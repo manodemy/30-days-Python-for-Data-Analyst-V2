@@ -112,6 +112,8 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.disabled = true;
     setTimeout(() => {
       btn.textContent = 'Success! Redirecting...';
+      // Set the auth token in localStorage so the route guard allows access
+      localStorage.setItem('manodemy_auth', 'true');
       setTimeout(() => {
         window.location.href = 'day01.html';
       }, 800);

@@ -2,9 +2,11 @@
 
 // Navbar scroll shadow
 const topBar = document.getElementById('topBar');
-window.addEventListener('scroll', () => {
-  topBar.classList.toggle('scrolled', window.scrollY > 10);
-});
+if (topBar) {
+  window.addEventListener('scroll', () => {
+    topBar.classList.toggle('scrolled', window.scrollY > 10);
+  });
+}
 
 // Price Editor Toggle
 const toggle = document.getElementById('priceToggle');
@@ -12,11 +14,11 @@ const editor = document.getElementById('priceEditor');
 const closeBtn = document.getElementById('closeEditor');
 const applyBtn = document.getElementById('applyPrice');
 
-toggle.addEventListener('click', () => editor.classList.toggle('hidden'));
-closeBtn.addEventListener('click', () => editor.classList.add('hidden'));
+if (toggle && editor) toggle.addEventListener('click', () => editor.classList.toggle('hidden'));
+if (closeBtn && editor) closeBtn.addEventListener('click', () => editor.classList.add('hidden'));
 
 // Apply Price Changes
-applyBtn.addEventListener('click', () => {
+if (applyBtn) applyBtn.addEventListener('click', () => {
   const currency = document.getElementById('inputCurrency').value || '$';
   const price = document.getElementById('inputPrice').value;
   const original = document.getElementById('inputOriginal').value;

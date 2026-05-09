@@ -48,3 +48,51 @@ document.querySelectorAll('.stat-card, .feature-card, .cta-btn, .pricing-box').f
   el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
   observer.observe(el);
 });
+
+// ═══════ GEO-PRICING & PAYMENT LINKS ═══════
+async function setupGeoPricing() {
+  const buyBtns = document.querySelectorAll('.buy-btn');
+  const priceNow = document.getElementById('priceNow');
+  const priceOld = document.getElementById('priceOld');
+  const discountBadge = document.getElementById('discountBadge');
+  const buyPrice = document.getElementById('buyPrice');
+  
+  try {
+    const response = await fetch('https://get.geojs.io/v1/ip/country.json');
+    const data = await response.json();
+    
+    if (data.country === 'IN') {
+      // Indian Pricing (INR)
+      if (priceNow) priceNow.textContent = '₹1499';
+      if (priceOld) priceOld.textContent = '₹4999';
+      if (buyPrice) buyPrice.textContent = '₹1499';
+      if (discountBadge) discountBadge.textContent = '70% OFF';
+      
+      // Update all Buy buttons to UPI/GPay
+      buyBtns.forEach(btn => {
+        // Change 'your-upi-id@okaxis' to your actual UPI ID
+        btn.href = 'upi://pay?pa=your-upi-id@okaxis&pn=Manodemy&am=1499.00&cu=INR';
+        btn.title = 'Pay with GPay / PhonePe / Paytm';
+      });
+    } else {
+      // International Pricing (USD)
+      if (priceNow) priceNow.textContent = '$19';
+      if (priceOld) priceOld.textContent = '$69';
+      if (buyPrice) buyPrice.textContent = '$19';
+      if (discountBadge) discountBadge.textContent = '72% OFF';
+      
+      // Update all Buy buttons to PayPal
+      buyBtns.forEach(btn => {
+        // Change 'your-paypal-id' to your actual PayPal.me link
+        btn.href = 'https://paypal.me/your-paypal-id/19USD';
+        btn.title = 'Pay with PayPal';
+      });
+    }
+  } catch (error) {
+    console.error("Geo-pricing API failed. Using default USD.", error);
+    buyBtns.forEach(btn => btn.href = 'https://paypal.me/your-paypal-id/19USD');
+  }
+}
+
+// Run geo-pricing when DOM is ready
+document.addEventListener('DOMContentLoaded', setupGeoPricing);

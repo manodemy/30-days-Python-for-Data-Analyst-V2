@@ -97,8 +97,12 @@ async function setupGeoPricing() {
 // Run geo-pricing when DOM is ready
 document.addEventListener('DOMContentLoaded', setupGeoPricing);
 
-// ═══════ LANDING LOGIN CARD INTERACTIVITY ═══════
-document.addEventListener('DOMContentLoaded', () => {
+// ═══════ LANDING LOGIN CARD INTERACTIVITY (SUPABASE) ═══════
+const SUPABASE_URL = 'https://gvhnwmuyrwissgkumeif.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_x0gyXkcrCSaxSG23Zyi7qA__v1sBgOq';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+document.addEventListener('DOMContentLoaded', async () => {
   const loginForm = document.getElementById('landingLoginForm');
   const btnGoogle = document.getElementById('btnLandingGoogle');
   const btnSubmit = document.getElementById('btnLandingSubmit');
@@ -110,123 +114,161 @@ document.addEventListener('DOMContentLoaded', () => {
   const inlineLogo = document.querySelector('.python-logo-inline');
   const buyBtn = document.querySelector('.buy-btn');
 
-  // Check if user is already logged in
-  if (localStorage.getItem('manodemy_auth') === 'true') {
-    // Hide login card instantly
-    if (loginCard) loginCard.style.display = 'none';
+  // Animation Function
+  const executeLoginAnimation = () => {
+    if (!loginCard || loginCard.style.display === 'none') return;
     
-    // Put logo in place immediately without transition
+    loginCard.classList.add('login-card-leaving');
+    
+    setTimeout(() => {
+      loginCard.style.display = 'none';
+
+      if (inlineLogo && heroVisual) {
+        const firstRect = inlineLogo.getBoundingClientRect();
+        heroVisual.appendChild(inlineLogo);
+        inlineLogo.classList.remove('python-logo-inline');
+        inlineLogo.classList.add('python-logo-hero');
+        
+        const lastRect = inlineLogo.getBoundingClientRect();
+        const deltaX = firstRect.left - lastRect.left;
+        const deltaY = firstRect.top - lastRect.top;
+        const scaleW = firstRect.width / lastRect.width;
+        const scaleH = firstRect.height / lastRect.height;
+        
+        const animation = inlineLogo.animate([
+          { transform: `translate(${deltaX}px, ${deltaY}px) scale(${scaleW}, ${scaleH})`, filter: 'drop-shadow(0 0 20px rgba(0, 230, 246, 0.4))' },
+          { transform: 'translate(0, 0) scale(1)', filter: 'drop-shadow(0 0 80px rgba(0, 230, 246, 0.8))' }
+        ], { duration: 1200, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards' });
+
+        animation.onfinish = () => {
+          inlineLogo.classList.add('float-hero-anim');
+          if (buyBtn) {
+            buyBtn.innerHTML = 'Go to Course →';
+            buyBtn.href = 'day01.html';
+          }
+        };
+      }
+    }, 500);
+  };
+
+  const showInstantLoggedInState = () => {
+    if (loginCard) loginCard.style.display = 'none';
     if (inlineLogo && heroVisual) {
       heroVisual.appendChild(inlineLogo);
       inlineLogo.classList.remove('python-logo-inline');
       inlineLogo.classList.add('python-logo-hero', 'float-hero-anim');
     }
-    
-    // Update Buy button
     if (buyBtn) {
       buyBtn.innerHTML = 'Go to Course →';
       buyBtn.href = 'day01.html';
     }
-  }
-
-  // Helper to simulate loading and stunning transition
-  const simulateLoginAndRedirect = (btn, originalText) => {
-    btn.textContent = 'Authenticating...';
-    btn.style.opacity = '0.7';
-    btn.disabled = true;
-    
-    setTimeout(() => {
-      btn.textContent = 'Success! Access Granted...';
-      localStorage.setItem('manodemy_auth', 'true');
-      
-      // 1. Fade out the login card completely
-      loginCard.classList.add('login-card-leaving');
-      
-      setTimeout(() => {
-        loginCard.style.display = 'none';
-
-        if (inlineLogo && heroVisual) {
-          // FLIP Animation Strategy
-          // First: Get bounding rect of the inline logo where it currently is
-          const firstRect = inlineLogo.getBoundingClientRect();
-          
-          // Move the logo into the hero visual area in the DOM
-          heroVisual.appendChild(inlineLogo);
-          
-          // Swap its classes so it adopts the massive absolute positioning
-          inlineLogo.classList.remove('python-logo-inline');
-          inlineLogo.classList.add('python-logo-hero');
-          
-          // Last: Get bounding rect of where it has now naturally landed
-          const lastRect = inlineLogo.getBoundingClientRect();
-          
-          // Invert: Calculate the difference
-          const deltaX = firstRect.left - lastRect.left;
-          const deltaY = firstRect.top - lastRect.top;
-          const scaleW = firstRect.width / lastRect.width;
-          const scaleH = firstRect.height / lastRect.height;
-          
-          // Play: Animate from the Inverted position to the natural position
-          const animation = inlineLogo.animate([
-            {
-              transform: `translate(${deltaX}px, ${deltaY}px) scale(${scaleW}, ${scaleH})`,
-              filter: 'drop-shadow(0 0 20px rgba(0, 230, 246, 0.4))'
-            },
-            {
-              transform: 'translate(0, 0) scale(1)',
-              filter: 'drop-shadow(0 0 80px rgba(0, 230, 246, 0.8))'
-            }
-          ], {
-            duration: 1200,
-            easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
-            fill: 'forwards'
-          });
-
-          // Add the continuous floating animation once the FLIP completes
-          animation.onfinish = () => {
-            inlineLogo.classList.add('float-hero-anim');
-            // Change the 'Buy Now' nav button to 'Go to Course'
-            const buyBtn = document.querySelector('.buy-btn');
-            if (buyBtn) {
-              buyBtn.innerHTML = 'Go to Course →';
-              buyBtn.href = 'day01.html';
-            }
-          };
-        }
-      }, 500); // wait for login card to vanish before moving the logo
-    }, 1200);
   };
 
+  // 1. Check Supabase Session on Load
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session) {
+    localStorage.setItem('manodemy_auth', 'true');
+    showInstantLoggedInState();
+  } else if (localStorage.getItem('manodemy_auth') === 'true') {
+    // Fallback for UI if session expired but cache remains
+    showInstantLoggedInState();
+  }
+
+  // 2. Listen for Auth State Changes (e.g. returning from Google OAuth)
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN' && session) {
+      localStorage.setItem('manodemy_auth', 'true');
+      executeLoginAnimation();
+    }
+  });
+
+  // 3. Email & Password Login / Auto-Signup
   if (loginForm) {
-    loginForm.addEventListener('submit', (e) => {
+    loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      simulateLoginAndRedirect(btnSubmit, 'Start Learning →');
+      const email = document.getElementById('landingEmail').value;
+      const password = document.getElementById('landingPassword').value;
+      
+      btnSubmit.textContent = 'Authenticating...';
+      btnSubmit.disabled = true;
+      btnSubmit.style.opacity = '0.7';
+
+      // Attempt Login
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      
+      if (error) {
+        // If user doesn't exist, automatically sign them up!
+        if (error.message.toLowerCase().includes('invalid login credentials')) {
+          btnSubmit.textContent = 'Creating Account...';
+          const { error: signUpError } = await supabase.auth.signUp({ email, password });
+          if (signUpError) {
+            alert('Signup Failed: ' + signUpError.message);
+            btnSubmit.textContent = 'Start Learning →';
+            btnSubmit.disabled = false;
+            btnSubmit.style.opacity = '1';
+            return;
+          }
+          btnSubmit.textContent = 'Account Created! Welcome...';
+          localStorage.setItem('manodemy_auth', 'true');
+          executeLoginAnimation();
+          return;
+        }
+        
+        alert('Login Failed: ' + error.message);
+        btnSubmit.textContent = 'Start Learning →';
+        btnSubmit.disabled = false;
+        btnSubmit.style.opacity = '1';
+        return;
+      }
+
+      // Successful Login
+      btnSubmit.textContent = 'Success! Access Granted...';
+      localStorage.setItem('manodemy_auth', 'true');
+      executeLoginAnimation();
     });
   }
 
+  // 4. Google OAuth Login
   if (btnGoogle) {
-    btnGoogle.addEventListener('click', () => {
-      // Simulate Google OAuth popup
-      const confirmed = confirm('Redirecting to Google Secure Sign-In. Continue?');
-      if (confirmed) {
-        simulateLoginAndRedirect(btnGoogle, 'Continue with Google');
+    btnGoogle.addEventListener('click', async () => {
+      btnGoogle.innerHTML = 'Redirecting securely...';
+      btnGoogle.disabled = true;
+      btnGoogle.style.opacity = '0.7';
+      
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          // Redirect back to exactly where we are right now
+          redirectTo: window.location.origin + window.location.pathname
+        }
+      });
+      
+      if (error) {
+        alert('Google Login Error: ' + error.message);
+        btnGoogle.innerHTML = '<img src="https://developers.google.com/identity/images/g-logo.png" alt="Google">Continue with Google';
+        btnGoogle.disabled = false;
+        btnGoogle.style.opacity = '1';
       }
     });
   }
 
   if (linkForgot) {
-    linkForgot.addEventListener('click', (e) => {
+    linkForgot.addEventListener('click', async (e) => {
       e.preventDefault();
-      prompt('Enter your registered email address to receive a password reset link:');
-      alert('If an account exists, a reset link has been sent to that email.');
+      const email = prompt('Enter your registered email address to receive a password reset link:');
+      if (email) {
+        await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: window.location.origin + window.location.pathname,
+        });
+        alert('If an account exists, a secure reset link has been sent to that email.');
+      }
     });
   }
 
   if (linkSignup) {
     linkSignup.addEventListener('click', (e) => {
       e.preventDefault();
-      alert('Redirecting to the comprehensive Registration Portal...');
-      // In a real app, this would redirect to the registration page or open a modal
+      alert('Just enter an email and password in the form and click "Start Learning" to instantly create your account!');
     });
   }
 });

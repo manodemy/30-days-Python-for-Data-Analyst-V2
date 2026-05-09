@@ -96,3 +96,74 @@ async function setupGeoPricing() {
 
 // Run geo-pricing when DOM is ready
 document.addEventListener('DOMContentLoaded', setupGeoPricing);
+
+// ═══════ LANDING LOGIN CARD INTERACTIVITY ═══════
+document.addEventListener('DOMContentLoaded', () => {
+  const loginForm = document.getElementById('landingLoginForm');
+  const btnGoogle = document.getElementById('btnLandingGoogle');
+  const btnPhone = document.getElementById('btnLandingPhone');
+  const btnSubmit = document.getElementById('btnLandingSubmit');
+  const linkForgot = document.getElementById('linkLandingForgot');
+  const linkSignup = document.getElementById('linkLandingSignup');
+
+  // Helper to simulate loading and redirect
+  const simulateLoginAndRedirect = (btn, originalText) => {
+    btn.textContent = 'Authenticating...';
+    btn.style.opacity = '0.7';
+    btn.disabled = true;
+    setTimeout(() => {
+      btn.textContent = 'Success! Redirecting...';
+      setTimeout(() => {
+        window.location.href = 'day01.html';
+      }, 800);
+    }, 1500);
+  };
+
+  if (loginForm) {
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      simulateLoginAndRedirect(btnSubmit, 'Start Learning →');
+    });
+  }
+
+  if (btnGoogle) {
+    btnGoogle.addEventListener('click', () => {
+      // Simulate Google OAuth popup
+      const confirmed = confirm('Redirecting to Google Secure Sign-In. Continue?');
+      if (confirmed) {
+        simulateLoginAndRedirect(btnGoogle, 'Google');
+      }
+    });
+  }
+
+  if (btnPhone) {
+    btnPhone.addEventListener('click', () => {
+      const phone = prompt('Enter your Phone Number with Country Code (e.g. +91 9876543210):');
+      if (phone && phone.trim().length > 5) {
+        const otp = prompt(`A 6-digit OTP has been sent to ${phone}.\nEnter OTP to continue (try 123456):`);
+        if (otp) {
+          simulateLoginAndRedirect(btnPhone, '📱 Phone');
+        } else {
+          alert('OTP Verification Cancelled.');
+        }
+      }
+    });
+  }
+
+  if (linkForgot) {
+    linkForgot.addEventListener('click', (e) => {
+      e.preventDefault();
+      prompt('Enter your registered email address to receive a password reset link:');
+      alert('If an account exists, a reset link has been sent to that email.');
+    });
+  }
+
+  if (linkSignup) {
+    linkSignup.addEventListener('click', (e) => {
+      e.preventDefault();
+      alert('Redirecting to the comprehensive Registration Portal...');
+      // In a real app, this would redirect to the registration page or open a modal
+    });
+  }
+});
+

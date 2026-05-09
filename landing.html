@@ -55,19 +55,24 @@
       <!-- Premium Landing Login Box -->
       <div class="landing-login-card">
         <h3 class="login-title">Join the Challenge</h3>
-        <button class="landing-social-btn">
-          <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google">
-          Continue with Google
-        </button>
-        <div class="landing-divider"><span>OR CONTINUE WITH EMAIL</span></div>
-        <form class="landing-login-form">
-          <input type="email" placeholder="name@example.com" class="landing-input" required>
-          <input type="password" placeholder="••••••••" class="landing-input" required>
-          <button type="button" class="landing-submit-btn">Start Learning →</button>
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+          <button class="landing-social-btn" id="btnLandingGoogle">
+            <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google">
+            Google
+          </button>
+          <button class="landing-social-btn" id="btnLandingPhone" style="font-size: 1.1rem;">
+            📱 Phone
+          </button>
+        </div>
+        <div class="landing-divider"><span>OR EMAIL</span></div>
+        <form class="landing-login-form" id="landingLoginForm">
+          <input type="email" id="landingEmail" placeholder="name@example.com" class="landing-input" required>
+          <input type="password" id="landingPassword" placeholder="••••••••" class="landing-input" required>
+          <button type="submit" class="landing-submit-btn" id="btnLandingSubmit">Start Learning →</button>
         </form>
         <div class="landing-footer-links">
-          <a href="#">Forgot password?</a>
-          <a href="#">Sign up</a>
+          <a href="#" id="linkLandingForgot">Forgot password?</a>
+          <a href="#" id="linkLandingSignup">Sign up</a>
         </div>
       </div>
 

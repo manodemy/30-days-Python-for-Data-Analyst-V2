@@ -153,7 +153,7 @@ def parse_notebook(nb_path, day_num):
                 if hm:
                     txt = md(hm.group(2).strip())
                     disp = re.sub(r'<[^>]+>', '', txt).strip()
-                    if len(hm.group(1)) <= 2 and len(disp) > 3:
+                    if len(hm.group(1)) <= 2 and len(disp) > 1:
                         open_sec(f'sec-{i}', disp[:60])
 
             # RENDER — split mixed cells (HTML + markdown) into proper segments

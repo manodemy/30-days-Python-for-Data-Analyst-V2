@@ -112,7 +112,9 @@ try {
   console.error("Error initializing Supabase client:", e);
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
+(async function initializeAuthentication() {
+  console.log("🚀 Initializing Manodemy Authentication...");
+  
   const loginForm = document.getElementById('landingLoginForm');
   const btnGoogle = document.getElementById('btnLandingGoogle');
   const btnSubmit = document.getElementById('btnLandingSubmit');
@@ -295,11 +297,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  if (linkSignup) {
     linkSignup.addEventListener('click', (e) => {
       e.preventDefault();
       alert('Just enter an email and password in the form and click "Start Learning" to instantly create your account!');
     });
   }
-});
+  
+  console.log("✅ Authentication event listeners attached successfully.");
+})();
 

@@ -1,3 +1,4 @@
+console.log("🎬 landing.js: Script execution started...");
 // ═══════ MANODEMY — PRICE EDITOR & INTERACTIONS ═══════
 
 // Navbar scroll shadow

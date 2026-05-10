@@ -109,10 +109,10 @@ console.log("✅ Google button found:", googleBtnTest);
 const SUPABASE_URL = 'https://gvhnwmuyrwissgkumeif.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_x0gyXkcrCSaxSG23Zyi7qA__v1sBgOq';
 
-let supabase = null;
+let supabaseClient = null;
 try {
   if (window.supabase) {
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     console.log("✅ Supabase client initialized.");
   } else {
     console.error("❌ Supabase SDK not found on window object. Is the CDN script blocked?");
@@ -184,9 +184,9 @@ try {
   };
 
   // 1. Check Supabase Session on Load
-  if (supabase) {
+  if (supabaseClient) {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await supabaseClient.auth.getSession();
       if (session) {
         localStorage.setItem('manodemy_auth', 'true');
         showInstantLoggedInState();
@@ -194,7 +194,7 @@ try {
         showInstantLoggedInState();
       }
 
-      supabase.auth.onAuthStateChange((event, session) => {
+      supabaseClient.auth.onAuthStateChange((event, session) => {
         if (event === 'SIGNED_IN' && session) {
           localStorage.setItem('manodemy_auth', 'true');
           executeLoginAnimation();
@@ -213,7 +213,7 @@ try {
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       
-      if (!supabase) {
+      if (!supabaseClient) {
         alert("Authentication service is currently unavailable. Please check your connection or disable adblockers.");
         return;
       }
@@ -225,12 +225,12 @@ try {
       btnSubmit.disabled = true;
       btnSubmit.style.opacity = '0.7';
 
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
       
       if (error) {
         if (error.message.toLowerCase().includes('invalid login credentials')) {
           btnSubmit.textContent = 'Creating Account...';
-          const { error: signUpError } = await supabase.auth.signUp({ email, password });
+          const { error: signUpError } = await supabaseClient.auth.signUp({ email, password });
           if (signUpError) {
             console.error("Supabase Signup Error:", signUpError);
             alert('Signup Failed: ' + signUpError.message);
@@ -265,8 +265,8 @@ try {
       e.preventDefault();
       console.log("✅ Google button clicked");
       
-      if (!supabase) {
-        console.error("❌ Cannot sign in with Google because supabase client is null.");
+      if (!supabaseClient) {
+        console.error("❌ Cannot sign in with Google because supabaseClient client is null.");
         alert("Authentication service is currently unavailable.");
         return;
       }
@@ -277,8 +277,8 @@ try {
       btnGoogle.style.opacity = '0.7';
       
       try {
-        console.log("✅ Calling supabase.auth.signInWithOAuth...");
-        const { error } = await supabase.auth.signInWithOAuth({
+        console.log("✅ Calling supabaseClient.auth.signInWithOAuth...");
+        const { error } = await supabaseClient.auth.signInWithOAuth({
           provider: 'google',
           options: {
             redirectTo: window.location.origin + window.location.pathname
@@ -307,8 +307,8 @@ try {
     linkForgot.addEventListener('click', async (e) => {
       e.preventDefault();
       const email = prompt('Enter your registered email address to receive a password reset link:');
-      if (email && supabase) {
-        await supabase.auth.resetPasswordForEmail(email, {
+      if (email && supabaseClient) {
+        await supabaseClient.auth.resetPasswordForEmail(email, {
           redirectTo: window.location.origin + window.location.pathname,
         });
         alert('If an account exists, a secure reset link has been sent to that email.');

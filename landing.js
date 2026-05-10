@@ -454,9 +454,29 @@ console.log("✅ Google button found:", googleBtnTest);
       const { data } = await supabaseClient.rpc('check_enrollment', { p_course_id: 'python-30day' });
       if (data === true) {
         localStorage.setItem('manodemy_enrolled', 'true');
-        if (buyBtnEl) {
-          buyBtnEl.innerHTML = 'Go to Course →';
-          buyBtnEl.onclick = () => { window.location.href = 'day01.html'; };
+        
+        // Hide the entire pricing section and its buy button
+        const pricingSection = document.getElementById('pricing');
+        if (pricingSection) pricingSection.style.display = 'none';
+
+        // Update top nav "Buy Now" to "Share this course"
+        const topBuyBtnEl = document.querySelector('.top-buy-btn');
+        if (topBuyBtnEl) {
+          topBuyBtnEl.innerHTML = '🔗 Share this course';
+          topBuyBtnEl.href = '#';
+          topBuyBtnEl.onclick = (e) => {
+            e.preventDefault();
+            navigator.clipboard.writeText(window.location.origin + window.location.pathname);
+            topBuyBtnEl.innerHTML = '✅ Link Copied!';
+            setTimeout(() => { topBuyBtnEl.innerHTML = '🔗 Share this course'; }, 2000);
+          };
+        }
+
+        // Change the purple CTA to "Continue Learning"
+        const purpleCta = document.querySelector('.cta-purple');
+        if (purpleCta) {
+          purpleCta.innerHTML = '🏆 CONTINUE LEARNING';
+          purpleCta.href = 'day01.html';
         }
       }
     } catch (e) {

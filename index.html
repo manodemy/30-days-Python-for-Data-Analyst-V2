@@ -5,13 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Manodemy — Learn Python By Actually Coding</title>
 <meta name="description" content="30-Day Python Data Analytics Masterclass. 30 Interactive Notebooks. 750+ Interview Questions. Get job-ready.">
+<link rel="icon" href="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" type="image/svg+xml">
+<meta property="og:title" content="Manodemy — Learn Python By Actually Coding">
+<meta property="og:description" content="30-Day Python Data Analytics Masterclass. 750+ Interview Questions. Get job-ready.">
+<meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="landing.css?v=6.0">
+<link rel="stylesheet" href="landing.css?v=7.0">
 <!-- Supabase SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<!-- Payment Gateway SDKs -->
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<!-- Razorpay SDK loaded lazily by landing.js when user clicks Buy -->
 <style>
   /* Anti-flicker: hide login card instantly if user was previously authenticated */
   .landing-login-card { opacity: 0; animation: fadeInCard 0.3s ease 0.2s forwards; }

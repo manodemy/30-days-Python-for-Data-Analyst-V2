@@ -229,8 +229,16 @@ async function initiatePayment(gateway) {
       throw new Error(data.error);
     }
 
-    // ── RAZORPAY ──
+    // ── RAZORPAY (lazy-load SDK) ──
     if (gateway === 'razorpay') {
+      if (typeof Razorpay === 'undefined') {
+        await new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          s.src = 'https://checkout.razorpay.com/v1/checkout.js';
+          s.onload = resolve; s.onerror = reject;
+          document.head.appendChild(s);
+        });
+      }
       const options = {
         key: RAZORPAY_KEY_ID,
         amount: data.amount,

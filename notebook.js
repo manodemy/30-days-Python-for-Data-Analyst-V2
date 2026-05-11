@@ -140,29 +140,51 @@ document.addEventListener('DOMContentLoaded', () => {
   updateScore(); // Initial score update
 });
 
-// ── LOAD PYODIDE ──
+// ── LOAD PYODIDE (LAZY — first Run click only) ──
+let pyodideLoading = false;
 async function initPyodide() {
+  if (pyodide || pyodideLoading) return;
+  pyodideLoading = true;
+  if (statusEl) {
+    statusEl.textContent = '⏳ Loading Python engine... (first run only)';
+    statusEl.classList.remove('hidden');
+  }
   try {
     pyodide = await loadPyodide();
-    statusEl.textContent = '✅ Python Ready — Shift+Enter to run cell';
-    statusEl.classList.add('ready');
-    setTimeout(() => statusEl.classList.add('hidden'), 3000);
+    if (statusEl) {
+      statusEl.textContent = '✅ Python Ready — Shift+Enter to run cell';
+      statusEl.classList.add('ready');
+      setTimeout(() => statusEl.classList.add('hidden'), 3000);
+    }
   } catch (e) {
-    statusEl.textContent = '❌ Failed to load Python. Refresh page.';
+    if (statusEl) statusEl.textContent = '❌ Failed to load Python. Refresh page.';
+    pyodideLoading = false;
   }
 }
-initPyodide();
+// Show hint instead of auto-loading 40MB WASM
+if (statusEl) {
+  statusEl.textContent = '💡 Click ▶ Run on any cell to start Python';
+  statusEl.classList.add('ready');
+}
 
 // ── SCORE TRACKING ──
 const successfulCells = new Set();
 let totalCells = 0;
 
-document.querySelectorAll('.code-cell').forEach(cell => {
-  let prev = cell.previousElementSibling;
-  // A cell counts towards the score if it directly follows a question or task
-  if (prev && (prev.classList.contains('question') || prev.classList.contains('task') || prev.classList.contains('interview'))) {
-    totalCells++;
-    cell.classList.add('is-scored-question');
+document.querySelectorAll('.question, .task, .interview').forEach(q => {
+  let next = q.nextElementSibling;
+  while (next) {
+    if (next.classList.contains('code-cell')) {
+      if (!next.classList.contains('is-scored-question')) {
+        totalCells++;
+        next.classList.add('is-scored-question');
+      }
+      break;
+    }
+    if (next.classList.contains('question') || next.classList.contains('task') || next.classList.contains('interview')) {
+      break; // Another question started without a code cell
+    }
+    next = next.nextElementSibling;
   }
 });
 if (totalCells === 0) totalCells = 1; // fallback prevent NaN
@@ -197,7 +219,7 @@ function updateScore() {
 
 // ── RUN CELL ──
 async function runCell(cellId) {
-  if (!pyodide) { alert('Python is still loading...'); return; }
+  if (!pyodide) { await initPyodide(); if (!pyodide) return; }
   const cell = document.getElementById(cellId);
   const cm = editors[cellId];
   const output = cell.querySelector('.cell-output');
@@ -310,7 +332,7 @@ function clearOutput(cellId) {
   label.textContent = 'In [ ]:';
 }
 
-function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 
 // ── SIDEBAR ACTIVE TRACKING ──
 const tocLinks = document.querySelectorAll('.toc-link');
@@ -363,19 +385,23 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// ── SIDEBAR RESIZE ──
+// ── SIDEBAR RESIZE (Mouse + Touch) ──
 const sidebar = document.getElementById('sidebar');
 const handle = document.getElementById('sidebarResize');
 if (handle && sidebar) {
   let dragging = false;
-  handle.addEventListener('mousedown', e=>{dragging=true;e.preventDefault()});
-  document.addEventListener('mousemove', e=>{
+  const onMove = (clientX) => {
     if (!dragging) return;
-    const w = Math.max(180,Math.min(400,window.innerWidth-e.clientX-16));
+    const w = Math.max(180,Math.min(400,window.innerWidth-clientX-16));
     sidebar.style.width = w+'px';
     document.querySelector('.notebook').style.maxWidth = `calc(100% - ${w}px)`;
-  });
+  };
+  handle.addEventListener('mousedown', e=>{dragging=true;e.preventDefault()});
+  handle.addEventListener('touchstart', e=>{dragging=true;e.preventDefault()},{passive:false});
+  document.addEventListener('mousemove', e=>onMove(e.clientX));
+  document.addEventListener('touchmove', e=>{if(dragging)onMove(e.touches[0].clientX);},{passive:true});
   document.addEventListener('mouseup', ()=>{dragging=false});
+  document.addEventListener('touchend', ()=>{dragging=false});
 }
 
 // ── PROFILE AVATAR & AGGREGATE PROGRESS ──

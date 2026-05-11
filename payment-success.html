@@ -34,12 +34,23 @@
   <a href="day01.html" class="success-cta">🚀 Start Learning Now</a>
   <p style="margin-top:1.5rem;font-size:0.8rem;color:var(--muted)">A confirmation has been sent to your email.</p>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const params = new URLSearchParams(window.location.search);
   const oid = params.get('order_id');
   if (oid) document.getElementById('orderId').textContent = 'Order ID: ' + oid;
-  localStorage.setItem('manodemy_auth', 'true');
-  localStorage.setItem('manodemy_enrolled', 'true');
+
+  // Verify enrollment with Supabase
+  const SUPA_URL = 'https://gvhnwmuyrwissgkumeif.supabase.co';
+  const SUPA_KEY = 'sb_publishable_x0gyXkcrCSaxSG23Zyi7qA__v1sBgOq';
+  const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  sb.rpc('check_enrollment', { p_course_id: 'python-30day' }).then(({ data }) => {
+    if (data === true) {
+      localStorage.setItem('manodemy_auth', 'true');
+      localStorage.setItem('manodemy_enrolled', 'true');
+    }
+  }).catch(e => console.error(e));
 </script>
 </body>
 </html>

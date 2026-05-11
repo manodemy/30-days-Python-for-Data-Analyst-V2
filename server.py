@@ -415,7 +415,7 @@ def build_page(day_num, title, body, secs, cells):
 
     try {{
       if (typeof window.supabase === 'undefined') {{
-        removePreload();
+        window.location.href = 'index.html?reason=sdk_blocked';
         return;
       }}
       const SUPA_URL = 'https://gvhnwmuyrwissgkumeif.supabase.co';
@@ -430,16 +430,28 @@ def build_page(day_num, title, body, secs, cells):
       }}
       
       const plan = session.user.user_metadata?.plan;
-      const isEnrolled = localStorage.getItem('manodemy_enrolled') === 'true';
-      if (plan !== 'pro' && !isEnrolled) {{
-        window.location.href = `index.html#pricing?locked=true`;
+      const isEnrolledLocal = localStorage.getItem('manodemy_enrolled') === 'true';
+      
+      if (plan === 'pro' || isEnrolledLocal) {{
+        removePreload();
         return;
       }}
       
-      removePreload();
+      // Fallback: verify enrollment server-side via Supabase RPC
+      try {{
+        const {{ data: enrolled }} = await sb.rpc('check_enrollment', {{ p_course_id: 'python-30day' }});
+        if (enrolled) {{
+          localStorage.setItem('manodemy_enrolled', 'true');
+          removePreload();
+          return;
+        }}
+      }} catch (rpcErr) {{
+        // RPC failed — don't grant access
+      }}
+      
+      window.location.href = `index.html#pricing?locked=true`;
       
     }} catch (err) {{
-      console.error('Auth verification failed', err);
       window.location.href = `index.html`;
     }}
   }})();

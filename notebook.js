@@ -286,7 +286,7 @@ async function runCell(cellId) {
     }
     updateScore();
   } catch (err) {
-    pyodide.runPython('sys.stdout=sys.__stdout__;sys.stderr=sys.__stderr__');
+    try { pyodide.runPython('sys.stdout=sys.__stdout__;sys.stderr=sys.__stderr__'); } catch(e) {}
     let msg = String(err.message||err);
     let lines = msg.split('\n').filter(l=>!l.includes('pyodide')&&!l.includes('wasm'));
     output.innerHTML = `<span class="out-label">Error:</span>${esc(lines.join('\n')||msg)}`;

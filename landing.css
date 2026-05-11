@@ -1448,3 +1448,39 @@ body {
   filter: drop-shadow(0 0 5px rgba(0, 230, 246, 0.8)) !important;
   display: block !important;
 }
+
+/* ═══════ LOGOUT BUTTON ═══════ */
+.top-logout-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: rgba(244, 63, 94, 0.1);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+  border-radius: 10px;
+  color: var(--rose);
+  cursor: pointer;
+  transition: all .25s;
+  margin-left: .5rem;
+}
+
+.top-logout-btn:hover {
+  background: rgba(244, 63, 94, 0.2);
+  border-color: var(--rose);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(244, 63, 94, 0.25);
+}
+
+/* ═══════ MOBILE GRID FIX ═══════ */
+@media (max-width: 768px) {
+  .skills-grid.s30 {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .skills-grid.s30 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}

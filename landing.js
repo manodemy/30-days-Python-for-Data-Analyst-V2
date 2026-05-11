@@ -1,4 +1,4 @@
-console.log("🎬 landing.js: Script execution started...");
+// ═══════ MANODEMY — Landing Page Engine ═══════
 // ═══════ MANODEMY — PRICE EDITOR & INTERACTIONS ═══════
 
 // Navbar scroll shadow
@@ -58,15 +58,15 @@ const SUPABASE_ANON_KEY = 'sb_publishable_x0gyXkcrCSaxSG23Zyi7qA__v1sBgOq';
 
 // Payment gateway publishable keys (safe for frontend)
 const RAZORPAY_KEY_ID = 'rzp_live_SnbHZn5Q7rYNAP';   // Live Razorpay key
-const PAYPAL_CLIENT_ID = 'xxxx';             // Replace with your PayPal client ID
+const PAYPAL_CLIENT_ID = '';             // Set your PayPal client ID to enable
 
 let supabaseClient = null;
 try {
   if (window.supabase) {
     supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    console.log("✅ Supabase client initialized.");
+
   } else {
-    console.error("❌ Supabase SDK not found.");
+
   }
 } catch (e) {
   console.error("❌ Error initializing Supabase:", e);
@@ -181,6 +181,12 @@ if (checkoutCloseBtn) checkoutCloseBtn.addEventListener('click', () => {
 });
 if (checkoutOverlay) checkoutOverlay.addEventListener('click', (e) => {
   if (e.target === checkoutOverlay) checkoutOverlay.classList.remove('active');
+});
+// Escape key closes checkout modal
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && checkoutOverlay?.classList.contains('active')) {
+    checkoutOverlay.classList.remove('active');
+  }
 });
 
 // ═══════ PAYMENT INITIATION ═══════
@@ -391,10 +397,6 @@ if (couponApplyBtn) {
 // Run geo-pricing when DOM is ready
 document.addEventListener('DOMContentLoaded', setupGeoPricing);
 
-console.log("✅ landing.js loaded successfully");
-console.log("✅ DOM ready check");
-const googleBtnTest = document.getElementById("google-signin-btn");
-console.log("✅ Google button found:", googleBtnTest);
 
 // ═══════ LANDING LOGIN CARD INTERACTIVITY (SUPABASE) ═══════
 (async function initializeAuthentication() {
@@ -555,10 +557,17 @@ console.log("✅ Google button found:", googleBtnTest);
 
       if (error) {
         if (error.message.toLowerCase().includes('invalid login credentials')) {
+          // Ask user before auto-creating account
+          const confirmSignup = confirm('No account found with this email. Would you like to create a new account?');
+          if (!confirmSignup) {
+            btnSubmit.textContent = 'Start Learning →';
+            btnSubmit.disabled = false;
+            btnSubmit.style.opacity = '1';
+            return;
+          }
           btnSubmit.textContent = 'Creating Account...';
           const { error: signUpError } = await supabaseClient.auth.signUp({ email, password });
           if (signUpError) {
-            console.error("Supabase Signup Error:", signUpError);
             alert('Signup Failed: ' + signUpError.message);
             btnSubmit.textContent = 'Start Learning →';
             btnSubmit.disabled = false;
@@ -571,7 +580,6 @@ console.log("✅ Google button found:", googleBtnTest);
           return;
         }
 
-        console.error("Supabase Login Error:", error);
         alert('Login Failed: ' + error.message);
         btnSubmit.textContent = 'Start Learning →';
         btnSubmit.disabled = false;
@@ -626,7 +634,7 @@ console.log("✅ Google button found:", googleBtnTest);
       }
     });
   } else {
-    console.error("❌ Could not attach click listener: google-signin-btn not found in DOM");
+    // Google button not found — non-critical
   }
 
   if (linkForgot) {
@@ -647,5 +655,20 @@ console.log("✅ Google button found:", googleBtnTest);
       e.preventDefault();
       alert('Just enter an email and password in the form and click "Start Learning" to instantly create your account!');
     });
+  }
+
+  // ═══════ LOGOUT BUTTON ON LANDING PAGE ═══════
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (supabaseClient) {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (session && logoutBtn) {
+      logoutBtn.style.display = 'inline-flex';
+      logoutBtn.addEventListener('click', async () => {
+        await supabaseClient.auth.signOut();
+        localStorage.removeItem('manodemy_auth');
+        localStorage.removeItem('manodemy_enrolled');
+        window.location.reload();
+      });
+    }
   }
 })();

@@ -1407,3 +1407,27 @@ body {
     height: 180px
   }
 }
+
+/* ═══════ BOTTOM-ALIGNED LOCKS ═══════ */
+.day-card--locked {
+  position: relative !important;
+  padding-bottom: 50px !important; /* Space for the lock */
+}
+
+.lock-overlay {
+  position: absolute !important;
+  bottom: 15px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+  pointer-events: none;
+}
+
+.lock-overlay svg {
+  width: 22px !important;
+  height: 22px !important;
+  color: var(--muted);
+  opacity: 0.5;
+}

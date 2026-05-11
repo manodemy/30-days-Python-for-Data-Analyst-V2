@@ -654,27 +654,47 @@ body {
   color: #EEFFFF
 }
 
-.analytics-overlay {
+/* Learning Steps (How to use platform) */
+.learning-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding: 1.2rem;
+  background: rgba(0, 230, 246, 0.03);
+  border: 1px solid rgba(0, 230, 246, 0.1);
+  border-radius: 12px;
+}
+
+.step-item {
   display: flex;
   align-items: center;
-  gap: .8rem;
-  padding: .8rem 1.2rem;
-  border-top: 1px solid #2d333b;
-  background: rgba(0, 230, 246, .03)
+  gap: 1rem;
 }
 
-.analytics-label {
-  font: 500 .75rem var(--font-c);
-  color: var(--muted)
+.step-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: rgba(0, 230, 246, 0.15);
+  color: var(--cyan);
+  border-radius: 50%;
+  font: 700 0.9rem var(--font-h);
+  flex-shrink: 0;
+  border: 1px solid rgba(0, 230, 246, 0.3);
 }
 
-.analytics-dots {
-  color: var(--cyan)
+.step-text {
+  font-size: 0.95rem;
+  color: var(--muted);
+  line-height: 1.4;
 }
 
-.chart-svg {
-  width: 120px;
-  height: 40px
+.step-text strong {
+  color: #fff;
+  font-weight: 600;
 }
 
 /* Skills Grid */

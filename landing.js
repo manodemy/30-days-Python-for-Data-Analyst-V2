@@ -544,8 +544,13 @@ document.addEventListener('DOMContentLoaded', setupGeoPricing);
         localStorage.setItem('manodemy_auth', 'true');
         showInstantLoggedInState();
         updateBuyButtonState();
-      } else if (localStorage.getItem('manodemy_auth') === 'true') {
-        showInstantLoggedInState();
+      } else {
+        // Session expired or out of sync: force login card to be visible
+        localStorage.removeItem('manodemy_auth');
+        if (loginCard) {
+          loginCard.style.setProperty('display', 'flex', 'important');
+          loginCard.style.opacity = '1';
+        }
       }
 
       supabaseClient.auth.onAuthStateChange((event, session) => {
@@ -557,10 +562,18 @@ document.addEventListener('DOMContentLoaded', setupGeoPricing);
       });
     } catch (e) {
       console.error("Session check failed:", e);
-      if (localStorage.getItem('manodemy_auth') === 'true') showInstantLoggedInState();
+      localStorage.removeItem('manodemy_auth');
+      if (loginCard) {
+        loginCard.style.setProperty('display', 'flex', 'important');
+        loginCard.style.opacity = '1';
+      }
     }
   } else {
-    if (localStorage.getItem('manodemy_auth') === 'true') showInstantLoggedInState();
+    localStorage.removeItem('manodemy_auth');
+    if (loginCard) {
+      loginCard.style.setProperty('display', 'flex', 'important');
+      loginCard.style.opacity = '1';
+    }
   }
 
   // 2. Email & Password Login / Auto-Signup

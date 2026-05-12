@@ -311,6 +311,32 @@ async function runCell(cellId) {
       if (dayId) safeStorageSet(`manodemy_${dayId}_${cellId}_solved`, 'false');
     }
     updateScore();
+
+    // ── MANO VOICE ASSISTANT HOOK ──
+    if (typeof ManoVoice !== 'undefined' && cell.classList.contains('is-scored-question')) {
+      const outputText = (text || '').trim();
+      if (outputText === '' || outputText === '(no output)') {
+        ManoVoice.onPartial(cellId, 'no_output');
+      } else if (isCorrectAndRelated) {
+        ManoVoice.onCorrect(cellId);
+      } else {
+        // Measure keyword overlap for partial vs wrong
+        let overlapCount = 0;
+        let prevEl = cell.previousElementSibling;
+        if (prevEl && (prevEl.classList.contains('question') || prevEl.classList.contains('interview'))) {
+          let qText = prevEl.textContent.toLowerCase();
+          let tokens = cleanCode.match(/[a-z_]\w*/g) || [];
+          let ignore = ['print','type','len','def','class','import','for','in','if','else','return','and','or','not','the','is','a','to','pass','true','false'];
+          tokens.forEach(t => { if (!ignore.includes(t) && qText.includes(t)) overlapCount++; });
+        }
+        if (overlapCount >= 1) {
+          ManoVoice.onPartial(cellId, 'close');
+        } else {
+          ManoVoice.onWrong(cellId);
+        }
+      }
+      ManoVoice.checkMilestone(successfulCells.size, totalCells);
+    }
   } catch (err) {
     try { pyodide.runPython('sys.stdout=sys.__stdout__;sys.stderr=sys.__stderr__'); } catch(e) {}
     let msg = String(err.message||err);
@@ -320,6 +346,11 @@ async function runCell(cellId) {
     
     successfulCells.delete(cellId);
     updateScore();
+
+    // ── MANO VOICE ERROR HOOK ──
+    if (typeof ManoVoice !== 'undefined' && cell.classList.contains('is-scored-question')) {
+      ManoVoice.onError(cellId, msg);
+    }
   }
   output.classList.remove('hidden');
   btn.disabled = false; btn.textContent = '▶ Run';

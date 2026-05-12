@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — Manodemy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root {
+    --bg: #0B0F19;
+    --card-bg: rgba(17, 24, 39, 0.7);
+    --border: rgba(255, 255, 255, 0.1);
+    --primary: #00E6F6;
+    --primary-glow: rgba(0, 230, 246, 0.3);
+    --gold: #F5A623;
+    --text: #F8FAFC;
+    --text-dim: #94A3B8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .admin-container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    width: 95%;
+    flex-grow: 1;
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  h1 { font-family: 'Outfit', sans-serif; font-size: 1.8rem; font-weight: 800; }
+  .grad-text { background: linear-gradient(135deg, var(--primary), var(--gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+  .admin-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 768px) { .admin-grid { grid-template-columns: 1fr; } }
+
+  .card {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    opacity: 0.5;
+  }
+
+  h2 { font-family: 'Outfit', sans-serif; margin-bottom: 1.2rem; font-size: 1.2rem; color: var(--primary); }
+
+  .form-group { margin-bottom: 1.2rem; }
+  label { display: block; color: var(--text-dim); font-size: 0.85rem; margin-bottom: 0.5rem; font-weight: 500; }
+  
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-icon {
+    position: absolute;
+    left: 1rem;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+  }
+
+  input {
+    width: 100%;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.8rem 1rem 0.8rem 2.2rem;
+    color: white;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1rem;
+    transition: all 0.2s;
+  }
+
+  input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 10px var(--primary-glow);
+  }
+
+  .btn {
+    background: var(--primary);
+    color: #0B0F19;
+    border: none;
+    border-radius: 8px;
+    padding: 0.8rem 1.5rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px var(--primary-glow);
+  }
+
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .status {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    padding: 0.8rem;
+    border-radius: 8px;
+    display: none;
+  }
+
+  .status.success { display: block; background: rgba(16, 185, 129, 0.1); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.2); }
+  .status.error { display: block; background: rgba(244, 63, 94, 0.1); color: #F43F5E; border: 1px solid rgba(244, 63, 94, 0.2); }
+
+  /* Login Overlay */
+  #loginOverlay {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .login-box {
+    width: 100%;
+    max-width: 400px;
+    padding: 2rem;
+  }
+
+  .hidden { display: none !important; }
+
+  .badge {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-left: 0.5rem;
+  }
+  .badge-inr { background: rgba(0, 230, 246, 0.1); color: var(--primary); }
+  .badge-usd { background: rgba(245, 166, 35, 0.1); color: var(--gold); }
+
+</style>
+</head>
+<body>
+
+<div id="loginOverlay">
+  <div class="card login-box">
+    <h2 style="text-align: center; margin-bottom: 1.5rem;">Admin Access</h2>
+    <form id="loginForm">
+      <div class="form-group">
+        <label>Email</label>
+        <div class="input-wrapper">
+          <span class="input-icon">✉️</span>
+          <input type="email" id="adminEmail" placeholder="admin@manodemy.com" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <div class="input-wrapper">
+          <span class="input-icon">🔒</span>
+          <input type="password" id="adminPass" placeholder="••••••••" required>
+        </div>
+      </div>
+      <button type="submit" class="btn">Login to Dashboard</button>
+      <div id="loginStatus" class="status"></div>
+    </form>
+  </div>
+</div>
+
+<div class="admin-container hidden" id="adminPanel">
+  <header>
+    <h1>Manodemy <span class="grad-text">Admin</span></h1>
+    <button id="logoutBtn" style="background: transparent; border: 1px solid var(--border); color: var(--text-dim); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;">Sign Out</button>
+  </header>
+
+  <div class="admin-grid">
+    <!-- Pricing Card -->
+    <div class="card">
+      <h2>💰 Pricing Management</h2>
+      <form id="pricingForm">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label>INR Sale Price <span class="badge badge-inr">₹</span></label>
+            <div class="input-wrapper">
+              <span class="input-icon">₹</span>
+              <input type="number" id="inr_price" value="1499" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>INR Original</label>
+            <div class="input-wrapper">
+              <span class="input-icon">₹</span>
+              <input type="number" id="inr_original" value="4999" required>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label>USD Sale Price <span class="badge badge-usd">$</span></label>
+            <div class="input-wrapper">
+              <span class="input-icon">$</span>
+              <input type="number" id="usd_price" value="19" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>USD Original</label>
+            <div class="input-wrapper">
+              <span class="input-icon">$</span>
+              <input type="number" id="usd_original" value="69" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Discount Label (Custom)</label>
+          <div class="input-wrapper">
+            <span class="input-icon">🏷️</span>
+            <input type="text" id="discount_label" placeholder="e.g. 70% OFF">
+          </div>
+        </div>
+
+        <button type="submit" class="btn" id="savePricing">Sync Prices to Cloud</button>
+        <div id="pricingStatus" class="status"></div>
+      </form>
+    </div>
+
+    <!-- Stats & Quick Actions -->
+    <div class="card">
+      <h2>📈 Platform Status</h2>
+      <div style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 2rem;">
+        <p>Live Environment: <span style="color: #10B981;">● Connected</span></p>
+        <p>Supabase API: <span style="color: #10B981;">● Operational</span></p>
+      </div>
+      
+      <div style="display: grid; gap: 1rem;">
+        <button class="btn" style="background: rgba(255,255,255,0.05); color: white; border: 1px solid var(--border);" onclick="alert('Rebuilding static site...')">⚡ Trigger Static Build</button>
+        <button class="btn" style="background: rgba(255,255,255,0.05); color: white; border: 1px solid var(--border);" onclick="alert('Clearing CDN cache...')">🧹 Purge Edge Cache</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const SUPA_URL = 'https://gvhnwmuyrwissgkumeif.supabase.co';
+  const SUPA_KEY = 'sb_publishable_x0gyXkcrCSaxSG23Zyi7qA__v1sBgOq';
+  const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  const loginOverlay = document.getElementById('loginOverlay');
+  const adminPanel = document.getElementById('adminPanel');
+  const loginForm = document.getElementById('loginForm');
+  const pricingForm = document.getElementById('pricingForm');
+
+  // 1. Check Auth State
+  async function checkAuth() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) {
+      // Verify if user is admin
+      const { data: profile } = await sb.from('profiles').select('role').eq('id', session.user.id).single();
+      if (profile && profile.role === 'admin') {
+        showPanel();
+        loadPricing();
+      } else {
+        await sb.auth.signOut();
+        showLoginError("Access Denied: You are not an administrator.");
+      }
+    }
+  }
+
+  function showPanel() {
+    loginOverlay.classList.add('hidden');
+    adminPanel.classList.remove('hidden');
+  }
+
+  function showLoginError(msg) {
+    const status = document.getElementById('loginStatus');
+    status.textContent = msg;
+    status.className = 'status error';
+  }
+
+  // 2. Login Logic
+  loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('adminEmail').value;
+    const password = document.getElementById('adminPass').value;
+    const btn = loginForm.querySelector('button');
+    
+    btn.disabled = true;
+    btn.textContent = 'Verifying...';
+
+    const { data, error } = await sb.auth.signInWithPassword({ email, password });
+    
+    if (error) {
+      showLoginError(error.message);
+      btn.disabled = false;
+      btn.textContent = 'Login to Dashboard';
+      return;
+    }
+
+    // Double check admin role
+    const { data: profile } = await sb.from('profiles').select('role').eq('id', data.user.id).single();
+    if (profile && profile.role === 'admin') {
+      showPanel();
+      loadPricing();
+    } else {
+      await sb.auth.signOut();
+      showLoginError("Access Denied: User role is not 'admin'.");
+      btn.disabled = false;
+      btn.textContent = 'Login to Dashboard';
+    }
+  });
+
+  // 3. Load Current Pricing
+  async function loadPricing() {
+    const { data } = await sb.from('settings').select('value').eq('key', 'pricing').single();
+    if (data) {
+      const p = data.value;
+      document.getElementById('inr_price').value = p.inr / 100;
+      document.getElementById('inr_original').value = p.original_inr / 100;
+      document.getElementById('usd_price').value = p.usd / 100;
+      document.getElementById('usd_original').value = p.original_usd / 100;
+      document.getElementById('discount_label').value = p.discount_label || '';
+    }
+  }
+
+  // 4. Save Pricing
+  pricingForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const status = document.getElementById('pricingStatus');
+    const btn = document.getElementById('savePricing');
+    
+    btn.disabled = true;
+    btn.textContent = 'Syncing...';
+    
+    const pricingData = {
+      inr: parseInt(document.getElementById('inr_price').value) * 100,
+      original_inr: parseInt(document.getElementById('inr_original').value) * 100,
+      usd: parseInt(document.getElementById('usd_price').value) * 100,
+      original_usd: parseInt(document.getElementById('usd_original').value) * 100,
+      discount_label: document.getElementById('discount_label').value || null
+    };
+
+    const { error } = await sb.from('settings').upsert({
+      key: 'pricing',
+      value: pricingData,
+      updated_at: new Date().toISOString()
+    });
+
+    if (error) {
+      status.textContent = 'Failed to sync: ' + error.message;
+      status.className = 'status error';
+    } else {
+      status.textContent = '🚀 Pricing updated successfully across all markets!';
+      status.className = 'status success';
+      setTimeout(() => status.className = 'status', 3000);
+    }
+    
+    btn.disabled = false;
+    btn.textContent = 'Sync Prices to Cloud';
+  });
+
+  // 5. Logout
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    await sb.auth.signOut();
+    window.location.reload();
+  });
+
+  checkAuth();
+</script>
+</body>
+</html>

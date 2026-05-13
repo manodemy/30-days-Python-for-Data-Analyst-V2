@@ -228,9 +228,91 @@ returnWelcome: [
   "You returned! That shows real commitment.","Back for more Python! I like your dedication.","Welcome back! Every session makes you stronger.","Hey, welcome back! Let's make today count."
 ],
 
-// ═══════ CATEGORY 19: SESSION FAREWELL (5 lines) ═══════
-farewell: [
-  "Great session today! See you next time.","Nice work today! Come back tomorrow and keep the momentum.","Good job today! Rest up and come back strong.","Excellent session! Your Python skills are growing.","Until next time! You did great today."
+// ═══════ CATEGORY 20: PROGRESS ZERO (25 lines) ═══════
+progress_zero: [
+  "Let's begin! You have {TOTAL} questions to solve today.",
+  "Ready to start? There are {TOTAL} coding challenges waiting for you.",
+  "Welcome! Your goal today is to solve {TOTAL} Python exercises. Let's go!",
+  "A fresh start! We have {TOTAL} questions lined up for you in this module.",
+  "Time to write some code. Can you complete all {TOTAL} questions?",
+  "Let's get this session started! {TOTAL} challenges are waiting.",
+  "You've got {TOTAL} blank canvases to write beautiful Python code on today.",
+  "Zero questions solved so far. Let's change that by tackling the first of {TOTAL} exercises!",
+  "Are you ready? Your {TOTAL}-question challenge starts right now.",
+  "Let's dive in! This notebook has {TOTAL} coding problems for you to master.",
+  "Fresh day, fresh notebook! {TOTAL} questions to conquer. Let's do this.",
+  "Time to warm up those fingers. You have {TOTAL} questions ahead.",
+  "Here we go! Let's work through these {TOTAL} exercises together.",
+  "Your Python journey continues. We have {TOTAL} new questions to solve.",
+  "It's a blank slate. Let's start knocking out these {TOTAL} coding tasks.",
+  "Let's unlock your potential today. There are {TOTAL} puzzles to solve.",
+  "Welcome! This module contains {TOTAL} questions designed to test your logic.",
+  "Let's see what you can do. {TOTAL} questions stand between you and mastery.",
+  "A perfect time to code. Let's begin the first of {TOTAL} questions.",
+  "Ready for a challenge? You have exactly {TOTAL} exercises to complete.",
+  "Let's build some skills. Your target for today is {TOTAL} completed questions.",
+  "Roll up your sleeves! We have {TOTAL} Python problems to crack.",
+  "Every expert started here. Let's tackle the first of your {TOTAL} questions.",
+  "Let's hit the ground running. {TOTAL} questions are queued up for you.",
+  "Your Python workspace is ready. Let's solve all {TOTAL} questions!"
+],
+
+// ═══════ CATEGORY 21: PROGRESS PARTIAL (25 lines) ═══════
+progress_partial: [
+  "Welcome back to this notebook. You've solved {SOLVED} out of {TOTAL} questions so far. Let's finish the remaining {REMAINING}!",
+  "You're making progress. You have {REMAINING} questions left to complete today's module.",
+  "Welcome back! You've already conquered {SOLVED} questions. Let's crush the last {REMAINING}.",
+  "You're doing great. With {SOLVED} down, you only have {REMAINING} more to go.",
+  "Let's keep the momentum alive! You have {REMAINING} questions remaining out of {TOTAL}.",
+  "Good to see you again. You've solved {SOLVED} exercises. Let's finish the rest!",
+  "You left off with {REMAINING} questions to go. Ready to complete the set?",
+  "Nice work so far, getting {SOLVED} correct. Let's knock out the remaining {REMAINING}.",
+  "Welcome back! Your progress is saved. Let's tackle the remaining {REMAINING} questions.",
+  "You're on a roll. Only {REMAINING} more challenges to finish this module.",
+  "You've already proven yourself on {SOLVED} questions. Now let's handle the other {REMAINING}.",
+  "Let's finish what you started! {REMAINING} questions left to solve.",
+  "Almost there! You're {SOLVED} questions deep, with just {REMAINING} to go.",
+  "Welcome back to the code. Let's clear out these last {REMAINING} questions.",
+  "You've built a great foundation with {SOLVED} solved. Let's finish the final {REMAINING}.",
+  "Let's get back into the flow. You have {REMAINING} questions standing in your way.",
+  "You've got {REMAINING} questions left to master this topic. Let's dive in.",
+  "Welcome back! Let's turn that {SOLVED} into a perfect {TOTAL}.",
+  "You're doing excellent work. Let's push through the remaining {REMAINING} problems.",
+  "Ready to continue? Just {REMAINING} more questions to conquer today.",
+  "Your past work was solid. Let's see how you handle the remaining {REMAINING}.",
+  "Let's pick up the pace! {SOLVED} down, {REMAINING} to go. You can do this.",
+  "Welcome back! It's time to finish the last {REMAINING} questions of this module.",
+  "You're closer to the finish line. Let's clear these remaining {REMAINING} tasks.",
+  "Let's wrap this up! You have exactly {REMAINING} questions left to solve."
+],
+
+// ═══════ CATEGORY 22: PROGRESS COMPLETE (25 lines) ═══════
+progress_complete: [
+  "Amazing work! You've already completed all {TOTAL} questions in this notebook!",
+  "You've mastered this module, all {TOTAL} questions are solved. Feel free to review your code.",
+  "Perfect score! You've nailed all {TOTAL} challenges here.",
+  "Welcome back to your finished masterpiece. All {TOTAL} questions are complete.",
+  "You crushed this notebook! All {TOTAL} questions are successfully solved.",
+  "Impressive dedication. You've cleared every single one of the {TOTAL} questions.",
+  "Look at all that green code! You solved all {TOTAL} exercises beautifully.",
+  "You've reached 100% completion here. All {TOTAL} questions are done.",
+  "Nothing left to solve here! You've conquered all {TOTAL} challenges.",
+  "Incredible job finishing all {TOTAL} questions in this module. Feel free to review.",
+  "You're a completionist! All {TOTAL} exercises have been solved.",
+  "Welcome back! Just a reminder that you've already aced all {TOTAL} questions here.",
+  "Outstanding performance. You've completed every one of the {TOTAL} tasks.",
+  "You left no question unsolved. All {TOTAL} are complete!",
+  "Brilliant work! You've cleared the entire set of {TOTAL} questions.",
+  "You've proven your skills. All {TOTAL} problems in this notebook are solved.",
+  "Welcome back! You've already achieved a perfect score on these {TOTAL} questions.",
+  "You handled all {TOTAL} questions like a true professional. Great job.",
+  "Flawless victory! You've solved all {TOTAL} exercises available here.",
+  "You've finished the marathon! All {TOTAL} questions are complete.",
+  "Excellent effort. You didn't stop until all {TOTAL} questions were solved.",
+  "You've mastered these concepts. All {TOTAL} questions are done.",
+  "Welcome back to a fully solved notebook. All {TOTAL} questions are correct.",
+  "You've set a high standard by solving all {TOTAL} challenges.",
+  "Nothing more to do here but admire your work! All {TOTAL} questions are solved."
 ]
 };
 
@@ -1122,24 +1204,65 @@ fallback: [
   function sessionWelcome() {
     if (sessionGreeted) return;
     sessionGreeted = true;
-    const h = new Date().getHours();
-    const R = VOICE_DATA;
-    let line;
-    if (h >= 6 && h < 12) line = smartPick('greet_m', R.welcome_morning);
-    else if (h >= 12 && h < 17) line = smartPick('greet_a', R.welcome_afternoon);
-    else line = smartPick('greet_e', R.welcome_evening);
-
-    // Check if returning user
-    try {
-      const last = localStorage.getItem('mano_last_session');
-      if (last) {
-        const diff = Date.now() - parseInt(last);
-        if (diff > 3600000) line = smartPick('return', R.returnWelcome);
+    
+    setTimeout(() => {
+      // Read DOM to get progress
+      const solvedEl = document.getElementById('scoreSolved');
+      const totalEl = document.getElementById('scoreTotal');
+      let solved = 0;
+      let total = 0;
+      if (solvedEl && totalEl) {
+        solved = parseInt(solvedEl.textContent) || 0;
+        total = parseInt(totalEl.textContent) || 0;
       }
-      localStorage.setItem('mano_last_session', String(Date.now()));
-    } catch(e) {}
-
-    setTimeout(() => say(line, RATE_NORMAL), 1500);
+      
+      const R = VOICE_DATA;
+      let line = "";
+      
+      // Determine Time Greeting
+      const h = new Date().getHours();
+      let timeGreet = "";
+      if (h >= 6 && h < 12) timeGreet = smartPick('greet_m', R.welcome_morning);
+      else if (h >= 12 && h < 17) timeGreet = smartPick('greet_a', R.welcome_afternoon);
+      else timeGreet = smartPick('greet_e', R.welcome_evening);
+      
+      // Check 1-Hour Cooldown for the Time Greeting
+      let shouldSayTime = false;
+      try {
+        const last = localStorage.getItem('mano_last_time_greet');
+        if (!last || (Date.now() - parseInt(last)) > 3600000) {
+          shouldSayTime = true;
+          localStorage.setItem('mano_last_time_greet', String(Date.now()));
+        }
+      } catch(e) {}
+      
+      // Generate Dynamic Progress Narration
+      let progressNarration = "";
+      if (total > 0) {
+        if (solved === 0) {
+          progressNarration = smartPick('prog_z', R.progress_zero).replace(/\{TOTAL\}/g, total);
+        } else if (solved < total) {
+          let remaining = total - solved;
+          progressNarration = smartPick('prog_p', R.progress_partial)
+            .replace(/\{SOLVED\}/g, solved)
+            .replace(/\{TOTAL\}/g, total)
+            .replace(/\{REMAINING\}/g, remaining);
+        } else {
+          progressNarration = smartPick('prog_c', R.progress_complete).replace(/\{TOTAL\}/g, total);
+        }
+      }
+      
+      // Combine and Say
+      if (shouldSayTime && progressNarration) {
+        line = timeGreet + " " + progressNarration;
+      } else if (progressNarration) {
+        line = progressNarration;
+      } else if (shouldSayTime) {
+        line = timeGreet;
+      }
+      
+      if (line) say(line, RATE_NORMAL);
+    }, 1500);
   }
 
   function onCorrect(cellId) {

@@ -18,21 +18,121 @@
     return ta ? (ta.value || '') : '';
   }
 
-  // ── Get error-specific hint ──
+  // ── Get error-specific hint (Smart randomized) ──
   function getErrorHint(cellId) {
     var outEl = document.querySelector('#' + cellId + ' .cell-output');
     if (!outEl || !outEl.classList.contains('error')) return null;
     var txt = outEl.textContent || '';
-    if (txt.includes('SyntaxError')) return "🐛 You have a SyntaxError. Check for missing colons, brackets, or unmatched quotes.";
-    if (txt.includes('NameError')) return "🐛 NameError — a variable or function name is misspelled or not defined yet.";
-    if (txt.includes('TypeError')) return "🐛 TypeError — you're mixing types that don't work together (like string + number).";
-    if (txt.includes('IndentationError')) return "🐛 IndentationError — use exactly 4 spaces after if, for, def, class.";
-    if (txt.includes('IndexError')) return "🐛 IndexError — you're accessing an index that doesn't exist. Check len().";
-    if (txt.includes('KeyError')) return "🐛 KeyError — that key isn't in the dictionary. Check spelling or use .get().";
-    if (txt.includes('ValueError')) return "🐛 ValueError — the value isn't valid for this operation. Check your input.";
-    if (txt.includes('ZeroDivisionError')) return "🐛 Can't divide by zero! Add a check before dividing.";
-    if (txt.includes('AttributeError')) return "🐛 AttributeError — that method doesn't exist on this type. Check the data type.";
-    return "🐛 Fix the error shown in red first, then try again.";
+    
+    // Pick a random hint from an array
+    function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+    // Smart regex extraction
+    var nameMatch = txt.match(/NameError: name '([^']+)' is not defined/);
+    var attrMatch = txt.match(/AttributeError: '([^']+)' object has no attribute '([^']+)'/);
+    var keyMatch = txt.match(/KeyError: '([^']+)'/);
+    var typeMatch = txt.match(/TypeError: (.*)/);
+
+    if (txt.includes('SyntaxError')) {
+      return pick([
+        "🐛 SyntaxError: Python is confused by the grammar. Did you miss a colon `:` or a bracket `()`?",
+        "🐛 SyntaxError spotted! Check the very end of your line. Are all quotes and parentheses closed?",
+        "🐛 You have a SyntaxError. This usually means a typo in the Python structure. Double-check your commas and brackets.",
+        "🐛 Oops, a SyntaxError. Python couldn't parse this. Look closely at the line it points to for missing syntax."
+      ]);
+    }
+    if (nameMatch) {
+      var n = nameMatch[1];
+      return pick([
+        "🐛 NameError: Python doesn't recognize `" + n + "`. Did you spell it correctly?",
+        "🐛 NameError: You're trying to use `" + n + "`, but it hasn't been created yet. Check your spelling or define it first.",
+        "🐛 Wait, what is `" + n + "`? Python threw a NameError because it cannot find a variable or function with that exact name."
+      ]);
+    }
+    if (txt.includes('NameError')) {
+      return pick([
+        "🐛 NameError: You're calling a variable or function that doesn't exist yet.",
+        "🐛 NameError: Check your spelling and capitalization! Python is case-sensitive."
+      ]);
+    }
+    if (typeMatch) {
+      var tInfo = typeMatch[1];
+      return pick([
+        "🐛 TypeError: You are mixing data types that don't belong together (like adding a string to a number).",
+        "🐛 TypeError: " + tInfo + ". Make sure you are using the correct data type for this operation.",
+        "🐛 TypeError! Are you trying to use a method on the wrong kind of object? Check what type of data you actually have using `type()`.",
+        "🐛 TypeError: Python can't perform this action on this specific data type. You might need to convert it first using int(), str(), or list()."
+      ]);
+    }
+    if (txt.includes('IndentationError')) {
+      return pick([
+        "🐛 IndentationError: Your spaces are misaligned. Remember to use exactly 4 spaces inside loops, functions, and if-statements.",
+        "🐛 IndentationError! Python uses indentation to know what code belongs together. Check for extra or missing spaces at the start of the line.",
+        "🐛 IndentationError: Make sure you aren't mixing tabs and spaces. Line up your code blocks perfectly."
+      ]);
+    }
+    if (txt.includes('IndexError')) {
+      return pick([
+        "🐛 IndexError: You reached too far! You're trying to access an item at an index that doesn't exist in this list/tuple.",
+        "🐛 IndexError: The list isn't that long. Remember, Python starts counting at 0. The last item is at `len(list) - 1`.",
+        "🐛 IndexError spotted! If a list has 5 items, the highest index you can ask for is 4. Double-check your numbers."
+      ]);
+    }
+    if (keyMatch) {
+      var k = keyMatch[1];
+      return pick([
+        "🐛 KeyError: The dictionary does not contain the key `" + k + "`. Are you sure it's spelled right?",
+        "🐛 KeyError for `" + k + "`. That key isn't in your dictionary. Maybe try using `.get()` to avoid errors?",
+        "🐛 KeyError! You asked the dictionary for `" + k + "`, but it came up empty-handed."
+      ]);
+    }
+    if (txt.includes('KeyError')) {
+      return pick([
+        "🐛 KeyError: You are trying to look up a key that doesn't exist in the dictionary.",
+        "🐛 KeyError: Double-check the exact spelling of the key you are trying to access in the dict."
+      ]);
+    }
+    if (txt.includes('ValueError')) {
+      return pick([
+        "🐛 ValueError: The function received the right *type* of data, but an inappropriate *value*. (Like trying to turn 'hello' into an integer).",
+        "🐛 ValueError! The input you gave isn't valid for this specific operation. Look closely at the data you are passing in.",
+        "🐛 ValueError: Python doesn't know how to process that specific value. Are you unpacking too many or too few variables?"
+      ]);
+    }
+    if (txt.includes('ZeroDivisionError')) {
+      return pick([
+        "🐛 ZeroDivisionError: Mathematical impossibility! You cannot divide by zero.",
+        "🐛 ZeroDivisionError: The denominator in your division operation turned out to be 0. Add an if-check to prevent this."
+      ]);
+    }
+    if (attrMatch) {
+      var obj = attrMatch[1];
+      var attr = attrMatch[2];
+      return pick([
+        "🐛 AttributeError: A `" + obj + "` object doesn't have a method or property named `" + attr + "`.",
+        "🐛 AttributeError: You are trying to use `." + attr + "()` but that doesn't work on a `" + obj + "`. Check the documentation or use `type()` to see what you actually have.",
+        "🐛 AttributeError! `" + attr + "` is not a valid command for `" + obj + "` objects. Did you misspell the method name?"
+      ]);
+    }
+    if (txt.includes('AttributeError')) {
+      return pick([
+        "🐛 AttributeError: You are trying to use a method that doesn't exist for this data type.",
+        "🐛 AttributeError: Check what type of object you're working with. It doesn't support the `.something` you just tried to call."
+      ]);
+    }
+    if (txt.includes('ModuleNotFoundError') || txt.includes('ImportError')) {
+      return pick([
+        "🐛 ModuleNotFoundError: Python can't find that library. Did you misspell the import statement?",
+        "🐛 ImportError: That module or function isn't available. Check the spelling of what you are trying to import."
+      ]);
+    }
+    
+    // Generic fallback
+    return pick([
+      "🐛 An error occurred! Read the red text carefully—it usually tells you exactly which line caused the problem.",
+      "🐛 Python threw an error. Look at the very bottom line of the error message to understand what went wrong.",
+      "🐛 Fix the error shown in the output first, then try running the cell again."
+    ]);
   }
 
   // ── Show / update hint popup ──

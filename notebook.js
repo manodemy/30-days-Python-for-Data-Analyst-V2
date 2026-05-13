@@ -237,6 +237,9 @@ async function runCell(cellId) {
   output.classList.remove('hidden','success','error');
   output.innerHTML = '';
 
+  // Track run start time for speed praise
+  if (typeof ManoVoice !== 'undefined' && ManoVoice.trackRunStart) ManoVoice.trackRunStart(cellId);
+
   try {
     pyodide.runPython('import sys,io;_co=io.StringIO();sys.stdout=_co;sys.stderr=_co');
     let result = await pyodide.runPythonAsync(code);
@@ -358,6 +361,7 @@ async function runCell(cellId) {
         ManoVoice.onPartial(cellId, 'no_output');
       } else if (isCorrectAndRelated) {
         ManoVoice.onCorrect(cellId);
+        if (ManoVoice.onCodeQuality) ManoVoice.onCodeQuality(cellId, code);
       } else {
         // Measure keyword overlap for partial vs wrong
         let overlapCount = 0;

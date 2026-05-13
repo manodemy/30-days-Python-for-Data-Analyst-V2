@@ -88,12 +88,13 @@ const SiteVoice = (() => {
 
   const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-  // Rate limiter: 1-hour cooldown to prevent annoyance if they keep reloading index.html
+  // Rate limiter: 10-minute cooldown to prevent annoyance if they keep reloading index.html
   function canSpeakWelcome() {
-    const lastWelcome = sessionStorage.getItem('mano_last_welcome_time');
+    const lastWelcome = localStorage.getItem('mano_last_welcome_time');
     const now = Date.now();
-    if (lastWelcome && (now - parseInt(lastWelcome)) < 3600000) return false;
-    sessionStorage.setItem('mano_last_welcome_time', now.toString());
+    // 10-minute (600,000 ms) cooldown across all tabs
+    if (lastWelcome && (now - parseInt(lastWelcome)) < 600000) return false;
+    localStorage.setItem('mano_last_welcome_time', now.toString());
     return true;
   }
 

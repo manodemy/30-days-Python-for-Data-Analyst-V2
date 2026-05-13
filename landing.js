@@ -1,29 +1,40 @@
 // ═══════ MANODEMY — Landing Page Engine ═══════
-// ═══════ SITE VOICE ENGINE ═══════
+// ═══════ SITE VOICE ENGINE (ADVANCED) ═══════
 const SiteVoice = (() => {
   let voice = null;
   let hasSpokenWelcome = false;
+  let hasSpokenCurriculum = false;
   let queuedSpeech = null;
 
   const NARRATIONS = {
     loggedOut: [
-      "Welcome to Manodemy. 30 days Python for Data Analyst. Please login. Learn by actually coding.",
-      "Welcome! Escape tutorial hell. Please login and learn by actually coding.",
-      "Welcome to Manodemy. Your 30 day Python challenge awaits. Please login."
+      "Hey there! Welcome to Manodemy. Ready to escape tutorial hell? Log in and let's write some Python.",
+      "Welcome! 30 days of Python for Data Analysts. Please log in to start your coding challenge.",
+      "Hello! Your Python journey is waiting. Sign in to access the 30-day curriculum.",
+      "Welcome to Manodemy. Real skills, real coding. Please log in to get started."
     ],
     firstLogin: [
-      "Welcome to the course! Let's get started.",
-      "Authentication successful. Welcome to Manodemy.",
-      "You're in! Get ready to write some Python."
+      "Authentication successful! Welcome to the course. Let's get started.",
+      "You're in! Your 30-day Python journey begins right now.",
+      "Welcome aboard. Get ready to write some real Python code."
     ],
     returning: [
       "Welcome back! You stopped at DAY_NAME. Let's keep that momentum going.",
       "Hello again! Ready to tackle DAY_NAME?",
-      "Great to see you back. DAY_NAME is waiting for you."
+      "Great to see you back. DAY_NAME is waiting for you.",
+      "Welcome back! Let's pick up right where you left off on DAY_NAME."
     ],
     returningGeneric: [
-      "Welcome back! Ready for another coding session?",
-      "Hello again! Let's write some Python today."
+      "Welcome back! Ready for another Python coding session?",
+      "Hello again! Let's get back to coding."
+    ],
+    buyNow: [
+      "Great choice! Taking you to secure checkout.",
+      "Securing your checkout now. You're making a great investment in your skills."
+    ],
+    curriculum: [
+      "Here is your 30-day roadmap. Every single day is an interactive coding notebook.",
+      "Take a look at the curriculum. Over 750 technical interview questions await you."
     ]
   };
 
@@ -77,10 +88,19 @@ const SiteVoice = (() => {
 
   const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
+  // Rate limiter: 1-hour cooldown to prevent annoyance if they keep reloading index.html
+  function canSpeakWelcome() {
+    const lastWelcome = sessionStorage.getItem('mano_last_welcome_time');
+    const now = Date.now();
+    if (lastWelcome && (now - parseInt(lastWelcome)) < 3600000) return false;
+    sessionStorage.setItem('mano_last_welcome_time', now.toString());
+    return true;
+  }
+
   function welcomeLoggedOut() {
-    if (hasSpokenWelcome) return;
+    if (hasSpokenWelcome || !canSpeakWelcome()) return;
     hasSpokenWelcome = true;
-    setTimeout(() => queueOrSay(pick(NARRATIONS.loggedOut)), 1000);
+    setTimeout(() => queueOrSay(pick(NARRATIONS.loggedOut)), 1500); // 1.5s delay to be non-intrusive
   }
 
   function welcomeFirstLogin() {
@@ -88,17 +108,27 @@ const SiteVoice = (() => {
   }
 
   function welcomeReturning() {
-    if (hasSpokenWelcome) return;
+    if (hasSpokenWelcome || !canSpeakWelcome()) return;
     hasSpokenWelcome = true;
     const lastDay = localStorage.getItem('mano_last_day');
     setTimeout(() => {
       if (lastDay) {
-        let msg = pick(NARRATIONS.returning).replace('DAY_NAME', lastDay);
+        let msg = pick(NARRATIONS.returning).replace(/DAY_NAME/g, lastDay);
         queueOrSay(msg);
       } else {
         queueOrSay(pick(NARRATIONS.returningGeneric));
       }
-    }, 1000);
+    }, 1500);
+  }
+
+  function buyNowClick() {
+    say(pick(NARRATIONS.buyNow));
+  }
+
+  function scrollCurriculum() {
+    if (hasSpokenCurriculum) return;
+    hasSpokenCurriculum = true;
+    say(pick(NARRATIONS.curriculum));
   }
 
   if (window.speechSynthesis) {
@@ -108,7 +138,7 @@ const SiteVoice = (() => {
     }
   }
 
-  return { welcomeLoggedOut, welcomeFirstLogin, welcomeReturning };
+  return { welcomeLoggedOut, welcomeFirstLogin, welcomeReturning, buyNowClick, scrollCurriculum };
 })();
 
 // ═══════ MANODEMY — PRICE EDITOR & INTERACTIONS ═══════
@@ -162,6 +192,21 @@ document.querySelectorAll('.stat-card, .feature-card, .cta-btn, .pricing-box').f
   el.style.transform = 'translateY(20px)';
   el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
   observer.observe(el);
+});
+
+// Curriculum Voice Observer
+const curriculumObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      if (typeof SiteVoice !== 'undefined') SiteVoice.scrollCurriculum();
+      curriculumObserver.disconnect();
+    }
+  });
+}, { threshold: 0.3 });
+
+document.addEventListener('DOMContentLoaded', () => {
+  const curriculumGrid = document.querySelector('.curriculum-grid');
+  if (curriculumGrid) curriculumObserver.observe(curriculumGrid);
 });
 
 // ═══════ SUPABASE CLIENT ═══════
@@ -259,9 +304,9 @@ function setupGatewayButtons() {
   const stripeBtn = document.getElementById('payStripe');
   const ppBtn = document.getElementById('payPaypal');
 
-  if (rzpBtn) rzpBtn.addEventListener('click', () => initiatePayment('razorpay'));
-  if (stripeBtn) stripeBtn.addEventListener('click', () => initiatePayment('stripe'));
-  if (ppBtn) ppBtn.addEventListener('click', () => initiatePayment('paypal'));
+  if (rzpBtn) rzpBtn.addEventListener('click', () => { if (typeof SiteVoice !== 'undefined') SiteVoice.buyNowClick(); initiatePayment('razorpay'); });
+  if (stripeBtn) stripeBtn.addEventListener('click', () => { if (typeof SiteVoice !== 'undefined') SiteVoice.buyNowClick(); initiatePayment('stripe'); });
+  if (ppBtn) ppBtn.addEventListener('click', () => { if (typeof SiteVoice !== 'undefined') SiteVoice.buyNowClick(); initiatePayment('paypal'); });
 }
 
 // ═══════ CHECKOUT MODAL ═══════

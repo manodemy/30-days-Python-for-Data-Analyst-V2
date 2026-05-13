@@ -719,7 +719,10 @@ document.addEventListener('DOMContentLoaded', setupGeoPricing);
           localStorage.setItem('manodemy_auth', 'true');
           executeLoginAnimation();
           updateBuyButtonState();
-          SiteVoice.welcomeFirstLogin();
+          if (sessionStorage.getItem('mano_active_login') === 'true') {
+            sessionStorage.removeItem('mano_active_login');
+            SiteVoice.welcomeFirstLogin();
+          }
         }
       });
     } catch (e) {
@@ -756,6 +759,7 @@ document.addEventListener('DOMContentLoaded', setupGeoPricing);
       btnSubmit.textContent = 'Authenticating...';
       btnSubmit.disabled = true;
       btnSubmit.style.opacity = '0.7';
+      sessionStorage.setItem('mano_active_login', 'true');
 
       const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
@@ -813,6 +817,7 @@ document.addEventListener('DOMContentLoaded', setupGeoPricing);
       btnGoogle.innerHTML = 'Redirecting securely...';
       btnGoogle.disabled = true;
       btnGoogle.style.opacity = '0.7';
+      sessionStorage.setItem('mano_active_login', 'true');
 
       try {
         console.log("✅ Calling supabaseClient.auth.signInWithOAuth...");

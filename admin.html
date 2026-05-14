@@ -182,6 +182,18 @@
 <div id="loginOverlay">
   <div class="card login-box">
     <h2 style="text-align: center; margin-bottom: 1.5rem;">Admin Access</h2>
+    
+    <button type="button" id="googleLoginBtn" style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border); background: rgba(0,0,0,0.3); color: var(--text); display: flex; align-items: center; justify-content: center; gap: 0.5rem; cursor: pointer; font-weight: 600; font-family: 'Inter', sans-serif; transition: all 0.2s; margin-bottom: 1.5rem;">
+      <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" style="width: 18px; height: 18px;">
+      Login with Google
+    </button>
+    
+    <div style="display: flex; align-items: center; text-align: center; color: var(--text-dim); font-size: 0.8rem; margin-bottom: 1.5rem;">
+      <div style="flex: 1; border-top: 1px solid var(--border);"></div>
+      <span style="padding: 0 10px;">OR EMAIL</span>
+      <div style="flex: 1; border-top: 1px solid var(--border);"></div>
+    </div>
+
     <form id="loginForm">
       <div class="form-group">
         <label>Email</label>
@@ -312,6 +324,29 @@
     const status = document.getElementById('loginStatus');
     status.textContent = msg;
     status.className = 'status error';
+  }
+
+  // Google Login Logic
+  const googleBtn = document.getElementById('googleLoginBtn');
+  if (googleBtn) {
+    googleBtn.addEventListener('click', async () => {
+      googleBtn.disabled = true;
+      googleBtn.style.opacity = '0.7';
+      googleBtn.innerHTML = 'Redirecting securely...';
+      const { error } = await sb.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.href,
+          queryParams: { access_type: 'offline', prompt: 'consent' }
+        }
+      });
+      if (error) {
+        showLoginError('Google Login Error: ' + error.message);
+        googleBtn.disabled = false;
+        googleBtn.style.opacity = '1';
+        googleBtn.innerHTML = '<img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" style="width: 18px; height: 18px;"> Login with Google';
+      }
+    });
   }
 
   // 2. Login Logic

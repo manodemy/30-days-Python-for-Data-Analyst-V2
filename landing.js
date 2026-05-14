@@ -7,12 +7,6 @@ const SiteVoice = (() => {
   let queuedSpeech = null;
 
   const NARRATIONS = {
-    loggedOut: [
-      "Hey there! Welcome to Manodemy. Ready to escape tutorial hell? Log in and let's write some Python.",
-      "Welcome! 30 days of Python for Data Analysts. Please log in to start your coding challenge.",
-      "Hello! Your Python journey is waiting. Sign in to access the 30-day curriculum.",
-      "Welcome to Manodemy. Real skills, real coding. Please log in to get started."
-    ],
     buyNow: [
       "Great choice! Taking you to secure checkout.",
       "Securing your checkout now. You're making a great investment in your skills."
@@ -73,22 +67,6 @@ const SiteVoice = (() => {
 
   const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-  // Rate limiter: 10-minute cooldown to prevent annoyance if they keep reloading index.html
-  function canSpeakWelcome() {
-    const lastWelcome = localStorage.getItem('mano_last_welcome_time');
-    const now = Date.now();
-    // 10-minute (600,000 ms) cooldown across all tabs
-    if (lastWelcome && (now - parseInt(lastWelcome)) < 600000) return false;
-    localStorage.setItem('mano_last_welcome_time', now.toString());
-    return true;
-  }
-
-  function welcomeLoggedOut() {
-    if (hasSpokenWelcome || !canSpeakWelcome()) return;
-    hasSpokenWelcome = true;
-    setTimeout(() => queueOrSay(pick(NARRATIONS.loggedOut)), 1500); // 1.5s delay to be non-intrusive
-  }
-
   function buyNowClick() {
     say(pick(NARRATIONS.buyNow));
   }
@@ -106,7 +84,7 @@ const SiteVoice = (() => {
     }
   }
 
-  return { welcomeLoggedOut, buyNowClick, scrollCurriculum };
+  return { buyNowClick, scrollCurriculum };
 })();
 
 // ═══════ MANODEMY — PRICE EDITOR & INTERACTIONS ═══════
@@ -677,7 +655,6 @@ document.addEventListener('DOMContentLoaded', setupGeoPricing);
         if (loginCard) {
           loginCard.style.setProperty('display', 'block', 'important');
           loginCard.style.opacity = '1';
-          SiteVoice.welcomeLoggedOut();
         }
       }
 
@@ -694,7 +671,6 @@ document.addEventListener('DOMContentLoaded', setupGeoPricing);
       if (loginCard) {
         loginCard.style.setProperty('display', 'block', 'important');
         loginCard.style.opacity = '1';
-        SiteVoice.welcomeLoggedOut();
       }
     }
   } else {
@@ -702,7 +678,6 @@ document.addEventListener('DOMContentLoaded', setupGeoPricing);
     if (loginCard) {
       loginCard.style.setProperty('display', 'block', 'important');
       loginCard.style.opacity = '1';
-      SiteVoice.welcomeLoggedOut();
     }
   }
 

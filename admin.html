@@ -2006,31 +2006,6 @@
               </div>
             </div>
 
-            <div class="anno-column">
-              <!-- Dropoff 1 (Visits -> Logged In) -->
-              <div class="anno-card-wrapper">
-                <div class="anno-connector" style="width: 56px; left: -56px;"></div>
-                <div class="anno-card">
-                  <div class="anno-header">
-                    <span style="color: var(--rose);" id="drop1_count">↓ 0 (0%)</span>
-                    <span class="anno-friction" style="background: rgba(139,92,246,0.2); color: var(--violet);">ACCOUNT FRICTION</span>
-                  </div>
-                  <div class="anno-msg" id="diag1">...</div>
-                </div>
-              </div>
-
-              <!-- Dropoff 2 (Logged In -> Buy Click) -->
-              <div class="anno-card-wrapper">
-                <div class="anno-connector" style="width: 80px; left: -80px;"></div>
-                <div class="anno-card">
-                  <div class="anno-header">
-                    <span style="color: var(--rose);" id="drop2_count">↓ 0 (0%)</span>
-                    <span class="anno-friction" style="background: rgba(245,158,11,0.2); color: var(--amber);">OFFER FRICTION</span>
-                  </div>
-                  <div class="anno-msg" id="diag2">...</div>
-                </div>
-              </div>
-            </div>
 
           </div>
 
@@ -3180,22 +3155,10 @@
       // Dropoff 1
       const d1 = s1 - s2;
       const d1p = s1 > 0 ? (d1/s1)*100 : 0;
-      document.getElementById('drop1_count').textContent = `↓ ${fmt(d1)} (${d1p.toFixed(1)}%)`;
-      let d1msg = "";
-      if (d1p < 40) d1msg = "✓ Login barrier is healthy. Users are motivated.";
-      else if (d1p <= 70) d1msg = "⚠ Moderate login friction. Consider social login or previewing content.";
-      else d1msg = "🚨 Critical: Login wall killing intent. Add Google login or delay auth requirement.";
-      document.getElementById('diag1').textContent = d1msg;
 
       // Dropoff 2
       const d2 = s2 - s3;
       const d2p = s2 > 0 ? (d2/s2)*100 : 0;
-      document.getElementById('drop2_count').textContent = `↓ ${fmt(d2)} (${d2p.toFixed(1)}%)`;
-      let d2msg = "";
-      if (d2p < 50) d2msg = "✓ Offer resonating well with logged-in users.";
-      else if (d2p <= 75) d2msg = "⚠ Offer friction detected. Test price anchoring or add urgency.";
-      else d2msg = "🚨 Critical: Price or value proposition mismatch. Test pricing tiers.";
-      document.getElementById('diag2').textContent = d2msg;
 
       // Dropoff 3
       let d3msg = "";

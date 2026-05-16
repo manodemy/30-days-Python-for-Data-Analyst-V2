@@ -1490,94 +1490,61 @@
       font-weight: 500;
       letter-spacing: 0.08em;
     }
-    /* FUNNEL ANALYTICS */
-    .funnel-container { width: 100%; max-width: 900px; display: flex; flex-direction: column; align-items: center; gap: 0; margin-top: 1rem; position: relative; padding: 2rem 0; }
+    /* TRUE TRAPEZOID FUNNEL ANALYTICS */
+    .funnel-container { width: 100%; max-width: 900px; display: flex; justify-content: center; align-items: flex-start; margin-top: 1rem; position: relative; padding: 2rem 0; gap: 2rem; }
     
-    .funnel-step-wrapper { width: 100%; display: flex; flex-direction: column; align-items: center; position: relative; z-index: 2; }
-    
-    .funnel-step-header { display: flex; flex-direction: column; align-items: center; margin-bottom: 0.75rem; gap: 0.4rem; }
-    
-    .step-badge { 
-      width: 32px; height: 32px; border-radius: 50%; 
-      display: flex; align-items: center; justify-content: center; 
-      font-family: var(--font-data); font-size: 0.9rem; font-weight: 700; 
-      background: var(--surface); border: 2px solid currentColor; color: inherit; 
-      box-shadow: 0 4px 10px rgba(0,0,0,0.4); z-index: 2; position: relative; 
-    }
-    .step-name { font-family: var(--font-display); font-size: 1.15rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; }
-    
-    .bar-container { 
-      width: 100%; max-width: 700px;
-      background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); 
-      border-radius: 8px; height: 50px; position: relative; 
-      display: flex; align-items: center; justify-content: center; margin-bottom: 0; 
-      box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
-    }
-    
-    .bar-fill { 
-      height: 100%; position: absolute; left: 50%; top: 0; transform: translateX(-50%);
-      transition: width 1s cubic-bezier(0.2, 0.8, 0.2, 1); opacity: 0.95; z-index: 1; 
-      border-radius: 6px;
-      background-image: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0) 100%);
-      background-size: 200% 100%;
-      animation: barShine 3s infinite linear;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    }
-    @keyframes barShine {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-    
-    .bar-content { position: relative; z-index: 2; display: flex; justify-content: center; align-items: center; gap: 2rem; width: 100%; padding: 0; pointer-events: none; }
-    .bar-val { font-family: var(--font-data); font-size: 1.4rem; font-weight: 600; color: #FFF; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
-    .bar-pct { font-family: var(--font-data); font-size: 0.95rem; font-weight: 600; color: rgba(255,255,255,0.9); text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
-    
-    .dropoff-block { 
-      display: flex; flex-direction: column; align-items: center; width: 100%;
-      padding: 1.5rem 0; position: relative; z-index: 1;
-    }
-    .dropoff-arrow {
-      width: 2px; height: 35px; background: var(--rim-strong); margin-bottom: 0.75rem;
+    .funnel-column { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 500px; position: relative; z-index: 2; }
+    .anno-column { display: flex; flex-direction: column; gap: 8px; margin-top: 72px; width: 340px; position: relative; z-index: 1; }
+
+    .layer-wrapper { display: flex; align-items: center; position: relative; width: 100%; justify-content: center; }
+    .layer-num { position: absolute; left: -50px; font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; color: rgba(255,255,255,0.15); line-height: 1; }
+
+    .layer-shape { 
+      height: 64px; 
+      display: flex; flex-direction: column; align-items: center; justify-content: center; 
+      padding: 0 40px; color: white; margin: 0 auto;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
       position: relative;
     }
-    .dropoff-arrow::after {
-      content: '▼'; position: absolute; bottom: -12px; left: 50%; transform: translateX(-50%);
-      color: var(--rim-strong); font-size: 0.85rem;
+    .layer-shape::after {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0));
+      pointer-events: none;
     }
     
-    .dropoff-card { 
+    .l-vis { width: 500px; clip-path: polygon(0 0, 100% 0, calc(100% - 24px) 100%, 24px 100%); background: linear-gradient(90deg, #60A5FA, #2563EB); }
+    .l-log { width: 452px; clip-path: polygon(0 0, 100% 0, calc(100% - 24px) 100%, 24px 100%); background: linear-gradient(90deg, #A78BFA, #7C3AED); }
+    .l-buy { width: 404px; clip-path: polygon(0 0, 100% 0, calc(100% - 24px) 100%, 24px 100%); background: linear-gradient(90deg, #FCD34D, #D97706); }
+    .l-tip { width: 356px; height: 32px; clip-path: polygon(0 0, 100% 0, 50% 100%, 50% 100%); background: var(--rim); margin-top: -4px; z-index: 0; box-shadow: none; }
+    .l-tip::after { display: none; }
+
+    .layer-content { display: flex; flex-direction: column; align-items: center; width: 100%; position: relative; z-index: 2; pointer-events: none; }
+    .l-title { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.95); text-shadow: 0 1px 2px rgba(0,0,0,0.5); margin-bottom: 2px;}
+    .l-data { display: flex; align-items: baseline; justify-content: center; gap: 0.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+    .l-data strong { font-family: var(--font-data); font-size: 1.4rem; font-weight: 700; color: #FFF; line-height: 1; }
+    .l-data small { font-family: var(--font-data); font-size: 0.9rem; font-weight: 600; color: rgba(255,255,255,0.9); }
+
+    .anno-card-wrapper { height: 64px; position: relative; display: flex; flex-direction: column; justify-content: center; }
+    .anno-connector { position: absolute; top: 12px; height: 1px; background: var(--rim-strong); z-index: 0; }
+    .anno-connector::before { content: ''; position: absolute; left: 0; top: -16px; width: 1px; height: 16px; background: var(--rim-strong); }
+    
+    .anno-card { 
       background: linear-gradient(135deg, rgba(30,30,45,0.6), rgba(20,20,30,0.7));
       border: 1px solid var(--rim); border-top: 3px solid var(--rose); 
-      border-radius: 8px; padding: 1.25rem 2rem; width: 100%; max-width: 480px; 
-      display: flex; flex-direction: column; align-items: center; gap: 0.6rem; text-align: center;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.4); backdrop-filter: blur(12px);
+      border-radius: 8px; padding: 0.8rem 1.2rem; width: 100%; 
+      display: flex; flex-direction: column; gap: 0.4rem; 
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4); backdrop-filter: blur(12px); position: relative; z-index: 2;
     }
-    .dropoff-header { display: flex; justify-content: center; gap: 1rem; align-items: center; font-family: var(--font-data); font-size: 0.9rem; font-weight: 500; width: 100%; }
-    .friction-label { padding: 0.25rem 0.6rem; border-radius: 4px; font-weight: 600; font-family: var(--font-body); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; }
-    .diagnostic-msg { font-size: 0.9rem; color: var(--ink-dim); line-height: 1.5; }
-    
-    .split-container { display: flex; justify-content: space-between; gap: 2rem; width: 100%; max-width: 700px; margin-top: 1.5rem; position: relative; }
-    
-    /* Fork connector lines */
-    .split-fork {
-      position: absolute; width: 100%; height: 30px; top: -1.5rem; left: 0; z-index: 0; pointer-events: none;
-    }
-    .split-fork-top {
-      position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 2px; height: 15px; background: var(--rim-strong);
-    }
-    .split-fork-horizontal {
-      position: absolute; top: 15px; left: 25%; width: 50%; height: 2px; background: var(--rim-strong);
-    }
-    .split-fork-drop-l, .split-fork-drop-r {
-      position: absolute; top: 15px; width: 2px; height: 15px; background: var(--rim-strong);
-    }
-    .split-fork-drop-l { left: 25%; transform: translateX(-50%); }
-    .split-fork-drop-r { right: 25%; transform: translateX(50%); }
-    .split-fork-drop-l::after, .split-fork-drop-r::after {
-      content: '▼'; position: absolute; bottom: -12px; left: 50%; transform: translateX(-50%); color: var(--rim-strong); font-size: 0.85rem;
-    }
-    
-    .split-branch { flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; z-index: 2; width: 100%; }
+    .anno-header { display: flex; align-items: center; gap: 0.75rem; font-family: var(--font-data); font-size: 0.85rem; font-weight: 500; }
+    .anno-friction { font-weight: 700; font-family: var(--font-body); font-size: 0.65rem; letter-spacing: 0.05em; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; }
+    .anno-msg { font-size: 0.85rem; color: var(--ink-dim); line-height: 1.4; }
+
+    .split-container { display: flex; justify-content: center; gap: 1.5rem; width: 100%; margin-top: 1rem; position: relative; }
+    .split-branch { flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; z-index: 2; width: 100%; background: rgba(30,30,45,0.4); border: 1px solid var(--rim); border-radius: 8px; padding: 1.25rem 1rem; box-shadow: inset 0 2px 6px rgba(0,0,0,0.2); }
+    .split-title { font-family: var(--font-display); font-size: 0.9rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.5rem; }
+    .split-data { display: flex; align-items: baseline; gap: 0.5rem; }
+    .split-data strong { font-family: var(--font-data); font-size: 1.3rem; font-weight: 700; color: #FFF; }
+    .split-pct { font-family: var(--font-data); font-size: 0.8rem; font-weight: 500; color: rgba(255,255,255,0.7); }
     
     /* Elegant Gradients */
     .c-vis { background: linear-gradient(90deg, #2563EB, #3B82F6); } .t-vis { color: #60A5FA; }
@@ -1985,115 +1952,86 @@
 
 
           <div class="funnel-container" style="padding:0;">
-            <!-- STEP 1 -->
-            <div class="funnel-step-wrapper">
-              <div class="funnel-step-header">
-                <div class="step-badge t-vis">1</div>
-                <div class="step-name t-vis">VISITS</div>
-              </div>
-              <div class="bar-container">
-                <div class="bar-fill c-vis" id="bar1" style="width: 100%;"></div>
-                <div class="bar-content">
-                  <span class="bar-val" id="val1">0</span>
-                  <span class="bar-pct">100%</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- DROPOFF 1 -->
-            <div class="dropoff-block">
-              <div class="dropoff-arrow"></div>
-              <div class="dropoff-card">
-                <div class="dropoff-header">
-                  <span style="color: var(--rose);" id="drop1_count">↓ 0 (0%)</span>
-                  <span class="friction-label" style="background: rgba(139,92,246,0.2); color: var(--violet);">ACCOUNT FRICTION</span>
-                </div>
-                <div class="diagnostic-msg" id="diag1">...</div>
-              </div>
-            </div>
-
-            <!-- STEP 2 -->
-            <div class="funnel-step-wrapper">
-              <div class="funnel-step-header">
-                <div class="step-badge t-log">2</div>
-                <div class="step-name t-log">LOGGED IN</div>
-              </div>
-              <div class="bar-container">
-                <div class="bar-fill c-log" id="bar2" style="width: 0%;"></div>
-                <div class="bar-content">
-                  <span class="bar-val" id="val2">0</span>
-                  <span class="bar-pct" id="pct2">0%</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- DROPOFF 2 -->
-            <div class="dropoff-block">
-              <div class="dropoff-arrow"></div>
-              <div class="dropoff-card">
-                <div class="dropoff-header">
-                  <span style="color: var(--rose);" id="drop2_count">↓ 0 (0%)</span>
-                  <span class="friction-label" style="background: rgba(245,158,11,0.2); color: var(--amber);">OFFER FRICTION</span>
-                </div>
-                <div class="diagnostic-msg" id="diag2">...</div>
-              </div>
-            </div>
-
-            <!-- STEP 3 -->
-            <div class="funnel-step-wrapper">
-              <div class="funnel-step-header">
-                <div class="step-badge t-buy">3</div>
-                <div class="step-name t-buy">BUY CLICK</div>
-              </div>
-              <div class="bar-container">
-                <div class="bar-fill c-buy" id="bar3" style="width: 0%;"></div>
-                <div class="bar-content">
-                  <span class="bar-val" id="val3">0</span>
-                  <span class="bar-pct" id="pct3">0%</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- SPLIT -->
-            <div class="split-container" style="padding-top: 1.5rem;">
-              <div class="split-fork">
-                <div class="split-fork-top"></div>
-                <div class="split-fork-horizontal"></div>
-                <div class="split-fork-drop-l"></div>
-                <div class="split-fork-drop-r"></div>
-              </div>
-              <!-- SUCCESS -->
-              <div class="split-branch">
-                <div class="funnel-step-header">
-                  <div class="step-badge t-suc">4</div>
-                  <div class="step-name t-suc">SUCCESS</div>
-                </div>
-                <div class="bar-container">
-                  <div class="bar-fill c-suc" id="bar4" style="width: 0%;"></div>
-                  <div class="bar-content">
-                    <span class="bar-val" id="val4">0</span>
-                    <span class="bar-pct" id="pct4">0% of Cart</span>
+            
+            <div class="funnel-column">
+              <!-- Step 1 -->
+              <div class="layer-wrapper">
+                <div class="layer-num">1</div>
+                <div class="layer-shape l-vis">
+                  <div class="layer-content">
+                    <span class="l-title">VISITS</span>
+                    <span class="l-data"><strong id="val1">0</strong> <small>100%</small></span>
                   </div>
                 </div>
-                <div class="diagnostic-msg" id="diag3_suc" style="margin-top:0.75rem; font-size:0.85rem; text-align:center;"></div>
               </div>
-              
-              <!-- FAILED -->
-              <div class="split-branch">
-                <div class="funnel-step-header">
-                  <div class="step-badge t-fai">5</div>
-                  <div class="step-name t-fai">FAILED</div>
-                </div>
-                <div class="bar-container">
-                  <div class="bar-fill c-fai" id="bar5" style="width: 0%;"></div>
-                  <div class="bar-content">
-                    <span class="bar-val" id="val5">0</span>
-                    <span class="bar-pct" id="pct5">0% of Cart</span>
+
+              <!-- Step 2 -->
+              <div class="layer-wrapper">
+                <div class="layer-num">2</div>
+                <div class="layer-shape l-log">
+                  <div class="layer-content">
+                    <span class="l-title">LOGGED IN</span>
+                    <span class="l-data"><strong id="val2">0</strong> <small id="pct2">0%</small></span>
                   </div>
                 </div>
-                <div class="diagnostic-msg" id="diag3_fail" style="margin-top:0.75rem; font-size:0.85rem; color:var(--rose); text-align:center;"></div>
+              </div>
+
+              <!-- Step 3 -->
+              <div class="layer-wrapper">
+                <div class="layer-num">3</div>
+                <div class="layer-shape l-buy">
+                  <div class="layer-content">
+                    <span class="l-title">BUY CLICK</span>
+                    <span class="l-data"><strong id="val3">0</strong> <small id="pct3">0%</small></span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="layer-shape l-tip"></div>
+
+              <!-- SPLIT -->
+              <div class="split-container">
+                <!-- SUCCESS -->
+                <div class="split-branch" style="border-top: 3px solid #34D399;">
+                  <div class="split-title" style="color: #34D399;">SUCCESS</div>
+                  <div class="split-data"><strong id="val4">0</strong> <span class="split-pct" id="pct4">0% of Cart</span></div>
+                  <div class="anno-msg" id="diag3_suc" style="margin-top:0.75rem; text-align:center;"></div>
+                </div>
+                <!-- FAILED -->
+                <div class="split-branch" style="border-top: 3px solid var(--rose);">
+                  <div class="split-title" style="color: var(--rose);">FAILED</div>
+                  <div class="split-data"><strong id="val5">0</strong> <span class="split-pct" id="pct5">0% of Cart</span></div>
+                  <div class="anno-msg" id="diag3_fail" style="margin-top:0.75rem; text-align:center; color:var(--rose);"></div>
+                </div>
               </div>
             </div>
+
+            <div class="anno-column">
+              <!-- Dropoff 1 (Visits -> Logged In) -->
+              <div class="anno-card-wrapper">
+                <div class="anno-connector" style="width: 56px; left: -56px;"></div>
+                <div class="anno-card">
+                  <div class="anno-header">
+                    <span style="color: var(--rose);" id="drop1_count">↓ 0 (0%)</span>
+                    <span class="anno-friction" style="background: rgba(139,92,246,0.2); color: var(--violet);">ACCOUNT FRICTION</span>
+                  </div>
+                  <div class="anno-msg" id="diag1">...</div>
+                </div>
+              </div>
+
+              <!-- Dropoff 2 (Logged In -> Buy Click) -->
+              <div class="anno-card-wrapper">
+                <div class="anno-connector" style="width: 80px; left: -80px;"></div>
+                <div class="anno-card">
+                  <div class="anno-header">
+                    <span style="color: var(--rose);" id="drop2_count">↓ 0 (0%)</span>
+                    <span class="anno-friction" style="background: rgba(245,158,11,0.2); color: var(--amber);">OFFER FRICTION</span>
+                  </div>
+                  <div class="anno-msg" id="diag2">...</div>
+                </div>
+              </div>
+            </div>
+
           </div>
 
           <div class="benchmarks" style="padding:0; margin:3rem 0; width:100%; max-width:900px;">
@@ -3229,10 +3167,7 @@
       const p4_abs = s1 > 0 ? (s4/s1)*100 : 0;
       const p5_abs = s1 > 0 ? (s5/s1)*100 : 0;
 
-      document.getElementById('bar2').style.width = Math.max(2, p2) + '%';
-      document.getElementById('bar3').style.width = Math.max(2, p3) + '%';
-      document.getElementById('bar4').style.width = Math.max(2, p4_abs*2) + '%';
-      document.getElementById('bar5').style.width = Math.max(2, p5_abs*2) + '%';
+
 
       document.getElementById('pct2').textContent = p2.toFixed(1) + '%';
       document.getElementById('pct3').textContent = p3.toFixed(1) + '%';

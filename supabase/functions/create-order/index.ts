@@ -47,15 +47,32 @@ serve(async (req) => {
         .from('coupons')
         .select('*')
         .eq('code', coupon_code.toUpperCase())
-        .eq('active', true)
         .single()
 
-      if (coupon && coupon.used_count < coupon.max_uses) {
-        amount = Math.round(amount * (1 - coupon.discount_percent / 100))
-        await supabase
-          .from('coupons')
-          .update({ used_count: coupon.used_count + 1 })
-          .eq('id', coupon.id)
+      if (coupon) {
+        const isCouponActive = (coupon.is_active === true && coupon.active !== false)
+        const appliesTo = coupon.applies_to || 'both'
+        const currencyMatch = appliesTo === 'both' || appliesTo === currencyCode
+        const notExpired = !coupon.expires_at || new Date(coupon.expires_at) > new Date()
+        const hasUses = !coupon.max_uses || coupon.used_count < coupon.max_uses
+
+        if (isCouponActive && currencyMatch && notExpired && hasUses) {
+          const type = coupon.discount_type || 'percentage'
+          const val = coupon.discount_value ?? coupon.discount_percent ?? 0
+          
+          if (type === 'percentage') {
+            amount = Math.round(amount * (1 - val / 100))
+          } else {
+            amount = Math.max(0, amount - (val * 100))
+          }
+
+          await supabase
+            .from('coupons')
+            .update({ used_count: (coupon.used_count || 0) + 1 })
+            .eq('id', coupon.id)
+        } else {
+          throw new Error('Coupon is invalid, expired, or not applicable to this currency')
+        }
       }
     }
 

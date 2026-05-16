@@ -515,7 +515,7 @@ if (couponApplyBtn) {
       .single();
 
     console.log('[Coupon] Data:', data);
-    const isActive = data ? (data.is_active !== undefined ? data.is_active : data.active) : false;
+    const isActive = data ? (data.is_active === true && data.active !== false) : false;
     const expiry = data ? (data.expires_at || data.valid_until) : null;
     const isExpired = expiry && new Date(expiry) < new Date();
     
@@ -742,6 +742,7 @@ document.addEventListener('DOMContentLoaded', setupGeoPricing);
     } catch (e) { console.log('Enrollment check skipped:', e.message); }
   }
 
+  // ── Admin Nav Link (conditional) ──
   // ── Admin Nav Link (conditional) ──
   async function checkAdminAccess() {
     if (!supabaseClient) return;

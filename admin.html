@@ -2911,7 +2911,7 @@
     }
 
     async function toggleCoupon(id, isActive) {
-      await sb.from('coupons').update({ is_active: isActive }).eq('id', id);
+      await sb.from('coupons').update({ is_active: isActive, active: isActive }).eq('id', id);
       showToast(`Coupon ${isActive ? 'activated' : 'deactivated'}`, 'success');
     }
 

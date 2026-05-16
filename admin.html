@@ -361,6 +361,17 @@
       outline: none;
       transition: border-color var(--transition);
       cursor: pointer;
+      color-scheme: dark;
+    }
+
+    .date-picker::-webkit-calendar-picker-indicator {
+      cursor: pointer;
+      opacity: 0.4;
+      transition: opacity var(--transition);
+    }
+
+    .date-picker::-webkit-calendar-picker-indicator:hover {
+      opacity: 1;
     }
 
     .date-picker:focus {

@@ -732,6 +732,66 @@ document.addEventListener('DOMContentLoaded', setupGeoPricing);
     linkBack.onclick = (e) => { e.preventDefault(); switchAuthState('login'); };
   }
 
+  // ═══════ COUNTRY CAPTURE PIPELINE ═══════
+  // Reliably fetches the user's ISO country code from two free geo APIs
+  // and writes it to profiles only if not already set.
+  async function saveCountryToProfile(fallbackCountry) {
+    if (!supabaseClient) return;
+    try {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) return;
+
+      // Check if country is already saved — don't overwrite good data
+      const { data: profile } = await supabaseClient
+        .from('profiles')
+        .select('country')
+        .eq('id', session.user.id)
+        .single();
+
+      if (profile?.country && profile.country !== 'US' && profile.country !== 'Unknown') {
+        // Country already set with a real value — skip
+        return;
+      }
+
+      // Try to get fresh country code from geo API
+      let countryCode = fallbackCountry || null;
+      const geoApis = [
+        'https://get.geojs.io/v1/ip/country.json',   // Primary: fast, no auth
+        'https://ipapi.co/json/'                        // Fallback
+      ];
+      for (const api of geoApis) {
+        try {
+          const res = await fetch(api, { signal: AbortSignal.timeout(4000) });
+          const json = await res.json();
+          const code = json.country || json.country_code;
+          if (code && code.length === 2) {
+            countryCode = code.toUpperCase();
+            break;
+          }
+        } catch (_) { /* try next API */ }
+      }
+
+      if (!countryCode) {
+        // Last resort: derive from browser locale (e.g. "en-IN" → "IN")
+        const locale = navigator.language || navigator.languages?.[0] || '';
+        const parts = locale.split('-');
+        if (parts.length > 1 && parts[1].length === 2) {
+          countryCode = parts[1].toUpperCase();
+        }
+      }
+
+      if (countryCode) {
+        await supabaseClient
+          .from('profiles')
+          .update({ country: countryCode })
+          .eq('id', session.user.id);
+        console.log('[Manodemy] Country saved to profile:', countryCode);
+      }
+    } catch (e) {
+      console.warn('[Manodemy] Country capture failed (non-critical):', e.message);
+    }
+  }
+
   // ═══════ 1. CHECK SESSION ON LOAD ═══════
   if (supabaseClient) {
     try {
@@ -741,6 +801,8 @@ document.addEventListener('DOMContentLoaded', setupGeoPricing);
         showInstantLoggedInState();
         updateBuyButtonState();
         checkAdminAccess();
+        // Capture country for existing session on every page load (idempotent — skips if already set)
+        saveCountryToProfile(userCountry);
       } else {
         localStorage.removeItem('manodemy_auth');
         if (loginCard) { loginCard.style.setProperty('display', 'block', 'important'); loginCard.style.opacity = '1'; }
@@ -751,6 +813,7 @@ document.addEventListener('DOMContentLoaded', setupGeoPricing);
           executeLoginAnimation();
           updateBuyButtonState();
           checkAdminAccess();
+          // Always capture country on fresh login
           saveCountryToProfile(userCountry);
         }
       });

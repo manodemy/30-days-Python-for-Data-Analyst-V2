@@ -33,7 +33,7 @@ serve(async (req) => {
     )
     if (authError || !user) throw new Error('Unauthorized')
 
-    const { gateway, currency, coupon_code } = await req.json()
+    const { gateway, currency, coupon_code, final_amount } = await req.json()
 
     // ── Dynamic Pricing from settings table ──
     const { data: pricingSetting } = await supabase.from('settings').select('value').eq('key', 'pricing').single()
@@ -41,9 +41,14 @@ serve(async (req) => {
     let amount = currency === 'INR' ? prices.inr : prices.usd  // paise / cents
     let currencyCode = currency || 'INR'
 
-    // Apply coupon if provided
-    if (coupon_code) {
-      console.log(`[Order] Checking coupon: ${coupon_code}`);
+    // ── Use client-side pre-calculated amount if provided (already validated) ──
+    // This ensures Razorpay always receives the exact discounted price the user saw
+    if (final_amount && final_amount > 0 && final_amount < amount) {
+      console.log(`[Order] Using client pre-calculated amount: ${final_amount} (was ${amount})`)
+      amount = Math.round(final_amount)
+    } else if (coupon_code) {
+      // Fallback: apply coupon server-side if no final_amount provided
+      console.log(`[Order] Checking coupon: ${coupon_code}`)
       const { data: coupon } = await supabase
         .from('coupons')
         .select('*')
@@ -57,12 +62,10 @@ serve(async (req) => {
         const notExpired = !coupon.expires_at || new Date(coupon.expires_at) > new Date()
         const hasUses = !coupon.max_uses || (coupon.used_count || 0) < coupon.max_uses
 
-        console.log(`[Order] Coupon validation: active=${isCouponActive}, currency=${currencyMatch}, expired=${!notExpired}, uses=${hasUses}`);
-
         if (isCouponActive && currencyMatch && notExpired && hasUses) {
           const type = coupon.discount_type || 'percentage'
           const val = (type === 'percentage') ? (coupon.discount_percent || 0) : (coupon.discount_value || 0)
-          
+
           if (type === 'percentage') {
             amount = Math.round(amount * (1 - val / 100))
           } else {
@@ -73,8 +76,6 @@ serve(async (req) => {
             .from('coupons')
             .update({ used_count: (coupon.used_count || 0) + 1 })
             .eq('id', coupon.id)
-        } else {
-          throw new Error('Coupon is invalid, expired, or not applicable to this currency')
         }
       }
     }

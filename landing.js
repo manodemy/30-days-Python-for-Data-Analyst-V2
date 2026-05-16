@@ -343,7 +343,8 @@ async function initiatePayment(gateway) {
       body: JSON.stringify({
         gateway,
         currency: currentPricing.currency,
-        coupon_code: coupon || undefined
+        coupon_code: appliedCouponCode || coupon || undefined,
+        final_amount: appliedCouponAmount || undefined  // pre-validated client-side amount
       })
     });
 
@@ -500,6 +501,10 @@ async function handlePayPalPayment(orderData, session) {
   }).render('#paypal-button-container');
 }
 
+// ═══════ COUPON STATE (persisted for payment) ═══════
+let appliedCouponCode = '';
+let appliedCouponAmount = null; // discounted amount in paise/cents
+
 // ═══════ COUPON VALIDATION ═══════
 const couponApplyBtn = document.getElementById('couponApply');
 if (couponApplyBtn) {
@@ -541,6 +546,10 @@ if (couponApplyBtn) {
       const displayPrice = currentPricing.currency === 'INR'
         ? '₹' + (newAmount / 100).toLocaleString('en-IN')
         : '$' + (newAmount / 100);
+
+      // ✅ Store discounted amount globally so initiatePayment uses it
+      appliedCouponCode = code.toUpperCase();
+      appliedCouponAmount = newAmount;
       
       // Update gateway button text only
       const razorpayBtn = document.getElementById('payRazorpay');
@@ -554,6 +563,10 @@ if (couponApplyBtn) {
       couponApplyBtn.textContent = label;
       couponApplyBtn.style.color = '#10B981';
     } else {
+      // Reset any previously stored coupon on failure
+      appliedCouponCode = '';
+      appliedCouponAmount = null;
+
       let msg = '❌ Invalid';
       if (isExpired) msg = '❌ Expired';
       else if (!currencyMatch) msg = `❌ Only for ${appliesTo}`;

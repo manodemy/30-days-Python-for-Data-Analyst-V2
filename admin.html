@@ -1769,6 +1769,21 @@
               </div>
             </div>
           </div>
+          <!-- Total Users all-time KPI row -->
+          <div class="kpi-row" style="padding:0; margin-bottom:1.5rem; display:grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+            <div class="kpi-card" style="margin:0; background: var(--surface); border: 1px solid var(--rim); border-radius: 8px; padding: 1.25rem;">
+              <div class="kpi-label" style="font-size: 0.8rem; color: var(--ink-muted);">Total Users (All-time)</div>
+              <div class="kpi-value" id="kpi-total-users" style="font-family: var(--font-data); font-size: 1.75rem; color: var(--ink);">—</div>
+            </div>
+            <div class="kpi-card" style="margin:0; background: var(--surface); border: 1px solid var(--rim); border-radius: 8px; padding: 1.25rem;">
+              <div class="kpi-label" style="font-size: 0.8rem; color: var(--ink-muted);">INR Revenue (Period)</div>
+              <div class="kpi-value" id="kpi-inr-rev" style="font-family: var(--font-data); font-size: 1.75rem; color: var(--gold);">₹0</div>
+            </div>
+            <div class="kpi-card" style="margin:0; background: var(--surface); border: 1px solid var(--rim); border-radius: 8px; padding: 1.25rem;">
+              <div class="kpi-label" style="font-size: 0.8rem; color: var(--ink-muted);">USD Revenue (Period)</div>
+              <div class="kpi-value" id="kpi-usd-rev" style="font-family: var(--font-data); font-size: 1.75rem; color: var(--emerald);">$0</div>
+            </div>
+          </div>
           <div class="chart-panel mb-3">
             <div class="chart-header">
               <span class="chart-label">Signups vs Purchases Trend</span>
@@ -1841,9 +1856,15 @@
         </div>
         <!-- ══ TAB: FUNNEL ══ -->
         <div class="tab-pane" id="tab-funnel">
-          <div class="tab-header">
-            <h2 class="tab-title">Conversion <em>Funnel</em></h2>
-            <span class="tab-period-label">Intent &middot; Friction &middot; Revenue</span>
+          <div class="tab-header" style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <h2 class="tab-title">Conversion <em>Funnel</em></h2>
+              <span class="tab-period-label">Intent &middot; Friction &middot; Revenue</span>
+            </div>
+            <div style="display:flex; align-items:center; gap: 1rem;">
+              <span id="funnelLastRefreshed" style="font-size:0.72rem; color:var(--ink-dim); font-family:var(--font-data);">—</span>
+              <button onclick="refreshFunnel()" style="background:var(--surface); border:1px solid var(--rim); color:var(--ink); border-radius:6px; padding:0.4rem 0.9rem; font-size:0.78rem; cursor:pointer; transition:background 0.2s;" onmouseover="this.style.background='var(--elevated)'" onmouseout="this.style.background='var(--surface)'">↺ Refresh</button>
+            </div>
           </div>
 
           <div class="kpi-row" style="padding:0; margin-bottom:1.5rem; display:grid; grid-template-columns: repeat(5, 1fr); gap: 1rem;">
@@ -2629,13 +2650,36 @@
       const fv = Number(inputEl?.value) || realPV;
 
       createChart('funnelChart', 'bar', {
-        labels: ['Visited', 'Signed Up', 'Purchased'],
-        datasets: [{ data: [fv, growthData?.funnel?.signups || 0, growthData?.funnel?.purchased || 0], backgroundColor: ['#60A5FA', '#C9A84C', '#2DD4BF'], borderRadius: 3, borderSkipped: false }]
+        labels: ['Visited', 'Signed Up', 'Checkout', 'Purchased'],
+        datasets: [{
+          data: [
+            fv,
+            growthData?.funnel?.signups || 0,
+            growthData?.funnel?.checkout_initiated || 0,
+            growthData?.funnel?.purchased || 0
+          ],
+          backgroundColor: ['#60A5FA', '#C9A84C', '#A78BFA', '#2DD4BF'],
+          borderRadius: 3,
+          borderSkipped: false
+        }]
       }, {
         indexAxis: 'y',
         plugins: { legend: { display: false } },
         scales: { x: { display: true }, y: { display: true } }
       });
+
+      // Populate Total Users (all-time, unfiltered)
+      sb.rpc('get_growth_intelligence', { start_ts: '2000-01-01T00:00:00Z', end_ts: '2099-12-31T23:59:59Z' })
+        .then(({ data: allTime }) => {
+          const tu = document.getElementById('kpi-total-users');
+          if (tu) tu.textContent = Number(allTime?.new_signups || 0).toLocaleString('en-IN');
+        });
+
+      // INR / USD revenue breakdown
+      const inrRevEl = document.getElementById('kpi-inr-rev');
+      const usdRevEl = document.getElementById('kpi-usd-rev');
+      if (inrRevEl) inrRevEl.textContent = '₹' + Number(inrAmt / 100 || inrAmt).toLocaleString('en-IN');
+      if (usdRevEl) usdRevEl.textContent = '$' + Number(usdAmt / 100 || usdAmt).toLocaleString('en-US');
 
       const topC = growthData?.country_distribution || [];
       createChart('countryChart', 'bar', {
@@ -3194,6 +3238,23 @@
 
       document.getElementById('bm_cvr').textContent = cvr.toFixed(2) + '%';
       document.getElementById('bm_st_cvr').innerHTML = cvr >= 2 ? '<span style="color:var(--emerald)">✓</span>' : '<span style="color:var(--rose)">🚨</span>';
+    }
+
+    // ── FUNNEL REFRESH ────────────────────────────────
+    async function refreshFunnel() {
+      const f = getFilter();
+      const btn = document.querySelector('[onclick="refreshFunnel()"]');
+      if (btn) btn.textContent = '↻ Loading…';
+      const { data, error } = await sb.rpc('get_conversion_funnel', { start_ts: f.from, end_ts: f.to });
+      if (!error && data && data.length > 0) {
+        latestFunnelData = data[0];
+        renderFunnelView();
+        const ts = document.getElementById('funnelLastRefreshed');
+        if (ts) ts.textContent = 'Refreshed ' + new Date().toLocaleTimeString('en-IN');
+      } else {
+        console.error('[Funnel] Refresh error:', error);
+      }
+      if (btn) btn.textContent = '↺ Refresh';
     }
 
     // ── INIT ─────────────────────────────────────────

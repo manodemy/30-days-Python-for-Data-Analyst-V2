@@ -589,9 +589,9 @@ tbody tr:hover{background:rgba(0,230,246,.03)}
 
 /* ═══════ PRACTICE MODE (THEORY HIDER) ═══════ */
 .practice-mode-btn {
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--text);
+  background: rgba(0, 230, 246, 0.15);
+  border: 1px solid var(--cyan);
+  color: var(--cyan);
   font: 600 0.75rem var(--font-h);
   padding: 4px 8px;
   border-radius: 4px;
@@ -602,12 +602,17 @@ tbody tr:hover{background:rgba(0,230,246,.03)}
   transition: all 0.2s ease;
 }
 .practice-mode-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 230, 246, 0.25);
+  box-shadow: 0 0 10px rgba(0, 230, 246, 0.3);
 }
 .practice-mode-btn.is-active {
-  background: var(--cyan);
-  color: #000;
-  border-color: var(--cyan);
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--gold);
+  border-color: var(--gold);
+}
+.practice-mode-btn.is-active:hover {
+  background: rgba(245, 158, 11, 0.25);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
 }
 
 /* Fallback if it's NOT inside the sidebar-header */

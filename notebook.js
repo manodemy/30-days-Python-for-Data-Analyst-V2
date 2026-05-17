@@ -848,7 +848,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Inject Button
   const btn = document.createElement('button');
   btn.className = 'practice-mode-btn' + (isPracticeMode ? ' is-active' : '');
-  btn.innerHTML = isPracticeMode ? '💻 Practice' : '📖 Read';
+  btn.innerHTML = isPracticeMode ? '📖 Read' : '💻 Practice';
   
   const sidebarHeader = document.querySelector('.sidebar-header');
   if (sidebarHeader) {
@@ -868,11 +868,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (isActive) {
       btn.classList.add('is-active');
-      btn.innerHTML = '💻 Practice';
+      btn.innerHTML = '📖 Read';
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       btn.classList.remove('is-active');
-      btn.innerHTML = '📖 Read';
+      btn.innerHTML = '💻 Practice';
     }
   });
 });

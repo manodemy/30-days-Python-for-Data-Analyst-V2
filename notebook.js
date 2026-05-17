@@ -14,6 +14,22 @@ if (typeof window.supabase !== 'undefined') {
   sbClient = window.supabase.createClient(SUPA_URL, SUPA_KEY);
 }
 
+// ── SUPABASE ACTIVITY SYNC HELPER ──────────────────────────────────────────
+// Writes a single event to activity_logs. Fire-and-forget (non-blocking).
+async function _notebookWriteActivity(eventType, metadata) {
+  try {
+    if (!sbClient) return;
+    const { data: { user } } = await sbClient.auth.getUser();
+    if (!user) return; // Anonymous users not tracked
+    await sbClient.from('activity_logs').insert([{
+      user_id:    user.id,
+      event_type: eventType,
+      page_url:   window.location.pathname,
+      metadata:   metadata
+    }]);
+  } catch (e) { /* silent — never block UI */ }
+}
+
 // Helper functions for state
 const safeStorageSet = (key, value) => {
   try { localStorage.setItem(key, value); return true; }
@@ -142,6 +158,38 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   updateScore(); // Initial score update
+
+  // ── SYNC ACCUMULATED TIME TO SUPABASE ON PAGE LOAD ─────────────────────
+  // Reads the localStorage Active Focus timer and writes a heartbeat so the
+  // admin engagement table always reflects the user's total time, even if they
+  // never trigger a natural 30-second telemetry heartbeat.
+  const _syncTimeToSupabase = async () => {
+    try {
+      if (!sbClient) return;
+      const { data: { user } } = await sbClient.auth.getUser();
+      if (!user) return;
+      const dayId = getDayId();
+      if (!dayId) return;
+      const match = dayId.match(/(\d{2})/);
+      if (!match) return;
+      const lsKey = `manodemy_day${match[1]}_time_spent`;
+      const secs = parseInt(localStorage.getItem(lsKey) || '0', 10);
+      if (secs < 10) return; // Don't write trivial values
+      // Write as a notebook_time_sync heartbeat — picked up by the RPC
+      await sbClient.from('activity_logs').insert([{
+        user_id:    user.id,
+        event_type: 'session_heartbeat',
+        page_url:   window.location.pathname,
+        metadata: {
+          session_id:     'notebook_sync_' + dayId,
+          active_seconds: secs,
+          page_url:       window.location.pathname
+        }
+      }]);
+    } catch(e) { /* silent */ }
+  };
+  // Delay by 3s to let Supabase auth session stabilise after page load
+  setTimeout(_syncTimeToSupabase, 3000);
 });
 
 // ── LOAD PYODIDE (LAZY — first Run click only) ──
@@ -349,6 +397,12 @@ async function runCell(cellId) {
         cell.classList.add('is-solved');
         const dayId = getDayId();
         if (dayId) safeStorageSet(`manodemy_${dayId}_${cellId}_solved`, 'true');
+
+        // ── SYNC TO SUPABASE: fire question_solved event (non-blocking) ──
+        _notebookWriteActivity('question_solved', {
+          question_id:  cellId,
+          page_url:     window.location.pathname
+        });
       }
     } else {
       successfulCells.delete(cellId);

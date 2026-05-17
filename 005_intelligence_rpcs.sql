@@ -10,8 +10,22 @@ CREATE TABLE IF NOT EXISTS public.page_views (
   page_url TEXT NOT NULL,
   referrer TEXT,
   country TEXT,
+  -- user_id links anonymous sessions to authenticated users (set on login)
+  -- MED-5 FIX: Added to schema definition to match funnel RPC queries
+  user_id UUID REFERENCES auth.users ON DELETE SET NULL,
   created_at TIMESTAMPTZ DEFAULT now()
 );
+
+-- Safe migration: add user_id if running on an existing database that already has page_views
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'page_views' AND column_name = 'user_id'
+  ) THEN
+    ALTER TABLE public.page_views ADD COLUMN user_id UUID REFERENCES auth.users ON DELETE SET NULL;
+  END IF;
+END $$;
 
 -- Ensure activity_logs has the correct schema (in case it was created previously with an older schema)
 CREATE TABLE IF NOT EXISTS public.activity_logs (
@@ -107,7 +121,9 @@ BEGIN
       SUM(amount_inr) FILTER (WHERE status IN ('completed', 'paid', 'captured', 'successful', 'refunded')) AS gross_revenue,
       SUM(amount_inr) FILTER (WHERE status = 'refunded') AS refund_amount,
       COUNT(*) FILTER (WHERE status IN ('completed', 'paid', 'captured', 'successful', 'refunded')) AS transaction_count,
-      COUNT(*) FILTER (WHERE status = 'refunded') AS refund_count
+      COUNT(*) FILTER (WHERE status = 'refunded') AS refund_count,
+      -- ARPU requires distinct paying users (not transaction count — one user can buy multiple times)
+      COUNT(DISTINCT user_id) FILTER (WHERE status IN ('completed', 'paid', 'captured', 'successful')) AS distinct_paying_users
     FROM purchases
     WHERE created_at >= start_ts AND created_at <= end_ts
   ),
@@ -139,10 +155,11 @@ BEGIN
     'transaction_count', COALESCE(agg.transaction_count, 0),
     'refund_count', COALESCE(agg.refund_count, 0),
     'refund_rate_pct', CASE WHEN agg.transaction_count > 0 THEN (agg.refund_count::NUMERIC / agg.transaction_count) * 100 ELSE 0 END,
-    -- AOV = Gross Revenue / total transactions (avg ticket size)
+    -- AOV = Gross Revenue / total transactions (avg ticket size per order)
     'aov', CASE WHEN agg.transaction_count > 0 THEN COALESCE(agg.gross_revenue, 0) / agg.transaction_count ELSE 0 END,
-    -- ARPU = Gross Revenue / distinct paying users (avg customer value before refunds)
-    'arpu', CASE WHEN agg.transaction_count > 0 THEN COALESCE(agg.gross_revenue, 0) / agg.transaction_count ELSE 0 END,
+    -- ARPU = Gross Revenue / DISTINCT paying users (avg lifetime value per customer)
+    --        Uses the pre-computed active_users_count which counts distinct payers in this period
+    'arpu', CASE WHEN agg.distinct_paying_users > 0 THEN COALESCE(agg.gross_revenue, 0) / agg.distinct_paying_users ELSE 0 END,
     'currency_split', COALESCE((SELECT json_agg(json_build_object('currency', currency, 'amount', amount, 'count', count)) FROM curr_split), '[]'::json),
     'daily_revenue', COALESCE((SELECT json_agg(json_build_object('day', day, 'gross', gross, 'net', gross - refunds, 'refunds', refunds)) FROM daily), '[]'::json)
   ) INTO res
@@ -183,7 +200,8 @@ BEGIN
       SUM(amount_inr) FILTER (WHERE status IN ('completed', 'paid', 'captured', 'successful', 'refunded')) AS gross_revenue,
       SUM(amount_inr) FILTER (WHERE status = 'refunded') AS refund_amount,
       COUNT(*) FILTER (WHERE status IN ('completed', 'paid', 'captured', 'successful', 'refunded')) AS transaction_count,
-      COUNT(*) FILTER (WHERE status = 'refunded') AS refund_count
+      COUNT(*) FILTER (WHERE status = 'refunded') AS refund_count,
+      COUNT(DISTINCT user_id) FILTER (WHERE status IN ('completed', 'paid', 'captured', 'successful')) AS distinct_paying_users
     FROM purchases
     WHERE created_at >= start_ts AND created_at <= end_ts
   )
@@ -195,7 +213,8 @@ BEGIN
     'refund_count', COALESCE(agg.refund_count, 0),
     'refund_rate_pct', CASE WHEN agg.transaction_count > 0 THEN (agg.refund_count::NUMERIC / agg.transaction_count) * 100 ELSE 0 END,
     'aov', CASE WHEN agg.transaction_count > 0 THEN COALESCE(agg.gross_revenue, 0) / agg.transaction_count ELSE 0 END,
-    'arpu', CASE WHEN agg.transaction_count > 0 THEN COALESCE(agg.gross_revenue, 0) / agg.transaction_count ELSE 0 END,
+    -- ARPU: use distinct paying users — consistent with primary revenue function
+    'arpu', CASE WHEN agg.distinct_paying_users > 0 THEN COALESCE(agg.gross_revenue, 0) / agg.distinct_paying_users ELSE 0 END,
     'currency_split', '[]'::json,
     'daily_revenue', '[]'::json
   ) INTO res
@@ -255,7 +274,11 @@ BEGIN
     WHERE created_at >= start_ts AND created_at <= end_ts
   ),
   chk AS (
-    SELECT COUNT(*) AS checkout_initiated
+    -- BUG FIX: Was COUNT(*) which counted every button click as a separate checkout.
+    -- A single user clicking Buy 5 times = 5 checkouts, which could exceed total visits.
+    -- Fix: COUNT(DISTINCT user_id) — consistent with get_conversion_funnel and all other steps.
+    -- Unit alignment: visits=unique sessions, signups=unique users, checkout=unique users, purchases=unique users
+    SELECT COUNT(DISTINCT user_id) AS checkout_initiated
     FROM activity_logs
     WHERE event_type = 'checkout_initiated'
       AND created_at >= start_ts AND created_at <= end_ts
@@ -400,6 +423,9 @@ BEGIN
     FROM prev_active p
     JOIN curr_active c ON p.user_id = c.user_id
   ),
+  -- MED-2 NOTE: plan_distribution uses the profiles.plan_type column.
+  -- IMPORTANT: Ensure your verify-payment Edge Function updates profiles.plan_type = 'premium'
+  -- on purchase success, and resets to 'free' on refund. Otherwise this chart will be stale.
   plan_dist AS (
     SELECT
       COUNT(*) FILTER (WHERE plan_type = 'free' OR plan_type IS NULL) AS free_count,

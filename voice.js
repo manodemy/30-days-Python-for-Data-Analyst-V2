@@ -1135,7 +1135,12 @@ fallback: [
     u.onend = () => { if (muteBtn) muteBtn.classList.remove('mano-speaking'); };
     u.onerror = () => { if (muteBtn) muteBtn.classList.remove('mano-speaking'); };
 
+    // Fix Chromium GC bug where utterance stops abruptly
+    window._currentUtterance = u;
+
     speechSynthesis.speak(u);
+    // Hack to unstick Chromium voice queue
+    speechSynthesis.resume();
   }
 
   // ═══════════════════════════════════════════════════════════════════
@@ -1451,7 +1456,21 @@ fallback: [
       speechSynthesis.onvoiceschanged = loadVoices;
     }
     injectUI();
-    sessionWelcome();
+
+    // Fix Browser Autoplay Policies (Audio requires user interaction)
+    const triggerWelcome = () => {
+      document.removeEventListener('click', triggerWelcome);
+      document.removeEventListener('keydown', triggerWelcome);
+      if (window.speechSynthesis) window.speechSynthesis.resume();
+      sessionWelcome();
+    };
+
+    if (navigator.userActivation && navigator.userActivation.hasBeenActive) {
+      sessionWelcome();
+    } else {
+      document.addEventListener('click', triggerWelcome, { once: true });
+      document.addEventListener('keydown', triggerWelcome, { once: true });
+    }
 
     // Session farewell
     window.addEventListener('beforeunload', () => {

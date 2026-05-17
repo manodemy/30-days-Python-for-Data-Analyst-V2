@@ -1859,7 +1859,11 @@
           <!-- USER ROSTER RAW DATA TABLE -->
           <div class="table-panel" style="margin-top:1.5rem;">
             <div class="table-panel-header">
-              <span class="table-panel-title">Enrolled Users — Raw Data</span>
+              <div style="display:flex;align-items:center;gap:0.75rem;">
+                <span class="table-panel-title">Enrolled Users — Raw Data</span>
+                <!-- HIGH-3 FIX: Explicit all-time label to avoid confusion with date filter -->
+                <span style="font-size:0.62rem;padding:2px 7px;border-radius:3px;background:rgba(96,165,250,0.08);color:var(--sapphire);letter-spacing:0.08em;text-transform:uppercase;border:1px solid rgba(96,165,250,0.15);">All-Time</span>
+              </div>
               <div style="display:flex;gap:0.75rem;align-items:center;">
                 <input id="rosterSearch" placeholder="🔍 Search name, email, country…"
                   style="background:var(--surface);border:1px solid var(--rim);border-radius:var(--radius-sm);color:var(--ink);font-size:0.75rem;padding:0.4rem 0.75rem;width:220px;outline:none;"
@@ -2154,7 +2158,11 @@
         <div class="tab-pane" id="tab-engagement">
           <div class="tab-header">
             <h2 class="tab-title">User <em>Engagement</em></h2>
-            <span class="tab-period-label" id="eng-period-label">Detailed Page Activity</span>
+            <div style="display:flex;align-items:center;gap:0.75rem;">
+              <span class="tab-period-label" id="eng-period-label">Detailed Page Activity</span>
+              <!-- HIGH-3 FIX: Explicit all-time label so admins know date filter doesn't apply here -->
+              <span style="font-size:0.65rem;padding:2px 8px;border-radius:3px;background:rgba(96,165,250,0.1);color:var(--sapphire);letter-spacing:0.08em;text-transform:uppercase;border:1px solid rgba(96,165,250,0.2);">📊 All-Time Data</span>
+            </div>
           </div>
 
           <!-- Controls Row -->
@@ -2619,9 +2627,13 @@
 
       if (funnelData && funnelData.length > 0) {
         latestFunnelData = funnelData[0];
+        // CRITICAL-2 FIX: Capture real AOV from revenue data before rendering funnel
+        latestRevenueAOV = revData?.aov || 0;
         renderFunnelView();
       }
       // ─ TAB 1: REVENUE ─
+      // Also update AOV for funnel risk calc whenever revenue refreshes
+      latestRevenueAOV = revData?.aov || 0;
       renderKPI('kpi-gross-rev', 'meta-gross-rev', revData?.gross_revenue || 0, revPrevData?.gross_revenue, formatINR);
       renderKPI('kpi-net-rev', 'meta-net-rev', revData?.net_revenue || 0, revPrevData?.net_revenue, formatINR);
       renderKPI('kpi-refund-rate', 'meta-refund-rate', revData?.refund_rate_pct || 0, revPrevData?.refund_rate_pct, formatPct);
@@ -2720,11 +2732,11 @@
         scales: { x: { display: true }, y: { display: true } }
       });
 
-      // Populate Total Users (all-time, unfiltered)
-      sb.rpc('get_growth_intelligence', { start_ts: '2000-01-01T00:00:00Z', end_ts: '2099-12-31T23:59:59Z' })
-        .then(({ data: allTime }) => {
+      // HIGH-2 FIX: Use lightweight count query instead of full pipeline RPC just for total users
+      sb.from('profiles').select('id', { count: 'exact', head: true })
+        .then(({ count }) => {
           const tu = document.getElementById('kpi-total-users');
-          if (tu) tu.textContent = Number(allTime?.new_signups || 0).toLocaleString('en-IN');
+          if (tu) tu.textContent = Number(count || 0).toLocaleString('en-IN');
         });
 
       // INR / USD revenue breakdown
@@ -2846,6 +2858,8 @@
     // ── TRANSACTION TABLE ────────────────────────────
     function renderTxTable(txs) {
       const tbody = document.querySelector('#transactionsTable tbody');
+      // HIGH-4 FIX: Cache full dataset so the CSV export button can access all rows (not just current page)
+      window._lastTxData = txs || [];
       if (!txs || txs.length === 0) {
         tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--ink-muted);padding:2rem;">No transactions in this period</td></tr>';
         return;
@@ -3458,18 +3472,41 @@
       showToast('Conversion rate updated', 'success');
     });
 
+    // HIGH-4 FIX: Real transaction CSV export (was a fake no-op placeholder)
     document.getElementById('exportTxBtn').addEventListener('click', () => {
-      showToast('Preparing CSV export…', 'info');
-      setTimeout(() => showToast('CSV exported successfully', 'success'), 1200);
+      // Use the last loaded transactions stored in the closure
+      const txRows = window._lastTxData || [];
+      if (!txRows.length) { showToast('No transactions to export', 'info'); return; }
+      const headers = ['#', 'Name', 'Email', 'Country', 'Date', 'Amount (INR)', 'Currency', 'Coupon', 'Gateway', 'Status'];
+      const csv = [headers.join(','), ...txRows.map((t, i) => [
+        i + 1,
+        `"${(t.user_name || '').replace(/"/g, '""')}"`,
+        `"${(t.user_email || t.user_id || '').replace(/"/g, '""')}"`,
+        t.user_country || '',
+        t.created_at ? new Date(t.created_at).toISOString().slice(0, 16) : '',
+        t.amount_inr || 0,
+        t.currency || '',
+        t.coupon_used || '',
+        t.payment_gateway || '',
+        t.status || ''
+      ].join(','))].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url;
+      a.download = `transactions_${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click(); URL.revokeObjectURL(url);
+      showToast('Transactions CSV exported ✓', 'success');
     });
 
     // ── FUNNEL RENDER ─────────────────────────────────
     let latestFunnelData = null;
+    let latestRevenueAOV = 0; // CRITICAL-2 FIX: dynamic AOV from real revenue data
     function renderFunnelView() {
       if (!latestFunnelData) return;
       const f = latestFunnelData;
       const s1 = f.step1_visits || 0, s2 = f.step2_logged_in || 0, s3 = f.step3_buy_clicks || 0, s4 = f.step4_success || 0, s5 = f.step5_failed || 0;
-      const aov = 1900;
+      // CRITICAL-2 FIX: Use dynamic AOV from revenue data; fallback to 1900 if no transactions yet
+      const aov = latestRevenueAOV > 0 ? latestRevenueAOV : 1900;
 
       function fmt(n) { return Number(n).toLocaleString('en-IN'); }
 

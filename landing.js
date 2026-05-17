@@ -44,7 +44,13 @@ const SiteVoice = (() => {
       const u = new SpeechSynthesisUtterance(text);
       if (voice) u.voice = voice;
       u.rate = 1.0;
+      
+      // Fix Chromium GC bug where utterance stops abruptly
+      window._currentUtterance = u;
+      
       speechSynthesis.speak(u);
+      // Hack to unstick Chromium voice queue
+      speechSynthesis.resume();
     } catch(e) {}
   }
 
@@ -261,19 +267,25 @@ function openCheckout() {
       return;
     }
     // ── Log Buy Click to activity_logs (feeds the funnel "Buy Clicks" metric) ──
-    supabaseClient.from('activity_logs').insert([{
-      user_id: session.user.id,
-      event_type: 'checkout_initiated',
-      page_url: window.location.pathname,
-      metadata: {
-        currency: currentPricing.currency,
-        amount: currentPricing.amount,
-        country: userCountry
-      }
-    }]).then(({ error }) => {
-      if (error) console.warn('[Telemetry] ⚠️ Buy click log failed:', error.message);
-      else console.log('[Telemetry] ✅ checkout_initiated logged');
-    });
+    // DEDUP FIX: Only log once per page session — opening modal multiple times shouldn't
+    // inflate the checkout count. SQL already uses COUNT(DISTINCT user_id) but this
+    // prevents unnecessary DB writes and keeps data clean.
+    if (!window._checkoutEventLogged) {
+      window._checkoutEventLogged = true;
+      supabaseClient.from('activity_logs').insert([{
+        user_id: session.user.id,
+        event_type: 'checkout_initiated',
+        page_url: window.location.pathname,
+        metadata: {
+          currency: currentPricing.currency,
+          amount: currentPricing.amount,
+          country: userCountry
+        }
+      }]).then(({ error }) => {
+        if (error) console.warn('[Telemetry] ⚠️ Buy click log failed:', error.message);
+        else console.log('[Telemetry] ✅ checkout_initiated logged');
+      });
+    }
     if (checkoutOverlay) checkoutOverlay.classList.add('active');
   });
 }
@@ -530,7 +542,9 @@ if (couponApplyBtn) {
         label = `✅ ${val}% OFF!`;
       } else {
         newAmount = Math.max(0, currentPricing.amount - (val * 100));
-        label = `✅ ₹${val} OFF!`;
+        // MED-3 FIX: Use correct currency symbol based on user's detected pricing
+        const currencySymbol = currentPricing.currency === 'INR' ? '₹' : '$';
+        label = `✅ ${currencySymbol}${val} OFF!`;
       }
 
       const displayPrice = currentPricing.currency === 'INR'

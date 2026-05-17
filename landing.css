@@ -53,7 +53,7 @@ body {
   right: 0;
   z-index: 999;
   height: 64px;
-  background: rgba(11, 15, 25, 0.82);
+  background: linear-gradient(rgba(11, 15, 25, 0.82), rgba(11, 15, 25, 0.82)), var(--bg);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);

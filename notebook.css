@@ -14,7 +14,7 @@ html{scroll-behavior:auto}
 body{background:var(--bg);color:var(--text);font-family:var(--font-b);padding-top:60px}
 
 /* ═══════ NAV ═══════ */
-.top-bar{position:fixed;top:0;left:0;right:0;z-index:999;height:72px;background:rgba(11,15,25,0.7);backdrop-filter:blur(24px) saturate(150%);border-bottom:1px solid rgba(255,255,255,0.06);box-shadow:0 4px 30px rgba(0,0,0,0.5)}
+.top-bar{position:fixed;top:0;left:0;right:0;z-index:999;height:72px;background:linear-gradient(rgba(11,15,25,0.7), rgba(11,15,25,0.7)), var(--bg);backdrop-filter:blur(24px) saturate(150%);border-bottom:1px solid rgba(255,255,255,0.06);box-shadow:0 4px 30px rgba(0,0,0,0.5)}
 .nav-inner{max-width:1400px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:100%}
 
 /* ═══════ CENTER DROPDOWN ═══════ */

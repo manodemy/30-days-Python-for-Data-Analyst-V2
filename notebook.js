@@ -852,9 +852,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
   const sidebarHeader = document.querySelector('.sidebar-header');
   if (sidebarHeader) {
-      sidebarHeader.style.display = 'flex';
-      sidebarHeader.style.justifyContent = 'space-between';
-      sidebarHeader.style.alignItems = 'center';
+      btn.style.marginLeft = 'auto';
       sidebarHeader.appendChild(btn);
   } else {
       document.body.appendChild(btn);

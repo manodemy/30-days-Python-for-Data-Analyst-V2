@@ -172,7 +172,7 @@ code{font-family:var(--font-c);font-size:.82em;background:rgba(0,230,246,.1);col
 .callout.tip{border-left-color:var(--green);background:rgba(16,185,129,.06)}
 
 /* ═══════ QUESTIONS — WHITE ═══════ */
-.question{padding:.9rem 1.1rem;margin:.8rem 0 .4rem;background:#FFFFFF;color:#1a1a2e;border-radius:var(--r);border-left:4px solid #6366F1;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.question{padding:.9rem 1.1rem;margin:.8rem 0 .4rem;background:#FFFFFF;color:#1a1a2e;border-radius:var(--r);border-left:4px solid #6366F1;box-shadow:0 2px 8px rgba(0,0,0,.15);scroll-margin-top:90px}
 .question p, .question h1, .question h2, .question h3, .question h4, .question li{margin:0;font-size:.88rem;color:#1a1a2e;line-height:1.65}
 .question h1, .question h2, .question h3, .question h4{margin-top:.4rem;margin-bottom:.2rem;font-size:.95rem;font-weight:600}
 .question strong{color:#111}

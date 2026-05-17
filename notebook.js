@@ -517,23 +517,28 @@ function clearOutput(cellId) {
 function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 
 // ── SIDEBAR ACTIVE TRACKING ──
-const tocLinks = document.querySelectorAll('.toc-link');
-const sectionEls = [];
-tocLinks.forEach(link => {
-  const id = link.getAttribute('href').slice(1);
-  const el = document.getElementById(id);
-  if (el) sectionEls.push({el,link});
-});
+let sectionEls = [];
+window.refreshTocTracking = function() {
+  sectionEls = [];
+  document.querySelectorAll('.toc-link').forEach(link => {
+    const href = link.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      const el = document.getElementById(href.slice(1));
+      if (el) sectionEls.push({el, link});
+    }
+  });
+  updateToc();
+};
 function updateToc() {
   let current = null;
-  for (const {el,link} of sectionEls) {
-    if (el.getBoundingClientRect().top <= 120) current = link;
+  for (const {el, link} of sectionEls) {
+    if (el.getBoundingClientRect().top <= 140) current = link;
   }
-  tocLinks.forEach(l=>l.classList.remove('active'));
+  document.querySelectorAll('.toc-link').forEach(l=>l.classList.remove('active'));
   if (current) current.classList.add('active');
 }
 window.addEventListener('scroll', updateToc);
-updateToc();
+window.refreshTocTracking();
 
 // ── DROPDOWN TOGGLE ──
 document.addEventListener('DOMContentLoaded', () => {
@@ -841,6 +846,10 @@ document.addEventListener('DOMContentLoaded', () => {
             tocList.appendChild(li);
         });
     });
+    
+    if (typeof window.refreshTocTracking === 'function') {
+        window.refreshTocTracking();
+    }
   }
 
   updateTOC(isPracticeMode);

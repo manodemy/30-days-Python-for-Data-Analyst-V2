@@ -827,7 +827,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ── PRACTICE MODE (THEORY HIDER) ──
 document.addEventListener('DOMContentLoaded', () => {
-  const isPracticeMode = localStorage.getItem('manodemy_practice_mode') === 'true';
+  const pageName = window.location.pathname.split('/').pop() || 'day01.html';
+  const storageKey = 'manodemy_practice_mode_' + pageName;
+  const isPracticeMode = localStorage.getItem(storageKey) === 'true';
   
   if (isPracticeMode) {
     document.body.classList.add('practice-mode-active');
@@ -923,13 +925,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (toPractice) {
       document.body.classList.add('practice-mode-active');
-      localStorage.setItem('manodemy_practice_mode', 'true');
+      localStorage.setItem(storageKey, 'true');
       readBtn.classList.remove('active');
       practiceBtn.classList.add('active');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       document.body.classList.remove('practice-mode-active');
-      localStorage.setItem('manodemy_practice_mode', 'false');
+      localStorage.setItem(storageKey, 'false');
       practiceBtn.classList.remove('active');
       readBtn.classList.add('active');
     }

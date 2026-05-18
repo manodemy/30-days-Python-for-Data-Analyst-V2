@@ -618,18 +618,23 @@ tbody tr:hover{background:rgba(0,230,246,.03)}
   .mano-hint-body { font-size: 0.8rem; padding: 10px; }
 }
 
-/* ═══════ DUAL-MODE SEGMENTED TOGGLE SWITCH ═══════ */
+/* ═══════ DUAL-MODE SEGMENTED TOGGLE SWITCH (COLOR SCIENCE UPGRADE) ═══════ */
 .mode-toggle-segmented {
   display: flex;
-  background: rgba(11, 15, 25, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
+  background: #090d16; /* deep cosmic tray */
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 14px;
   padding: 4px;
-  margin-bottom: 12px;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5), 0 4px 15px rgba(0, 0, 0, 0.4);
+  margin-bottom: 15px;
+  box-shadow: 
+    inset 0 4px 10px rgba(0, 0, 0, 0.6), 
+    0 1px 1px rgba(255, 255, 255, 0.05),
+    0 8px 24px rgba(0, 0, 0, 0.35);
   position: relative;
   z-index: 10;
   width: 100%;
+  overflow: hidden;
+  transition: all 0.4s ease;
 }
 
 .mode-segment-btn {
@@ -639,33 +644,62 @@ tbody tr:hover{background:rgba(0,230,246,.03)}
   justify-content: center;
   gap: 8px;
   background: transparent;
-  border: 1px solid transparent;
+  border: none;
   color: var(--muted);
-  font: 700 0.8rem var(--font-h);
-  padding: 8px 12px;
-  border-radius: 8px;
+  font: 700 0.82rem var(--font-h);
+  padding: 10px 14px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
   outline: none;
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.03em;
 }
 
-.mode-segment-btn:hover {
+/* Hover highlights for inactive button segments */
+.mode-segment-btn:hover:not(.active) {
   color: #fff;
+  background: rgba(255, 255, 255, 0.03);
 }
 
-/* Active Segment Highlights */
+/* --- ACTIVE STATE CHROMATIC GLOWS --- */
+
+/* 1. READ MODE (Warm intellectual gold gradient + rich contrast dark text) */
 .mode-segment-btn.active.segment-read {
-  background: linear-gradient(135deg, rgba(245, 166, 35, 0.15), rgba(245, 166, 35, 0.05));
-  color: var(--gold);
-  border-color: rgba(245, 166, 35, 0.3);
-  box-shadow: 0 0 12px rgba(245, 166, 35, 0.15);
+  background: linear-gradient(135deg, #F5A623 0%, #D97706 100%);
+  color: #05070a; /* solid obsidian black text for superb clarity */
+  font-weight: 800;
+  box-shadow: 
+    0 4px 12px rgba(245, 166, 35, 0.35),
+    inset 0 1px 2px rgba(255, 255, 255, 0.35);
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.1);
 }
 
+/* 2. PRACTICE MODE (Technical cyber-cyan/blue gradient + rich contrast dark text) */
 .mode-segment-btn.active.segment-practice {
-  background: linear-gradient(135deg, rgba(0, 230, 246, 0.15), rgba(0, 230, 246, 0.05));
-  color: var(--cyan);
-  border-color: rgba(0, 230, 246, 0.3);
-  box-shadow: 0 0 12px rgba(0, 230, 246, 0.15);
+  background: linear-gradient(135deg, #00E6F6 0%, #0099FF 100%);
+  color: #05070a; /* solid obsidian black text for superb clarity */
+  font-weight: 800;
+  box-shadow: 
+    0 4px 12px rgba(0, 230, 246, 0.35),
+    inset 0 1px 2px rgba(255, 255, 255, 0.35);
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.1);
+}
+
+/* Cosmic accent shifts on container border based on active mode */
+.mode-toggle-segmented:has(.segment-read.active) {
+  border-color: rgba(245, 166, 35, 0.18);
+  box-shadow: 
+    inset 0 4px 10px rgba(0, 0, 0, 0.6),
+    0 0 20px rgba(245, 166, 35, 0.06);
+}
+
+.mode-toggle-segmented:has(.segment-practice.active) {
+  border-color: rgba(0, 230, 246, 0.18);
+  box-shadow: 
+    inset 0 4px 10px rgba(0, 0, 0, 0.6),
+    0 0 20px rgba(0, 230, 246, 0.06);
 }
 
 /* Float on body mobile fallback */
@@ -676,7 +710,7 @@ body > .mode-toggle-segmented {
   width: calc(100% - 48px);
   max-width: 300px;
   z-index: 998;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.55);
 }
 
 /* Practice Mode Hiding Logic - Target specific theory sections */

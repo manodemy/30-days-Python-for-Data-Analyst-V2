@@ -646,6 +646,11 @@ body.practice-mode-active .layout .nb-section[id^="sec-"] .nb-rich > h2 {
 }
 
 /* Protect the questions, hints, and their children */
+body.practice-mode-active .layout .nb-section[id^="sec-"] .question p,
+body.practice-mode-active .layout .nb-section[id^="sec-"] .question ul,
+body.practice-mode-active .layout .nb-section[id^="sec-"] .question ol,
+body.practice-mode-active .layout .nb-section[id^="sec-"] .question h3,
+body.practice-mode-active .layout .nb-section[id^="sec-"] .mano-hint-body p,
 body.practice-mode-active .layout .question p,
 body.practice-mode-active .layout .question ul,
 body.practice-mode-active .layout .question ol,

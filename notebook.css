@@ -618,44 +618,65 @@ tbody tr:hover{background:rgba(0,230,246,.03)}
   .mano-hint-body { font-size: 0.8rem; padding: 10px; }
 }
 
-/* ═══════ PRACTICE MODE (THEORY HIDER) ═══════ */
-.practice-mode-btn {
-  background: rgba(0, 230, 246, 0.15);
-  border: 1px solid var(--cyan);
-  color: var(--cyan);
-  font: 600 0.75rem var(--font-h);
-  padding: 4px 8px;
-  border-radius: 4px;
-  cursor: pointer;
+/* ═══════ DUAL-MODE SEGMENTED TOGGLE SWITCH ═══════ */
+.mode-toggle-segmented {
   display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: all 0.2s ease;
-}
-.practice-mode-btn:hover {
-  background: rgba(0, 230, 246, 0.25);
-  box-shadow: 0 0 10px rgba(0, 230, 246, 0.3);
-}
-.practice-mode-btn.is-active {
-  background: rgba(245, 158, 11, 0.15);
-  color: var(--gold);
-  border-color: var(--gold);
-}
-.practice-mode-btn.is-active:hover {
-  background: rgba(245, 158, 11, 0.25);
-  box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+  background: rgba(11, 15, 25, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 12px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5), 0 4px 15px rgba(0, 0, 0, 0.4);
+  position: relative;
+  z-index: 10;
+  width: 100%;
 }
 
-/* Fallback if it's NOT inside the sidebar-header */
-body > .practice-mode-btn {
+.mode-segment-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--muted);
+  font: 700 0.8rem var(--font-h);
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+}
+
+.mode-segment-btn:hover {
+  color: #fff;
+}
+
+/* Active Segment Highlights */
+.mode-segment-btn.active.segment-read {
+  background: linear-gradient(135deg, rgba(245, 166, 35, 0.15), rgba(245, 166, 35, 0.05));
+  color: var(--gold);
+  border-color: rgba(245, 166, 35, 0.3);
+  box-shadow: 0 0 12px rgba(245, 166, 35, 0.15);
+}
+
+.mode-segment-btn.active.segment-practice {
+  background: linear-gradient(135deg, rgba(0, 230, 246, 0.15), rgba(0, 230, 246, 0.05));
+  color: var(--cyan);
+  border-color: rgba(0, 230, 246, 0.3);
+  box-shadow: 0 0 12px rgba(0, 230, 246, 0.15);
+}
+
+/* Float on body mobile fallback */
+body > .mode-toggle-segmented {
   position: fixed;
   bottom: 24px;
   left: 24px;
+  width: calc(100% - 48px);
+  max-width: 300px;
   z-index: 998;
-  padding: 10px 18px;
-  border-radius: 50px;
-  font-size: 0.85rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
 }
 
 /* Practice Mode Hiding Logic - Target specific theory sections */

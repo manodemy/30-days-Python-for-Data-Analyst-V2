@@ -894,32 +894,48 @@ document.addEventListener('DOMContentLoaded', () => {
 
   updateTOC(isPracticeMode);
 
-  // Inject Button
-  const btn = document.createElement('button');
-  btn.className = 'practice-mode-btn' + (isPracticeMode ? ' is-active' : '');
-  btn.innerHTML = isPracticeMode ? '📖 Read' : '💻 Practice';
+  // Inject Segmented Control above CONTENTS in sidebar
+  const toggleContainer = document.createElement('div');
+  toggleContainer.className = 'mode-toggle-segmented';
   
+  const readBtn = document.createElement('button');
+  readBtn.className = 'mode-segment-btn segment-read' + (!isPracticeMode ? ' active' : '');
+  readBtn.innerHTML = '📖 Read';
+  
+  const practiceBtn = document.createElement('button');
+  practiceBtn.className = 'mode-segment-btn segment-practice' + (isPracticeMode ? ' active' : '');
+  practiceBtn.innerHTML = '💻 Practice';
+  
+  toggleContainer.appendChild(readBtn);
+  toggleContainer.appendChild(practiceBtn);
+  
+  const sidebarTop = document.querySelector('.sidebar-top');
   const sidebarHeader = document.querySelector('.sidebar-header');
-  if (sidebarHeader) {
-      btn.style.marginLeft = 'auto';
-      sidebarHeader.appendChild(btn);
+  if (sidebarTop && sidebarHeader) {
+      sidebarTop.insertBefore(toggleContainer, sidebarHeader);
   } else {
-      document.body.appendChild(btn);
+      document.body.appendChild(toggleContainer);
   }
 
-  btn.addEventListener('click', () => {
-    const isActive = document.body.classList.toggle('practice-mode-active');
-    localStorage.setItem('manodemy_practice_mode', isActive);
+  function setMode(toPractice) {
+    const isCurrentlyPractice = document.body.classList.contains('practice-mode-active');
+    if (toPractice === isCurrentlyPractice) return;
     
-    updateTOC(isActive);
-    
-    if (isActive) {
-      btn.classList.add('is-active');
-      btn.innerHTML = '📖 Read';
+    if (toPractice) {
+      document.body.classList.add('practice-mode-active');
+      localStorage.setItem('manodemy_practice_mode', 'true');
+      readBtn.classList.remove('active');
+      practiceBtn.classList.add('active');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      btn.classList.remove('is-active');
-      btn.innerHTML = '💻 Practice';
+      document.body.classList.remove('practice-mode-active');
+      localStorage.setItem('manodemy_practice_mode', 'false');
+      practiceBtn.classList.remove('active');
+      readBtn.classList.add('active');
     }
-  });
+    updateTOC(toPractice);
+  }
+
+  readBtn.addEventListener('click', () => setMode(false));
+  practiceBtn.addEventListener('click', () => setMode(true));
 });

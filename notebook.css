@@ -739,16 +739,8 @@ body.practice-mode-active .nb-section[id^="sec-"] > h2 {
   display: block !important;
 }
 
-/* ── 4. Keep the section-0 (Enterprise Objective) h2 visible but hide its body ── */
-body.practice-mode-active .nb-section#sec-0 > h2,
-body.practice-mode-active .nb-section#sec-0 > .nb-rich > h2 {
-  display: block !important;
-}
-body.practice-mode-active .nb-section#sec-0 > p,
-body.practice-mode-active .nb-section#sec-0 > h3,
-body.practice-mode-active .nb-section#sec-0 > table,
-body.practice-mode-active .nb-section#sec-0 > .callout,
-body.practice-mode-active .nb-section#sec-0 > .nb-code-block {
+/* ── 4. Hide Enterprise Objective section entirely in practice mode ── */
+body.practice-mode-active .nb-section#sec-0 {
   display: none !important;
 }
 

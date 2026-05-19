@@ -713,41 +713,132 @@ body > .mode-toggle-segmented {
   box-shadow: 0 10px 35px rgba(0, 0, 0, 0.55);
 }
 
-/* Practice Mode Hiding Logic - Target specific theory sections */
-body.practice-mode-active .layout .nb-section[id^="sec-"] .nb-rich > div,
-body.practice-mode-active .layout .nb-section[id^="sec-"] .nb-rich > h3,
-body.practice-mode-active .layout .nb-section[id^="sec-"] .nb-rich > h4,
-body.practice-mode-active .layout .nb-section[id^="sec-"] p,
-body.practice-mode-active .layout .nb-section[id^="sec-"] ul:not(.exercise-list),
-body.practice-mode-active .layout .nb-section[id^="sec-"] ol,
-body.practice-mode-active .layout .nb-section[id^="sec-"] table,
-body.practice-mode-active .layout .nb-section[id^="sec-"] .callout,
-body.practice-mode-active .layout .nb-section[id^="sec-"] .code-cell {
+/* ═══════ PRACTICE MODE — COMPLETE CONTENT HIDING ═══════ */
+
+/* ── 1. THEORY SECTIONS (sec-*): Hide all body content ── */
+body.practice-mode-active .nb-section[id^="sec-"] > p,
+body.practice-mode-active .nb-section[id^="sec-"] > ul,
+body.practice-mode-active .nb-section[id^="sec-"] > ol,
+body.practice-mode-active .nb-section[id^="sec-"] > table,
+body.practice-mode-active .nb-section[id^="sec-"] > .callout,
+body.practice-mode-active .nb-section[id^="sec-"] > .nb-code-block,
+body.practice-mode-active .nb-section[id^="sec-"] > .code-cell,
+body.practice-mode-active .nb-section[id^="sec-"] > .checklist,
+body.practice-mode-active .nb-section[id^="sec-"] > .question {
   display: none !important;
 }
 
-/* Ensure h2 is preserved ALWAYS */
-body.practice-mode-active .layout .nb-section[id^="sec-"] .nb-rich > h2 {
+/* ── 2. Hide all content INSIDE .nb-rich blocks in theory sections ── */
+body.practice-mode-active .nb-section[id^="sec-"] .nb-rich {
+  /* Keep the nb-rich wrapper but hide its content */
+}
+body.practice-mode-active .nb-section[id^="sec-"] .nb-rich > *:not(h2) {
+  display: none !important;
+}
+
+/* ── 3. Always show the topic h2 heading (coloured section title) ── */
+body.practice-mode-active .nb-section[id^="sec-"] .nb-rich > h2,
+body.practice-mode-active .nb-section[id^="sec-"] > h2 {
   display: block !important;
 }
 
-/* Protect the questions, hints, and their children */
-body.practice-mode-active .layout .nb-section[id^="sec-"] .question p,
-body.practice-mode-active .layout .nb-section[id^="sec-"] .question ul,
-body.practice-mode-active .layout .nb-section[id^="sec-"] .question ol,
-body.practice-mode-active .layout .nb-section[id^="sec-"] .question h3,
-body.practice-mode-active .layout .nb-section[id^="sec-"] .mano-hint-body p,
-body.practice-mode-active .layout .question p,
-body.practice-mode-active .layout .question ul,
-body.practice-mode-active .layout .question ol,
-body.practice-mode-active .layout .question h3,
-body.practice-mode-active .layout .mano-hint-body p {
+/* ── 4. Keep the section-0 (Enterprise Objective) h2 visible but hide its body ── */
+body.practice-mode-active .nb-section#sec-0 > h2,
+body.practice-mode-active .nb-section#sec-0 > .nb-rich > h2 {
   display: block !important;
+}
+body.practice-mode-active .nb-section#sec-0 > p,
+body.practice-mode-active .nb-section#sec-0 > h3,
+body.practice-mode-active .nb-section#sec-0 > table,
+body.practice-mode-active .nb-section#sec-0 > .callout,
+body.practice-mode-active .nb-section#sec-0 > .nb-code-block {
+  display: none !important;
 }
 
-/* Protect code cells directly following questions */
-body.practice-mode-active .layout .nb-section[id^="sec-"] .question + .code-cell,
-body.practice-mode-active .layout .nb-section#practice .question + .code-cell,
-body.practice-mode-active .layout .nb-section#interview .question + .code-cell {
+/* ── 5. CONCEPT CHECK SECTIONS (checks-*): Show EVERYTHING ── */
+/* These sections contain the questions + interactive code cells */
+body.practice-mode-active .nb-section[id^="checks-"] {
   display: block !important;
 }
+body.practice-mode-active .nb-section[id^="checks-"] > *,
+body.practice-mode-active .nb-section[id^="checks-"] .nb-rich,
+body.practice-mode-active .nb-section[id^="checks-"] .nb-rich > *,
+body.practice-mode-active .nb-section[id^="checks-"] .question,
+body.practice-mode-active .nb-section[id^="checks-"] .question *,
+body.practice-mode-active .nb-section[id^="checks-"] .code-cell,
+body.practice-mode-active .nb-section[id^="checks-"] .code-cell *,
+body.practice-mode-active .nb-section[id^="checks-"] .cell-bar,
+body.practice-mode-active .nb-section[id^="checks-"] .cell-bar *,
+body.practice-mode-active .nb-section[id^="checks-"] .cell-output,
+body.practice-mode-active .nb-section[id^="checks-"] .CodeMirror,
+body.practice-mode-active .nb-section[id^="checks-"] .mano-hint-popup,
+body.practice-mode-active .nb-section[id^="checks-"] .mano-hint-popup * {
+  display: revert !important;
+}
+/* Restore cell-output hidden state (JS manages this) */
+body.practice-mode-active .nb-section[id^="checks-"] .cell-output.hidden {
+  display: none !important;
+}
+
+/* ── 6. Protect question content inside theory sections (if any) ── */
+body.practice-mode-active .nb-section[id^="sec-"] .question {
+  display: block !important;
+}
+body.practice-mode-active .nb-section[id^="sec-"] .question *,
+body.practice-mode-active .nb-section[id^="sec-"] .question p,
+body.practice-mode-active .nb-section[id^="sec-"] .question ul,
+body.practice-mode-active .nb-section[id^="sec-"] .question ol,
+body.practice-mode-active .nb-section[id^="sec-"] .question code,
+body.practice-mode-active .nb-section[id^="sec-"] .question strong,
+body.practice-mode-active .nb-section[id^="sec-"] .question em {
+  display: revert !important;
+}
+
+/* ── 7. Code cell after question in theory section: show it ── */
+body.practice-mode-active .nb-section[id^="sec-"] .question + .code-cell {
+  display: block !important;
+}
+body.practice-mode-active .nb-section[id^="sec-"] .question + .code-cell * {
+  display: revert !important;
+}
+body.practice-mode-active .nb-section[id^="sec-"] .question + .code-cell .cell-output.hidden {
+  display: none !important;
+}
+
+/* ── 8. Hint popups remain functional everywhere ── */
+body.practice-mode-active .mano-hint-popup,
+body.practice-mode-active .mano-hint-popup * {
+  display: revert !important;
+}
+body.practice-mode-active .mano-hint-popup:not(.mano-hint-visible) {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* ── 9. Practice mode subtle background tint on concept check sections ── */
+body.practice-mode-active .nb-section[id^="checks-"] {
+  border-left: 2px solid rgba(0, 230, 246, 0.15);
+  border-radius: 0 8px 8px 0;
+  padding-left: 8px;
+  margin-left: -10px;
+}
+
+/* ── 10. Practice mode banner at top of notebook ── */
+body.practice-mode-active .nb-title::after {
+  content: "🎯 Practice Mode — Theory hidden. Questions & code cells only.";
+  display: block;
+  margin-top: 8px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, rgba(0,230,246,0.08), rgba(0,153,255,0.06));
+  border: 1px solid rgba(0,230,246,0.2);
+  border-radius: 8px;
+  font: 600 0.8rem var(--font-h);
+  color: var(--cyan);
+  letter-spacing: 0.03em;
+  animation: practiceModeFadeIn 0.5s ease forwards;
+}
+@keyframes practiceModeFadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+

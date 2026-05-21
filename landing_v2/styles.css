@@ -1789,7 +1789,10 @@ button {
 }
 
 .section-head h2 span {
-  color: var(--cyan);
+  background: linear-gradient(135deg, var(--cyan) 0%, #10b981 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
 }
 
 .section-head p {
@@ -1802,22 +1805,24 @@ button {
 .how-steps {
   display: flex;
   gap: 2rem;
-  align-items: flex-start;
+  align-items: stretch; /* mathematically force identical card heights for perfect symmetry! */
 }
 
 .how-step {
   flex: 1;
   position: relative;
-  padding: 2.5rem 2rem;
+  padding: 2.75rem 2.25rem;
   background: var(--glass-bg);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--glass-border);
-  border-top-color: var(--glass-border-strong);
-  border-radius: 16px;
+  border-top: 3px solid rgba(255, 255, 255, 0.12); /* Default top rim placeholder */
+  border-radius: 20px; /* high-end soft radius */
   box-shadow: var(--shadow-bloom);
   overflow: hidden;
   transition: var(--transition);
+  display: flex;
+  flex-direction: column;
 }
 
 .how-step::before {
@@ -1832,43 +1837,80 @@ button {
   z-index: 1;
 }
 
-.how-step:hover {
-  transform: translateY(-5px) scale(1.02);
-  border-color: rgba(0, 230, 246, 0.35);
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.55), 0 0 20px rgba(0, 230, 246, 0.1);
+/* Chromatic semantic accent mappings using advanced color theory */
+.how-step--cyan {
+  border-top: 3px solid var(--cyan);
+}
+.how-step--cyan .how-num {
+  background: linear-gradient(135deg, var(--cyan) 0%, rgba(0, 230, 246, 0.3) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.how-step--cyan:hover {
+  transform: translateY(-6px) scale(1.015);
+  border-color: rgba(0, 230, 246, 0.45);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.65), 0 0 25px rgba(0, 230, 246, 0.15);
+}
+
+.how-step--purple {
+  border-top: 3px solid var(--purple);
+}
+.how-step--purple .how-num {
+  background: linear-gradient(135deg, var(--purple) 0%, rgba(168, 85, 247, 0.3) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.how-step--purple:hover {
+  transform: translateY(-6px) scale(1.015);
+  border-color: rgba(168, 85, 247, 0.45);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.65), 0 0 25px rgba(168, 85, 247, 0.15);
+}
+
+.how-step--emerald {
+  border-top: 3px solid var(--emerald);
+}
+.how-step--emerald .how-num {
+  background: linear-gradient(135deg, var(--emerald) 0%, rgba(16, 185, 129, 0.3) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.how-step--emerald:hover {
+  transform: translateY(-6px) scale(1.015);
+  border-color: rgba(16, 185, 129, 0.45);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.65), 0 0 25px rgba(16, 185, 129, 0.15);
 }
 
 .how-num {
   font-family: var(--font-display);
   font-weight: 950;
-  font-size: 72px;
-  color: var(--cyan);
-  opacity: 0.15;
+  font-size: 76px;
+  opacity: 0.18;
   line-height: 1;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
   display: block;
-  transition: opacity 400ms var(--ease), text-shadow 400ms var(--ease);
+  transition: opacity 400ms var(--ease), transform 400ms var(--ease);
 }
 
 .how-step:hover .how-num {
-  opacity: 0.3;
-  text-shadow: 0 0 30px rgba(0, 230, 246, 0.2);
+  opacity: 0.35;
+  transform: translateY(-3px);
 }
 
 .how-step h3 {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 20px;
-  margin-bottom: 10px;
+  font-size: 21px;
+  margin-bottom: 12px;
   color: #fff;
 }
 
 .how-step p {
   font-size: 14.5px;
   color: var(--ink-dim);
-  line-height: 1.7;
+  line-height: 1.75;
 }
 
+/* Beautiful dynamic flowing connector paths with exact mathematical centers */
 .how-connector {
   display: flex;
   align-items: center;
@@ -1876,40 +1918,68 @@ button {
   width: 60px;
   min-width: 60px;
   position: relative;
-  padding-top: 3rem;
+  /* padding-top removed for auto vertical centering inside stretched flex container! */
 }
 
-.how-connector::before {
+.how-connector--cyan-purple::before {
   content: '';
   position: absolute;
   top: 50%;
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, rgba(0, 230, 246, 0.05), rgba(0, 230, 246, 0.3), rgba(0, 230, 246, 0.05));
+  background: linear-gradient(90deg, rgba(0, 230, 246, 0.15) 0%, rgba(0, 230, 246, 0.6) 30%, rgba(168, 85, 247, 0.6) 70%, rgba(168, 85, 247, 0.15) 100%);
+  transform: translateY(-50%);
 }
 
-.connector-dot {
-  width: 10px;
-  height: 10px;
+.how-connector--purple-emerald::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(168, 85, 247, 0.15) 0%, rgba(168, 85, 247, 0.6) 30%, rgba(16, 185, 129, 0.6) 70%, rgba(16, 185, 129, 0.15) 100%);
+  transform: translateY(-50%);
+}
+
+.how-connector--cyan-purple .connector-dot {
+  width: 11px;
+  height: 11px;
   border-radius: 50%;
-  background: var(--cyan);
-  box-shadow: 0 0 10px var(--cyan-glow), 0 0 20px rgba(0, 230, 246, 0.1);
+  background: linear-gradient(135deg, var(--cyan) 0%, var(--purple) 100%);
+  box-shadow: 0 0 10px rgba(0, 230, 246, 0.4), 0 0 20px rgba(168, 85, 247, 0.25);
   position: relative;
   z-index: 2;
-  animation: connector-pulse 2.5s ease-in-out infinite;
+  animation: connector-pulse-cyan-purple 2.5s ease-in-out infinite;
 }
 
-@keyframes connector-pulse {
-  0%, 100% { transform: scale(1); box-shadow: 0 0 10px var(--cyan-glow); }
-  50% { transform: scale(1.3); box-shadow: 0 0 20px var(--cyan-glow), 0 0 30px rgba(0, 230, 246, 0.15); }
+.how-connector--purple-emerald .connector-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--purple) 0%, var(--emerald) 100%);
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.4), 0 0 20px rgba(16, 185, 129, 0.25);
+  position: relative;
+  z-index: 2;
+  animation: connector-pulse-purple-emerald 2.5s ease-in-out infinite;
+}
+
+@keyframes connector-pulse-cyan-purple {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(0, 230, 246, 0.4); }
+  50% { transform: scale(1.3); box-shadow: 0 0 18px rgba(0, 230, 246, 0.6), 0 0 28px rgba(168, 85, 247, 0.4); }
+}
+
+@keyframes connector-pulse-purple-emerald {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(168, 85, 247, 0.4); }
+  50% { transform: scale(1.3); box-shadow: 0 0 18px rgba(168, 85, 247, 0.6), 0 0 28px rgba(16, 185, 129, 0.4); }
 }
 
 @media(max-width:768px) {
   .how-steps {
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
+    gap: 1.5rem; /* slightly larger gap on mobile for better breathing room */
   }
 
   .how-connector {
@@ -1920,13 +1990,29 @@ button {
   }
 
   .how-connector::before {
+    display: none; /* override default horizontal bar fallback */
+  }
+
+  .how-connector--cyan-purple::before {
     top: 0;
     bottom: 0;
     left: 50%;
     right: auto;
     width: 2px;
     height: 100%;
-    background: linear-gradient(180deg, rgba(0, 230, 246, 0.05), rgba(0, 230, 246, 0.3), rgba(0, 230, 246, 0.05));
+    background: linear-gradient(180deg, rgba(0, 230, 246, 0.15) 0%, rgba(0, 230, 246, 0.6) 30%, rgba(168, 85, 247, 0.6) 70%, rgba(168, 85, 247, 0.15) 100%);
+    transform: translateX(-50%);
+  }
+
+  .how-connector--purple-emerald::before {
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    right: auto;
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(180deg, rgba(168, 85, 247, 0.15) 0%, rgba(168, 85, 247, 0.6) 30%, rgba(16, 185, 129, 0.6) 70%, rgba(16, 185, 129, 0.15) 100%);
+    transform: translateX(-50%);
   }
 }
 

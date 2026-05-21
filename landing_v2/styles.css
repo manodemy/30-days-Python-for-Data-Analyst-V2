@@ -2233,15 +2233,28 @@ button {
 }
 
 .compare .col-mano {
-  border-left: 1px solid rgba(0, 230, 246, 0.18);
-  border-right: 1px solid rgba(0, 230, 246, 0.18);
-  background: rgba(0, 230, 246, 0.02);
+  border-left: 2px solid rgba(0, 230, 246, 0.22);
+  border-right: 2px solid rgba(0, 230, 246, 0.22);
+  background: rgba(0, 230, 246, 0.03);
+  transition: background 300ms var(--ease), box-shadow 300ms var(--ease);
 }
 
 .compare thead .col-mano {
   background: rgba(0, 230, 246, 0.08);
   color: var(--cyan);
-  font-weight: 800;
+  font-weight: 900;
+  border-top: 4px solid var(--cyan);
+  border-left: 2px solid rgba(0, 230, 246, 0.22);
+  border-right: 2px solid rgba(0, 230, 246, 0.22);
+  text-shadow: 0 0 10px rgba(0, 230, 246, 0.25);
+}
+
+.compare tbody tr:last-child .col-mano {
+  border-bottom: 2px solid rgba(0, 230, 246, 0.22);
+}
+
+.compare tbody tr:hover .col-mano {
+  background: rgba(0, 230, 246, 0.06);
 }
 
 .compare .yes {
@@ -2252,6 +2265,84 @@ button {
 .compare .no {
   color: var(--rose);
   font-weight: bold;
+}
+
+.compare-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.compare-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  border-radius: 50%;
+  transition: transform 300ms var(--ease), box-shadow 300ms var(--ease), background 300ms var(--ease), border-color 300ms var(--ease);
+}
+
+.compare-badge--yes {
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--emerald);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.1);
+}
+
+.compare-badge--no {
+  background: rgba(244, 63, 94, 0.12);
+  color: var(--rose);
+  border: 1px solid rgba(244, 63, 94, 0.25);
+  box-shadow: 0 0 8px rgba(244, 63, 94, 0.1);
+}
+
+.compare-badge--neutral-yes {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--ink-dim);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.compare-svg {
+  width: 11px;
+  height: 11px;
+}
+
+.compare-price-mano {
+  font-family: var(--font-display);
+  font-size: 16.5px;
+  font-weight: 800;
+  color: var(--cyan);
+  text-shadow: 0 0 10px rgba(0, 230, 246, 0.15);
+}
+
+.compare-price-bootcamp {
+  font-weight: 700;
+  color: var(--rose);
+  text-shadow: 0 0 10px rgba(244, 63, 94, 0.15);
+}
+
+/* Beautiful micro-interactions on list badge hovers */
+.compare-status:hover .compare-badge--yes {
+  transform: scale(1.15);
+  background: rgba(16, 185, 129, 0.22);
+  border-color: var(--emerald);
+  box-shadow: 0 0 14px rgba(16, 185, 129, 0.35);
+}
+
+.compare-status:hover .compare-badge--no {
+  transform: scale(1.15);
+  background: rgba(244, 63, 94, 0.22);
+  border-color: var(--rose);
+  box-shadow: 0 0 14px rgba(244, 63, 94, 0.35);
+}
+
+.compare-status:hover .compare-badge--neutral-yes {
+  transform: scale(1.15);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--ink);
+  color: #fff;
 }
 
 /* ═══ TESTIMONIALS (Luxury Cards Grid) ═══ */

@@ -250,22 +250,95 @@
 
     <!-- Free Day 1 Preview -->
     <section class="preview">
+      <!-- Ambient Bloom Background Elements -->
+      <div class="preview-bg-bloom-left"></div>
+      <div class="preview-bg-bloom-right"></div>
+
       <div class="container">
         <div class="preview-text reveal">
-          <h2>Stop Stalling. Try Day 01 Unlocked Right Now.</h2>
-          <p class="preview-body">We are so confident in our hands-on active curriculum that we don't hide it behind annoying paywalls, subscription captures, or sales call forms. Launch the full Day 01 interactive notebook workspace directly in your browser. Edit variables, run automated test sets, and experience how simple learning python can feel when you are actually coding.</p>
+          <div class="preview-badge-top">Day 01 Free Pass</div>
+          <h2>Stop Watching. Start Writing.<br><span>Day 01 Sandbox is Fully Unlocked.</span></h2>
+          <p class="preview-body">We are so confident in our hands-on, active-learning curriculum that we don't hide it behind annoying paywalls, email captures, or aggressive sales calls. Experience how simple learning Python can feel when you actually write, run, and test code live in your browser.</p>
+          
           <ul class="preview-list">
-            <li>Day 01: Core memory allocation & basic syntax foundations</li>
-            <li>Fully active Jupyter-style notebook cell editor</li>
-            <li>Instant, real-time code execution and automated test runners</li>
-            <li>100% Zero local installation — click and code instantly</li>
+            <li>
+              <div class="bullet-icon-wrapper">
+                <svg class="bullet-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+              <span class="bullet-text"><strong>Day 01 Core Mastery:</strong> Variables, memory pointers, and foundational syntax rules.</span>
+            </li>
+            <li>
+              <div class="bullet-icon-wrapper">
+                <svg class="bullet-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+              <span class="bullet-text"><strong>Jupyter-Style Notebooks:</strong> A fully active in-browser terminal and cell editor.</span>
+            </li>
+            <li>
+              <div class="bullet-icon-wrapper">
+                <svg class="bullet-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+              <span class="bullet-text"><strong>Instant Test Verification:</strong> Run automated test cases to instantly check your logic.</span>
+            </li>
+            <li>
+              <div class="bullet-icon-wrapper">
+                <svg class="bullet-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+              <span class="bullet-text"><strong>Zero Setup Required:</strong> 100% cloud-based. No compiler, Docker, or local downloads.</span>
+            </li>
           </ul>
         </div>
+        
         <div class="preview-visual reveal">
           <div class="preview-card">
-            <div class="preview-card-icon">&#x1F513;</div>
+            <!-- Animated Gold Neon Lock Icon -->
+            <div class="premium-lock-wrapper">
+              <svg class="premium-lock-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Outer glowing rings -->
+                <circle cx="32" cy="32" r="28" stroke="rgba(255, 176, 32, 0.15)" stroke-width="2" stroke-dasharray="4 4" class="lock-ring-slow" />
+                <circle cx="32" cy="32" r="24" stroke="rgba(0, 230, 246, 0.2)" stroke-width="1.5" class="lock-ring-fast" />
+                <!-- Unlocked Shackle (Gold Gradient) -->
+                <path d="M22 28V20C22 14.4772 26.4772 10 32 10C37.5228 10 42 14.4772 42 20V24" stroke="url(#gold-grad)" stroke-width="4.5" stroke-linecap="round" class="shackle-anim" />
+                <!-- Lock Body (High-end Glassmorphic Gold) -->
+                <rect x="16" y="26" width="32" height="26" rx="6" fill="url(#lock-body-grad)" stroke="url(#gold-grad)" stroke-width="2" />
+                <!-- Keyhole -->
+                <circle cx="32" cy="36" r="3" fill="var(--base)" />
+                <path d="M32 39V45" stroke="var(--base)" stroke-width="2" stroke-linecap="round" />
+                
+                <defs>
+                  <linearGradient id="gold-grad" x1="16" y1="10" x2="48" y2="52" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#FFE873" />
+                    <stop offset="0.5" stop-color="#FFB020" />
+                    <stop offset="1" stop-color="#FF8A00" />
+                  </linearGradient>
+                  <linearGradient id="lock-body-grad" x1="16" y1="26" x2="48" y2="52" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="rgba(255, 176, 32, 0.3)" />
+                    <stop offset="1" stop-color="rgba(255, 138, 0, 0.05)" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+            
             <h3>Instant Day 01 Sandbox</h3>
             <span class="preview-meta">100% Free &bull; No Login Required</span>
+            
+            <!-- Sleek Mock Jupyter-style Notebook Interface -->
+            <div class="mock-notebook-cell">
+              <div class="cell-header">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+                <span class="cell-title">day01_challenge.py</span>
+              </div>
+              <div class="cell-body">
+                <div class="cell-line"><span class="line-no">In [1]:</span> <span class="code-comment"># Click Launch below to execute</span></div>
+                <div class="cell-line"><span class="line-no"></span> <span class="code-keyword">def</span> <span class="code-func">verify_active_learning</span>():</div>
+                <div class="cell-line"><span class="line-no"></span>     <span class="code-keyword">return</span> <span class="code-string">"Tutorial Hell Escaped! &#x1F680;"</span></div>
+                <div class="cell-line"><span class="line-no"></span> </div>
+                <div class="cell-line"><span class="line-no"></span> verify_active_learning()</div>
+                <div class="cell-output"><span class="output-no">Out [1]:</span> <span class="output-text">'Tutorial Hell Escaped! &#x1F680;'</span></div>
+              </div>
+            </div>
+            
             <a href="../day01.html" class="btn-gold btn-gold--filled preview-cta">&#x1F680; Launch Lesson Sandbox</a>
             <span class="preview-micro">Build active muscle memory in 10 minutes</span>
           </div>

@@ -1369,7 +1369,7 @@
           </div>
           <div class="nav-stat-pill nav-stat-pill--solved" title="Total solved challenges">
             <span class="nav-stat-icon">🏆</span>
-            <span class="nav-stat-value" id="navSolvedVal">0 / 640</span>
+            <span class="nav-stat-value" id="navSolvedVal">0 / 1668</span>
             <span class="nav-stat-label">Solved</span>
           </div>
           <div class="nav-stat-pill nav-stat-pill--time" title="Total spent coding">
@@ -1449,7 +1449,7 @@
             <div style="border-top: 1px solid rgba(255,255,255,0.06); padding-top: 0.6rem; display: flex; flex-direction: column; gap: 8px;">
               <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
                 <span class="progress-stats-summary" id="progressSummary" style="font-size: 12.5px; color: var(--ink-dim);">
-                  Solved <strong>0</strong> of <strong>640</strong> challenges
+                  Solved <strong>0</strong> of <strong>1668</strong> challenges
                 </span>
                 <span id="completionMotivationText" style="font-size: 11.5px; font-weight: 700; color: var(--cyan); font-family: 'Outfit', sans-serif; letter-spacing: 0.02em;">Start your journey!</span>
               </div>
@@ -1613,36 +1613,36 @@
   <!-- ═══════════ DASHBOARD CONTROLLER JS ═══════════ -->
   <script>
     const DAY_METADATA = [
-      { day: "01", title: "Data Types and Memory", emoji: "🔢", totalCells: 50, category: "basics" },
-      { day: "02", title: "Operators and Control Flow", emoji: "➕", totalCells: 50, category: "basics" },
-      { day: "03", title: "Strings Manipulation", emoji: "📝", totalCells: 40, category: "structures" },
-      { day: "04", title: "Lists & Tuples Essentials", emoji: "📋", totalCells: 40, category: "structures" },
-      { day: "05", title: "Dictionaries & Sets Deep Dive", emoji: "📦", totalCells: 30, category: "structures" },
-      { day: "06", title: "Tuples & Immutability", emoji: "🔐", totalCells: 30, category: "structures" },
-      { day: "07", title: "Sets & Unique Collections", emoji: "🧩", totalCells: 35, category: "structures" },
-      { day: "08", title: "Conditionals & Boolean Logic", emoji: "🛑", totalCells: 25, category: "basics" },
-      { day: "09", title: "Loops & Iteration Control", emoji: "🔄", totalCells: 35, category: "basics" },
-      { day: "10", title: "Functions & Scope", emoji: "📦", totalCells: 15, category: "basics" },
-      { day: "11", title: "Modules & Libraries", emoji: "🛠️", totalCells: 15, category: "basics" },
-      { day: "12", title: "List & Dict Comprehensions", emoji: "⚡", totalCells: 10, category: "structures" },
-      { day: "13", title: "Lambda & Anonymous Functions", emoji: "λ", totalCells: 10, category: "basics" },
-      { day: "14", title: "Exception Handling & Debugging", emoji: "⚠️", totalCells: 15, category: "basics" },
-      { day: "15", title: "File Input & Output", emoji: "💾", totalCells: 15, category: "basics" },
-      { day: "16", title: "OOP: Classes & Objects", emoji: "🏗️", totalCells: 15, category: "basics" },
-      { day: "17", title: "OOP: Advanced Concepts", emoji: "🧬", totalCells: 15, category: "basics" },
-      { day: "18", title: "Regular Expressions (Regex)", emoji: "🔍", totalCells: 15, category: "structures" },
-      { day: "19", title: "Generators & Yield", emoji: "⚙️", totalCells: 15, category: "structures" },
-      { day: "20", title: "SQL Integration & Queries", emoji: "🏢", totalCells: 15, category: "advanced" },
-      { day: "21", title: "NumPy Arrays & Matrices", emoji: "🧮", totalCells: 15, category: "analysis" },
-      { day: "22", title: "Advanced NumPy Math", emoji: "📈", totalCells: 15, category: "analysis" },
-      { day: "23", title: "Pandas Series & DataFrames", emoji: "📊", totalCells: 15, category: "analysis" },
-      { day: "24", title: "Data Selection & Filtering", emoji: "🧹", totalCells: 15, category: "analysis" },
-      { day: "25", title: "Cleaning Messy Data", emoji: "🧼", totalCells: 15, category: "analysis" },
-      { day: "26", title: "Aggregating & Grouping", emoji: "🔄", totalCells: 15, category: "analysis" },
-      { day: "27", title: "Merging & Joining Datasets", emoji: "🔗", totalCells: 15, category: "analysis" },
-      { day: "28", title: "Pandas Series Operations", emoji: "📈", totalCells: 15, category: "analysis" },
-      { day: "29", title: "Data Visualization with Seaborn", emoji: "📉", totalCells: 15, category: "analysis" },
-      { day: "30", title: "Capstone: E-Commerce Funnel Analysis", emoji: "🎓", totalCells: 15, category: "advanced" }
+      { day: "01", title: "Data Types and Memory", emoji: "🔢", totalCells: 90, category: "basics" },
+      { day: "02", title: "Operators and Control Flow", emoji: "➕", totalCells: 90, category: "basics" },
+      { day: "03", title: "Strings Manipulation", emoji: "📝", totalCells: 78, category: "structures" },
+      { day: "04", title: "Lists & Tuples Essentials", emoji: "📋", totalCells: 78, category: "structures" },
+      { day: "05", title: "Dictionaries & Sets Deep Dive", emoji: "📦", totalCells: 66, category: "structures" },
+      { day: "06", title: "Tuples & Immutability", emoji: "🔐", totalCells: 66, category: "structures" },
+      { day: "07", title: "Sets & Unique Collections", emoji: "🧩", totalCells: 72, category: "structures" },
+      { day: "08", title: "Conditionals & Boolean Logic", emoji: "🛑", totalCells: 60, category: "basics" },
+      { day: "09", title: "Loops & Iteration Control", emoji: "🔄", totalCells: 72, category: "basics" },
+      { day: "10", title: "Functions & Scope", emoji: "📦", totalCells: 48, category: "basics" },
+      { day: "11", title: "Modules & Libraries", emoji: "🛠️", totalCells: 48, category: "basics" },
+      { day: "12", title: "List & Dict Comprehensions", emoji: "⚡", totalCells: 42, category: "structures" },
+      { day: "13", title: "Lambda & Anonymous Functions", emoji: "λ", totalCells: 42, category: "basics" },
+      { day: "14", title: "Exception Handling & Debugging", emoji: "⚠️", totalCells: 48, category: "basics" },
+      { day: "15", title: "File Input & Output", emoji: "💾", totalCells: 48, category: "basics" },
+      { day: "16", title: "OOP: Classes & Objects", emoji: "🏗️", totalCells: 48, category: "basics" },
+      { day: "17", title: "OOP: Advanced Concepts", emoji: "🧬", totalCells: 48, category: "basics" },
+      { day: "18", title: "Regular Expressions (Regex)", emoji: "🔍", totalCells: 48, category: "structures" },
+      { day: "19", title: "Generators & Yield", emoji: "⚙️", totalCells: 48, category: "structures" },
+      { day: "20", title: "SQL Integration & Queries", emoji: "🏢", totalCells: 48, category: "advanced" },
+      { day: "21", title: "NumPy Arrays & Matrices", emoji: "🧮", totalCells: 48, category: "analysis" },
+      { day: "22", title: "Advanced NumPy Math", emoji: "📈", totalCells: 48, category: "analysis" },
+      { day: "23", title: "Pandas Series & DataFrames", emoji: "📊", totalCells: 48, category: "analysis" },
+      { day: "24", title: "Data Selection & Filtering", emoji: "🧹", totalCells: 48, category: "analysis" },
+      { day: "25", title: "Cleaning Messy Data", emoji: "🧼", totalCells: 48, category: "analysis" },
+      { day: "26", title: "Aggregating & Grouping", emoji: "🔄", totalCells: 48, category: "analysis" },
+      { day: "27", title: "Merging & Joining Datasets", emoji: "🔗", totalCells: 48, category: "analysis" },
+      { day: "28", title: "Pandas Series Operations", emoji: "📈", totalCells: 48, category: "analysis" },
+      { day: "29", title: "Data Visualization with Seaborn", emoji: "📉", totalCells: 48, category: "analysis" },
+      { day: "30", title: "Capstone: E-Commerce Funnel Analysis", emoji: "🎓", totalCells: 48, category: "advanced" }
     ];
 
     const TOTAL_CHALLENGES = DAY_METADATA.reduce((sum, item) => sum + item.totalCells, 0);
@@ -1734,13 +1734,13 @@
         window.location.replace("landing_v2/index.html");
       });
 
-      // Calculate XP from stats — scaled to 640 real challenges
+      // Calculate XP from stats — scaled to 1668 real challenges
       // Formula: Each challenge = 10 XP | Focus = 200 XP/hr | Streak = 50 XP/day
       // Day completion bonus: 50 XP per fully completed day
       // Category bonus: 500 XP per category (basics/structures/analysis/advanced) fully done
       // Milestone bonuses: 500 (25%), 1500 (50%), 3000 (75%), 7500 (100%)
       const calculateXP = (solved, timeSeconds, streak) => {
-        let solvedXP = solved * 10;       // 640 challenges × 10 XP = 6,400 XP max from challenges
+        let solvedXP = solved * 10;       // 1668 challenges × 10 XP = 16,680 XP max from challenges
         let focusXP = Math.round((timeSeconds / 3600) * 200);  // 200 XP per study hour
         let streakXP = streak * 50;       // 50 XP per streak day
 
@@ -1763,12 +1763,12 @@
           if ((categoryBonusXP_map[cat] || 0) >= catTotals[cat]) catBonusXP += 500;
         }
 
-        // Progress milestone bonuses (based on solved count vs total 640)
+        // Progress milestone bonuses (based on solved count vs total 1668)
         let milestoneXP = 0;
-        if (solved >= 160) milestoneXP += 500;   // 25% milestone
-        if (solved >= 320) milestoneXP += 1500;  // 50% milestone
-        if (solved >= 480) milestoneXP += 3000;  // 75% milestone
-        if (solved >= 640) milestoneXP += 7500;  // 100% graduation bonus
+        if (solved >= 417) milestoneXP += 500;   // 25% milestone
+        if (solved >= 834) milestoneXP += 1500;  // 50% milestone
+        if (solved >= 1251) milestoneXP += 3000; // 75% milestone
+        if (solved >= 1668) milestoneXP += 7500; // 100% graduation bonus
 
         return solvedXP + focusXP + streakXP + dayCompletionXP + catBonusXP + milestoneXP;
       };
@@ -1871,19 +1871,19 @@
         if (streak >= 3) { consistentBadge.classList.remove('locked'); unlockedCount++; }
         else consistentBadge.classList.add('locked');
 
-        // 3. NumPy Ninja — completed 5+ challenges in Day 21 (out of 15)
+        // 3. NumPy Ninja — completed 5+ challenges in Day 21 (out of 48)
         const numpyBadge = document.getElementById('badge-numpy');
         const d21Solved = parseInt(localStorage.getItem('manodemy_day21_solved_count') || '0', 10);
         if (d21Solved >= 5) { numpyBadge.classList.remove('locked'); unlockedCount++; }
         else numpyBadge.classList.add('locked');
 
-        // 4. Data Cleaner — completed 5+ challenges in Day 25 (out of 15)
+        // 4. Data Cleaner — completed 5+ challenges in Day 25 (out of 48)
         const cleanBadge = document.getElementById('badge-datacleaner');
         const d25Solved = parseInt(localStorage.getItem('manodemy_day25_solved_count') || '0', 10);
         if (d25Solved >= 5) { cleanBadge.classList.remove('locked'); unlockedCount++; }
         else cleanBadge.classList.add('locked');
 
-        // 5. Mastery Graduate — completed 10+ challenges in Day 30 (out of 15)
+        // 5. Mastery Graduate — completed 10+ challenges in Day 30 (out of 48)
         const gradBadge = document.getElementById('badge-graduate');
         const d30Solved = parseInt(localStorage.getItem('manodemy_day30_solved_count') || '0', 10);
         if (d30Solved >= 10) { gradBadge.classList.remove('locked'); unlockedCount++; }
@@ -1989,15 +1989,15 @@
         // Update achievements
         updateAchievements(totalSolvedCount, simulatedStreak);
 
-        // Dynamic welcome subtitle — calibrated to 640 total challenges
+        // Dynamic welcome subtitle — calibrated to 1668 total challenges
         const welcomeSub = document.getElementById('welcomeSubtitle');
         if (welcomeSub) {
           let sub;
-          if (totalSolvedCount >= 512) sub = "You're in elite territory! Python mastery is within reach! 🏆"; // 80%+
-          else if (totalSolvedCount >= 320) sub = "Incredible progress — you're clearly built for this! 🔥"; // 50%+
-          else if (totalSolvedCount >= 160) sub = "Quarter-way through the full curriculum! Skills compounding fast! ⚡"; // 25%+
-          else if (totalSolvedCount >= 50) sub = "Solid momentum! Each challenge makes you sharper! 🚀";
-          else if (totalSolvedCount >= 10) sub = "Great start! Consistency is your superpower — keep going! 💪";
+          if (totalSolvedCount >= 1334) sub = "You're in elite territory! Python mastery is within reach! 🏆"; // 80%+
+          else if (totalSolvedCount >= 834) sub = "Incredible progress — you're clearly built for this! 🔥"; // 50%+
+          else if (totalSolvedCount >= 417) sub = "Quarter-way through the full curriculum! Skills compounding fast! ⚡"; // 25%+
+          else if (totalSolvedCount >= 100) sub = "Solid momentum! Each challenge makes you sharper! 🚀";
+          else if (totalSolvedCount >= 30) sub = "Great start! Consistency is your superpower — keep going! 💪";
           else if (totalSolvedCount >= 1) sub = "You've begun the journey — the hardest step is taken! ✨";
           else sub = "Start your Python journey today — every line of code matters! 🌟";
           welcomeSub.textContent = sub;

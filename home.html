@@ -1860,100 +1860,103 @@
           <div id="questBonusText" style="display:none; font-size:12px; color:rgba(203,213,225,0.75); line-height:1.6; padding: 0.65rem 0.9rem; border-radius: 10px; background: rgba(0,230,246,0.04); border: 1px solid rgba(0,230,246,0.12); margin-top: -0.25rem;"></div>
         </div>
 
-        <!-- Coding Score Card -->
-        <div class="success-card" id="xpCard" style="min-height: auto; gap: 0.75rem;">
-          <div class="success-card-header" style="margin-bottom: 0;">
-            <span class="success-card-title">Coding Score</span>
-            <span class="rank-badge rank-badge--cadet" id="rankBadge">Code Cadet</span>
-          </div>
-          <!-- Big Score Number Display -->
-          <div class="coding-score-display">
-            <div class="coding-score-number" id="codingScoreNumber">0</div>
-            <div class="coding-score-sublabel">
-              <span class="coding-score-level" id="rankLevelText">Level 1 (Novice) 🌱</span>
-              <span class="coding-score-progress-text" id="xpNumberText">0 / 1,000 Marks</span>
+        <!-- Hidden Side Panel Modules to Prevent JS Reference Errors -->
+        <div style="display: none !important;">
+          <!-- Coding Score Card -->
+          <div class="success-card" id="xpCard" style="min-height: auto; gap: 0.75rem;">
+            <div class="success-card-header" style="margin-bottom: 0;">
+              <span class="success-card-title">Coding Score</span>
+              <span class="rank-badge rank-badge--cadet" id="rankBadge">Code Cadet</span>
+            </div>
+            <!-- Big Score Number Display -->
+            <div class="coding-score-display">
+              <div class="coding-score-number" id="codingScoreNumber">0</div>
+              <div class="coding-score-sublabel">
+                <span class="coding-score-level" id="rankLevelText">Level 1 (Novice) 🌱</span>
+                <span class="coding-score-progress-text" id="xpNumberText">0 / 1,000 Marks</span>
+              </div>
+            </div>
+            <div class="xp-progress-container" style="margin: 0;">
+              <div class="xp-bar-track">
+                <div class="xp-bar-fill" id="xpBarFill"></div>
+              </div>
+            </div>
+            <div class="rank-summary-stats" style="margin-top: 0; padding-top: 0.75rem;">
+              <div class="rank-stat">
+                <span class="rank-stat-val" id="rankStreakValCard">0</span>
+                <span class="rank-stat-lbl">🔥 Streak</span>
+              </div>
+              <div class="rank-stat">
+                <span class="rank-stat-val" id="rankSolvedValCard">0</span>
+                <span class="rank-stat-lbl">✅ Solved</span>
+              </div>
+              <div class="rank-stat">
+                <span class="rank-stat-val" id="rankFocusValCard">0.0h</span>
+                <span class="rank-stat-lbl">⏱ Focus</span>
+              </div>
             </div>
           </div>
-          <div class="xp-progress-container" style="margin: 0;">
-            <div class="xp-bar-track">
-              <div class="xp-bar-fill" id="xpBarFill"></div>
-            </div>
-          </div>
-          <div class="rank-summary-stats" style="margin-top: 0; padding-top: 0.75rem;">
-            <div class="rank-stat">
-              <span class="rank-stat-val" id="rankStreakValCard">0</span>
-              <span class="rank-stat-lbl">🔥 Streak</span>
-            </div>
-            <div class="rank-stat">
-              <span class="rank-stat-val" id="rankSolvedValCard">0</span>
-              <span class="rank-stat-lbl">✅ Solved</span>
-            </div>
-            <div class="rank-stat">
-              <span class="rank-stat-val" id="rankFocusValCard">0.0h</span>
-              <span class="rank-stat-lbl">⏱ Focus</span>
-            </div>
-          </div>
-        </div>
 
-        <!-- Zen Focus Pomodoro Sprint Card -->
-        <div class="success-card" style="min-height: auto; gap: 1rem;">
-          <div class="success-card-header" style="margin-bottom: 0;">
-            <span class="success-card-title">Zen Focus Pomodoro</span>
-            <span class="focus-status-pill" id="focusStatusPill">IDLE</span>
-          </div>
-          <div class="focus-timer-container">
-            <div class="circular-timer-wrapper">
-              <svg class="timer-svg" viewBox="0 0 100 100">
-                <circle class="timer-bg" cx="50" cy="50" r="45" />
-                <circle class="timer-fill" id="timerCircleFill" cx="50" cy="50" r="45" />
-              </svg>
-              <div class="timer-digits" id="timerDisplay" style="cursor: pointer;" title="Double-click to fast forward sprint for testing">25:00</div>
+          <!-- Zen Focus Pomodoro Sprint Card -->
+          <div class="success-card" style="min-height: auto; gap: 1rem;">
+            <div class="success-card-header" style="margin-bottom: 0;">
+              <span class="success-card-title">Zen Focus Pomodoro</span>
+              <span class="focus-status-pill" id="focusStatusPill">IDLE</span>
             </div>
-            <button class="timer-btn" id="pomodoroBtn">Start Sprint</button>
+            <div class="focus-timer-container">
+              <div class="circular-timer-wrapper">
+                <svg class="timer-svg" viewBox="0 0 100 100">
+                  <circle class="timer-bg" cx="50" cy="50" r="45" />
+                  <circle class="timer-fill" id="timerCircleFill" cx="50" cy="50" r="45" />
+                </svg>
+                <div class="timer-digits" id="timerDisplay" style="cursor: pointer;" title="Double-click to fast forward sprint for testing">25:00</div>
+              </div>
+              <button class="timer-btn" id="pomodoroBtn">Start Sprint</button>
+            </div>
+            <div class="xp-text" style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.75rem; margin: 0;">
+              <span>🎯 Rewards:</span>
+              <span>+0.4h Focus &bull; Heatmap Activity 🔥</span>
+            </div>
           </div>
-          <div class="xp-text" style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.75rem; margin: 0;">
-            <span>🎯 Rewards:</span>
-            <span>+0.4h Focus &bull; Heatmap Activity 🔥</span>
-          </div>
-        </div>
 
-        <!-- Collectible Achievements & Trophies Card -->
-        <div class="success-card" style="min-height: auto; gap: 1rem;">
-          <div class="success-card-header" style="margin-bottom: 0;">
-            <span class="success-card-title">Achievements</span>
-            <span class="badges-unlocked-count" id="unlockedBadgesCount">0 / 5</span>
+          <!-- Collectible Achievements & Trophies Card -->
+          <div class="success-card" style="min-height: auto; gap: 1rem;">
+            <div class="success-card-header" style="margin-bottom: 0;">
+              <span class="success-card-title">Achievements</span>
+              <span class="badges-unlocked-count" id="unlockedBadgesCount">0 / 5</span>
+            </div>
+            <div class="achievements-badges-grid">
+              <div class="achievement-badge locked" id="badge-initiated" title="Initiated: Solved your very first Python challenge! (🚀)">🚀</div>
+              <div class="achievement-badge locked" id="badge-consistent" title="Consistent Coder: Achieved a 3+ day active streak! (🔥)">🔥</div>
+              <div class="achievement-badge locked" id="badge-numpy" title="NumPy Ninja: Started learning numerical arrays and matrices! (🧮)">🧮</div>
+              <div class="achievement-badge locked" id="badge-datacleaner" title="Data Alchemist: Successfully cleaned messy raw datasets! (🧹)">🧹</div>
+              <div class="achievement-badge locked" id="badge-graduate" title="Mastery Graduate: Completed the Day 30 Capstone Funnel! (🎓)">🎓</div>
+            </div>
+            <div class="xp-text" style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.75rem; margin: 0;">
+              <span>Status:</span>
+              <span id="badgeStatusText" style="color: var(--ink-dim); text-align: right; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Hover icons to view details</span>
+            </div>
           </div>
-          <div class="achievements-badges-grid">
-            <div class="achievement-badge locked" id="badge-initiated" title="Initiated: Solved your very first Python challenge! (🚀)">🚀</div>
-            <div class="achievement-badge locked" id="badge-consistent" title="Consistent Coder: Achieved a 3+ day active streak! (🔥)">🔥</div>
-            <div class="achievement-badge locked" id="badge-numpy" title="NumPy Ninja: Started learning numerical arrays and matrices! (🧮)">🧮</div>
-            <div class="achievement-badge locked" id="badge-datacleaner" title="Data Alchemist: Successfully cleaned messy raw datasets! (🧹)">🧹</div>
-            <div class="achievement-badge locked" id="badge-graduate" title="Mastery Graduate: Completed the Day 30 Capstone Funnel! (🎓)">🎓</div>
-          </div>
-          <div class="xp-text" style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.75rem; margin: 0;">
-            <span>Status:</span>
-            <span id="badgeStatusText" style="color: var(--ink-dim); text-align: right; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Hover icons to view details</span>
-          </div>
-        </div>
 
-        <!-- Sleek Contribution Calendar Heatmap -->
-        <div class="glass-card heatmap-card">
-          <div class="heatmap-header">
-            <div class="heatmap-title">
-              Contribution Calendar
-              <span class="heatmap-subtitle">Consistency Logs</span>
+          <!-- Sleek Contribution Calendar Heatmap -->
+          <div class="glass-card heatmap-card">
+            <div class="heatmap-header">
+              <div class="heatmap-title">
+                Contribution Calendar
+                <span class="heatmap-subtitle">Consistency Logs</span>
+              </div>
+              <div class="heatmap-legend">
+                <span>Less</span>
+                <div class="legend-box legend-box--0"></div>
+                <div class="legend-box legend-box--1"></div>
+                <div class="legend-box legend-box--2"></div>
+                <div class="legend-box legend-box--3"></div>
+                <span>More</span>
+              </div>
             </div>
-            <div class="heatmap-legend">
-              <span>Less</span>
-              <div class="legend-box legend-box--0"></div>
-              <div class="legend-box legend-box--1"></div>
-              <div class="legend-box legend-box--2"></div>
-              <div class="legend-box legend-box--3"></div>
-              <span>More</span>
+            <div class="heatmap-grid" id="heatmapGrid">
+              <!-- 28 Cells dynamically rendered -->
             </div>
-          </div>
-          <div class="heatmap-grid" id="heatmapGrid">
-            <!-- 28 Cells dynamically rendered -->
           </div>
         </div>
 

@@ -1408,6 +1408,68 @@
       transform: translateY(-1px);
     }
     
+    .marks-fraction-stack {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      min-width: 85px !important;
+      line-height: 1 !important;
+      cursor: pointer !important;
+      transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+      position: relative !important;
+    }
+    
+    #heroTotalMarks {
+      font-family: 'Outfit', sans-serif !important;
+      font-size: 44px !important;
+      font-weight: 950 !important;
+      color: #fff !important;
+      text-shadow: 0 0 18px rgba(0, 230, 246, 0.45) !important;
+      text-align: center !important;
+      line-height: 1.0 !important;
+      transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    }
+    
+    .marks-fraction-stack .fraction-line {
+      width: 100% !important;
+      height: 2px !important;
+      background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 20%, rgba(255, 255, 255, 0.3) 80%, transparent 100%) !important;
+      margin: 5px 0 !important;
+      transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    }
+    
+    .marks-fraction-stack .fraction-denominator {
+      font-family: 'Outfit', sans-serif !important;
+      font-size: 18px !important;
+      font-weight: 800 !important;
+      color: rgba(255, 255, 255, 0.35) !important;
+      text-align: center !important;
+      letter-spacing: 0.05em !important;
+      transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    }
+    
+    /* Interactive Premium Hover Micro-Animations */
+    .marks-fraction-stack:hover {
+      transform: scale(1.1) translateY(-3px) !important;
+    }
+    
+    .marks-fraction-stack:hover #heroTotalMarks {
+      color: var(--cyan) !important;
+      text-shadow: 0 0 25px rgba(0, 230, 246, 0.8), 0 0 45px rgba(0, 230, 246, 0.4) !important;
+    }
+    
+    .marks-fraction-stack:hover .fraction-line {
+      background: linear-gradient(90deg, transparent 0%, var(--cyan) 20%, var(--purple) 80%, transparent 100%) !important;
+      height: 2.5px !important;
+      box-shadow: 0 0 10px rgba(0, 230, 246, 0.5) !important;
+    }
+    
+    .marks-fraction-stack:hover .fraction-denominator {
+      color: rgba(255, 255, 255, 0.85) !important;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.3) !important;
+      letter-spacing: 0.1em !important;
+    }
+    
     #percentageCircle {
       width: 100px !important;
       height: 100px !important;
@@ -1646,10 +1708,10 @@
               
               <div style="display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-top: 4px;">
                 <!-- Fraction Stacker -->
-                <div style="display: flex; flex-direction: column; align-items: center; min-width: 75px; line-height: 1;">
-                  <span id="heroTotalMarks" style="font-family: 'Outfit', sans-serif; font-size: 34px; font-weight: 900; color: #fff; text-shadow: 0 0 15px rgba(0, 230, 246, 0.45); text-align: center; line-height: 1.1;">0.0</span>
-                  <div style="width: 100%; height: 2px; background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.25) 20%, rgba(255, 255, 255, 0.25) 80%, transparent 100%); margin: 4px 0;"></div>
-                  <span style="font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 800; color: rgba(255, 255, 255, 0.35); text-align: center; letter-spacing: 0.05em;">1000</span>
+                <div class="marks-fraction-stack">
+                  <span id="heroTotalMarks">0.0</span>
+                  <div class="fraction-line"></div>
+                  <span class="fraction-denominator">1000</span>
                 </div>
  
                 <!-- Right Column: Level Label + Circle -->
@@ -1734,7 +1796,6 @@
             <div style="display: flex; justify-content: space-between; align-items: center;">
               <div style="display: flex; align-items: center; gap: 6px;">
                 <span style="font-family: 'Outfit', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.05em; color: rgba(255,255,255,0.4); text-transform: uppercase;">Milestone Timeline</span>
-                <span id="activeTimelineHighlight" style="font-size: 10px; color: var(--cyan); background: rgba(0, 230, 246, 0.06); border: 1px solid rgba(0, 230, 246, 0.12); padding: 1px 6px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; opacity: 0; transition: opacity 0.2s;">Hover a milestone split</span>
               </div>
               <span id="timelineMotivationText" style="font-size: 10px; font-weight: 700; color: var(--cyan); font-family: 'Outfit', sans-serif; text-transform: uppercase; letter-spacing: 0.04em;">Start your journey! 🚀</span>
             </div>
@@ -2393,12 +2454,6 @@
             
             // Hover logic
             segment.addEventListener('mouseenter', (e) => {
-              const highlight = document.getElementById('activeTimelineHighlight');
-              if (highlight) {
-                highlight.textContent = `Day ${item.day}: ${item.title} • ${solvedCount}/${item.totalCells} Solved • ${bestScore.toFixed(1)}/${maxDayXP.toFixed(1)} Marks`;
-                highlight.style.opacity = '1';
-              }
-
               if (label) {
                 label.style.color = '#00e6f6';
                 label.style.transform = 'scale(1.2)';
@@ -2425,11 +2480,6 @@
             });
             
             segment.addEventListener('mouseleave', () => {
-              const highlight = document.getElementById('activeTimelineHighlight');
-              if (highlight) {
-                highlight.style.opacity = '0';
-              }
-
               if (label) {
                 label.style.color = (resumeTarget === `day${item.day}.html`) ? 'var(--cyan)' : 'rgba(255, 255, 255, 0.25)';
                 label.style.transform = 'none';

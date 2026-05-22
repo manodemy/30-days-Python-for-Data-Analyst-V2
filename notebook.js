@@ -51,6 +51,9 @@ const _currentDayId = getDayId();
 if (_currentDayId) {
   safeStorageSet('mano_last_day', _currentDayId.replace('day', 'Day '));
 }
+
+const _dayStarted = _currentDayId ? (safeStorageGet(`manodemy_${_currentDayId}_start_time`) ? true : false) : true;
+
 let pyodide = null;
 let cellCounter = 0;
 const editors = {};  // cellId -> CodeMirror instance
@@ -65,6 +68,7 @@ document.querySelectorAll('.cm-source').forEach(ta => {
     lineNumbers: true,
     indentUnit: 4,
     tabSize: 4,
+    readOnly: _dayStarted ? false : 'nocursor',
     indentWithTabs: false,
     smartIndent: true,
     electricChars: true,
@@ -158,6 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   updateScore(); // Initial score update
+  setupGamifiedMarkingSystem(); // Initialize overlay locks, start buttons, modals and timer lifecycle
 
   // ── COMPREHENSIVE SYNC: TIME + QUESTIONS TO SUPABASE ON PAGE LOAD ──────
   // Pushes BOTH the Active Focus timer AND the solved questions count from
@@ -290,6 +295,260 @@ document.querySelectorAll('.question, .task, .interview').forEach(q => {
 });
 if (totalCells === 0) totalCells = 1; // fallback prevent NaN
 
+// ── GAMIFIED TIMER & SCORING ENGINE ──
+let countdownInterval = null;
+
+function calculateDayXP() {
+  const dayId = getDayId();
+  if (!dayId) return 0;
+  
+  const startTime = parseInt(safeStorageGet(`manodemy_${dayId}_start_time`) || '0', 10);
+  if (!startTime) return 0;
+  
+  const completionTime = parseInt(safeStorageGet(`manodemy_${dayId}_completion_time`) || '0', 10);
+  const now = completionTime ? completionTime : Date.now();
+  
+  const elapsedMs = now - startTime;
+  const elapsedHours = elapsedMs / (3,600,000);
+  
+  // Decay factor: 0.2 + 0.8 * ((48 - t)/48) if t <= 48 else 0.2
+  let timeMultiplier = 0.2;
+  if (elapsedHours <= 48) {
+    timeMultiplier = 0.2 + 0.8 * ((48 - elapsedHours) / 48);
+  }
+  
+  const solved = successfulCells.size;
+  if (totalCells === 0) return 0;
+  
+  const dayXP = 1000 * (solved / 1668) * timeMultiplier;
+  return dayXP;
+}
+
+function startCountdownTicker() {
+  if (countdownInterval) clearInterval(countdownInterval);
+  
+  const updateTicker = () => {
+    const dayId = getDayId();
+    if (!dayId) return;
+    
+    const startTime = parseInt(safeStorageGet(`manodemy_${dayId}_start_time`) || '0', 10);
+    if (!startTime) return;
+    
+    const completionTime = parseInt(safeStorageGet(`manodemy_${dayId}_completion_time`) || '0', 10);
+    const now = completionTime ? completionTime : Date.now();
+    
+    const elapsedMs = now - startTime;
+    const total48HoursMs = 48 * 3600 * 1000;
+    const remainingMs = Math.max(0, total48HoursMs - elapsedMs);
+    
+    // Format countdown
+    const hours = Math.floor(remainingMs / (3600 * 1000));
+    const minutes = Math.floor((remainingMs % (3600 * 1000)) / (60 * 1000));
+    const seconds = Math.floor((remainingMs % (60 * 1000)) / 1000);
+    
+    const timeStr = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    
+    const countdownVal = document.getElementById('countdownVal');
+    if (countdownVal) {
+      if (completionTime) {
+        countdownVal.innerHTML = `${timeStr} <span style="color: var(--emerald, #10B981); font-weight:900; margin-left:4px; filter: drop-shadow(0 0 4px rgba(16,185,129,0.3));">✓ FROZEN</span>`;
+        const timerPill = document.getElementById('navCountdownTimer');
+        if (timerPill) {
+          timerPill.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+          timerPill.style.boxShadow = '0 0 15px rgba(16, 185, 129, 0.15)';
+          const dot = timerPill.querySelector('.timer-dot');
+          if (dot) {
+            dot.style.background = '#10B981';
+            dot.style.boxShadow = '0 0 8px #10B981';
+          }
+        }
+      } else if (remainingMs === 0) {
+        countdownVal.innerHTML = `00:00:00 <span style="color: #f43f5e; font-weight:900; margin-left:4px;">EXPIRED</span>`;
+      } else {
+        countdownVal.textContent = timeStr;
+      }
+    }
+    
+    const dayXP = calculateDayXP();
+    safeStorageSet(`manodemy_${dayId}_xp_earned`, dayXP.toFixed(2));
+    
+    const bestScoreKey = `manodemy_${dayId}_best_score`;
+    const currentBest = parseFloat(safeStorageGet(bestScoreKey) || '0');
+    if (dayXP > currentBest) {
+      safeStorageSet(bestScoreKey, dayXP.toFixed(2));
+    }
+    
+    const xpEarnedEl = document.getElementById('scoreXPEarned');
+    const maxBarXPEl = document.getElementById('scoreMaxXP');
+    const maxDayXP = 1000 * (totalCells / 1668);
+    
+    if (xpEarnedEl) xpEarnedEl.textContent = dayXP.toFixed(1);
+    if (maxBarXPEl) maxBarXPEl.textContent = maxDayXP.toFixed(1);
+  };
+  
+  updateTicker();
+  countdownInterval = setInterval(updateTicker, 1000);
+}
+
+function setupGamifiedMarkingSystem() {
+  const dayId = getDayId();
+  if (!dayId) return;
+  
+  // 1. Inject custom warning modal if not present
+  if (!document.getElementById('startCodingModal')) {
+    const modalDiv = document.createElement('div');
+    modalDiv.id = 'startCodingModal';
+    modalDiv.className = 'custom-warning-modal';
+    modalDiv.innerHTML = `
+      <div class="custom-warning-content">
+         <div class="warning-icon-wrapper">⚠️</div>
+         <h3 class="warning-title">Are you ready to begin?</h3>
+         <p class="warning-text" style="margin: 0.5rem 0; font-weight: 500; font-size: 0.95rem; color: var(--muted, #94a3b8);">clicking this will alter you Score which might impact your certificate</p>
+         <div class="warning-buttons">
+           <button class="warning-btn warning-btn--confirm" id="confirmStartBtn">Yes, Start Coding</button>
+           <button class="warning-btn warning-btn--cancel" id="cancelStartBtn">Cancel</button>
+         </div>
+      </div>
+    `;
+    document.body.appendChild(modalDiv);
+    
+    // Bind buttons
+    document.getElementById('confirmStartBtn').onclick = () => {
+      safeStorageSet(`manodemy_${dayId}_start_time`, Date.now().toString());
+      document.getElementById('startCodingModal').classList.remove('show');
+      setupGamifiedMarkingSystem();
+      Object.values(editors).forEach(cm => cm.setOption('readOnly', false));
+      
+      _notebookWriteActivity('challenge_started', {
+        day_id:   dayId,
+        page_url: window.location.pathname
+      });
+    };
+    
+    document.getElementById('cancelStartBtn').onclick = () => {
+      document.getElementById('startCodingModal').classList.remove('show');
+    };
+  }
+  
+  // 2. Inject XP Earned Row into .nav-score-card
+  const scoreCard = document.querySelector('.nav-score-card');
+  if (scoreCard && !document.getElementById('scoreXPEarned')) {
+    const scoreInfo = scoreCard.querySelector('.score-info');
+    if (scoreInfo) {
+      const xpInfo = document.createElement('div');
+      xpInfo.className = 'score-info';
+      xpInfo.style.marginTop = '4px';
+      xpInfo.style.borderTop = '1px solid rgba(255,255,255,0.06)';
+      xpInfo.style.paddingTop = '4px';
+      xpInfo.innerHTML = `
+        <span class="score-label">XP Earned</span>
+        <span class="score-values"><span id="scoreXPEarned" class="score-highlight" style="color: var(--cyan); text-shadow: 0 0 8px rgba(0,230,246,0.5);">0.0</span> / <span id="scoreMaxXP">0.0</span> XP</span>
+      `;
+      scoreInfo.parentNode.insertBefore(xpInfo, scoreInfo.nextSibling);
+    }
+  }
+  
+  // 3. Check start state
+  const startTime = safeStorageGet(`manodemy_${dayId}_start_time`);
+  if (!startTime) {
+    // LOCKED STATE
+    document.body.classList.add('notebook-locked');
+    
+    // Lock editors
+    Object.values(editors).forEach(cm => cm.setOption('readOnly', 'nocursor'));
+    
+    // Lock overlay
+    const notebook = document.getElementById('notebook');
+    if (notebook && !document.querySelector('.notebook-lock-overlay')) {
+      notebook.classList.add('notebook-container-relative');
+      const lockOverlay = document.createElement('div');
+      lockOverlay.className = 'notebook-lock-overlay';
+      lockOverlay.innerHTML = `
+        <div class="notebook-lock-content">
+          <div class="lock-icon-wrapper">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <h3 class="lock-title">Workbook Locked</h3>
+          <p class="lock-desc">
+            This workbook is currently locked. Click <strong>"Start Coding"</strong> to activate your 48-hour challenge and unlock all python environments.
+          </p>
+          <button class="lock-action-btn" id="lockOverlayStartBtn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            Start Coding
+          </button>
+        </div>
+      `;
+      notebook.insertBefore(lockOverlay, notebook.firstChild);
+    }
+    
+    // Nav start coding button
+    const navControls = document.querySelector('.nav-controls');
+    if (navControls && !document.getElementById('navStartCodingBtn')) {
+      const startBtn = document.createElement('button');
+      startBtn.id = 'navStartCodingBtn';
+      startBtn.className = 'start-coding-btn';
+      startBtn.innerHTML = `
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="margin-right:2px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+        Start Coding
+      `;
+      navControls.insertBefore(startBtn, navControls.firstChild);
+    }
+    
+    // Bind start clicks
+    const showWarningModal = () => {
+      const modal = document.getElementById('startCodingModal');
+      if (modal) modal.classList.add('show');
+    };
+    
+    const navBtn = document.getElementById('navStartCodingBtn');
+    if (navBtn) navBtn.onclick = showWarningModal;
+    
+    const overlayBtn = document.getElementById('lockOverlayStartBtn');
+    if (overlayBtn) overlayBtn.onclick = showWarningModal;
+  } else {
+    // STARTED STATE
+    document.body.classList.remove('notebook-locked');
+    
+    // Remove lock overlay
+    const overlay = document.querySelector('.notebook-lock-overlay');
+    if (overlay) overlay.remove();
+    
+    // Ensure editors unlocked
+    Object.values(editors).forEach(cm => cm.setOption('readOnly', false));
+    
+    // Remove start button, show live timer
+    const navBtn = document.getElementById('navStartCodingBtn');
+    if (navBtn) navBtn.remove();
+    
+    const navControls = document.querySelector('.nav-controls');
+    if (navControls && !document.getElementById('navCountdownTimer')) {
+      const timerPill = document.createElement('div');
+      timerPill.id = 'navCountdownTimer';
+      timerPill.style.display = 'inline-flex';
+      timerPill.style.alignItems = 'center';
+      timerPill.style.gap = '8px';
+      timerPill.style.padding = '6px 14px';
+      timerPill.style.borderRadius = '50px';
+      timerPill.style.background = 'rgba(11, 15, 25, 0.6)';
+      timerPill.style.border = '1px solid rgba(244, 63, 94, 0.3)';
+      timerPill.style.boxShadow = '0 0 15px rgba(244, 63, 94, 0.1)';
+      timerPill.style.fontFamily = "'JetBrains Mono', monospace";
+      timerPill.style.fontSize = '0.8rem';
+      timerPill.style.fontWeight = '700';
+      timerPill.style.color = '#fff';
+      timerPill.style.marginRight = '8px';
+      timerPill.innerHTML = `
+        <span class="timer-dot" style="width: 8px; height: 8px; background: #f43f5e; border-radius: 50%; box-shadow: 0 0 8px #f43f5e; display: inline-block; animation: pulse 1.5s infinite;"></span>
+        <span class="timer-label" style="font-size: 0.75rem; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.05em;">Timer:</span>
+        <span class="timer-val" id="countdownVal">48:00:00</span>
+      `;
+      navControls.insertBefore(timerPill, navControls.firstChild);
+    }
+    
+    startCountdownTicker();
+  }
+}
+
 function updateScore() {
   const solvedEl = document.getElementById('scoreSolved');
   const totalEl = document.getElementById('scoreTotal');
@@ -313,6 +572,36 @@ function updateScore() {
   const dayId = getDayId();
   if (dayId) {
     safeStorageSet(`manodemy_${dayId}_solved_count`, successfulCells.size.toString());
+    
+    // Completion freeze
+    const solved = successfulCells.size;
+    if (solved === totalCells && totalCells > 0) {
+      if (!safeStorageGet(`manodemy_${dayId}_completion_time`)) {
+        safeStorageSet(`manodemy_${dayId}_completion_time`, Date.now().toString());
+      }
+    } else {
+      try {
+        localStorage.removeItem(`manodemy_${dayId}_completion_time`);
+        sessionStorage.removeItem(`manodemy_${dayId}_completion_time`);
+      } catch(e) {}
+    }
+    
+    // Recalculate Day XP and update XP score elements
+    const dayXP = calculateDayXP();
+    safeStorageSet(`manodemy_${dayId}_xp_earned`, dayXP.toFixed(2));
+    
+    const bestScoreKey = `manodemy_${dayId}_best_score`;
+    const currentBest = parseFloat(safeStorageGet(bestScoreKey) || '0');
+    if (dayXP > currentBest) {
+      safeStorageSet(bestScoreKey, dayXP.toFixed(2));
+    }
+    
+    const xpEarnedEl = document.getElementById('scoreXPEarned');
+    const maxBarXPEl = document.getElementById('scoreMaxXP');
+    const maxDayXP = 1000 * (totalCells / 1668);
+    
+    if (xpEarnedEl) xpEarnedEl.textContent = dayXP.toFixed(1);
+    if (maxBarXPEl) maxBarXPEl.textContent = maxDayXP.toFixed(1);
   }
 
   // Sync Green Tick UI for Question Boxes

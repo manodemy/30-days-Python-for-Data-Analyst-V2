@@ -1,0 +1,26 @@
+{
+  "timestamp": "2026-05-22T17:08:02.064926",
+  "dry_run": false,
+  "users": {
+    "total_legacy": 14,
+    "migrated": 0,
+    "skipped_existing": 14,
+    "failed": 0
+  },
+  "profiles": {
+    "total_legacy": 14,
+    "upserted": 14
+  },
+  "orders": {
+    "total_legacy": 36,
+    "upserted": 36
+  },
+  "payments": {
+    "total_legacy": 3,
+    "upserted": 3
+  },
+  "enrollments": {
+    "total_legacy": 3,
+    "upserted": 3
+  }
+}

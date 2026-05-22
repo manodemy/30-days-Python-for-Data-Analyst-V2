@@ -1380,6 +1380,7 @@
       box-shadow: 0 24px 50px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.08), inset 0 0 20px rgba(0, 230, 246, 0.03) !important;
       backdrop-filter: blur(25px) !important;
       -webkit-backdrop-filter: blur(25px) !important;
+      overflow: visible !important;
     }
     
     #headerRankLevelText {
@@ -2472,7 +2473,18 @@
                 // Calculate coordinates relative to parent .timeline-wrapper
                 const wrapperRect = timelineTrack.parentElement.getBoundingClientRect();
                 const segmentRect = segment.getBoundingClientRect();
-                const leftPos = segmentRect.left - wrapperRect.left + (segmentRect.width / 2);
+                let leftPos = segmentRect.left - wrapperRect.left + (segmentRect.width / 2);
+                
+                // Keep tooltip inside bounds to prevent cropping at start/end dates
+                const tooltipWidth = tooltip.offsetWidth || 180;
+                const minLeft = (tooltipWidth / 2) + 8;
+                const maxLeft = wrapperRect.width - (tooltipWidth / 2) - 8;
+                
+                if (leftPos < minLeft) {
+                  leftPos = minLeft;
+                } else if (leftPos > maxLeft) {
+                  leftPos = maxLeft;
+                }
                 
                 tooltip.style.left = `${leftPos}px`;
                 tooltip.style.opacity = '1';

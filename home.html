@@ -1893,6 +1893,18 @@
 
       // Recalculator Core
       const recalculateStatsAndReload = () => {
+        // One-time automatic migration of historical solved counts to best scores
+        DAY_METADATA.forEach(d => {
+          const bestScoreKey = `manodemy_day${d.day}_best_score`;
+          const existingBest = parseFloat(localStorage.getItem(bestScoreKey) || '0');
+          const solvedCount = parseInt(localStorage.getItem(`manodemy_day${d.day}_solved_count`) || '0', 10);
+          
+          if (solvedCount > 0 && existingBest === 0) {
+            const maxDayXP = 1000 * (solvedCount / 1668);
+            localStorage.setItem(bestScoreKey, maxDayXP.toFixed(2));
+          }
+        });
+
         let totalSolvedCount = 0;
         let totalTimeSpentSeconds = 0;
         

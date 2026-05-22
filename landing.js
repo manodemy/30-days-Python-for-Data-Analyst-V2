@@ -137,8 +137,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ═══════ SUPABASE CLIENT ═══════
-const SUPABASE_URL = 'https://gvhnwmuyrwissgkumeif.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_x0gyXkcrCSaxSG23Zyi7qA__v1sBgOq';
+const SUPABASE_URL = 'https://erqoyvbuhmkyvcqgwcbz.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_ZWfeHvv41ErWTcx2BtfdIQ_jw1EO4_0';
 
 // Payment gateway publishable keys (safe for frontend)
 const RAZORPAY_KEY_ID = 'rzp_live_SnbHZn5Q7rYNAP';   // Live Razorpay key

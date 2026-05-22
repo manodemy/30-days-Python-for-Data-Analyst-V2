@@ -7,8 +7,8 @@ ctx = ssl.create_default_context()
 ctx.check_hostname = False
 ctx.verify_mode = ssl.CERT_NONE
 
-SUPA_URL = "https://gvhnwmuyrwissgkumeif.supabase.co"
-ANON_KEY = "sb_publishable_x0gyXkcrCSaxSG23Zyi7qA__v1sBgOq"
+SUPA_URL = "https://erqoyvbuhmkyvcqgwcbz.supabase.co"
+ANON_KEY = "sb_publishable_ZWfeHvv41ErWTcx2BtfdIQ_jw1EO4_0"
 
 def api_insert(extra_headers={}):
     headers = {

@@ -885,13 +885,36 @@
           
           <!-- Right Column: Features and Guarantee Checkout -->
           <div class="pricing-right">
-            <ul class="pricing-features">
-              <li><span class="feat-check">&#x2714;</span> 30 Unlocked Day Notebooks</li>
-              <li><span class="feat-check">&#x2714;</span> 750+ Practice Interview Questions</li>
-              <li><span class="feat-check">&#x2714;</span> Inline evaluation and test runners</li>
-            </ul>
+            <div class="pricing-details-view" id="pricingDetailsView">
+              <ul class="pricing-features">
+                <li><span class="feat-check">&#x2714;</span> 30 Unlocked Day Notebooks</li>
+                <li><span class="feat-check">&#x2714;</span> 750+ Practice Interview Questions</li>
+                <li><span class="feat-check">&#x2714;</span> Inline evaluation and test runners</li>
+              </ul>
+              
+              <button class="btn-gold btn-gold--filled" style="width:100%; border:none; display:flex;" id="btnPricingBuy" type="button">&#x1F680; Buy Full Masterclass &mdash; Unlocks Instantly</button>
+            </div>
             
-            <a href="#buy" class="btn-gold btn-gold--filled" style="width:100%;" data-cta="buy">&#x1F680; Buy Full Masterclass &mdash; Unlocks Instantly</a>
+            <div class="pricing-checkout-view" id="pricingCheckoutView" style="display: none;">
+              <div class="checkout-back-link" id="checkoutBackToDetails">&#x2190; Back to details</div>
+              <div class="checkout-header">
+                <h3>Complete Checkout</h3>
+                <p class="checkout-subtitle">One-time payment &bull; Lifetime access</p>
+              </div>
+              <div class="checkout-price-summary">
+                <span class="checkout-amount" id="checkoutAmount">$19</span>
+                <span class="checkout-original" id="checkoutOriginal">$69</span>
+              </div>
+              <div class="coupon-section">
+                <input type="text" id="couponInput" placeholder="Coupon code (optional)" maxlength="20">
+                <button class="coupon-apply" id="couponApply" type="button">Apply</button>
+              </div>
+              <div class="checkout-divider"><span>Payment Methods</span></div>
+              <div class="gateway-buttons" id="gatewayButtons">
+                <!-- Populated dynamically based on geo -->
+              </div>
+              <div class="checkout-spinner" id="checkoutSpinner"></div>
+            </div>
             
             <div class="guarantee">
               <span class="shield">&#x1F6E1;</span>
@@ -1113,11 +1136,59 @@
     </div>
   </div>
 
+  <!-- Glassmorphic Auth Modal Overlay -->
+  <div class="auth-modal-overlay" id="authModal">
+    <div class="auth-modal-card">
+      <button class="btn-close-auth-modal" id="btnCloseAuthModal" aria-label="Close modal">&times;</button>
+      <div class="auth-modal-header">
+        <h3 id="authTitle">Join the Challenge</h3>
+        <p id="authSubtitle">Sign in to start learning</p>
+      </div>
+      
+      <div class="auth-message-box" id="authMessage"></div>
+      
+      <div class="social-auth-section" id="socialAuthSection">
+        <button type="button" class="google-signin-btn" id="authGoogleBtn">
+          <svg viewBox="0 0 48 48" style="width: 18px; height: 18px; margin-right: 8px;">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.5 24c0-1.61-.15-3.16-.42-4.67H24v8.86h12.7c-.55 2.87-2.17 5.3-4.61 6.94l7.19 5.56c4.21-3.88 6.64-9.59 6.64-16.69z"/>
+            <path fill="#FBBC05" d="M10.54 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.98-6.19z"/>
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.19-5.56c-2 1.34-4.55 2.13-7.7 2.13-6.26 0-11.57-4.22-13.46-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+          </svg>
+          Continue with Google
+        </button>
+        <div class="auth-divider" id="authDivider"><span>OR EMAIL</span></div>
+      </div>
+      
+      <form class="auth-form" id="authForm" onsubmit="return false;">
+        <div class="auth-input-group" id="authNameGroup" style="display: none;">
+          <input type="text" id="authName" class="auth-input" placeholder="Full Name">
+        </div>
+        <div class="auth-input-group">
+          <input type="email" id="authEmail" class="auth-input" placeholder="name@example.com" required>
+        </div>
+        <div class="auth-input-group" id="authPasswordGroup">
+          <input type="password" id="authPassword" class="auth-input" placeholder="••••••••">
+        </div>
+        <div class="auth-input-group" id="authConfirmGroup" style="display: none;">
+          <input type="password" id="authConfirmPassword" class="auth-input" placeholder="Confirm Password">
+        </div>
+        <button type="submit" class="btn-auth-submit" id="btnAuthSubmit">Login</button>
+      </form>
+      
+      <div class="auth-footer-links">
+        <a href="#" id="linkForgot">Forgot password?</a>
+        <a href="#" id="linkSignup">Create Account</a>
+        <a href="#" id="linkBackToLogin" style="display: none;">&larr; Back to Login</a>
+      </div>
+    </div>
+  </div>
+
   <!-- Supabase Config Context Injection -->
   <script>
     window.MANODEMY_CONFIG = {
-      SUPA_URL: "https://gvhnwmuyrwissgkumeif.supabase.co",
-      SUPA_KEY: "sb_publishable_x0gyXkcrCSaxSG23Zyi7qA__v1sBgOq"
+      SUPA_URL: "https://erqoyvbuhmkyvcqgwcbz.supabase.co",
+      SUPA_KEY: "sb_publishable_ZWfeHvv41ErWTcx2BtfdIQ_jw1EO4_0"
     };
   </script>
 

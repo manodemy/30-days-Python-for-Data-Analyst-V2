@@ -9,8 +9,8 @@ const TOAST_DURATION_MS = 6000;
 // Supabase client initialize (assumes loaded in head)
 let sbClient = null;
 if (typeof window.supabase !== 'undefined') {
-  const SUPA_URL = 'https://gvhnwmuyrwissgkumeif.supabase.co';
-  const SUPA_KEY = 'sb_publishable_x0gyXkcrCSaxSG23Zyi7qA__v1sBgOq';
+  const SUPA_URL = 'https://erqoyvbuhmkyvcqgwcbz.supabase.co';
+  const SUPA_KEY = 'sb_publishable_ZWfeHvv41ErWTcx2BtfdIQ_jw1EO4_0';
   sbClient = window.supabase.createClient(SUPA_URL, SUPA_KEY);
 }
 

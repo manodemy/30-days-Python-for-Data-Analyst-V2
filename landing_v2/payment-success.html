@@ -95,8 +95,8 @@
     }
 
     // Verify enrollment with Supabase
-    const SUPA_URL = 'https://gvhnwmuyrwissgkumeif.supabase.co';
-    const SUPA_KEY = 'sb_publishable_x0gyXkcrCSaxSG23Zyi7qA__v1sBgOq';
+    const SUPA_URL = 'https://erqoyvbuhmkyvcqgwcbz.supabase.co';
+    const SUPA_KEY = 'sb_publishable_ZWfeHvv41ErWTcx2BtfdIQ_jw1EO4_0';
     try {
       const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
       sb.rpc('check_enrollment', { p_course_id: 'python-30day' }).then(({ data }) => {

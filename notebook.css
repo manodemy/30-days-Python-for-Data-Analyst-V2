@@ -917,12 +917,13 @@ body.practice-mode-active .nb-title::after {
 }
 
 /* Custom Stunning Dialog Modal */
+/* Custom Stunning Dialog Modal (Workbook Locked) */
 .custom-warning-modal {
   position: fixed;
   inset: 0;
-  background: rgba(11, 15, 25, 0.85);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(11, 15, 25, 0.82);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
   z-index: 10000;
   display: flex;
   align-items: center;
@@ -935,96 +936,151 @@ body.practice-mode-active .nb-title::after {
   opacity: 1;
   visibility: visible;
 }
-.custom-warning-content {
-  background: linear-gradient(145deg, #161e31, #0f1523);
-  border: 1px solid rgba(244, 63, 94, 0.3);
-  border-radius: 20px;
-  padding: 2.5rem;
+.workbook-locked-card {
+  background: linear-gradient(145deg, #0f1424, #080a12);
+  border: 1px solid rgba(0, 230, 246, 0.22);
+  border-radius: 28px;
+  padding: 3rem 2rem 2.5rem 2rem;
   max-width: 480px;
   width: 90%;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(244, 63, 94, 0.15);
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.8), 
+    0 0 45px rgba(0, 230, 246, 0.08),
+    inset 0 1px 1px rgba(255, 255, 255, 0.05);
   text-align: center;
   transform: scale(0.9);
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1.5rem;
 }
-.custom-warning-modal.show .custom-warning-content {
+.custom-warning-modal.show .workbook-locked-card {
   transform: scale(1);
 }
-.warning-icon-wrapper {
-  width: 64px;
-  height: 64px;
+.lock-icon-circle {
+  width: 76px;
+  height: 76px;
   border-radius: 50%;
-  background: rgba(244, 63, 94, 0.1);
-  border: 1px solid rgba(244, 63, 94, 0.3);
+  border: 1.5px solid rgba(0, 230, 246, 0.35);
+  background: rgba(0, 230, 246, 0.04);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--rose);
-  box-shadow: 0 0 20px rgba(244, 63, 94, 0.2);
-  font-size: 1.80rem;
+  color: #00E6F6;
+  box-shadow: 0 0 25px rgba(0, 230, 246, 0.15);
+  margin-bottom: 0.2rem;
 }
-.warning-title {
-  font: 800 1.4rem var(--font-h);
+.lock-svg {
+  width: 30px;
+  height: 30px;
+  filter: drop-shadow(0 0 6px rgba(0, 230, 246, 0.5));
+}
+.lock-title {
+  font: 800 1.6rem var(--font-h);
   color: #fff;
+  letter-spacing: 0.02em;
+  margin: 0;
 }
-.warning-text {
-  font: 400 0.92rem/1.6 var(--font-b);
-  color: var(--muted);
+.lock-desc {
+  font: 400 0.95rem/1.65 var(--font-b);
+  color: #94a3b8;
+  max-width: 380px;
+  margin: 0;
 }
-.warning-highlight {
-  color: var(--rose);
+.highlight-cyan {
+  color: #00E6F6;
   font-weight: 700;
+  text-shadow: 0 0 8px rgba(0, 230, 246, 0.3);
 }
-.warning-buttons {
+.warning-text-container {
+  background: rgba(244, 63, 94, 0.06);
+  border: 1px dashed rgba(244, 63, 94, 0.22);
+  border-radius: 12px;
+  padding: 10px 16px;
+  width: 100%;
+}
+.warning-alert-text {
+  color: #f43f5e;
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.45;
+  margin: 0;
+  text-align: center;
+}
+.modal-actions {
   display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 12px;
   width: 100%;
-  margin-top: 0.5rem;
 }
-.warning-btn {
-  flex: 1;
-  padding: 10px 16px;
+.improve-score-grad-btn {
+  background: linear-gradient(90deg, #00D6F6 0%, #8B5CF6 100%);
+  color: #0b0f19 !important;
+  font: 900 0.9rem var(--font-h) !important;
+  border: none;
   border-radius: 50px;
-  font: 700 0.85rem var(--font-h);
+  padding: 12px 32px;
   cursor: pointer;
-  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  box-shadow: 
+    0 4px 15px rgba(0, 230, 246, 0.35), 
+    inset 0 1px 2px rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.improve-score-grad-btn:hover {
+  transform: scale(1.03);
+  box-shadow: 
+    0 6px 25px rgba(0, 230, 246, 0.6), 
+    0 0 15px rgba(139, 92, 246, 0.3),
+    inset 0 1px 2px rgba(255, 255, 255, 0.5);
+  background: linear-gradient(90deg, #00f5ff 0%, #a855f7 100%);
+}
+.improve-score-grad-btn:active {
+  transform: scale(0.98);
+}
+.play-icon-svg {
+  width: 14px;
+  height: 14px;
+  fill: #0b0f19;
+  stroke: #0b0f19;
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+}
+.modal-close-cancel-btn {
+  background: none;
+  border: none;
+  color: #64748b;
+  font: 600 0.85rem var(--font-h);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 6px 12px;
 }
-.warning-btn--confirm {
-  background: linear-gradient(135deg, #f43f5e, #be123c);
-  color: #fff;
-  border: none;
-  box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3);
-}
-.warning-btn--confirm:hover {
-  transform: scale(1.03);
-  box-shadow: 0 6px 18px rgba(244, 63, 94, 0.5);
-  background: linear-gradient(135deg, #ff4d6d, #e11d48);
-}
-.warning-btn--cancel {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text);
-  border: 1px solid var(--border);
-}
-.warning-btn--cancel:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+.modal-close-cancel-btn:hover {
+  color: #cbd5e1;
 }
 
-/* Notebook Locked Blur & Scroll Control */
+/* Notebook Locked State Settings */
 body.notebook-locked {
-  overflow: hidden !important;
+  /* No full blur or scroll lock on page load, let student read theory and see cells! */
 }
-body.notebook-locked .notebook > *:not(.notebook-lock-overlay) {
-  filter: blur(10px) grayscale(40%);
+
+/* Modal Open blur effects */
+body.modal-open #notebook,
+body.modal-open header,
+body.modal-open nav {
+  filter: blur(8px) grayscale(20%);
   pointer-events: none !important;
-  opacity: 0.3;
-  transition: filter 0.5s ease, opacity 0.5s ease;
+  transition: filter 0.3s ease;
 }
 
 

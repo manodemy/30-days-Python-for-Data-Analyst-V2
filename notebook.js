@@ -130,6 +130,28 @@ document.querySelectorAll('.cm-source').forEach(ta => {
   });
   cm.setSize(null, null);  // auto height
   editors[cellId] = cm;
+
+  // Custom click/focus capture for locked state
+  cm.on('focus', () => {
+    if (document.body.classList.contains('notebook-locked')) {
+      const modal = document.getElementById('startCodingModal');
+      if (modal) {
+        modal.classList.add('show');
+        document.body.classList.add('modal-open');
+      }
+      cm.blur();
+    }
+  });
+
+  cm.on('mousedown', () => {
+    if (document.body.classList.contains('notebook-locked')) {
+      const modal = document.getElementById('startCodingModal');
+      if (modal) {
+        modal.classList.add('show');
+        document.body.classList.add('modal-open');
+      }
+    }
+  });
   
   // Attach debounced auto-save to CodeMirror
   const dayId = getDayId();
@@ -400,22 +422,48 @@ function setupGamifiedMarkingSystem() {
     modalDiv.id = 'startCodingModal';
     modalDiv.className = 'custom-warning-modal';
     modalDiv.innerHTML = `
-      <div class="custom-warning-content">
-         <div class="warning-icon-wrapper">⚠️</div>
-         <h3 class="warning-title">Are you ready to begin?</h3>
-         <p class="warning-text" style="margin: 0.5rem 0; font-weight: 500; font-size: 0.95rem; color: var(--muted, #94a3b8);">clicking this will alter you Score which might impact your certificate</p>
-         <div class="warning-buttons">
-           <button class="warning-btn warning-btn--confirm" id="confirmStartBtn">Yes, Start Coding</button>
-           <button class="warning-btn warning-btn--cancel" id="cancelStartBtn">Cancel</button>
+      <div class="workbook-locked-card">
+         <div class="lock-icon-circle">
+           <svg class="lock-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+             <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+           </svg>
+         </div>
+         <h3 class="lock-title">Workbook Locked</h3>
+         <p class="lock-desc">
+           This workbook is currently locked. Click <span class="highlight-cyan">"Improve score"</span> to activate your 48-hour challenge and unlock all python environments.
+         </p>
+         <div class="warning-text-container">
+           <p class="warning-alert-text">⚠️ WARNING: Clicking this will alter your Score, which might impact your certificate!</p>
+         </div>
+         <div class="modal-actions">
+           <button class="improve-score-grad-btn" id="confirmStartBtn">
+             <svg class="play-icon-svg" viewBox="0 0 24 24" fill="currentColor">
+               <polygon points="5 3 19 12 5 21 5 3"/>
+             </svg>
+             IMPROVE SCORE
+           </button>
+           <button class="modal-close-cancel-btn" id="cancelStartBtn">
+             Cancel
+           </button>
          </div>
       </div>
     `;
     document.body.appendChild(modalDiv);
     
+    // Bind click outside
+    modalDiv.onclick = (e) => {
+      if (e.target === modalDiv) {
+        modalDiv.classList.remove('show');
+        document.body.classList.remove('modal-open');
+      }
+    };
+    
     // Bind buttons
     document.getElementById('confirmStartBtn').onclick = () => {
       safeStorageSet(`manodemy_${dayId}_start_time`, Date.now().toString());
       document.getElementById('startCodingModal').classList.remove('show');
+      document.body.classList.remove('modal-open');
       setupGamifiedMarkingSystem();
       Object.values(editors).forEach(cm => cm.setOption('readOnly', false));
       
@@ -427,6 +475,7 @@ function setupGamifiedMarkingSystem() {
     
     document.getElementById('cancelStartBtn').onclick = () => {
       document.getElementById('startCodingModal').classList.remove('show');
+      document.body.classList.remove('modal-open');
     };
   }
   
@@ -457,31 +506,7 @@ function setupGamifiedMarkingSystem() {
     // Lock editors
     Object.values(editors).forEach(cm => cm.setOption('readOnly', 'nocursor'));
     
-    // Lock overlay
-    const notebook = document.getElementById('notebook');
-    if (notebook && !document.querySelector('.notebook-lock-overlay')) {
-      notebook.classList.add('notebook-container-relative');
-      const lockOverlay = document.createElement('div');
-      lockOverlay.className = 'notebook-lock-overlay';
-      lockOverlay.innerHTML = `
-        <div class="notebook-lock-content">
-          <div class="lock-icon-wrapper">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          </div>
-          <h3 class="lock-title">Workbook Locked</h3>
-          <p class="lock-desc">
-            This workbook is currently locked. Click <strong>"Start Coding"</strong> to activate your 48-hour challenge and unlock all python environments.
-          </p>
-          <button class="lock-action-btn" id="lockOverlayStartBtn">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-            Start Coding
-          </button>
-        </div>
-      `;
-      notebook.insertBefore(lockOverlay, notebook.firstChild);
-    }
-    
-    // Nav start coding button
+    // Nav start coding button renamed to "Improve score"
     const navControls = document.querySelector('.nav-controls');
     if (navControls && !document.getElementById('navStartCodingBtn')) {
       const startBtn = document.createElement('button');
@@ -489,7 +514,7 @@ function setupGamifiedMarkingSystem() {
       startBtn.className = 'start-coding-btn';
       startBtn.innerHTML = `
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="margin-right:2px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-        Start Coding
+        Improve score
       `;
       navControls.insertBefore(startBtn, navControls.firstChild);
     }
@@ -497,21 +522,17 @@ function setupGamifiedMarkingSystem() {
     // Bind start clicks
     const showWarningModal = () => {
       const modal = document.getElementById('startCodingModal');
-      if (modal) modal.classList.add('show');
+      if (modal) {
+        modal.classList.add('show');
+        document.body.classList.add('modal-open');
+      }
     };
     
     const navBtn = document.getElementById('navStartCodingBtn');
     if (navBtn) navBtn.onclick = showWarningModal;
-    
-    const overlayBtn = document.getElementById('lockOverlayStartBtn');
-    if (overlayBtn) overlayBtn.onclick = showWarningModal;
   } else {
     // STARTED STATE
     document.body.classList.remove('notebook-locked');
-    
-    // Remove lock overlay
-    const overlay = document.querySelector('.notebook-lock-overlay');
-    if (overlay) overlay.remove();
     
     // Ensure editors unlocked
     Object.values(editors).forEach(cm => cm.setOption('readOnly', false));
@@ -645,6 +666,14 @@ function updateScore() {
 
 // ── RUN CELL ──
 async function runCell(cellId) {
+  if (document.body.classList.contains('notebook-locked')) {
+    const modal = document.getElementById('startCodingModal');
+    if (modal) {
+      modal.classList.add('show');
+      document.body.classList.add('modal-open');
+    }
+    return;
+  }
   if (!pyodide) { await initPyodide(); if (!pyodide) return; }
   const cell = document.getElementById(cellId);
   const cm = editors[cellId];

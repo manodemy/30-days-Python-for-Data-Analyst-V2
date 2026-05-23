@@ -2,6 +2,7 @@
 -- MANODEMY V2 — COMPLETE RESET & UNIFIED SCHEMA DEPLOYMENT
 -- Run this in your Supabase SQL Editor to wipe manual table drafts,
 -- create clean reviews system, and grant proper API permissions.
+-- Includes a SECURITY DEFINER helper to prevent infinite RLS recursion.
 -- ═══════════════════════════════════════════════════════════════
 
 -- 1. DROP EXISTING TABLE DRAFTS TO START FRESH
@@ -50,7 +51,39 @@ CREATE TABLE public.review_votes (
 ALTER TABLE public.reviews ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.review_votes ENABLE ROW LEVEL SECURITY;
 
--- 6. DEFINE ALL REGULAR & ADMIN ACCESS CONTROL POLICIES
+-- 6. CREATE HELPER FUNCTION TO PREVENT INFINITE RECURSION IN RLS POLICIES
+-- Runs as SECURITY DEFINER to bypass RLS checks on profiles table
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS BOOLEAN AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.profiles
+    WHERE id = auth.uid() AND role = 'admin'
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 7. RE-DEPLOY PROFILES POLICIES TO PREVENT RECURSION
+DROP POLICY IF EXISTS "Users can read own profile" ON public.profiles;
+DROP POLICY IF EXISTS "Users can update own profile" ON public.profiles;
+DROP POLICY IF EXISTS "Admins can select all profiles" ON public.profiles;
+DROP POLICY IF EXISTS "Admins can update all profiles" ON public.profiles;
+
+CREATE POLICY "Users can read own profile" ON public.profiles
+  FOR SELECT USING (auth.uid() = id OR public.is_admin() OR auth.role() = 'service_role');
+
+CREATE POLICY "Users can update own profile" ON public.profiles
+  FOR UPDATE USING (auth.uid() = id OR public.is_admin() OR auth.role() = 'service_role');
+
+-- 8. DEFINE ALL REVIEWS & VOTES ACCESS CONTROL POLICIES
+DROP POLICY IF EXISTS "Anyone can read approved reviews" ON public.reviews;
+DROP POLICY IF EXISTS "Anyone can insert reviews" ON public.reviews;
+DROP POLICY IF EXISTS "Anyone can update reviews" ON public.reviews;
+DROP POLICY IF EXISTS "Service role full access on reviews" ON public.reviews;
+DROP POLICY IF EXISTS "Admins can select all reviews" ON public.reviews;
+DROP POLICY IF EXISTS "Admins can update reviews" ON public.reviews;
+DROP POLICY IF EXISTS "Admins can delete reviews" ON public.reviews;
+DROP POLICY IF EXISTS "Anyone can read and write votes" ON public.review_votes;
 
 -- Read: Anyone can read approved reviews
 CREATE POLICY "Anyone can read approved reviews" 
@@ -68,39 +101,21 @@ CREATE POLICY "Anyone can update reviews"
   USING (true);
 
 -- Delete & Admin capabilities:
-CREATE POLICY "Admins can select all reviews"
-  ON public.reviews FOR SELECT
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE id = auth.uid() AND role = 'admin'
-    )
-  );
+CREATE POLICY "Admins can select all reviews" ON public.reviews
+  FOR SELECT USING (public.is_admin());
 
-CREATE POLICY "Admins can update reviews"
-  ON public.reviews FOR UPDATE
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE id = auth.uid() AND role = 'admin'
-    )
-  );
+CREATE POLICY "Admins can update reviews" ON public.reviews
+  FOR UPDATE USING (public.is_admin());
 
-CREATE POLICY "Admins can delete reviews"
-  ON public.reviews FOR DELETE
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE id = auth.uid() AND role = 'admin'
-    )
-  );
+CREATE POLICY "Admins can delete reviews" ON public.reviews
+  FOR DELETE USING (public.is_admin());
 
 -- Votes: Allow anyone to read/write votes to track helpful actions
 CREATE POLICY "Anyone can read and write votes" 
   ON public.review_votes FOR ALL 
   USING (true);
 
--- 7. AUTOMATED VERIFICATION TRIGGER
+-- 9. AUTOMATED VERIFICATION TRIGGER
 -- Automatically flags a review as "Verified Buyer" if the email or user ID has an active paid enrollment in public.enrollments
 CREATE OR REPLACE FUNCTION public.check_reviewer_verification()
 RETURNS TRIGGER AS $$
@@ -141,22 +156,22 @@ CREATE TRIGGER tr_verify_reviewer_on_submit
   BEFORE INSERT ON public.reviews
   FOR EACH ROW EXECUTE FUNCTION public.check_reviewer_verification();
 
--- 8. INDEXES FOR PERFORMANCE
+-- 10. INDEXES FOR PERFORMANCE
 CREATE INDEX IF NOT EXISTS idx_reviews_status ON public.reviews(status);
 CREATE INDEX IF NOT EXISTS idx_reviews_rating ON public.reviews(rating);
 CREATE INDEX IF NOT EXISTS idx_reviews_created_at ON public.reviews(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_review_votes_match ON public.review_votes(review_id, client_uuid, vote_type);
 
--- 9. EXPLICITLY GRANT API PERMISSIONS (Exposes reviews to anon REST queries)
+-- 11. EXPLICITLY GRANT API PERMISSIONS (Exposes reviews to anon REST queries)
 -- Critical: PostgREST won't show the table unless permissions are granted to 'anon' role!
 GRANT ALL ON public.reviews TO anon, authenticated, service_role;
 GRANT ALL ON public.review_votes TO anon, authenticated, service_role;
 GRANT ALL ON public.profiles TO anon, authenticated, service_role;
 
--- 10. REBUILD SCHEMA CACHE
+-- 12. REBUILD SCHEMA CACHE
 NOTIFY pgrst, 'reload schema';
 
--- 11. INSERT PREMIUM SEED DATA
+-- 13. INSERT PREMIUM SEED DATA
 INSERT INTO public.reviews (
   reviewer_name,
   reviewer_email,

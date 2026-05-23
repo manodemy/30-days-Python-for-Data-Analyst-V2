@@ -404,7 +404,8 @@ function startCountdownTicker() {
     const maxBarXPEl = document.getElementById('scoreMaxXP');
     const maxDayXP = 1000 * (totalCells / TOTAL_QUESTIONS);
     
-    if (xpEarnedEl) xpEarnedEl.textContent = dayXP.toFixed(1);
+    const finalScoreToShow = Math.max(currentBest, dayXP);
+    if (xpEarnedEl) xpEarnedEl.textContent = finalScoreToShow.toFixed(1);
     if (maxBarXPEl) maxBarXPEl.textContent = maxDayXP.toFixed(1);
   };
   
@@ -623,7 +624,8 @@ function updateScore() {
     const maxBarXPEl = document.getElementById('scoreMaxXP');
     const maxDayXP = 1000 * (totalCells / TOTAL_QUESTIONS);
     
-    if (xpEarnedEl) xpEarnedEl.textContent = dayXP.toFixed(1);
+    const finalScoreToShow = Math.max(currentBest, dayXP);
+    if (xpEarnedEl) xpEarnedEl.textContent = finalScoreToShow.toFixed(1);
     if (maxBarXPEl) maxBarXPEl.textContent = maxDayXP.toFixed(1);
   }
 

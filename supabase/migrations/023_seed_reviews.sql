@@ -3,6 +3,10 @@
 -- Run this in your Supabase SQL Editor AFTER running supabase_schema_v2.sql
 -- ═══════════════════════════════════════════════════════════════
 
+-- Fix legacy V1 not-null constraints to allow nullable title and cohort in V2 submissions
+ALTER TABLE public.reviews ALTER COLUMN title DROP NOT NULL;
+ALTER TABLE public.reviews ALTER COLUMN cohort_date DROP NOT NULL;
+
 INSERT INTO public.reviews (
   reviewer_name,
   reviewer_email,

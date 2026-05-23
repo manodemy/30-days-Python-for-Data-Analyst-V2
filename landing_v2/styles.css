@@ -5052,6 +5052,7 @@ button {
    ========================================================================== */
 
 .reviews-carousel-container {
+  container-type: inline-size; /* Establish Container Query Context */
   position: relative;
   width: 100%;
   margin-top: 2.5rem;
@@ -5090,22 +5091,18 @@ button {
   grid-template-columns: none !important;
   gap: 24px !important;
   margin-bottom: 0 !important;
-  width: auto !important;
-  padding: 0 15px;
+  width: max-content !important; /* Grow dynamically to lay cards flat side-by-side */
+  padding: 0 15px; /* Fully respected by max-content width, ensuring no endpoint cropping */
 }
 
 /* Force equal and calculated card widths inside track */
 .reviews-grid.reviews-carousel-track .rev-card {
-  flex: 0 0 calc((100% - 48px) / 3); /* Exactly 3 cards visible */
+  flex: 0 0 calc((100cqw - 48px) / 3) !important; /* Exactly 3 cards visible relative to container width */
   box-sizing: border-box;
   margin-bottom: 0;
   height: auto;
   min-height: 100%; /* Force equal heights */
   transition: transform 400ms var(--ease), border-color 400ms var(--ease), box-shadow 400ms var(--ease), opacity 400ms var(--ease);
-}
-
-.reviews-grid.reviews-carousel-track .rev-card:last-child {
-  margin-right: 15px; /* Right-scroll spacer to prevent boundary cropping */
 }
 
 /* Elite Glassmorphic Floating Buttons */
@@ -5210,7 +5207,7 @@ button {
 /* Dynamic Responsive Sizing Breakpoints */
 @media (max-width: 1199px) and (min-width: 768px) {
   .reviews-grid.reviews-carousel-track .rev-card {
-    flex: 0 0 calc((100% - 24px) / 2); /* 2 cards visible */
+    flex: 0 0 calc((100cqw - 24px) / 2) !important; /* 2 cards visible relative to container width */
   }
   .btn-carousel-nav {
     width: 48px;
@@ -5226,7 +5223,7 @@ button {
 
 @media (max-width: 767px) {
   .reviews-grid.reviews-carousel-track .rev-card {
-    flex: 0 0 100%; /* 1 card visible */
+    flex: 0 0 100cqw !important; /* 1 card visible relative to container width */
   }
   .btn-carousel-nav {
     width: 42px;

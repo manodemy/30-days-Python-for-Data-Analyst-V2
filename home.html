@@ -2201,7 +2201,7 @@
                 <div
                   style="font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: #fff; display: flex; align-items: baseline; gap: 3px;">
                   <span id="sectionBasicsScore" style="color: #fff;">0.0</span> <span
-                    style="font-size: 9.5px; color: rgba(255, 255, 255, 0.35);">/ 384.9</span>
+                    style="font-size: 9.5px; color: rgba(255, 255, 255, 0.35);">/ 383.1</span>
                 </div>
                 <!-- Visual progress bar -->
                 <div
@@ -2222,7 +2222,7 @@
                 <div
                   style="font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: #fff; display: flex; align-items: baseline; gap: 3px;">
                   <span id="sectionStructuresScore" style="color: #fff;">0.0</span> <span
-                    style="font-size: 9.5px; color: rgba(255, 255, 255, 0.35);">/ 298.6</span>
+                    style="font-size: 9.5px; color: rgba(255, 255, 255, 0.35);">/ 295.5</span>
                 </div>
                 <!-- Visual progress bar -->
                 <div
@@ -2243,7 +2243,7 @@
                 <div
                   style="font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: #fff; display: flex; align-items: baseline; gap: 3px;">
                   <span id="sectionAnalysisScore" style="color: #fff;">0.0</span> <span
-                    style="font-size: 9.5px; color: rgba(255, 255, 255, 0.35);">/ 259.0</span>
+                    style="font-size: 9.5px; color: rgba(255, 255, 255, 0.35);">/ 263.0</span>
                 </div>
                 <!-- Visual progress bar -->
                 <div
@@ -2264,7 +2264,7 @@
                 <div
                   style="font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: #fff; display: flex; align-items: baseline; gap: 3px;">
                   <span id="sectionAdvancedScore" style="color: #fff;">0.0</span> <span
-                    style="font-size: 9.5px; color: rgba(255, 255, 255, 0.35);">/ 57.5</span>
+                    style="font-size: 9.5px; color: rgba(255, 255, 255, 0.35);">/ 58.4</span>
                 </div>
                 <!-- Visual progress bar -->
                 <div
@@ -2651,11 +2651,11 @@
 
       const ctaBtn = document.getElementById('resumeLearningBtn');
       if (ctaBtn) {
-        ctaBtn.href = resumeTarget;
+        ctaBtn.href = resumeTarget + "?v=2.1";
         ctaBtn.innerHTML = `${resumeText} <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>`;
       }
       const dropDownResume = document.getElementById('dropdownResumeLink');
-      if (dropDownResume) dropDownResume.href = resumeTarget;
+      if (dropDownResume) dropDownResume.href = resumeTarget + "?v=2.1";
 
       // Calculate XP from stats — scaled to 1668 real challenges
       // Formula: Each challenge = 10 XP | Focus = 200 XP/hr | Streak = 50 XP/day
@@ -2901,13 +2901,13 @@
 
         // Update visual progress bars for each section
         const basicsBar = document.getElementById('sectionBasicsBar');
-        if (basicsBar) basicsBar.style.width = `${Math.min((categoryScores.basics / 384.9) * 100, 100)}%`;
+        if (basicsBar) basicsBar.style.width = `${Math.min((categoryScores.basics / 383.1) * 100, 100)}%`;
         const structuresBar = document.getElementById('sectionStructuresBar');
-        if (structuresBar) structuresBar.style.width = `${Math.min((categoryScores.structures / 298.6) * 100, 100)}%`;
+        if (structuresBar) structuresBar.style.width = `${Math.min((categoryScores.structures / 295.5) * 100, 100)}%`;
         const analysisBar = document.getElementById('sectionAnalysisBar');
-        if (analysisBar) analysisBar.style.width = `${Math.min((categoryScores.analysis / 259.0) * 100, 100)}%`;
+        if (analysisBar) analysisBar.style.width = `${Math.min((categoryScores.analysis / 263.0) * 100, 100)}%`;
         const advancedBar = document.getElementById('sectionAdvancedBar');
-        if (advancedBar) advancedBar.style.width = `${Math.min((categoryScores.advanced / 57.5) * 100, 100)}%`;
+        if (advancedBar) advancedBar.style.width = `${Math.min((categoryScores.advanced / 58.4) * 100, 100)}%`;
 
         // Update overall score hero display
         const totalMarksSum = categoryScores.basics + categoryScores.structures + categoryScores.analysis + categoryScores.advanced;
@@ -3029,7 +3029,7 @@
             });
 
             segment.addEventListener('click', () => {
-              window.location.href = `day${item.day}.html`;
+              window.location.href = `day${item.day}.html?v=2.1`;
             });
 
             timelineTrack.appendChild(segment);
@@ -3188,7 +3188,7 @@
 
         const card = document.createElement('a');
         card.className = 'day-card' + (isCurrentActive ? ' active-day' : '');
-        card.href = `day${item.day}.html`;
+        card.href = `day${item.day}.html?v=2.1`;
         card.setAttribute('data-day', item.day);
         card.setAttribute('data-category', item.category);
         card.setAttribute('tabindex', '0');

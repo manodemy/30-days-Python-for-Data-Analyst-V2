@@ -1087,19 +1087,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   const navSignin = document.getElementById('navSignin');
-
   if (navSignin) {
-
-    navSignin.addEventListener('click', (e) => {
-
+    navSignin.addEventListener('click', async (e) => {
+      if (navSignin.textContent === 'Sign Out') {
+        e.preventDefault();
+        if (supabaseClient) {
+          await supabaseClient.auth.signOut();
+          localStorage.removeItem('manodemy_auth');
+          localStorage.removeItem('manodemy_enrolled');
+          window.location.reload();
+        }
+        return;
+      }
       if (localStorage.getItem('manodemy_auth') === 'true' || navSignin.textContent === 'Dashboard') return;
-
       e.preventDefault();
-
       openAuthModal('login');
-
     });
-
   }
 
 
@@ -1948,28 +1951,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-  function updateNavForLoggedIn(user) {
-
+  async function updateNavForLoggedIn(user) {
     const signInBtn = document.getElementById('navSignin');
-
-    if (signInBtn) {
-
-      if (user && user.email === 'manodamy25@gmail.com') {
-
-        signInBtn.textContent = '⚙️ Admin Panel';
-
-        signInBtn.href = '../admin.html';
-
-        signInBtn.style.display = 'inline-flex';
-
-      } else {
-
-        signInBtn.style.display = 'none';
-
-      }
-
+    if (!signInBtn) return;
+    if (!user) {
+      signInBtn.textContent = 'Sign In';
+      signInBtn.href = '#';
+      signInBtn.style.display = 'inline-flex';
+      return;
     }
 
+    try {
+      if (supabaseClient) {
+        const { data: profile } = await supabaseClient
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+
+        if (profile && profile.role === 'admin') {
+          signInBtn.textContent = '⚙️ Admin Panel';
+          signInBtn.href = '../admin.html';
+          signInBtn.style.display = 'inline-flex';
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn('[Admin] Failed to check admin role:', e);
+    }
+
+    if (user.email === 'manodamy25@gmail.com') {
+      signInBtn.textContent = '⚙️ Admin Panel';
+      signInBtn.href = '../admin.html';
+      signInBtn.style.display = 'inline-flex';
+      return;
+    }
+
+    signInBtn.textContent = 'Sign Out';
+    signInBtn.href = '#';
+    signInBtn.style.display = 'inline-flex';
   }
 
 

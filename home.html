@@ -2808,9 +2808,11 @@
           const existingBest = parseFloat(localStorage.getItem(bestScoreKey) || '0');
           const solvedCount = parseInt(localStorage.getItem(`manodemy_day${d.day}_solved_count`) || '0', 10);
 
-          if (solvedCount > 0 && existingBest === 0) {
-            const maxDayXP = 1000 * (solvedCount / TOTAL_CHALLENGES);
-            localStorage.setItem(bestScoreKey, maxDayXP.toFixed(2));
+          if (solvedCount > 0) {
+            const calculatedBest = 1000 * (solvedCount / TOTAL_CHALLENGES);
+            if (calculatedBest > existingBest) {
+              localStorage.setItem(bestScoreKey, calculatedBest.toFixed(2));
+            }
           }
         });
 

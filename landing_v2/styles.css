@@ -5090,7 +5090,7 @@ button {
   grid-template-columns: none !important;
   gap: 24px !important;
   margin-bottom: 0 !important;
-  width: 100% !important;
+  width: auto !important;
   padding: 0 15px;
 }
 
@@ -5102,6 +5102,10 @@ button {
   height: auto;
   min-height: 100%; /* Force equal heights */
   transition: transform 400ms var(--ease), border-color 400ms var(--ease), box-shadow 400ms var(--ease), opacity 400ms var(--ease);
+}
+
+.reviews-grid.reviews-carousel-track .rev-card:last-child {
+  margin-right: 15px; /* Right-scroll spacer to prevent boundary cropping */
 }
 
 /* Elite Glassmorphic Floating Buttons */

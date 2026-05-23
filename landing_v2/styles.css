@@ -5066,10 +5066,21 @@ button {
 }
 
 .reviews-carousel-track-wrapper {
-  overflow: hidden;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
   width: 100%;
   padding: 15px 0; /* Clear shadow clipping */
   margin: 0 -15px; /* Offset padding alignment */
+}
+
+/* Hide webkit scrollbar */
+.reviews-carousel-track-wrapper::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 /* Carousel track flex behavior override */
@@ -5079,9 +5090,7 @@ button {
   grid-template-columns: none !important;
   gap: 24px !important;
   margin-bottom: 0 !important;
-  transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: transform;
-  width: auto;
+  width: max-content; /* Size dynamically based on cards */
   padding: 0 15px;
 }
 

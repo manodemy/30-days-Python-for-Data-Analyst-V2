@@ -980,6 +980,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (!track) return;
     
+    const wrapper = track.parentElement; // .reviews-carousel-track-wrapper
+    if (!wrapper) return;
+
     const cards = track.querySelectorAll('.rev-card');
     
     // If no cards are found, clean up nav controls and dots
@@ -990,12 +993,15 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Function to calculate and apply sliding offset
-    function updateCarousel() {
+    // Function to calculate and update control elements (arrows/dots) based on active scroll
+    function updateCarouselState() {
       const cardWidth = cards[0].getBoundingClientRect().width;
       const gap = 24; // from CSS gap
+      const itemWidth = cardWidth + gap;
       
-      // Determine visible cards count based on viewport breakpoints matching CSS media queries
+      const scrollLeft = wrapper.scrollLeft;
+      const activeIndex = Math.round(scrollLeft / itemWidth);
+      
       let visibleCards = 3;
       if (window.innerWidth < 768) {
         visibleCards = 1;
@@ -1003,39 +1009,59 @@ document.addEventListener('DOMContentLoaded', () => {
         visibleCards = 2;
       }
       
-      // Clamp index to valid bounds
       const maxIndex = Math.max(0, cards.length - visibleCards);
-      if (currentSlideIndex > maxIndex) {
-        currentSlideIndex = maxIndex;
-      }
-      if (currentSlideIndex < 0) {
-        currentSlideIndex = 0;
-      }
       
-      // Calculate dynamic pixel offset and translate the flex-track
-      const offset = currentSlideIndex * (cardWidth + gap);
-      track.style.transform = `translateX(-${offset}px)`;
+      // Determine if at scroll limits (with 8px threshold buffer)
+      const isAtStart = scrollLeft <= 8;
+      const isAtEnd = scrollLeft >= (wrapper.scrollWidth - wrapper.clientWidth - 8);
       
-      // Configure button states
-      if (prevBtn) prevBtn.disabled = (currentSlideIndex === 0);
-      if (nextBtn) nextBtn.disabled = (currentSlideIndex === maxIndex);
+      if (prevBtn) prevBtn.disabled = isAtStart;
+      if (nextBtn) nextBtn.disabled = isAtEnd;
       
-      // Render Dot Indicators
+      // Update active state class on dot indicators
       if (dotsContainer) {
-        dotsContainer.innerHTML = '';
-        if (maxIndex > 0) {
-          for (let i = 0; i <= maxIndex; i++) {
-            const dot = document.createElement('button');
-            dot.type = 'button';
-            dot.className = `carousel-dot ${i === currentSlideIndex ? 'active' : ''}`;
-            dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
-            dot.addEventListener('click', () => {
-              currentSlideIndex = i;
-              updateCarousel();
-            });
-            dotsContainer.appendChild(dot);
+        const dots = dotsContainer.querySelectorAll('.carousel-dot');
+        dots.forEach((dot, idx) => {
+          if (idx === activeIndex) {
+            dot.classList.add('active');
+          } else {
+            dot.classList.remove('active');
           }
-        }
+        });
+      }
+    }
+
+    // Render Dot Indicators (Generated once per card layout load)
+    function renderDots() {
+      if (!dotsContainer) return;
+      dotsContainer.innerHTML = '';
+      
+      let visibleCards = 3;
+      if (window.innerWidth < 768) {
+        visibleCards = 1;
+      } else if (window.innerWidth < 1200) {
+        visibleCards = 2;
+      }
+      
+      const maxIndex = Math.max(0, cards.length - visibleCards);
+      if (maxIndex <= 0) return;
+      
+      const cardWidth = cards[0].getBoundingClientRect().width;
+      const gap = 24;
+      const itemWidth = cardWidth + gap;
+
+      for (let i = 0; i <= maxIndex; i++) {
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'carousel-dot';
+        dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+        dot.addEventListener('click', () => {
+          wrapper.scrollTo({
+            left: i * itemWidth,
+            behavior: 'smooth'
+          });
+        });
+        dotsContainer.appendChild(dot);
       }
     }
 
@@ -1044,10 +1070,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const newPrev = prevBtn.cloneNode(true);
       prevBtn.parentNode.replaceChild(newPrev, prevBtn);
       newPrev.addEventListener('click', () => {
-        if (currentSlideIndex > 0) {
-          currentSlideIndex--;
-          updateCarousel();
-        }
+        const cardWidth = cards[0].getBoundingClientRect().width;
+        const gap = 24;
+        wrapper.scrollBy({
+          left: -(cardWidth + gap),
+          behavior: 'smooth'
+        });
       });
     }
     
@@ -1055,64 +1083,34 @@ document.addEventListener('DOMContentLoaded', () => {
       const newNext = nextBtn.cloneNode(true);
       nextBtn.parentNode.replaceChild(newNext, nextBtn);
       newNext.addEventListener('click', () => {
-        const visibleCards = window.innerWidth < 768 ? 1 : (window.innerWidth < 1200 ? 2 : 3);
-        const maxIndex = Math.max(0, cards.length - visibleCards);
-        if (currentSlideIndex < maxIndex) {
-          currentSlideIndex++;
-          updateCarousel();
-        }
+        const cardWidth = cards[0].getBoundingClientRect().width;
+        const gap = 24;
+        wrapper.scrollBy({
+          left: (cardWidth + gap),
+          behavior: 'smooth'
+        });
       });
     }
 
-    // Set up window resize listener to recalculate translation percentages dynamically
+    // Listen to scroll events on the wrapper to synchronize arrow states and active indicators
+    wrapper.removeEventListener('scroll', window.__reviewsScrollHandler);
+    window.__reviewsScrollHandler = () => {
+      // Use requestAnimationFrame to optimize rendering on scroll
+      requestAnimationFrame(updateCarouselState);
+    };
+    wrapper.addEventListener('scroll', window.__reviewsScrollHandler, { passive: true });
+
+    // Set up window resize listener to rebuild dot list and recalibrate spacing offsets
     window.removeEventListener('resize', window.__reviewsResizeHandler);
     window.__reviewsResizeHandler = () => {
-      updateCarousel();
+      renderDots();
+      updateCarouselState();
     };
     window.addEventListener('resize', window.__reviewsResizeHandler);
 
-    // Set up touch swipe listeners to support mobile touch devices seamlessly
-    let touchStartX = 0;
-    let touchEndX = 0;
-    
-    // Clean and rebind swipe event listeners to track's viewport parent
-    const viewportParent = track.parentElement;
-    
-    // We bind swipe events on the track's viewport parent
-    if (viewportParent && !viewportParent.dataset.swipeBound) {
-      viewportParent.dataset.swipeBound = "true";
-      viewportParent.addEventListener('touchstart', (e) => {
-        touchStartX = e.changedTouches[0].screenX;
-      }, { passive: true });
-      
-      viewportParent.addEventListener('touchend', (e) => {
-        touchEndX = e.changedTouches[0].screenX;
-        handleSwipe();
-      }, { passive: true });
-    }
-    
-    function handleSwipe() {
-      const swipeThreshold = 50; // pixels
-      const visibleCards = window.innerWidth < 768 ? 1 : (window.innerWidth < 1200 ? 2 : 3);
-      const maxIndex = Math.max(0, cards.length - visibleCards);
-      
-      if (touchStartX - touchEndX > swipeThreshold) {
-        // Swiped left -> next card
-        if (currentSlideIndex < maxIndex) {
-          currentSlideIndex++;
-          updateCarousel();
-        }
-      } else if (touchEndX - touchStartX > swipeThreshold) {
-        // Swiped right -> prev card
-        if (currentSlideIndex > 0) {
-          currentSlideIndex--;
-          updateCarousel();
-        }
-      }
-    }
-
-    // Initial render sizing trigger
-    updateCarousel();
+    // Initial load setup
+    renderDots();
+    updateCarouselState();
   }
 
   // Handle Helpful / Report Database Writing Actions

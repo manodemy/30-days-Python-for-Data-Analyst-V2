@@ -562,23 +562,24 @@
       width: 14px;
       height: 14px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: var(--ink-muted);
+      background: rgba(251, 191, 36, 0.15); /* Light golden background */
+      border: 1px solid rgba(251, 191, 36, 0.4);  /* Clear golden border */
+      color: #fbbf24;                           /* Vibrant gold/yellow color */
       font-size: 0.65rem;
-      font-weight: bold;
+      font-weight: 800;                         /* Extra bold for clarity */
       cursor: pointer;
       transition: all 0.2s ease;
       user-select: none;
       text-transform: none;
       letter-spacing: normal;
+      box-shadow: 0 0 4px rgba(251, 191, 36, 0.1);
     }
 
     .info-icon:hover {
-      background: var(--gold);
-      border-color: var(--gold);
+      background: #fbbf24;
+      border-color: #fbbf24;
       color: var(--void);
-      box-shadow: 0 0 8px var(--gold);
+      box-shadow: 0 0 10px #fbbf24;
     }
 
     .metric-tooltip {
@@ -586,27 +587,27 @@
       bottom: calc(100% + 8px);
       left: 50%;
       transform: translateX(-50%) translateY(4px);
-      background: rgba(20, 20, 35, 0.95);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: #121220; /* Solid opaque premium dark background */
+      border: 1px solid var(--gold); /* Thin gold border to stand out cleanly */
       border-radius: 6px;
       padding: 0.55rem 0.8rem;
       color: var(--ink-dim);
       font-size: 0.72rem;
       font-family: var(--font-body);
       line-height: 1.35;
-      width: 240px;
-      box-shadow: var(--shadow-card), 0 8px 32px rgba(0, 0, 0, 0.5);
+      width: 180px; /* Highly compact and readable width */
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(251, 191, 36, 0.15);
       pointer-events: none;
       opacity: 0;
       visibility: hidden;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: 1000;
-      text-align: left;
-      font-weight: 400;
+      z-index: 9999; /* Extra high z-index to overlay on top of sticky elements */
+      text-align: center;
+      font-weight: 500;
       letter-spacing: normal;
       text-transform: none;
+      white-space: normal;
+      word-wrap: break-word;
     }
 
     .metric-tooltip::after {
@@ -617,7 +618,7 @@
       transform: translateX(-50%);
       border-width: 5px;
       border-style: solid;
-      border-color: rgba(20, 20, 35, 0.95) transparent transparent transparent;
+      border-color: #121220 transparent transparent transparent;
     }
 
     .info-icon:hover .metric-tooltip {
@@ -625,6 +626,7 @@
       visibility: visible;
       transform: translateX(-50%) translateY(0);
     }
+
 
     /* Table Zebra Striping and Premium Glow */
     #transactionsTable tbody tr:nth-child(even),
@@ -2421,19 +2423,19 @@
                   <th style="position:sticky;top:auto;z-index:4;text-align:center;border-left:2px solid var(--rim-strong);background:linear-gradient(rgba(96,165,250,0.04), rgba(96,165,250,0.04)), var(--elevated);font-size:0.6rem;color:var(--sapphire);opacity:0.8;">
                     VISITS
                     <span class="info-icon" style="vertical-align: middle; margin-left: 2px;">i
-                      <span class="metric-tooltip">Unique session IDs in page_views for this user/page</span>
+                      <span class="metric-tooltip">Unique page visits</span>
                     </span>
                   </th>
                   <th style="position:sticky;top:auto;z-index:4;text-align:center;background:linear-gradient(rgba(96,165,250,0.04), rgba(96,165,250,0.04)), var(--elevated);font-size:0.6rem;color:var(--sapphire);opacity:0.8;">
                     TIME SPENT
                     <span class="info-icon" style="vertical-align: middle; margin-left: 2px;">i
-                      <span class="metric-tooltip">GREATEST of (cumulative localStorage sync, SUM of telemetry sessions)</span>
+                      <span class="metric-tooltip">Active study minutes</span>
                     </span>
                   </th>
                   <th style="position:sticky;top:auto;z-index:4;text-align:center;background:linear-gradient(rgba(96,165,250,0.04), rgba(96,165,250,0.04)), var(--elevated);font-size:0.6rem;color:var(--sapphire);opacity:0.8;">
                     Q.SOLVED
                     <span class="info-icon" style="vertical-align: middle; margin-left: 2px;">i
-                      <span class="metric-tooltip">GREATEST of (notebook_state_sync.solved_count, COUNT of individual question_solved events)</span>
+                      <span class="metric-tooltip">Coding questions solved</span>
                     </span>
                   </th>
                   <!-- Day sub-headers injected by JS -->
@@ -3604,11 +3606,11 @@
         const hueSub = idx < 10 ? 'rgba(167,139,250,0.04)' : (idx < 20 ? 'rgba(251,191,36,0.04)' : 'rgba(45,212,191,0.04)');
         const col = idx < 10 ? 'var(--sapphire)' : (idx < 20 ? 'var(--amber)' : 'var(--emerald)');
         topExtra += `<th colspan="5" style="position:sticky;top:0;z-index:4;text-align:center;border-left:2px solid var(--rim-strong);background:linear-gradient(${hue}, ${hue}), var(--elevated);color:${col};min-width:350px;">${label}</th>`;
-        subExtra += `<th style="position:sticky;top:auto;z-index:4;text-align:center;border-left:2px solid var(--rim-strong);background:linear-gradient(${hueSub}, ${hueSub}), var(--elevated);font-size:0.6rem;color:${col};opacity:0.8;">VISITS<span class="info-icon" style="vertical-align: middle; margin-left: 2px;">i<span class="metric-tooltip" style="color:var(--ink-dim);">Unique session IDs in page_views for this user/page</span></span></th>`;
-        subExtra += `<th style="position:sticky;top:auto;z-index:4;text-align:center;background:linear-gradient(${hueSub}, ${hueSub}), var(--elevated);font-size:0.6rem;color:${col};opacity:0.8;">TIME SPENT<span class="info-icon" style="vertical-align: middle; margin-left: 2px;">i<span class="metric-tooltip" style="color:var(--ink-dim);">GREATEST of (cumulative localStorage sync, SUM of telemetry sessions)</span></span></th>`;
-        subExtra += `<th style="position:sticky;top:auto;z-index:4;text-align:center;background:linear-gradient(${hueSub}, ${hueSub}), var(--elevated);font-size:0.6rem;color:${col};opacity:0.8;">Q.SOLVED<span class="info-icon" style="vertical-align: middle; margin-left: 2px;">i<span class="metric-tooltip" style="color:var(--ink-dim);">GREATEST of (notebook_state_sync.solved_count, COUNT of individual question_solved events)</span></span></th>`;
-        subExtra += `<th style="position:sticky;top:auto;z-index:4;text-align:center;background:linear-gradient(${hueSub}, ${hueSub}), var(--elevated);font-size:0.6rem;color:${col};opacity:0.8;">IMPROVE ↻<span class="info-icon" style="vertical-align: middle; margin-left: 2px;">i<span class="metric-tooltip" style="color:var(--ink-dim);">Number of times user clicked "Improve Score" button (challenge_started events)</span></span></th>`;
-        subExtra += `<th style="position:sticky;top:auto;z-index:4;text-align:center;background:linear-gradient(${hueSub}, ${hueSub}), var(--elevated);font-size:0.6rem;color:${col};opacity:0.8;">MARKS<span class="info-icon" style="vertical-align: middle; margin-left: 2px;">i<span class="metric-tooltip" style="color:var(--ink-dim);">Latest best_score synced from localStorage via notebook_state_sync</span></span></th>`;
+        subExtra += `<th style="position:sticky;top:auto;z-index:4;text-align:center;border-left:2px solid var(--rim-strong);background:linear-gradient(${hueSub}, ${hueSub}), var(--elevated);font-size:0.6rem;color:${col};opacity:0.8;">VISITS<span class="info-icon" style="vertical-align: middle; margin-left: 2px;">i<span class="metric-tooltip" style="color:var(--ink-dim);">Unique page visits</span></span></th>`;
+        subExtra += `<th style="position:sticky;top:auto;z-index:4;text-align:center;background:linear-gradient(${hueSub}, ${hueSub}), var(--elevated);font-size:0.6rem;color:${col};opacity:0.8;">TIME SPENT<span class="info-icon" style="vertical-align: middle; margin-left: 2px;">i<span class="metric-tooltip" style="color:var(--ink-dim);">Active study minutes</span></span></th>`;
+        subExtra += `<th style="position:sticky;top:auto;z-index:4;text-align:center;background:linear-gradient(${hueSub}, ${hueSub}), var(--elevated);font-size:0.6rem;color:${col};opacity:0.8;">Q.SOLVED<span class="info-icon" style="vertical-align: middle; margin-left: 2px;">i<span class="metric-tooltip" style="color:var(--ink-dim);">Coding questions solved</span></span></th>`;
+        subExtra += `<th style="position:sticky;top:auto;z-index:4;text-align:center;background:linear-gradient(${hueSub}, ${hueSub}), var(--elevated);font-size:0.6rem;color:${col};opacity:0.8;">IMPROVE ↻<span class="info-icon" style="vertical-align: middle; margin-left: 2px;">i<span class="metric-tooltip" style="color:var(--ink-dim);">'Improve Score' clicks</span></span></th>`;
+        subExtra += `<th style="position:sticky;top:auto;z-index:4;text-align:center;background:linear-gradient(${hueSub}, ${hueSub}), var(--elevated);font-size:0.6rem;color:${col};opacity:0.8;">MARKS<span class="info-icon" style="vertical-align: middle; margin-left: 2px;">i<span class="metric-tooltip" style="color:var(--ink-dim);">Best marks achieved</span></span></th>`;
       });
 
       // Append to existing static header rows

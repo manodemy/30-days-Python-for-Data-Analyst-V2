@@ -98,30 +98,30 @@ INSERT INTO public.purchases (id, user_id, course_id, amount_inr, amount_origina
 -- 6. INSERT REALISTIC ORDERS & PAYMENTS (Optional checkout tables, matching schemas)
 -- Matches public.orders and public.payments schemas in supabase_schema_v2.sql
 INSERT INTO public.orders (id, user_id, course_id, amount, currency, gateway, gateway_order_id, status, created_at, updated_at) VALUES
-('ord_11111111-1111-1111-1111-111111111111', 'a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d', 'python-30day', 349930, 'USD', 'stripe', 'ch_1111', 'paid', now() - interval '28 days', now() - interval '28 days'),
-('ord_22222222-2222-2222-2222-222222222222', 'b2c3d4e5-f67a-8b9c-0d1e-2f3a4b5c6d7e', 'python-30day', 499900, 'USD', 'stripe', 'ch_2222', 'paid', now() - interval '25 days', now() - interval '25 days'),
-('ord_33333333-3333-3333-3333-333333333333', 'c3d4e5f6-7a8b-9c0d-1e2f-3a4b5c6d7e8f', 'python-30day', 349930, 'INR', 'razorpay', 'pay_3333', 'paid', now() - interval '22 days', now() - interval '22 days'),
-('ord_44444444-4444-4444-4444-444444444444', 'd4e5f67a-8b9c-0d1e-2f3a-4b5c6d7e8f9a', 'python-30day', 499900, 'USD', 'stripe', 'ch_4444', 'paid', now() - interval '20 days', now() - interval '20 days'),
-('ord_55555555-5555-5555-5555-555555555555', 'f67a8b9c-0d1e-2f3a-4b5c-6d7e8f9a0b1c', 'python-30day', 249950, 'USD', 'stripe', 'ch_5555', 'paid', now() - interval '15 days', now() - interval '15 days'),
-('ord_66666666-6666-6666-6666-666666666666', '7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d', 'python-30day', 499900, 'INR', 'razorpay', 'pay_6666', 'paid', now() - interval '12 days', now() - interval '12 days'),
-('ord_77777777-7777-7777-7777-777777777777', '9c0d1e2f-3a4b-5c6d-7e8f-9a0b1c2d3e4f', 'python-30day', 349930, 'USD', 'stripe', 'ch_7777', 'paid', now() - interval '8 days', now() - interval '8 days'),
-('ord_88888888-8888-8888-8888-888888888888', '0d1e2f3a-4b5c-6d7e-8f9a-0b1c2d3e4f5a', 'python-30day', 499900, 'USD', 'stripe', 'ch_8888', 'paid', now() - interval '7 days', now() - interval '7 days'),
-('ord_99999999-9999-9999-9999-999999999999', '2f3a4b5c-6d7e-8f9a-0b1c-2d3e4f5a6b7c', 'python-30day', 249950, 'INR', 'razorpay', 'pay_9999', 'paid', now() - interval '4 days', now() - interval '4 days'),
-('ord_00000000-0000-0000-0000-000000000000', '4b5c6d7e-8f9a-0b1c-2d3e-4f5a6b7c8d9e', 'python-30day', 499900, 'USD', 'stripe', 'ch_0000', 'paid', now() - interval '2 days', now() - interval '2 days'),
-('ord_aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '5c6d7e8f-9a0b-1c2d-3e4f-5a6b7c8d9e0f', 'python-30day', 499900, 'USD', 'stripe', 'ch_aaaa', 'paid', now() - interval '1 day', now() - interval '1 day');
+('d0111111-1111-1111-1111-111111111111', 'a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d', 'python-30day', 349930, 'USD', 'stripe', 'ch_1111', 'paid', now() - interval '28 days', now() - interval '28 days'),
+('d0222222-2222-2222-2222-222222222222', 'b2c3d4e5-f67a-8b9c-0d1e-2f3a4b5c6d7e', 'python-30day', 499900, 'USD', 'stripe', 'ch_2222', 'paid', now() - interval '25 days', now() - interval '25 days'),
+('d0333333-3333-3333-3333-333333333333', 'c3d4e5f6-7a8b-9c0d-1e2f-3a4b5c6d7e8f', 'python-30day', 349930, 'INR', 'razorpay', 'pay_3333', 'paid', now() - interval '22 days', now() - interval '22 days'),
+('d0444444-4444-4444-4444-444444444444', 'd4e5f67a-8b9c-0d1e-2f3a-4b5c6d7e8f9a', 'python-30day', 499900, 'USD', 'stripe', 'ch_4444', 'paid', now() - interval '20 days', now() - interval '20 days'),
+('d0555555-5555-5555-5555-555555555555', 'f67a8b9c-0d1e-2f3a-4b5c-6d7e8f9a0b1c', 'python-30day', 249950, 'USD', 'stripe', 'ch_5555', 'paid', now() - interval '15 days', now() - interval '15 days'),
+('d0666666-6666-6666-6666-666666666666', '7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d', 'python-30day', 499900, 'INR', 'razorpay', 'pay_6666', 'paid', now() - interval '12 days', now() - interval '12 days'),
+('d0777777-7777-7777-7777-777777777777', '9c0d1e2f-3a4b-5c6d-7e8f-9a0b1c2d3e4f', 'python-30day', 349930, 'USD', 'stripe', 'ch_7777', 'paid', now() - interval '8 days', now() - interval '8 days'),
+('d0888888-8888-8888-8888-888888888888', '0d1e2f3a-4b5c-6d7e-8f9a-0b1c2d3e4f5a', 'python-30day', 499900, 'USD', 'stripe', 'ch_8888', 'paid', now() - interval '7 days', now() - interval '7 days'),
+('d0999999-9999-9999-9999-999999999999', '2f3a4b5c-6d7e-8f9a-0b1c-2d3e4f5a6b7c', 'python-30day', 249950, 'INR', 'razorpay', 'pay_9999', 'paid', now() - interval '4 days', now() - interval '4 days'),
+('d0000000-0000-0000-0000-000000000000', '4b5c6d7e-8f9a-0b1c-2d3e-4f5a6b7c8d9e', 'python-30day', 499900, 'USD', 'stripe', 'ch_0000', 'paid', now() - interval '2 days', now() - interval '2 days'),
+('d0aaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '5c6d7e8f-9a0b-1c2d-3e4f-5a6b7c8d9e0f', 'python-30day', 499900, 'USD', 'stripe', 'ch_aaaa', 'paid', now() - interval '1 day', now() - interval '1 day');
 
 INSERT INTO public.payments (id, order_id, gateway_payment_id, gateway_signature, amount, currency, method, status, raw_response, verified_at, created_at) VALUES
-('pay_11111111-1111-1111-1111-111111111111', 'ord_11111111-1111-1111-1111-111111111111', 'ch_1111', NULL, 349930, 'USD', 'card', 'captured', NULL, now() - interval '28 days', now() - interval '28 days'),
-('pay_22222222-2222-2222-2222-222222222222', 'ord_22222222-2222-2222-2222-222222222222', 'ch_2222', NULL, 499900, 'USD', 'card', 'captured', NULL, now() - interval '25 days', now() - interval '25 days'),
-('pay_33333333-3333-3333-3333-333333333333', 'ord_33333333-3333-3333-3333-333333333333', 'pay_3333', NULL, 349930, 'INR', 'upi', 'captured', NULL, now() - interval '22 days', now() - interval '22 days'),
-('pay_44444444-4444-4444-4444-444444444444', 'ord_44444444-4444-4444-4444-444444444444', 'ch_4444', NULL, 499900, 'USD', 'card', 'captured', NULL, now() - interval '20 days', now() - interval '20 days'),
-('pay_55555555-5555-5555-5555-555555555555', 'ord_55555555-5555-5555-5555-555555555555', 'ch_5555', NULL, 249950, 'USD', 'card', 'captured', NULL, now() - interval '15 days', now() - interval '15 days'),
-('pay_66666666-6666-6666-6666-666666666666', 'ord_66666666-6666-6666-6666-666666666666', 'pay_6666', NULL, 499900, 'INR', 'upi', 'captured', NULL, now() - interval '12 days', now() - interval '12 days'),
-('pay_77777777-7777-7777-7777-777777777777', 'ord_77777777-7777-7777-7777-777777777777', 'ch_7777', NULL, 349930, 'USD', 'card', 'captured', NULL, now() - interval '8 days', now() - interval '8 days'),
-('pay_88888888-8888-8888-8888-888888888888', 'ord_88888888-8888-8888-8888-888888888888', 'ch_8888', NULL, 499900, 'USD', 'card', 'captured', NULL, now() - interval '7 days', now() - interval '7 days'),
-('pay_99999999-9999-9999-9999-999999999999', 'ord_99999999-9999-9999-9999-999999999999', 'pay_9999', NULL, 249950, 'INR', 'upi', 'captured', NULL, now() - interval '4 days', now() - interval '4 days'),
-('pay_00000000-0000-0000-0000-000000000000', 'ord_00000000-0000-0000-0000-000000000000', 'ch_0000', NULL, 499900, 'USD', 'card', 'captured', NULL, now() - interval '2 days', now() - interval '2 days'),
-('pay_aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'ord_aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'ch_aaaa', NULL, 499900, 'USD', 'card', 'captured', NULL, now() - interval '1 day', now() - interval '1 day');
+('e0111111-1111-1111-1111-111111111111', 'd0111111-1111-1111-1111-111111111111', 'ch_1111', NULL, 349930, 'USD', 'card', 'captured', NULL, now() - interval '28 days', now() - interval '28 days'),
+('e0222222-2222-2222-2222-222222222222', 'd0222222-2222-2222-2222-222222222222', 'ch_2222', NULL, 499900, 'USD', 'card', 'captured', NULL, now() - interval '25 days', now() - interval '25 days'),
+('e0333333-3333-3333-3333-333333333333', 'd0333333-3333-3333-3333-333333333333', 'pay_3333', NULL, 349930, 'INR', 'upi', 'captured', NULL, now() - interval '22 days', now() - interval '22 days'),
+('e0444444-4444-4444-4444-444444444444', 'd0444444-4444-4444-4444-444444444444', 'ch_4444', NULL, 499900, 'USD', 'card', 'captured', NULL, now() - interval '20 days', now() - interval '20 days'),
+('e0555555-5555-5555-5555-555555555555', 'd0555555-5555-5555-5555-555555555555', 'ch_5555', NULL, 249950, 'USD', 'card', 'captured', NULL, now() - interval '15 days', now() - interval '15 days'),
+('e0666666-6666-6666-6666-666666666666', 'd0666666-6666-6666-6666-666666666666', 'pay_6666', NULL, 499900, 'INR', 'upi', 'captured', NULL, now() - interval '12 days', now() - interval '12 days'),
+('e0777777-7777-7777-7777-777777777777', 'd0777777-7777-7777-7777-777777777777', 'ch_7777', NULL, 349930, 'USD', 'card', 'captured', NULL, now() - interval '8 days', now() - interval '8 days'),
+('e0888888-8888-8888-8888-888888888888', 'd0888888-8888-8888-8888-888888888888', 'ch_8888', NULL, 499900, 'USD', 'card', 'captured', NULL, now() - interval '7 days', now() - interval '7 days'),
+('e0999999-9999-9999-9999-999999999999', 'd0999999-9999-9999-9999-999999999999', 'pay_9999', NULL, 249950, 'INR', 'upi', 'captured', NULL, now() - interval '4 days', now() - interval '4 days'),
+('e0000000-0000-0000-0000-000000000000', 'd0000000-0000-0000-0000-000000000000', 'ch_0000', NULL, 499900, 'USD', 'card', 'captured', NULL, now() - interval '2 days', now() - interval '2 days'),
+('e0aaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'd0aaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'ch_aaaa', NULL, 499900, 'USD', 'card', 'captured', NULL, now() - interval '1 day', now() - interval '1 day');
 
 -- 7. INSERT ENROLLMENTS
 -- Matches columns from public.enrollments schema (no is_active column)

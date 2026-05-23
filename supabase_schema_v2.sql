@@ -220,7 +220,7 @@ CREATE TABLE IF NOT EXISTS public.reviews (
   reviewer_email TEXT NOT NULL,
   reviewer_avatar TEXT,
   rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
-  title TEXT NOT NULL,
+  title TEXT,
   comment TEXT NOT NULL,
   pros TEXT[] DEFAULT '{}'::TEXT[],
   cons TEXT[] DEFAULT '{}'::TEXT[],

@@ -7,6 +7,13 @@
 ALTER TABLE public.reviews ALTER COLUMN title DROP NOT NULL;
 ALTER TABLE public.reviews ALTER COLUMN cohort_date DROP NOT NULL;
 
+-- Explicitly grant select/all permissions to anon and authenticated roles to ensure PostgREST cache exposes the table
+GRANT ALL ON public.reviews TO anon, authenticated, service_role;
+GRANT ALL ON public.review_votes TO anon, authenticated, service_role;
+
+-- Force reload schema cache
+NOTIFY pgrst, 'reload schema';
+
 INSERT INTO public.reviews (
   reviewer_name,
   reviewer_email,

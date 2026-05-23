@@ -1671,6 +1671,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 2000);
       } finally {
         couponApplyBtn.disabled = false;
+      }
     });
   }
 

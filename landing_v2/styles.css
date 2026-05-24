@@ -1222,13 +1222,22 @@ button {
   }
 
   .hero-ctas {
-    flex-direction: column;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 10px !important;
     margin-left: auto;
     margin-right: auto;
+    justify-content: center !important;
+    width: 100% !important;
   }
 
   .btn-gold {
-    width: 100%;
+    flex: 1 1 50% !important;
+    width: auto !important;
+    font-size: 12.5px !important;
+    padding: 0 12px !important;
+    height: 50px !important;
+    white-space: nowrap !important;
   }
 
   .hero-trust {

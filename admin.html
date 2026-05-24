@@ -1727,481 +1727,479 @@
 
     .dl-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
 
-    /* ===== THE ACTUAL PREMIUM CERTIFICATE BODY ===== */
+        /* ===== THE ACTUAL PREMIUM CERTIFICATE BODY (CYBERNETIC EDITION) ===== */
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600;700&family=Dancing+Script:wght@600&display=swap');
+
     .certificate-body {
-      width: 1100px;
-      height: 780px;
-      background: #ffffff;
+      width: 1122px;
+      height: 794px;
+      background: #0b0f14;
       position: relative;
       overflow: hidden;
-      padding: 32px 56px 28px;
-      box-shadow: 0 20px 60px rgba(15, 23, 42, 0.25);
-      font-family: 'Inter', sans-serif;
-      color: #0f172a;
+      padding: 56px 72px 48px;
+      box-shadow: 0 20px 60px rgba(0, 229, 255, 0.15);
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: stretch;
       justify-content: space-between;
+    }
+
+    .cert-mesh {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
     }
 
     .cert-border-outer {
       position: absolute; inset: 8px;
-      border: 3px solid #0f172a;
+      border: 1px solid #00E5FF;
+      border-radius: 4px;
       pointer-events: none; z-index: 2;
     }
 
     .cert-border-middle {
-      position: absolute; inset: 14px;
-      border: 1.5px solid #c9a84c;
+      position: absolute; inset: 16px;
+      border: 1px solid rgba(0,229,255,0.2);
+      border-radius: 2px;
       pointer-events: none; z-index: 2;
     }
 
     .cert-border-inner {
-      position: absolute; inset: 20px;
-      border: 0.5px solid rgba(15, 23, 42, 0.12);
-      pointer-events: none; z-index: 2;
+      display: none !important;
     }
 
     .cert-watermark {
       position: absolute;
       top: 50%; left: 50%;
-      transform: translate(-50%, -50%) rotate(-5deg);
+      transform: translate(-50%, -50%);
       font-family: 'Cinzel', serif;
-      font-size: 130px;
+      font-size: 140px;
       font-weight: 700;
-      color: rgba(15, 23, 42, 0.02);
-      letter-spacing: 0.35em;
+      color: rgba(0,229,255,0.03);
+      letter-spacing: 12px;
       white-space: nowrap;
       pointer-events: none;
       z-index: 0;
       user-select: none;
     }
 
-    .cert-gold-band {
-      width: 100%;
-      height: 8px;
-      background: linear-gradient(
-        90deg,
-        #0f172a 0%,
-        #6c5a1e 15%,
-        #c9a84c 30%,
-        #f0d080 50%,
-        #c9a84c 70%,
-        #6c5a1e 85%,
-        #0f172a 100%
-      );
-    }
-
     .cert-corner {
       position: absolute;
-      width: 52px;
-      height: 52px;
+      width: 42px; height: 42px;
+      border-color: #00E5FF;
+      border-style: solid;
       z-index: 3;
     }
-    .cert-corner.tl { top: 8px; left: 8px; }
-    .cert-corner.tr { top: 8px; right: 8px; transform: scaleX(-1); }
-    .cert-corner.bl { bottom: 8px; left: 8px; transform: scaleY(-1); }
-    .cert-corner.br { bottom: 8px; right: 8px; transform: scale(-1, -1); }
+    .cert-corner.tl { top: 22px; left: 22px; border-width: 2px 0 0 2px; }
+    .cert-corner.tr { top: 22px; right: 22px; border-width: 2px 2px 0 0; }
+    .cert-corner.bl { bottom: 22px; left: 22px; border-width: 0 0 2px 2px; }
+    .cert-corner.br { bottom: 22px; right: 22px; border-width: 0 2px 2px 0; }
+
+    .cert-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      justify-content: space-between;
+    }
 
     /* Institution Header Block */
     .cert-header {
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: 5px;
+      text-align: center;
       z-index: 1;
     }
 
-    .cert-logo-wrapper {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 2px;
+    .cert-logo-lockup {
+      display: inline-flex; align-items: center; gap: 12px;
+      margin-bottom: 6px;
     }
 
-    .cert-header-star {
-      width: 24px;
-      height: 24px;
-      background: #fff;
-      border: 1.5px solid #c9a84c;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .cert-logo-mark {
+      width: 44px; height: 44px;
+      border: 1.5px solid #00E5FF;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(0,229,255,0.05);
     }
+    .cert-logo-mark svg { width: 24px; height: 24px; }
 
-    .cert-header-star svg {
-      width: 12px;
-      height: 12px;
-      fill: #c9a84c;
-    }
-
-    .cert-institution-name {
-      font-family: 'Cinzel', serif;
+    .cert-logo-wordmark {
+      font-family: 'Raleway', sans-serif;
+      font-size: 30px;
       font-weight: 700;
-      font-size: 14px;
-      letter-spacing: 0.45em;
-      color: #0f172a;
-      margin: 0;
+      letter-spacing: 1px;
+    }
+    .cert-logo-wordmark .mano { color: #ffffff; }
+    .cert-logo-wordmark .demy { color: #00E5FF; }
+
+    .cert-logo-tagline {
+      font-family: 'Raleway', sans-serif;
+      font-size: 10px;
+      letter-spacing: 5px;
+      color: rgba(0,229,255,0.45);
       text-transform: uppercase;
+      margin-bottom: 20px;
     }
 
-    .cert-tagline {
-      font-family: 'Inter', sans-serif;
-      font-weight: 300;
-      font-size: 9px;
-      letter-spacing: 0.22em;
-      color: #64748b;
-      margin: 2px 0 0;
+    .cert-title-eyebrow {
+      font-family: 'Raleway', sans-serif;
+      font-size: 11px;
+      letter-spacing: 6px;
+      color: rgba(0,229,255,0.6);
       text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .cert-title-main {
+      font-family: 'Cinzel', serif;
+      font-size: 44px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 8px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      line-height: 1.1;
+    }
+
+    .cert-title-sub {
+      font-family: 'Cinzel', serif;
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 7px;
+      color: #00E5FF;
+      text-transform: uppercase;
+      margin-bottom: 24px;
     }
 
     /* Ornamental Divider */
     .cert-divider {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      width: 70%;
-      margin: 6px 0;
-      z-index: 1;
+      display: flex; align-items: center; gap: 12px;
+      margin: 0 auto 24px;
+      width: 60%;
+      justify-content: center;
+    }
+    .divider-line { flex: 1; height: 1px; background: rgba(0,229,255,0.25); }
+    .divider-diamond {
+      width: 6px; height: 6px;
+      background: #00E5FF;
+      transform: rotate(45deg);
+      opacity: 0.7;
     }
 
-    .divider-line {
-      flex: 1;
-      height: 0.5px;
-      background: linear-gradient(90deg, transparent, #c9a84c 40%, #c9a84c 60%, transparent);
-    }
-
-    .divider-diamonds {
-      color: #c9a84c;
-      font-size: 10px;
-      letter-spacing: 6px;
-    }
-
-    /* Title Block */
-    .cert-title-block {
-      text-align: center;
-      z-index: 1;
-    }
-
-    .cert-presents {
-      font-family: 'Inter', sans-serif;
-      font-weight: 400;
-      font-size: 9px;
-      color: #64748b;
-      letter-spacing: 0.3em;
-      margin: 0 0 4px;
-      text-transform: uppercase;
-    }
-
-    .cert-type-title {
-      font-family: 'Cinzel', serif;
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: 0.18em;
-      color: #0f172a;
-      margin: 0;
-    }
-
-    .cert-of-subtitle {
-      font-family: 'Cinzel', serif;
-      font-weight: 400;
+    .cert-awarded-label {
+      font-family: 'Raleway', sans-serif;
       font-size: 11px;
-      color: #c9a84c;
-      letter-spacing: 0.4em;
-      margin: 4px 0 0;
+      letter-spacing: 4px;
+      color: rgba(255,255,255,0.35);
       text-transform: uppercase;
-    }
-
-    /* Recipient Block */
-    .cert-recipient-block {
-      text-align: center;
-      z-index: 1;
-    }
-
-    .cert-awarded-to {
-      font-family: 'Inter', sans-serif;
-      font-weight: 400;
-      font-size: 9px;
-      color: #64748b;
-      letter-spacing: 0.25em;
-      margin: 0 0 2px;
-      text-transform: uppercase;
+      margin-bottom: 8px;
     }
 
     .cert-recipient-name {
-      font-family: 'Playfair Display', serif;
-      font-style: italic;
-      font-size: 42px;
-      font-weight: 700;
-      color: #0f172a;
-      margin: 0 0 4px;
-      line-height: 1.2;
+      font-family: 'Dancing Script', cursive;
+      font-size: 56px;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 6px;
+      line-height: 1.1;
+      text-shadow: 0 0 40px rgba(0,229,255,0.25);
     }
 
-    .cert-name-underline {
-      width: 260px;
+    .cert-recipient-underline {
+      width: 240px;
       height: 1px;
-      background: linear-gradient(90deg, transparent, #c9a84c, transparent);
-      margin: 0 auto;
+      background: rgba(0,229,255,0.35);
+      margin: 0 auto 20px;
     }
 
     /* Achievement Statement */
-    .cert-statement {
-      font-family: 'EB Garamond', serif;
-      font-size: 13px;
-      line-height: 1.75;
-      color: #334155;
+    .cert-body-copy {
+      font-family: 'Raleway', sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.8;
+      max-width: 720px;
+      margin: 0 auto 28px;
       text-align: center;
-      max-width: 520px;
-      margin: 4px 0 10px;
-      z-index: 1;
     }
+    .cert-body-copy .highlight { color: rgba(255,255,255,0.88); font-weight: 600; }
+    .cert-body-copy .cyan { color: #00E5FF; font-weight: 600; }
 
     /* Score + Level Row */
-    .cert-score-level-row {
+    .cert-achievement-row {
       display: flex;
-      align-items: center;
+      align-items: stretch;
       justify-content: center;
-      gap: 40px;
-      margin: 4px 0 10px;
-      z-index: 1;
+      gap: 0;
+      margin-bottom: 28px;
     }
 
-    .cert-score-box {
-      background: #0f172a;
-      border: 1.5px solid #c9a84c;
-      padding: 12px 28px;
+    .cert-score-card {
+      background: rgba(0,229,255,0.06);
+      border: 1px solid #00E5FF;
+      border-radius: 6px 0 0 6px;
+      padding: 16px 36px;
       text-align: center;
-      position: relative;
-      box-shadow: 0 4px 15px rgba(15, 23, 42, 0.15);
+      min-width: 220px;
     }
 
-    .cert-score-box::before {
-      content: '◆';
-      position: absolute;
-      left: -6px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #c9a84c;
+    .cert-score-card-label {
+      font-family: 'Raleway', sans-serif;
       font-size: 9px;
-    }
-
-    .cert-score-box::after {
-      content: '◆';
-      position: absolute;
-      right: -6px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #c9a84c;
-      font-size: 9px;
-    }
-
-    .score-label {
-      font: 400 8px/1 'Inter', sans-serif;
-      letter-spacing: 0.3em;
-      color: #94a3b8;
+      letter-spacing: 4px;
+      color: rgba(0,229,255,0.6);
       text-transform: uppercase;
-      display: block;
+      margin-bottom: 6px;
+    }
+
+    .cert-score-card-value {
+      font-family: 'Cinzel', serif;
+      font-size: 48px;
+      font-weight: 700;
+      color: #00E5FF;
+      line-height: 1;
       margin-bottom: 4px;
     }
 
-    .score-number {
-      font: 700 32px/1 'Cinzel', serif;
-      color: #f0d080;
-      display: block;
+    .cert-score-card-sub {
+      font-family: 'Raleway', sans-serif;
+      font-size: 9.5px;
+      color: rgba(0,229,255,0.4);
+      letter-spacing: 2px;
+      text-transform: uppercase;
     }
 
-    .score-denom {
-      font: 400 9px/1 'Inter', sans-serif;
-      color: #64748b;
-      display: block;
-      margin-top: 3px;
+    .cert-divider-vert {
+      width: 1px;
+      background: rgba(0,229,255,0.3);
+    }
+
+    .cert-level-card {
+      border: 1px solid rgba(0,229,255,0.35);
+      border-left: none;
+      border-radius: 0 6px 6px 0;
+      padding: 16px 36px;
+      text-align: center;
+      min-width: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .cert-level-card-label {
+      font-family: 'Raleway', sans-serif;
+      font-size: 9px;
+      letter-spacing: 4px;
+      color: rgba(255,255,255,0.3);
+      text-transform: uppercase;
+      margin-bottom: 8px;
     }
 
     .cert-level-badge {
-      border: 1.5px solid #c9a84c;
-      background: rgba(201, 168, 76, 0.08);
-      padding: 8px 20px;
-      text-align: center;
-      box-shadow: 0 4px 15px rgba(201, 168, 76, 0.05);
-    }
-
-    .level-label {
-      font: 400 7px/1 'Inter', sans-serif;
-      letter-spacing: 0.3em;
-      color: #64748b;
+      display: inline-block;
+      background: rgba(0,229,255,0.1);
+      border: 1px solid rgba(0,229,255,0.5);
+      border-radius: 4px;
+      padding: 6px 18px;
+      font-family: 'Cinzel', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #00E5FF;
+      letter-spacing: 3px;
       text-transform: uppercase;
-      display: block;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
 
-    .level-value {
-      font: 600 14px/1 'Cinzel', serif;
-      color: #c9a84c;
-      display: block;
+    .cert-level-card-desc {
+      font-family: 'Raleway', sans-serif;
+      font-size: 9.5px;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 1px;
     }
 
-    /* Section-wise performance grid */
-    .cert-grid-wrapper {
-      width: 90%;
-      z-index: 1;
+    /* Skills Row */
+    .cert-skills-row {
       display: flex;
-      flex-direction: column;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
     }
 
-    .cert-section-label {
-      font: 400 8px/1 'Inter', sans-serif;
-      letter-spacing: 0.3em;
-      color: #475569;
+    .cert-skill-pill {
+      font-family: 'Raleway', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 2px;
       text-transform: uppercase;
-      align-self: flex-start;
-      padding-left: 4px;
-      margin: 0 0 6px 0;
+      color: rgba(0,229,255,0.7);
+      border: 1px solid rgba(0,229,255,0.25);
+      border-radius: 20px;
+      padding: 6px 16px;
+      background: rgba(0,229,255,0.04);
     }
 
-    .cert-section-grid {
-      display: grid;
-      grid-template-columns: repeat(15, 1fr);
-      gap: 4px;
-      width: 100%;
+    /* Performance Grid Section */
+    .cert-perf-section {
+      margin-bottom: 28px;
+      width: 90%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cert-perf-header {
+      display: flex; align-items: center; gap: 14px;
       margin-bottom: 12px;
     }
 
-    .cert-day-cell {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 2px;
-      padding: 4px 2px;
-      text-align: center;
-      box-sizing: border-box;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+    .cert-perf-header-line { flex: 1; height: 1px; background: rgba(0,229,255,0.12); }
+
+    .cert-perf-header-text {
+      font-family: 'Raleway', sans-serif;
+      font-size: 9px;
+      letter-spacing: 5px;
+      color: rgba(255,255,255,0.25);
+      text-transform: uppercase;
     }
 
-    .cell-day-label {
-      font: 500 7px/1 'Inter', sans-serif;
-      color: #94a3b8;
-      letter-spacing: 0.05em;
-      display: block;
+    .cert-tiles-grid {
+      display: grid;
+      grid-template-columns: repeat(15, minmax(0, 1fr));
+      gap: 5px;
+      width: 100%;
+    }
+
+    .tile {
+      background: rgba(0,229,255,0.04);
+      border: 1px solid rgba(0,229,255,0.15);
+      border-top: 2px solid rgba(0,229,255,0.55);
+      border-radius: 3px;
+      padding: 6px 2px;
+      text-align: center;
+      transition: border-color 0.2s;
+    }
+    .tile:hover { border-top-color: #00E5FF; background: rgba(0,229,255,0.08); }
+
+    .tile-day {
+      font-family: 'Raleway', sans-serif;
+      font-size: 8px;
+      font-weight: 600;
+      color: rgba(0,229,255,0.55);
+      letter-spacing: 0.5px;
       margin-bottom: 2px;
     }
 
-    .cell-day-xp {
-      font: 600 8px/1 'Inter', sans-serif;
-      color: #0f172a;
-      display: block;
-      margin-bottom: 3px;
+    .tile-score {
+      font-family: 'Raleway', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.8);
     }
-
-    .cell-day-bar {
-      height: 2px;
-      border-radius: 1px;
-      margin: 0 2px;
-    }
-
-    /* Color states for day cells */
-    .cert-day-cell.high { border-color: rgba(16, 185, 129, 0.4); background: #f0fdf4; }
-    .cert-day-cell.high .cell-day-xp  { color: #065f46; }
-    .cert-day-cell.high .cell-day-bar { background: #10b981; }
-
-    .cert-day-cell.mid  { border-color: rgba(245, 158, 11, 0.4); background: #fffbeb; }
-    .cert-day-cell.mid  .cell-day-xp  { color: #92400e; }
-    .cert-day-cell.mid  .cell-day-bar { background: #f59e0b; }
-
-    .cert-day-cell.low  { border-color: rgba(239, 68, 68, 0.3); background: #fef2f2; }
-    .cert-day-cell.low  .cell-day-xp  { color: #991b1b; }
-    .cert-day-cell.low  .cell-day-bar { background: #ef4444; }
-
-    .cert-day-cell.zero { background: #f1f5f9; opacity: 0.6; }
-    .cert-day-cell.zero .cell-day-xp  { color: #cbd5e1; }
-    .cert-day-cell.zero .cell-day-bar { background: #e2e8f0; }
+    .tile.low { border-top-color: rgba(255,200,100,0.55); }
+    .tile.low .tile-score { color: rgba(255,200,100,0.8); }
+    .tile.high { border-top-color: #00E5FF; }
+    .tile.high .tile-score { color: rgba(0,229,255,0.95); }
 
     /* Footer / Signature Area */
-    .cert-footer-row {
+    .cert-footer {
+      border-top: 1px solid rgba(0,229,255,0.1);
+      padding-top: 20px;
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: 1fr auto 1fr;
       align-items: center;
+      gap: 20px;
       width: 90%;
-      border-top: 0.5px solid rgba(201, 168, 76, 0.3);
-      padding-top: 10px;
-      z-index: 1;
+      margin: 0 auto;
     }
 
-    .cert-footer-col {
-      text-align: center;
+    .cert-footer-left { text-align: left; }
+    .cert-footer-center { text-align: center; }
+    .cert-footer-right { text-align: right; }
+
+    .cert-sig-block-name {
+      font-family: 'Dancing Script', cursive;
+      font-size: 22px;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 4px;
     }
 
-    .cert-footer-center {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+    .cert-sig-block-line { width: 100%; height: 1px; background: rgba(255,255,255,0.1); margin-bottom: 5px; }
 
-    .sig-underline {
-      width: 120px;
-      height: 0.5px;
-      background: #cbd5e1;
-      margin: 0 auto 5px;
-    }
-
-    .sig-name {
-      font: 400 12px/1.4 'Playfair Display', serif;
-      font-style: italic;
-      color: #1e293b;
-      margin: 0 0 2px;
-    }
-
-    .sig-role {
-      font: 400 7px/1 'Inter', sans-serif;
-      letter-spacing: 0.22em;
-      color: #64748b;
+    .cert-sig-block-role {
+      font-family: 'Raleway', sans-serif;
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: rgba(255,255,255,0.25);
       text-transform: uppercase;
-      margin: 0;
     }
 
-    .cert-medallion {
-      width: 58px;
-      height: 58px;
-      border: 1.5px solid #c9a84c;
+    .cert-seal {
+      width: 76px; height: 76px;
+      border: 1.5px solid rgba(0,229,255,0.6);
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #fff;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      margin: 0 auto;
+      background: rgba(0,229,255,0.04);
+      gap: 2px;
       position: relative;
-      margin: 0 auto 4px;
     }
 
-    .cert-medallion::before {
+    .cert-seal::before {
       content: '';
       position: absolute;
       inset: 4px;
-      border: 0.5px solid rgba(201,168,76,0.5);
+      border: 0.5px solid rgba(0,229,255,0.25);
       border-radius: 50%;
     }
 
-    .medallion-star {
-      font-size: 22px;
-      color: #c9a84c;
-      line-height: 1;
-    }
+    .cert-seal-star svg { width: 22px; height: 22px; }
 
-    .cert-issued-date {
-      font-size: 7px;
-      color: #64748b;
-      margin: 0;
-      letter-spacing: 0.05em;
+    .cert-seal-date {
+      font-family: 'Raleway', sans-serif;
+      font-size: 8px;
+      letter-spacing: 1.5px;
+      color: rgba(0,229,255,0.5);
       text-transform: uppercase;
     }
 
-    .cert-id-strip {
-      font: 400 7px/1 monospace;
-      color: #64748b;
-      letter-spacing: 0.15em;
-      margin: 8px 0 0 0;
-      z-index: 1;
+    .cert-verify-block-score {
+      font-family: 'Cinzel', serif;
+      font-size: 18px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 4px;
     }
+
+    .cert-verify-block-line { width: 100%; height: 1px; background: rgba(255,255,255,0.1); margin-bottom: 5px; }
+
+    .cert-verify-block-label {
+      font-family: 'Raleway', sans-serif;
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: rgba(255,255,255,0.25);
+      text-transform: uppercase;
+    }
+
+    .cert-id-bar {
+      text-align: center;
+      margin-top: 16px;
+      font-family: 'Raleway', sans-serif;
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: rgba(255,255,255,0.15);
+    }
+    .cert-id-bar span { color: rgba(0,229,255,0.3); margin: 0 8px; }
 
     @keyframes modalSlideUp {
       from { opacity: 0; transform: translateY(30px); }
@@ -5252,12 +5250,11 @@
         const isHigh = pseudoRandom() > 0.15;
         const dayXp = parseFloat((isHigh ? (26 + pseudoRandom() * 7.3) : (18 + pseudoRandom() * 7)).toFixed(1));
         accumulatedScore += dayXp;
-        const cellClass = dayXp >= 25 ? 'high' : (dayXp >= 15 ? 'mid' : (dayXp > 0 ? 'low' : 'zero'));
+        const stateClass = dayXp >= 25 ? 'high' : (dayXp > 0 && dayXp < 15 ? 'low' : '');
         gridHtml += `
-          <div class="cert-day-cell ${cellClass}">
-            <span class="cell-day-label">D${padD}</span>
-            <span class="cell-day-xp">${dayXp}</span>
-            <div class="cell-day-bar"></div>
+          <div class="tile ${stateClass}">
+            <div class="tile-day">D${padD}</div>
+            <div class="tile-score">${dayXp}</div>
           </div>
         `;
       }
@@ -5334,157 +5331,114 @@
         <button class="dl-btn dl-close" type="button" onclick="closeModal('certificate-modal')">✕ Close</button>
       </div>
 
-      <div id="certificate-render" class="certificate-body">
-        <!-- Concentric Border Layers -->
+            <div id="certificate-render" class="certificate-body">
+        <div class="cert-mesh"></div>
         <div class="cert-border-outer"></div>
         <div class="cert-border-middle"></div>
-        <div class="cert-border-inner"></div>
+        <div class="cert-corner tl"></div>
+        <div class="cert-corner tr"></div>
+        <div class="cert-corner bl"></div>
+        <div class="cert-corner br"></div>
+        <div class="cert-watermark">VERIFIED</div>
 
-        <!-- Watermark -->
-        <div class="cert-watermark">MANODEMY</div>
-
-        <!-- Four Corner SVG Flourishes -->
-        <div class="cert-corner tl">
-          <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M8 8 L8 44" stroke="#c9a84c" stroke-width="1.8" stroke-linecap="round"/>
-            <path d="M8 8 L44 8" stroke="#c9a84c" stroke-width="1.8" stroke-linecap="round"/>
-            <path d="M15 15 L15 36" stroke="#c9a84c" stroke-width="0.6" opacity="0.45"/>
-            <path d="M15 15 L36 15" stroke="#c9a84c" stroke-width="0.6" opacity="0.45"/>
-            <circle cx="8" cy="8" r="3.5" fill="#c9a84c"/>
-            <circle cx="22" cy="8" r="1.2" fill="#c9a84c" opacity="0.5"/>
-            <circle cx="8" cy="22" r="1.2" fill="#c9a84c" opacity="0.5"/>
-          </svg>
-        </div>
-        <div class="cert-corner tr">
-          <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M8 8 L8 44" stroke="#c9a84c" stroke-width="1.8" stroke-linecap="round"/>
-            <path d="M8 8 L44 8" stroke="#c9a84c" stroke-width="1.8" stroke-linecap="round"/>
-            <path d="M15 15 L15 36" stroke="#c9a84c" stroke-width="0.6" opacity="0.45"/>
-            <path d="M15 15 L36 15" stroke="#c9a84c" stroke-width="0.6" opacity="0.45"/>
-            <circle cx="8" cy="8" r="3.5" fill="#c9a84c"/>
-            <circle cx="22" cy="8" r="1.2" fill="#c9a84c" opacity="0.5"/>
-            <circle cx="8" cy="22" r="1.2" fill="#c9a84c" opacity="0.5"/>
-          </svg>
-        </div>
-        <div class="cert-corner bl">
-          <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M8 8 L8 44" stroke="#c9a84c" stroke-width="1.8" stroke-linecap="round"/>
-            <path d="M8 8 L44 8" stroke="#c9a84c" stroke-width="1.8" stroke-linecap="round"/>
-            <path d="M15 15 L15 36" stroke="#c9a84c" stroke-width="0.6" opacity="0.45"/>
-            <path d="M15 15 L36 15" stroke="#c9a84c" stroke-width="0.6" opacity="0.45"/>
-            <circle cx="8" cy="8" r="3.5" fill="#c9a84c"/>
-            <circle cx="22" cy="8" r="1.2" fill="#c9a84c" opacity="0.5"/>
-            <circle cx="8" cy="22" r="1.2" fill="#c9a84c" opacity="0.5"/>
-          </svg>
-        </div>
-        <div class="cert-corner br">
-          <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M8 8 L8 44" stroke="#c9a84c" stroke-width="1.8" stroke-linecap="round"/>
-            <path d="M8 8 L44 8" stroke="#c9a84c" stroke-width="1.8" stroke-linecap="round"/>
-            <path d="M15 15 L15 36" stroke="#c9a84c" stroke-width="0.6" opacity="0.45"/>
-            <path d="M15 15 L36 15" stroke="#c9a84c" stroke-width="0.6" opacity="0.45"/>
-            <circle cx="8" cy="8" r="3.5" fill="#c9a84c"/>
-            <circle cx="22" cy="8" r="1.2" fill="#c9a84c" opacity="0.5"/>
-            <circle cx="8" cy="22" r="1.2" fill="#c9a84c" opacity="0.5"/>
-          </svg>
-        </div>
-
-        <!-- Top gold decorative band -->
-        <div class="cert-gold-band"></div>
-
-        <!-- Institution Header Block -->
-        <div class="cert-header">
-          <div class="cert-logo-wrapper">
-            <div class="cert-header-star">
-              <svg viewBox="0 0 24 24">
-                <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9" />
-              </svg>
+        <div class="cert-content">
+          <div class="cert-header">
+            <div class="cert-logo-lockup">
+              <div class="cert-logo-mark">
+                <svg viewBox="0 0 20 20" fill="none">
+                  <path d="M4 10 L8 5 L12 10 L16 5" stroke="#00E5FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M4 15 L8 10 L12 15 L16 10" stroke="#00E5FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
+                </svg>
+              </div>
+              <div class="cert-logo-wordmark"><span class="mano">Mano</span><span class="demy">demy</span></div>
             </div>
-            <h3 class="cert-institution-name">MANODEMY</h3>
-            <div class="cert-header-star">
-              <svg viewBox="0 0 24 24">
-                <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9" />
-              </svg>
+            <div class="cert-logo-tagline">Hands-On EdTech &nbsp;·&nbsp; Institute of Coding Excellence</div>
+
+            <div class="cert-title-eyebrow">This is to proudly certify that</div>
+            <div class="cert-title-main">Certificate</div>
+            <div class="cert-title-sub">of Mastery &nbsp;&nbsp; &amp; &nbsp;&nbsp; Completion</div>
+
+            <div class="cert-divider">
+              <div class="divider-line"></div>
+              <div class="divider-diamond"></div>
+              <div class="divider-line"></div>
+              <div class="divider-diamond"></div>
+              <div class="divider-line"></div>
+            </div>
+
+            <div class="cert-awarded-label">Proudly awarded to</div>
+            <div id="cert-name-display" class="cert-recipient-name">Aditya Sharma</div>
+            <div class="cert-recipient-underline"></div>
+
+            <div class="cert-body-copy">
+              has demonstrated <span class="highlight">exceptional dedication and technical mastery</span> upon successful completion of the
+              <span class="cyan">Manodemy V2 Coding Mastery Program</span> — an intensive, industry-aligned curriculum spanning
+              <span class="highlight">30 days</span> of rigorous daily challenges, encompassing
+              <span class="highlight">1,668 coding problems</span> across Python programming,
+              data structures, algorithms, and computational thinking.
             </div>
           </div>
-          <p class="cert-tagline">Institute of Coding Excellence</p>
-        </div>
 
-        <!-- Divider -->
-        <div class="cert-divider">
-          <div class="divider-line"></div>
-          <div class="divider-diamonds">◆ ◆ ◆</div>
-          <div class="divider-line"></div>
-        </div>
-
-        <!-- Title Block -->
-        <div class="cert-title-block">
-          <p class="cert-presents">This is to certify that</p>
-          <h1 class="cert-type-title">CERTIFICATE</h1>
-          <p class="cert-of-subtitle">OF COMPLETION</p>
-        </div>
-
-        <!-- Recipient Block -->
-        <div class="cert-recipient-block">
-          <p class="cert-awarded-to">PROUDLY AWARDED TO</p>
-          <h2 id="cert-name-display" class="cert-recipient-name">Aditya Sharma</h2>
-          <div class="cert-name-underline"></div>
-        </div>
-
-        <!-- Achievement Statement -->
-        <p class="cert-statement">
-          has successfully completed the <strong style="color:#111; font-weight:600;">Manodemy V2 Coding Mastery Program</strong>,
-          demonstrating exceptional proficiency across <strong style="color:#111; font-weight:600;">30 days</strong> of intensive challenges
-          encompassing <strong style="color:#111; font-weight:600;">1,668 coding problems</strong> in Python programming,
-          algorithms, and computational thinking.
-        </p>
-
-        <!-- Score + Level Row -->
-        <div class="cert-score-level-row">
-          <div class="cert-score-box">
-            <span class="score-label">TOTAL SCORE</span>
-            <span id="cert-score-number" class="score-number">850.00</span>
-            <span class="score-denom">out of 1000 XP</span>
-          </div>
-          <div class="divider-diamonds" style="color: #c9a84c; font-size: 11px;">◆</div>
-          <div class="cert-level-badge">
-            <span class="level-label">ACHIEVED LEVEL</span>
-            <span id="cert-level-value" class="level-value">Alchemist</span>
-          </div>
-        </div>
-
-        <!-- Section Grid -->
-        <div class="cert-grid-wrapper">
-          <p class="cert-section-label">◆ &nbsp; Section-wise Performance &nbsp; ◆</p>
-          <div id="cert-section-grid" class="cert-section-grid"></div>
-        </div>
-
-        <!-- Signature / Footer Row -->
-        <div class="cert-footer-row">
-          <div class="cert-footer-col">
-            <div class="sig-underline"></div>
-            <p class="sig-name">Manodemy V2</p>
-            <p class="sig-role">Program Director</p>
-          </div>
-          <div class="cert-footer-col cert-footer-center">
-            <div class="cert-medallion">
-              <span class="medallion-star">★</span>
+          <div class="cert-achievement-row">
+            <div class="cert-score-card">
+              <div class="cert-score-card-label">Total Score Achieved</div>
+              <div class="cert-score-card-value"><span id="cert-score-number">850</span><span style="font-size:22px;opacity:0.6">.00</span></div>
+              <div class="cert-score-card-sub">out of 1000 XP</div>
             </div>
-            <p class="cert-issued-date" id="cert-issued-date">ISSUED · JUNE 2026</p>
+            <div class="cert-divider-vert"></div>
+            <div class="cert-level-card">
+              <div class="cert-level-card-label">Proficiency Level</div>
+              <div id="cert-level-value" class="cert-level-badge">Alchemist</div>
+              <div class="cert-level-card-desc">Top 5% of graduates</div>
+            </div>
           </div>
-          <div class="cert-footer-col">
-            <div class="sig-underline"></div>
-            <p id="cert-verified-score" class="sig-name" style="font-family: monospace; font-size: 11px; font-style: normal;">850.00 / 1000</p>
-            <p class="sig-role">Verified Record</p>
+
+          <div class="cert-skills-row">
+            <div class="cert-skill-pill">Python Programming</div>
+            <div class="cert-skill-pill">Data Structures</div>
+            <div class="cert-skill-pill">Algorithms</div>
+            <div class="cert-skill-pill">Problem Solving</div>
+            <div class="cert-skill-pill">Computational Thinking</div>
+            <div class="cert-skill-pill">Code Optimization</div>
+          </div>
+
+          <div class="cert-perf-section">
+            <div class="cert-perf-header">
+              <div class="cert-perf-header-line"></div>
+              <div class="cert-perf-header-text">Daily Performance Record — 30 Days</div>
+              <div class="cert-perf-header-line"></div>
+            </div>
+            <div id="cert-section-grid" class="cert-tiles-grid"></div>
+          </div>
+
+          <div class="cert-footer">
+            <div class="cert-footer-left">
+              <div class="cert-sig-block-name">Manodemy V2</div>
+              <div class="cert-sig-block-line"></div>
+              <div class="cert-sig-block-role">Program Director &nbsp;·&nbsp; Manodemy</div>
+            </div>
+            <div class="cert-footer-center">
+              <div class="cert-seal">
+                <div class="cert-seal-star">
+                  <svg viewBox="0 0 22 22" fill="none">
+                    <polygon points="11,2 13.5,8.5 20.5,8.5 14.8,12.8 17,19.5 11,15.2 5,19.5 7.2,12.8 1.5,8.5 8.5,8.5" stroke="#00E5FF" stroke-width="1.2" fill="rgba(0,229,255,0.08)"/>
+                  </svg>
+                </div>
+                <div class="cert-seal-date" id="cert-issued-date">ISSUED · JUNE 2026</div>
+              </div>
+            </div>
+            <div class="cert-footer-right">
+              <div id="cert-verified-score" class="cert-verify-block-score">850.00 / 1000</div>
+              <div class="cert-verify-block-line"></div>
+              <div class="cert-verify-block-label">Verified Record &nbsp;·&nbsp; Authenticated</div>
+            </div>
+          </div>
+
+          <div id="cert-id-strip" class="cert-id-bar">
+            CERT-ID <span>·</span> MND-2026-F41FC2 <span>·</span> manodemy.com/verify <span>·</span> Issued May 2026
           </div>
         </div>
-
-        <p id="cert-id-strip" class="cert-id-strip">CERT-ID: MND-2026-00000 &nbsp;|&nbsp; manodemy.com/verify</p>
-
-        <!-- Bottom gold decorative band -->
-        <div class="cert-gold-band" style="margin-top: 5px;"></div>
-      </div>
-    </div>
+      </div>    </div>
   </div>
 
 </body>

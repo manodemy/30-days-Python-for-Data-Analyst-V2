@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Allow: /landing_v2/
+Disallow: /supabase/
+Disallow: /admin.html
+Disallow: /admin/
+
+Sitemap: https://manodemy.github.io/30-days-Python-for-Data-Analyst-V2/sitemap.xml

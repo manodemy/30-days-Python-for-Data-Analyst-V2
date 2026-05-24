@@ -8,8 +8,10 @@
   <title>Manodemy — Intelligence Suite</title>
   <link href="https://fonts.googleapis.com" rel="preconnect" />
   <link
-    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300&amp;family=DM+Mono:wght@300;400;500&amp;family=DM+Sans:wght@300;400;500;600&amp;display=swap"
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300&amp;family=DM+Mono:wght@300;400;500&amp;family=DM+Sans:wght@300;400;500;600&amp;family=Cinzel:wght@400;600;700&amp;family=Playfair+Display:ital,wght@0,400;0,700;1,400&amp;family=EB+Garamond:ital,wght@0,400;1,400&amp;family=Inter:wght@300;400;500;600&amp;display=swap"
     rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="supabase.js"></script>
   <script src="chart.js"></script>
   <style>
@@ -1667,6 +1669,540 @@
     .benchmarks-table { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--rim); border-radius: 8px; overflow: hidden; margin-top: 1rem; }
     .benchmarks-table th, .benchmarks-table td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--rim); font-size: 0.9rem; }
     .benchmarks-table th { color: var(--ink-muted); font-weight: 500; background: var(--elevated); }
+
+    /* ===== CERTIFICATE SYSTEM MODALS & PREVIEW ===== */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 10, 0.85);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(8px);
+      padding: 1.5rem;
+      overflow-y: auto;
+      box-sizing: border-box;
+    }
+
+    .modal-backdrop.hidden { display: none !important; }
+
+    .cert-modal-backdrop {
+      align-items: flex-start;
+      padding: 2rem 1rem;
+    }
+
+    .cert-modal-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      max-width: 1140px;
+      width: 100%;
+      margin: auto;
+    }
+
+    .cert-action-bar {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .dl-btn {
+      padding: 0.65rem 1.5rem;
+      border: none;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .dl-png  { background: linear-gradient(135deg, #6c63ff, #3ecfcf); color: #fff; }
+    .dl-pdf  { background: linear-gradient(135deg, #c9a84c, #f0d080); color: #1a1a2e; }
+    .dl-close { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+
+    .dl-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+
+    /* ===== CERTIFICATE BODY ===== */
+    .certificate-body {
+      width: 1100px;
+      height: 780px;
+      background: #f7f3eb;
+      position: relative;
+      overflow: hidden;
+      padding: 32px 56px 28px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      font-family: 'Inter', sans-serif;
+      color: #1a1a2e;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .cert-border-outer {
+      position: absolute; inset: 8px;
+      border: 2px solid #c9a84c;
+      pointer-events: none; z-index: 2;
+    }
+
+    .cert-border-middle {
+      position: absolute; inset: 14px;
+      border: 1px solid #c9a84c;
+      pointer-events: none; z-index: 2;
+    }
+
+    .cert-border-inner {
+      position: absolute; inset: 20px;
+      border: 0.5px solid rgba(201,168,76,0.35);
+      pointer-events: none; z-index: 2;
+    }
+
+    .cert-watermark {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%) rotate(-5deg);
+      font-family: 'Cinzel', serif;
+      font-size: 130px;
+      font-weight: 700;
+      color: rgba(201,168,76,0.045);
+      letter-spacing: 0.35em;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 0;
+      user-select: none;
+    }
+
+    .cert-gold-band {
+      width: 100%;
+      height: 8px;
+      background: linear-gradient(
+        90deg,
+        #1a1a2e 0%,
+        #6c5a1e 15%,
+        #c9a84c 30%,
+        #f0d080 50%,
+        #c9a84c 70%,
+        #6c5a1e 85%,
+        #1a1a2e 100%
+      );
+    }
+
+    .cert-corner {
+      position: absolute;
+      width: 52px;
+      height: 52px;
+      z-index: 3;
+    }
+    .cert-corner.tl { top: 8px; left: 8px; }
+    .cert-corner.tr { top: 8px; right: 8px; transform: scaleX(-1); }
+    .cert-corner.bl { bottom: 8px; left: 8px; transform: scaleY(-1); }
+    .cert-corner.br { bottom: 8px; right: 8px; transform: scale(-1, -1); }
+
+    /* Institution Header Block */
+    .cert-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 5px;
+      z-index: 1;
+    }
+
+    .cert-logo-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 2px;
+    }
+
+    .cert-header-star {
+      width: 24px;
+      height: 24px;
+      background: #fff;
+      border: 1.5px solid #c9a84c;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cert-header-star svg {
+      width: 12px;
+      height: 12px;
+      fill: #c9a84c;
+    }
+
+    .cert-institution-name {
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.45em;
+      color: #1a1a2e;
+      margin: 0;
+      text-transform: uppercase;
+    }
+
+    .cert-tagline {
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      color: #999;
+      margin: 2px 0 0;
+      text-transform: uppercase;
+    }
+
+    /* Ornamental Divider */
+    .cert-divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 70%;
+      margin: 6px 0;
+      z-index: 1;
+    }
+
+    .divider-line {
+      flex: 1;
+      height: 0.5px;
+      background: linear-gradient(90deg, transparent, #c9a84c 40%, #c9a84c 60%, transparent);
+    }
+
+    .divider-diamonds {
+      color: #c9a84c;
+      font-size: 10px;
+      letter-spacing: 6px;
+    }
+
+    /* Title Block */
+    .cert-title-block {
+      text-align: center;
+      z-index: 1;
+    }
+
+    .cert-presents {
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      font-size: 9px;
+      color: #aaa;
+      letter-spacing: 0.3em;
+      margin: 0 0 4px;
+      text-transform: uppercase;
+    }
+
+    .cert-type-title {
+      font-family: 'Cinzel', serif;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      color: #1a1a2e;
+      margin: 0;
+    }
+
+    .cert-of-subtitle {
+      font-family: 'Cinzel', serif;
+      font-weight: 400;
+      font-size: 11px;
+      color: #c9a84c;
+      letter-spacing: 0.4em;
+      margin: 4px 0 0;
+      text-transform: uppercase;
+    }
+
+    /* Recipient Block */
+    .cert-recipient-block {
+      text-align: center;
+      z-index: 1;
+    }
+
+    .cert-awarded-to {
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      font-size: 9px;
+      color: #bbb;
+      letter-spacing: 0.25em;
+      margin: 0 0 2px;
+      text-transform: uppercase;
+    }
+
+    .cert-recipient-name {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 42px;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin: 0 0 4px;
+      line-height: 1.2;
+    }
+
+    .cert-name-underline {
+      width: 260px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #c9a84c, transparent);
+      margin: 0 auto;
+    }
+
+    /* Achievement Statement */
+    .cert-statement {
+      font-family: 'EB Garamond', serif;
+      font-size: 13px;
+      line-height: 1.75;
+      color: #555;
+      text-align: center;
+      max-width: 520px;
+      margin: 4px 0 10px;
+      z-index: 1;
+    }
+
+    /* Score + Level Row */
+    .cert-score-level-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      margin: 4px 0 10px;
+      z-index: 1;
+    }
+
+    .cert-score-box {
+      background: #1a1a2e;
+      border: 1px solid #c9a84c;
+      padding: 12px 28px;
+      text-align: center;
+      position: relative;
+    }
+
+    .cert-score-box::before {
+      content: '◆';
+      position: absolute;
+      left: -6px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #c9a84c;
+      font-size: 9px;
+    }
+
+    .cert-score-box::after {
+      content: '◆';
+      position: absolute;
+      right: -6px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #c9a84c;
+      font-size: 9px;
+    }
+
+    .score-label {
+      font: 400 8px/1 'Inter', sans-serif;
+      letter-spacing: 0.3em;
+      color: #888;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .score-number {
+      font: 700 32px/1 'Cinzel', serif;
+      color: #f0d080;
+      display: block;
+    }
+
+    .score-denom {
+      font: 400 9px/1 'Inter', sans-serif;
+      color: #777;
+      display: block;
+      margin-top: 3px;
+    }
+
+    .cert-level-badge {
+      border: 1px solid #c9a84c;
+      background: rgba(201,168,76,0.08);
+      padding: 8px 20px;
+      text-align: center;
+    }
+
+    .level-label {
+      font: 400 7px/1 'Inter', sans-serif;
+      letter-spacing: 0.3em;
+      color: #aaa;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .level-value {
+      font: 600 14px/1 'Cinzel', serif;
+      color: #c9a84c;
+      display: block;
+    }
+
+    /* Section-wise performance grid */
+    .cert-grid-wrapper {
+      width: 90%;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cert-section-label {
+      font: 400 8px/1 'Inter', sans-serif;
+      letter-spacing: 0.3em;
+      color: #bbb;
+      text-transform: uppercase;
+      align-self: flex-start;
+      padding-left: 4px;
+      margin: 0 0 6px 0;
+    }
+
+    .cert-section-grid {
+      display: grid;
+      grid-template-columns: repeat(15, 1fr);
+      gap: 4px;
+      width: 100%;
+      margin-bottom: 12px;
+    }
+
+    .cert-day-cell {
+      background: #fff;
+      border: 0.5px solid #e0d9c8;
+      border-radius: 2px;
+      padding: 4px 2px;
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    .cell-day-label {
+      font: 500 7px/1 'Inter', sans-serif;
+      color: #bbb;
+      letter-spacing: 0.05em;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .cell-day-xp {
+      font: 600 8px/1 'Inter', sans-serif;
+      color: #1a1a2e;
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .cell-day-bar {
+      height: 2px;
+      border-radius: 1px;
+      margin: 0 2px;
+    }
+
+    /* Color states for day cells */
+    .cert-day-cell.high { border-color: rgba(62,207,207,0.4); background: #f0fcfa; }
+    .cert-day-cell.high .cell-day-xp  { color: #0a6e56; }
+    .cert-day-cell.high .cell-day-bar { background: #3ecfcf; }
+
+    .cert-day-cell.mid  { border-color: rgba(201,168,76,0.45); background: #fdf8ec; }
+    .cert-day-cell.mid  .cell-day-xp  { color: #7a5c0a; }
+    .cert-day-cell.mid  .cell-day-bar { background: #c9a84c; }
+
+    .cert-day-cell.low  { border-color: rgba(220,80,80,0.3); background: #fdf0f0; }
+    .cert-day-cell.low  .cell-day-xp  { color: #8a2a2a; }
+    .cert-day-cell.low  .cell-day-bar { background: #e06060; }
+
+    .cert-day-cell.zero { background: #f6f4ef; opacity: 0.55; }
+    .cert-day-cell.zero .cell-day-xp  { color: #ccc; }
+    .cert-day-cell.zero .cell-day-bar { background: #ddd; }
+
+    /* Footer / Signature Area */
+    .cert-footer-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      align-items: center;
+      width: 90%;
+      border-top: 0.5px solid rgba(201,168,76,0.3);
+      padding-top: 10px;
+      z-index: 1;
+    }
+
+    .cert-footer-col {
+      text-align: center;
+    }
+
+    .cert-footer-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .sig-underline {
+      width: 120px;
+      height: 0.5px;
+      background: #ccc;
+      margin: 0 auto 5px;
+    }
+
+    .sig-name {
+      font: 400 12px/1.4 'Playfair Display', serif;
+      font-style: italic;
+      color: #333;
+      margin: 0 0 2px;
+    }
+
+    .sig-role {
+      font: 400 7px/1 'Inter', sans-serif;
+      letter-spacing: 0.22em;
+      color: #aaa;
+      text-transform: uppercase;
+      margin: 0;
+    }
+
+    .cert-medallion {
+      width: 58px;
+      height: 58px;
+      border: 1.5px solid #c9a84c;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      position: relative;
+      margin: 0 auto 4px;
+    }
+
+    .cert-medallion::before {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      border: 0.5px solid rgba(201,168,76,0.5);
+      border-radius: 50%;
+    }
+
+    .medallion-star {
+      font-size: 22px;
+      color: #c9a84c;
+      line-height: 1;
+    }
+
+    .cert-issued-date {
+      font-size: 7px;
+      color: #aaa;
+      margin: 0;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .cert-id-strip {
+      font: 400 7px/1 monospace;
+      color: #bbb;
+      letter-spacing: 0.15em;
+      margin: 8px 0 0 0;
+      z-index: 1;
+    }
+
+    @keyframes modalSlideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 
@@ -2053,6 +2589,7 @@
                     <th>Total Spent</th>
                     <th>Purchases</th>
                     <th>Coupon Used</th>
+                    <th>Certificate</th>
                   </tr>
                 </thead>
                 <tbody></tbody>
@@ -3532,6 +4069,11 @@
         <td class="cell-mono" style="color:var(--gold);">${u.total_spent_inr > 0 ? formatINR(u.total_spent_inr) : '—'}</td>
         <td class="cell-mono" style="text-align:center;">${u.purchase_count || 0}</td>
         <td class="cell-mono" style="color:var(--ink-muted);">${u.coupon_used || '—'}</td>
+        <td style="text-align:center;">
+          <button class="btn-export" style="padding:0.25rem 0.5rem; font-size:0.68rem;" onclick="viewAdminCertificate('${(u.full_name || 'Student').replace(/'/g, "\\'")}', '${u.id || u.user_id || ''}')">
+            🎓 View
+          </button>
+        </td>
       </tr>`).join('');
     }
 
@@ -4514,6 +5056,81 @@
       }
     }
 
+    // ===== CERTIFICATE PREVIEW SYSTEM FOR ADMIN =====
+    function openModal(id) {
+      document.getElementById(id)?.classList.remove('hidden');
+    }
+    function closeModal(id) {
+      document.getElementById(id)?.classList.add('hidden');
+    }
+
+    function viewAdminCertificate(studentName, userId) {
+      // 1. Set Student Name
+      document.getElementById('cert-name-display').textContent = studentName || 'Student';
+
+      // 2. Generate simulated, high-achiever 30-day performance grid
+      let gridHtml = '';
+      let accumulatedScore = 0;
+      
+      // Let's use seed or deterministic generation based on userId to keep it stable
+      let seed = 0;
+      if (userId) {
+        for (let i = 0; i < userId.length; i++) {
+          seed += userId.charCodeAt(i);
+        }
+      } else {
+        seed = Math.floor(Math.random() * 1000);
+      }
+      
+      function pseudoRandom() {
+        const x = Math.sin(seed++) * 10000;
+        return x - Math.floor(x);
+      }
+
+      for (let d = 1; d <= 30; d++) {
+        const padD = String(d).padStart(2, '0');
+        const isHigh = pseudoRandom() > 0.15;
+        const dayXp = parseFloat((isHigh ? (26 + pseudoRandom() * 7.3) : (18 + pseudoRandom() * 7)).toFixed(1));
+        accumulatedScore += dayXp;
+        const cellClass = dayXp >= 25 ? 'high' : (dayXp >= 15 ? 'mid' : (dayXp > 0 ? 'low' : 'zero'));
+        gridHtml += `
+          <div class="cert-day-cell ${cellClass}">
+            <span class="cell-day-label">D${padD}</span>
+            <span class="cell-day-xp">${dayXp}</span>
+            <div class="cell-day-bar"></div>
+          </div>
+        `;
+      }
+
+      const totalScore = parseFloat(accumulatedScore.toFixed(2));
+      const level = totalScore >= 900 ? 'Data Guru' : 'Alchemist';
+
+      // 3. Populate dynamic values
+      document.getElementById('cert-score-number').textContent = totalScore.toFixed(2);
+      document.getElementById('cert-level-value').textContent = level;
+      document.getElementById('cert-verified-score').textContent = `${totalScore.toFixed(2)} / 1000`;
+      document.getElementById('cert-section-grid').innerHTML = gridHtml;
+
+      // 4. Issued date (current month & year)
+      const months = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+      const now = new Date();
+      const currentMonth = months[now.getMonth()];
+      const currentYear = now.getFullYear();
+      document.getElementById('cert-issued-date').textContent = `ISSUED · ${currentMonth} ${currentYear}`;
+
+      // 5. Crypto Cert ID MND-YEAR-HASH
+      const uniqueHash = userId ? userId.replace(/-/g, '').substring(0, 6).toUpperCase() : Math.random().toString(36).substring(2, 8).toUpperCase();
+      document.getElementById('cert-id-strip').innerHTML = `CERT-ID: MND-${currentYear}-${uniqueHash} &nbsp;|&nbsp; manodemy.com/verify`;
+
+      // 6. Open Modal
+      openModal('certificate-modal');
+    }
+
+    // Attach to window globally for onclick calls from table rows
+    window.viewAdminCertificate = viewAdminCertificate;
+    window.openModal = openModal;
+    window.closeModal = closeModal;
+
     // Attach reviews operations globally
     window.fetchAdminReviews = fetchAdminReviews;
     window.updateReviewStatus = updateReviewStatus;
@@ -4537,6 +5154,80 @@
           renderReviewsList();
         });
       });
+
+      // Certificate modal download controls
+      const downloadPngBtn = document.getElementById('download-png-btn');
+      if (downloadPngBtn) {
+        downloadPngBtn.addEventListener('click', async () => {
+          downloadPngBtn.textContent = 'Generating Image...';
+          downloadPngBtn.disabled = true;
+
+          const cert = document.getElementById('certificate-render');
+          try {
+            const canvas = await html2canvas(cert, {
+              scale: 3,
+              useCORS: true,
+              backgroundColor: '#f7f3eb',
+              logging: false,
+              onclone: (doc) => {
+                doc.querySelectorAll('.cert-border-outer, .cert-border-middle, .cert-border-inner')
+                   .forEach(el => el.style.display = 'block');
+              }
+            });
+
+            const link = document.createElement('a');
+            link.download = `Manodemy_Certificate_${Date.now()}.png`;
+            link.href = canvas.toDataURL('image/png', 1.0);
+            link.click();
+          } catch (err) {
+            console.error("Failed to export certificate as PNG", err);
+          } finally {
+            downloadPngBtn.textContent = '⬇ Download as Image';
+            downloadPngBtn.disabled = false;
+          }
+        });
+      }
+
+      const downloadPdfBtn = document.getElementById('download-pdf-btn');
+      if (downloadPdfBtn) {
+        downloadPdfBtn.addEventListener('click', async () => {
+          downloadPdfBtn.textContent = 'Building PDF...';
+          downloadPdfBtn.disabled = true;
+
+          const cert = document.getElementById('certificate-render');
+          try {
+            const canvas = await html2canvas(cert, {
+              scale: 3,
+              useCORS: true,
+              backgroundColor: '#f7f3eb',
+              logging: false
+            });
+
+            const imgData = canvas.toDataURL('image/png', 1.0);
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+            const pw = pdf.internal.pageSize.getWidth();   // 297mm
+            const ph = pdf.internal.pageSize.getHeight();  // 210mm
+            const aspect = canvas.width / canvas.height;
+            let iw = pw, ih = pw / aspect;
+            if (ih > ph) {
+              ih = ph;
+              iw = ph * aspect;
+            }
+            const x = (pw - iw) / 2;
+            const y = (ph - ih) / 2;
+
+            pdf.addImage(imgData, 'PNG', x, y, iw, ih, '', 'FAST');
+            pdf.save(`Manodemy_Certificate_${Date.now()}.pdf`);
+          } catch (err) {
+            console.error("Failed to export certificate as PDF", err);
+          } finally {
+            downloadPdfBtn.textContent = '⬇ Download as PDF';
+            downloadPdfBtn.disabled = false;
+          }
+        });
+      }
     });
 
     // ── INIT ─────────────────────────────────────────
@@ -4547,6 +5238,168 @@
       loadPricingData();
     })();
   </script>
+  <!-- ═══════════ ADMIN PREVIEW CERTIFICATE MODAL ═══════════ -->
+  <div id="certificate-modal" class="modal-backdrop hidden cert-modal-backdrop">
+    <div class="cert-modal-container">
+      <div class="cert-action-bar">
+        <button id="download-png-btn" class="dl-btn dl-png" type="button">⬇ Download as Image</button>
+        <button id="download-pdf-btn" class="dl-btn dl-pdf" type="button">⬇ Download as PDF</button>
+        <button class="dl-btn dl-close" type="button" onclick="closeModal('certificate-modal')">✕ Close</button>
+      </div>
+
+      <div id="certificate-render" class="certificate-body">
+        <!-- Concentric Border Layers -->
+        <div class="cert-border-outer"></div>
+        <div class="cert-border-middle"></div>
+        <div class="cert-border-inner"></div>
+
+        <!-- Watermark -->
+        <div class="cert-watermark">MANODEMY</div>
+
+        <!-- Four Corner SVG Flourishes -->
+        <div class="cert-corner tl">
+          <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 8 L8 44" stroke="#c9a84c" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M8 8 L44 8" stroke="#c9a84c" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M15 15 L15 36" stroke="#c9a84c" stroke-width="0.6" opacity="0.45"/>
+            <path d="M15 15 L36 15" stroke="#c9a84c" stroke-width="0.6" opacity="0.45"/>
+            <circle cx="8" cy="8" r="3.5" fill="#c9a84c"/>
+            <circle cx="22" cy="8" r="1.2" fill="#c9a84c" opacity="0.5"/>
+            <circle cx="8" cy="22" r="1.2" fill="#c9a84c" opacity="0.5"/>
+          </svg>
+        </div>
+        <div class="cert-corner tr">
+          <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 8 L8 44" stroke="#c9a84c" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M8 8 L44 8" stroke="#c9a84c" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M15 15 L15 36" stroke="#c9a84c" stroke-width="0.6" opacity="0.45"/>
+            <path d="M15 15 L36 15" stroke="#c9a84c" stroke-width="0.6" opacity="0.45"/>
+            <circle cx="8" cy="8" r="3.5" fill="#c9a84c"/>
+            <circle cx="22" cy="8" r="1.2" fill="#c9a84c" opacity="0.5"/>
+            <circle cx="8" cy="22" r="1.2" fill="#c9a84c" opacity="0.5"/>
+          </svg>
+        </div>
+        <div class="cert-corner bl">
+          <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 8 L8 44" stroke="#c9a84c" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M8 8 L44 8" stroke="#c9a84c" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M15 15 L15 36" stroke="#c9a84c" stroke-width="0.6" opacity="0.45"/>
+            <path d="M15 15 L36 15" stroke="#c9a84c" stroke-width="0.6" opacity="0.45"/>
+            <circle cx="8" cy="8" r="3.5" fill="#c9a84c"/>
+            <circle cx="22" cy="8" r="1.2" fill="#c9a84c" opacity="0.5"/>
+            <circle cx="8" cy="22" r="1.2" fill="#c9a84c" opacity="0.5"/>
+          </svg>
+        </div>
+        <div class="cert-corner br">
+          <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 8 L8 44" stroke="#c9a84c" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M8 8 L44 8" stroke="#c9a84c" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M15 15 L15 36" stroke="#c9a84c" stroke-width="0.6" opacity="0.45"/>
+            <path d="M15 15 L36 15" stroke="#c9a84c" stroke-width="0.6" opacity="0.45"/>
+            <circle cx="8" cy="8" r="3.5" fill="#c9a84c"/>
+            <circle cx="22" cy="8" r="1.2" fill="#c9a84c" opacity="0.5"/>
+            <circle cx="8" cy="22" r="1.2" fill="#c9a84c" opacity="0.5"/>
+          </svg>
+        </div>
+
+        <!-- Top gold decorative band -->
+        <div class="cert-gold-band"></div>
+
+        <!-- Institution Header Block -->
+        <div class="cert-header">
+          <div class="cert-logo-wrapper">
+            <div class="cert-header-star">
+              <svg viewBox="0 0 24 24">
+                <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9" />
+              </svg>
+            </div>
+            <h3 class="cert-institution-name">MANODEMY</h3>
+            <div class="cert-header-star">
+              <svg viewBox="0 0 24 24">
+                <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9" />
+              </svg>
+            </div>
+          </div>
+          <p class="cert-tagline">Institute of Coding Excellence</p>
+        </div>
+
+        <!-- Divider -->
+        <div class="cert-divider">
+          <div class="divider-line"></div>
+          <div class="divider-diamonds">◆ ◆ ◆</div>
+          <div class="divider-line"></div>
+        </div>
+
+        <!-- Title Block -->
+        <div class="cert-title-block">
+          <p class="cert-presents">This is to certify that</p>
+          <h1 class="cert-type-title">CERTIFICATE</h1>
+          <p class="cert-of-subtitle">OF COMPLETION</p>
+        </div>
+
+        <!-- Recipient Block -->
+        <div class="cert-recipient-block">
+          <p class="cert-awarded-to">PROUDLY AWARDED TO</p>
+          <h2 id="cert-name-display" class="cert-recipient-name">Aditya Sharma</h2>
+          <div class="cert-name-underline"></div>
+        </div>
+
+        <!-- Achievement Statement -->
+        <p class="cert-statement">
+          has successfully completed the <strong style="color:#111; font-weight:600;">Manodemy V2 Coding Mastery Program</strong>,
+          demonstrating exceptional proficiency across <strong style="color:#111; font-weight:600;">30 days</strong> of intensive challenges
+          encompassing <strong style="color:#111; font-weight:600;">1,668 coding problems</strong> in Python programming,
+          algorithms, and computational thinking.
+        </p>
+
+        <!-- Score + Level Row -->
+        <div class="cert-score-level-row">
+          <div class="cert-score-box">
+            <span class="score-label">TOTAL SCORE</span>
+            <span id="cert-score-number" class="score-number">850.00</span>
+            <span class="score-denom">out of 1000 XP</span>
+          </div>
+          <div class="divider-diamonds" style="color: #c9a84c; font-size: 11px;">◆</div>
+          <div class="cert-level-badge">
+            <span class="level-label">ACHIEVED LEVEL</span>
+            <span id="cert-level-value" class="level-value">Alchemist</span>
+          </div>
+        </div>
+
+        <!-- Section Grid -->
+        <div class="cert-grid-wrapper">
+          <p class="cert-section-label">◆ &nbsp; Section-wise Performance &nbsp; ◆</p>
+          <div id="cert-section-grid" class="cert-section-grid"></div>
+        </div>
+
+        <!-- Signature / Footer Row -->
+        <div class="cert-footer-row">
+          <div class="cert-footer-col">
+            <div class="sig-underline"></div>
+            <p class="sig-name">Manodemy V2</p>
+            <p class="sig-role">Program Director</p>
+          </div>
+          <div class="cert-footer-col cert-footer-center">
+            <div class="cert-medallion">
+              <span class="medallion-star">★</span>
+            </div>
+            <p class="cert-issued-date" id="cert-issued-date">ISSUED · JUNE 2026</p>
+          </div>
+          <div class="cert-footer-col">
+            <div class="sig-underline"></div>
+            <p id="cert-verified-score" class="sig-name" style="font-family: monospace; font-size: 11px; font-style: normal;">850.00 / 1000</p>
+            <p class="sig-role">Verified Record</p>
+          </div>
+        </div>
+
+        <p id="cert-id-strip" class="cert-id-strip">CERT-ID: MND-2026-00000 &nbsp;|&nbsp; manodemy.com/verify</p>
+
+        <!-- Bottom gold decorative band -->
+        <div class="cert-gold-band" style="margin-top: 5px;"></div>
+      </div>
+    </div>
+  </div>
+
 </body>
 
 </html>

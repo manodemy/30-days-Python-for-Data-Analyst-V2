@@ -4441,21 +4441,17 @@
 
     .dl-png  { background: linear-gradient(135deg, #6c63ff, #3ecfcf); color: #fff; }
     .dl-pdf  { background: linear-gradient(135deg, #c9a84c, #f0d080); color: #1a1a2e; }
-    .dl-close { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
-
-    .dl-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
-
-    /* ===== THE ACTUAL PREMIUM CERTIFICATE BODY ===== */
+    .dl-close { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2    /* ===== THE ACTUAL PREMIUM CERTIFICATE BODY ===== */
     .certificate-body {
       width: 1100px;
       height: 780px;
-      background: #f7f3eb;
+      background: #ffffff;
       position: relative;
       overflow: hidden;
       padding: 32px 56px 28px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      box-shadow: 0 20px 60px rgba(15, 23, 42, 0.25);
       font-family: 'Inter', sans-serif;
-      color: #1a1a2e;
+      color: #0f172a;
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
@@ -4465,19 +4461,19 @@
 
     .cert-border-outer {
       position: absolute; inset: 8px;
-      border: 2px solid #c9a84c;
+      border: 3px solid #0f172a;
       pointer-events: none; z-index: 2;
     }
 
     .cert-border-middle {
       position: absolute; inset: 14px;
-      border: 1px solid #c9a84c;
+      border: 1.5px solid #c9a84c;
       pointer-events: none; z-index: 2;
     }
 
     .cert-border-inner {
       position: absolute; inset: 20px;
-      border: 0.5px solid rgba(201,168,76,0.35);
+      border: 0.5px solid rgba(15, 23, 42, 0.12);
       pointer-events: none; z-index: 2;
     }
 
@@ -4488,7 +4484,7 @@
       font-family: 'Cinzel', serif;
       font-size: 130px;
       font-weight: 700;
-      color: rgba(201,168,76,0.045);
+      color: rgba(15, 23, 42, 0.02);
       letter-spacing: 0.35em;
       white-space: nowrap;
       pointer-events: none;
@@ -4501,13 +4497,13 @@
       height: 8px;
       background: linear-gradient(
         90deg,
-        #1a1a2e 0%,
+        #0f172a 0%,
         #6c5a1e 15%,
         #c9a84c 30%,
         #f0d080 50%,
         #c9a84c 70%,
         #6c5a1e 85%,
-        #1a1a2e 100%
+        #0f172a 100%
       );
     }
 
@@ -4560,7 +4556,7 @@
       font-weight: 700;
       font-size: 14px;
       letter-spacing: 0.45em;
-      color: #1a1a2e;
+      color: #0f172a;
       margin: 0;
       text-transform: uppercase;
     }
@@ -4570,7 +4566,7 @@
       font-weight: 300;
       font-size: 9px;
       letter-spacing: 0.22em;
-      color: #999;
+      color: #64748b;
       margin: 2px 0 0;
       text-transform: uppercase;
     }
@@ -4607,7 +4603,7 @@
       font-family: 'Inter', sans-serif;
       font-weight: 400;
       font-size: 9px;
-      color: #aaa;
+      color: #64748b;
       letter-spacing: 0.3em;
       margin: 0 0 4px;
       text-transform: uppercase;
@@ -4618,7 +4614,7 @@
       font-size: 22px;
       font-weight: 700;
       letter-spacing: 0.18em;
-      color: #1a1a2e;
+      color: #0f172a;
       margin: 0;
     }
 
@@ -4642,7 +4638,7 @@
       font-family: 'Inter', sans-serif;
       font-weight: 400;
       font-size: 9px;
-      color: #bbb;
+      color: #64748b;
       letter-spacing: 0.25em;
       margin: 0 0 2px;
       text-transform: uppercase;
@@ -4653,7 +4649,7 @@
       font-style: italic;
       font-size: 42px;
       font-weight: 700;
-      color: #1a1a2e;
+      color: #0f172a;
       margin: 0 0 4px;
       line-height: 1.2;
     }
@@ -4670,7 +4666,7 @@
       font-family: 'EB Garamond', serif;
       font-size: 13px;
       line-height: 1.75;
-      color: #555;
+      color: #334155;
       text-align: center;
       max-width: 520px;
       margin: 4px 0 10px;
@@ -4688,11 +4684,12 @@
     }
 
     .cert-score-box {
-      background: #1a1a2e;
-      border: 1px solid #c9a84c;
+      background: #0f172a;
+      border: 1.5px solid #c9a84c;
       padding: 12px 28px;
       text-align: center;
       position: relative;
+      box-shadow: 0 4px 15px rgba(15, 23, 42, 0.15);
     }
 
     .cert-score-box::before {
@@ -4718,7 +4715,7 @@
     .score-label {
       font: 400 8px/1 'Inter', sans-serif;
       letter-spacing: 0.3em;
-      color: #888;
+      color: #94a3b8;
       text-transform: uppercase;
       display: block;
       margin-bottom: 4px;
@@ -4732,22 +4729,23 @@
 
     .score-denom {
       font: 400 9px/1 'Inter', sans-serif;
-      color: #777;
+      color: #64748b;
       display: block;
       margin-top: 3px;
     }
 
     .cert-level-badge {
-      border: 1px solid #c9a84c;
-      background: rgba(201,168,76,0.08);
+      border: 1.5px solid #c9a84c;
+      background: rgba(201, 168, 76, 0.08);
       padding: 8px 20px;
       text-align: center;
+      box-shadow: 0 4px 15px rgba(201, 168, 76, 0.05);
     }
 
     .level-label {
       font: 400 7px/1 'Inter', sans-serif;
       letter-spacing: 0.3em;
-      color: #aaa;
+      color: #64748b;
       text-transform: uppercase;
       display: block;
       margin-bottom: 4px;
@@ -4770,7 +4768,7 @@
     .cert-section-label {
       font: 400 8px/1 'Inter', sans-serif;
       letter-spacing: 0.3em;
-      color: #bbb;
+      color: #475569;
       text-transform: uppercase;
       align-self: flex-start;
       padding-left: 4px;
@@ -4786,17 +4784,18 @@
     }
 
     .cert-day-cell {
-      background: #fff;
-      border: 0.5px solid #e0d9c8;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
       border-radius: 2px;
       padding: 4px 2px;
       text-align: center;
       box-sizing: border-box;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
     }
 
     .cell-day-label {
       font: 500 7px/1 'Inter', sans-serif;
-      color: #bbb;
+      color: #94a3b8;
       letter-spacing: 0.05em;
       display: block;
       margin-bottom: 2px;
@@ -4804,7 +4803,7 @@
 
     .cell-day-xp {
       font: 600 8px/1 'Inter', sans-serif;
-      color: #1a1a2e;
+      color: #0f172a;
       display: block;
       margin-bottom: 3px;
     }
@@ -4816,21 +4815,21 @@
     }
 
     /* Color states for day cells */
-    .cert-day-cell.high { border-color: rgba(62,207,207,0.4); background: #f0fcfa; }
-    .cert-day-cell.high .cell-day-xp  { color: #0a6e56; }
-    .cert-day-cell.high .cell-day-bar { background: #3ecfcf; }
+    .cert-day-cell.high { border-color: rgba(16, 185, 129, 0.4); background: #f0fdf4; }
+    .cert-day-cell.high .cell-day-xp  { color: #065f46; }
+    .cert-day-cell.high .cell-day-bar { background: #10b981; }
 
-    .cert-day-cell.mid  { border-color: rgba(201,168,76,0.45); background: #fdf8ec; }
-    .cert-day-cell.mid  .cell-day-xp  { color: #7a5c0a; }
-    .cert-day-cell.mid  .cell-day-bar { background: #c9a84c; }
+    .cert-day-cell.mid  { border-color: rgba(245, 158, 11, 0.4); background: #fffbeb; }
+    .cert-day-cell.mid  .cell-day-xp  { color: #92400e; }
+    .cert-day-cell.mid  .cell-day-bar { background: #f59e0b; }
 
-    .cert-day-cell.low  { border-color: rgba(220,80,80,0.3); background: #fdf0f0; }
-    .cert-day-cell.low  .cell-day-xp  { color: #8a2a2a; }
-    .cert-day-cell.low  .cell-day-bar { background: #e06060; }
+    .cert-day-cell.low  { border-color: rgba(239, 68, 68, 0.3); background: #fef2f2; }
+    .cert-day-cell.low  .cell-day-xp  { color: #991b1b; }
+    .cert-day-cell.low  .cell-day-bar { background: #ef4444; }
 
-    .cert-day-cell.zero { background: #f6f4ef; opacity: 0.55; }
-    .cert-day-cell.zero .cell-day-xp  { color: #ccc; }
-    .cert-day-cell.zero .cell-day-bar { background: #ddd; }
+    .cert-day-cell.zero { background: #f1f5f9; opacity: 0.6; }
+    .cert-day-cell.zero .cell-day-xp  { color: #cbd5e1; }
+    .cert-day-cell.zero .cell-day-bar { background: #e2e8f0; }
 
     /* Footer / Signature Area */
     .cert-footer-row {
@@ -4838,7 +4837,7 @@
       grid-template-columns: 1fr 1fr 1fr;
       align-items: center;
       width: 90%;
-      border-top: 0.5px solid rgba(201,168,76,0.3);
+      border-top: 0.5px solid rgba(201, 168, 76, 0.3);
       padding-top: 10px;
       z-index: 1;
     }
@@ -4856,21 +4855,21 @@
     .sig-underline {
       width: 120px;
       height: 0.5px;
-      background: #ccc;
+      background: #cbd5e1;
       margin: 0 auto 5px;
     }
 
     .sig-name {
       font: 400 12px/1.4 'Playfair Display', serif;
       font-style: italic;
-      color: #333;
+      color: #1e293b;
       margin: 0 0 2px;
     }
 
     .sig-role {
       font: 400 7px/1 'Inter', sans-serif;
       letter-spacing: 0.22em;
-      color: #aaa;
+      color: #64748b;
       text-transform: uppercase;
       margin: 0;
     }
@@ -4904,7 +4903,7 @@
 
     .cert-issued-date {
       font-size: 7px;
-      color: #aaa;
+      color: #64748b;
       margin: 0;
       letter-spacing: 0.05em;
       text-transform: uppercase;
@@ -4912,7 +4911,7 @@
 
     .cert-id-strip {
       font: 400 7px/1 monospace;
-      color: #bbb;
+      color: #64748b;
       letter-spacing: 0.15em;
       margin: 8px 0 0 0;
       z-index: 1;

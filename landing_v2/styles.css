@@ -710,6 +710,8 @@ button {
     0 0 50px -10px rgba(0, 230, 246, 0.08);
   position: relative;
   transition: border-color 0.4s var(--ease), box-shadow 0.4s var(--ease), transform 0.4s var(--ease);
+  height: 330px !important;
+  flex: 0 0 auto !important;
 }
 
 .terminal:hover {
@@ -820,6 +822,7 @@ button {
   font-size: 13.5px;
   line-height: 1.8;
   min-height: 200px;
+  height: calc(100% - 40px) !important;
   position: relative;
   color: #F1F5F9;
   overflow: hidden;

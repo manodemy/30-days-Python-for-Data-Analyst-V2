@@ -486,8 +486,8 @@ button {
   font-family: var(--font-data);
   /* JetBrains Mono coding-themed font */
   font-weight: 700;
-  font-size: 0.68em;
-  /* Reduced exactly to half/proportional size next to massive PYTHON */
+  font-size: 0.85em;
+  /* Premium monospaced coding scale next to Outfit */
   color: var(--gold);
   -webkit-text-fill-color: var(--gold);
   -webkit-background-clip: initial;
@@ -499,16 +499,16 @@ button {
   /* The sleek coding typewriter cursor */
   white-space: nowrap;
   margin-right: 0.25em;
-  /* Elegant natural spacing before PYTHON */
+  /* Elegant natural spacing before Python */
   vertical-align: middle;
   position: relative;
   top: -0.06em;
-  /* Fine-tuned alignment to sit perfectly level on the baseline of PYTHON */
+  /* Fine-tuned alignment to sit perfectly level on the baseline */
   letter-spacing: -0.01em;
   text-transform: none;
-  /* Renders spelling exactly as 'Learn' */
+  /* Renders spelling exactly as typed */
   animation:
-    typing-learn 6s steps(5, end) infinite,
+    typing-learn 6s steps(12, end) infinite,
     blink-caret 0.75s step-end infinite;
 }
 
@@ -518,26 +518,26 @@ button {
     width: 0
   }
 
-  /* Type out 'Learn' (5 characters) from 5% to 20% (0.9s) */
+  /* Type out 'start coding' (12 characters) from 5% to 20% */
   5% {
     width: 0
   }
 
   20% {
-    width: 5ch
+    width: 12ch
   }
 
-  /* Hold 'Learn' fully typed for 3.3s to allow easy reading */
+  /* Hold 'start coding' fully typed for 3.3s to allow easy reading */
   75% {
-    width: 5ch
+    width: 12ch
   }
 
-  /* Backspace/Delete 'Learn' from 75% to 90% (0.9s) */
+  /* Backspace/Delete 'start coding' from 75% to 90% */
   90% {
     width: 0
   }
 
-  /* Pause before typing again (0.6s) */
+  /* Pause before typing again */
   100% {
     width: 0
   }

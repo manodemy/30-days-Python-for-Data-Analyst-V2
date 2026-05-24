@@ -1746,13 +1746,7 @@
     }
 
     .cert-mesh {
-      position: absolute; inset: 0;
-      background-image:
-        linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px);
-      background-size: 40px 40px;
-      pointer-events: none;
-      z-index: 0;
+      display: none !important;
     }
 
     .cert-border-outer {
@@ -2200,6 +2194,37 @@
       color: rgba(255,255,255,0.15);
     }
     .cert-id-bar span { color: rgba(0,229,255,0.3); margin: 0 8px; }
+
+
+    /* Responsive scaling to prevent any cropping on smaller screens */
+    @media (max-width: 1200px) {
+      .certificate-body {
+        transform: scale(0.8) !important;
+        transform-origin: top center !important;
+        margin-bottom: -150px !important;
+      }
+    }
+    @media (max-width: 992px) {
+      .certificate-body {
+        transform: scale(0.65) !important;
+        transform-origin: top center !important;
+        margin-bottom: -270px !important;
+      }
+    }
+    @media (max-width: 768px) {
+      .certificate-body {
+        transform: scale(0.5) !important;
+        transform-origin: top center !important;
+        margin-bottom: -390px !important;
+      }
+    }
+    @media (max-width: 576px) {
+      .certificate-body {
+        transform: scale(0.38) !important;
+        transform-origin: top center !important;
+        margin-bottom: -480px !important;
+      }
+    }
 
     @keyframes modalSlideUp {
       from { opacity: 0; transform: translateY(30px); }
@@ -5332,7 +5357,7 @@
       </div>
 
             <div id="certificate-render" class="certificate-body">
-        <div class="cert-mesh"></div>
+        
         <div class="cert-border-outer"></div>
         <div class="cert-border-middle"></div>
         <div class="cert-corner tl"></div>
@@ -5352,7 +5377,7 @@
               </div>
               <div class="cert-logo-wordmark"><span class="mano">Mano</span><span class="demy">demy</span></div>
             </div>
-            <div class="cert-logo-tagline">Hands-On EdTech &nbsp;·&nbsp; Institute of Coding Excellence</div>
+            
 
             <div class="cert-title-eyebrow">This is to proudly certify that</div>
             <div class="cert-title-main">Certificate</div>

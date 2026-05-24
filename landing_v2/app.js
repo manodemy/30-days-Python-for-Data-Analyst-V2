@@ -529,8 +529,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const enrolledCount = parseInt(count, 10);
       if (isNaN(enrolledCount)) return;
 
-      const baseCount = 2400;
-      const totalCount = baseCount + enrolledCount;
+      const totalCount = enrolledCount;
 
       // 1. Update right column proof card
       const activeLearnersEl = document.getElementById('hero-active-learners');

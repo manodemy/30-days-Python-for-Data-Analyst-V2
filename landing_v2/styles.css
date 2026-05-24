@@ -5281,7 +5281,7 @@ button {
 
 /* ═══ GUEST CTA HORIZONTAL STACKING IN RIGHT COLUMN ═══ */
 .hero-right .hero-ctas {
-  display: flex !important;
+  display: flex;
   flex-direction: row !important;
   gap: 12px !important;
   flex-wrap: nowrap !important;

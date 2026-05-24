@@ -1965,10 +1965,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // 2. Hide the default hero-ctas in the left column
+    // 2. Hide the default hero-ctas
     const heroCtas = document.querySelector('.hero-ctas');
     if (heroCtas) {
-      heroCtas.style.display = 'none';
+      heroCtas.style.setProperty('display', 'none', 'important');
     }
 
     // 3. Render the premium CTAs below the hero-proof cards in the right column

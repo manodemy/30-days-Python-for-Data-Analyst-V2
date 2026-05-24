@@ -5104,7 +5104,25 @@
               scale: 3,
               useCORS: true,
               backgroundColor: '#ffffff',
-              logging: false
+              logging: false,
+              onclone: (doc) => {
+                // 1. Remove all canvas elements in the cloned document to prevent createPattern errors
+                doc.querySelectorAll('canvas').forEach(el => el.remove());
+
+                // 2. Disable the body::before noise background image in the cloned document
+                const style = doc.createElement('style');
+                style.textContent = `
+                  body::before {
+                    content: none !important;
+                    background-image: none !important;
+                    display: none !important;
+                  }
+                  #adminPanel, .sidebar, .main-content, .top-filter-bar, .page-content, .tab-pane {
+                    display: none !important;
+                  }
+                `;
+                doc.head.appendChild(style);
+              }
             });
 
             const link = document.createElement('a');
@@ -5163,7 +5181,25 @@
               scale: 3,
               useCORS: true,
               backgroundColor: '#ffffff',
-              logging: false
+              logging: false,
+              onclone: (doc) => {
+                // 1. Remove all canvas elements in the cloned document to prevent createPattern errors
+                doc.querySelectorAll('canvas').forEach(el => el.remove());
+
+                // 2. Disable the body::before noise background image in the cloned document
+                const style = doc.createElement('style');
+                style.textContent = `
+                  body::before {
+                    content: none !important;
+                    background-image: none !important;
+                    display: none !important;
+                  }
+                  #adminPanel, .sidebar, .main-content, .top-filter-bar, .page-content, .tab-pane {
+                    display: none !important;
+                  }
+                `;
+                doc.head.appendChild(style);
+              }
             });
 
             const imgData = canvas.toDataURL('image/png', 1.0);

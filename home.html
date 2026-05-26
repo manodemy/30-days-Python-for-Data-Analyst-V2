@@ -5764,12 +5764,12 @@
       <div class="modal-icon">🔒</div>
       <h2 class="modal-title">Certificate Locked</h2>
       <p class="modal-body">
-        You need <strong>700 or more XP</strong> to unlock your certificate.
+        You need <strong>700 or more Marks</strong> to unlock your certificate.
       </p>
       <div class="xp-progress-wrapper">
         <div class="xp-progress-label">
-          <span id="inelig-current-xp">0 XP</span>
-          <span>700 XP Required</span>
+          <span id="inelig-current-xp">0 Marks</span>
+          <span>700 Marks Required</span>
         </div>
         <div class="xp-progress-track">
           <div id="inelig-progress-fill" class="xp-progress-fill"></div>
@@ -5800,7 +5800,7 @@
         <span id="name-error" class="name-error hidden">Please enter a valid name (letters and standard spaces/punctuation only, min 2 characters).</span>
       </div>
       <div class="modal-score-preview">
-        <span class="score-chip">🏆 <span id="modal-score-display">0</span> / 1000 XP</span>
+        <span class="score-chip">🏆 <span id="modal-score-display">0</span> / 1000 Marks</span>
       </div>
       <div class="modal-actions">
         <button class="modal-cancel-btn" type="button" onclick="closeModal('name-input-modal')">Cancel</button>
@@ -7783,7 +7783,7 @@
       });
 
       function showIneligibleModal(totalXP) {
-        document.getElementById('inelig-current-xp').textContent = `${totalXP.toFixed(1)} XP`;
+        document.getElementById('inelig-current-xp').textContent = `${totalXP.toFixed(1)} Marks`;
         const fillPct = Math.min((totalXP / 700) * 100, 100);
         document.getElementById('inelig-progress-fill').style.width = `${fillPct}%`;
         openModal('ineligible-modal');

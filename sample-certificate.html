@@ -184,17 +184,32 @@
       container-type: inline-size;
       position: relative;
       overflow: hidden;
-      padding: 5cqw 6.4cqw 4cqw;
+      padding: 4.4cqw 6.4cqw 3cqw;
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
       align-items: stretch;
       justify-content: space-between;
+      background: #0b0f14;
     }
     
-    /* Sleek Grid Overlay (Invisible in printing/high elegance mode) */
-    .cert-mesh {
-      display: none !important;
+    /* Glossy Refraction Shine Layer matching Admin exactly */
+    .certificate-body::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        115deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0) 30%,
+        rgba(255, 255, 255, 0.08) 38%,
+        rgba(255, 255, 255, 0.16) 40%,
+        rgba(255, 255, 255, 0.08) 42%,
+        rgba(255, 255, 255, 0) 50%,
+        rgba(255, 255, 255, 0) 100%
+      );
+      pointer-events: none;
+      z-index: 20;
     }
     
     .cert-border-outer {
@@ -217,7 +232,7 @@
     
     .cert-watermark {
       position: absolute;
-      top: 52%;
+      top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       font-family: 'Cinzel', serif;
@@ -266,14 +281,14 @@
       display: inline-flex;
       align-items: center;
       gap: 1cqw;
-      margin-bottom: 0.4cqw;
+      margin-bottom: 0.5cqw;
     }
     
     .cert-logo-mark {
-      width: 3.8cqw;
-      height: 3.8cqw;
+      width: 3.9cqw;
+      height: 3.9cqw;
       border: 1.5px solid var(--cyan);
-      border-radius: 6px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -286,34 +301,26 @@
     
     .cert-logo-wordmark {
       font-family: 'Raleway', sans-serif;
-      font-size: 2.6cqw;
+      font-size: 2.7cqw;
       font-weight: 700;
-      letter-spacing: 0.08cqw;
+      letter-spacing: 0.09cqw;
     }
     .cert-logo-wordmark .mano { color: #ffffff; }
     .cert-logo-wordmark .demy { color: var(--cyan); }
     
-    .cert-logo-tagline {
-      font-family: 'Raleway', sans-serif;
-      font-size: 0.8cqw;
-      letter-spacing: 0.4cqw;
-      color: rgba(0, 229, 255, 0.45);
-      text-transform: uppercase;
-      margin-bottom: 1.5cqw;
-    }
-    
     .cert-title-eyebrow {
       font-family: 'Raleway', sans-serif;
-      font-size: 0.95cqw;
-      letter-spacing: 0.5cqw;
+      font-size: 0.98cqw;
+      letter-spacing: 0.53cqw;
       color: rgba(0, 229, 255, 0.6);
       text-transform: uppercase;
       margin-bottom: 0.5cqw;
+      margin-top: 0.5cqw;
     }
     
     .cert-title-main {
       font-family: 'Cinzel', serif;
-      font-size: 3.8cqw;
+      font-size: 3.9cqw;
       font-weight: 700;
       color: #ffffff;
       letter-spacing: 0.7cqw;
@@ -324,20 +331,20 @@
     
     .cert-title-sub {
       font-family: 'Cinzel', serif;
-      font-size: 1.05cqw;
+      font-size: 1.07cqw;
       font-weight: 400;
-      letter-spacing: 0.6cqw;
+      letter-spacing: 0.62cqw;
       color: var(--cyan);
       text-transform: uppercase;
-      margin-bottom: 2cqw;
+      margin-bottom: 1.1cqw;
     }
     
     /* Ornamental Divider */
     .cert-divider {
       display: flex;
       align-items: center;
-      gap: 1cqw;
-      margin: 0 auto 2cqw;
+      gap: 1.1cqw;
+      margin: 0 auto 1.1cqw;
       width: 55%;
       justify-content: center;
     }
@@ -347,8 +354,8 @@
       background: rgba(0, 229, 255, 0.25);
     }
     .divider-diamond {
-      width: 0.5cqw;
-      height: 0.5cqw;
+      width: 0.53cqw;
+      height: 0.53cqw;
       background: var(--cyan);
       transform: rotate(45deg);
       opacity: 0.7;
@@ -356,11 +363,11 @@
     
     .cert-awarded-label {
       font-family: 'Raleway', sans-serif;
-      font-size: 0.95cqw;
+      font-size: 0.98cqw;
       letter-spacing: 0.35cqw;
       color: rgba(255, 255, 255, 0.35);
       text-transform: uppercase;
-      margin-bottom: 0.6cqw;
+      margin-bottom: 0.7cqw;
     }
     
     .cert-recipient-name {
@@ -374,21 +381,21 @@
     }
     
     .cert-recipient-underline {
-      width: 20cqw;
+      width: 21cqw;
       height: 1px;
       background: rgba(0, 229, 255, 0.3);
-      margin: 0 auto 1.8cqw;
+      margin: 0 auto 1.1cqw;
     }
     
     /* Achievement Statement */
     .cert-body-copy {
       font-family: 'Raleway', sans-serif;
-      font-size: 1.22cqw;
+      font-size: 1.25cqw;
       font-weight: 400;
       color: rgba(255, 255, 255, 0.55);
       line-height: 1.75;
       max-width: 64cqw;
-      margin: 0 auto 2.2cqw;
+      margin: 0 auto 1.4cqw;
       text-align: center;
     }
     .cert-body-copy .highlight { color: rgba(255, 255, 255, 0.88); font-weight: 600; }
@@ -400,14 +407,14 @@
       align-items: stretch;
       justify-content: center;
       gap: 0;
-      margin-bottom: 2.2cqw;
+      margin-bottom: 1.4cqw;
     }
     
     .cert-score-card {
       background: rgba(0, 229, 255, 0.05);
       border: 1px solid var(--cyan);
       border-radius: 6px 0 0 6px;
-      padding: 1.2cqw 3.2cqw;
+      padding: 1.4cqw 3.2cqw;
       text-align: center;
       min-width: 20cqw;
     }
@@ -415,7 +422,7 @@
     .cert-score-card-label {
       font-family: 'Raleway', sans-serif;
       font-size: 0.8cqw;
-      letter-spacing: 0.3cqw;
+      letter-spacing: 0.35cqw;
       color: rgba(0, 229, 255, 0.6);
       text-transform: uppercase;
       margin-bottom: 0.5cqw;
@@ -423,7 +430,7 @@
     
     .cert-score-card-value {
       font-family: 'Cinzel', serif;
-      font-size: 4cqw;
+      font-size: 4.3cqw;
       font-weight: 700;
       color: var(--cyan);
       line-height: 1;
@@ -432,9 +439,9 @@
     
     .cert-score-card-sub {
       font-family: 'Raleway', sans-serif;
-      font-size: 0.82cqw;
+      font-size: 0.85cqw;
       color: rgba(0, 229, 255, 0.4);
-      letter-spacing: 0.15cqw;
+      letter-spacing: 0.17cqw;
       text-transform: uppercase;
     }
     
@@ -447,7 +454,7 @@
       border: 1px solid rgba(0, 229, 255, 0.35);
       border-left: none;
       border-radius: 0 6px 6px 0;
-      padding: 1.2cqw 3.2cqw;
+      padding: 1.4cqw 3.2cqw;
       text-align: center;
       min-width: 18cqw;
       display: flex;
@@ -461,7 +468,7 @@
       letter-spacing: 0.35cqw;
       color: rgba(255, 255, 255, 0.3);
       text-transform: uppercase;
-      margin-bottom: 0.6cqw;
+      margin-bottom: 0.7cqw;
     }
     
     .cert-level-badge {
@@ -469,48 +476,26 @@
       background: rgba(0, 229, 255, 0.08);
       border: 1px solid rgba(0, 229, 255, 0.4);
       border-radius: 4px;
-      padding: 0.4cqw 1.4cqw;
+      padding: 0.5cqw 1.6cqw;
       font-family: 'Cinzel', serif;
       font-size: 1.4cqw;
       font-weight: 600;
       color: var(--cyan);
-      letter-spacing: 0.2cqw;
+      letter-spacing: 0.26cqw;
       text-transform: uppercase;
-      margin-bottom: 0.4cqw;
+      margin-bottom: 0.5cqw;
     }
     
     .cert-level-card-desc {
       font-family: 'Raleway', sans-serif;
-      font-size: 0.82cqw;
-      color: rgba(255, 255, 255, 0.3);
-      letter-spacing: 0.08cqw;
-    }
-    
-    /* Skills Row */
-    .cert-skills-row {
-      display: flex;
-      justify-content: center;
-      gap: 0.7cqw;
-      margin-bottom: 2.2cqw;
-      flex-wrap: wrap;
-    }
-    
-    .cert-skill-pill {
-      font-family: 'Raleway', sans-serif;
       font-size: 0.85cqw;
-      font-weight: 600;
-      letter-spacing: 0.15cqw;
-      text-transform: uppercase;
-      color: rgba(0, 229, 255, 0.75);
-      border: 1px solid rgba(0, 229, 255, 0.25);
-      border-radius: 20px;
-      padding: 0.4cqw 1.2cqw;
-      background: rgba(0, 229, 255, 0.04);
+      color: rgba(255, 255, 255, 0.3);
+      letter-spacing: 0.09cqw;
     }
     
     /* Performance Grid Section */
     .cert-perf-section {
-      margin-bottom: 2.2cqw;
+      margin-bottom: 1.4cqw;
       width: 90%;
       margin-left: auto;
       margin-right: auto;
@@ -520,7 +505,7 @@
       display: flex;
       align-items: center;
       gap: 1cqw;
-      margin-bottom: 0.9cqw;
+      margin-bottom: 1cqw;
     }
     
     .cert-perf-header-line {
@@ -532,7 +517,7 @@
     .cert-perf-header-text {
       font-family: 'Raleway', sans-serif;
       font-size: 0.8cqw;
-      letter-spacing: 0.4cqw;
+      letter-spacing: 0.45cqw;
       color: rgba(255, 255, 255, 0.25);
       text-transform: uppercase;
     }
@@ -570,7 +555,7 @@
     
     .tile-score {
       font-family: 'Raleway', sans-serif;
-      font-size: 0.95cqw;
+      font-size: 0.98cqw;
       font-weight: 700;
       color: rgba(255, 255, 255, 0.8);
     }
@@ -591,11 +576,11 @@
     /* Footer / Signature Area */
     .cert-footer {
       border-top: 1px solid rgba(0, 229, 255, 0.1);
-      padding-top: 1.6cqw;
+      padding-top: 1cqw;
       display: grid;
       grid-template-columns: 1fr auto 1fr;
       align-items: center;
-      gap: 1.5cqw;
+      gap: 1.8cqw;
       width: 90%;
       margin: 0 auto;
     }
@@ -621,46 +606,22 @@
     .cert-sig-block-role {
       font-family: 'Raleway', sans-serif;
       font-size: 0.8cqw;
-      letter-spacing: 0.25cqw;
+      letter-spacing: 0.26cqw;
       color: rgba(255, 255, 255, 0.25);
       text-transform: uppercase;
     }
     
-    .cert-seal {
-      width: 6.8cqw;
-      height: 6.8cqw;
-      border: 1.5px solid rgba(0, 229, 255, 0.6);
-      border-radius: 50%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+    /* Golden Shield Crest matching Admin exactly */
+    .cert-crest-emblem {
+      width: 7.13cqw;
+      height: 7.13cqw;
       margin: 0 auto;
-      background: rgba(0, 229, 255, 0.04);
-      gap: 0.15cqw;
       position: relative;
+      filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.25));
     }
-    
-    .cert-seal::before {
-      content: '';
-      position: absolute;
-      inset: 0.35cqw;
-      border: 0.5px solid rgba(0, 229, 255, 0.25);
-      border-radius: 50%;
-    }
-    
-    .cert-seal-star svg {
-      width: 1.8cqw;
-      height: 1.8cqw;
-    }
-    
-    .cert-seal-date {
-      font-family: 'Raleway', sans-serif;
-      font-size: 0.7cqw;
-      letter-spacing: 0.1cqw;
-      color: rgba(0, 229, 255, 0.55);
-      text-transform: uppercase;
-      z-index: 2;
+    .cert-crest-emblem svg {
+      width: 100%;
+      height: 100%;
     }
     
     .cert-verify-block-score {
@@ -681,22 +642,24 @@
     .cert-verify-block-label {
       font-family: 'Raleway', sans-serif;
       font-size: 0.8cqw;
-      letter-spacing: 0.25cqw;
+      letter-spacing: 0.26cqw;
       color: rgba(255, 255, 255, 0.25);
       text-transform: uppercase;
     }
     
+    /* Absolutely Positioned ID Bar matching Admin Panel exactly */
     .cert-id-bar {
-      text-align: center;
-      margin-top: 1.4cqw;
+      position: absolute;
+      top: 2.85cqw;
+      left: 6.6cqw;
       font-family: 'Raleway', sans-serif;
-      font-size: 0.8cqw;
-      letter-spacing: 0.15cqw;
-      color: rgba(255, 255, 255, 0.15);
-    }
-    .cert-id-bar span {
-      color: rgba(0, 229, 255, 0.3);
-      margin: 0 0.6cqw;
+      font-size: 0.98cqw;
+      font-weight: 600;
+      letter-spacing: 0.13cqw;
+      color: #d4af37;
+      z-index: 10;
+      text-transform: uppercase;
+      text-shadow: 0 0 10px rgba(212, 175, 55, 0.15);
     }
     
     /* ══════ PRINT STYLES ══════ */
@@ -793,7 +756,6 @@
             </div>
             <div class="cert-logo-wordmark"><span class="mano">Mano</span><span class="demy">demy</span></div>
           </div>
-          <div class="cert-logo-tagline">Hands-On EdTech &nbsp;·&nbsp; Institute of Coding Excellence</div>
 
           <div class="cert-title-eyebrow">This is to proudly certify that</div>
           <div class="cert-title-main">Certificate</div>
@@ -808,14 +770,14 @@
           </div>
 
           <div class="cert-awarded-label">Proudly awarded to</div>
-          <div id="cert-name-display" class="cert-recipient-name">Aditya Sharma</div>
+          <div id="cert-name-display" class="cert-recipient-name">Your Name</div>
           <div class="cert-recipient-underline"></div>
 
           <div class="cert-body-copy">
             has demonstrated <span class="highlight">exceptional dedication and technical mastery</span> upon successful completion of the
             <span class="cyan">Manodemy V2 Coding Mastery Program</span> — an intensive, industry-aligned curriculum spanning
             <span class="highlight">30 days</span> of rigorous daily challenges, encompassing
-            <span class="highlight">1,540 coding problems</span> across Python programming,
+            <span class="highlight">1,668 coding problems</span> across Python programming,
             data structures, algorithms, and computational thinking.
           </div>
         </div>
@@ -833,16 +795,6 @@
             <div id="cert-level-value" class="cert-level-badge">Alchemist</div>
             <div class="cert-level-card-desc">Top 5% of graduates</div>
           </div>
-        </div>
-
-        <!-- Skills Covered -->
-        <div class="cert-skills-row">
-          <div class="cert-skill-pill">Python Programming</div>
-          <div class="cert-skill-pill">Data Structures</div>
-          <div class="cert-skill-pill">Algorithms</div>
-          <div class="cert-skill-pill">Problem Solving</div>
-          <div class="cert-skill-pill">Computational Thinking</div>
-          <div class="cert-skill-pill">Code Optimization</div>
         </div>
 
         <!-- Performance Record Matrix -->
@@ -889,18 +841,21 @@
         <!-- Footer / Signature System -->
         <div class="cert-footer">
           <div class="cert-footer-left">
-            <div class="cert-sig-block-name">Manoj Kumar</div>
+            <div class="cert-sig-block-name">Manojkumar</div>
             <div class="cert-sig-block-line"></div>
-            <div class="cert-sig-block-role">Program Director &nbsp;·&nbsp; Manodemy</div>
+            <div class="cert-sig-block-role">Program Director</div>
           </div>
           <div class="cert-footer-center">
-            <div class="cert-seal">
-              <div class="cert-seal-star">
-                <svg viewBox="0 0 22 22" fill="none">
-                  <polygon points="11,2 13.5,8.5 20.5,8.5 14.8,12.8 17,19.5 11,15.2 5,19.5 7.2,12.8 1.5,8.5 8.5,8.5" stroke="#00E5FF" stroke-width="1.2" fill="rgba(0,229,255,0.08)"/>
-                </svg>
-              </div>
-              <div class="cert-seal-date" id="cert-issued-date">ISSUED · MAY 2026</div>
+            <div class="cert-crest-emblem">
+              <svg viewBox="0 0 80 80" fill="none">
+                <circle cx="40" cy="40" r="38" stroke="#d4af37" stroke-width="0.75" stroke-dasharray="2 2" opacity="0.6"/>
+                <circle cx="40" cy="40" r="34" stroke="rgba(0, 229, 255, 0.4)" stroke-width="1"/>
+                <circle cx="40" cy="40" r="31" stroke="#d4af37" stroke-width="1.5" opacity="0.8"/>
+                <path d="M40 18 L53 23 L53 38 C53 48 45 57 40 60 C35 57 27 48 27 38 L27 23 L40 18 Z" fill="rgba(212, 175, 55, 0.08)" stroke="#d4af37" stroke-width="1.5"/>
+                <path d="M40 27 L43 33 H50 L45 37 L47 43 L40 39 L33 43 L35 37 L30 33 H37 L40 27 Z" fill="rgba(0, 229, 255, 0.8)" stroke="#00E5FF" stroke-width="0.5"/>
+                <path d="M22 40 H28 M52 40 H58 M40 12 V16 M40 64 V68" stroke="#d4af37" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+              </svg>
+              <span id="cert-issued-date" style="display:none;"></span>
             </div>
           </div>
           <div class="cert-footer-right">
@@ -910,9 +865,9 @@
           </div>
         </div>
 
-        <!-- Verification ID Strip -->
+        <!-- Absolutely Positioned ID Bar matching Admin Panel exactly -->
         <div id="cert-id-strip" class="cert-id-bar">
-          CERT-ID <span>·</span> MND-2026-F41FC2 <span>·</span> manodemy.github.io/30-days-Python-for-Data-Analyst-V2/verify <span>·</span> Issued May 2026
+          CERT-ID: MND-2026-F41FC2
         </div>
       </div>
     </div>

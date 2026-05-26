@@ -882,7 +882,7 @@ function setupGamifiedMarkingSystem() {
 
          <div class="warning-text-container">
 
-           <p class="warning-alert-text">⚠️ RESET WARNING: Resets today's code cells. Your profile's global high score will NOT be overwritten unless you achieve a new record!</p>
+           <p class="warning-alert-text">⚠️ RESET WARNING: Resets all the code cells. Your profile's global high score will NOT be overwritten unless you achieve a new record!</p>
 
          </div>
 

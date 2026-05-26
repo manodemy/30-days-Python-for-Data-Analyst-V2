@@ -14,26 +14,15 @@
 
 
 
-  <!-- Font Setup -->
-
+  <!-- Font & Network Preconnections -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="dns-prefetch" href="https://erqoyvbuhmkyvcqgwcbz.supabase.co">
 
-  <link
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Cinzel:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 
-    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Cinzel:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=EB+Garamond:ital,wght@0,400;1,400&display=swap"
-
-    rel="stylesheet">
-
-  <!-- jsPDF & html2canvas — Certificate generation systems -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
-
-
-  <!-- Supabase SDK -->
-
+  <!-- Supabase SDK (Required immediately for Route Paywall Guard) -->
   <script src="supabase.js"></script>
 
 
@@ -5936,6 +5925,10 @@
   </div>
 
 
+
+  <!-- External JS Dependencies (Moved from head for PageSpeed optimisation) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <!-- ═══════════ DASHBOARD CONTROLLER JS ═══════════ -->
 

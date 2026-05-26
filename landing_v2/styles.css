@@ -3262,16 +3262,36 @@ button {
   height: 52px;
   padding: 0 2rem;
   font-size: 15px;
-  background: linear-gradient(135deg, rgba(255, 176, 32, 0.2) 0%, rgba(255, 138, 0, 0.08) 100%);
-  border: 1px solid rgba(255, 176, 32, 0.45);
-  box-shadow: 0 6px 20px rgba(255, 176, 32, 0.08);
+  background: linear-gradient(135deg, rgba(0, 230, 246, 0.12) 0%, rgba(0, 119, 246, 0.05) 100%);
+  border: 1px solid rgba(0, 230, 246, 0.35);
+  box-shadow: 0 6px 20px rgba(0, 230, 246, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  border-radius: 26px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 300ms var(--ease);
+}
+
+.rev-trust-col .btn-write-review svg {
+  width: 18px;
+  height: 18px;
+  color: var(--cyan);
+  transition: transform 300ms var(--ease);
 }
 
 .rev-trust-col .btn-write-review:hover {
-  background: linear-gradient(135deg, rgba(255, 176, 32, 0.3) 0%, rgba(255, 138, 0, 0.15) 100%);
-  border-color: var(--gold);
-  box-shadow: 0 8px 30px rgba(255, 176, 32, 0.25), 0 0 15px rgba(255, 176, 32, 0.1);
+  background: linear-gradient(135deg, rgba(0, 230, 246, 0.22) 0%, rgba(0, 119, 246, 0.12) 100%);
+  border-color: var(--cyan);
+  box-shadow: 0 8px 30px rgba(0, 230, 246, 0.25), 0 0 15px rgba(0, 230, 246, 0.1);
   transform: translateY(-2px);
+  color: #fff;
+}
+
+.rev-trust-col .btn-write-review:hover svg {
+  transform: rotate(15deg) scale(1.1);
 }
 /* ─────────────────────────────────────────────────────────────
    REVIEWS SCROLLABLE CAROUSEL & DOTS
@@ -3403,17 +3423,28 @@ button {
   min-width: 0;
 }
 
+.rev-card-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 .rev-card-name {
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 15px;
   color: #fff;
   line-height: 1.2;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
   letter-spacing: -0.01em;
+}
+
+.rev-card-role {
+  font-size: 12px;
+  color: var(--ink-muted);
+  font-weight: 500;
+  margin-top: -1px;
+  letter-spacing: 0.01em;
 }
 
 .badge-verified {
@@ -3515,9 +3546,58 @@ button {
 .rev-card-bottom {
   display: flex;
   align-items: center;
-  border-top: 1px solid rgba(255, 255, 255, 0.04);
-  padding-top: 10px;
-  margin-top: 2px;
+  justify-content: space-between;
+  border-top: none;
+  padding-top: 0;
+  margin-top: 4px;
+}
+
+.rev-helpful-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 6px 12px;
+  color: var(--ink-dim);
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 250ms var(--ease);
+  height: 30px;
+}
+
+.rev-helpful-btn svg {
+  width: 13px;
+  height: 13px;
+  color: var(--ink-muted);
+  transition: transform 200ms var(--ease), color 250ms var(--ease);
+}
+
+.rev-helpful-btn:hover {
+  background: rgba(0, 230, 246, 0.08);
+  border-color: rgba(0, 230, 246, 0.25);
+  color: var(--cyan);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 230, 246, 0.1);
+}
+
+.rev-helpful-btn:hover svg {
+  transform: scale(1.1);
+  color: var(--cyan);
+}
+
+.rev-helpful-btn.active {
+  background: rgba(0, 230, 246, 0.12);
+  border-color: rgba(0, 230, 246, 0.4);
+  color: var(--cyan);
+  box-shadow: 0 0 15px rgba(0, 230, 246, 0.15);
+}
+
+.rev-helpful-btn.active svg {
+  color: var(--cyan);
 }
 
 .rev-rec {

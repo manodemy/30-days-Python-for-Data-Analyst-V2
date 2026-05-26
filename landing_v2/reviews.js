@@ -212,6 +212,9 @@ document.addEventListener('DOMContentLoaded', () => {
       pendingUploadBase64 = null;
       const dz = document.getElementById('mediaDropzone');
       if (dz) dz.classList.remove('has-file');
+      
+      const roleInput = document.getElementById('rev-input-role');
+      if (roleInput) roleInput.value = '';
     }
   };
 
@@ -269,19 +272,45 @@ document.addEventListener('DOMContentLoaded', () => {
       pendingUploadFile = file;
       const reader = new FileReader();
       reader.onload = (e) => {
-        pendingUploadBase64 = e.target.result;
-        mediaPreviewsContainer.innerHTML = `
-          <div class="media-preview-item" style="width:80px;height:80px;">
-            <img src="${e.target.result}" alt="Preview">
-            <button type="button" class="btn-remove-media">&times;</button>
-          </div>`;
-        mediaPreviewsContainer.querySelector('.btn-remove-media').addEventListener('click', () => {
-          pendingUploadFile = null;
-          pendingUploadBase64 = null;
-          mediaPreviewsContainer.innerHTML = '';
-          dropzone.classList.remove('has-file');
-        });
-        dropzone.classList.add('has-file');
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const maxDim = 150;
+          let width = img.width;
+          let height = img.height;
+          if (width > height) {
+            if (width > maxDim) {
+              height *= maxDim / width;
+              width = maxDim;
+            }
+          } else {
+            if (height > maxDim) {
+              width *= maxDim / height;
+              height = maxDim;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          pendingUploadBase64 = canvas.toDataURL('image/jpeg', 0.85);
+          
+          mediaPreviewsContainer.innerHTML = `
+            <div class="media-preview-item" style="width:80px;height:80px;position:relative;">
+              <img src="${pendingUploadBase64}" alt="Preview" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">
+              <button type="button" class="btn-remove-media" style="position:absolute;top:-8px;right:-8px;background:rgba(244,63,94,0.9);color:#fff;border:none;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;z-index:2;">&times;</button>
+            </div>`;
+          mediaPreviewsContainer.querySelector('.btn-remove-media').addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            pendingUploadFile = null;
+            pendingUploadBase64 = null;
+            mediaPreviewsContainer.innerHTML = '';
+            dropzone.classList.remove('has-file');
+          });
+          dropzone.classList.add('has-file');
+        };
+        img.src = e.target.result;
       };
       reader.readAsDataURL(file);
     };
@@ -308,13 +337,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!rating) { alert("Please select a rating star!"); return; }
       const name      = document.getElementById('rev-input-name').value.trim();
       const email     = document.getElementById('rev-input-email').value.trim();
+      const role      = document.getElementById('rev-input-role').value.trim();
       const comment   = commentTextarea.value.trim();
       const recommend = document.getElementById('rev-input-recommend').checked;
-      if (!name || !email || !comment) { alert("Please fill in all required fields (Name, Email, Feedback)."); return; }
+      if (!name || !email || !comment || !role) { alert("Please fill in all required fields (Name, Email, Role, Feedback)."); return; }
 
       const pros = Array.from(document.querySelectorAll('#pros-tags-list .rev-tag-item span')).map(s => s.textContent);
       const cons = Array.from(document.querySelectorAll('#cons-tags-list .rev-tag-item span')).map(s => s.textContent);
-      const uploadedMediaUrls = pendingUploadBase64 ? [pendingUploadBase64] : [];
 
       const submitBtn = reviewForm.querySelector('.btn-modal-submit');
       const origHtml  = submitBtn.innerHTML;
@@ -322,27 +351,52 @@ document.addEventListener('DOMContentLoaded', () => {
       submitBtn.innerHTML = `<svg class="animate-spin" viewBox="0 0 24 24" style="width:16px;height:16px;margin-right:8px;animation:spin 1s linear infinite"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="4" style="opacity:.25"></circle><path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Submitting...`;
 
       try {
-        let avatarSource = activeUser?.user_metadata?.avatar_url || activeUser?.user_metadata?.picture || null;
+        let avatarSource = pendingUploadBase64 || activeUser?.user_metadata?.avatar_url || activeUser?.user_metadata?.picture || null;
         const reviewPayload = {
           reviewer_name: name,
           reviewer_email: email,
+          reviewer_role: role,
           rating,
           comment,
           pros,
           cons,
           recommend,
-          media_urls: uploadedMediaUrls,
+          media_urls: [],
           title: '',
           reviewer_avatar: avatarSource,
           user_id: activeUser ? activeUser.id : null,
           status: 'approved'
         };
 
-        const { data, error } = await sb.from('reviews').insert(reviewPayload).select();
-        if (error) throw error;
+        let data = null;
+        let error = null;
+
+        try {
+          const res = await sb.from('reviews').insert(reviewPayload).select();
+          data = res.data;
+          error = res.error;
+        } catch (dbErr) {
+          error = dbErr;
+        }
+
+        // Seamless fallback retry if reviewer_role column not in live database yet
+        if (error && (error.message?.includes('reviewer_role') || String(error).includes('reviewer_role'))) {
+          console.warn("reviewer_role column not found in database, retrying insert without role...");
+          const fallbackPayload = { ...reviewPayload };
+          delete fallbackPayload.reviewer_role;
+          
+          const retryRes = await sb.from('reviews').insert(fallbackPayload).select();
+          if (retryRes.error) throw retryRes.error;
+          data = retryRes.data;
+          
+          showSleekToast("✨ Review submitted! (Admin: Run SQL migration for roles.)");
+        } else if (error) {
+          throw error;
+        } else {
+          showSleekToast("✨ Review submitted successfully!");
+        }
 
         closeModal();
-        showSleekToast("✨ Review submitted successfully!");
 
         // Prepend the new review to the top of the carousel immediately
         if (data && data[0]) {
@@ -516,12 +570,31 @@ document.addEventListener('DOMContentLoaded', () => {
       ? `<span class="rev-rec yes"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Recommends</span>`
       : `<span class="rev-rec no"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Not Recommended</span>`;
 
+    const votedReviews = JSON.parse(localStorage.getItem('manodemy_helpful_votes') || '[]');
+    const isVoted = votedReviews.includes(rev.id);
+    const helpfulActive = isVoted ? 'active' : '';
+    const helpfulText = rev.helpful_count || 0;
+    
+    const helpfulHtml = `
+      <button class="rev-helpful-btn ${helpfulActive}" data-id="${rev.id}" data-count="${helpfulText}">
+        <svg fill="${isVoted ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 012.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 00.322-1.672V3a.75.75 0 01.75-.75A2.25 2.25 0 0116.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.91.688 2.053 1.703a11.208 11.208 0 01-.735 6.37 2.625 2.625 0 01-2.36 1.727H11.218a5.2 5.2 0 01-3.66-1.5l-3.21-3.21a.75.75 0 010-1.06l.983-.983A2.404 2.404 0 016.633 10.5z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 18v-6a9 9 0 011.8-5.4"></path>
+        </svg>
+        <span>Helpful (${helpfulText})</span>
+      </button>
+    `;
+
     return `
       <div class="rev-card" data-id="${rev.id}">
         <div class="rev-card-top">
           ${avatarHtml}
           <div class="rev-card-info">
-            <div class="rev-card-name">${rev.reviewer_name} ${verifiedHtml}</div>
+            <div class="rev-card-name-row">
+              <span class="rev-card-name">${rev.reviewer_name}</span>
+              ${verifiedHtml}
+            </div>
+            <div class="rev-card-role">${rev.reviewer_role || 'Python Learner'}</div>
             <div class="rev-card-meta">
               <span class="rev-card-stars">${renderStarsSvg(rev.rating)}</span>
               <span class="rev-card-date">${dateStr}</span>
@@ -530,7 +603,10 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
         <div class="rev-card-body"><p>${rev.comment}</p></div>
         ${(prosHtml || consHtml) ? `<div class="rev-card-tags">${prosHtml}${consHtml}</div>` : ''}
-        <div class="rev-card-bottom">${recHtml}</div>
+        <div class="rev-card-bottom">
+          ${recHtml}
+          ${helpfulHtml}
+        </div>
       </div>`;
   }
 
@@ -557,6 +633,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Render all cards
     carouselTrack.innerHTML = reviews.map(renderCard).join('');
+
+    // Bind helpful buttons
+    const helpfulButtons = carouselTrack.querySelectorAll('.rev-helpful-btn');
+    helpfulButtons.forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const reviewId = btn.dataset.id;
+        const votedReviews = JSON.parse(localStorage.getItem('manodemy_helpful_votes') || '[]');
+        if (votedReviews.includes(reviewId)) {
+          showSleekToast("You already voted this review as helpful!");
+          return;
+        }
+        
+        const currentCount = parseInt(btn.dataset.count || '0', 10);
+        const newCount = currentCount + 1;
+        
+        // Update UI immediately
+        btn.classList.add('active');
+        btn.querySelector('span').textContent = `Helpful (${newCount})`;
+        btn.dataset.count = newCount;
+        const svg = btn.querySelector('svg');
+        if (svg) {
+          svg.setAttribute('fill', 'currentColor');
+        }
+        
+        // Save to localStorage
+        votedReviews.push(reviewId);
+        localStorage.setItem('manodemy_helpful_votes', JSON.stringify(votedReviews));
+        
+        // Update in DB
+        if (sb && !reviewId.startsWith('fallback-')) {
+          try {
+            await sb.from('reviews').update({ helpful_count: newCount }).eq('id', reviewId);
+          } catch (err) {
+            console.error("Failed to update helpful count in database:", err);
+          }
+        }
+        showSleekToast("👍 Review marked as helpful!");
+      });
+    });
 
     // Build dots
     buildDots(reviews.length);

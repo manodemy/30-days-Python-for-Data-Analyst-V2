@@ -989,26 +989,98 @@ body.practice-mode-active .nb-title::after {
   visibility: visible;
 }
 .workbook-locked-card {
-  background: linear-gradient(145deg, #0f1424, #080a12);
-  border: 1px solid rgba(0, 230, 246, 0.22);
-  border-radius: 28px;
-  padding: 3rem 2rem 2.5rem 2rem;
-  max-width: 480px;
+  background: linear-gradient(145deg, #0b0f19, #05070a);
+  border: 1px solid rgba(0, 230, 246, 0.25);
+  border-radius: 24px;
+  padding: 2.5rem 2rem 2rem 2rem;
+  max-width: 660px;
   width: 90%;
   box-shadow: 
-    0 25px 50px rgba(0, 0, 0, 0.8), 
-    0 0 45px rgba(0, 230, 246, 0.08),
+    0 25px 50px rgba(0, 0, 0, 0.85), 
+    0 0 50px rgba(0, 230, 246, 0.1),
     inset 0 1px 1px rgba(255, 255, 255, 0.05);
   text-align: center;
-  transform: scale(0.9);
+  transform: scale(0.95);
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 .custom-warning-modal.show .workbook-locked-card {
   transform: scale(1);
+}
+
+/* Graded Challenge Marking System Grid */
+.marking-system-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  width: 100%;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.marking-card {
+  background: linear-gradient(145deg, rgba(16, 24, 48, 0.6), rgba(10, 14, 26, 0.7));
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 14px;
+  padding: 1rem 1.15rem;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  transition: all 0.3s ease;
+}
+.marking-card:hover {
+  border-color: rgba(0, 230, 246, 0.15);
+  background: linear-gradient(145deg, rgba(16, 24, 48, 0.75), rgba(10, 14, 26, 0.85));
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+.marking-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.marking-card-icon {
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.marking-card-title {
+  font-family: var(--font-h);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+.marking-card-body {
+  font-family: var(--font-b);
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: #94a3b8;
+}
+.marking-card-highlight {
+  color: #00E6F6;
+  font-weight: 700;
+}
+.marking-card-highlight-gold {
+  color: #F5A623;
+  font-weight: 700;
+}
+.marking-card-highlight-green {
+  color: #10B981;
+  font-weight: 700;
+}
+@media (max-width: 600px) {
+  .marking-system-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  .workbook-locked-card {
+    padding: 2rem 1.25rem 1.5rem 1.25rem;
+  }
 }
 .lock-icon-circle {
   width: 76px;

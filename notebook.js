@@ -793,6 +793,12 @@ function setupGamifiedMarkingSystem() {
 
   
 
+  const maxDayMarks = (1000 * (totalCells / TOTAL_QUESTIONS)).toFixed(1);
+
+  const marksPerQuestion = (1000 / TOTAL_QUESTIONS).toFixed(3);
+
+
+
   // 1. Inject custom warning modal if not present
 
   if (!document.getElementById('startCodingModal')) {
@@ -819,17 +825,64 @@ function setupGamifiedMarkingSystem() {
 
          </div>
 
-         <h3 class="lock-title">Workbook Locked</h3>
+         <h3 class="lock-title">Workbook Graded Challenge</h3>
 
-         <p class="lock-desc">
-
-           Click <span class="highlight-cyan">"Improve score"</span> to start a <span class="highlight-cyan">24-hour graded challenge</span>. All code cells will be wiped and your score will reset to zero — solve as many questions as you can to earn marks!
-
+         <p class="lock-desc" style="color: #94a3b8; font-size: 0.9rem; margin-top: -0.25rem;">
+           Activate <span class="highlight-cyan">Graded Challenge Mode</span> to unlock and earn official Marks toward your Certificate of Mastery.
          </p>
+
+         <!-- 2x2 marking system grid explanation -->
+         <div class="marking-system-grid">
+           
+           <!-- Card 1: Scored Challenges -->
+           <div class="marking-card">
+             <div class="marking-card-header">
+               <span class="marking-card-icon">📝</span>
+               <span class="marking-card-title">Scored Challenges</span>
+             </div>
+             <div class="marking-card-body">
+               Today's workbook has <span class="marking-card-highlight">${totalCells} interactive questions</span>. Each task contains automated tests to instantly evaluate your logic.
+             </div>
+           </div>
+
+           <!-- Card 2: Marks Allocation -->
+           <div class="marking-card">
+             <div class="marking-card-header">
+               <span class="marking-card-icon">🏆</span>
+               <span class="marking-card-title">Marking Mechanics</span>
+             </div>
+             <div class="marking-card-body">
+               Earn exactly <span class="marking-card-highlight">${marksPerQuestion} Marks</span> per correct solution, up to a maximum of <span class="marking-card-highlight">${maxDayMarks} Marks</span> for this workbook.
+             </div>
+           </div>
+
+           <!-- Card 3: 24h Graded Window -->
+           <div class="marking-card">
+             <div class="marking-card-header">
+               <span class="marking-card-icon">⏱️</span>
+               <span class="marking-card-title">24-Hour Active Timer</span>
+             </div>
+             <div class="marking-card-body">
+               Once started, a <span class="marking-card-highlight-gold">24-hour countdown timer</span> begins. Only your <span class="marking-card-highlight-green">highest-ever score</span> is synced—so your score never decreases.
+             </div>
+           </div>
+
+           <!-- Card 4: Workspace Reset -->
+           <div class="marking-card">
+             <div class="marking-card-header">
+               <span class="marking-card-icon">⚡</span>
+               <span class="marking-card-title">Workspace Reset</span>
+             </div>
+             <div class="marking-card-body">
+               To ensure academic integrity, starting resets all code cells in today's workbook. You can re-run and re-submit as many times as you like.
+             </div>
+           </div>
+
+         </div>
 
          <div class="warning-text-container">
 
-           <p class="warning-alert-text">⚠️ WARNING: Clicking this will alter your Score, which might impact your certificate!</p>
+           <p class="warning-alert-text">⚠️ RESET WARNING: Resets today's code cells. Your profile's global high score will NOT be overwritten unless you achieve a new record!</p>
 
          </div>
 
@@ -843,7 +896,7 @@ function setupGamifiedMarkingSystem() {
 
              </svg>
 
-             IMPROVE SCORE
+             START GRADED CHALLENGE
 
            </button>
 

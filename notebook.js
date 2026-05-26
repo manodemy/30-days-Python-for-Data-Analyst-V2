@@ -106,7 +106,30 @@ if (_currentDayId) {
 
 
 
-const _dayStarted = _currentDayId ? (safeStorageGet(`manodemy_${_currentDayId}_start_time`) ? true : false) : true;
+// ── CHALLENGE STATE HELPER ──────────────────────────────────────────────────
+// Returns true only if a 24-hour grading window is currently open.
+function isChallengeActive() {
+
+  const dayId = getDayId();
+
+  if (!dayId) return true; // Non-day pages: don't restrict
+
+  const startTimeStr = safeStorageGet(`manodemy_${dayId}_start_time`);
+
+  if (!startTimeStr) return false; // Never started — practice mode
+
+  const startTime = parseInt(startTimeStr, 10);
+
+  const elapsedMs = Date.now() - startTime;
+
+  const total24HoursMs = 24 * 3600 * 1000;
+
+  return elapsedMs < total24HoursMs; // Active only if within 24h
+
+}
+
+// Editors are ALWAYS unlocked — grading state does not lock the UI
+const _dayStarted = true;
 
 
 
@@ -138,7 +161,7 @@ document.querySelectorAll('.cm-source').forEach(ta => {
 
     tabSize: 4,
 
-    readOnly: _dayStarted ? false : 'nocursor',
+    readOnly: false, // Editors always unlocked — practice or active
 
     indentWithTabs: false,
 
@@ -264,47 +287,7 @@ document.querySelectorAll('.cm-source').forEach(ta => {
 
 
 
-  // Custom click/focus capture for locked state
-
-  cm.on('focus', () => {
-
-    if (document.body.classList.contains('notebook-locked')) {
-
-      const modal = document.getElementById('startCodingModal');
-
-      if (modal) {
-
-        modal.classList.add('show');
-
-        document.body.classList.add('modal-open');
-
-      }
-
-      cm.blur();
-
-    }
-
-  });
-
-
-
-  cm.on('mousedown', () => {
-
-    if (document.body.classList.contains('notebook-locked')) {
-
-      const modal = document.getElementById('startCodingModal');
-
-      if (modal) {
-
-        modal.classList.add('show');
-
-        document.body.classList.add('modal-open');
-
-      }
-
-    }
-
-  });
+  // Editors are always interactive — no locked-state intercepts
 
   
 
@@ -658,45 +641,15 @@ function calculateDayXP() {
 
   if (!dayId) return 0;
 
-  
+  // Pure accuracy-based marks — no time decay multiplier
 
-  const startTime = parseInt(safeStorageGet(`manodemy_${dayId}_start_time`) || '0', 10);
-
-  if (!startTime) return 0;
-
-  
-
-  const completionTime = parseInt(safeStorageGet(`manodemy_${dayId}_completion_time`) || '0', 10);
-
-  const now = completionTime ? completionTime : Date.now();
-
-  
-
-  const elapsedMs = now - startTime;
-
-  const elapsedHours = elapsedMs / 3600000; // FIX: was (3,600,000) — JS comma operator made this elapsedMs/0=Infinity
-
-  
-
-  // Decay factor: 0.2 + 0.8 * ((48 - t)/48) if t <= 48 else 0.2
-
-  let timeMultiplier = 0.2;
-
-  if (elapsedHours <= 48) {
-
-    timeMultiplier = 0.2 + 0.8 * ((48 - elapsedHours) / 48);
-
-  }
-
-  
+  // Formula: 1000 * (questions_solved / 1540)
 
   const solved = successfulCells.size;
 
-  if (totalCells === 0) return 0;
+  if (TOTAL_QUESTIONS === 0) return 0;
 
-  
-
-  const dayXP = 1000 * (solved / TOTAL_QUESTIONS) * timeMultiplier;
+  const dayXP = 1000 * (solved / TOTAL_QUESTIONS);
 
   return dayXP;
 
@@ -708,7 +661,11 @@ function startCountdownTicker() {
 
   if (countdownInterval) clearInterval(countdownInterval);
 
-  
+
+
+  let _hasExpired = false; // Guard: only fire expiration logic once
+
+
 
   const updateTicker = () => {
 
@@ -716,27 +673,21 @@ function startCountdownTicker() {
 
     if (!dayId) return;
 
-    
+
 
     const startTime = parseInt(safeStorageGet(`manodemy_${dayId}_start_time`) || '0', 10);
 
     if (!startTime) return;
 
-    
 
-    const completionTime = parseInt(safeStorageGet(`manodemy_${dayId}_completion_time`) || '0', 10);
 
-    const now = completionTime ? completionTime : Date.now();
+    const elapsedMs = Date.now() - startTime;
 
-    
+    const total24HoursMs = 24 * 3600 * 1000;
 
-    const elapsedMs = now - startTime;
+    const remainingMs = Math.max(0, total24HoursMs - elapsedMs);
 
-    const total48HoursMs = 48 * 3600 * 1000;
 
-    const remainingMs = Math.max(0, total48HoursMs - elapsedMs);
-
-    
 
     // Format countdown
 
@@ -746,43 +697,41 @@ function startCountdownTicker() {
 
     const seconds = Math.floor((remainingMs % (60 * 1000)) / 1000);
 
-    
-
     const timeStr = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
-    
+
 
     const countdownVal = document.getElementById('countdownVal');
 
     if (countdownVal) {
 
-      if (completionTime) {
+      if (remainingMs === 0) {
 
-        countdownVal.innerHTML = `${timeStr} <span style="color: var(--emerald, #10B981); font-weight:900; margin-left:4px; filter: drop-shadow(0 0 4px rgba(16,185,129,0.3));">✓ FROZEN</span>`;
+        countdownVal.innerHTML = `00:00:00 <span style="color: #f43f5e; font-weight:900; margin-left:4px;">EXPIRED</span>`;
 
-        const timerPill = document.getElementById('navCountdownTimer');
+        // ── EXPIRATION: transition back to Practice Mode ─────────────────────
 
-        if (timerPill) {
+        if (!_hasExpired) {
 
-          timerPill.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+          _hasExpired = true;
 
-          timerPill.style.boxShadow = '0 0 15px rgba(16, 185, 129, 0.15)';
+          clearInterval(countdownInterval);
 
-          const dot = timerPill.querySelector('.timer-dot');
+          countdownInterval = null;
 
-          if (dot) {
+          // Show toast notification
 
-            dot.style.background = '#10B981';
+          if (window.showUpgradeToast) {
 
-            dot.style.boxShadow = '0 0 8px #10B981';
+            window.showUpgradeToast('24-hour grading session ended');
 
           }
 
+          // Rebuild navbar: replace timer with "Improve score" button
+
+          setTimeout(() => setupGamifiedMarkingSystem(), 1500);
+
         }
-
-      } else if (remainingMs === 0) {
-
-        countdownVal.innerHTML = `00:00:00 <span style="color: #f43f5e; font-weight:900; margin-left:4px;">EXPIRED</span>`;
 
       } else {
 
@@ -792,43 +741,41 @@ function startCountdownTicker() {
 
     }
 
-    
 
-    const dayXP = calculateDayXP();
 
-    safeStorageSet(`manodemy_${dayId}_xp_earned`, dayXP.toFixed(2));
+    // Only update scoreboard XP display during active challenge
 
-    
+    if (isChallengeActive()) {
 
-    const bestScoreKey = `manodemy_${dayId}_best_score`;
+      const dayXP = calculateDayXP();
 
-    const currentBest = parseFloat(safeStorageGet(bestScoreKey) || '0');
+      safeStorageSet(`manodemy_${dayId}_xp_earned`, dayXP.toFixed(2));
 
-    if (dayXP > currentBest) {
+      const bestScoreKey = `manodemy_${dayId}_best_score`;
 
-      safeStorageSet(bestScoreKey, dayXP.toFixed(2));
+      const currentBest = parseFloat(safeStorageGet(bestScoreKey) || '0');
+
+      if (dayXP > currentBest) {
+
+        safeStorageSet(bestScoreKey, dayXP.toFixed(2));
+
+      }
+
+      const xpEarnedEl = document.getElementById('scoreXPEarned');
+
+      const maxBarXPEl = document.getElementById('scoreMaxXP');
+
+      const maxDayXP = 1000 * (totalCells / TOTAL_QUESTIONS);
+
+      if (xpEarnedEl) xpEarnedEl.textContent = dayXP.toFixed(1);
+
+      if (maxBarXPEl) maxBarXPEl.textContent = maxDayXP.toFixed(1);
 
     }
 
-    
-
-    const xpEarnedEl = document.getElementById('scoreXPEarned');
-
-    const maxBarXPEl = document.getElementById('scoreMaxXP');
-
-    const maxDayXP = 1000 * (totalCells / TOTAL_QUESTIONS);
-
-    
-
-    const finalScoreToShow = Math.max(currentBest, dayXP);
-
-    if (xpEarnedEl) xpEarnedEl.textContent = finalScoreToShow.toFixed(1);
-
-    if (maxBarXPEl) maxBarXPEl.textContent = maxDayXP.toFixed(1);
-
   };
 
-  
+
 
   updateTicker();
 
@@ -876,7 +823,7 @@ function setupGamifiedMarkingSystem() {
 
          <p class="lock-desc">
 
-           This workbook is currently locked. Click <span class="highlight-cyan">"Improve score"</span> to activate your 48-hour challenge and unlock all python environments.
+           Click <span class="highlight-cyan">"Improve score"</span> to start a <span class="highlight-cyan">24-hour graded challenge</span>. All code cells will be wiped and your score will reset to zero — solve as many questions as you can to earn marks!
 
          </p>
 
@@ -936,33 +883,103 @@ function setupGamifiedMarkingSystem() {
 
     document.getElementById('confirmStartBtn').onclick = () => {
 
-      safeStorageSet(`manodemy_${dayId}_start_time`, Date.now().toString());
-
       // ── TRACK IMPROVE SCORE CLICKS ──
-      // Increment per-day counter so admin panel can show how many times
-      // the student attempted to improve their score on this day.
       const clicksKey = `manodemy_${dayId}_improve_clicks`;
       const prevClicks = parseInt(safeStorageGet(clicksKey) || '0', 10);
       safeStorageSet(clicksKey, (prevClicks + 1).toString());
 
-      document.getElementById('startCodingModal').classList.remove('show');
+      // ── COMPLETE WIPE — code cells, solved flags, visual ticks ──
 
+      Object.keys(editors).forEach(cellId => {
+
+        // 1. Clear editor contents
+
+        editors[cellId].setValue('');
+
+        // 2. Remove saved code from storage
+
+        try {
+          localStorage.removeItem(`manodemy_${dayId}_${cellId}_code`);
+          sessionStorage.removeItem(`manodemy_${dayId}_${cellId}_code`);
+        } catch(e) {}
+
+        // 3. Remove solved flag from storage
+
+        try {
+          localStorage.removeItem(`manodemy_${dayId}_${cellId}_solved`);
+          sessionStorage.removeItem(`manodemy_${dayId}_${cellId}_solved`);
+        } catch(e) {}
+
+        // 4. Remove green solved styling from cell
+
+        const cellEl = document.getElementById(cellId);
+        if (cellEl) cellEl.classList.remove('is-solved');
+
+      });
+
+      // 5. Clear all solved question box styling and TOC ticks
+
+      document.querySelectorAll('.question, .task, .interview').forEach(q => {
+
+        q.classList.remove('is-solved-box');
+
+        if (q.id) {
+          const tocLink = document.querySelector(`.toc-list a[href="#${q.id}"]`);
+          if (tocLink) {
+            const tick = tocLink.querySelector('.toc-tick');
+            if (tick) tick.remove();
+          }
+        }
+
+      });
+
+      // 6. Reset the in-memory solved set and session score
+
+      successfulCells.clear();
+
+      // 7. Clear stored solved count and completion time
+
+      try {
+        localStorage.removeItem(`manodemy_${dayId}_solved_count`);
+        localStorage.removeItem(`manodemy_${dayId}_completion_time`);
+        localStorage.removeItem(`manodemy_${dayId}_xp_earned`);
+        sessionStorage.removeItem(`manodemy_${dayId}_solved_count`);
+        sessionStorage.removeItem(`manodemy_${dayId}_completion_time`);
+        sessionStorage.removeItem(`manodemy_${dayId}_xp_earned`);
+      } catch(e) {}
+
+      // 8. Reset navbar scoreboard display to 0
+
+      const solvedEl = document.getElementById('scoreSolved');
+      const totalEl  = document.getElementById('scoreTotal');
+      const xpEl     = document.getElementById('scoreXPEarned');
+      const maxXpEl  = document.getElementById('scoreMaxXP');
+      const progEl   = document.getElementById('scoreProgress');
+      if (solvedEl) solvedEl.textContent = '0';
+      if (totalEl)  totalEl.textContent  = totalCells;
+      if (xpEl)     xpEl.textContent     = '0.0';
+      if (maxXpEl)  maxXpEl.textContent  = (1000 * (totalCells / TOTAL_QUESTIONS)).toFixed(1);
+      if (progEl)   progEl.style.width   = '0%';
+
+      // 9. Set new start time (opens fresh 24-hour grading window)
+
+      safeStorageSet(`manodemy_${dayId}_start_time`, Date.now().toString());
+
+      // 10. Close modal
+
+      document.getElementById('startCodingModal').classList.remove('show');
       document.body.classList.remove('modal-open');
+
+      // 11. Rebuild navbar (show countdown timer)
 
       setupGamifiedMarkingSystem();
 
-      Object.values(editors).forEach(cm => cm.setOption('readOnly', false));
-
-      
+      // 12. Telemetry
 
       _notebookWriteActivity('challenge_started', {
-
-        day_id:       dayId,
-
+        day_id:         dayId,
         improve_clicks: prevClicks + 1,
-
-        page_url: window.location.pathname
-
+        page_url:       window.location.pathname
       });
 
     };
@@ -1021,25 +1038,29 @@ function setupGamifiedMarkingSystem() {
 
   
 
-  // 3. Check start state
+  // 3. Determine current challenge state
 
-  const startTime = safeStorageGet(`manodemy_${dayId}_start_time`);
+  const active = isChallengeActive();
 
-  if (!startTime) {
+  // Editors are always unlocked in both modes
 
-    // LOCKED STATE
+  Object.values(editors).forEach(cm => cm.setOption('readOnly', false));
 
-    document.body.classList.add('notebook-locked');
+  // Remove 'notebook-locked' class entirely — we no longer lock the notebook
 
-    
+  document.body.classList.remove('notebook-locked');
 
-    // Lock editors
+  if (!active) {
 
-    Object.values(editors).forEach(cm => cm.setOption('readOnly', 'nocursor'));
+    // ── PRACTICE MODE: Show "Improve score" button ───────────────────────────
 
-    
+    // Remove countdown timer if it exists
 
-    // Nav start coding button renamed to "Improve score"
+    const existingTimer = document.getElementById('navCountdownTimer');
+
+    if (existingTimer) existingTimer.remove();
+
+    if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
 
     const navControls = document.querySelector('.nav-controls');
 
@@ -1063,25 +1084,13 @@ function setupGamifiedMarkingSystem() {
 
     }
 
-    
-
-    // Bind start clicks
-
     const showWarningModal = () => {
 
       const modal = document.getElementById('startCodingModal');
 
-      if (modal) {
-
-        modal.classList.add('show');
-
-        document.body.classList.add('modal-open');
-
-      }
+      if (modal) { modal.classList.add('show'); document.body.classList.add('modal-open'); }
 
     };
-
-    
 
     const navBtn = document.getElementById('navStartCodingBtn');
 
@@ -1089,25 +1098,13 @@ function setupGamifiedMarkingSystem() {
 
   } else {
 
-    // STARTED STATE
+    // ── ACTIVE CHALLENGE MODE: Show countdown timer ──────────────────────────
 
-    document.body.classList.remove('notebook-locked');
-
-    
-
-    // Ensure editors unlocked
-
-    Object.values(editors).forEach(cm => cm.setOption('readOnly', false));
-
-    
-
-    // Remove start button, show live timer
+    // Remove "Improve score" button if present
 
     const navBtn = document.getElementById('navStartCodingBtn');
 
     if (navBtn) navBtn.remove();
-
-    
 
     const navControls = document.querySelector('.nav-controls');
 
@@ -1613,7 +1610,7 @@ async function runCell(cellId) {
 
       if (cell.classList.contains('is-scored-question')) {
 
-        successfulCells.add(cellId);
+        // ── VISUAL TICK: always applied in both Practice and Active modes ──
 
         cell.classList.add('is-solved');
 
@@ -1621,23 +1618,33 @@ async function runCell(cellId) {
 
         if (dayId) safeStorageSet(`manodemy_${dayId}_${cellId}_solved`, 'true');
 
+        if (isChallengeActive()) {
 
+          // ── ACTIVE CHALLENGE: update successfulCells set and scoreboard ──
 
-        // ── SYNC TO SUPABASE: fire question_solved event (non-blocking) ──
+          successfulCells.add(cellId);
 
-        _notebookWriteActivity('question_solved', {
+          // Sync to Supabase
 
-          question_id:  cellId,
+          _notebookWriteActivity('question_solved', {
 
-          page_url:     window.location.pathname
+            question_id: cellId,
 
-        });
+            page_url:    window.location.pathname
+
+          });
+
+          updateScore(); // Live scoreboard update
+
+        }
+
+        // In Practice Mode: no successfulCells update, no scoreboard change
 
       }
 
     } else {
 
-      successfulCells.delete(cellId);
+      // Wrong/partial: always remove visual tick
 
       cell.classList.remove('is-solved');
 
@@ -1645,9 +1652,17 @@ async function runCell(cellId) {
 
       if (dayId) safeStorageSet(`manodemy_${dayId}_${cellId}_solved`, 'false');
 
-    }
+      if (isChallengeActive()) {
 
-    updateScore();
+        // Only update scoreboard during active challenge
+
+        successfulCells.delete(cellId);
+
+        updateScore();
+
+      }
+
+    }
 
 
 

@@ -64,187 +64,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-  /* ═══ TYPING TERMINAL ═══ */
+  /* ═══ HERO VIDEO — Click-to-Play ═══ */
 
-  const codeExamples = [
+  window.loadHeroVideo = function () {
 
-    { lines: [
+    const poster = document.getElementById('videoPoster');
 
-      { text: '# Load and analyze sales data', cls: 'cmt' },
+    const iframe = document.getElementById('heroVideoFrame');
 
-      { text: 'import', cls: 'kw' }, { text: ' pandas ', cls: '' }, { text: 'as', cls: 'kw' }, { text: ' pd', cls: '' },
+    if (!poster || !iframe) return;
 
-      { text: "df = pd.read_csv('sales_data.csv')", cls: '' },
+    // Inject autoplay YouTube src on click (avoids autoplay policy blocking)
 
-      { text: "summary = df.groupby('region')['revenue'].sum()", cls: '' },
+    iframe.src = 'https://www.youtube.com/embed/RpB3d0miEhY?autoplay=1&rel=0&modestbranding=1&color=white&iv_load_policy=3';
 
-      { text: 'print(summary.sort_values(ascending=False))', cls: '' }
+    // Fade out poster, reveal iframe
 
-    ]},
+    poster.classList.add('hidden');
 
-    { lines: [
+    iframe.classList.remove('hidden');
 
-      { text: '# Top 5 products by revenue', cls: 'cmt' },
-
-      { text: "top5 = (df.groupby('product')", cls: '' },
-
-      { text: "          .agg({'revenue': 'sum', 'units': 'count'})", cls: '' },
-
-      { text: "          .sort_values('revenue', ascending=False)", cls: '' },
-
-      { text: '          .head(5))', cls: '' },
-
-      { text: 'print(top5)', cls: '' }
-
-    ]},
-
-    { lines: [
-
-      { text: '# Monthly revenue trend', cls: 'cmt' },
-
-      { text: "df['date'] = pd.to_datetime(df['date'])", cls: '' },
-
-      { text: "monthly = df.resample('M', on='date')['revenue'].sum()", cls: '' },
-
-      { text: "monthly.plot(kind='line', title='Revenue Trend')", cls: '' }
-
-    ]}
-
-  ];
-
-
-
-  const display = document.getElementById('typingDisplay');
-
-  const cursorEl = document.getElementById('typingCursor');
-
-  let exIdx = 0, charIdx = 0, lineIdx = 0, typeTimer = null;
-
-
-
-  function flattenExample(ex) {
-
-    let result = '';
-
-    const raw = ex.lines;
-
-    for (let i = 0; i < raw.length; i++) {
-
-      const line = raw[i];
-
-      // Simple approach: just use text with syntax spans
-
-      if (line.cls === 'kw' || line.cls === 'cmt' || line.cls === 'str' || line.cls === 'num') {
-
-        result += `<span class="${line.cls}">${line.text}</span>`;
-
-      } else {
-
-        result += escapeHTML(line.text);
-
-      }
-
-      if (i < raw.length - 1 && !raw[i].text.endsWith(' ') && raw[i+1]?.cls !== 'kw' && raw[i+1]?.cls !== '') {
-
-        result += '\n';
-
-      }
-
-    }
-
-    return result;
-
-  }
-
-
-
-  function escapeHTML(s) {
-
-    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-
-  }
-
-
-
-  function getPlainText(ex) {
-
-    return ex.lines.map(l => l.text).join('\n');
-
-  }
-
-
-
-  function highlightCode(text) {
-
-    let h = escapeHTML(text);
-
-    return h.replace(
-
-      /(#[^\n]*)|('(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*")|\b(import|as|from|def|return|print|for|in|if|else|True|False|None)\b|\b(\d+)\b/g,
-
-      (match, p1, p2, p3, p4) => {
-
-        if (p1) return `<span class="cmt">${p1}</span>`;
-
-        if (p2) return `<span class="str">${p2}</span>`;
-
-        if (p3) return `<span class="kw">${p3}</span>`;
-
-        if (p4) return `<span class="num">${p4}</span>`;
-
-        return match;
-
-      }
-
-    );
-
-  }
-
-
-
-  function typeExample() {
-
-    if (!display) return;
-
-    const plain = getPlainText(codeExamples[exIdx]);
-
-    if (charIdx <= plain.length) {
-
-      const partial = plain.substring(0, charIdx);
-
-      display.innerHTML = highlightCode(partial);
-
-      charIdx++;
-
-      typeTimer = setTimeout(typeExample, 35);
-
-    } else {
-
-      typeTimer = setTimeout(() => {
-
-        exIdx = (exIdx + 1) % codeExamples.length;
-
-        charIdx = 0;
-
-        display.style.opacity = '0';
-
-        setTimeout(() => {
-
-          display.innerHTML = '';
-
-          display.style.opacity = '1';
-
-          typeExample();
-
-        }, 400);
-
-      }, 2500);
-
-    }
-
-  }
-
-  if (display) typeExample();
+  };
 
 
 

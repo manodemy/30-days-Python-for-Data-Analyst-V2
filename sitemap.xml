@@ -1,9 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  UPDATE: Replace https://yourdomain.com with your actual custom domain
+  e.g., https://manodemy.com or https://www.manodemy.com
+-->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Landing Page -->
   <url>
-    <loc>https://manodemy.github.io/30-days-Python-for-Data-Analyst-V2/landing_v2/index.html</loc>
-    <lastmod>2026-05-24</lastmod>
+    <loc>https://yourdomain.com/</loc>
+    <lastmod>2026-05-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.00</priority>
+  </url>
+  <!-- Legal Pages -->
+  <url>
+    <loc>https://yourdomain.com/privacy</loc>
+    <lastmod>2026-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.30</priority>
+  </url>
+  <url>
+    <loc>https://yourdomain.com/terms</loc>
+    <lastmod>2026-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.30</priority>
+  </url>
+  <url>
+    <loc>https://yourdomain.com/refund-policy</loc>
+    <lastmod>2026-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.30</priority>
+  </url>
+  <!-- Free Course Days (publicly indexable) -->
+  <url>
+    <loc>https://yourdomain.com/day01.html</loc>
+    <lastmod>2026-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://yourdomain.com/day02.html</loc>
+    <lastmod>2026-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
   </url>
 </urlset>

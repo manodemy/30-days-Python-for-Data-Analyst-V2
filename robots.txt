@@ -4,5 +4,7 @@ Allow: /landing_v2/
 Disallow: /supabase/
 Disallow: /admin.html
 Disallow: /admin/
+Disallow: /video_pipeline/
 
-Sitemap: https://manodemy.github.io/30-days-Python-for-Data-Analyst-V2/sitemap.xml
+# UPDATE: Replace yourdomain.com with your actual custom domain
+Sitemap: https://yourdomain.com/sitemap.xml

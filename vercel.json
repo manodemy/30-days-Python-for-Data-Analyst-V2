@@ -1,0 +1,76 @@
+{
+  "version": 2,
+  "cleanUrls": false,
+  "trailingSlash": false,
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "X-XSS-Protection", "value": "1; mode=block" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+      ]
+    },
+    {
+      "source": "/supabase.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "source": "/chart.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "source": "/(.*\\.css|.*\\.js)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=3600" }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/landing_v2/index.html"
+    },
+    {
+      "source": "/privacy",
+      "destination": "/landing_v2/privacy.html"
+    },
+    {
+      "source": "/terms",
+      "destination": "/landing_v2/terms.html"
+    },
+    {
+      "source": "/refund-policy",
+      "destination": "/landing_v2/refund-policy.html"
+    },
+    {
+      "source": "/reset-password",
+      "destination": "/landing_v2/reset-password.html"
+    },
+    {
+      "source": "/payment-success",
+      "destination": "/landing_v2/payment-success.html"
+    },
+    {
+      "source": "/payment-failed",
+      "destination": "/landing_v2/payment-failed.html"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/index.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/landing_v2/index.html",
+      "destination": "/",
+      "permanent": true
+    }
+  ]
+}

@@ -380,7 +380,7 @@
 
           
 
-          <div class="terminal" role="img" aria-label="Visual demonstration of python data analytics workflow">
+          <div class="terminal terminal--video" role="region" aria-label="Manodemy product demo video">
 
             <div class="terminal-bar">
 
@@ -394,29 +394,57 @@
 
               </div>
 
-              <span class="terminal-title">Python Interactive Console</span>
+              <span class="terminal-title">&#x25B6;&nbsp;&nbsp;Manodemy Product Demo</span>
+
+              <span class="terminal-live-badge" aria-hidden="true">
+                <span class="live-dot"></span>DEMO
+              </span>
 
             </div>
 
-            <div class="terminal-body">
+            <!-- Click-to-play YouTube Video -->
+            <div class="terminal-video-body" id="heroVideoContainer">
 
-              <div class="terminal-mesh" aria-hidden="true"></div>
+              <!-- Poster / Thumbnail State (shown before play) -->
+              <div class="video-poster" id="videoPoster" role="button" tabindex="0"
+                   aria-label="Play Manodemy product demo"
+                   onclick="loadHeroVideo()"
+                   onkeydown="if(event.key==='Enter'||event.key===' '){loadHeroVideo();}">
 
-              <div class="terminal-blobs" aria-hidden="true">
+                <!-- YouTube Thumbnail as poster -->
+                <img
+                  src="https://img.youtube.com/vi/RpB3d0miEhY/maxresdefault.jpg"
+                  alt="Manodemy Python course product demo"
+                  class="video-poster-img"
+                  loading="lazy"
+                  onerror="this.src='https://img.youtube.com/vi/RpB3d0miEhY/hqdefault.jpg'"
+                />
 
-                <div class="blob blob-purple"></div>
+                <!-- Overlay gradient -->
+                <div class="video-poster-overlay" aria-hidden="true"></div>
 
-                <div class="blob blob-cyan"></div>
+                <!-- Glowing Play Button -->
+                <div class="video-play-btn" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8 5.14v14l11-7-11-7z"/>
+                  </svg>
+                </div>
+
+                <!-- Duration / CTA label -->
+                <span class="video-cta-label">Watch Full Demo</span>
 
               </div>
 
-              <div class="terminal-code-wrapper" aria-live="off" aria-atomic="true">
-
-                <pre><code id="typingDisplay"></code></pre>
-
-                <span class="cursor-blink" id="typingCursor" aria-hidden="true">&#x2587;</span>
-
-              </div>
+              <!-- YouTube iframe (injected on click) -->
+              <iframe
+                id="heroVideoFrame"
+                class="hero-video-iframe hidden"
+                src=""
+                title="Manodemy Product Demo — 30-Day Python for Data Analyst Course"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+                loading="lazy"
+              ></iframe>
 
             </div>
 

@@ -56,7 +56,12 @@
 
   
 
-  <link rel="stylesheet" href="styles.css?v=3.0">
+  <!-- Cache busting: v3.1 — forces browser to load fresh CSS/JS after deploy -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
+  <link rel="stylesheet" href="styles.css?v=3.1">
 
   
 
@@ -2371,9 +2376,9 @@
 
   <script src="../supabase.js"></script>
 
-  <script src="reviews.js?v=3.0"></script>
+  <script src="reviews.js?v=3.1"></script>
 
-  <script src="app.js?v=3.0"></script>
+  <script src="app.js?v=3.1"></script>
 
 </body>
 

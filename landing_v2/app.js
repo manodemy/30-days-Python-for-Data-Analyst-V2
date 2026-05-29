@@ -431,28 +431,81 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-    const geoAPIs = [
-      { url: 'https://get.geojs.io/v1/ip/country.json', parse: d => d.country },
-      { url: 'https://ipapi.co/json/', parse: d => d.country_code },
-      { url: 'https://api.country.is/', parse: d => d.country },
-    ];
-
+    // 1. Try URL override first (e.g. ?country=IN or ?country=US)
+    const urlParams = new URLSearchParams(window.location.search);
+    const countryParam = urlParams.get('country');
     let geoDetected = false;
-    for (const api of geoAPIs) {
-      try {
-        const response = await fetch(api.url, { signal: AbortSignal.timeout(4000) });
-        const data = await response.json();
-        const code = api.parse(data);
-        if (code && code.length === 2) {
-          userCountry = code.toUpperCase();
-          geoDetected = true;
-          break;
-        }
-      } catch (_) { /* try next */ }
+
+    if (countryParam) {
+      const cp = countryParam.toUpperCase();
+      if (cp === 'IN' || cp === 'US') {
+        userCountry = cp;
+        geoDetected = true;
+        console.log("[Geo-pricing] Country overridden via URL:", userCountry);
+      }
     }
 
+    // 2. Try Timezone detection (IST timezone is UTC+5:30, i.e., offset of -330 minutes)
     if (!geoDetected) {
-      // Last resort: use browser language as a hint
+      try {
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const offset = new Date().getTimezoneOffset();
+        if (tz === 'Asia/Kolkata' || tz === 'Asia/Calcutta' || offset === -330) {
+          userCountry = 'IN';
+          geoDetected = true;
+          console.log("[Geo-pricing] Detected India timezone.");
+        }
+      } catch (e) {
+        console.warn("[Geo-pricing] Timezone check failed:", e);
+      }
+    }
+
+    // 3. Try logged-in user profile country from Supabase
+    if (!geoDetected && supabaseClient) {
+      try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (session) {
+          const { data: profile } = await supabaseClient
+            .from('profiles')
+            .select('country')
+            .eq('id', session.user.id)
+            .single();
+          if (profile?.country && profile.country.length === 2 && profile.country !== 'Unknown') {
+            userCountry = profile.country.toUpperCase();
+            geoDetected = true;
+            console.log("[Geo-pricing] Stored profile country loaded:", userCountry);
+          }
+        }
+      } catch (e) {
+        console.warn("[Geo-pricing] Failed to fetch country from profile:", e);
+      }
+    }
+
+    // 4. Try standard Geo IP APIs if not detected yet
+    if (!geoDetected) {
+      const geoAPIs = [
+        { url: 'https://get.geojs.io/v1/ip/country.json', parse: d => d.country },
+        { url: 'https://ipapi.co/json/', parse: d => d.country_code },
+        { url: 'https://api.country.is/', parse: d => d.country },
+      ];
+
+      for (const api of geoAPIs) {
+        try {
+          const response = await fetch(api.url, { signal: AbortSignal.timeout(4000) });
+          const data = await response.json();
+          const code = api.parse(data);
+          if (code && code.length === 2) {
+            userCountry = code.toUpperCase();
+            geoDetected = true;
+            console.log("[Geo-pricing] Detected via API:", userCountry);
+            break;
+          }
+        } catch (_) { /* try next */ }
+      }
+    }
+
+    // 5. Fallback: browser language
+    if (!geoDetected) {
       const lang = navigator.language || navigator.languages?.[0] || '';
       if (lang === 'en-IN' || lang.endsWith('-IN')) {
         userCountry = 'IN';

@@ -97,6 +97,13 @@ serve(async (req) => {
       // Update order
       await supabase.from('orders').update({ status: 'paid', updated_at: new Date().toISOString() }).eq('id', order_id)
 
+      // Capture buyer's phone number from Razorpay checkout response
+      const buyerPhone = body.contact || body.razorpay_contact || null
+      if (buyerPhone) {
+        await supabase.from('profiles').update({ phone: buyerPhone }).eq('id', user.id)
+        console.log(`[verify-payment] Saved phone ${buyerPhone} for user ${user.id}`)
+      }
+
       // Create enrollment
       await supabase.from('enrollments').upsert({
         user_id: user.id,
@@ -110,6 +117,7 @@ serve(async (req) => {
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
+
 
     // ══════════ PAYPAL CAPTURE ══════════
     if (gateway === 'paypal') {

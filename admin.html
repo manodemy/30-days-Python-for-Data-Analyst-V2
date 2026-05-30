@@ -2428,6 +2428,8 @@
                     <th>Amount</th>
                     <th>Ccy</th>
                     <th>Coupon</th>
+                    <th>Discount</th>
+                    <th>Phone</th>
                     <th>Gateway</th>
                     <th>Status</th>
                     <th>Action</th>
@@ -3982,7 +3984,7 @@
       // HIGH-4 FIX: Cache full dataset so the CSV export button can access all rows (not just current page)
       window._lastTxData = txs || [];
       if (!txs || txs.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--ink-muted);padding:2rem;">No transactions in this period</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="13" style="text-align:center;color:var(--ink-muted);padding:2rem;">No transactions in this period</td></tr>';
         return;
       }
       txs.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
@@ -4002,7 +4004,9 @@
         <td class="cell-mono">${new Date(t.created_at).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</td>
         <td class="cell-mono" style="color:var(--gold);">${formatINR(t.amount_inr)}</td>
         <td><span class="badge badge-neutral">${t.currency}</span></td>
-        <td class="cell-mono" style="color:var(--ink-muted);">${t.coupon_used || '—'}</td>
+        <td class="cell-mono" style="color:var(--ink-muted);">${t.coupon_used ? `<span class="coupon-code">${t.coupon_used}</span>` : '—'}</td>
+        <td class="cell-mono" style="color:${t.coupon_discount_inr > 0 ? 'var(--emerald, #10b981)' : 'var(--ink-muted)'}">${t.coupon_discount_inr > 0 ? '−' + formatINR(t.coupon_discount_inr) : '—'}</td>
+        <td class="cell-mono" style="color:var(--ink-muted);">${t.phone || '—'}</td>
         <td style="color:var(--ink-muted);font-size:0.75rem;">${t.payment_gateway || '—'}</td>
         <td><span class="badge ${badge}">${t.status}</span></td>
         <td>${action}</td>
@@ -4701,7 +4705,7 @@
       // Use the last loaded transactions stored in the closure
       const txRows = window._lastTxData || [];
       if (!txRows.length) { showToast('No transactions to export', 'info'); return; }
-      const headers = ['#', 'Name', 'Email', 'Country', 'Date', 'Amount (INR)', 'Currency', 'Coupon', 'Gateway', 'Status'];
+      const headers = ['#', 'Name', 'Email', 'Country', 'Date', 'Amount (INR)', 'Currency', 'Coupon', 'Discount (INR)', 'Phone', 'Gateway', 'Status'];
       const csv = [headers.join(','), ...txRows.map((t, i) => [
         i + 1,
         `"${(t.user_name || '').replace(/"/g, '""')}"`,
@@ -4711,6 +4715,8 @@
         t.amount_inr || 0,
         t.currency || '',
         t.coupon_used || '',
+        t.coupon_discount_inr || 0,
+        `"${(t.phone || '').replace(/"/g, '""')}"`,
         t.payment_gateway || '',
         t.status || ''
       ].join(','))].join('\n');

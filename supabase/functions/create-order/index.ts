@@ -40,6 +40,7 @@ serve(async (req) => {
     const prices = pricingSetting?.value || { inr: 149900, usd: 1900 }
     let amount = currency === 'INR' ? prices.inr : prices.usd  // paise / cents
     let currencyCode = currency || 'INR'
+    const originalAmount = amount // capture pre-discount price for discount calculation
 
     // ── Use client-side pre-calculated amount if provided (already validated) ──
     // This ensures Razorpay always receives the exact discounted price the user saw
@@ -98,6 +99,15 @@ serve(async (req) => {
       )
     }
 
+    // ── Compute discount value in INR (for analytics) ──
+    // originalAmount and amount are in paise/cents; convert to whole currency for INR column
+    const INR_USD_RATE = 83.5
+    let coupon_discount_inr = 0
+    if (originalAmount > amount) {
+      const discountRaw = (originalAmount - amount) / 100.0 // convert from paise/cents
+      coupon_discount_inr = currencyCode === 'INR' ? discountRaw : Math.round(discountRaw * INR_USD_RATE)
+    }
+
     // ── Create order in DB ──
     const { data: order, error: orderError } = await supabase
       .from('orders')
@@ -107,7 +117,9 @@ serve(async (req) => {
         amount,
         currency: currencyCode,
         gateway,
-        status: 'pending'
+        status: 'pending',
+        coupon_code: coupon_code ? coupon_code.toUpperCase() : null,  // ← save applied coupon code
+        coupon_discount_inr                                             // ← save discount amount in INR
       })
       .select()
       .single()

@@ -850,7 +850,9 @@ async function initiatePayment(gateway) {
 
                 razorpay_order_id: response.razorpay_order_id,
 
-                razorpay_signature: response.razorpay_signature
+                razorpay_signature: response.razorpay_signature,
+
+                contact: response.contact || ''   // ← buyer's phone from Razorpay checkout
 
               })
 

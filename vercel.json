@@ -31,46 +31,41 @@
       ]
     }
   ],
-  "rewrites": [
+  "redirects": [
     {
       "source": "/",
-      "destination": "/landing_v2/index.html"
+      "destination": "/landing_v2/index.html",
+      "permanent": false
     },
     {
       "source": "/privacy",
-      "destination": "/landing_v2/privacy.html"
+      "destination": "/landing_v2/privacy.html",
+      "permanent": false
     },
     {
       "source": "/terms",
-      "destination": "/landing_v2/terms.html"
+      "destination": "/landing_v2/terms.html",
+      "permanent": false
     },
     {
       "source": "/refund-policy",
-      "destination": "/landing_v2/refund-policy.html"
+      "destination": "/landing_v2/refund-policy.html",
+      "permanent": false
     },
     {
       "source": "/reset-password",
-      "destination": "/landing_v2/reset-password.html"
+      "destination": "/landing_v2/reset-password.html",
+      "permanent": false
     },
     {
       "source": "/payment-success",
-      "destination": "/landing_v2/payment-success.html"
+      "destination": "/landing_v2/payment-success.html",
+      "permanent": false
     },
     {
       "source": "/payment-failed",
-      "destination": "/landing_v2/payment-failed.html"
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/index.html",
-      "destination": "/",
-      "permanent": true
-    },
-    {
-      "source": "/landing_v2/index.html",
-      "destination": "/",
-      "permanent": true
+      "destination": "/landing_v2/payment-failed.html",
+      "permanent": false
     }
   ]
 }

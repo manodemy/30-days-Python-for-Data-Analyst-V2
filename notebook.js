@@ -324,6 +324,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const dayId = getDayId();
 
   if (dayId) {
+    // 1. Resolve expired challenge state first
+    checkAndResolveExpiredChallenge(dayId);
 
     // Restore cell contents
 
@@ -338,13 +340,14 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       const isSolved = safeStorageGet(`manodemy_${dayId}_${cellId}_solved`) === 'true';
+      const isGradedSolved = safeStorageGet(`manodemy_${dayId}_${cellId}_graded_solved`) === 'true';
 
       if (isSolved) {
-
-        successfulCells.add(cellId);
-
         document.getElementById(cellId).classList.add('is-solved');
+      }
 
+      if (isGradedSolved) {
+        successfulCells.add(cellId);
       }
 
     });
@@ -727,6 +730,9 @@ function startCountdownTicker() {
 
           }
 
+          // Evaluate final challenge session score before resetting
+          checkAndResolveExpiredChallenge(dayId);
+
           // Rebuild navbar: replace timer with "Improve score" button
 
           setTimeout(() => setupGamifiedMarkingSystem(), 1500);
@@ -750,16 +756,7 @@ function startCountdownTicker() {
       const dayXP = calculateDayXP();
 
       safeStorageSet(`manodemy_${dayId}_xp_earned`, dayXP.toFixed(2));
-
-      const bestScoreKey = `manodemy_${dayId}_best_score`;
-
-      const currentBest = parseFloat(safeStorageGet(bestScoreKey) || '0');
-
-      if (dayXP > currentBest) {
-
-        safeStorageSet(bestScoreKey, dayXP.toFixed(2));
-
-      }
+      safeStorageSet(`manodemy_${dayId}_solved_count`, successfulCells.size.toString());
 
       const xpEarnedEl = document.getElementById('scoreXPEarned');
 
@@ -956,11 +953,13 @@ function setupGamifiedMarkingSystem() {
           sessionStorage.removeItem(`manodemy_${dayId}_${cellId}_code`);
         } catch(e) {}
 
-        // 3. Remove solved flag from storage
+        // 3. Remove solved flag and graded solved flag from storage
 
         try {
           localStorage.removeItem(`manodemy_${dayId}_${cellId}_solved`);
+          localStorage.removeItem(`manodemy_${dayId}_${cellId}_graded_solved`);
           sessionStorage.removeItem(`manodemy_${dayId}_${cellId}_solved`);
+          sessionStorage.removeItem(`manodemy_${dayId}_${cellId}_graded_solved`);
         } catch(e) {}
 
         // 4. Remove green solved styling from cell
@@ -1218,113 +1217,66 @@ function setupGamifiedMarkingSystem() {
 
 
 function updateScore() {
-
   const solvedEl = document.getElementById('scoreSolved');
-
   const totalEl = document.getElementById('scoreTotal');
+  const progEl = document.getElementById('scoreProgress');
 
-  const progEl = document.getElementById('scoreProgress'); // Note: we removed this from the prompt's layout, but keeping JS safe
+  const dayId = getDayId();
+  const active = isChallengeActive();
 
-  
+  let solvedToShow = 0;
+  let scoreToShow = 0.0;
+
+  if (active) {
+    solvedToShow = successfulCells.size;
+    scoreToShow = calculateDayXP();
+
+    if (dayId) {
+      safeStorageSet(`manodemy_${dayId}_solved_count`, solvedToShow.toString());
+      safeStorageSet(`manodemy_${dayId}_xp_earned`, scoreToShow.toFixed(2));
+
+      // Completion freeze
+      if (solvedToShow === totalCells && totalCells > 0) {
+        if (!safeStorageGet(`manodemy_${dayId}_completion_time`)) {
+          safeStorageSet(`manodemy_${dayId}_completion_time`, Date.now().toString());
+        }
+      } else {
+        try {
+          localStorage.removeItem(`manodemy_${dayId}_completion_time`);
+          sessionStorage.removeItem(`manodemy_${dayId}_completion_time`);
+        } catch(e) {}
+      }
+    }
+  } else {
+    // In Practice Mode, load and show best stats
+    if (dayId) {
+      scoreToShow = parseFloat(safeStorageGet(`manodemy_${dayId}_best_score`) || '0');
+      solvedToShow = parseInt(safeStorageGet(`manodemy_${dayId}_best_solved`) || '0', 10);
+    }
+  }
 
   if (solvedEl && totalEl) {
-
-    let solved = successfulCells.size;
-
-    solvedEl.textContent = solved;
-
+    solvedEl.textContent = solvedToShow;
     totalEl.textContent = totalCells;
 
     if (progEl) {
-
-        let pct = (solved / totalCells) * 100;
-
-        progEl.style.width = pct + '%';
-
-        if (pct === 100) {
-
-            progEl.style.boxShadow = '0 0 12px var(--cyan)';
-
-        } else {
-
-            progEl.style.boxShadow = 'none';
-
-        }
-
+      let pct = totalCells > 0 ? (solvedToShow / totalCells) * 100 : 0;
+      progEl.style.width = pct + '%';
+      if (pct === 100) {
+        progEl.style.boxShadow = '0 0 12px var(--cyan)';
+      } else {
+        progEl.style.boxShadow = 'none';
+      }
     }
-
   }
 
-  
-
-  const dayId = getDayId();
-
   if (dayId) {
-
-    safeStorageSet(`manodemy_${dayId}_solved_count`, successfulCells.size.toString());
-
-    
-
-    // Completion freeze
-
-    const solved = successfulCells.size;
-
-    if (solved === totalCells && totalCells > 0) {
-
-      if (!safeStorageGet(`manodemy_${dayId}_completion_time`)) {
-
-        safeStorageSet(`manodemy_${dayId}_completion_time`, Date.now().toString());
-
-      }
-
-    } else {
-
-      try {
-
-        localStorage.removeItem(`manodemy_${dayId}_completion_time`);
-
-        sessionStorage.removeItem(`manodemy_${dayId}_completion_time`);
-
-      } catch(e) {}
-
-    }
-
-    
-
-    // Recalculate Day XP and update XP score elements
-
-    const dayXP = calculateDayXP();
-
-    safeStorageSet(`manodemy_${dayId}_xp_earned`, dayXP.toFixed(2));
-
-    
-
-    const bestScoreKey = `manodemy_${dayId}_best_score`;
-
-    const currentBest = parseFloat(safeStorageGet(bestScoreKey) || '0');
-
-    if (dayXP > currentBest) {
-
-      safeStorageSet(bestScoreKey, dayXP.toFixed(2));
-
-    }
-
-    
-
     const xpEarnedEl = document.getElementById('scoreXPEarned');
-
     const maxBarXPEl = document.getElementById('scoreMaxXP');
-
     const maxDayXP = 1000 * (totalCells / TOTAL_QUESTIONS);
 
-    
-
-    const finalScoreToShow = Math.max(currentBest, dayXP);
-
-    if (xpEarnedEl) xpEarnedEl.textContent = finalScoreToShow.toFixed(1);
-
+    if (xpEarnedEl) xpEarnedEl.textContent = scoreToShow.toFixed(1);
     if (maxBarXPEl) maxBarXPEl.textContent = maxDayXP.toFixed(1);
-
   }
 
 
@@ -1676,6 +1628,7 @@ async function runCell(cellId) {
           // ── ACTIVE CHALLENGE: update successfulCells set and scoreboard ──
 
           successfulCells.add(cellId);
+          if (dayId) safeStorageSet(`manodemy_${dayId}_${cellId}_graded_solved`, 'true');
 
           // Sync to Supabase
 
@@ -1689,9 +1642,9 @@ async function runCell(cellId) {
 
           updateScore(); // Live scoreboard update
 
+        } else {
+          updateScore();
         }
-
-        // In Practice Mode: no successfulCells update, no scoreboard change
 
       }
 
@@ -1703,7 +1656,10 @@ async function runCell(cellId) {
 
       const dayId = getDayId();
 
-      if (dayId) safeStorageSet(`manodemy_${dayId}_${cellId}_solved`, 'false');
+      if (dayId) {
+        safeStorageSet(`manodemy_${dayId}_${cellId}_solved`, 'false');
+        safeStorageSet(`manodemy_${dayId}_${cellId}_graded_solved`, 'false');
+      }
 
       if (isChallengeActive()) {
 
@@ -1713,6 +1669,8 @@ async function runCell(cellId) {
 
         updateScore();
 
+      } else {
+        updateScore();
       }
 
     }
@@ -1785,7 +1743,12 @@ async function runCell(cellId) {
 
     output.classList.add('error');
 
-    
+    cell.classList.remove('is-solved');
+    const dayId = getDayId();
+    if (dayId) {
+      safeStorageSet(`manodemy_${dayId}_${cellId}_solved`, 'false');
+      safeStorageSet(`manodemy_${dayId}_${cellId}_graded_solved`, 'false');
+    }
 
     successfulCells.delete(cellId);
 

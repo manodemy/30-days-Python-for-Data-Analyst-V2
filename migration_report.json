@@ -1,19 +1,19 @@
 {
-  "timestamp": "2026-05-23T17:39:00.648152",
+  "timestamp": "2026-05-30T11:29:33.856195",
   "dry_run": false,
   "users": {
     "total_legacy": 15,
     "migrated": 0,
-    "skipped_existing": 14,
-    "failed": 1
+    "skipped_existing": 15,
+    "failed": 0
   },
   "profiles": {
     "total_legacy": 15,
     "upserted": 15
   },
   "purchases": {
-    "total_legacy": 3,
-    "upserted": 0
+    "total_legacy": 6,
+    "upserted": 6
   },
   "orders": {
     "total_legacy": 36,

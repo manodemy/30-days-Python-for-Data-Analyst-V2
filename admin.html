@@ -2637,23 +2637,48 @@
 
           <div class="kpi-row" style="padding:0; margin-bottom:1.5rem; display:grid; grid-template-columns: repeat(5, 1fr); gap: 1rem;">
             <div class="kpi-card" style="margin:0; background: var(--surface); border: 1px solid var(--rim); border-radius: 8px; padding: 1.25rem;">
-              <div class="kpi-label" style="font-size: 0.8rem; color: var(--ink-muted);">Total Visits</div>
+              <div class="kpi-label" style="font-size: 0.8rem; color: var(--ink-muted);">
+                Total Visits
+                <span class="info-icon">i
+                  <span class="metric-tooltip">Total unique visitor sessions tracked across all landing pages</span>
+                </span>
+              </div>
               <div class="kpi-value" id="kpiVisits" style="font-family: var(--font-data); font-size: 1.75rem; color: var(--ink);">0</div>
             </div>
             <div class="kpi-card" style="margin:0; background: var(--surface); border: 1px solid var(--rim); border-radius: 8px; padding: 1.25rem;">
-              <div class="kpi-label" style="font-size: 0.8rem; color: var(--ink-muted);">Logged Users</div>
+              <div class="kpi-label" style="font-size: 0.8rem; color: var(--ink-muted);">
+                Logged Users
+                <span class="info-icon">i
+                  <span class="metric-tooltip">Total unique users who successfully logged in</span>
+                </span>
+              </div>
               <div class="kpi-value" id="kpiLogged" style="font-family: var(--font-data); font-size: 1.75rem; color: var(--ink);">0</div>
             </div>
             <div class="kpi-card" style="margin:0; background: var(--surface); border: 1px solid var(--rim); border-radius: 8px; padding: 1.25rem;">
-              <div class="kpi-label" style="font-size: 0.8rem; color: var(--ink-muted);">Buy Clicks</div>
+              <div class="kpi-label" style="font-size: 0.8rem; color: var(--ink-muted);">
+                Buy Clicks
+                <span class="info-icon">i
+                  <span class="metric-tooltip">Total times a user clicked a checkout or buy button</span>
+                </span>
+              </div>
               <div class="kpi-value" id="kpiBuyClicks" style="font-family: var(--font-data); font-size: 1.75rem; color: var(--ink);">0</div>
             </div>
             <div class="kpi-card" style="margin:0; background: var(--surface); border: 1px solid var(--rim); border-radius: 8px; padding: 1.25rem;">
-              <div class="kpi-label" style="font-size: 0.8rem; color: var(--ink-muted);">Payment Success</div>
+              <div class="kpi-label" style="font-size: 0.8rem; color: var(--ink-muted);">
+                Payment Success
+                <span class="info-icon">i
+                  <span class="metric-tooltip">Completed and successfully verified purchases</span>
+                </span>
+              </div>
               <div class="kpi-value" id="kpiSuccessRaw" style="font-family: var(--font-data); font-size: 1.75rem; color: var(--emerald);">0</div>
             </div>
             <div class="kpi-card" style="margin:0; background: var(--surface); border: 1px solid var(--rim); border-radius: 8px; padding: 1.25rem;">
-              <div class="kpi-label" style="font-size: 0.8rem; color: var(--ink-muted);">Payment Failed</div>
+              <div class="kpi-label" style="font-size: 0.8rem; color: var(--ink-muted);">
+                Payment Failed
+                <span class="info-icon">i
+                  <span class="metric-tooltip">Checkout attempts that failed, were canceled, or abandoned</span>
+                </span>
+              </div>
               <div class="kpi-value" id="kpiFailedRaw" style="font-family: var(--font-data); font-size: 1.75rem; color: var(--rose);">0</div>
             </div>
           </div>
@@ -2662,19 +2687,39 @@
           <div class="kpi-row" style="padding:0; margin-bottom:1.5rem; display:grid; grid-template-columns: repeat(5, 1fr); gap: 1rem;">
             <div style="visibility: hidden;"></div>
             <div class="kpi-card" style="margin:0; background: var(--surface); border: 1px solid var(--rim); border-radius: 8px; padding: 1.25rem;">
-              <div class="kpi-label" style="font-size: 0.8rem; color: var(--ink-muted);">Visit → Login</div>
+              <div class="kpi-label" style="font-size: 0.8rem; color: var(--ink-muted);">
+                Visit → Login
+                <span class="info-icon">i
+                  <span class="metric-tooltip">Conversion percentage from total visits to logged-in sessions</span>
+                </span>
+              </div>
               <div class="kpi-value" id="kpiVisitLogin" style="font-family: var(--font-data); font-size: 1.75rem; color: var(--gold);">0%</div>
             </div>
             <div class="kpi-card" style="margin:0; background: var(--surface); border: 1px solid var(--rim); border-radius: 8px; padding: 1.25rem;">
-              <div class="kpi-label" style="font-size: 0.8rem; color: var(--ink-muted);">Visit → Purchase</div>
+              <div class="kpi-label" style="font-size: 0.8rem; color: var(--ink-muted);">
+                Visit → Purchase
+                <span class="info-icon">i
+                  <span class="metric-tooltip">Overall conversion rate from total visits to successful purchases</span>
+                </span>
+              </div>
               <div class="kpi-value" id="kpiCvr" style="font-family: var(--font-data); font-size: 1.75rem; color: var(--gold);">0%</div>
             </div>
             <div class="kpi-card" style="margin:0; background: var(--surface); border: 1px solid var(--rim); border-radius: 8px; padding: 1.25rem;">
-              <div class="kpi-label" style="font-size: 0.8rem; color: var(--ink-muted);">Payment Success Rate</div>
+              <div class="kpi-label" style="font-size: 0.8rem; color: var(--ink-muted);">
+                Payment Success Rate
+                <span class="info-icon">i
+                  <span class="metric-tooltip">Percentage of checkout attempts that were successful (Success / (Success + Failed))</span>
+                </span>
+              </div>
               <div class="kpi-value" id="kpiSucc" style="font-family: var(--font-data); font-size: 1.75rem; color: var(--emerald);">0%</div>
             </div>
             <div class="kpi-card" style="margin:0; background: var(--surface); border: 1px solid var(--rim); border-radius: 8px; padding: 1.25rem;">
-              <div class="kpi-label" style="font-size: 0.8rem; color: var(--ink-muted);">Est. Revenue at Risk</div>
+              <div class="kpi-label" style="font-size: 0.8rem; color: var(--ink-muted);">
+                Est. Revenue at Risk
+                <span class="info-icon">i
+                  <span class="metric-tooltip">Estimated potential revenue lost due to failed checkouts</span>
+                </span>
+              </div>
               <div class="kpi-value" id="kpiRisk" style="font-family: var(--font-data); font-size: 1.75rem; color: var(--rose);">₹0</div>
             </div>
           </div>

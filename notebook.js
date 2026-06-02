@@ -337,6 +337,16 @@ document.querySelectorAll('.cm-source').forEach(ta => {
 
   editors[cellId] = cm;
 
+  cm.on('focus', function(instance) {
+    if (window.innerWidth <= 768) {
+      showSymbolHelperBar(instance);
+    }
+  });
+
+  cm.on('blur', function(instance) {
+    setTimeout(hideSymbolHelperBar, 200);
+  });
+
 
 
   // Editors are always interactive — no locked-state intercepts
@@ -482,9 +492,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
       });
 
-      // Use the higher of the two counts (score counter vs individual cells)
+      // Also read best_solved count from localStorage
+      const bestSolvedKey = `manodemy_${dayId}_best_solved`;
+      const bestSolved = parseInt(safeStorageGet(bestSolvedKey) || '0', 10);
 
-      const finalSolved = Math.max(solvedCount, cellSolvedCount);
+      // Use the higher of the three counts (score counter vs individual cells vs best solved)
+
+      const finalSolved = Math.max(solvedCount, cellSolvedCount, bestSolved);
 
 
 
@@ -499,6 +513,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const improveClicksKey = `manodemy_${dayId}_improve_clicks`;
       const bestScore = parseFloat(safeStorageGet(bestScoreKey) || '0');
       const improveClicks = parseInt(safeStorageGet(improveClicksKey) || '0', 10);
+
+      // Also read current_score (XP earned in active challenge)
+      const currentScoreKey = `manodemy_${dayId}_xp_earned`;
+      const currentScore = parseFloat(safeStorageGet(currentScoreKey) || '0');
+      const finalBestScore = Math.max(bestScore, currentScore);
 
       // Write a single comprehensive sync event
 
@@ -522,7 +541,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
           total_cells:      totalCells,
 
-          best_score:       bestScore,
+          best_score:       finalBestScore,
 
           improve_clicks:   improveClicks,
 
@@ -2623,5 +2642,130 @@ document.addEventListener('DOMContentLoaded', () => {
 
   practiceBtn.addEventListener('click', () => setMode(true));
 
+});
+
+// ══════════════════════════════════════════════════════════════════
+// MOBILE VIEW HANDLERS (TOC DRAWER & SYMBOL HELPER BAR)
+// ══════════════════════════════════════════════════════════════════
+
+let activeEditorInstance = null;
+let symbolHelperBarEl = null;
+
+function initSymbolHelperBar() {
+  if (symbolHelperBarEl) return;
+  
+  symbolHelperBarEl = document.createElement('div');
+  symbolHelperBarEl.className = 'symbol-helper-bar';
+  
+  const symbols = ['[ ]', '{ }', '( )', '=', ':', '#', '.', '_', '→', '**', 'print', 'input', 'len', 'type'];
+  
+  symbols.forEach(sym => {
+    const pill = document.createElement('button');
+    pill.className = 'symbol-pill';
+    pill.type = 'button';
+    pill.textContent = sym;
+    pill.addEventListener('mousedown', function(e) {
+      e.preventDefault();
+      if (activeEditorInstance) {
+        let insertText = sym;
+        if (sym === '[ ]') insertText = '[]';
+        else if (sym === '{ }') insertText = '{}';
+        else if (sym === '( )') insertText = '()';
+        else if (sym === '→') insertText = '->';
+        
+        const doc = activeEditorInstance.getDoc();
+        const cursor = doc.getCursor();
+        doc.replaceRange(insertText, cursor);
+        activeEditorInstance.focus();
+        
+        if (['[]', '{}', '()'].includes(insertText)) {
+          activeEditorInstance.setCursor({line: cursor.line, ch: cursor.ch + 1});
+        } else {
+          activeEditorInstance.setCursor({line: cursor.line, ch: cursor.ch + insertText.length});
+        }
+      }
+    });
+    symbolHelperBarEl.appendChild(pill);
+  });
+  
+  document.body.appendChild(symbolHelperBarEl);
+}
+
+function showSymbolHelperBar(cmInstance) {
+  activeEditorInstance = cmInstance;
+  initSymbolHelperBar();
+  if (symbolHelperBarEl) {
+    symbolHelperBarEl.classList.add('visible');
+    symbolHelperBarEl.style.position = 'fixed';
+    symbolHelperBarEl.style.bottom = '0';
+    symbolHelperBarEl.style.left = '0';
+    symbolHelperBarEl.style.right = '0';
+  }
+}
+
+function hideSymbolHelperBar() {
+  if (symbolHelperBarEl) {
+    symbolHelperBarEl.classList.remove('visible');
+  }
+  activeEditorInstance = null;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const hamburger = document.createElement('button');
+  hamburger.className = 'toc-drawer-toggle';
+  hamburger.type = 'button';
+  hamburger.style.cssText = `
+    display: none;
+    position: fixed;
+    top: 6px;
+    left: 8px;
+    z-index: 1001;
+    background: rgba(19, 24, 37, 0.85);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--cyan);
+    padding: 8px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+  `;
+  hamburger.innerHTML = '☰ TOC';
+  
+  if (window.innerWidth <= 768) {
+    hamburger.style.display = 'block';
+  }
+  window.addEventListener('resize', () => {
+    hamburger.style.display = (window.innerWidth <= 768) ? 'block' : 'none';
+  });
+  
+  const sidebar = document.querySelector('.toc-sidebar');
+  if (sidebar) {
+    const backdrop = document.createElement('div');
+    backdrop.className = 'toc-backdrop';
+    document.body.appendChild(backdrop);
+    
+    const toggleDrawer = () => {
+      sidebar.classList.toggle('open');
+      backdrop.classList.toggle('active');
+    };
+    
+    hamburger.addEventListener('click', toggleDrawer);
+    backdrop.addEventListener('click', toggleDrawer);
+    
+    sidebar.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        sidebar.classList.remove('open');
+        backdrop.classList.remove('active');
+      });
+    });
+    
+    const header = document.querySelector('.notebook-header');
+    if (header) {
+      header.insertBefore(hamburger, header.firstChild);
+      hamburger.style.position = 'static';
+      hamburger.style.marginRight = '8px';
+    } else {
+      document.body.appendChild(hamburger);
+    }
+  }
 });
 

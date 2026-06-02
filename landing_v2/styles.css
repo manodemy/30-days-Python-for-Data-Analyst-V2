@@ -67,6 +67,15 @@
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
   /* Elite Custom Out-Quint Curve */
   --transition: all 400ms var(--ease);
+
+  /* === MOBILE ADDITIONS === */
+  --mobile-pad: 16px;
+  --tablet-pad: 24px;
+  --tap-min: 44px;           /* WCAG minimum tap target */
+  --duration-fast: 150ms;
+  --duration-mid: 200ms;
+  --duration-slow: 300ms;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 /* ══════ CORE RESET & BASE STYLING ══════ */
@@ -5244,4 +5253,204 @@ button {
 .hero-right .hero-ctas .btn-gold--filled:hover {
   transform: translateY(-3px) scale(1.025) !important;
   box-shadow: 0 12px 35px rgba(0, 114, 255, 0.5), 0 0 25px rgba(0, 230, 246, 0.35) !important;
+}
+
+/* ==========================================================================
+   MOBILE-FIRST & RESPONSIVE PRODUCTION OVERRIDES (WCAG 2.1 AA compliant)
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  /* Navigation adjustments */
+  .nav {
+    height: 56px !important;
+    padding: 0 16px !important;
+  }
+  .nav-brand-name {
+    font-size: 18px !important;
+  }
+  .mobile-overlay .btn-nav-buy {
+    width: 100% !important;
+    text-align: center;
+    padding: 12px !important;
+  }
+
+  /* Hero Section Grid Adjustments */
+  .hero .container {
+    grid-template-columns: 1fr !important;
+    gap: 2.5rem !important;
+    padding: 2rem var(--mobile-pad) !important;
+  }
+  .hero h1 {
+    font-size: clamp(28px, 7vw, 42px) !important;
+    text-align: center !important;
+    line-height: 1.15 !important;
+  }
+  .hero-left {
+    text-align: center !important;
+    align-items: center !important;
+  }
+  .hero-sub {
+    text-align: center !important;
+    font-size: 15px !important;
+  }
+  .hero-proof {
+    justify-content: center !important;
+    font-size: 11px !important;
+  }
+  .hero-ctas {
+    flex-direction: column !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+  .btn-gold {
+    width: 100% !important;
+    height: 54px !important;
+    font-size: 14.5px !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+  .terminal {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Steps Section - Horizontal Swipe Carousel */
+  .steps-grid {
+    display: flex !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    gap: 16px !important;
+    padding: 0 var(--mobile-pad) 20px !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+  .steps-grid::-webkit-scrollbar {
+    display: none !important;
+  }
+  .step-card {
+    flex-shrink: 0 !important;
+    width: 280px !important;
+    scroll-snap-align: start !important;
+  }
+
+  /* Student Reviews Carousel */
+  .reviews-dashboard {
+    display: flex !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    gap: 16px !important;
+    padding: 0 var(--mobile-pad) 20px !important;
+    scrollbar-width: none !important;
+  }
+  .reviews-dashboard::-webkit-scrollbar {
+    display: none !important;
+  }
+  .review-card {
+    flex-shrink: 0 !important;
+    width: calc(100vw - 48px) !important;
+    scroll-snap-align: start !important;
+  }
+
+  /* Footer stack */
+  .footer-grid {
+    grid-template-columns: 1fr !important;
+    text-align: center !important;
+    gap: 2rem !important;
+  }
+
+  /* Comparison Feature Table replacement on mobile */
+  .comparison-tab-switcher {
+    display: flex !important;
+    background: var(--elevated);
+    padding: 4px;
+    border-radius: 50px;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--rim);
+    width: 100%;
+  }
+  .comparison-tab-pill {
+    flex: 1;
+    text-align: center;
+    padding: 8px 12px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    color: var(--ink-dim);
+  }
+  .comparison-tab-pill.active {
+    background: var(--cyan);
+    color: var(--void);
+    box-shadow: 0 4px 12px var(--cyan-glow);
+  }
+  .mobile-feature-list {
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+  }
+  .mobile-feature-list.active {
+    display: flex;
+  }
+  .mobile-feature-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--surface);
+    border-radius: 10px;
+    border: 1px solid var(--rim);
+  }
+  .mobile-feature-name {
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .mobile-feature-val {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--cyan);
+  }
+}
+
+@media (max-width: 480px) {
+  /* Social proof / stats column stacking */
+  .stats-bar {
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 16px !important;
+  }
+  .stat-col {
+    flex: 0 0 calc(50% - 12px) !important;
+    text-align: center !important;
+  }
+
+  /* Curriculum accordions and items */
+  .phase-body {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Auth Modals compressed padding */
+  .auth-modal-overlay {
+    padding: 12px !important;
+  }
+  .auth-card {
+    padding: 1.5rem 1.25rem !important;
+  }
+}
+
+/* 44x44px Tap targets enforcement */
+button, a, input, select, .accordion-header {
+  min-height: 44px;
+}
+
+/* Reduced Motion Queries */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

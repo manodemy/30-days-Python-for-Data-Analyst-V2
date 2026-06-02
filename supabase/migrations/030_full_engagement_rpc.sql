@@ -54,7 +54,10 @@ BEGIN
     SELECT
       pv.user_id                              AS uid,
       pv.session_id,
-      REGEXP_REPLACE(pv.page_url, '^.+/', '') AS page_key
+      CASE
+        WHEN pv.page_url = '/' THEN 'index.html'
+        ELSE REGEXP_REPLACE(pv.page_url, '^.+/', '')
+      END AS page_key
     FROM public.page_views pv
     WHERE pv.created_at BETWEEN start_ts AND end_ts
       AND pv.user_id IS NOT NULL
@@ -65,13 +68,16 @@ BEGIN
     SELECT
       al.user_id                              AS uid,
       al.event_type,
-      REGEXP_REPLACE(
-        COALESCE(
-          NULLIF(al.metadata->>'page_url', ''),
-          NULLIF(al.page_url, ''),
-          ''
-        ), '^.+/', ''
-      )                                       AS page_key,
+      CASE
+        WHEN COALESCE(NULLIF(al.metadata->>'page_url', ''), NULLIF(al.page_url, ''), '') = '/' THEN 'index.html'
+        ELSE REGEXP_REPLACE(
+          COALESCE(
+            NULLIF(al.metadata->>'page_url', ''),
+            NULLIF(al.page_url, ''),
+            ''
+          ), '^.+/', ''
+        )
+      END AS page_key,
       al.metadata
     FROM public.activity_logs al
     WHERE al.created_at BETWEEN start_ts AND end_ts
@@ -79,12 +85,12 @@ BEGIN
   ),
 
   -- ═══ VISITS ═══════════════════════════════════════════════════════════════
-  -- One visit = one distinct session_id in page_views
+  -- One visit = one page view/load event in page_views (counting all visits)
   visits_agg AS (
     SELECT
       nv.uid,
       nv.page_key,
-      COUNT(DISTINCT nv.session_id) AS visits
+      COUNT(*) AS visits
     FROM norm_views nv
     WHERE nv.page_key IS NOT NULL AND nv.page_key <> ''
     GROUP BY nv.uid, nv.page_key

@@ -4932,6 +4932,96 @@
       }
     }
 
+    /* === DASHBOARD MOBILE OVERRIDES === */
+    @media (max-width: 768px) {
+      header {
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 100 !important;
+      }
+      .avatar-dropdown {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        top: auto !important;
+        width: 100% !important;
+        border-radius: 16px 16px 0 0 !important;
+        transform: translateY(100%) !important;
+        transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1) !important;
+        z-index: 9999 !important;
+        background: #121826 !important; /* var(--surface) */
+        border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        box-shadow: 0 -10px 30px rgba(0,0,0,0.5) !important;
+        padding: 24px !important;
+        display: none;
+      }
+      .avatar-dropdown.active {
+        display: block !important;
+        transform: translateY(0) !important;
+      }
+      .leaderboard-table-wrapper {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        overscroll-behavior-x: contain;
+      }
+      .leaderboard-table th:nth-child(1),
+      .leaderboard-table td:nth-child(1),
+      .leaderboard-table th:nth-child(2),
+      .leaderboard-table td:nth-child(2) {
+        position: sticky !important;
+        left: 0 !important;
+        z-index: 5 !important;
+        background-color: #0B0F19 !important;
+      }
+      .leaderboard-table th:nth-child(2),
+      .leaderboard-table td:nth-child(2) {
+        left: 45px !important;
+      }
+    }
+    @media (max-width: 640px) {
+      .curriculum-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 10px !important;
+        padding: 8px !important;
+      }
+      .day-card {
+        aspect-ratio: 1 / 1 !important;
+        border-radius: 10px !important;
+        min-height: auto !important;
+        padding: 10px 6px !important;
+      }
+      .day-card .day-emoji {
+        font-size: 20px !important;
+        margin-bottom: 4px !important;
+      }
+      .day-card .day-title {
+        font-size: 11px !important;
+        line-height: 1.2 !important;
+        margin-bottom: 2px !important;
+      }
+      .day-card .day-num {
+        font-size: 10px !important;
+        margin-bottom: 2px !important;
+      }
+      .day-card .day-badge {
+        font-size: 8px !important;
+        padding: 2px 6px !important;
+        top: 6px !important;
+        right: 6px !important;
+      }
+      .day-card.active-day::after {
+        top: 6px !important;
+        left: 6px !important;
+        font-size: 7px !important;
+        padding: 2px 4px !important;
+      }
+    }
+    @media (max-width: 380px) {
+      .curriculum-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+    }
 </style>
 
 </head>

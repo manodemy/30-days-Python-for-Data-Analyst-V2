@@ -5264,6 +5264,12 @@ button {
   box-shadow: 0 12px 35px rgba(0, 114, 255, 0.5), 0 0 25px rgba(0, 230, 246, 0.35) !important;
 }
 
+/* Hide mobile-specific comparison elements on desktop */
+.comparison-tab-switcher,
+.mobile-feature-list {
+  display: none;
+}
+
 /* ==========================================================================
    MOBILE-FIRST & RESPONSIVE PRODUCTION OVERRIDES (WCAG 2.1 AA compliant)
    ========================================================================== */

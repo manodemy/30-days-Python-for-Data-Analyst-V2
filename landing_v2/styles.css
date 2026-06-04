@@ -5418,6 +5418,7 @@ button {
   /* ── Hero Section: overflow-safe ── */
   .hero {
     overflow-x: hidden !important;
+    padding-top: 0 !important;
   }
   .hero .container {
     grid-template-columns: 1fr !important;

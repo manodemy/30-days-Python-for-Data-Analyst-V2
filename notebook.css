@@ -1591,22 +1591,118 @@ body.modal-open nav {
 /* --- Mobile Top Bar redesign (Tiers 1 & 2) --- */
 @media (max-width: 768px) {
   .top-bar {
-    height: 56px !important;
-    padding: 0 10px !important;
-    background: #0B0F19 !important; /* var(--surface) */
+    display: grid !important;
+    grid-template-areas:
+      "left right"
+      "center center" !important;
+    grid-template-columns: 1fr auto !important;
+    grid-template-rows: 48px 40px !important;
+    height: 88px !important;
+    padding: 0 !important;
+    background: #0B0F19 !important; /* var(--surface) equivalent */
     border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
     position: sticky !important;
     top: 0 !important;
     z-index: 1000 !important;
+    gap: 0 !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
   }
 
   body {
-    padding-top: 0 !important; /* Ensure layout fits nicely under top-bar */
+    padding-top: 0 !important; /* Ensure layout fits nicely under sticky top-bar */
+  }
+
+  .nav-zone--left {
+    grid-area: left !important;
+    display: flex !important;
+    align-items: center !important;
+    padding-left: 10px !important;
+    gap: 8px !important;
+  }
+
+  .nav-zone--right {
+    grid-area: right !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    padding-right: 10px !important;
+    gap: 6px !important;
+  }
+
+  .nav-controls {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+  }
+
+  /* Dashboard button styling on mobile */
+  .scorecard-btn {
+    height: 32px !important;
+    padding: 0 10px !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+    border-radius: 8px !important;
+    font-size: 0.72rem !important;
+    font-weight: 600 !important;
+    color: #94A3B8 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    text-transform: none !important;
+    box-shadow: none !important;
+  }
+
+  .scorecard-btn:active {
+    background: rgba(255, 255, 255, 0.06) !important;
+    transform: scale(0.96) !important;
+  }
+
+  .scorecard-btn svg {
+    margin-right: 0 !important;
+  }
+
+  /* Improve Score button / Countdown Timer styling on mobile */
+  .start-coding-btn,
+  #navStartCodingBtn,
+  #navCountdownTimer {
+    height: 32px !important;
+    padding: 0 12px !important;
+    font-size: 0.72rem !important;
+    font-weight: 800 !important;
+    border-radius: 8px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+  }
+
+  #navStartCodingBtn,
+  .start-coding-btn {
+    background: linear-gradient(135deg, #02FFF2, #00B4D8) !important;
+    color: #060913 !important;
+    border: none !important;
+    box-shadow: 0 2px 8px rgba(2, 255, 242, 0.25) !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.02em !important;
+  }
+
+  #navStartCodingBtn:active,
+  .start-coding-btn:active {
+    transform: scale(0.96) !important;
+    opacity: 0.9 !important;
+  }
+
+  #navCountdownTimer {
+    background: rgba(244, 63, 94, 0.08) !important;
+    border: 1px solid rgba(244, 63, 94, 0.2) !important;
+    color: #FB7185 !important;
+    font-family: 'JetBrains Mono', monospace !important;
   }
 
   .avatar-wrapper {
     width: 32px !important;
     height: 32px !important;
+    flex-shrink: 0 !important;
   }
 
   .avatar-circle {
@@ -1618,53 +1714,153 @@ body.modal-open nav {
     display: none !important; /* Hide on mobile */
   }
 
-  /* Day Selector Pill */
+  /* Custom compact style for Solved / Marks score card on mobile */
+  .nav-score-card {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    background: rgba(255, 255, 255, 0.02) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 6px !important;
+    padding: 3px 8px !important;
+    height: 32px !important;
+    box-sizing: border-box !important;
+    gap: 0 !important;
+    box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.02) !important;
+  }
+
+  .score-grid {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 6px !important;
+    align-items: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  .score-col {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 4px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .score-label {
+    color: #64748B !important; /* var(--muted) */
+    font-size: 0.65rem !important;
+    font-weight: 500 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.02em !important;
+  }
+
+  .score-val {
+    color: #F8FAFC !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    font-family: 'JetBrains Mono', monospace !important;
+  }
+
+  .score-highlight {
+    color: #02FFF2 !important; /* var(--cyan) */
+  }
+
+  .score-slash {
+    color: #475569 !important;
+    font-weight: 400 !important;
+    margin: 0 1px !important;
+  }
+
+  .score-divider {
+    width: 1px !important;
+    height: 12px !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+  }
+
+  .score-track {
+    display: none !important; /* Hide progress bar in mobile top-bar */
+  }
+
+  /* Row 2: Day Selector & Navigation */
   .nav-center.has-dropdown {
-    display: flex !important; /* Unhide */
+    grid-area: center !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: rgba(255, 255, 255, 0.015) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.04) !important;
+    width: 100% !important;
+    height: 40px !important;
   }
 
   .nav-center-flex {
-    gap: 4px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    width: 100% !important;
   }
 
   .nav-dropdown-btn {
-    padding: 4px 8px !important;
-    height: 32px !important;
-    font-size: 0.78rem !important;
-    background: rgba(255, 255, 255, 0.04) !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    border-radius: 20px !important;
+    padding: 0 12px !important;
+    height: 28px !important;
+    font-size: 0.76rem !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+    border-radius: 16px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+  }
+
+  .nav-dropdown-btn:active {
+    background: rgba(2, 255, 242, 0.08) !important;
+    border-color: rgba(2, 255, 242, 0.3) !important;
   }
 
   .day-badge {
     padding: 1px 6px !important;
     font-size: 0.65rem !important;
+    background: rgba(2, 255, 242, 0.1) !important;
+    color: #02FFF2 !important;
+    border-radius: 4px !important;
+    font-weight: 800 !important;
   }
 
   .day-title {
-    max-width: 80px !important;
+    max-width: 180px !important; /* Increase width for readability since it has a full row */
     overflow: hidden !important;
     text-overflow: ellipsis !important;
     white-space: nowrap !important;
-    font-size: 0.72rem !important;
+    font-size: 0.74rem !important;
+    font-weight: 600 !important;
+    color: #E2E8F0 !important;
   }
 
   .nav-icon-btn.prev-btn, 
   .nav-icon-btn.next-btn {
-    width: 30px !important;
-    height: 30px !important;
-  }
-
-  /* Score card compacting */
-  .nav-score-card {
-    display: none !important; /* Hide full desktop card */
-  }
-
-  /* Compact score text in header zone */
-  .nav-zone--left {
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.06) !important;
     display: flex !important;
     align-items: center !important;
-    gap: 8px !important;
+    justify-content: center !important;
+    transition: all 0.2s ease !important;
+  }
+
+  .nav-icon-btn.prev-btn:active, 
+  .nav-icon-btn.next-btn:active {
+    background: rgba(255, 255, 255, 0.08) !important;
   }
 }
 
@@ -1672,7 +1868,7 @@ body.modal-open nav {
 @media (max-width: 768px) {
   .nav-dropdown-menu {
     position: fixed !important;
-    top: 56px !important;
+    top: 88px !important;
     left: 0 !important;
     right: 0 !important;
     width: 100vw !important;
@@ -1681,8 +1877,9 @@ body.modal-open nav {
     border-top: none !important;
     box-shadow: 0 10px 25px rgba(0,0,0,0.5) !important;
     background: #0B0F19 !important;
+    transform: none !important;
   }
-  
+
   .dropdown-scroll {
     max-height: calc(60vh - 50px) !important;
   }

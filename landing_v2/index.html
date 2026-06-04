@@ -67,7 +67,7 @@
     href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@1,700&family=Caveat:wght@400;700&display=swap"
     rel="stylesheet">
 
-  <link rel="stylesheet" href="styles.css?v=4.9">
+  <link rel="stylesheet" href="styles.css?v=5.0">
 
 
 
@@ -282,13 +282,11 @@
 
 
 
-  <!-- Mobile Menu Overlay -->
+  <!-- Mobile Menu Dropdown -->
 
   <div class="mobile-overlay" id="mobileOverlay" role="dialog" aria-modal="true" aria-label="Mobile Navigation">
 
-    <button class="mobile-close" id="mobileClose" aria-label="Close menu">&times;</button>
-
-    <a href="../day01.html">Try Day 01 Free</a>
+    <a href="../day01.html">Try for Free</a>
 
     <a href="#curriculum">Curriculum</a>
 
@@ -296,8 +294,9 @@
 
     <a href="#faq">FAQ</a>
 
-    <a href="#pricing" class="btn-gold btn-gold--filled" style="width: 80%; justify-content: center; margin-top: 1rem;"
-      data-cta="buy">Buy Now &mdash; $19</a>
+    <div class="mob-menu-divider" aria-hidden="true"></div>
+
+    <a href="#pricing" class="mob-menu-buy" data-cta="buy">Buy Now &mdash; $19</a>
 
   </div>
 
@@ -2740,7 +2739,7 @@
 
   <script defer src="reviews.js?v=3.1"></script>
 
-  <script defer src="app.js?v=4.0"></script>
+  <script defer src="app.js?v=4.1"></script>
 
   <!-- PWA Service Worker Registration -->
   <script>

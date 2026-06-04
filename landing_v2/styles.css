@@ -331,53 +331,120 @@ button {
   transition: var(--transition);
 }
 
+/* ─── Mobile Dropdown Menu (Compact Popup) ─── */
+@keyframes dropdownSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 .mobile-overlay {
   display: none;
   position: fixed;
-  inset: 0;
-  z-index: 999;
-  background: var(--void);
+  top: 76px;
+  right: 16px;
+  left: auto;
+  bottom: auto;
+  z-index: 1100;
+  width: 240px;
+  background: rgba(10, 14, 28, 0.92);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 230, 246, 0.06);
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 24px;
+  align-items: stretch;
+  padding: 10px 8px;
+  gap: 2px;
+  transform-origin: top right;
 }
 
 .mobile-overlay.active {
   display: flex;
+  animation: dropdownSlideIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .mobile-overlay a {
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 22px;
+  font-weight: 600;
+  font-size: 14px;
   color: var(--ink-dim);
-  padding: 12px;
-  transition: var(--transition);
+  padding: 11px 16px;
+  border-radius: 12px;
+  transition: background 0.18s ease, color 0.18s ease;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mobile-overlay a::before {
+  content: '';
+  display: block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(0, 230, 246, 0.4);
+  flex-shrink: 0;
+  transition: background 0.18s ease;
 }
 
 .mobile-overlay a:hover {
   color: #fff;
-  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.06);
+  transform: none;
 }
 
-.mobile-close {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  width: 48px;
-  height: 48px;
-  font-size: 32px;
-  color: var(--ink-dim);
+.mobile-overlay a:hover::before {
+  background: var(--cyan);
+}
+
+/* The Buy Now button inside the dropdown */
+.mobile-overlay .mob-menu-buy {
+  margin: 6px 0 2px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: var(--transition);
+  gap: 8px;
+  background: linear-gradient(135deg, var(--cyan) 0%, #0077f6 100%);
+  color: #fff !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  padding: 12px 18px !important;
+  border-radius: 12px !important;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.35);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.35);
+  box-shadow: 0 4px 20px rgba(0, 230, 246, 0.3);
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease !important;
 }
 
-.mobile-close:hover {
-  color: #fff;
-  transform: rotate(90deg);
+.mobile-overlay .mob-menu-buy::before {
+  display: none !important;
+}
+
+.mobile-overlay .mob-menu-buy:hover {
+  background: linear-gradient(135deg, #00f5ff 0%, #3b82f6 100%) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 8px 28px rgba(0, 230, 246, 0.45) !important;
+}
+
+/* Divider line before buy button */
+.mob-menu-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.07);
+  margin: 4px 8px;
+  border-radius: 1px;
+}
+
+/* Remove close button — not needed for dropdown */
+.mobile-close {
+  display: none;
 }
 
 @media(max-width:768px) {
@@ -5385,15 +5452,8 @@ button {
     height: 1.5px !important;
     background: #fff !important;
   }
-  .mobile-overlay .btn-nav-buy {
-    width: 80% !important;
-    text-align: center !important;
-    padding: 12px !important;
-    height: auto !important;
-    font-size: 16px !important;
-    border-radius: 50px !important;
-    min-height: unset !important;
-  }
+
+
 
   /* ── Hero Section: overflow-safe ── */
   .hero {

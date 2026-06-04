@@ -26,13 +26,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-  /* ═══ MOBILE MENU ═══ */
+  /* ═══ MOBILE MENU (Dropdown) ═══ */
 
   const hamburger = document.getElementById('hamburger');
 
   const overlay = document.getElementById('mobileOverlay');
-
-  const mobileClose = document.getElementById('mobileClose');
 
   if (hamburger && overlay) {
 
@@ -52,12 +50,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     };
 
-    hamburger.addEventListener('click', () => toggle(true));
+    // Toggle on hamburger click (click again to close)
+    hamburger.addEventListener('click', (e) => {
 
-    mobileClose?.addEventListener('click', () => toggle(false));
+      e.stopPropagation();
 
+      toggle(!overlay.classList.contains('active'));
+
+    });
+
+    // Close when a menu link is clicked
     overlay.querySelectorAll('a').forEach(a => a.addEventListener('click', () => toggle(false)));
 
+    // Close when clicking outside the dropdown
+    document.addEventListener('click', (e) => {
+
+      if (overlay.classList.contains('active') && !overlay.contains(e.target) && e.target !== hamburger) {
+
+        toggle(false);
+
+      }
+
+    });
+
+    // Close on Escape key
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && overlay.classList.contains('active')) toggle(false); });
 
   }

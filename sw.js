@@ -1,23 +1,19 @@
-const CACHE_NAME = 'manodemy-static-cache-v25';
-const DYNAMIC_CACHE_NAME = 'manodemy-dynamic-cache-v25';
+const CACHE_NAME = 'manodemy-static-cache-v26';
+const DYNAMIC_CACHE_NAME = 'manodemy-dynamic-cache-v26';
 
-// Static assets to precache immediately
+// Static assets to precache immediately (only truly stable assets)
 const PRECACHE_ASSETS = [
   '/favicon.ico',
-  '/landing_v2/styles.css',
-  '/notebook.css',
-  '/notebook.js',
-  '/voice.js',
   '/chart.js',
   '/supabase.js',
   '/landing_v2/reviews.js'
 ];
 
-// Install Event - Pre-cache core files
+// Install Event - Pre-cache stable assets only
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
-      console.log('[Service Worker] Precaching core static assets');
+      console.log('[Service Worker] Precaching stable static assets');
       return cache.addAll(PRECACHE_ASSETS);
     }).then(() => self.skipWaiting())
   );
@@ -38,6 +34,15 @@ self.addEventListener('activate', event => {
     }).then(() => self.clients.claim())
   );
 });
+
+// Core app files that should ALWAYS be fetched fresh from network
+const NETWORK_FIRST_PATHS = [
+  '/notebook.css',
+  '/notebook.js',
+  '/landing_v2/styles.css',
+  '/voice.js',
+  '/sw.js'
+];
 
 // Fetch Event - Dynamic routing and smart caching
 self.addEventListener('fetch', event => {
@@ -78,7 +83,23 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // 3. CACHE-FIRST Strategy for assets, styles, scripts, and fonts
+  // 3. NETWORK-FIRST: Core app CSS/JS (always get latest, fallback to cache offline)
+  if (NETWORK_FIRST_PATHS.some(p => url.pathname === p || url.pathname.endsWith(p))) {
+    event.respondWith(
+      fetch(event.request, { cache: 'no-cache' })
+        .then(response => {
+          if (response.status === 200) {
+            const responseClone = response.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseClone));
+          }
+          return response;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // 4. CACHE-FIRST Strategy for stable assets (fonts, images, third-party libs)
   event.respondWith(
     caches.match(event.request).then(cachedResponse => {
       if (cachedResponse) {
@@ -88,12 +109,11 @@ self.addEventListener('fetch', event => {
       return fetch(event.request).then(response => {
         if (
           response.status === 200 &&
-          (url.pathname.endsWith('.css') ||
-           url.pathname.endsWith('.js') ||
-           url.pathname.endsWith('.woff2') ||
+          (url.pathname.endsWith('.woff2') ||
            url.pathname.endsWith('.png') ||
            url.pathname.endsWith('.jpg') ||
-           url.pathname.endsWith('.svg'))
+           url.pathname.endsWith('.svg') ||
+           url.pathname.endsWith('.ico'))
         ) {
           const responseClone = response.clone();
           caches.open(DYNAMIC_CACHE_NAME).then(cache => {

@@ -426,74 +426,29 @@
     }
 
     /* ══════════════════════════════════════════════════════════════════
-       PORTRAIT MOBILE — rotate the certificate to landscape
-       The outer .cert-scroll-area acts as the viewport-sized box.
-       The .cert-rotate-wrap is rotated 90° and repositioned so the
-       landscape certificate fills the portrait screen width.
+       PORTRAIT MOBILE — JavaScript handles exact sizing & rotation.
+       CSS only provides the initial container setup; JS overrides
+       with computed pixel values on load and resize.
        ══════════════════════════════════════════════════════════════════ */
-    @media (max-width: 768px) and (orientation: portrait) {
-
+    @media (max-width: 900px) and (orientation: portrait) {
       body {
-        padding: 12px 0 20px;
+        padding: 8px 0 16px;
         justify-content: flex-start;
       }
-
       .header-controls {
-        padding: 0 14px;
-        margin-bottom: 12px;
+        padding: 0 12px;
+        margin-bottom: 8px;
       }
-
-      /* Hint bar telling user to rotate (subtle) */
-      .rotate-hint {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-family: 'Outfit', sans-serif;
-        font-size: 11px;
-        color: rgba(0, 229, 255, 0.5);
-        letter-spacing: 0.04em;
-        margin-bottom: 10px;
-        z-index: 10;
-      }
-      .rotate-hint svg { opacity: 0.6; }
-
-      /* Scroll area becomes fixed-height based on viewport width
-         because the cert is rotated: its rendered "height" = vw */
       .cert-scroll-area {
-        width: 100vw;
-        /* Height = what the rotated landscape cert will appear as tall */
-        height: calc(100vw / 1.414);
-        overflow: hidden;
         position: relative;
-        padding: 0;
+        overflow: hidden;
+        width: 100%;
       }
-
-      /* Rotate wrapper: rendered at full viewport width in landscape,
-         then rotated 90° anticlockwise and shifted so it sits in the
-         correct vertical position */
-      .cert-rotate-wrap {
-        position: absolute;
-        /* When rotated, the cert's width (100vw) becomes the height,
-           and the cert's height (100vw/1.414) becomes the width.
-           We want the cert width after rotation = 100vw of portrait screen,
-           so we set the cert width = 100vh * 1.414  ... but simpler:
-           render at landscape and rotate. */
-        width: calc(100vw / 1.414 * 1.414);   /* = 100vw */
-        transform-origin: top left;
-        transform: rotate(90deg) translateY(-100%);
-        top: 0;
-        left: 0;
-      }
-
       .certificate-wrapper {
-        /* Fill the rotated space: width in landscape = portrait height available */
-        width: calc(100vw / 1.414 * 1.414);   /* = 100vw in landscape */
-        height: calc(100vw / 1.414);           /* A4 ratio */
-        border-radius: 0;
-        box-shadow: none;
+        position: absolute;
+        box-shadow: 0 16px 50px rgba(0,0,0,0.85);
       }
-
-      .certificate-body { border-radius: 0; }
+      .certificate-body { border-radius: 4px; }
     }
 
     /* Landscape mobile / tablet: normal rendering, no rotation */
@@ -511,9 +466,10 @@
       body { background: #000 !important; margin: 0 !important; padding: 0 !important; display: block !important; }
       .header-controls, .bg-glow-cyan, .bg-glow-purple, .rotate-hint { display: none !important; }
       .cert-scroll-area { display: block !important; width: 100% !important; height: auto !important; overflow: visible !important; }
-      .cert-rotate-wrap { position: static !important; transform: none !important; width: 100% !important; }
+      .cert-rotate-wrap { position: static !important; transform: none !important; width: 100% !important; height: auto !important; }
       .certificate-wrapper {
-        width: 100% !important; height: auto !important;
+        position: static !important; width: 100% !important; height: auto !important;
+        transform: none !important;
         box-shadow: none !important; border: none !important;
         border-radius: 0 !important; background: #0b0f14 !important;
         page-break-inside: avoid;
@@ -709,16 +665,102 @@
   </div><!-- /cert-scroll-area -->
 
   <script>
-    // Show rotate hint only in portrait mobile
-    function checkOrientation() {
-      const hint = document.getElementById('rotateHint');
-      const wrap = document.getElementById('certRotateWrap');
-      const isPortraitMobile = window.innerWidth <= 768 && window.innerHeight > window.innerWidth;
-      if (hint) hint.style.display = isPortraitMobile ? 'flex' : 'none';
+    // ══════════════════════════════════════════════════════════════════
+    // fitCertificate() — Precisely sizes & rotates the certificate in
+    // portrait mobile so it fills the screen with ZERO cropping.
+    //
+    // Rotation math (rotate -90° around element's own top-left corner,
+    // i.e. transform-origin: 0 0):
+    //   Element CSS position: left = hOffset, top = certW
+    //   Point (ex, ey) in element → screen: (hOffset + ey, certW - ex)
+    //   Visual bounds: x ∈ [hOffset, hOffset+certH], y ∈ [0, certW]
+    //
+    // Constraints to avoid cropping:
+    //   certH (visual width after rotation) ≤ availW
+    //   certW (visual height after rotation) ≤ availH
+    //   certW / certH = 1.414  (A4 landscape ratio)
+    // ══════════════════════════════════════════════════════════════════
+    function fitCertificate() {
+      const cert   = document.querySelector('.certificate-wrapper');
+      const area   = document.querySelector('.cert-scroll-area');
+      const wrap   = document.getElementById('certRotateWrap');
+      const hint   = document.getElementById('rotateHint');
+      const header = document.querySelector('.header-controls');
+
+      const isPortrait = window.innerWidth <= 900 && window.innerHeight > window.innerWidth;
+
+      if (hint) hint.style.display = 'none'; // we removed the hint
+
+      if (!isPortrait) {
+        // Desktop / landscape — reset all inline JS styles
+        cert.removeAttribute('style');
+        area.removeAttribute('style');
+        wrap.removeAttribute('style');
+        return;
+      }
+
+      // ── Measure available space ──────────────────────────────────────
+      const vw      = window.innerWidth;
+      const vh      = window.innerHeight;
+      const headerH = header ? header.getBoundingClientRect().height : 0;
+      const bodyPad = 24; // px above+below the cert area
+      const availW  = vw;                          // full screen width
+      const availH  = vh - headerH - bodyPad;      // remaining height
+
+      // ── Compute certificate CSS dimensions ──────────────────────────
+      // After -90° rotation: visual_width = certH, visual_height = certW
+      // Pick the largest cert that fits both axes:
+      //   certH ≤ availW  and  certW = certH × 1.414 ≤ availH
+      //   → certH = min(availW, availH / 1.414)
+      const RATIO  = 1.414;
+      const certH  = Math.floor(Math.min(availW, availH / RATIO));
+      const certW  = Math.floor(certH * RATIO);
+
+      // Horizontal centering: visual width may be less than availW
+      const hOffset = Math.floor((availW - certH) / 2);
+
+      // ── Apply styles ─────────────────────────────────────────────────
+      // Scroll area: sized to exactly the visual footprint of rotated cert
+      area.style.cssText = [
+        'position:relative',
+        'overflow:hidden',
+        `width:${availW}px`,
+        `height:${certW}px`,
+        'padding:0',
+        'display:block'
+      ].join(';');
+
+      // Rotate-wrap: same size as scroll area (just a positioning anchor)
+      wrap.style.cssText = [
+        'position:absolute',
+        'top:0', 'left:0',
+        `width:${availW}px`,
+        `height:${certW}px`
+      ].join(';');
+
+      // Certificate: pre-rotation CSS size is certW × certH
+      // Placed at (left=hOffset, top=certW) so that after rotate(-90deg)
+      // around its own top-left (transform-origin:0 0) the visual area is
+      // exactly x∈[hOffset, hOffset+certH], y∈[0, certW].
+      cert.style.cssText = [
+        'position:absolute',
+        `left:${hOffset}px`,
+        `top:${certW}px`,
+        `width:${certW}px`,
+        `height:${certH}px`,
+        'transform:rotate(-90deg)',
+        'transform-origin:0 0',
+        'border-radius:6px',
+        'box-shadow:0 20px 60px rgba(0,0,0,0.85)'
+      ].join(';');
     }
-    checkOrientation();
-    window.addEventListener('resize', checkOrientation);
-    window.addEventListener('orientationchange', checkOrientation);
+
+    // Run on load and whenever screen dimensions change
+    fitCertificate();
+    window.addEventListener('resize', fitCertificate);
+    window.addEventListener('orientationchange', function() {
+      setTimeout(fitCertificate, 120); // slight delay for browser to update vw/vh
+    });
   </script>
 
 </body>

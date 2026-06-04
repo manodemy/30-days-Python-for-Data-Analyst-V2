@@ -5626,16 +5626,39 @@ button {
     box-shadow: 0 4px 12px rgba(0, 230, 246, 0.3) !important;
   }
 
-  /* Mobile table styling and dynamic column switching */
+  /* Mobile table styling with horizontal scrolling and sticky first column */
   .compare-wrap {
     width: 100% !important;
-    overflow-x: hidden !important;
+    overflow-x: auto !important;
+    scroll-behavior: smooth !important;
+    -webkit-overflow-scrolling: touch !important;
+    border: 1px solid var(--rim) !important;
+    border-radius: 16px !important;
   }
+  
+  .compare-wrap::-webkit-scrollbar {
+    height: 6px !important;
+  }
+  .compare-wrap::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02) !important;
+    border-radius: 3px !important;
+  }
+  .compare-wrap::-webkit-scrollbar-thumb {
+    background: rgba(0, 230, 246, 0.2) !important;
+    border-radius: 3px !important;
+  }
+  .compare-wrap::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 230, 246, 0.4) !important;
+  }
+
   .compare table {
-    min-width: unset !important;
-    width: 100% !important;
+    min-width: 860px !important;
+    width: max-content !important;
     table-layout: fixed !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
   }
+
   .compare th,
   .compare td {
     padding: 12px 8px !important;
@@ -5643,40 +5666,49 @@ button {
     word-wrap: break-word;
     overflow-wrap: break-word;
   }
+
+  /* Make first column sticky on mobile */
   .compare th:first-child,
   .compare td:first-child {
-    width: 42% !important;
+    width: 120px !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 10 !important;
+    background: var(--void) !important;
+    border-right: 1px solid var(--rim) !important;
   }
   
-  /* Hide all comparison columns by default on mobile */
+  .compare thead th:first-child {
+    z-index: 11 !important;
+    background: var(--surface) !important;
+  }
+
+  .compare tbody tr:nth-child(even) td:first-child {
+    background: #0a0d17 !important;
+  }
+  .compare tbody tr:nth-child(odd) td:first-child {
+    background: #060913 !important;
+  }
+
+  .compare tbody tr:nth-child(even):hover td:first-child {
+    background: #0a111b !important;
+  }
+  .compare tbody tr:nth-child(odd):hover td:first-child {
+    background: #060d18 !important;
+  }
+
+  /* Column sizes */
   .compare th:nth-child(2),
-  .compare td:nth-child(2),
+  .compare td:nth-child(2) {
+    width: 200px !important;
+  }
   .compare th:nth-child(3),
   .compare td:nth-child(3),
   .compare th:nth-child(4),
   .compare td:nth-child(4),
   .compare th:nth-child(5),
   .compare td:nth-child(5) {
-    display: none !important;
-    width: 58% !important;
-  }
-
-  /* Show the active column based on active tab attribute */
-  .compare-wrap[data-active-tab="comp-mano"] th:nth-child(2),
-  .compare-wrap[data-active-tab="comp-mano"] td:nth-child(2) {
-    display: table-cell !important;
-  }
-  .compare-wrap[data-active-tab="comp-traditional"] th:nth-child(3),
-  .compare-wrap[data-active-tab="comp-traditional"] td:nth-child(3) {
-    display: table-cell !important;
-  }
-  .compare-wrap[data-active-tab="comp-sub"] th:nth-child(4),
-  .compare-wrap[data-active-tab="comp-sub"] td:nth-child(4) {
-    display: table-cell !important;
-  }
-  .compare-wrap[data-active-tab="comp-bootcamp"] th:nth-child(5),
-  .compare-wrap[data-active-tab="comp-bootcamp"] td:nth-child(5) {
-    display: table-cell !important;
+    width: 180px !important;
   }
 
   .compare-status {

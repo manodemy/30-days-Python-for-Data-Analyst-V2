@@ -67,7 +67,7 @@
     href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@1,700&family=Caveat:wght@400;700&display=swap"
     rel="stylesheet">
 
-  <link rel="stylesheet" href="styles.css?v=4.6">
+  <link rel="stylesheet" href="styles.css?v=4.7">
 
 
 
@@ -2679,8 +2679,63 @@
       const compareWrap = document.querySelector('.compare-wrap');
       if (compareWrap) {
         compareWrap.setAttribute('data-active-tab', tabId);
+        
+        let scrollTarget = 0;
+        if (tabId === 'comp-mano') {
+          scrollTarget = 0;
+        } else if (tabId === 'comp-traditional') {
+          scrollTarget = 200;
+        } else if (tabId === 'comp-sub') {
+          scrollTarget = 380;
+        } else if (tabId === 'comp-bootcamp') {
+          scrollTarget = 560;
+        }
+        
+        // Prevent scroll listener from fighting back during smooth programmatic scroll
+        compareWrap.setAttribute('data-programmatic-scroll', 'true');
+        compareWrap.scrollTo({ left: scrollTarget, behavior: 'smooth' });
+        
+        // Clear the flag after smooth scroll is completed
+        setTimeout(() => {
+          compareWrap.removeAttribute('data-programmatic-scroll');
+        }, 500);
       }
     }
+
+    // Manual scroll sync listener for comparison table
+    document.addEventListener('DOMContentLoaded', () => {
+      const compareWrap = document.querySelector('.compare-wrap');
+      if (compareWrap) {
+        let scrollTimeout;
+        compareWrap.addEventListener('scroll', () => {
+          if (compareWrap.getAttribute('data-programmatic-scroll') === 'true') return;
+          
+          clearTimeout(scrollTimeout);
+          scrollTimeout = setTimeout(() => {
+            const scrollLeft = compareWrap.scrollLeft;
+            let activeTab = 'comp-mano';
+            
+            // Map scroll ranges to columns (using midpoints)
+            if (scrollLeft < 100) {
+              activeTab = 'comp-mano';
+            } else if (scrollLeft >= 100 && scrollLeft < 290) {
+              activeTab = 'comp-traditional';
+            } else if (scrollLeft >= 290 && scrollLeft < 470) {
+              activeTab = 'comp-sub';
+            } else {
+              activeTab = 'comp-bootcamp';
+            }
+            
+            compareWrap.setAttribute('data-active-tab', activeTab);
+            document.querySelectorAll('.comparison-tab-pill').forEach(pill => {
+              pill.classList.remove('active');
+            });
+            const activePill = Array.from(document.querySelectorAll('.comparison-tab-pill')).find(p => p.getAttribute('onclick').includes(activeTab));
+            if (activePill) activePill.classList.add('active');
+          }, 50);
+        }, { passive: true });
+      }
+    });
 
   </script>
 

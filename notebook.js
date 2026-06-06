@@ -1028,106 +1028,102 @@ function setupGamifiedMarkingSystem() {
     modalDiv.className = 'custom-warning-modal';
 
     modalDiv.innerHTML = `
-
       <div class="workbook-locked-card">
-
-         <div class="lock-icon-circle">
-
-           <svg class="lock-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-
-             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-
-             <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-
-           </svg>
-
+         <div class="lock-outer-glow">
+           <div class="lock-icon-circle">
+             <svg class="lock-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+               <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+               <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+             </svg>
+           </div>
          </div>
-
          <h3 class="lock-title">Workbook Graded Challenge</h3>
-
          <p class="lock-desc" style="color: #94a3b8; font-size: 0.9rem; margin-top: -0.25rem;">
            Activate <span class="highlight-cyan">Graded Challenge Mode</span> to unlock and earn official Marks toward your Certificate of Mastery.
          </p>
-
-         <!-- 2x2 marking system grid explanation -->
          <div class="marking-system-grid">
-           
-           <!-- Card 1: Scored Challenges -->
            <div class="marking-card">
              <div class="marking-card-header">
-               <span class="marking-card-icon">📝</span>
+               <span class="marking-card-icon-svg">
+                 <svg viewBox="0 0 24 24" fill="none" stroke="#00E6F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:100%; height:100%;">
+                   <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                   <polyline points="14 2 14 8 20 8"/>
+                   <line x1="16" y1="13" x2="8" y2="13"/>
+                   <line x1="16" y1="17" x2="8" y2="17"/>
+                   <polyline points="10 9 9 9 8 9"/>
+                 </svg>
+               </span>
                <span class="marking-card-title">Scored Challenges</span>
              </div>
              <div class="marking-card-body">
                Today's workbook has <span class="marking-card-highlight">${totalCells} interactive questions</span>. Each task contains automated tests to instantly evaluate your logic.
              </div>
            </div>
-
-           <!-- Card 2: Marks Allocation -->
            <div class="marking-card">
              <div class="marking-card-header">
-               <span class="marking-card-icon">🏆</span>
+               <span class="marking-card-icon-svg">
+                 <svg viewBox="0 0 24 24" fill="none" stroke="#a5b4fc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:100%; height:100%;">
+                   <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+                   <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+                   <path d="M4 22h16"/>
+                   <path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34"/>
+                   <path d="M12 2a6 6 0 0 1 6 6v3.58a6 6 0 0 1-6 6 6 6 0 0 1-6-6V8a6 6 0 0 1 6-6z"/>
+                 </svg>
+               </span>
                <span class="marking-card-title">Marking Mechanics</span>
              </div>
              <div class="marking-card-body">
                Earn exactly <span class="marking-card-highlight">${marksPerQuestion} Marks</span> per correct solution, up to a maximum of <span class="marking-card-highlight">${maxDayMarks} Marks</span> for this workbook.
              </div>
            </div>
-
-           <!-- Card 3: 24h Graded Window -->
            <div class="marking-card">
              <div class="marking-card-header">
-               <span class="marking-card-icon">⏱️</span>
+               <span class="marking-card-icon-svg">
+                 <svg viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:100%; height:100%;">
+                   <circle cx="12" cy="12" r="10"/>
+                   <polyline points="12 6 12 12 16 14"/>
+                 </svg>
+               </span>
                <span class="marking-card-title">24-Hour Active Timer</span>
              </div>
              <div class="marking-card-body">
                Once started, a <span class="marking-card-highlight-gold">24-hour countdown timer</span> begins. Only your <span class="marking-card-highlight-green">highest-ever score</span> is synced—so your score never decreases.
              </div>
            </div>
-
-           <!-- Card 4: Workspace Reset -->
            <div class="marking-card">
              <div class="marking-card-header">
-               <span class="marking-card-icon">⚡</span>
+               <span class="marking-card-icon-svg">
+                 <svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:100%; height:100%;">
+                   <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                 </svg>
+               </span>
                <span class="marking-card-title">Workspace Reset</span>
              </div>
              <div class="marking-card-body">
                To ensure academic integrity, starting resets all code cells in today's workbook. You can re-run and re-submit as many times as you like.
              </div>
            </div>
-
          </div>
-
          <div class="warning-text-container">
-
-           <p class="warning-alert-text">⚠️ RESET WARNING: Resets all the code cells. Your profile's global high score will NOT be overwritten unless you achieve a new record!</p>
-
+           <svg class="warning-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+             <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+             <line x1="12" y1="9" x2="12" y2="13"/>
+             <line x1="12" y1="17" x2="12.01" y2="17"/>
+           </svg>
+           <p class="warning-alert-text">RESET WARNING: Resets all the code cells. Your profile\'s global high score will NOT be overwritten unless you achieve a new record!</p>
          </div>
-
          <div class="modal-actions">
-
            <button class="improve-score-grad-btn" id="confirmStartBtn">
-
              <svg class="play-icon-svg" viewBox="0 0 24 24" fill="currentColor">
-
                <polygon points="5 3 19 12 5 21 5 3"/>
-
              </svg>
-
              START GRADED CHALLENGE
-
            </button>
-
            <button class="modal-close-cancel-btn" id="cancelStartBtn">
-
              Cancel
-
            </button>
-
          </div>
-
       </div>
-
     `;
 
     document.body.appendChild(modalDiv);

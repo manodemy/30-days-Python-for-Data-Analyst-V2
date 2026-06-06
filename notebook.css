@@ -1197,6 +1197,7 @@ body.practice-mode-active .nb-title::after {
   position: relative;
   overflow: hidden;
   margin: auto;
+  flex-shrink: 0;
 }
 .workbook-locked-card::before {
   content: '';

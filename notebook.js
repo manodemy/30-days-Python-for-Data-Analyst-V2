@@ -455,6 +455,58 @@ document.addEventListener('DOMContentLoaded', () => {
 
     });
 
+    // 2. Background reconciliation of solved status with database
+    if (sbClient) {
+      (async () => {
+        try {
+          const sessionRes = await sbClient.auth.getSession();
+          const session = sessionRes.data.session;
+          if (session) {
+            const { data: progress } = await sbClient.rpc('get_user_progress');
+            if (progress && progress[dayId]) {
+              const dayData = progress[dayId];
+              const solvedCellsList = dayData.solved_cells || [];
+              let hasChanges = false;
+
+              Object.keys(editors).forEach(cellId => {
+                const isSolvedInDb = solvedCellsList.includes(cellId);
+                const localSolved = safeStorageGet(`manodemy_${dayId}_${cellId}_solved`) === 'true';
+                
+                if (localSolved !== isSolvedInDb) {
+                  hasChanges = true;
+                  safeStorageSet(`manodemy_${dayId}_${cellId}_solved`, isSolvedInDb ? 'true' : 'false');
+                  safeStorageSet(`manodemy_${dayId}_${cellId}_graded_solved`, isSolvedInDb ? 'true' : 'false');
+                  
+                  const cellEl = document.getElementById(cellId);
+                  if (cellEl) {
+                    if (isSolvedInDb) {
+                      cellEl.classList.add('is-solved');
+                      successfulCells.add(cellId);
+                    } else {
+                      cellEl.classList.remove('is-solved');
+                      successfulCells.delete(cellId);
+                    }
+                  }
+                }
+              });
+
+              const dbSolvedCountStr = dayData.solved_count.toString();
+              if (safeStorageGet(`manodemy_${dayId}_solved_count`) !== dbSolvedCountStr) {
+                safeStorageSet(`manodemy_${dayId}_solved_count`, dbSolvedCountStr);
+                hasChanges = true;
+              }
+
+              if (hasChanges) {
+                updateScore();
+              }
+            }
+          }
+        } catch (err) {
+          console.warn("[Reconcile Progress] Background reconciliation failed:", err);
+        }
+      })();
+    }
+
   }
 
   updateScore(); // Initial score update

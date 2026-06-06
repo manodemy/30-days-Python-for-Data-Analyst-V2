@@ -6284,6 +6284,35 @@
 
 
 
+      // Cryptographically verified progress sync
+      const restoreVerifiedProgress = async () => {
+        try {
+          const { data: progress, error } = await sb.rpc('get_user_progress');
+          if (error) {
+            console.warn("Failed to fetch verified progress:", error.message);
+            return;
+          }
+          if (progress) {
+            DAY_METADATA.forEach(item => {
+              const dayId = `day${item.day}`;
+              const dayData = progress[dayId] || { solved_count: 0, solved_cells: [] };
+              const count = dayData.solved_count || 0;
+              
+              localStorage.setItem(`manodemy_${dayId}_solved_count`, count.toString());
+              
+              // Calculate score exactly matching dashboard XP system
+              const score = 1000 * (count / TOTAL_CHALLENGES);
+              localStorage.setItem(`manodemy_day${item.day}_best_score`, score.toFixed(2));
+              localStorage.setItem(`manodemy_${dayId}_best_solved`, count.toString());
+            });
+          }
+        } catch (err) {
+          console.warn("Error restoring progress:", err);
+        }
+      };
+
+      await restoreVerifiedProgress();
+
       // Retrieve resume learning link mapping to last active day and pre-calculate totalSolvedCount
 
       let totalSolvedCount = 0;

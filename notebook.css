@@ -1163,8 +1163,9 @@ body.practice-mode-active .nb-title::after {
   -webkit-backdrop-filter: blur(20px) saturate(200%);
   z-index: 10000;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   overflow-y: auto;
   padding: 2rem 1rem;
   opacity: 0;
@@ -1195,6 +1196,7 @@ body.practice-mode-active .nb-title::after {
   gap: 1.25rem;
   position: relative;
   overflow: hidden;
+  margin: auto;
 }
 .workbook-locked-card::before {
   content: '';
@@ -1476,6 +1478,75 @@ body.modal-open nav {
   filter: blur(8px) grayscale(20%);
   pointer-events: none !important;
   transition: filter 0.3s ease;
+}
+
+/* Responsive adjustments for Workbook Locked Modal */
+@media (max-width: 600px) {
+  .workbook-locked-card {
+    padding: 1.75rem 1.25rem 1.5rem 1.25rem;
+    gap: 1rem;
+    border-radius: 20px;
+  }
+  .lock-icon-circle {
+    width: 60px;
+    height: 60px;
+  }
+  .lock-svg {
+    width: 22px;
+    height: 22px;
+  }
+  .lock-outer-glow::after {
+    inset: -6px;
+  }
+  .lock-title {
+    font-size: 1.5rem;
+  }
+  .lock-desc {
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .marking-system-grid {
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+  }
+  .marking-card {
+    padding: 0.85rem 1rem;
+    gap: 0.3rem;
+    border-radius: 12px;
+  }
+  .marking-card-title {
+    font-size: 0.8rem;
+  }
+  .marking-card-body {
+    font-size: 0.72rem;
+    line-height: 1.4;
+  }
+  .warning-text-container {
+    padding: 10px 12px;
+    gap: 8px;
+    border-radius: 10px;
+  }
+  .warning-icon-svg {
+    width: 18px;
+    height: 18px;
+  }
+  .warning-alert-text {
+    font-size: 0.72rem;
+    line-height: 1.4;
+  }
+  .modal-actions {
+    gap: 10px;
+    margin-top: 0.25rem;
+  }
+  .improve-score-grad-btn {
+    padding: 12px 24px;
+    font-size: 0.85rem !important;
+  }
+  .modal-close-cancel-btn {
+    font-size: 0.8rem;
+  }
 }
 
 /* ══════════════════════════════════════════════════════════════════

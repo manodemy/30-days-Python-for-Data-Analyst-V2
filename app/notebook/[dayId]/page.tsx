@@ -83,6 +83,11 @@ export default async function NotebookPage({ params }: { params: { dayId: string
 
   const sections = (notebook.sections || []) as Section[];
 
+  // Dynamically rewrite static day links (e.g. day03.html or /day03.html) to Next.js routes (/notebook/day03)
+  const cleanHtmlBody = notebook.html_body
+    ? notebook.html_body.replace(/href=(["'])\/?day(\d+)\.html/g, 'href=$1/notebook/day$2')
+    : '';
+
   // Static DAYS array matching server.py curriculum map
   const DAYS = [
     ['Day01_Data_Types_Blank.ipynb',      'Data Types and Memory',     '🔢'],
@@ -145,7 +150,7 @@ export default async function NotebookPage({ params }: { params: { dayId: string
 
   return (
     <>
-      <NotebookInitializer />
+      <NotebookInitializer dayId={cleanDayId} />
       {/* Inject styling and resource hints */}
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -177,11 +182,24 @@ export default async function NotebookPage({ params }: { params: { dayId: string
 
           {/* User score tracking progress */}
           <div className="nav-score-card">
-            <div className="score-info">
-              <span className="score-label">Solved</span>
-              <span className="score-values">
-                <span id="scoreSolved" className="score-highlight">0</span> / <span id="scoreTotal">0</span>
-              </span>
+            <div className="score-grid">
+              <div className="score-col">
+                <span className="score-label">Solved</span>
+                <span className="score-val">
+                  <span id="scoreSolved" className="score-highlight">0</span>
+                  <span className="score-slash">/</span>
+                  <span id="scoreTotal">0</span>
+                </span>
+              </div>
+              <div className="score-divider"></div>
+              <div className="score-col">
+                <span className="score-label">Marks</span>
+                <span className="score-val">
+                  <span id="scoreXPEarned" className="score-highlight">0.0</span>
+                  <span className="score-slash">/</span>
+                  <span id="scoreMaxXP">0.0</span>
+                </span>
+              </div>
             </div>
             <div className="score-track">
               <div className="score-fill" id="scoreProgress" style={{ width: '0%' }}></div>
@@ -290,7 +308,7 @@ export default async function NotebookPage({ params }: { params: { dayId: string
           <div className="nb-title">
             <h1>📊 Day {formattedDay} : {notebook.title.replace(/^[^\s]+\s+/, '').replace(/^Day\s+\d+\s*:\s*/, '')}</h1>
           </div>
-          <div dangerouslySetInnerHTML={{ __html: notebook.html_body }} />
+          <div dangerouslySetInnerHTML={{ __html: cleanHtmlBody }} />
         </main>
         
         {/* Dynamic table of contents (TOC) sidebar */}
@@ -300,8 +318,8 @@ export default async function NotebookPage({ params }: { params: { dayId: string
           </div>
           <ul className="toc-list">
             {sections.map((sec, i) => (
-              <li key={i} className="toc-item">
-                <a href={`#${sec.anchor}`}>{sec.title}</a>
+              <li key={i}>
+                <a href={`#${sec.anchor}`} className="toc-link">{sec.title}</a>
               </li>
             ))}
           </ul>

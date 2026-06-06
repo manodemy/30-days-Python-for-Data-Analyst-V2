@@ -6,7 +6,7 @@ import { useEffect } from 'react';
  * NotebookInitializer invokes the global initializeNotebook function
  * strictly after React hydration is complete.
  */
-export default function NotebookInitializer() {
+export default function NotebookInitializer({ dayId }: { dayId: string }) {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
@@ -14,7 +14,7 @@ export default function NotebookInitializer() {
     const checkAndInit = () => {
       const isReady = (window as any).initializeNotebook && (window as any).CodeMirror;
       if (isReady) {
-        console.log('[Notebook] All scripts loaded. Initializing CodeMirror & Pyodide state...');
+        console.log(`[Notebook] All scripts loaded. Initializing day: ${dayId}`);
         (window as any).initializeNotebook();
       } else {
         attempts++;
@@ -33,7 +33,7 @@ export default function NotebookInitializer() {
     // Begin polling
     const timeout = setTimeout(checkAndInit, 100);
     return () => clearTimeout(timeout);
-  }, []);
+  }, [dayId]);
 
   return null;
 }

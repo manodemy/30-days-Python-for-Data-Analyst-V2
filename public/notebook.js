@@ -8,6 +8,10 @@ const SAVE_DEBOUNCE_MS = 400;
 
 const TOTAL_QUESTIONS = 1540; // total across 30 days
 
+const successfulCells = new Set();
+let totalCells = 0;
+let countdownInterval = null;
+
 const AVATAR_COLORS = ['--avatar-bg-1', '--avatar-bg-2', '--avatar-bg-3'];
 
 const TOAST_DURATION_MS = 6000;
@@ -83,6 +87,15 @@ const safeStorageGet = (key) => {
   catch (e) { return ''; }
 
 };
+
+const runWhenReady = (fn) => {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', fn);
+  } else {
+    setTimeout(fn, 0);
+  }
+};
+
 
 
 
@@ -205,6 +218,12 @@ function initializeNotebook() {
     statusEl.setAttribute('aria-live', 'polite');
   }
 
+  // Clear any existing editors and successful cells state
+  for (const key in editors) {
+    delete editors[key];
+  }
+  successfulCells.clear();
+
   // ── INIT CODEMIRROR EDITORS ──
 
   document.querySelectorAll('.cm-source').forEach(ta => {
@@ -212,6 +231,11 @@ function initializeNotebook() {
   const cellEl = ta.closest('.code-cell');
 
   const cellId = cellEl.id;
+
+  if (ta.CodeMirror) {
+    editors[cellId] = ta.CodeMirror;
+    return;
+  }
 
   const cm = CodeMirror.fromTextArea(ta, {
 
@@ -722,6 +746,13 @@ function initializeNotebook() {
 
   updateScore(); // Initial score update
   setupGamifiedMarkingSystem(); // Initialize overlay locks, timer lifecycle
+
+  // Initialize all interactive features post-hydration
+  initializeDropdownToggle();
+  initializeProfileModal();
+  initializeEngagementTimer();
+  initializePracticeModeSidebar();
+  initializeMobileFeatures();
 }
 
 // Expose initializeNotebook globally
@@ -810,10 +841,6 @@ async function initPyodide() {
 
 // ── SCORE TRACKING ──
 
-const successfulCells = new Set();
-
-let totalCells = 0;
-
 
 
 // Cell counting is now handled inside initializeNotebook
@@ -821,8 +848,6 @@ let totalCells = 0;
 
 
 // ── GAMIFIED TIMER & SCORING ENGINE ──
-
-let countdownInterval = null;
 
 
 
@@ -1895,65 +1920,42 @@ window.refreshTocTracking();
 
 // ── DROPDOWN TOGGLE ──
 
-document.addEventListener('DOMContentLoaded', () => {
-
+function initializeDropdownToggle() {
   const btn = document.getElementById('dayDropdownBtn');
-
   const menu = document.getElementById('dayDropdownMenu');
 
-
-
   if (btn && menu) {
+    const newBtn = btn.cloneNode(true);
+    btn.parentNode.replaceChild(newBtn, btn);
 
-    btn.addEventListener('click', (e) => {
-
+    newBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-
       menu.classList.toggle('show');
-
-      btn.classList.toggle('open');
-
-
+      newBtn.classList.toggle('open');
 
       // Auto-scroll to active item
-
       if (menu.classList.contains('show')) {
-
         const activeItem = menu.querySelector('.dropdown-item.active');
-
         if (activeItem) {
-
           setTimeout(() => {
-
             activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
           }, 50);
-
         }
-
       }
-
     });
 
-
-
-    // Close on click outside
-
-    document.addEventListener('click', (e) => {
-
-      if (!menu.contains(e.target) && !btn.contains(e.target)) {
-
+    if (window.__closeDropdownHandler) {
+      document.removeEventListener('click', window.__closeDropdownHandler);
+    }
+    window.__closeDropdownHandler = (e) => {
+      if (!menu.contains(e.target) && !newBtn.contains(e.target)) {
         menu.classList.remove('show');
-
-        btn.classList.remove('open');
-
+        newBtn.classList.remove('open');
       }
-
-    });
-
+    };
+    document.addEventListener('click', window.__closeDropdownHandler);
   }
-
-});
+}
 
 
 
@@ -2051,135 +2053,86 @@ const updateProfileProgress = () => {
 
 
 
-document.addEventListener('DOMContentLoaded', async () => {
-
+async function initializeProfileModal() {
   const avatar = document.getElementById('profileAvatar');
-
   const card = document.getElementById('profileCard');
-
   const avatarCircle = document.getElementById('avatarCircle');
-
-
 
   if (!avatar || !card || !sbClient) return;
 
-
+  const newAvatar = avatar.cloneNode(true);
+  avatar.parentNode.replaceChild(newAvatar, avatar);
 
   // Fetch User Auth
-
   const { data: { session } } = await sbClient.auth.getSession();
 
   if (session) {
-
     const user = session.user;
-
     const metadata = user.user_metadata || {};
 
-
-
     if (metadata.avatar_url) {
-
       avatarCircle.innerHTML = `<img src="${metadata.avatar_url}" alt="${metadata.full_name || 'User'}">`;
-
     } else {
-
       const nameToUse = metadata.full_name || user.email;
-
       const initials = getInitials(nameToUse);
-
       const colorVar = AVATAR_COLORS[hashString(user.email) % AVATAR_COLORS.length];
-
       const span = document.createElement('span');
-
       span.textContent = initials;
-
       avatarCircle.style.backgroundColor = `var(${colorVar})`;
-
+      avatarCircle.innerHTML = '';
       avatarCircle.appendChild(span);
-
     }
 
-
-
-    document.getElementById('profileName').textContent = metadata.full_name || 'Developer';
-
-    document.getElementById('profileEmail').textContent = user.email;
+    const nameEl = document.getElementById('profileName');
+    if (nameEl) nameEl.textContent = metadata.full_name || 'Developer';
+    const emailEl = document.getElementById('profileEmail');
+    if (emailEl) emailEl.textContent = user.email;
 
     const plan = metadata.plan === 'pro' ? 'pro' : 'free';
-
     const badgeEl = document.getElementById('profileBadge');
-
-    badgeEl.textContent = plan === 'pro' ? 'Pro' : 'Free';
-
-    badgeEl.setAttribute('data-plan', plan);
-
+    if (badgeEl) {
+      badgeEl.textContent = plan === 'pro' ? 'Pro' : 'Free';
+      badgeEl.setAttribute('data-plan', plan);
+    }
   }
-
-
-
-  // Toggle card
 
   const toggleCard = () => {
-
     const isOpen = card.classList.contains('is-open');
-
     if (!isOpen) {
-
       updateProfileProgress();
-
       card.classList.add('is-open');
-
-      avatar.setAttribute('aria-expanded', 'true');
-
+      newAvatar.setAttribute('aria-expanded', 'true');
     } else {
-
       card.classList.remove('is-open');
-
-      avatar.setAttribute('aria-expanded', 'false');
-
+      newAvatar.setAttribute('aria-expanded', 'false');
     }
-
   };
 
+  newAvatar.addEventListener('click', toggleCard);
 
-
-  avatar.addEventListener('click', toggleCard);
-
-
-
-  document.addEventListener('focusout', (e) => {
-
+  if (window.__profileFocusoutHandler) {
+    document.removeEventListener('focusout', window.__profileFocusoutHandler);
+  }
+  window.__profileFocusoutHandler = (e) => {
     if (card.classList.contains('is-open') &&
-
       !card.contains(e.relatedTarget) &&
-
-      !avatar.contains(e.relatedTarget)) {
-
+      !newAvatar.contains(e.relatedTarget)) {
       toggleCard();
-
     }
-
-  });
-
-
+  };
+  document.addEventListener('focusout', window.__profileFocusoutHandler);
 
   const signOutBtn = document.getElementById('signOutBtn');
-
   if (signOutBtn) {
-
-    signOutBtn.addEventListener('click', async () => {
-
+    const newSignOutBtn = signOutBtn.cloneNode(true);
+    signOutBtn.parentNode.replaceChild(newSignOutBtn, signOutBtn);
+    newSignOutBtn.addEventListener('click', async () => {
       await sbClient.auth.signOut();
-
       localStorage.removeItem('manodemy_auth');
-
       window.location.href = 'index.html';
-
     });
-
   }
-
-});
+}
 
 
 
@@ -2259,88 +2212,47 @@ window.showUpgradeToast = (dayTitle) => {
 
 // ── ENGAGEMENT TIMER (UI) ──
 
-document.addEventListener('DOMContentLoaded', () => {
-
+function initializeEngagementTimer() {
   const displayEl = document.getElementById('pageTimerDisplay');
-
   const ringEl = document.querySelector('.timer-pulse-ring');
 
   if (!displayEl) return;
 
-
-
   const dayId = getDayId();
-
   if (!dayId) return;
 
-
-
   const storageKey = `manodemy_${dayId}_time_spent`;
-
   let activeSeconds = parseInt(safeStorageGet(storageKey) || '0', 10);
-
-
-
   let isTimerRunning = false;
-
   let timerInterval = null;
 
-
-
   const formatTime = (secs) => {
-
     const m = Math.floor(secs / 60).toString().padStart(2, '0');
-
     const s = (secs % 60).toString().padStart(2, '0');
-
     return `${m}:${s}`;
-
   };
-
-
 
   const updateDisplay = () => {
-
     displayEl.textContent = formatTime(activeSeconds);
-
   };
-
-
 
   const startTimer = () => {
-
     if (isTimerRunning) return;
-
     isTimerRunning = true;
-
     if (ringEl) ringEl.classList.add('active');
-
     timerInterval = setInterval(() => {
-
       activeSeconds++;
-
       updateDisplay();
-
-      // Save to storage every 5 seconds to reduce I/O overhead
-
       if (activeSeconds % 5 === 0) {
-
         safeStorageSet(storageKey, activeSeconds.toString());
-
       }
-
     }, 1000);
-
+    window.manoTimerInterval = timerInterval;
   };
 
-
-
   const pauseTimer = () => {
-
     if (!isTimerRunning) return;
-
     isTimerRunning = false;
-
     if (ringEl) ringEl.classList.remove('active');
 
     clearInterval(timerInterval);
@@ -2351,241 +2263,137 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-  // Initial render
+  if (window.manoTimerInterval) {
+    clearInterval(window.manoTimerInterval);
+  }
 
   updateDisplay();
 
-
-
-  // Start timer if window is visible
-
   if (document.visibilityState === 'visible') {
-
     startTimer();
-
   }
 
-
-
-  // Handle visibility changes
-
-  document.addEventListener('visibilitychange', () => {
-
+  if (window.__timerVisibilityHandler) {
+    document.removeEventListener('visibilitychange', window.__timerVisibilityHandler);
+  }
+  window.__timerVisibilityHandler = () => {
     if (document.visibilityState === 'visible') {
-
       startTimer();
-
     } else {
-
       pauseTimer();
-
     }
+  };
+  document.addEventListener('visibilitychange', window.__timerVisibilityHandler);
 
-  });
-
-
-
-  window.addEventListener('beforeunload', pauseTimer);
-
-});
+  if (window.__timerUnloadHandler) {
+    window.removeEventListener('beforeunload', window.__timerUnloadHandler);
+  }
+  window.__timerUnloadHandler = pauseTimer;
+  window.addEventListener('beforeunload', window.__timerUnloadHandler);
+}
 
 
 
 // ── PRACTICE MODE (THEORY HIDER) ──
 
-document.addEventListener('DOMContentLoaded', () => {
-
+function initializePracticeModeSidebar() {
   const pageName = window.location.pathname.split('/').pop() || 'day01.html';
-
   const storageKey = 'manodemy_practice_mode_' + pageName;
-
   const isPracticeMode = localStorage.getItem(storageKey) === 'true';
 
-
-
   if (isPracticeMode) {
-
     document.body.classList.add('practice-mode-active');
-
   }
-
-
 
   function updateTOC(isActive) {
-
     const tocList = document.querySelector('.toc-list');
-
     if (!tocList) return;
 
-
-
     if (!window.originalTOCHTML) {
-
       window.originalTOCHTML = tocList.innerHTML;
-
     }
-
-
 
     tocList.innerHTML = '';
-
     const sections = document.querySelectorAll('.nb-section');
-
     sections.forEach((sec, sIdx) => {
-
       const h2 = sec.querySelector('.nb-rich > h2, h2');
-
       if (h2 && !sec.id.includes('checks')) {
-
         const li = document.createElement('li');
-
         const a = document.createElement('a');
-
         a.href = '#' + sec.id;
-
         a.className = 'toc-link';
-
         a.textContent = h2.textContent.replace(/🎯|💻|📊|✅|1\.|2\.|3\.|4\.|5\.|6\.|7\.|8\.|9\.|10\./g, '').trim().split(':')[0];
-
         li.appendChild(a);
-
         tocList.appendChild(li);
-
       }
 
-
-
       const questions = sec.querySelectorAll('.question');
-
       questions.forEach((q, qIdx) => {
-
         if (!q.id) {
-
           q.id = (sec.id || 'sec-' + sIdx) + '-q' + qIdx;
-
         }
-
-
 
         let fullText = q.textContent.trim();
-
         let match = fullText.match(/^(Q\d+|Task \d+)/i);
-
         if (match) {
-
           fullText = match[0];
-
         } else if (fullText.length > 35) {
-
           fullText = fullText.substring(0, 35) + '...';
-
         }
-
-
 
         const li = document.createElement('li');
-
         li.style.paddingLeft = '12px';
-
         li.style.fontSize = '0.9em';
-
         li.style.opacity = '0.85';
 
-
-
         const a = document.createElement('a');
-
         a.href = '#' + q.id;
-
         a.className = 'toc-link';
-
         if (q.classList.contains('is-solved-box')) {
-
           a.innerHTML = fullText + '<span class="toc-tick" style="float:right; color:var(--emerald, #10B981); font-weight:900; filter: drop-shadow(0 0 4px rgba(16,185,129,0.6));">✓</span>';
-
         } else {
-
           a.textContent = fullText;
-
         }
-
         li.appendChild(a);
-
         tocList.appendChild(li);
-
       });
-
     });
 
-
-
     if (typeof window.refreshTocTracking === 'function') {
-
       window.refreshTocTracking();
-
     }
-
   }
-
-
 
   updateTOC(isPracticeMode);
 
-
-
-  // Inject Segmented Control above CONTENTS in sidebar
+  const existingToggle = document.querySelector('.mode-toggle-segmented');
+  if (existingToggle) existingToggle.remove();
 
   const toggleContainer = document.createElement('div');
-
   toggleContainer.className = 'mode-toggle-segmented';
 
-
-
   const readBtn = document.createElement('button');
-
   readBtn.className = 'mode-segment-btn segment-read' + (!isPracticeMode ? ' active' : '');
-
   readBtn.innerHTML = '📖 Read';
 
-
-
   const practiceBtn = document.createElement('button');
-
   practiceBtn.className = 'mode-segment-btn segment-practice' + (isPracticeMode ? ' active' : '');
-
   practiceBtn.innerHTML = '💻 Practice';
 
-
-
   toggleContainer.appendChild(readBtn);
-
   toggleContainer.appendChild(practiceBtn);
 
-
-
   const sidebarTop = document.querySelector('.sidebar-top');
-
   const sidebarHeader = document.querySelector('.sidebar-header');
-
   if (sidebarTop && sidebarHeader) {
-
     sidebarTop.insertBefore(toggleContainer, sidebarHeader);
-
   } else {
-
     document.body.appendChild(toggleContainer);
-
   }
 
-
-
   function setMode(toPractice) {
-
     const isCurrentlyPractice = document.body.classList.contains('practice-mode-active');
-
     if (toPractice === isCurrentlyPractice) return;
-
-
 
     if (toPractice) {
 
@@ -2616,10 +2424,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   readBtn.addEventListener('click', () => setMode(false));
-
   practiceBtn.addEventListener('click', () => setMode(true));
-
-});
+}
 
 // ══════════════════════════════════════════════════════════════════
 // MOBILE VIEW HANDLERS (TOC DRAWER & SYMBOL HELPER BAR)
@@ -2687,28 +2493,37 @@ function hideSymbolHelperBar() {
   activeEditorInstance = null;
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+function initializeMobileFeatures() {
   const sidebar = document.querySelector('.sidebar');
-  if (!sidebar) return;
+
+  const oldBar = document.querySelector('.mobile-bottom-bar');
+  if (oldBar) oldBar.remove();
+  const oldBackdrop = document.querySelector('.toc-backdrop');
+  if (oldBackdrop) oldBackdrop.remove();
 
   // --- TOC DRAWER BACKDROP ---
-  const backdrop = document.createElement('div');
-  backdrop.className = 'toc-backdrop';
-  document.body.appendChild(backdrop);
-
+  let backdrop = null;
   const toggleDrawer = () => {
-    sidebar.classList.toggle('open');
-    backdrop.classList.toggle('active');
+    if (sidebar && backdrop) {
+      sidebar.classList.toggle('open');
+      backdrop.classList.toggle('active');
+    }
   };
 
-  backdrop.addEventListener('click', toggleDrawer);
+  if (sidebar) {
+    backdrop = document.createElement('div');
+    backdrop.className = 'toc-backdrop';
+    document.body.appendChild(backdrop);
 
-  sidebar.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', () => {
-      sidebar.classList.remove('open');
-      backdrop.classList.remove('active');
+    backdrop.addEventListener('click', toggleDrawer);
+
+    sidebar.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        sidebar.classList.remove('open');
+        backdrop.classList.remove('active');
+      });
     });
-  });
+  }
 
   // --- INJECT BOTTOM TAB BAR (TIER 1 & 2) ---
   const bottomBar = document.createElement('div');
@@ -2722,10 +2537,12 @@ document.addEventListener('DOMContentLoaded', () => {
       <span class="tab-icon">💻</span>
       <span class="tab-label">Practice</span>
     </button>
+    ${sidebar ? `
     <button class="mobile-tab-btn" id="mobileTabToc">
       <span class="tab-icon">📑</span>
       <span class="tab-label">Content</span>
     </button>
+    ` : ''}
   `;
   document.body.appendChild(bottomBar);
 
@@ -2758,20 +2575,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  tocTab.addEventListener('click', toggleDrawer);
+  if (tocTab && sidebar && backdrop) {
+    tocTab.addEventListener('click', toggleDrawer);
+  }
 
   // Sync Bottom Tab Bar active states when desktop segmented toggle is clicked
-  document.addEventListener('click', (e) => {
+  if (window.__mobileSegmentClickListener) {
+    document.removeEventListener('click', window.__mobileSegmentClickListener);
+  }
+  window.__mobileSegmentClickListener = (e) => {
     const segmentRead = e.target.closest('.segment-read');
     const segmentPractice = e.target.closest('.segment-practice');
+    const curReadTab = document.getElementById('mobileTabRead');
+    const curPracticeTab = document.getElementById('mobileTabPractice');
+    if (!curReadTab || !curPracticeTab) return;
     if (segmentRead) {
-      readTab.classList.add('active');
-      practiceTab.classList.remove('active');
+      curReadTab.classList.add('active');
+      curPracticeTab.classList.remove('active');
     } else if (segmentPractice) {
-      readTab.classList.remove('active');
-      practiceTab.classList.add('active');
+      curReadTab.classList.remove('active');
+      curPracticeTab.classList.add('active');
     }
-  });
+  };
+  document.addEventListener('click', window.__mobileSegmentClickListener);
 
   // Sync initial tab states
   setTimeout(() => {
@@ -3042,5 +2868,5 @@ document.addEventListener('DOMContentLoaded', () => {
     injectFocusButtons();
   });
   focusModeObserver.observe(document.body, { childList: true, subtree: true });
-});
+}
 

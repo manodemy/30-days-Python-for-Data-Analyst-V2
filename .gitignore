@@ -35,3 +35,7 @@ demo.txt
 *.wfp
 video_pipeline/
 scratch/
+
+# Node / Next.js
+node_modules/
+.next/

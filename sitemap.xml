@@ -1,31 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- Landing Page -->
+  <!-- Landing Page (Primary) -->
   <url>
     <loc>https://www.manodemy.com/</loc>
     <lastmod>2026-06-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.00</priority>
   </url>
+  <!-- Free Course Days (publicly indexable) -->
   <url>
-    <loc>https://www.manodemy.com/landing_v2/index.html</loc>
+    <loc>https://www.manodemy.com/day01.html</loc>
     <lastmod>2026-06-06</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>monthly</changefreq>
     <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://www.manodemy.com/notebook/day01</loc>
+    <lastmod>2026-06-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://www.manodemy.com/day02.html</loc>
+    <lastmod>2026-06-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.manodemy.com/notebook/day02</loc>
+    <lastmod>2026-06-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <!-- Sample Certificate -->
+  <url>
+    <loc>https://www.manodemy.com/sample-certificate.html</loc>
+    <lastmod>2026-06-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.60</priority>
   </url>
   <!-- Student Dashboard -->
   <url>
     <loc>https://www.manodemy.com/home.html</loc>
     <lastmod>2026-06-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
-  </url>
-  <!-- Marketing Pages -->
-  <url>
-    <loc>https://www.manodemy.com/sample-certificate.html</loc>
-    <lastmod>2026-06-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.70</priority>
+    <changefreq>weekly</changefreq>
+    <priority>0.50</priority>
   </url>
   <!-- Legal Pages -->
   <url>
@@ -46,17 +65,10 @@
     <changefreq>monthly</changefreq>
     <priority>0.30</priority>
   </url>
-  <!-- Free Course Days (publicly indexable) -->
   <url>
-    <loc>https://www.manodemy.com/day01.html</loc>
+    <loc>https://www.manodemy.com/reset-password</loc>
     <lastmod>2026-06-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://www.manodemy.com/day02.html</loc>
-    <lastmod>2026-06-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
+    <priority>0.20</priority>
   </url>
 </urlset>

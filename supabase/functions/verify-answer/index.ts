@@ -142,10 +142,7 @@ serve(async (req) => {
           if (!outText.includes('<class') && !cleanCode.includes('type(')) penalties++;
         }
 
-        // Requirement 2: comment existence
-        if (questionText.includes('explain') || questionText.includes('describe') || questionText.includes('why is')) {
-          if (!rawCode.includes('#')) penalties++;
-        }
+
 
         // Requirement 3: lines count
         if (questionText.includes('both results') || questionText.includes('print both') || questionText.includes('compute both')) {

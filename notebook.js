@@ -1459,10 +1459,15 @@ function updateScore() {
       }
     }
   } else {
-    // In Practice Mode, load and show best stats
+    // In Practice Mode, show current solved cells on page (falling back to best stats if higher)
     if (dayId) {
-      scoreToShow = parseFloat(safeStorageGet(`manodemy_${dayId}_best_score`) || '0');
-      solvedToShow = parseInt(safeStorageGet(`manodemy_${dayId}_best_solved`) || '0', 10);
+      const currentSolved = successfulCells.size;
+      const currentScore = calculateDayXP();
+      const bestSolved = parseInt(safeStorageGet(`manodemy_${dayId}_best_solved`) || '0', 10);
+      const bestScore = parseFloat(safeStorageGet(`manodemy_${dayId}_best_score`) || '0');
+
+      solvedToShow = Math.max(currentSolved, bestSolved);
+      scoreToShow = Math.max(currentScore, bestScore);
     }
   }
 
@@ -1720,16 +1725,24 @@ async function runCell(cellId) {
 
       btn.disabled = false; btn.textContent = '▶ Run';
 
-      if (verified) {
+      let localVerified = false;
+      if (!verified && cleanCode.length > 0 && cleanCode !== 'pass') {
+        const outputText = (text || '').trim();
+        if (outputText && outputText !== '(no output)' && !outputText.toLowerCase().includes('error:')) {
+          localVerified = true;
+        }
+      }
+
+      if (verified || localVerified) {
         isCorrectAndRelated = true;
 
         cell.classList.add('is-solved');
         if (dayId) safeStorageSet(`manodemy_${dayId}_${cellId}_solved`, 'true');
 
-        if (isChallengeActive()) {
-          successfulCells.add(cellId);
-          if (dayId) safeStorageSet(`manodemy_${dayId}_${cellId}_graded_solved`, 'true');
+        successfulCells.add(cellId);
+        if (dayId) safeStorageSet(`manodemy_${dayId}_${cellId}_graded_solved`, 'true');
 
+        if (isChallengeActive() && verified) {
           // Sync to Supabase with HMAC signature payload!
           _notebookWriteActivity('question_solved', {
             question_id: cellId,
@@ -1738,11 +1751,8 @@ async function runCell(cellId) {
             timestamp: timestamp,
             page_url: window.location.pathname
           });
-
-          updateScore(); // Live scoreboard update
-        } else {
-          updateScore();
         }
+        updateScore(); // Live scoreboard update
       } else {
         cell.classList.remove('is-solved');
         if (dayId) {

@@ -3145,7 +3145,7 @@
 
     /* ═══════════ SEGMENTED TIMELINE & PREMIUM HEADER SCORE CARD ═══════════ */
 
-    .header-score-card, .header-timeline-card {
+    .header-score-card {
       background: linear-gradient(135deg, rgba(17, 24, 39, 0.75) 0%, rgba(10, 15, 30, 0.9) 100%) !important;
       border: 1px solid rgba(255, 255, 255, 0.08) !important;
       border-top-color: rgba(255, 255, 255, 0.16) !important;
@@ -3156,10 +3156,6 @@
       position: relative !important;
       padding: 1.5rem !important;
       border-radius: 24px !important;
-    }
-
-    .header-score-card {
-      margin-bottom: 20px !important;
     }
 
     .score-card-bg-glow {
@@ -3184,19 +3180,29 @@
     }
 
     .score-hero-display {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      min-width: 280px;
-      flex: 0.85;
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      gap: 1.5rem !important;
+      min-width: 320px !important;
+      flex: 0.95 !important;
     }
 
-    .score-hero-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      width: 100%;
+    .score-hero-left {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      gap: 12px !important;
+    }
+
+    .score-hero-right {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 10px !important;
+      flex-shrink: 0 !important;
     }
 
     .score-badge-pill {
@@ -3249,6 +3255,7 @@
       gap: 4px !important;
       box-shadow: 0 0 15px rgba(0, 230, 246, 0.1) !important;
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      white-space: nowrap !important;
     }
 
     .rank-level-badge:hover {
@@ -3256,14 +3263,6 @@
       border-color: rgba(0, 230, 246, 0.5) !important;
       box-shadow: 0 0 20px rgba(0, 230, 246, 0.25) !important;
       transform: translateY(-1px);
-    }
-
-    .score-hero-body {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-      width: 100%;
     }
 
     .marks-hero-container {
@@ -3542,6 +3541,9 @@
     .section-score-box.box-advanced .section-card-title { color: rgba(245, 166, 35, 0.85); }
 
     .timeline-wrapper {
+      border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+      padding-top: 1.25rem !important;
+      margin-top: 1.25rem !important;
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -3675,6 +3677,14 @@
         align-items: flex-start !important;
         gap: 1.5rem !important;
       }
+      .score-hero-display {
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+      }
+      .score-hero-left {
+        align-items: center !important;
+      }
       .sections-breakdown-grid {
         grid-template-columns: repeat(2, 1fr) !important;
         width: 100% !important;
@@ -3685,7 +3695,9 @@
       .sections-breakdown-grid {
         grid-template-columns: 1fr !important;
       }
-    }\n\n    /* ==========================================================================
+    }
+
+    /* ==========================================================================
 
        WORLD-CLASS REDESIGN FOR CURRICULUM DAY CARDS (TOP 3 GLOBAL UI/UX STANDARD)
 
@@ -5148,7 +5160,7 @@
 
         <!-- Premium Score Card and Segmented Milestone Timeline Dashboard -->
 
-                                <!-- Premium Score Card Dashboard -->
+                                        <!-- Combined Premium Score Card & Timeline Dashboard -->
         <div class="glass-card header-score-card">
           <!-- Ambient glowing orb in the card background -->
           <div class="score-card-bg-glow"></div>
@@ -5156,19 +5168,16 @@
           <!-- Top Row: Overall Marks Hero + 4 Section Breakdown Columns -->
           <div class="score-hero-row">
 
-            <!-- Left Panel: Large Bold Overall Score + Holographic Donut Gauge -->
+            <!-- Left Panel: Large Bold Overall Score + Holographic Donut Gauge (Vertically Aligned Badge and Circle) -->
             <div class="score-hero-display">
-              <!-- Header info: Badge & Label -->
-              <div class="score-hero-header">
+              
+              <!-- Left Column: Title and Trophy Score Stack -->
+              <div class="score-hero-left">
                 <div class="score-badge-pill">
                   <span class="pulse-dot"></span>
                   <span class="badge-label">TOTAL PERFORMANCE</span>
                 </div>
-                <div id="headerRankLevelText" class="rank-level-badge">Level 1 (Novice) 🌱</div>
-              </div>
-
-              <!-- Content Row: Fraction Stack + Circular Progress -->
-              <div class="score-hero-body">
+                
                 <div class="marks-hero-container">
                   <div class="trophy-icon-wrapper">
                     <svg class="trophy-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -5188,7 +5197,11 @@
                     <div class="hero-score-subtitle">ACCUMULATED SCORE</div>
                   </div>
                 </div>
+              </div>
 
+              <!-- Right Column: Rank level badge + Circle Gauge (Perfect Center Vertical Alignment) -->
+              <div class="score-hero-right">
+                <div id="headerRankLevelText" class="rank-level-badge">Level 1 (Novice) 🌱</div>
                 <!-- Circular Progress Ring (Holographic Circle) -->
                 <div id="percentageCircle" class="hologram-progress-circle">
                   <div class="progress-circle-inner">
@@ -5196,6 +5209,7 @@
                   </div>
                 </div>
               </div>
+
             </div>
 
             <!-- Right Panel: 4 Section Breakdown Grid -->
@@ -5287,13 +5301,8 @@
             </div>
 
           </div>
-        </div>
 
-        <!-- Segmented Milestone Timeline Dashboard -->
-        <div class="glass-card header-timeline-card">
-          <!-- Ambient glowing orb in the card background -->
-          <div class="score-card-bg-glow" style="background: radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, rgba(0, 230, 246, 0.03) 50%, transparent 100%);"></div>
-
+          <!-- Bottom Row: 30-Day Segmented Milestone Timeline Bar -->
           <div class="timeline-wrapper">
             <div class="timeline-header-row">
               <div class="timeline-title-group">
@@ -5329,7 +5338,11 @@
               <div id="tooltipDayMarks">0.0 / 30.0 Marks</div>
             </div>
           </div>
-        </div>\n\n\n\n        <!-- Category Filter Tabs -->
+        </div>
+
+
+
+        <!-- Category Filter Tabs -->
 
         <div class="filter-tabs-container">
 

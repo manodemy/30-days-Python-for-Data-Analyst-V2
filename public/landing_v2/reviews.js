@@ -329,6 +329,26 @@ document.addEventListener('DOMContentLoaded', () => {
   // ─────────────────────────────────────────────────────────────
   //  Form submission
   // ─────────────────────────────────────────────────────────────
+  const withTimeout = (promise, ms, errorMsg) => {
+    let timeoutId;
+    const timeoutPromise = new Promise((_, reject) => {
+      timeoutId = setTimeout(() => reject(new Error(errorMsg)), ms);
+    });
+    return Promise.race([
+      promise.then(
+        (res) => {
+          clearTimeout(timeoutId);
+          return res;
+        },
+        (err) => {
+          clearTimeout(timeoutId);
+          throw err;
+        }
+      ),
+      timeoutPromise
+    ]);
+  };
+
   if (reviewForm) {
     reviewForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -371,14 +391,12 @@ document.addEventListener('DOMContentLoaded', () => {
         let data = null;
         let error = null;
 
-        // 6-second timeout promise
-        const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error("Database connection timed out. Please try again.")), 6000);
-        });
-
         try {
-          const insertPromise = sb.from('reviews').insert(reviewPayload).select();
-          const res = await Promise.race([insertPromise, timeoutPromise]);
+          const res = await withTimeout(
+            sb.from('reviews').insert(reviewPayload).select(),
+            15000,
+            "Database connection timed out. Please try again."
+          );
           data = res.data;
           error = res.error;
         } catch (dbErr) {
@@ -392,8 +410,11 @@ document.addEventListener('DOMContentLoaded', () => {
           delete fallbackPayload.reviewer_role;
           
           try {
-            const retryInsertPromise = sb.from('reviews').insert(fallbackPayload).select();
-            const retryRes = await Promise.race([retryInsertPromise, timeoutPromise]);
+            const retryRes = await withTimeout(
+              sb.from('reviews').insert(fallbackPayload).select(),
+              15000,
+              "Database connection timed out. Please try again."
+            );
             if (retryRes.error) throw retryRes.error;
             data = retryRes.data;
           } catch (retryErr) {

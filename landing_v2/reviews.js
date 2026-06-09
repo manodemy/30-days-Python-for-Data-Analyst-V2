@@ -329,6 +329,26 @@ document.addEventListener('DOMContentLoaded', () => {
   // ─────────────────────────────────────────────────────────────
   //  Form submission
   // ─────────────────────────────────────────────────────────────
+  const withTimeout = (promise, ms, errorMsg) => {
+    let timeoutId;
+    const timeoutPromise = new Promise((_, reject) => {
+      timeoutId = setTimeout(() => reject(new Error(errorMsg)), ms);
+    });
+    return Promise.race([
+      promise.then(
+        (res) => {
+          clearTimeout(timeoutId);
+          return res;
+        },
+        (err) => {
+          clearTimeout(timeoutId);
+          throw err;
+        }
+      ),
+      timeoutPromise
+    ]);
+  };
+
   if (reviewForm) {
     reviewForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -372,7 +392,11 @@ document.addEventListener('DOMContentLoaded', () => {
         let error = null;
 
         try {
-          const res = await sb.from('reviews').insert(reviewPayload).select();
+          const res = await withTimeout(
+            sb.from('reviews').insert(reviewPayload).select(),
+            15000,
+            "Database connection timed out. Please try again."
+          );
           data = res.data;
           error = res.error;
         } catch (dbErr) {
@@ -385,9 +409,17 @@ document.addEventListener('DOMContentLoaded', () => {
           const fallbackPayload = { ...reviewPayload };
           delete fallbackPayload.reviewer_role;
           
-          const retryRes = await sb.from('reviews').insert(fallbackPayload).select();
-          if (retryRes.error) throw retryRes.error;
-          data = retryRes.data;
+          try {
+            const retryRes = await withTimeout(
+              sb.from('reviews').insert(fallbackPayload).select(),
+              15000,
+              "Database connection timed out. Please try again."
+            );
+            if (retryRes.error) throw retryRes.error;
+            data = retryRes.data;
+          } catch (retryErr) {
+            throw retryErr;
+          }
           
           showSleekToast("✨ Review submitted! (Admin: Run SQL migration for roles.)");
         } else if (error) {
@@ -398,12 +430,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
         closeModal();
 
+        // Optimistic UI Fallback: construct review client-side if no data was returned from the DB select
+        const insertedReview = (data && data[0]) ? data[0] : {
+          id: "local-" + Date.now(),
+          reviewer_name: name,
+          reviewer_email: email,
+          reviewer_role: role,
+          rating,
+          comment,
+          pros,
+          cons,
+          recommend,
+          media_urls: [],
+          reviewer_avatar: avatarSource,
+          is_verified: activeUser && activeUser.email?.toLowerCase() === email.toLowerCase(),
+          status: 'approved',
+          created_at: new Date().toISOString(),
+          helpful_count: 0
+        };
+
         // Prepend the new review to the top of the carousel immediately
-        if (data && data[0]) {
-          allReviews.unshift(data[0]);
-          renderCarousel(allReviews);
-          refreshStats();
-        }
+        allReviews.unshift(insertedReview);
+        renderCarousel(allReviews);
+        processAndRenderStats(allReviews);
       } catch (err) {
         console.error("Submission failed:", err);
         alert(`Failed to submit review: ${err.message || err}`);

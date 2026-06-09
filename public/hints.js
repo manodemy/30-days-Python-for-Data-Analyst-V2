@@ -157,9 +157,20 @@
   injectStyles();
   watchChallengeState();
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', injectHintButtons);
+  const isNextJS = !!window.next || !!document.getElementById('__NEXT_DATA__');
+  if (isNextJS) {
+    if (document.readyState === 'complete') {
+      setTimeout(injectHintButtons, 200);
+    } else {
+      window.addEventListener('load', function() {
+        setTimeout(injectHintButtons, 200);
+      });
+    }
   } else {
-    injectHintButtons();
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', injectHintButtons);
+    } else {
+      injectHintButtons();
+    }
   }
 })();

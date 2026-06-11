@@ -156,7 +156,7 @@ export default async function NotebookPage({ params }: { params: { dayId: string
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
-      <link rel="stylesheet" href="/notebook.css?v=29" />
+      <link rel="stylesheet" href="/notebook.css?v=30" />
 
       {/* Render SEO structured metadata */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaJson) }} />
@@ -346,8 +346,8 @@ export default async function NotebookPage({ params }: { params: { dayId: string
       {/* Telemetry and interactive behaviors (served from public/) */}
       <script src="/manodemy-telemetry.js" defer></script>
       <script src="/voice.js" defer></script>
-      <script src="/hints.js?v=29" defer></script>
-      <script src="/notebook.js?v=29" defer></script>
+      <script src="/hints.js?v=30" defer></script>
+      <script src="/notebook.js?v=30" defer></script>
     </>
   );
 }

@@ -750,22 +750,57 @@ tbody tr:hover{background:rgba(0,230,246,.03)}
 
 /* ═══════ MANO HINT SYSTEM ═══════ */
 
-/* Hint Button (in cell-actions bar) */
+/* Hint Button (in cell-actions bar) with premium 3D design and Gemini branding */
 .hint-btn {
-  padding: 3px 10px;
-  background: rgba(245, 158, 11, 0.08);
-  color: var(--gold);
-  font: 600 0.72rem var(--font-h);
-  border: 1px solid rgba(245, 158, 11, 0.2);
-  border-radius: 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 5px 12px;
+  background: linear-gradient(135deg, #0b0f19 0%, #1e1b4b 100%) !important;
+  border: 1px solid rgba(0, 230, 246, 0.35) !important;
+  border-radius: 8px !important;
   cursor: pointer;
-  transition: all 0.2s;
+  position: relative;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 3px 0 rgba(0, 230, 246, 0.35), 
+              0 3px 0 rgba(139, 92, 246, 0.25), 
+              0 6px 12px rgba(0, 0, 0, 0.6) !important;
+  transform: translateY(0);
 }
+
+.hint-btn .gemini-btn-text {
+  font: 700 0.72rem var(--font-h, 'Outfit', sans-serif);
+  background: linear-gradient(90deg, #00E6F6 0%, #a855f7 50%, #f472b6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  letter-spacing: 0.02em;
+}
+
+.hint-btn svg {
+  filter: drop-shadow(0 0 3px rgba(0, 230, 246, 0.5));
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
 .hint-btn:hover {
-  background: rgba(245, 158, 11, 0.15);
-  border-color: rgba(245, 158, 11, 0.4);
-  transform: scale(1.05);
-  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
+  border-color: rgba(0, 230, 246, 0.6) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 5px 0 rgba(0, 230, 246, 0.45), 
+              0 5px 0 rgba(139, 92, 246, 0.35), 
+              0 10px 18px rgba(0, 230, 246, 0.15) !important;
+}
+
+.hint-btn:hover svg {
+  transform: scale(1.15) rotate(5deg);
+}
+
+.hint-btn:active {
+  transform: translateY(3px) !important;
+  box-shadow: 0 0px 0 transparent, 
+              0 2px 4px rgba(0, 0, 0, 0.4) !important;
 }
 
 /* Hint Popup (sibling after cell — flow-based, never moves) */
@@ -2490,8 +2525,7 @@ body.modal-open nav {
   transform: scale(0.96);
 }
 
-.focus-clear-btn, 
-.focus-hint-btn {
+.focus-clear-btn {
   flex: 1;
   min-height: 40px;
   background: rgba(255, 255, 255, 0.04);
@@ -2505,11 +2539,65 @@ body.modal-open nav {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.2s;
 }
 
-.focus-clear-btn:active, 
-.focus-hint-btn:active {
+.focus-clear-btn:active {
   background: rgba(255, 255, 255, 0.08);
+  transform: scale(0.96);
+}
+
+.focus-hint-btn {
+  flex: 1;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #0b0f19 0%, #1e1b4b 100%) !important;
+  border: 1px solid rgba(0, 230, 246, 0.35) !important;
+  border-radius: 8px !important;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 3px 0 rgba(0, 230, 246, 0.35), 
+              0 3px 0 rgba(139, 92, 246, 0.25), 
+              0 6px 12px rgba(0, 0, 0, 0.6) !important;
+  transform: translateY(0);
+}
+
+.focus-hint-btn .gemini-btn-text {
+  font: 700 0.75rem var(--font-h, 'Outfit', sans-serif);
+  background: linear-gradient(90deg, #00E6F6 0%, #a855f7 50%, #f472b6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  letter-spacing: 0.02em;
+}
+
+.focus-hint-btn svg {
+  filter: drop-shadow(0 0 3px rgba(0, 230, 246, 0.5));
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.focus-hint-btn:hover {
+  border-color: rgba(0, 230, 246, 0.6) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 5px 0 rgba(0, 230, 246, 0.45), 
+              0 5px 0 rgba(139, 92, 246, 0.35), 
+              0 10px 18px rgba(0, 230, 246, 0.15) !important;
+}
+
+.focus-hint-btn:hover svg {
+  transform: scale(1.15) rotate(5deg);
+}
+
+.focus-hint-btn:active {
+  transform: translateY(3px) !important;
+  box-shadow: 0 0px 0 transparent, 
+              0 2px 4px rgba(0, 0, 0, 0.4) !important;
 }
 
 /* Hide background layout elements when Focus Mode is open */

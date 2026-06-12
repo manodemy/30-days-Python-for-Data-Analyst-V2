@@ -5686,9 +5686,15 @@
 
   <footer class="footer">
 
-    <div class="container">
+    <div class="container" style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
 
-      <p class="footer-text">&copy; 2026 Manodemy. Built for serious Data Analysts, Data Engineers, and Data Scientists. Start Learning by actually coding.</p>
+      <p class="footer-text" style="margin: 0;">&copy; 2026 Manodemy. Built for serious Data Analysts, Data Engineers, and Data Scientists. Start Learning by actually coding.</p>
+      
+      <div class="footer-links" style="display: flex; gap: 16px; font-size: 12px; margin-top: 4px;">
+        <a href="/privacy" style="color: rgba(255,255,255,0.4); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='rgba(255,255,255,0.8)'" onmouseout="this.style.color='rgba(255,255,255,0.4)'">Privacy &amp; Terms</a>
+        <a href="/refund-policy" style="color: rgba(255,255,255,0.4); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='rgba(255,255,255,0.8)'" onmouseout="this.style.color='rgba(255,255,255,0.4)'">Refund Policy</a>
+        <a href="/referral-earnings" style="color: var(--accent, #00E6F6); text-decoration: none; transition: opacity 0.2s; font-weight: 600;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">Referral Program</a>
+      </div>
 
     </div>
 

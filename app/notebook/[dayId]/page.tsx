@@ -295,6 +295,15 @@ export default async function NotebookPage({ params }: { params: { dayId: string
             <span className="profile-card__progress-pct" id="profileProgressPct">0%</span>
           </div>
         </div>
+
+        <div className="profile-card__links" style={{ display: 'flex', flexDirection: 'column', gap: '10px', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '14px', marginBottom: '14px' }}>
+          <a href="/home.html" style={{ color: 'rgba(255,255,255,0.8)', textDecoration: 'none', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px', transition: 'color 0.2s' }}>
+            <span>🏠</span> Back to Dashboard
+          </a>
+          <a href="/referral-earnings" style={{ color: '#00E6F6', textDecoration: 'none', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, transition: 'opacity 0.2s' }}>
+            <span>💰</span> Referral Program
+          </a>
+        </div>
         
         <button className="profile-card__signout" id="signOutBtn">Sign Out</button>
       </div>

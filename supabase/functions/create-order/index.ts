@@ -33,7 +33,7 @@ serve(async (req) => {
     )
     if (authError || !user) throw new Error('Unauthorized')
 
-    const { gateway, currency, coupon_code, final_amount } = await req.json()
+    const { gateway, currency, coupon_code, final_amount, referral_code } = await req.json()
 
     // ── Dynamic Pricing from settings table ──
     const { data: pricingSetting } = await supabase.from('settings').select('value').eq('key', 'pricing').single()
@@ -84,6 +84,39 @@ serve(async (req) => {
       }
     }
 
+    // ── Referral Buyer Discount ──
+    // If a valid referral code is present, apply a discount to the buyer's price.
+    // Commission is NOT credited here — that happens in verify-payment / payment-webhook.
+    let validatedReferralCode: string | null = null
+    if (referral_code && typeof referral_code === 'string' && referral_code.trim().length > 0) {
+      const code = referral_code.trim().toUpperCase()
+      const { data: refCodeRow } = await supabase
+        .from('referral_codes')
+        .select('user_id, is_active')
+        .eq('code', code)
+        .single()
+
+      if (refCodeRow && refCodeRow.is_active && refCodeRow.user_id !== user.id) {
+        // Code is valid and not a self-referral — apply buyer discount
+        const { data: refConfig } = await supabase
+          .from('settings')
+          .select('value')
+          .eq('key', 'referral_config')
+          .single()
+
+        const cfg = refConfig?.value || {}
+        if (cfg.program_active !== false) {
+          const discount = currencyCode === 'INR'
+            ? (cfg.discount_inr || 10000)   // ₹100 in paise
+            : (cfg.discount_usd || 100)      // $1 in cents
+
+          amount = Math.max(100, amount - discount) // floor at 1 rupee/cent
+          validatedReferralCode = code
+          console.log(`[Order] Referral discount applied: -${discount} ${currencyCode} for code ${code}`)
+        }
+      }
+    }
+
     // Check if already enrolled
     const { data: existing } = await supabase
       .from('enrollments')
@@ -119,7 +152,8 @@ serve(async (req) => {
         gateway,
         status: 'pending',
         coupon_code: coupon_code ? coupon_code.toUpperCase() : null,  // ← save applied coupon code
-        coupon_discount_inr                                             // ← save discount amount in INR
+        coupon_discount_inr,                                            // ← save discount amount in INR
+        referral_code: validatedReferralCode                            // ← save referral code for commission
       })
       .select()
       .single()

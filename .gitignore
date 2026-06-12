@@ -39,3 +39,9 @@ scratch/
 # Node / Next.js
 node_modules/
 .next/
+
+# Environment Variables
+.env
+.env.*
+.env.local
+

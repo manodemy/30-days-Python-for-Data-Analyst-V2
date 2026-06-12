@@ -6,7 +6,84 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
+  /* ═══ REFERRAL LINK CAPTURE ═══ */
+  const urlParams = new URLSearchParams(window.location.search);
+  const refParam = urlParams.get('ref');
+  
+  if (refParam && refParam.trim().length === 8) {
+    const cleanRef = refParam.trim().toUpperCase();
+    localStorage.setItem('manodemy_ref', cleanRef);
+    localStorage.setItem('manodemy_ref_time', String(Date.now()));
+    
+    // Clean URL query parameters to avoid ugly urls
+    const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+    window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+  }
 
+  // Display referral banner if code is active (valid for 30 days)
+  const savedRef = localStorage.getItem('manodemy_ref');
+  const savedRefTime = localStorage.getItem('manodemy_ref_time');
+  const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
+
+  if (savedRef && savedRefTime && (Date.now() - parseInt(savedRefTime) < thirtyDaysMs)) {
+    const banner = document.createElement('div');
+    banner.id = 'referralBanner';
+    banner.style.cssText = `
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.25), rgba(59, 130, 246, 0.25));
+      border-bottom: 1px solid rgba(0, 230, 246, 0.4);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      color: #00E6F6;
+      text-align: center;
+      padding: 12px 24px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      z-index: 9999;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      animation: slideDown 0.4s ease-out;
+      font-family: 'Outfit', sans-serif;
+    `;
+    banner.innerHTML = `
+      <span>🎉 <strong>Referral Applied:</strong> You will get an extra discount (₹100 / $1) at checkout!</span>
+      <button id="closeReferralBanner" style="
+        background: none;
+        border: none;
+        color: rgba(255,255,255,0.7);
+        font-size: 1.3rem;
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
+        transition: color 0.2s;
+      " onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">&times;</button>
+    `;
+    
+    // Add slideDown animation keyframes dynamically if not present
+    if (!document.getElementById('refAnimationStyles')) {
+      const style = document.createElement('style');
+      style.id = 'refAnimationStyles';
+      style.innerHTML = `
+        @keyframes slideDown {
+          from { transform: translateY(-100%); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+    
+    document.body.insertBefore(banner, document.body.firstChild);
+    
+    document.getElementById('closeReferralBanner').addEventListener('click', () => {
+      banner.style.transition = 'all 0.3s ease';
+      banner.style.height = '0';
+      banner.style.padding = '0';
+      banner.style.opacity = '0';
+      setTimeout(() => banner.remove(), 300);
+    });
+  }
 
   /* ═══ NAV SCROLL ═══ */
 
@@ -1268,7 +1345,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
           coupon_code: appliedCouponCode || coupon || undefined,
 
-          final_amount: appliedCouponAmount || undefined
+          final_amount: appliedCouponAmount || undefined,
+
+          referral_code: localStorage.getItem('manodemy_ref') || undefined
 
         })
 

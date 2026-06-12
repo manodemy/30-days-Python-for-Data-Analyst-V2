@@ -21,6 +21,214 @@ async function generateHmacSha256(secret: string, data: string) {
     .join('');
 }
 
+// ─────────────────────────────────────────────────────────────
+// Referral Commission Logic
+// Called after enrollment is confirmed. Idempotent via UNIQUE(order_id).
+// ─────────────────────────────────────────────────────────────
+async function processReferralCommission(supabase: any, order: any, buyerUserId: string) {
+  try {
+    if (!order.referral_code) return;
+
+    // IDEMPOTENCY: check if earning already exists for this order
+    const { data: existing } = await supabase
+      .from('referral_earnings')
+      .select('id')
+      .eq('order_id', order.id)
+      .single();
+    if (existing) {
+      console.log(`[Referral] Earning already exists for order ${order.id} — skipping`);
+      return;
+    }
+
+    // Look up referrer
+    const { data: refCode } = await supabase
+      .from('referral_codes')
+      .select('user_id')
+      .eq('code', order.referral_code)
+      .eq('is_active', true)
+      .single();
+    if (!refCode) return;
+
+    const referrerUserId = refCode.user_id;
+
+    // Anti-fraud: self-referral
+    if (referrerUserId === buyerUserId) return;
+
+    // Get both profiles
+    const [{ data: referrerProfile }, { data: buyerProfile }] = await Promise.all([
+      supabase.from('profiles').select('country, referral_banned').eq('id', referrerUserId).single(),
+      supabase.from('profiles').select('country').eq('id', buyerUserId).single()
+    ]);
+
+    if (referrerProfile?.referral_banned) return;
+
+    // Get config
+    const { data: configRow } = await supabase.from('settings').select('value').eq('key', 'referral_config').single();
+    const cfg = configRow?.value || {};
+    if (cfg.program_active === false) return;
+
+    // Velocity check: max referrals per day
+    const maxPerDay = cfg.max_referrals_per_day || 10;
+    const dayAgo = new Date(Date.now() - 86400000).toISOString();
+    const { count: todayCount } = await supabase
+      .from('referral_earnings')
+      .select('id', { count: 'exact', head: true })
+      .eq('referrer_user_id', referrerUserId)
+      .gte('created_at', dayAgo);
+    if ((todayCount || 0) >= maxPerDay) {
+      console.log(`[Referral] Velocity limit reached for ${referrerUserId}`);
+      return;
+    }
+
+    const buyerCountry = buyerProfile?.country || 'US';
+    const referrerCountry = referrerProfile?.country || 'US';
+    const isBuyerIndian = buyerCountry === 'IN';
+    const isReferrerIndian = referrerCountry === 'IN';
+
+    const originalAmount = isBuyerIndian ? (cfg.reward_inr || 20000) : (cfg.reward_usd || 200);
+    const originalCurrency = isBuyerIndian ? 'INR' : 'USD';
+    const payoutCurrency = isReferrerIndian ? 'INR' : 'USD';
+    const isCrossBorder = originalCurrency !== payoutCurrency;
+
+    let creditedAmount = originalAmount;
+    let exchangeRate: number | null = null;
+    let exchangeRateSource: string | null = null;
+    let exchangeRateTimestamp: string | null = null;
+
+    if (isCrossBorder) {
+      // Try cached rate first
+      const { data: cached } = await supabase
+        .from('exchange_rate_cache')
+        .select('rate, source, fetched_at')
+        .eq('base_currency', 'USD')
+        .eq('target_currency', 'INR')
+        .gt('expires_at', new Date().toISOString())
+        .single();
+
+      if (cached) {
+        exchangeRate = cached.rate;
+        exchangeRateSource = cached.source;
+        exchangeRateTimestamp = cached.fetched_at;
+      } else {
+        try {
+          const rateRes = await fetch('https://api.exchangerate-api.com/v4/latest/USD', { signal: AbortSignal.timeout(5000) });
+          const rateData = await rateRes.json();
+          exchangeRate = rateData.rates?.INR || 83.50;
+          exchangeRateSource = 'https://api.exchangerate-api.com/v4/latest/USD';
+          exchangeRateTimestamp = new Date().toISOString();
+          const cacheMinutes = cfg.exchange_rate_cache_minutes || 60;
+          await supabase.from('exchange_rate_cache').upsert({
+            base_currency: 'USD', target_currency: 'INR',
+            rate: exchangeRate, source: exchangeRateSource,
+            fetched_at: exchangeRateTimestamp,
+            expires_at: new Date(Date.now() + cacheMinutes * 60000).toISOString()
+          }, { onConflict: 'base_currency,target_currency' });
+        } catch {
+          // Fallback: use last known rate
+          const { data: lastKnown } = await supabase
+            .from('exchange_rate_cache').select('rate, source, fetched_at')
+            .eq('base_currency', 'USD').eq('target_currency', 'INR')
+            .order('fetched_at', { ascending: false }).limit(1).single();
+          exchangeRate = lastKnown?.rate || 83.50;
+          exchangeRateSource = 'fallback';
+          exchangeRateTimestamp = lastKnown?.fetched_at || new Date().toISOString();
+        }
+      }
+
+      if (originalCurrency === 'USD' && payoutCurrency === 'INR') {
+        creditedAmount = Math.round((originalAmount / 100) * exchangeRate! * 100);
+      } else if (originalCurrency === 'INR' && payoutCurrency === 'USD') {
+        creditedAmount = Math.round((originalAmount / 100) / exchangeRate! * 100);
+      }
+    }
+
+    // Yearly cap check (Indian FY: April–March; cap checked against created_at)
+    const now = new Date();
+    const fyStart = now.getMonth() >= 3
+      ? new Date(now.getFullYear(), 3, 1)
+      : new Date(now.getFullYear() - 1, 3, 1);
+
+    const { data: fyEarnings } = await supabase
+      .from('referral_earnings')
+      .select('credited_amount')
+      .eq('referrer_user_id', referrerUserId)
+      .in('status', ['earned', 'confirmed', 'paid'])
+      .gte('created_at', fyStart.toISOString());
+
+    const fyTotal = (fyEarnings || []).reduce((s: number, e: any) => s + e.credited_amount, 0);
+    const yearlyCap = isReferrerIndian ? (cfg.yearly_cap_inr || 1000000) : (cfg.yearly_cap_usd || 12000);
+
+    if (fyTotal + creditedAmount > yearlyCap) {
+      console.log(`[Referral] Cap exceeded for ${referrerUserId}: FY total ${fyTotal} + ${creditedAmount} > ${yearlyCap}`);
+      return;
+    }
+
+    // Create the earning
+    const coolingDays = cfg.cooling_period_days || 7;
+    const coolingEndsAt = new Date(Date.now() + coolingDays * 86400000).toISOString();
+
+    const { error: insertError } = await supabase.from('referral_earnings').insert({
+      referrer_user_id: referrerUserId,
+      referred_user_id: buyerUserId,
+      order_id: order.id,
+      buyer_country: buyerCountry,
+      referrer_country: referrerCountry,
+      is_cross_border: isCrossBorder,
+      original_amount: originalAmount,
+      original_currency: originalCurrency,
+      credited_amount: creditedAmount,
+      credited_currency: payoutCurrency,
+      exchange_rate: exchangeRate,
+      exchange_rate_source: exchangeRateSource,
+      exchange_rate_timestamp: exchangeRateTimestamp,
+      status: 'earned',
+      cooling_ends_at: coolingEndsAt
+    });
+
+    // 23505 = unique_violation: another path already created the earning — that's fine
+    if (insertError && insertError.code === '23505') {
+      console.log(`[Referral] Race condition: earning already created for order ${order.id}`);
+      return;
+    }
+    if (insertError) {
+      console.error('[Referral] Insert error:', insertError);
+      return;
+    }
+
+    // Increment purchase count on referral code
+    await supabase.rpc('increment_referral_purchases', { p_code: order.referral_code });
+
+    // Log purchase event
+    await supabase.from('referral_tracking').insert({
+      referrer_user_id: referrerUserId,
+      referral_code: order.referral_code,
+      referred_user_id: buyerUserId,
+      event_type: 'purchase',
+      order_id: order.id,
+      metadata: { is_cross_border: isCrossBorder, exchange_rate: exchangeRate }
+    });
+
+    // Notify referrer
+    const sym = payoutCurrency === 'INR' ? '₹' : '$';
+    const decimals = payoutCurrency === 'INR' ? 0 : 2;
+    const formattedAmount = `${sym}${(creditedAmount / 100).toFixed(decimals)}`;
+    const crossNote = isCrossBorder
+      ? ` (converted from ${originalCurrency === 'USD' ? `$${(originalAmount/100).toFixed(2)}` : `₹${(originalAmount/100).toFixed(0)}`})`
+      : '';
+
+    await supabase.from('notifications').insert({
+      type: 'referral',
+      title: '🎉 Referral Earned!',
+      body: `You earned ${formattedAmount}${crossNote} from a referral! Withdrawable in ${coolingDays} days.`,
+      metadata: { referrer_user_id: referrerUserId }
+    });
+
+    console.log(`[Referral] Commission created: ${payoutCurrency} ${creditedAmount} for user ${referrerUserId}`);
+  } catch (err) {
+    console.error('[Referral] processReferralCommission error:', err);
+  }
+}
+
 serve(async (req) => {
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL')!,
@@ -96,6 +304,9 @@ serve(async (req) => {
             payment_id: paymentRecord?.id,
             enrolled_at: new Date().toISOString()
           }, { onConflict: 'user_id,course_id' })
+
+          // Trigger Referral Commission (idempotent)
+          await processReferralCommission(supabase, order, order.user_id)
         }
       }
 
@@ -181,6 +392,9 @@ serve(async (req) => {
             payment_id: paymentRecord?.id,
             enrolled_at: new Date().toISOString()
           }, { onConflict: 'user_id,course_id' })
+
+          // Trigger Referral Commission (idempotent)
+          await processReferralCommission(supabase, order, order.user_id)
         }
       }
 

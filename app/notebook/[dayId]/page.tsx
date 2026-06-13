@@ -32,29 +32,35 @@ export async function generateMetadata({ params }: { params: { dayId: string } }
 
 export default async function NotebookPage({ params }: { params: { dayId: string } }) {
   const cleanDayId = params.dayId.endsWith('.html') ? params.dayId.replace('.html', '') : params.dayId;
+
+  // ── Input Validation: block path traversal & invalid dayId formats ──────────
+  // Only allow exact format: day01 through day30
+  const dayIdPattern = /^day(0[1-9]|[12][0-9]|30)$/;
+  if (!dayIdPattern.test(cleanDayId)) {
+    redirect('/landing_v2/index.html');
+  }
+
   const dayNum = parseInt(cleanDayId.replace('day', ''), 10);
   const formattedDay = dayNum.toString().padStart(2, '0');
 
-  // 1. Server-Side Auth & Enrollment Guard for Protected Days (3-30)
+  // ── Server-Side Auth & Enrollment Guard for Protected Days (3–30) ───────────
+  // NOTE: middleware.ts already blocks unauthenticated users at the edge.
+  // This is a second, independent layer — enrollment requires a DB query.
   if (dayNum >= 3 && dayNum <= 30) {
     const supabase = getSupabaseServerClient();
-    const { data: { user } } = await supabase.auth.getUser();
 
-    if (!user) {
+    // getUser() validates JWT with Supabase Auth servers (not just cookie read)
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !user) {
       redirect(`/landing_v2/index.html?redirect=${encodeURIComponent(`/notebook/${cleanDayId}`)}`);
     }
 
-    // Call the check_enrollment database function in the user context
-    const { data: enrolled } = await supabase.rpc('check_enrollment', {
-      p_course_id: 'python-30day'
-    });
-
-    // Check if user is an admin
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
+    // Run enrollment check + admin role check in parallel for performance
+    const [{ data: enrolled }, { data: profile }] = await Promise.all([
+      supabase.rpc('check_enrollment', { p_course_id: 'python-30day' }),
+      supabase.from('profiles').select('role').eq('id', user!.id).single(),
+    ]);
 
     const isAdmin = profile?.role === 'admin';
 
@@ -62,6 +68,7 @@ export default async function NotebookPage({ params }: { params: { dayId: string
       redirect('/landing_v2/index.html#pricing?locked=true');
     }
   }
+
 
   // 2. Fetch Notebook Content (HTML + Metadata)
   const supabase = getSupabaseServerClient();

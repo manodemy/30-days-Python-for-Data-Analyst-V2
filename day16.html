@@ -47,12 +47,9 @@
       }
       
       const plan = session.user.user_metadata?.plan;
-      const isEnrolledLocal = localStorage.getItem('manodemy_enrolled') === 'true';
-      
-      if (plan === 'pro' || isEnrolledLocal) {
-        removePreload();
-        return;
-      }
+      // Security hardened: localStorage and user_metadata are client-controlled
+      // and cannot be trusted. Access is ALWAYS verified via server-side RPC.
+      // The check_enrollment() RPC validates auth.uid() on the Supabase server.
       
       // Fallback: verify enrollment server-side via Supabase RPC
       try {

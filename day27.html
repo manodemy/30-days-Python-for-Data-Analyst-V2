@@ -32,7 +32,7 @@
 
     try {
       if (typeof window.supabase === 'undefined') {
-        window.location.href = '/?reason=sdk_blocked';
+        window.location.href = 'index.html?reason=sdk_blocked';
         return;
       }
       const SUPA_URL = 'https://erqoyvbuhmkyvcqgwcbz.supabase.co';
@@ -42,14 +42,17 @@
       const { data: { session }, error } = await sb.auth.getSession();
       
       if (error || !session) {
-        window.location.href = `/?redirect=${encodeURIComponent(currentPath)}`;
+        window.location.href = `index.html?redirect=${encodeURIComponent(currentPath)}`;
         return;
       }
       
       const plan = session.user.user_metadata?.plan;
-      // Security hardened: localStorage and user_metadata are client-controlled
-      // and cannot be trusted. Access is ALWAYS verified via server-side RPC.
-      // The check_enrollment() RPC validates auth.uid() on the Supabase server.
+      const isEnrolledLocal = localStorage.getItem('manodemy_enrolled') === 'true';
+      
+      if (plan === 'pro' || isEnrolledLocal) {
+        removePreload();
+        return;
+      }
       
       // Fallback: verify enrollment server-side via Supabase RPC
       try {
@@ -63,17 +66,17 @@
         // RPC failed — don't grant access
       }
       
-      window.location.href = `/#pricing?locked=true`;
+      window.location.href = `index.html#pricing?locked=true`;
       
     } catch (err) {
-      window.location.href = `/`;
+      window.location.href = `index.html`;
     }
   });
 </script>
 <!-- Non-render-blocking fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
-<link rel="stylesheet" href="/notebook.css?v=3.0">
+<link rel="stylesheet" href="notebook.css">
 <!-- PWA Web App Manifest and Mobile Capabilities -->
 <link rel="manifest" href="/manifest.json">
 <link rel="icon" type="image/png" sizes="192x192" href="/icon-192x192.png">
@@ -102,16 +105,9 @@
 
     <!-- Score Card -->
     <div class="nav-score-card">
-      <div class="score-grid">
-        <div class="score-col">
-          <span class="score-label">Solved</span>
-          <span class="score-val"><span id="scoreSolved" class="score-highlight">0</span><span class="score-slash">/</span><span id="scoreTotal">0</span></span>
-        </div>
-        <div class="score-divider"></div>
-        <div class="score-col">
-          <span class="score-label">Marks</span>
-          <span class="score-val"><span id="scoreXPEarned" class="score-highlight">0.0</span><span class="score-slash">/</span><span id="scoreMaxXP">0.0</span></span>
-        </div>
+      <div class="score-info">
+        <span class="score-label">Solved</span>
+        <span class="score-values"><span id="scoreSolved" class="score-highlight">0</span> / <span id="scoreTotal">0</span></span>
       </div>
       <div class="score-track"><div class="score-fill" id="scoreProgress" style="width:0%"></div></div>
     </div>
@@ -119,47 +115,47 @@
 
   <div class="nav-center has-dropdown">
     <div class="nav-center-flex">
-      <a href="/day26.html" class="nav-icon-btn prev-btn" aria-label="Previous Day" title="Previous Day"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></a>
+      <a href="day26.html" class="nav-icon-btn prev-btn" aria-label="Previous Day" title="Previous Day"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></a>
       <button class="nav-dropdown-btn" id="dayDropdownBtn">
         <span class="day-badge">Day 27</span>
         <span class="day-title">Pandas Merging</span>
         <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
       </button>
-      <a href="/day28.html" class="nav-icon-btn next-btn" aria-label="Next Day" title="Next Day"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></a>
+      <a href="day28.html" class="nav-icon-btn next-btn" aria-label="Next Day" title="Next Day"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></a>
     </div>
     <div class="nav-dropdown-menu" id="dayDropdownMenu">
       <div class="dropdown-header">Jump to another day</div>
       <div class="dropdown-scroll">
-        <a href="/day01.html" class="dropdown-item "><span class="day-num">Day 01</span> <span class="day-em">🔢</span> Data Types and Memory</a>
-<a href="/day02.html" class="dropdown-item "><span class="day-num">Day 02</span> <span class="day-em">➕</span> Operators and Expressions</a>
-<a href="/day03.html" class="dropdown-item "><span class="day-num">Day 03</span> <span class="day-em">📝</span> Strings</a>
-<a href="/day04.html" class="dropdown-item "><span class="day-num">Day 04</span> <span class="day-em">📋</span> Lists</a>
-<a href="/day05.html" class="dropdown-item "><span class="day-num">Day 05</span> <span class="day-em">📦</span> Tuples</a>
-<a href="/day06.html" class="dropdown-item "><span class="day-num">Day 06</span> <span class="day-em">⭕</span> Sets</a>
-<a href="/day07.html" class="dropdown-item "><span class="day-num">Day 07</span> <span class="day-em">🗂️</span> Dictionaries</a>
-<a href="/day08.html" class="dropdown-item "><span class="day-num">Day 08</span> <span class="day-em">🔀</span> Conditionals</a>
-<a href="/day09.html" class="dropdown-item "><span class="day-num">Day 09</span> <span class="day-em">🔄</span> Loops</a>
-<a href="/day10.html" class="dropdown-item "><span class="day-num">Day 10</span> <span class="day-em">⚙️</span> Functions</a>
-<a href="/day11.html" class="dropdown-item "><span class="day-num">Day 11</span> <span class="day-em">🔧</span> Modules</a>
-<a href="/day12.html" class="dropdown-item "><span class="day-num">Day 12</span> <span class="day-em">🧮</span> Comprehensions</a>
-<a href="/day13.html" class="dropdown-item "><span class="day-num">Day 13</span> <span class="day-em">λ</span> Lambda Functions</a>
-<a href="/day14.html" class="dropdown-item "><span class="day-num">Day 14</span> <span class="day-em">⚠️</span> Exceptions</a>
-<a href="/day15.html" class="dropdown-item "><span class="day-num">Day 15</span> <span class="day-em">📂</span> File Handling</a>
-<a href="/day16.html" class="dropdown-item "><span class="day-num">Day 16</span> <span class="day-em">🧩</span> OOP Basics</a>
-<a href="/day17.html" class="dropdown-item "><span class="day-num">Day 17</span> <span class="day-em">🏗️</span> OOP Advanced</a>
-<a href="/day18.html" class="dropdown-item "><span class="day-num">Day 18</span> <span class="day-em">🔍</span> Regex</a>
-<a href="/day19.html" class="dropdown-item "><span class="day-num">Day 19</span> <span class="day-em">⚡</span> Generators and Iterators</a>
-<a href="/day20.html" class="dropdown-item "><span class="day-num">Day 20</span> <span class="day-em">🏆</span> Capstone Project</a>
-<a href="/day21.html" class="dropdown-item "><span class="day-num">Day 21</span> <span class="day-em">📊</span> NumPy Fundamentals</a>
-<a href="/day22.html" class="dropdown-item "><span class="day-num">Day 22</span> <span class="day-em">📈</span> NumPy Advanced</a>
-<a href="/day23.html" class="dropdown-item "><span class="day-num">Day 23</span> <span class="day-em">🐼</span> Pandas Introduction</a>
-<a href="/day24.html" class="dropdown-item "><span class="day-num">Day 24</span> <span class="day-em">🎯</span> Pandas Selection</a>
-<a href="/day25.html" class="dropdown-item "><span class="day-num">Day 25</span> <span class="day-em">🧹</span> Pandas Cleaning</a>
-<a href="/day26.html" class="dropdown-item "><span class="day-num">Day 26</span> <span class="day-em">🗃️</span> Pandas GroupBy</a>
-<a href="/day27.html" class="dropdown-item active"><span class="day-num">Day 27</span> <span class="day-em">🔗</span> Pandas Merging</a>
-<a href="/day28.html" class="dropdown-item "><span class="day-num">Day 28</span> <span class="day-em">📉</span> Pandas Time Series</a>
-<a href="/day29.html" class="dropdown-item "><span class="day-num">Day 29</span> <span class="day-em">🎨</span> Data Visualization</a>
-<a href="/day30.html" class="dropdown-item "><span class="day-num">Day 30</span> <span class="day-em">🔬</span> Phase Analysis & Review</a>
+        <a href="day01.html" class="dropdown-item "><span class="day-num">Day 01</span> <span class="day-em">🔢</span> Data Types and Memory</a>
+<a href="day02.html" class="dropdown-item "><span class="day-num">Day 02</span> <span class="day-em">➕</span> Operators and Expressions</a>
+<a href="day03.html" class="dropdown-item "><span class="day-num">Day 03</span> <span class="day-em">📝</span> Strings</a>
+<a href="day04.html" class="dropdown-item "><span class="day-num">Day 04</span> <span class="day-em">📋</span> Lists</a>
+<a href="day05.html" class="dropdown-item "><span class="day-num">Day 05</span> <span class="day-em">📦</span> Tuples</a>
+<a href="day06.html" class="dropdown-item "><span class="day-num">Day 06</span> <span class="day-em">⭕</span> Sets</a>
+<a href="day07.html" class="dropdown-item "><span class="day-num">Day 07</span> <span class="day-em">🗂️</span> Dictionaries</a>
+<a href="day08.html" class="dropdown-item "><span class="day-num">Day 08</span> <span class="day-em">🔀</span> Conditionals</a>
+<a href="day09.html" class="dropdown-item "><span class="day-num">Day 09</span> <span class="day-em">🔄</span> Loops</a>
+<a href="day10.html" class="dropdown-item "><span class="day-num">Day 10</span> <span class="day-em">⚙️</span> Functions</a>
+<a href="day11.html" class="dropdown-item "><span class="day-num">Day 11</span> <span class="day-em">📦</span> Modules</a>
+<a href="day12.html" class="dropdown-item "><span class="day-num">Day 12</span> <span class="day-em">🧮</span> Comprehensions</a>
+<a href="day13.html" class="dropdown-item "><span class="day-num">Day 13</span> <span class="day-em">λ</span> Lambda Functions</a>
+<a href="day14.html" class="dropdown-item "><span class="day-num">Day 14</span> <span class="day-em">⚠️</span> Exceptions</a>
+<a href="day15.html" class="dropdown-item "><span class="day-num">Day 15</span> <span class="day-em">📂</span> File Handling</a>
+<a href="day16.html" class="dropdown-item "><span class="day-num">Day 16</span> <span class="day-em">🧩</span> OOP Basics</a>
+<a href="day17.html" class="dropdown-item "><span class="day-num">Day 17</span> <span class="day-em">🏗️</span> OOP Advanced</a>
+<a href="day18.html" class="dropdown-item "><span class="day-num">Day 18</span> <span class="day-em">🔍</span> Regex</a>
+<a href="day19.html" class="dropdown-item "><span class="day-num">Day 19</span> <span class="day-em">⚡</span> Generators and Iterators</a>
+<a href="day20.html" class="dropdown-item "><span class="day-num">Day 20</span> <span class="day-em">🏆</span> Capstone Project</a>
+<a href="day21.html" class="dropdown-item "><span class="day-num">Day 21</span> <span class="day-em">📊</span> NumPy Fundamentals</a>
+<a href="day22.html" class="dropdown-item "><span class="day-num">Day 22</span> <span class="day-em">📈</span> NumPy Advanced</a>
+<a href="day23.html" class="dropdown-item "><span class="day-num">Day 23</span> <span class="day-em">🐼</span> Pandas Introduction</a>
+<a href="day24.html" class="dropdown-item "><span class="day-num">Day 24</span> <span class="day-em">🎯</span> Pandas Selection</a>
+<a href="day25.html" class="dropdown-item "><span class="day-num">Day 25</span> <span class="day-em">🧹</span> Pandas Cleaning</a>
+<a href="day26.html" class="dropdown-item "><span class="day-num">Day 26</span> <span class="day-em">🗃️</span> Pandas GroupBy</a>
+<a href="day27.html" class="dropdown-item active"><span class="day-num">Day 27</span> <span class="day-em">🔗</span> Pandas Merging</a>
+<a href="day28.html" class="dropdown-item "><span class="day-num">Day 28</span> <span class="day-em">📉</span> Pandas Time Series</a>
+<a href="day29.html" class="dropdown-item "><span class="day-num">Day 29</span> <span class="day-em">🎨</span> Data Visualization</a>
+<a href="day30.html" class="dropdown-item "><span class="day-num">Day 30</span> <span class="day-em">🔬</span> Phase Analysis & Review</a>
 
       </div>
     </div>
@@ -168,7 +164,7 @@
   <div class="nav-zone--right">
     <!-- App Navigation -->
     <div class="nav-controls">
-      <a href="/home.html" class="nav-icon-btn scorecard-btn" title="Back to Dashboard" aria-label="Score Card">
+      <a href="home.html" class="nav-icon-btn scorecard-btn" title="Back to Dashboard" aria-label="Score Card">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
         Score Card
       </a>
@@ -684,7 +680,7 @@ print(&quot;\nInner Join on Index:\n&quot;, inner_joined)</textarea>
 <p>• [ ] I can stack DataFrames vertically using <code>pd.concat()</code>.</p>
 <p>• [ ] I understand the difference between Merge and Concat.</p>
 <div class="next-day-wrapper" style="margin-top: 3.5rem; margin-bottom: 2rem; text-align: center;">
-                <a href="/day28.html" class="cta-btn cta-cyan" style="display: inline-flex; width: 100%; max-width: 450px; justify-content: center; font-size: 1.15rem; padding: 1.1rem; box-shadow: 0 4px 15px rgba(0, 230, 246, 0.3);">🚀 Continue to Day 28 - Pandas Series & Time Series Analysis</a>
+                <a href="day28.html" class="cta-btn cta-cyan" style="display: inline-flex; width: 100%; max-width: 450px; justify-content: center; font-size: 1.15rem; padding: 1.1rem; box-shadow: 0 4px 15px rgba(0, 230, 246, 0.3);">🚀 Continue to Day 28 - Pandas Series & Time Series Analysis</a>
             </div>
 </div>
   </main>
@@ -740,10 +736,9 @@ print(&quot;\nInner Join on Index:\n&quot;, inner_joined)</textarea>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.js"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/anyword-hint.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
-<script defer src="/notebook.js?v=3.1"></script>
-<script src="/voice.js" defer></script>
-
-<script src="/hints.js" defer></script>
+<script defer src="notebook.js?v=2.1"></script>
+<script src="voice.js" defer></script>
+<script src="hints.js" defer></script>
 
 <!-- PWA Service Worker Registration -->
 <script>

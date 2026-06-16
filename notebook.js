@@ -411,6 +411,10 @@ function initializeNotebook() {
       const hint = cellEl.querySelector('.keyboard-hint');
       if (hint) hint.classList.add('show');
     }
+    // Auto-clear helper placeholder comment
+    if (instance.getValue().trim() === '# Write your answer here') {
+      instance.setValue('');
+    }
   });
 
   cm.on('blur', function (instance) {

@@ -6393,3 +6393,351 @@ button, a, input, select, .accordion-header {
   letter-spacing: 0.05em;
 }
 
+/* ══════ COURSE PILLS ══════ */
+.pill-sql {
+  background: rgba(59, 130, 246, 0.12) !important;
+  color: #93C5FD !important;
+  border: 1px solid rgba(59, 130, 246, 0.3) !important;
+}
+.pill-excel {
+  background: rgba(16, 185, 129, 0.12) !important;
+  color: #6EE7B7 !important;
+  border: 1px solid rgba(16, 185, 129, 0.3) !important;
+}
+.pill-python {
+  background: rgba(0, 230, 246, 0.12) !important;
+  color: #67E8F9 !important;
+  border: 1px solid rgba(0, 230, 246, 0.3) !important;
+}
+
+/* ══════ BUNDLE CARDS OVERRIDES ══════ */
+.bundle-card--sql {
+  border-color: rgba(59, 130, 246, 0.35) !important;
+  box-shadow: 0 0 0 1px rgba(59,130,246,0.08), 0 8px 30px rgba(0,0,0,0.3) !important;
+}
+.bundle-card--sql::before {
+  background: linear-gradient(90deg, #3B82F6, #6366F1) !important;
+}
+.bundle-card--sql .bundle-card-cta {
+  background: linear-gradient(135deg, #3B82F6, #6366F1) !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+.bundle-card--excel {
+  border-color: rgba(16, 185, 129, 0.35) !important;
+  box-shadow: 0 0 0 1px rgba(16,185,129,0.08), 0 8px 30px rgba(0,0,0,0.3) !important;
+}
+.bundle-card--excel::before {
+  background: linear-gradient(90deg, #10B981, #14B8A6) !important;
+}
+.bundle-card--excel .bundle-card-cta {
+  background: linear-gradient(135deg, #10B981, #14B8A6) !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+.bundle-card--python {
+  border-color: rgba(0, 230, 246, 0.35) !important;
+  box-shadow: 0 0 0 1px rgba(0,230,246,0.08), 0 8px 30px rgba(0,0,0,0.3) !important;
+}
+.bundle-card--python::before {
+  background: linear-gradient(90deg, #00E6F6, #3B82F6) !important;
+}
+.bundle-card--python .bundle-card-cta {
+  background: linear-gradient(135deg, #00E6F6, #3B82F6) !important;
+  color: #0B0F19 !important;
+  border: none !important;
+}
+
+/* ══════ FREE PREVIEW TRIPTYCH ══════ */
+.free-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+}
+@media (max-width: 1024px) {
+  .free-preview-grid {
+    grid-template-columns: 1fr;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+.free-card {
+  background: linear-gradient(160deg, rgba(18,24,38,0.7), rgba(11,15,25,0.9));
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s ease;
+}
+.free-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  border-radius: 20px 20px 0 0;
+}
+.free-card:hover {
+  transform: translateY(-6px);
+}
+
+.free-card--sql {
+  border-color: rgba(59, 130, 246, 0.25);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.3), 0 0 0 1px rgba(59,130,246,0.08);
+}
+.free-card--sql::before {
+  background: linear-gradient(90deg, #3B82F6, #6366F1);
+}
+.free-card--sql:hover {
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 30px rgba(59,130,246,0.18);
+}
+
+.free-card--excel {
+  border-color: rgba(16, 185, 129, 0.25);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.3), 0 0 0 1px rgba(16,185,129,0.08);
+}
+.free-card--excel::before {
+  background: linear-gradient(90deg, #10B981, #14B8A6);
+}
+.free-card--excel:hover {
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 30px rgba(16,185,129,0.18);
+}
+
+.free-card--python {
+  border-color: rgba(0, 230, 246, 0.25);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.35), 0 0 0 1px rgba(0,230,246,0.08);
+}
+.free-card--python::before {
+  background: linear-gradient(90deg, #00E6F6, #3B82F6);
+}
+.free-card--python:hover {
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 30px rgba(0,230,246,0.18);
+}
+
+.free-card-badge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  font-family: monospace;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  width: fit-content;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+}
+.free-card--sql .free-card-badge {
+  background: rgba(59,130,246,0.15);
+  color: #93C5FD;
+  border: 1px solid rgba(59,130,246,0.3);
+}
+.free-card--excel .free-card-badge {
+  background: rgba(16,185,129,0.15);
+  color: #6EE7B7;
+  border: 1px solid rgba(16,185,129,0.3);
+}
+.free-card--python .free-card-badge {
+  background: rgba(0,230,246,0.15);
+  color: #67E8F9;
+  border: 1px solid rgba(0,230,246,0.3);
+}
+
+.free-card-day {
+  font-family: sans-serif;
+  font-size: 0.7rem;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.free-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.free-card-snippet {
+  background: #0F131D;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.snippet-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+.dot.red { background: #ff5f56; }
+.dot.yellow { background: #ffbd2e; }
+.dot.green { background: #27c93f; }
+.snippet-filename {
+  font-family: monospace;
+  font-size: 0.68rem;
+  color: var(--ink-muted);
+  margin-left: 4px;
+}
+.snippet-body {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-align: left;
+}
+.snip-line {
+  font-family: monospace;
+  font-size: 0.78rem;
+  color: var(--ink);
+  line-height: 1.7;
+}
+.snip-comment { color: #6A9955; font-style: italic; }
+.snip-kw { color: #569CD6; font-weight: 600; }
+.snip-func { color: #DCDCAA; }
+.snip-str { color: #CE9178; }
+.snip-num { color: #B5CEA8; }
+.snip-op { color: #D4D4D4; }
+.snip-output {
+  margin-top: 6px;
+  padding: 6px 10px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 6px;
+  border-left: 2px solid rgba(255,255,255,0.1);
+  font-family: monospace;
+  font-size: 0.72rem;
+  display: flex;
+  gap: 8px;
+}
+.out-label { color: var(--ink-muted); }
+.out-val { color: #27c93f; }
+
+.free-card-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7rem 1.25rem;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.free-cta--sql {
+  background: linear-gradient(135deg, #3B82F6, #6366F1);
+  color: #fff;
+  box-shadow: 0 8px 25px rgba(59,130,246,0.3);
+}
+.free-cta--sql:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(59,130,246,0.45);
+}
+.free-cta--excel {
+  background: linear-gradient(135deg, #10B981, #14B8A6);
+  color: #fff;
+  box-shadow: 0 8px 25px rgba(16,185,129,0.3);
+}
+.free-cta--excel:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(16,185,129,0.45);
+}
+.free-cta--python {
+  background: linear-gradient(135deg, #00E6F6, #3B82F6);
+  color: #0B0F19;
+  box-shadow: 0 8px 25px rgba(0,230,246,0.3);
+}
+.free-cta--python:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(0,230,246,0.45);
+}
+.free-card-meta {
+  font-size: 0.72rem;
+  color: var(--ink-muted);
+  text-align: center;
+}
+
+/* ══════ CURRICULUM TABS ══════ */
+.curr-tabs {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding-bottom: 0;
+  justify-content: center;
+}
+.curr-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px 12px 0 0;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--ink-muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-bottom: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+  bottom: -1px;
+}
+.curr-tab:hover {
+  color: var(--ink);
+  background: rgba(255,255,255,0.04);
+}
+.curr-tab-days {
+  font-size: 0.72rem;
+  color: var(--ink-muted);
+}
+
+.curr-tab--sql.active {
+  color: #93C5FD;
+  background: rgba(59,130,246,0.08);
+  border-color: rgba(59,130,246,0.3);
+  border-bottom-color: #060913;
+  box-shadow: 0 0 20px rgba(59,130,246,0.1);
+}
+.curr-tab--excel.active {
+  color: #6EE7B7;
+  background: rgba(16,185,129,0.08);
+  border-color: rgba(16,185,129,0.3);
+  border-bottom-color: #060913;
+  box-shadow: 0 0 20px rgba(16,185,129,0.1);
+}
+.curr-tab--python.active {
+  color: #67E8F9;
+  background: rgba(0,230,246,0.08);
+  border-color: rgba(0,230,246,0.3);
+  border-bottom-color: #060913;
+  box-shadow: 0 0 20px rgba(0,230,246,0.1);
+}
+
+.curriculum-grid--sql .day-card:hover {
+  border-color: rgba(59,130,246,0.45) !important;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.45), 0 0 20px rgba(59,130,246,0.15) !important;
+}
+.curriculum-grid--excel .day-card:hover {
+  border-color: rgba(16, 185, 129, 0.45) !important;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.45), 0 0 20px rgba(16,185,129,0.15) !important;
+}
+.curriculum-grid--python .day-card:hover {
+  border-color: rgba(0, 230, 246, 0.45) !important;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.45), 0 0 20px rgba(0,230,246,0.15) !important;
+}
+

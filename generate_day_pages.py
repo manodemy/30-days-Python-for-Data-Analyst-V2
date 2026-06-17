@@ -1068,7 +1068,7 @@ def generate_page(item, curriculum, course_type):
     dropdown_items = build_dropdown(curriculum, day, course_type)
 
     html = f'''<!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-course="{course_type}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">

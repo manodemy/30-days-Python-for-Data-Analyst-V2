@@ -118,6 +118,12 @@
   <!-- Dashboard Custom Styles -->
 
   <style>
+    :root {
+      --dashboard-accent: #3B82F6;
+      --dashboard-accent-glow: rgba(59, 130, 246, 0.15);
+      --dashboard-gradient: linear-gradient(135deg, #3B82F6, #6366F1);
+    }
+
     /* Referral Nav Button style */
     .referral-nav-btn {
       color: #FFB020 !important;
@@ -240,28 +246,12 @@
     }
     
     /* Active & Accents */
-    .course-select-card.active.course--python {
-      border-color: rgba(48, 105, 152, 0.6);
-      box-shadow: 0 0 20px rgba(48, 105, 152, 0.2), 0 8px 30px rgba(0, 0, 0, 0.3);
+    .course-select-card.active {
+      border-color: var(--dashboard-accent);
+      box-shadow: 0 0 20px var(--dashboard-accent-glow), 0 8px 30px rgba(0, 0, 0, 0.3);
     }
-    .course-select-card.active.course--python::before {
-      background: linear-gradient(90deg, #306998, #74b9e8);
-    }
-    
-    .course-select-card.active.course--sql {
-      border-color: rgba(168, 85, 247, 0.6);
-      box-shadow: 0 0 20px rgba(168, 85, 247, 0.2), 0 8px 30px rgba(0, 0, 0, 0.3);
-    }
-    .course-select-card.active.course--sql::before {
-      background: linear-gradient(90deg, #a855f7, #c084fc);
-    }
-    
-    .course-select-card.active.course--excel {
-      border-color: rgba(16, 185, 129, 0.6);
-      box-shadow: 0 0 20px rgba(16, 185, 129, 0.2), 0 8px 30px rgba(0, 0, 0, 0.3);
-    }
-    .course-select-card.active.course--excel::before {
-      background: linear-gradient(90deg, #10b981, #34d399);
+    .course-select-card.active::before {
+      background: var(--dashboard-gradient);
     }
     
     .course-select-card.locked {
@@ -329,13 +319,13 @@
       transition: width 0.4s ease;
     }
     .course--python .course-select-progress-fill {
-      background: linear-gradient(90deg, #306998, #74b9e8);
+      background: linear-gradient(90deg, #00E6F6, #3B82F6);
     }
     .course--sql .course-select-progress-fill {
-      background: linear-gradient(90deg, #a855f7, #c084fc);
+      background: linear-gradient(90deg, #3B82F6, #6366F1);
     }
     .course--excel .course-select-progress-fill {
-      background: linear-gradient(90deg, #10b981, #34d399);
+      background: linear-gradient(90deg, #10B981, #059669);
     }
     
     .course-select-badge {
@@ -358,6 +348,31 @@
       border: 1px solid rgba(0, 230, 246, 0.25);
     }
 
+    .course-select-free-preview-container {
+      margin-top: auto;
+      padding-top: 0.5rem;
+    }
+    .course-select-free-preview-btn {
+      background: linear-gradient(135deg, #FFB020 0%, #FF8C00 100%);
+      color: #000;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      text-align: center;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(255, 176, 32, 0.25);
+      transition: all 0.2s ease-in-out;
+    }
+    .course-select-free-preview-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(255, 176, 32, 0.45);
+      filter: brightness(1.1);
+    }
+
 
 
 
@@ -372,11 +387,11 @@
 
       background-image:
 
-        radial-gradient(ellipse at 12% 18%, rgba(138, 43, 226, 0.18) 0px, transparent 55%),
+        radial-gradient(ellipse at 12% 18%, var(--dashboard-accent-glow) 0px, transparent 55%),
 
-        radial-gradient(ellipse at 88% 85%, rgba(0, 230, 246, 0.12) 0px, transparent 55%),
+        radial-gradient(ellipse at 88% 85%, var(--dashboard-accent-glow) 0px, transparent 55%),
 
-        radial-gradient(ellipse at 50% 110%, rgba(16, 185, 129, 0.07) 0px, transparent 45%);
+        radial-gradient(ellipse at 50% 110%, var(--dashboard-accent-glow) 0px, transparent 45%);
 
       color: var(--ink);
 
@@ -422,7 +437,7 @@
 
     .nav-brand-name span {
 
-      color: var(--cyan);
+      color: var(--dashboard-accent);
 
     }
 
@@ -450,7 +465,7 @@
 
       border-radius: 50%;
 
-      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      background: var(--dashboard-gradient);
 
       color: #fff;
 
@@ -466,7 +481,7 @@
 
       justify-content: center;
 
-      box-shadow: 0 0 10px rgba(0, 230, 246, 0.3);
+      box-shadow: 0 0 10px var(--dashboard-accent-glow);
 
       border: 2px solid rgba(255, 255, 255, 0.1);
 
@@ -628,7 +643,7 @@
 
     .dropdown-item.active {
 
-      color: var(--cyan);
+      color: var(--dashboard-accent);
 
       font-weight: 600;
 
@@ -644,15 +659,15 @@
 
       font-size: 11px;
 
-      color: var(--cyan);
+      color: var(--dashboard-accent);
 
       margin-top: 6px;
 
       font-weight: 700;
 
-      background: rgba(0, 230, 246, 0.05);
+      background: var(--dashboard-accent-glow);
 
-      border: 1px solid rgba(0, 230, 246, 0.15);
+      border: 1px solid var(--dashboard-accent-glow);
 
       padding: 3px 8px;
 
@@ -660,7 +675,7 @@
 
       display: inline-block;
 
-      text-shadow: 0 0 4px rgba(0, 230, 246, 0.3);
+      text-shadow: 0 0 4px var(--dashboard-accent-glow);
 
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 
@@ -672,11 +687,11 @@
 
     .day-card:hover .day-xp-badge {
 
-      background: rgba(0, 230, 246, 0.1);
+      background: var(--dashboard-accent-glow);
 
-      border-color: rgba(0, 230, 246, 0.3);
+      border-color: var(--dashboard-accent);
 
-      box-shadow: 0 0 10px rgba(0, 230, 246, 0.2);
+      box-shadow: 0 0 10px var(--dashboard-accent-glow);
 
     }
 
@@ -828,15 +843,15 @@
 
       gap: 6px;
 
-      background: rgba(0, 230, 246, 0.08);
+      background: var(--dashboard-accent-glow);
 
-      border: 1px solid rgba(0, 230, 246, 0.2);
+      border: 1px solid var(--dashboard-accent-glow);
 
       padding: 6px 12px;
 
       border-radius: 100px;
 
-      color: var(--cyan);
+      color: var(--dashboard-accent);
 
       font-size: 11px;
 
@@ -860,11 +875,11 @@
 
       height: 6px;
 
-      background: var(--cyan);
+      background: var(--dashboard-accent);
 
       border-radius: 50%;
 
-      box-shadow: 0 0 8px var(--cyan);
+      box-shadow: 0 0 8px var(--dashboard-accent);
 
       animation: pulse 1.5s infinite;
 
@@ -916,7 +931,7 @@
 
       padding: 14px 32px;
 
-      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      background: var(--dashboard-gradient);
 
       color: #fff;
 
@@ -932,7 +947,7 @@
 
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-      box-shadow: 0 4px 20px rgba(0, 230, 246, 0.3);
+      box-shadow: 0 4px 20px var(--dashboard-accent-glow);
 
       align-self: flex-start;
 
@@ -946,7 +961,7 @@
 
       transform: translateY(-3px);
 
-      box-shadow: 0 8px 30px rgba(0, 230, 246, 0.5);
+      box-shadow: 0 8px 30px var(--dashboard-accent-glow);
 
     }
 
@@ -1110,7 +1125,7 @@
 
     .progress-stats-summary strong {
 
-      color: var(--cyan);
+      color: var(--dashboard-accent);
 
     }
 
@@ -1352,9 +1367,9 @@
 
     .day-card.active-day {
 
-      border-color: var(--cyan) !important;
+      border-color: var(--dashboard-accent) !important;
 
-      box-shadow: 0 0 25px rgba(0, 230, 246, 0.35), 0 15px 35px rgba(0, 0, 0, 0.45) !important;
+      box-shadow: 0 0 25px var(--dashboard-accent-glow), 0 15px 35px rgba(0, 0, 0, 0.45) !important;
 
       background: var(--elevated) !important;
 
@@ -1382,19 +1397,19 @@
 
       font-weight: 900;
 
-      color: var(--cyan);
+      color: var(--dashboard-accent);
 
       letter-spacing: 0.12em;
 
-      background: rgba(0, 230, 246, 0.15);
+      background: var(--dashboard-accent-glow);
 
       padding: 2px 8px;
 
       border-radius: 4px;
 
-      border: 1px solid rgba(0, 230, 246, 0.3);
+      border: 1px solid var(--dashboard-accent);
 
-      box-shadow: 0 0 10px rgba(0, 230, 246, 0.2);
+      box-shadow: 0 0 10px var(--dashboard-accent-glow);
 
     }
 
@@ -2028,9 +2043,9 @@
 
       border-radius: 6px;
 
-      background: linear-gradient(90deg, var(--cyan), var(--purple));
+      background: var(--dashboard-gradient);
 
-      box-shadow: 0 0 12px rgba(0, 230, 246, 0.5), 0 0 24px rgba(0, 230, 246, 0.2);
+      box-shadow: 0 0 12px var(--dashboard-accent-glow), 0 0 24px var(--dashboard-accent-glow);
 
       width: 0%;
 
@@ -2410,7 +2425,7 @@
 
       fill: none;
 
-      stroke: var(--cyan);
+      stroke: var(--dashboard-accent);
 
       stroke-width: 6;
 
@@ -2422,7 +2437,7 @@
 
       transition: stroke-dashoffset 1s linear;
 
-      filter: drop-shadow(0 0 5px rgba(0, 230, 246, 0.4));
+      filter: drop-shadow(0 0 5px var(--dashboard-accent));
 
     }
 
@@ -2484,11 +2499,11 @@
 
     .timer-btn:hover {
 
-      background: linear-gradient(135deg, var(--cyan) 0%, var(--purple) 100%);
+      background: var(--dashboard-gradient);
 
       border-color: transparent;
 
-      box-shadow: 0 4px 18px rgba(0, 230, 246, 0.35);
+      box-shadow: 0 4px 18px var(--dashboard-accent-glow);
 
       transform: translateY(-2px);
 
@@ -2536,11 +2551,11 @@
 
     .focus-status-pill.timer-active {
 
-      background: rgba(0, 230, 246, 0.12);
+      background: var(--dashboard-accent-glow);
 
-      color: var(--cyan);
+      color: var(--dashboard-accent);
 
-      border: 1px solid rgba(0, 230, 246, 0.25);
+      border: 1px solid var(--dashboard-accent);
 
       animation: pulse-timer-status 2s infinite;
 
@@ -2646,11 +2661,11 @@
 
       transform: scale(1.28) rotate(8deg);
 
-      box-shadow: 0 0 25px rgba(0, 230, 246, 0.6), 0 0 12px rgba(138, 43, 226, 0.4), 0 8px 20px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 0 25px var(--dashboard-accent), 0 0 12px rgba(138, 43, 226, 0.4), 0 8px 20px rgba(0, 0, 0, 0.5);
 
-      border-color: var(--cyan);
+      border-color: var(--dashboard-accent);
 
-      background: radial-gradient(circle, rgba(0, 230, 246, 0.18) 0%, rgba(8, 12, 22, 0.65) 100%);
+      background: radial-gradient(circle, var(--dashboard-accent-glow) 0%, rgba(8, 12, 22, 0.65) 100%);
 
     }
 
@@ -2662,7 +2677,7 @@
 
       font-size: 11px;
 
-      color: var(--cyan);
+      color: var(--dashboard-accent);
 
       font-weight: 700;
 
@@ -2750,7 +2765,7 @@
 
       font-weight: 900;
 
-      color: var(--cyan);
+      color: var(--dashboard-accent);
 
       letter-spacing: 0.12em;
 
@@ -4207,15 +4222,15 @@
 
       font-size: 10px !important;
 
-      color: var(--cyan) !important;
+      color: var(--dashboard-accent) !important;
 
       margin-top: 8px !important;
 
       font-weight: 700 !important;
 
-      background: rgba(0, 230, 246, 0.05) !important;
+      background: var(--dashboard-accent-glow) !important;
 
-      border: 1px solid rgba(0, 230, 246, 0.15) !important;
+      border: 1px solid var(--dashboard-accent-glow) !important;
 
       padding: 4px 10px !important;
 
@@ -4225,7 +4240,7 @@
 
       align-items: center !important;
 
-      text-shadow: 0 0 4px rgba(0, 230, 246, 0.3) !important;
+      text-shadow: 0 0 4px var(--dashboard-accent-glow) !important;
 
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
 
@@ -4237,11 +4252,11 @@
 
     .day-card:hover .day-xp-badge {
 
-      background: rgba(0, 230, 246, 0.12) !important;
+      background: var(--dashboard-accent-glow) !important;
 
-      border-color: rgba(0, 230, 246, 0.4) !important;
+      border-color: var(--dashboard-accent) !important;
 
-      box-shadow: 0 4px 12px rgba(0, 230, 246, 0.2) !important;
+      box-shadow: 0 4px 12px var(--dashboard-accent-glow) !important;
 
       transform: translateY(1px) !important;
 
@@ -4307,13 +4322,13 @@
 
     .free-badge {
 
-      background: rgba(0, 230, 246, 0.12) !important;
+      background: var(--dashboard-accent-glow) !important;
 
-      color: #00e6f6 !important;
+      color: var(--dashboard-accent) !important;
 
-      border: 1px solid rgba(0, 230, 246, 0.3) !important;
+      border: 1px solid var(--dashboard-accent) !important;
 
-      box-shadow: 0 2px 8px rgba(0, 230, 246, 0.15) !important;
+      box-shadow: 0 2px 8px var(--dashboard-accent-glow) !important;
 
       animation: free-badge-pulse 2s ease-in-out infinite !important;
 
@@ -4323,11 +4338,11 @@
 
     .day-card.active-day {
 
-      border: 1px solid var(--cyan) !important;
+      border: 1px solid var(--dashboard-accent) !important;
 
       background: rgba(23, 37, 68, 0.7) !important;
 
-      box-shadow: 0 0 35px rgba(0, 230, 246, 0.3), 0 20px 45px rgba(0, 0, 0, 0.6) !important;
+      box-shadow: 0 0 35px var(--dashboard-accent-glow), 0 20px 45px rgba(0, 0, 0, 0.6) !important;
 
       transform: translateY(-6px) scale(1.025) !important;
 
@@ -4355,19 +4370,19 @@
 
       font-weight: 900 !important;
 
-      color: var(--cyan) !important;
+      color: var(--dashboard-accent) !important;
 
       letter-spacing: 0.12em !important;
 
-      background: rgba(0, 230, 246, 0.15) !important;
+      background: var(--dashboard-accent-glow) !important;
 
       padding: 3px 8px !important;
 
       border-radius: 8px !important;
 
-      border: 1px solid rgba(0, 230, 246, 0.35) !important;
+      border: 1px solid var(--dashboard-accent) !important;
 
-      box-shadow: 0 0 10px rgba(0, 230, 246, 0.2) !important;
+      box-shadow: 0 0 10px var(--dashboard-accent-glow) !important;
 
     }
 
@@ -5631,7 +5646,7 @@
 
           <div id="questBonusText"
 
-            style="display:none; font-size:12px; color:rgba(203,213,225,0.75); line-height:1.6; padding: 0.65rem 0.9rem; border-radius: 10px; background: rgba(0,230,246,0.04); border: 1px solid rgba(0,230,246,0.12); margin-top: -0.25rem;">
+            style="display:none; font-size:12px; color:rgba(203,213,225,0.75); line-height:1.6; padding: 0.65rem 0.9rem; border-radius: 10px; background: var(--dashboard-accent-glow); border: 1px solid var(--dashboard-accent); margin-top: -0.25rem;">
 
           </div>
 
@@ -6421,22 +6436,47 @@
       const isEnrolledSql = localStorage.getItem('manodemy_enrolled_sql') === 'true';
       const isEnrolledExcel = localStorage.getItem('manodemy_enrolled_excel') === 'true';
       
-      let defaultCourse = 'python';
-      if (!isEnrolledPython) {
-        if (isEnrolledSql) defaultCourse = 'sql';
-        else if (isEnrolledExcel) defaultCourse = 'excel';
+      const applyDashboardCourseTheme = (course) => {
+        let accent = '#3B82F6';
+        let glow = 'rgba(59, 130, 246, 0.15)';
+        let gradient = 'linear-gradient(135deg, #3B82F6, #6366F1)';
+        
+        if (course === 'excel') {
+          accent = '#10B981';
+          glow = 'rgba(16, 185, 129, 0.15)';
+          gradient = 'linear-gradient(135deg, #10B981, #059669)';
+        } else if (course === 'python') {
+          accent = '#00E6F6';
+          glow = 'rgba(0, 230, 246, 0.15)';
+          gradient = 'linear-gradient(135deg, #00E6F6, #3B82F6)';
+        }
+        
+        document.documentElement.style.setProperty('--dashboard-accent', accent);
+        document.documentElement.style.setProperty('--dashboard-accent-glow', glow);
+        document.documentElement.style.setProperty('--dashboard-gradient', gradient);
+      };
+
+      let defaultCourse = 'sql';
+      if (!isEnrolledSql) {
+        if (isEnrolledExcel) defaultCourse = 'excel';
+        else if (isEnrolledPython) defaultCourse = 'python';
       }
       
       currentCourse = localStorage.getItem('manodemy_active_course');
-      if (!currentCourse || (currentCourse === 'python' && !isEnrolledPython && (isEnrolledSql || isEnrolledExcel))) {
+      const isEnrolledCurrent = (currentCourse === 'sql' && isEnrolledSql) || 
+                               (currentCourse === 'excel' && isEnrolledExcel) || 
+                               (currentCourse === 'python' && isEnrolledPython);
+      if (!currentCourse || !isEnrolledCurrent) {
         currentCourse = defaultCourse;
         localStorage.setItem('manodemy_active_course', currentCourse);
       }
 
+      applyDashboardCourseTheme(currentCourse);
+
       // Sync active course metadata
-      DAY_METADATA = PYTHON_METADATA;
-      if (currentCourse === 'sql') DAY_METADATA = SQL_METADATA;
+      DAY_METADATA = SQL_METADATA;
       if (currentCourse === 'excel') DAY_METADATA = EXCEL_METADATA;
+      if (currentCourse === 'python') DAY_METADATA = PYTHON_METADATA;
       TOTAL_CHALLENGES = DAY_METADATA.reduce((sum, item) => sum + item.totalCells, 0);
 
       await restoreVerifiedProgress();
@@ -6472,14 +6512,6 @@
         
         const courses = [
           {
-            id: 'python',
-            title: 'Python for Data Analyst',
-            icon: '🐍',
-            days: '30 Days',
-            class: 'course--python',
-            enrolled: isEnrolledPython
-          },
-          {
             id: 'sql',
             title: 'SQL for Data Analyst',
             icon: '🗄️',
@@ -6494,6 +6526,14 @@
             days: '12 Days',
             class: 'course--excel',
             enrolled: isEnrolledExcel
+          },
+          {
+            id: 'python',
+            title: 'Python for Data Analyst',
+            icon: '🐍',
+            days: '30 Days',
+            class: 'course--python',
+            enrolled: isEnrolledPython
           }
         ];
         
@@ -6510,6 +6550,29 @@
           } else if (!c.enrolled) {
             badgeHTML = `<span class="course-select-badge badge--locked">LOCKED 🔒</span>`;
           }
+
+          let progressHTML = `
+            <div class="course-select-progress-container">
+              <div class="course-select-progress-text">
+                <span>Progress</span>
+                <span class="course-select-progress-val">${stats.totalSolved} / ${stats.totalCells} Solved (${percent}%)</span>
+              </div>
+              <div class="course-select-progress-bar">
+                <div class="course-select-progress-fill" style="width: ${percent}%;"></div>
+              </div>
+            </div>
+          `;
+
+          if (!c.enrolled) {
+            const freeDayUrl = c.id === 'sql' ? 'sql/day01.html' : (c.id === 'excel' ? 'excel/day01.html' : 'day01.html');
+            progressHTML = `
+              <div class="course-select-free-preview-container">
+                <div class="course-select-free-preview-btn" onclick="event.stopPropagation(); window.location.href='${freeDayUrl}'">
+                  Try Day 01 Free ⚡
+                </div>
+              </div>
+            `;
+          }
           
           card.innerHTML = `
             ${badgeHTML}
@@ -6520,15 +6583,7 @@
                 <span class="course-select-days">${c.days}</span>
               </div>
             </div>
-            <div class="course-select-progress-container">
-              <div class="course-select-progress-text">
-                <span>Progress</span>
-                <span class="course-select-progress-val">${stats.totalSolved} / ${stats.totalCells} Solved (${percent}%)</span>
-              </div>
-              <div class="course-select-progress-bar">
-                <div class="course-select-progress-fill" style="width: ${percent}%;"></div>
-              </div>
-            </div>
+            ${progressHTML}
           `;
           
           card.addEventListener('click', () => {
@@ -7088,7 +7143,7 @@
 
           if (percentageCircle) {
 
-            percentageCircle.style.background = `conic-gradient(var(--cyan) ${overallPct}%, rgba(255, 255, 255, 0.05) 0)`;
+            percentageCircle.style.background = `conic-gradient(var(--dashboard-accent) ${overallPct}%, rgba(255, 255, 255, 0.05) 0)`;
 
           }
 
@@ -7224,11 +7279,11 @@
 
               if (label) {
 
-                label.style.color = '#00e6f6';
+                label.style.color = 'var(--dashboard-accent)';
 
                 label.style.transform = 'scale(1.2)';
 
-                label.style.textShadow = '0 0 8px rgba(0, 230, 246, 0.6)';
+                label.style.textShadow = '0 0 8px var(--dashboard-accent-glow)';
 
               }
 
@@ -7298,11 +7353,11 @@
 
               if (label) {
 
-                label.style.color = (resumeTarget === getDayUrl(currentCourse, item.day)) ? 'var(--cyan)' : 'rgba(255, 255, 255, 0.25)';
+                label.style.color = (resumeTarget === getDayUrl(currentCourse, item.day)) ? 'var(--dashboard-accent)' : 'rgba(255, 255, 255, 0.25)';
 
                 label.style.transform = 'none';
 
-                label.style.textShadow = (resumeTarget === getDayUrl(currentCourse, item.day)) ? '0 0 6px rgba(0, 230, 246, 0.4)' : 'none';
+                label.style.textShadow = (resumeTarget === getDayUrl(currentCourse, item.day)) ? '0 0 6px var(--dashboard-accent-glow)' : 'none';
 
               }
 
@@ -7613,7 +7668,7 @@
 
           if (bonusEl) {
 
-            bonusEl.innerHTML = `<span style="color:rgba(0,230,246,0.8);font-size:9.5px;text-transform:uppercase;letter-spacing:0.15em;font-weight:700;">Bonus Quest</span><br>${bonus.icon} ${bonus.text}`;
+            bonusEl.innerHTML = `<span style="color:var(--dashboard-accent);font-size:9.5px;text-transform:uppercase;letter-spacing:0.15em;font-weight:700;">Bonus Quest</span><br>${bonus.icon} ${bonus.text}`;
 
             bonusEl.style.display = 'block';
 

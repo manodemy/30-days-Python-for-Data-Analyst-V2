@@ -374,28 +374,69 @@ document.addEventListener('DOMContentLoaded', () => {
     card.addEventListener('click', () => {
 
       const isPaid = window._userHasPurchased || localStorage.getItem('manodemy_enrolled') === 'true';
+      const day = card.dataset.day;
+      
+      // Detect course from parent container
+      let course = 'python';
+      if (card.closest('.curriculum-grid--sql')) course = 'sql';
+      else if (card.closest('.curriculum-grid--excel')) course = 'excel';
 
-      if (card.dataset.day === '01') {
-
-        window.location.href = '/day01.html';
-
-      } else if (card.dataset.day === '02') {
-
-        window.location.href = '/day02.html';
-
-      } else if (isPaid) {
-
-        window.location.href = `/day${card.dataset.day}.html`;
-
+      if (course === 'sql') {
+        if (day === '01') {
+          window.location.href = '/sql/day01.html';
+        } else if (isPaid) {
+          window.location.href = `/sql/day${day}.html`;
+        } else {
+          openPricingModal();
+        }
+      } else if (course === 'excel') {
+        if (day === '01') {
+          window.location.href = '/excel/day01.html';
+        } else if (isPaid) {
+          window.location.href = `/excel/day${day}.html`;
+        } else {
+          openPricingModal();
+        }
       } else {
-
-        openPricingModal();
-
+        // Python
+        if (day === '01') {
+          window.location.href = '/day01.html';
+        } else if (day === '02') {
+          window.location.href = '/day02.html';
+        } else if (isPaid) {
+          window.location.href = `/day${day}.html`;
+        } else {
+          openPricingModal();
+        }
       }
 
     });
 
     card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); } });
+
+  });
+
+
+
+  /* ═══ CURRICULUM TABS ═══ */
+
+  document.querySelectorAll('.curr-tab').forEach(tab => {
+
+    tab.addEventListener('click', () => {
+
+      const target = tab.dataset.tab;
+
+      document.querySelectorAll('.curr-tab').forEach(t => t.classList.remove('active'));
+
+      document.querySelectorAll('.curr-panel').forEach(p => p.style.display = 'none');
+
+      tab.classList.add('active');
+
+      const panel = document.getElementById('panel-' + target);
+
+      if (panel) panel.style.display = 'block';
+
+    });
 
   });
 

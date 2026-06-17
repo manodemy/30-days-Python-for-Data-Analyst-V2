@@ -209,6 +209,15 @@ let statusEl = null;
 
 // Wrap initialization in a function to run after React hydration in Next.js
 function initializeNotebook() {
+  (function detectAndApplyCourseTheme() {
+    const path = window.location.pathname.toLowerCase();
+    let course = 'python'; // default
+    if (path.includes('/sql/') || path.includes('sql-day') || path.includes('sql-')) course = 'sql';
+    else if (path.includes('/excel/') || path.includes('excel-day') || path.includes('excel-')) course = 'excel';
+    document.documentElement.setAttribute('data-course', course);
+    document.documentElement.dataset.course = course;
+  })();
+
   const preloadEl = document.getElementById('paywall-preload-screen');
   if (preloadEl) {
     preloadEl.remove();

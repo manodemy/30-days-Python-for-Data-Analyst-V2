@@ -12,6 +12,8 @@ export default function NotebookInitializer({ dayId, kernelType }: { dayId: stri
 
     // Set kernel type for notebook.js execution routing
     document.body.setAttribute('data-kernel', kernelType);
+    document.documentElement.setAttribute('data-course', kernelType);
+    document.documentElement.dataset.course = kernelType;
 
     let attempts = 0;
     const checkAndInit = () => {

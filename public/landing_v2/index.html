@@ -327,6 +327,25 @@
 
         <div class="nav-right">
 
+          <div class="dropdown" id="navMyCoursesDropdown" style="display: none; position: relative;">
+            <a href="javascript:void(0)" class="btn-ghost" style="background: rgba(0,230,246,0.08); border: 1px solid rgba(0,230,246,0.2); color: #00E6F6; border-radius: 8px; font-weight: 700; padding: 8px 16px; display: inline-flex; align-items: center; gap: 6px;">
+              📚 My Courses
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </a>
+            <div class="dropdown-menu" style="position: absolute; right: 0; top: 100%; background: #0b0f19; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; min-width: 180px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); padding: 8px 0; display: none;">
+              <a href="/notebook/day01" style="display: block; padding: 10px 16px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 13px; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'; this.style.color='#fff';" onmouseout="this.style.background='none'; this.style.color='rgba(255,255,255,0.8)';">🐍 Python Course</a>
+              <a href="/notebook/sql-day01" style="display: block; padding: 10px 16px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 13px; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'; this.style.color='#fff';" onmouseout="this.style.background='none'; this.style.color='rgba(255,255,255,0.8)';">🗄️ SQL Course</a>
+              <a href="/notebook/excel-day01" style="display: block; padding: 10px 16px; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 13px; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'; this.style.color='#fff';" onmouseout="this.style.background='none'; this.style.color='rgba(255,255,255,0.8)';">📊 Excel Course</a>
+              <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 6px 0;"></div>
+              <a href="/home.html" style="display: block; padding: 10px 16px; color: #00E6F6; text-decoration: none; font-size: 13px; font-weight: 700; transition: all 0.2s;" onmouseover="this.style.background='rgba(0,230,246,0.05)'; this.style.color='#00E6F6';" onmouseout="this.style.background='none'; this.style.color='#00E6F6';">🏠 Dashboard</a>
+            </div>
+          </div>
+          <style>
+            #navMyCoursesDropdown:hover .dropdown-menu {
+              display: block !important;
+            }
+          </style>
+
           <a href="javascript:void(0)" id="navSignin" class="btn-ghost" onclick="document.getElementById('authModal').classList.add('active');" aria-label="Sign in to your account">Sign In</a>
 
           <a href="#pricing" class="btn-nav-buy" data-cta="buy">Buy Now &mdash; <span class="dynamic-price">$19</span></a>
@@ -390,7 +409,7 @@
 
         <div class="hero-left reveal">
 
-          <span class="hero-badge">⚡ PYTHON FOR DATA JOBS</span>
+          <span class="hero-badge">🎯 COMPLETE DATA ANALYTICS PACKAGE — Python · SQL · Excel</span>
 
           <h1 class="hero-title">Stop watching <span class="gradient-actually">videos.</span><br class="mobile-only-br"><br
               class="desktop-only"><span class="typed-learn">Start coding</span> <br class="mobile-only-br"><span class="hero-nowrap"><span
@@ -402,9 +421,14 @@
                   d="M229.5 459c68.1 0 107.1-15.6 107.1-53.6v-34.4H229.5v-15.3h107.1c47.8 0 76.5-30.6 76.5-76.5v-61.2c0-45.9-28.7-76.5-76.5-76.5h-30.6v45.9c0 51-41.3 91.8-91.8 91.8H122.4V351.9c0 53.6 47.8 107.1 122.4 107.1zm53.6-30.6c-8.4 0-15.3-6.9-15.3-15.3s6.9-15.3 15.3-15.3 15.3 6.9 15.3 15.3-6.9 15.3-15.3 15.3z" />
               </svg></span></h1>
 
-          <p class="hero-sub">Passive video courses won't get you hired because they keep you watching someone else code.
-            Escape the tutorial loop. Write actual code inside live browser notebooks and master 750+ real-world interview challenges.
+          <p class="hero-sub">The complete toolkit to become a Data Analyst. Master Python (30 days), SQL (20 days) and Excel (12 days) — all in one interactive package. Write real code, run real queries, and solve 1,000+ industry-level challenges. No passive watching. No fluff.
           </p>
+
+          <div class="hero-course-pills">
+            <span class="course-pill pill-python">🐍 Python — 30 Days</span>
+            <span class="course-pill pill-sql">🗄️ SQL — 20 Days</span>
+            <span class="course-pill pill-excel">📊 Excel — 12 Days</span>
+          </div>
 
 
 
@@ -609,25 +633,25 @@
 
         <div class="proof-stat">
 
-          <span class="proof-num" data-count="750" data-suffix="+">750+</span>
+          <span class="proof-num" data-count="1000" data-suffix="+">1000+</span>
 
-          <span class="proof-label">Interview Practice Challenges</span>
-
-        </div>
-
-        <div class="proof-stat">
-
-          <span class="proof-num" data-count="30" data-suffix=" Days">30 Days</span>
-
-          <span class="proof-label">Complete Learning Plan</span>
+          <span class="proof-label">Practice Challenges (Python + SQL + Excel)</span>
 
         </div>
 
         <div class="proof-stat">
 
-          <span class="proof-num" data-count="100" data-suffix="%">100%</span>
+          <span class="proof-num" data-count="62" data-suffix=" Days">62 Days</span>
 
-          <span class="proof-label">Interactive Practice Retention</span>
+          <span class="proof-label">Structured Learning Across 3 Courses</span>
+
+        </div>
+
+        <div class="proof-stat">
+
+          <span class="proof-num" data-count="3" data-suffix=" Courses">3 Courses</span>
+
+          <span class="proof-label">Python · SQL · Excel — One Bundle</span>
 
         </div>
 
@@ -920,6 +944,130 @@
 
 
 
+    <!-- Bundle Section: What's Included -->
+
+    <section class="bundle-section" id="bundle">
+
+      <div class="container">
+
+        <div class="section-head reveal">
+
+          <h2>One Bundle. <span>Three Complete Courses.</span></h2>
+
+          <p>Everything you need to go from zero to job-ready as a Data Analyst — all in one interactive package.</p>
+
+        </div>
+
+        <div class="bundle-courses-grid reveal">
+
+          <!-- Python Card -->
+          <div class="bundle-course-card bundle-card--python">
+            <div class="bundle-card-header">
+              <span class="bundle-card-icon">🐍</span>
+              <div>
+                <h3 class="bundle-card-title">Python for Data Analyst</h3>
+                <span class="bundle-card-days">30 Days · 700+ Challenges</span>
+              </div>
+            </div>
+            <ul class="bundle-card-topics">
+              <li>✦ Data Types, Operators, Strings, Lists</li>
+              <li>✦ OOP, Functions, Modules, Exceptions</li>
+              <li>✦ NumPy, Pandas, Data Cleaning</li>
+              <li>✦ GroupBy, Merging, Time Series</li>
+              <li>✦ Seaborn Visualization &amp; Capstone</li>
+            </ul>
+            <a href="/day01.html" class="bundle-card-cta">Try Day 1 Free →</a>
+          </div>
+
+          <!-- SQL Card -->
+          <div class="bundle-course-card bundle-card--sql">
+            <div class="bundle-card-header">
+              <span class="bundle-card-icon">🗄️</span>
+              <div>
+                <h3 class="bundle-card-title">SQL for Data Analyst</h3>
+                <span class="bundle-card-days">20 Days · 200+ Challenges</span>
+              </div>
+            </div>
+            <ul class="bundle-card-topics">
+              <li>✦ SELECT, WHERE, Filtering &amp; Sorting</li>
+              <li>✦ Aggregates, GROUP BY, HAVING</li>
+              <li>✦ All JOIN types, Subqueries, CTEs</li>
+              <li>✦ Window Functions (RANK, LAG, LEAD)</li>
+              <li>✦ String, Date, CASE WHEN, Capstone BI Report</li>
+            </ul>
+            <a href="/landing_v2/sql-course.html" class="bundle-card-cta">View SQL Curriculum →</a>
+          </div>
+
+          <!-- Excel Card -->
+          <div class="bundle-course-card bundle-card--excel">
+            <div class="bundle-card-header">
+              <span class="bundle-card-icon">📊</span>
+              <div>
+                <h3 class="bundle-card-title">Excel for Data Analyst</h3>
+                <span class="bundle-card-days">12 Days · 120+ Challenges</span>
+              </div>
+            </div>
+            <ul class="bundle-card-topics">
+              <li>✦ Formulas, Formatting &amp; Data Cleaning</li>
+              <li>✦ VLOOKUP, XLOOKUP, INDEX-MATCH</li>
+              <li>✦ IF, IFS, SUMIFS, COUNTIFS</li>
+              <li>✦ Text &amp; Date Functions</li>
+              <li>✦ PivotTables, PivotCharts &amp; Dashboard</li>
+            </ul>
+            <a href="/landing_v2/excel-course.html" class="bundle-card-cta">View Excel Curriculum →</a>
+          </div>
+
+        </div>
+
+        <!-- Bundle vs Individual Comparison -->
+        <div class="bundle-compare reveal">
+
+          <div class="bundle-compare-table">
+            <div class="bcmp-header">
+              <div class="bcmp-feature">What You Get</div>
+              <div class="bcmp-col bcmp-col--free">Python Only</div>
+              <div class="bcmp-col bcmp-col--bundle">🎯 Full Bundle</div>
+            </div>
+            <div class="bcmp-row">
+              <div class="bcmp-feature">Python (30 days, 700+ challenges)</div>
+              <div class="bcmp-col">✅</div>
+              <div class="bcmp-col">✅</div>
+            </div>
+            <div class="bcmp-row">
+              <div class="bcmp-feature">SQL (20 days, 200+ challenges)</div>
+              <div class="bcmp-col bcmp-col--no">✗</div>
+              <div class="bcmp-col">✅</div>
+            </div>
+            <div class="bcmp-row">
+              <div class="bcmp-feature">Excel (12 days, 120+ challenges)</div>
+              <div class="bcmp-col bcmp-col--no">✗</div>
+              <div class="bcmp-col">✅</div>
+            </div>
+            <div class="bcmp-row">
+              <div class="bcmp-feature">Mano AI Tutor (all 3 courses)</div>
+              <div class="bcmp-col bcmp-col--no">Python only</div>
+              <div class="bcmp-col">✅</div>
+            </div>
+            <div class="bcmp-row">
+              <div class="bcmp-feature">Certificate on completion</div>
+              <div class="bcmp-col">✅</div>
+              <div class="bcmp-col">✅ × 3 Certificates</div>
+            </div>
+            <div class="bcmp-row">
+              <div class="bcmp-feature">Lifetime access</div>
+              <div class="bcmp-col">✅</div>
+              <div class="bcmp-col">✅</div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
     <!-- Curriculum Roadmap Section -->
 
     <section class="curriculum" id="curriculum">
@@ -928,7 +1076,8 @@
 
         <div class="section-head reveal">
 
-          <h2>30-Day Structured Curriculum</h2>
+          <h2>🐍 Python Course — <span>30-Day Curriculum</span></h2>
+          <p>The foundation of every Data Analyst's technical toolkit. Covers Python core through NumPy, Pandas and Data Visualisation.</p>
 
         </div>
 
@@ -2104,11 +2253,17 @@
 
               <ul class="pricing-features">
 
-                <li><span class="feat-check">&#x2714;</span> 30 Unlocked Day Notebooks</li>
+                <li><span class="feat-check">&#x2714;</span> 🐍 Python — 30 days, 700+ challenges</li>
 
-                <li><span class="feat-check">&#x2714;</span> 750+ Practice Interview Questions</li>
+                <li><span class="feat-check">&#x2714;</span> 🗄️ SQL — 20 days, 200+ challenges <span class="feat-coming">Coming Soon</span></li>
 
-                <li><span class="feat-check">&#x2714;</span> Inline evaluation and test runners</li>
+                <li><span class="feat-check">&#x2714;</span> 📊 Excel — 12 days, 120+ challenges <span class="feat-coming">Coming Soon</span></li>
+
+                <li><span class="feat-check">&#x2714;</span> Mano AI Tutor across all courses</li>
+
+                <li><span class="feat-check">&#x2714;</span> Inline code execution &amp; auto-grading</li>
+
+                <li><span class="feat-check">&#x2714;</span> 3 Completion Certificates · Lifetime Access</li>
 
               </ul>
 

@@ -102,11 +102,12 @@ const runWhenReady = (fn) => {
 // Auto-save logic hooks
 
 const getDayId = () => {
-
-  const m = window.location.pathname.match(/day(\d{2})/);
-
-  return m ? `day${m[1]}` : null;
-
+  const path = window.location.pathname;
+  const m = path.match(/(?:sql-day|excel-day|day)(\d{2})/);
+  if (!m) return null;
+  if (path.includes('sql-day')) return `sql-day${m[1]}`;
+  if (path.includes('excel-day')) return `excel-day${m[1]}`;
+  return `day${m[1]}`;
 };
 
 const _currentDayId = getDayId();
@@ -1604,7 +1605,141 @@ async function runCell(cellId) {
 
   }
 
-  if (!pyodide) { await initPyodide(); if (!pyodide) return; }
+function evaluateExcelFormula(formula) {
+  let expr = formula.substring(1).trim(); // Remove '='
+  
+  function getCellValue(cellRef) {
+    const el = document.getElementById(`cell-${cellRef.toUpperCase()}`);
+    if (!el) return 0;
+    const val = el.getAttribute('data-val') || el.innerText || '0';
+    return isNaN(val) ? val : parseFloat(val);
+  }
+
+  function colToNum(col) {
+    let num = 0;
+    for (let i = 0; i < col.length; i++) {
+      num = num * 26 + (col.charCodeAt(i) - 64);
+    }
+    return num;
+  }
+
+  function numToCol(num) {
+    let col = '';
+    while (num > 0) {
+      let rem = (num - 1) % 26;
+      col = String.fromCharCode(65 + rem) + col;
+      num = Math.floor((num - rem) / 26);
+    }
+    return col;
+  }
+
+  function parseArgs(argsStr) {
+    if (argsStr.trim().startsWith('[')) {
+      try { return JSON.parse(argsStr); } catch (e) {}
+    }
+    return argsStr.split(',').map(s => evalExpr(s.trim()));
+  }
+
+  function evalExpr(s) {
+    try {
+      const sanitized = s.replace(/[^0-9+\-*/%().<>=!&|?:\s"']/g, '');
+      return Function(`"use strict"; return (${sanitized})`)();
+    } catch (e) {
+      return s;
+    }
+  }
+
+  // Resolve ranges like A1:A5 to array of values
+  expr = expr.replace(/([A-Z]+\d+):([A-Z]+\d+)/gi, (match, start, end) => {
+    const startCol = start.match(/[A-Z]+/i)[0].toUpperCase();
+    const startRow = parseInt(start.match(/\d+/)[0], 10);
+    const endCol = end.match(/[A-Z]+/i)[0].toUpperCase();
+    const endRow = parseInt(end.match(/\d+/)[0], 10);
+    
+    const startColNum = colToNum(startCol);
+    const endColNum = colToNum(endCol);
+    
+    const vals = [];
+    for (let r = Math.min(startRow, endRow); r <= Math.max(startRow, endRow); r++) {
+      for (let c = Math.min(startColNum, endColNum); c <= Math.max(startColNum, endColNum); c++) {
+        const cellRef = numToCol(c) + r;
+        vals.push(getCellValue(cellRef));
+      }
+    }
+    return JSON.stringify(vals);
+  });
+
+  // Resolve single cell references
+  expr = expr.replace(/\b([A-Z]+\d+)\b/gi, (match) => {
+    const val = getCellValue(match);
+    return typeof val === 'string' ? `"${val}"` : val;
+  });
+
+  // Implement Excel functions
+  expr = expr.replace(/SUM\((.*?)\)/gi, (match, args) => {
+    const vals = parseArgs(args);
+    return vals.reduce((a, b) => a + (parseFloat(b) || 0), 0);
+  });
+
+  expr = expr.replace(/AVERAGE\((.*?)\)/gi, (match, args) => {
+    const vals = parseArgs(args);
+    const numericVals = vals.map(v => parseFloat(v) || 0);
+    return numericVals.length ? (numericVals.reduce((a, b) => a + b, 0) / numericVals.length) : 0;
+  });
+
+  expr = expr.replace(/COUNT\((.*?)\)/gi, (match, args) => {
+    const vals = parseArgs(args);
+    return vals.filter(v => !isNaN(v) && v !== '').length;
+  });
+
+  expr = expr.replace(/UPPER\((.*?)\)/gi, (match, arg) => {
+    return String(evalExpr(arg)).toUpperCase();
+  });
+
+  expr = expr.replace(/LOWER\((.*?)\)/gi, (match, arg) => {
+    return String(evalExpr(arg)).toLowerCase();
+  });
+
+  expr = expr.replace(/CONCAT\((.*?)\)/gi, (match, args) => {
+    const vals = parseArgs(args);
+    return vals.join('');
+  });
+
+  expr = expr.replace(/IF\((.*?),([^,]*),([^,]*)\)/gi, (match, cond, trueVal, falseVal) => {
+    const condition = evalExpr(cond);
+    return condition ? evalExpr(trueVal) : evalExpr(falseVal);
+  });
+
+  try {
+    return evalExpr(expr);
+  } catch (e) {
+    return '#VALUE!';
+  }
+}
+
+async function runCell(cellId) {
+
+  if (document.body.classList.contains('notebook-locked')) {
+
+    const modal = document.getElementById('startCodingModal');
+
+    if (modal) {
+
+      modal.classList.add('show');
+
+      document.body.classList.add('modal-open');
+
+    }
+
+    return;
+
+  }
+
+  const kernel = document.body.getAttribute('data-kernel') || 'python';
+
+  if (kernel === 'python') {
+    if (!pyodide) { await initPyodide(); if (!pyodide) return; }
+  }
 
   const cell = document.getElementById(cellId);
 
@@ -1649,42 +1784,100 @@ async function runCell(cellId) {
   if (typeof ManoVoice !== 'undefined' && ManoVoice.trackRunStart) ManoVoice.trackRunStart(cellId);
 
 
+  let text = '';
+  let executionSuccess = false;
 
   try {
+    if (kernel === 'python') {
+      pyodide.runPython('import sys,io;_co=io.StringIO();sys.stdout=_co;sys.stderr=_co');
+      let result = await pyodide.runPythonAsync(code);
+      let captured = pyodide.runPython('_co.getvalue()');
+      pyodide.runPython('sys.stdout=sys.__stdout__;sys.stderr=sys.__stderr__');
 
-    pyodide.runPython('import sys,io;_co=io.StringIO();sys.stdout=_co;sys.stderr=_co');
+      if (captured && captured.trim()) text += captured;
+      if (result !== undefined && result !== null && String(result) !== 'None') {
+        if (text) text += '\n';
+        text += String(result);
+      }
+      output.innerHTML = `<span class="out-label">Out [${cellCounter}]:</span>${esc(text.trim() || '(no output)')}`;
+      executionSuccess = true;
+    } else if (kernel === 'sql') {
+      const dayId = getDayId() || 'sql-day01';
+      const dayNum = parseInt(dayId.replace('sql-day', ''), 10);
+      let dbName = 'retail.db';
+      if (dayNum >= 1 && dayNum <= 8) dbName = 'retail.db';
+      else if (dayNum >= 9 && dayNum <= 11) dbName = 'company.db';
+      else if (dayNum >= 12 && dayNum <= 19) dbName = 'ecommerce.db';
+      else if (dayNum === 20) dbName = 'capstone_retail.db';
 
-    let result = await pyodide.runPythonAsync(code);
+      const res = await fetch('/api/sql', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: code, dbName })
+      });
 
-    let captured = pyodide.runPython('_co.getvalue()');
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.error || 'Failed to execute query');
+      }
 
-    pyodide.runPython('sys.stdout=sys.__stdout__;sys.stderr=sys.__stderr__');
+      const data = await res.json();
+      if (data.error) {
+        throw new Error(data.error);
+      }
 
-    let text = '';
-
-    if (captured && captured.trim()) text += captured;
-
-    if (result !== undefined && result !== null && String(result) !== 'None') {
-
-      if (text) text += '\n';
-
-      text += String(result);
-
+      if (data.rows && data.rows.length > 0) {
+        let tableHtml = '<div class="sql-results-wrapper"><table class="sql-results-table"><thead><tr>';
+        data.columns.forEach(col => {
+          tableHtml += `<th>${esc(col)}</th>`;
+        });
+        tableHtml += '</tr></thead><tbody>';
+        data.rows.forEach(row => {
+          tableHtml += '<tr>';
+          data.columns.forEach(col => {
+            let val = row[col];
+            if (val === null || val === undefined) val = 'NULL';
+            tableHtml += `<td>${esc(String(val))}</td>`;
+          });
+          tableHtml += '</tr>';
+        });
+        tableHtml += '</tbody></table></div>';
+        text = tableHtml;
+      } else {
+        text = 'Query executed successfully. (0 rows returned)';
+      }
+      output.innerHTML = `<span class="out-label">Out [${cellCounter}]:</span>${text}`;
+      executionSuccess = true;
+    } else if (kernel === 'excel') {
+      try {
+        const formula = code.trim();
+        let evalResult = '';
+        if (formula.startsWith('=')) {
+          evalResult = evaluateExcelFormula(formula);
+        } else {
+          evalResult = formula;
+        }
+        text = String(evalResult);
+      } catch (err) {
+        throw new Error('Excel Error: ' + err.message);
+      }
+      output.innerHTML = `<span class="out-label">Out [${cellCounter}]:</span>${esc(text.trim() || '(no output)')}`;
+      executionSuccess = true;
     }
 
-
-
-    output.innerHTML = `<span class="out-label">Out [${cellCounter}]:</span>${esc(text.trim() || '(no output)')}`;
-
     output.classList.add('success');
-
-    // ── Reset button immediately after successful Python execution ──
     output.classList.remove('hidden');
     btn.disabled = false; btn.textContent = '▶ Run';
 
-    // ── Hoist cleanCode so it's always available (fixes ReferenceError in ManoVoice hook) ──
     const rawCode = code.trim();
-    const cleanCode = rawCode.replace(/#.*/g, '').trim().toLowerCase();
+    let cleanCode = rawCode;
+    if (kernel === 'sql') {
+      cleanCode = rawCode.replace(/(--.*)|(\/\*[\s\S]*?\*\/)/g, '').trim().toLowerCase();
+    } else if (kernel === 'excel') {
+      cleanCode = rawCode.trim().toLowerCase();
+    } else {
+      cleanCode = rawCode.replace(/#.*/g, '').trim().toLowerCase();
+    }
 
     // ── SCORE VERIFICATION (Smart Server-Side Validation) ──
 

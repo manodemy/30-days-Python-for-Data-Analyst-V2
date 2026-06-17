@@ -6,15 +6,18 @@ import { useEffect } from 'react';
  * NotebookInitializer invokes the global initializeNotebook function
  * strictly after React hydration is complete.
  */
-export default function NotebookInitializer({ dayId }: { dayId: string }) {
+export default function NotebookInitializer({ dayId, kernelType }: { dayId: string; kernelType: string }) {
   useEffect(() => {
     if (typeof window === 'undefined') return;
+
+    // Set kernel type for notebook.js execution routing
+    document.body.setAttribute('data-kernel', kernelType);
 
     let attempts = 0;
     const checkAndInit = () => {
       const isReady = (window as any).initializeNotebook && (window as any).CodeMirror;
       if (isReady) {
-        console.log(`[Notebook] All scripts loaded. Initializing day: ${dayId}`);
+        console.log(`[Notebook] All scripts loaded. Initializing day: ${dayId} with kernel: ${kernelType}`);
         (window as any).initializeNotebook();
       } else {
         attempts++;
@@ -33,7 +36,7 @@ export default function NotebookInitializer({ dayId }: { dayId: string }) {
     // Begin polling
     const timeout = setTimeout(checkAndInit, 100);
     return () => clearTimeout(timeout);
-  }, [dayId]);
+  }, [dayId, kernelType]);
 
   return null;
 }

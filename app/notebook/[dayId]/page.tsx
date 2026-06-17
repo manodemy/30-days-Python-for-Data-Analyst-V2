@@ -14,15 +14,31 @@ interface Section {
 // Generate dynamic metadata for SEO including canonical tags and index blocks
 export async function generateMetadata({ params }: { params: { dayId: string } }): Promise<Metadata> {
   const cleanDayId = params.dayId.endsWith('.html') ? params.dayId.replace('.html', '') : params.dayId;
-  const dayNum = parseInt(cleanDayId.replace('day', ''), 10);
-  const formattedDay = dayNum.toString().padStart(2, '0');
   
-  // Format dynamic titles
-  const title = `Day ${formattedDay} Notebook — Manodemy`;
+  let courseType = 'python';
+  let dayNum = 1;
+  let courseTitle = "30-Day Python for Data Analyst";
+  
+  if (cleanDayId.startsWith('sql-')) {
+    courseType = 'sql';
+    dayNum = parseInt(cleanDayId.replace('sql-day', ''), 10);
+    courseTitle = "SQL for Data Analyst";
+  } else if (cleanDayId.startsWith('excel-')) {
+    courseType = 'excel';
+    dayNum = parseInt(cleanDayId.replace('excel-day', ''), 10);
+    courseTitle = "Excel for Data Analyst";
+  } else {
+    courseType = 'python';
+    dayNum = parseInt(cleanDayId.replace('day', ''), 10);
+    courseTitle = "30-Day Python for Data Analyst";
+  }
+  
+  const formattedDay = dayNum.toString().padStart(2, '0');
+  const title = `Day ${formattedDay} Notebook — ${courseTitle} — Manodemy`;
 
   return {
     title,
-    description: `Day ${formattedDay}: Interactive Python coding workbook. Part of Manodemy's 30-Day Python for Data Analyst course.`,
+    description: `Day ${formattedDay}: Interactive workbook. Part of Manodemy's ${courseTitle} course.`,
     alternates: {
       canonical: `https://www.manodemy.com/notebook/${cleanDayId}`,
     },
@@ -34,22 +50,44 @@ export default async function NotebookPage({ params }: { params: { dayId: string
   const cleanDayId = params.dayId.endsWith('.html') ? params.dayId.replace('.html', '') : params.dayId;
 
   // ── Input Validation: block path traversal & invalid dayId formats ──────────
-  // Only allow exact format: day01 through day30
-  const dayIdPattern = /^day(0[1-9]|[12][0-9]|30)$/;
+  const dayIdPattern = /^(day(0[1-9]|[12][0-9]|30)|sql-day(0[1-9]|1[0-9]|20)|excel-day(0[1-9]|1[0-2]))$/;
   if (!dayIdPattern.test(cleanDayId)) {
     redirect('/landing_v2/index.html');
   }
 
-  const dayNum = parseInt(cleanDayId.replace('day', ''), 10);
+  let courseType = 'python';
+  let dayNum = 1;
+  let courseTitle = "30-Day Python for Data Analyst";
+  let maxDays = 30;
+  let courseId = 'python-30day';
+
+  if (cleanDayId.startsWith('sql-')) {
+    courseType = 'sql';
+    dayNum = parseInt(cleanDayId.replace('sql-day', ''), 10);
+    courseTitle = "SQL for Data Analyst";
+    maxDays = 20;
+    courseId = 'sql-20day';
+  } else if (cleanDayId.startsWith('excel-')) {
+    courseType = 'excel';
+    dayNum = parseInt(cleanDayId.replace('excel-day', ''), 10);
+    courseTitle = "Excel for Data Analyst";
+    maxDays = 12;
+    courseId = 'excel-12day';
+  } else {
+    courseType = 'python';
+    dayNum = parseInt(cleanDayId.replace('day', ''), 10);
+    courseTitle = "30-Day Python for Data Analyst";
+    maxDays = 30;
+    courseId = 'python-30day';
+  }
+
   const formattedDay = dayNum.toString().padStart(2, '0');
 
-  // ── Server-Side Auth & Enrollment Guard for Protected Days (3–30) ───────────
-  // NOTE: middleware.ts already blocks unauthenticated users at the edge.
-  // This is a second, independent layer — enrollment requires a DB query.
-  if (dayNum >= 3 && dayNum <= 30) {
+  // ── Server-Side Auth & Enrollment Guard for Protected Days (3+) ───────────
+  if (dayNum >= 3 && dayNum <= maxDays) {
     const supabase = getSupabaseServerClient();
 
-    // getUser() validates JWT with Supabase Auth servers (not just cookie read)
+    // getUser() validates JWT with Supabase Auth servers
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {
@@ -58,7 +96,7 @@ export default async function NotebookPage({ params }: { params: { dayId: string
 
     // Run enrollment check + admin role check in parallel for performance
     const [{ data: enrolled }, { data: profile }] = await Promise.all([
-      supabase.rpc('check_enrollment', { p_course_id: 'python-30day' }),
+      supabase.rpc('check_enrollment', { p_course_id: courseId }),
       supabase.from('profiles').select('role').eq('id', user!.id).single(),
     ]);
 
@@ -68,7 +106,6 @@ export default async function NotebookPage({ params }: { params: { dayId: string
       redirect('/landing_v2/index.html#pricing?locked=true');
     }
   }
-
 
   // 2. Fetch Notebook Content (HTML + Metadata)
   const supabase = getSupabaseServerClient();
@@ -105,8 +142,8 @@ export default async function NotebookPage({ params }: { params: { dayId: string
     ? notebook.html_body.replace(/href=(["'])\/?day(\d+)\.html/g, 'href=$1/notebook/day$2')
     : '';
 
-  // Static DAYS array matching server.py curriculum map
-  const DAYS = [
+  // Curriculum maps for all courses
+  const PYTHON_DAYS = [
     ['Day01_Data_Types_Blank.ipynb',      'Data Types and Memory',     '🔢'],
     ['Day02_Operators_Blank.ipynb',       'Operators and Expressions', '➕'],
     ['Day03_Strings_Blank.ipynb',         'Strings',                   '📝'],
@@ -139,6 +176,51 @@ export default async function NotebookPage({ params }: { params: { dayId: string
     ['Day30_Phase_Analysis_Blank.ipynb',  'Phase Analysis & Review',   '🔬'],
   ];
 
+  const SQL_DAYS = [
+    ['Day01_SQL_Blank.ipynb', 'Introduction to SQL & Databases', '🗄️'],
+    ['Day02_SQL_Blank.ipynb', 'Filtering Data with WHERE', '🔍'],
+    ['Day03_SQL_Blank.ipynb', 'Pattern Matching & NULL Handling', '📝'],
+    ['Day04_SQL_Blank.ipynb', 'Sorting & Limiting Results', '📈'],
+    ['Day05_SQL_Blank.ipynb', 'Aggregate Functions', '📊'],
+    ['Day06_SQL_Blank.ipynb', 'GROUP BY & HAVING', '🗃️'],
+    ['Day07_SQL_Blank.ipynb', 'Data Types, Casting & Expressions', '➕'],
+    ['Day08_SQL_Blank.ipynb', 'CASE WHEN (Conditional Logic)', '🔀'],
+    ['Day09_SQL_Blank.ipynb', 'Understanding Relationships & INNER JOIN', '🔗'],
+    ['Day10_SQL_Blank.ipynb', 'LEFT, RIGHT & FULL OUTER JOIN', '🔄'],
+    ['Day11_SQL_Blank.ipynb', 'SELF JOIN & Multi-Table Queries', '👥'],
+    ['Day12_SQL_Blank.ipynb', 'Subqueries', '🧠'],
+    ['Day13_SQL_Blank.ipynb', 'CTEs (Common Table Expressions)', '🏗️'],
+    ['Day14_SQL_Blank.ipynb', 'Window Functions Part 1 (Ranking)', '🔢'],
+    ['Day15_SQL_Blank.ipynb', 'Window Functions Part 2 (Analytic)', '📈'],
+    ['Day16_SQL_Blank.ipynb', 'String Functions', '🧹'],
+    ['Day17_SQL_Blank.ipynb', 'Date & Time Functions', '📅'],
+    ['Day18_SQL_Blank.ipynb', 'UNION, INTERSECT & EXCEPT (SET Operations)', '🥞'],
+    ['Day19_SQL_Blank.ipynb', 'Query Optimization & Best Practices', '⚡'],
+    ['Day20_SQL_Blank.ipynb', 'SQL Capstone Project', '🏆']
+  ];
+
+  const EXCEL_DAYS = [
+    ['Day01_Excel_Blank.ipynb', 'Excel Orientation & Essential Formulas', '📊'],
+    ['Day02_Excel_Blank.ipynb', 'Formatting, Sorting & Filtering', '🎨'],
+    ['Day03_Excel_Blank.ipynb', 'Data Cleaning Essentials', '🧹'],
+    ['Day04_Excel_Blank.ipynb', 'Excel Tables', '📋'],
+    ['Day05_Excel_Blank.ipynb', 'Lookup & Reference Functions', '🔍'],
+    ['Day06_Excel_Blank.ipynb', 'Logic Functions', '🔀'],
+    ['Day07_Excel_Blank.ipynb', 'Text Functions', '📝'],
+    ['Day08_Excel_Blank.ipynb', 'Date & Time Functions', '📅'],
+    ['Day09_Excel_Blank.ipynb', 'Conditional Aggregation', '🧮'],
+    ['Day10_Excel_Blank.ipynb', 'PivotTables Core Mechanics', '⚙️'],
+    ['Day11_Excel_Blank.ipynb', 'PivotTables Advanced & Charts', '📈'],
+    ['Day12_Excel_Blank.ipynb', 'Data Validation, What-If & Capstone', '🏆']
+  ];
+
+  const currentCourseDays = courseType === 'sql' ? SQL_DAYS : (courseType === 'excel' ? EXCEL_DAYS : PYTHON_DAYS);
+
+  const getDayUrl = (num: number) => {
+    if (courseType === 'python') return `/notebook/day${num.toString().padStart(2, '0')}`;
+    return `/notebook/${courseType}-day${num.toString().padStart(2, '0')}`;
+  };
+
   // Dynamic JSON-LD structured schema for search engines
   const schemaJson = {
     "@context": "https://schema.org",
@@ -146,7 +228,7 @@ export default async function NotebookPage({ params }: { params: { dayId: string
       {
         "@type": "Course",
         "@id": "https://www.manodemy.com/landing_v2/#course",
-        "name": "30-Day Python for Data Analyst Course",
+        "name": courseTitle,
         "provider": {
           "@type": "EducationalOrganization",
           "name": "Manodemy",
@@ -156,7 +238,7 @@ export default async function NotebookPage({ params }: { params: { dayId: string
       {
         "@type": "TechArticle",
         "headline": `Day ${formattedDay}: ${notebook.title}`,
-        "description": `Interactive Python notebook for Day ${formattedDay}.`,
+        "description": `Interactive notebook for Day ${formattedDay}.`,
         "url": `https://www.manodemy.com/notebook/${cleanDayId}`,
         "isPartOf": {
           "@id": "https://www.manodemy.com/landing_v2/#course"
@@ -165,9 +247,21 @@ export default async function NotebookPage({ params }: { params: { dayId: string
     ]
   };
 
+  // Define client engine assets
+  let engineStatus = '⏳ Loading Python Engine...';
+  let engineScript = <script defer src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>;
+
+  if (courseType === 'sql') {
+    engineStatus = '🔌 Connected to SQL Server Database';
+    engineScript = null;
+  } else if (courseType === 'excel') {
+    engineStatus = '📊 Loading Excel Formula Engine...';
+    engineScript = <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>;
+  }
+
   return (
     <>
-      <NotebookInitializer dayId={cleanDayId} />
+      <NotebookInitializer dayId={cleanDayId} kernelType={courseType} />
       {/* Inject styling and resource hints */}
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -228,7 +322,7 @@ export default async function NotebookPage({ params }: { params: { dayId: string
         <div className="nav-center has-dropdown">
           <div className="nav-center-flex">
             {dayNum > 1 ? (
-              <a href={`/notebook/day${(dayNum - 1).toString().padStart(2, '0')}`} className="nav-icon-btn prev-btn" aria-label="Previous Day" title="Previous Day">
+              <a href={getDayUrl(dayNum - 1)} className="nav-icon-btn prev-btn" aria-label="Previous Day" title="Previous Day">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="15 18 9 12 15 6"></polyline>
                 </svg>
@@ -243,14 +337,14 @@ export default async function NotebookPage({ params }: { params: { dayId: string
 
             <button className="nav-dropdown-btn" id="dayDropdownBtn">
               <span className="day-badge">Day {formattedDay}</span>
-              <span className="day-title">{notebook.title.replace(/^[^\s]+\s+/, '').replace(/^Day\s+\d+\s*:\s*/, '')}</span>
-              <svg className="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <span className="day-title">{notebook.title.replace(/^[^\s]+\s+/, '').replace(/^Day\s+\d+\s*:\s*/, '').replace(/^SQL\s+Day\s+\d+\s*:\s*/i, '').replace(/^Excel\s+Day\s+\d+\s*:\s*/i, '')}</span>
+              <svg className="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="6 9 12 15 18 9"></polyline>
               </svg>
             </button>
 
-            {dayNum < 30 ? (
-              <a href={`/notebook/day${(dayNum + 1).toString().padStart(2, '0')}`} className="nav-icon-btn next-btn" aria-label="Next Day" title="Next Day">
+            {dayNum < maxDays ? (
+              <a href={getDayUrl(dayNum + 1)} className="nav-icon-btn next-btn" aria-label="Next Day" title="Next Day">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="9 18 15 12 9 6"></polyline>
                 </svg>
@@ -266,11 +360,11 @@ export default async function NotebookPage({ params }: { params: { dayId: string
           <div className="nav-dropdown-menu" id="dayDropdownMenu">
             <div className="dropdown-header">Jump to another day</div>
             <div className="dropdown-scroll">
-              {DAYS.map(([f, t, e], index) => {
+              {currentCourseDays.map(([f, t, e], index) => {
                 const i = index + 1;
                 const active = i === dayNum ? 'active' : '';
                 return (
-                  <a key={i} href={`/notebook/day${i.toString().padStart(2, '0')}`} className={`dropdown-item ${active}`}>
+                  <a key={i} href={getDayUrl(i)} className={`dropdown-item ${active}`}>
                     <span className="day-num">Day {i.toString().padStart(2, '0')}</span>{' '}
                     <span className="day-em">{e}</span> {t}
                   </a>
@@ -327,14 +421,14 @@ export default async function NotebookPage({ params }: { params: { dayId: string
         <button className="profile-card__signout" id="signOutBtn">Sign Out</button>
       </div>
 
-      {/* Pyodide loader status */}
-      <div className="pyodide-status" id="pyStatus">⏳ Loading Python Engine...</div>
+      {/* Pyodide/SQL/Excel loader status */}
+      <div className="pyodide-status" id="pyStatus">{engineStatus}</div>
 
       <div className="layout">
         {/* Core notebook content injected */}
         <main className="notebook" id="notebook">
           <div className="nb-title">
-            <h1>📊 Day {formattedDay} : {notebook.title.replace(/^[^\s]+\s+/, '').replace(/^Day\s+\d+\s*:\s*/, '')}</h1>
+            <h1>📊 Day {formattedDay} : {notebook.title.replace(/^[^\s]+\s+/, '').replace(/^Day\s+\d+\s*:\s*/, '').replace(/^SQL\s+Day\s+\d+\s*:\s*/i, '').replace(/^Excel\s+Day\s+\d+\s*:\s*/i, '')}</h1>
           </div>
           <div dangerouslySetInnerHTML={{ __html: cleanHtmlBody }} />
         </main>
@@ -368,8 +462,8 @@ export default async function NotebookPage({ params }: { params: { dayId: string
       <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.js"></script>
       <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/anyword-hint.min.js"></script>
       
-      {/* Pyodide compiled compiler runtime */}
-      <script defer src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+      {/* Compiled compiler runtime */}
+      {engineScript}
       
       {/* Telemetry and interactive behaviors (served from public/) */}
       <script src="/manodemy-telemetry.js" defer></script>

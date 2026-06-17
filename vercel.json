@@ -93,6 +93,16 @@
       "source": "/referral-earnings",
       "destination": "/referral-earnings.html",
       "permanent": false
+    },
+    {
+      "source": "/sql-course",
+      "destination": "/landing_v2/sql-course.html",
+      "permanent": false
+    },
+    {
+      "source": "/excel-course",
+      "destination": "/landing_v2/excel-course.html",
+      "permanent": false
     }
   ]
 }

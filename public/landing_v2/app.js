@@ -2041,12 +2041,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function updateNavForLoggedIn(user) {
     const signInBtn = document.getElementById('navSignin');
+    const myCoursesDropdown = document.getElementById('navMyCoursesDropdown');
+    
     if (!signInBtn) return;
+    
     if (!user) {
       signInBtn.textContent = 'Sign In';
       signInBtn.href = '#';
       signInBtn.style.display = 'inline-flex';
+      if (myCoursesDropdown) myCoursesDropdown.style.display = 'none';
       return;
+    }
+
+    // Standard behavior: show My Courses dropdown and hide standard Sign In
+    signInBtn.style.display = 'none';
+    if (myCoursesDropdown) {
+      myCoursesDropdown.style.display = 'inline-block';
     }
 
     try {
@@ -2058,9 +2068,17 @@ document.addEventListener('DOMContentLoaded', () => {
           .single();
 
         if (profile && profile.role === 'admin') {
-          signInBtn.textContent = '⚙️ Admin Panel';
-          signInBtn.href = '../admin.html';
-          signInBtn.style.display = 'inline-flex';
+          const menu = myCoursesDropdown ? myCoursesDropdown.querySelector('.dropdown-menu') : null;
+          if (menu && !document.getElementById('adminDropdownLink')) {
+            const adminLink = document.createElement('a');
+            adminLink.id = 'adminDropdownLink';
+            adminLink.href = '../admin.html';
+            adminLink.textContent = '⚙️ Admin Panel';
+            adminLink.setAttribute('style', 'display: block; padding: 10px 16px; color: #FFB020; text-decoration: none; font-size: 13px; font-weight: 700; transition: all 0.2s;');
+            adminLink.onmouseover = function() { this.style.background = 'rgba(255, 176, 32, 0.05)'; };
+            adminLink.onmouseout = function() { this.style.background = 'none'; };
+            menu.appendChild(adminLink);
+          }
           return;
         }
       }
@@ -2069,15 +2087,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (user.email === 'manodamy25@gmail.com') {
-      signInBtn.textContent = '⚙️ Admin Panel';
-      signInBtn.href = '../admin.html';
-      signInBtn.style.display = 'inline-flex';
+      const menu = myCoursesDropdown ? myCoursesDropdown.querySelector('.dropdown-menu') : null;
+      if (menu && !document.getElementById('adminDropdownLink')) {
+        const adminLink = document.createElement('a');
+        adminLink.id = 'adminDropdownLink';
+        adminLink.href = '../admin.html';
+        adminLink.textContent = '⚙️ Admin Panel';
+        adminLink.setAttribute('style', 'display: block; padding: 10px 16px; color: #FFB020; text-decoration: none; font-size: 13px; font-weight: 700; transition: all 0.2s;');
+        adminLink.onmouseover = function() { this.style.background = 'rgba(255, 176, 32, 0.05)'; };
+        adminLink.onmouseout = function() { this.style.background = 'none'; };
+        menu.appendChild(adminLink);
+      }
       return;
     }
-
-    signInBtn.textContent = 'My Score Card';
-    signInBtn.href = '../home.html';
-    signInBtn.style.display = 'inline-flex';
   }
 
 

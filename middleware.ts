@@ -15,7 +15,7 @@ const PREMIUM_DAY_MAX = 30;
  * Returns null if the path is not a notebook day path.
  */
 function extractNotebookDayNum(pathname: string): number | null {
-  const match = pathname.match(/^\/notebook\/day(\d{1,2})(?:\/|$)/i);
+  const match = pathname.match(/^\/notebook\/(?:sql-day|excel-day|day)(\d{1,2})(?:\/|$)/i);
   if (!match) return null;
   const num = parseInt(match[1], 10);
   return isNaN(num) ? null : num;

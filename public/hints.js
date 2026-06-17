@@ -26,18 +26,41 @@
     var errorText = outEl ? (outEl.textContent || '').trim() : '';
 
     var errorContext = '';
-    if (errorText) {
-      errorContext = '\nMy code currently throws this error/output:\n' + errorText + '\n';
+    
+    var course = 'python';
+    var path = window.location.pathname.toLowerCase();
+    if (path.indexOf('sql') !== -1) {
+      course = 'sql';
+    } else if (path.indexOf('excel') !== -1) {
+      course = 'excel';
     }
 
-    return 'I am learning Python and working on this exercise:\n' +
+    var langName = 'Python';
+    var codeBlockLang = 'python';
+    var tutorName = 'Socratic Python tutor';
+
+    if (course === 'sql') {
+      langName = 'SQL';
+      codeBlockLang = 'sql';
+      tutorName = 'Socratic SQL tutor';
+    } else if (course === 'excel') {
+      langName = 'Excel';
+      codeBlockLang = 'excel';
+      tutorName = 'Socratic Excel tutor';
+    }
+
+    if (errorText) {
+      errorContext = '\nMy ' + (course === 'excel' ? 'formula' : 'code') + ' currently throws this error/output:\n' + errorText + '\n';
+    }
+
+    return 'I am learning ' + langName + ' and working on this exercise:\n' +
       '"' + questionText + '"\n\n' +
-      'Here is my current code:\n' +
-      '```python\n' +
-      (userCode || '# No code written yet') +
+      'Here is my current ' + (course === 'excel' ? 'formula' : 'code') + ':\n' +
+      '```' + codeBlockLang + '\n' +
+      (userCode || (course === 'excel' ? '# No formula written yet' : '# No code written yet')) +
       '\n```\n' +
       errorContext + '\n' +
-      'Please act as a Socratic Python tutor. Guide me to solve this step-by-step. Do not provide the full solution code. If I am stuck, you may provide at most one line of code showing the next step.';
+      'Please act as a ' + tutorName + '. Guide me to solve this step-by-step. Do not provide the full solution code. If I am stuck, you may provide at most one line of ' + (course === 'excel' ? 'formula' : 'code') + ' showing the next step.';
   }
 
   // Robust clipboard copy function

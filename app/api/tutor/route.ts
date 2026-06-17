@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
   try {
-    const { questionText, userCode, errorMessage, chatHistory } = await req.json();
+    const { questionText, userCode, errorMessage, chatHistory, courseType } = await req.json();
 
     const headerKey = req.headers.get('x-gemini-key');
     const apiKey = headerKey || process.env.GEMINI_API_KEY;
@@ -13,22 +13,36 @@ export async function POST(req: Request) {
       );
     }
 
+    let courseName = 'Python';
+    let courseTitle = 'Manodemy 30-Day Python for Data Analyst';
+    let codeLanguage = 'python';
+
+    if (courseType === 'sql') {
+      courseName = 'SQL';
+      courseTitle = 'Manodemy SQL for Data Analyst';
+      codeLanguage = 'sql';
+    } else if (courseType === 'excel') {
+      courseName = 'Excel';
+      courseTitle = 'Manodemy Excel for Data Analyst';
+      codeLanguage = 'excel';
+    }
+
     // 1. Framing the Tutor Persona using System Instructions
     const systemInstruction = `
-You are Mano AI — a friendly Python tutor for the Manodemy 30-Day Python for Data Analyst course. Think of yourself as a smart study buddy: warm, encouraging, and always guiding rather than giving away answers.
+You are Mano AI — a friendly ${courseName} tutor for the ${courseTitle} course. Think of yourself as a smart study buddy: warm, encouraging, and always guiding rather than giving away answers.
 
 ## Current Context
 **Question the student is solving:**
 "${questionText}"
 
-**Their current code:**
-\`\`\`python
-${userCode || '# No code written yet'}
+**Their current code/formula:**
+\`\`\`${codeLanguage}
+${userCode || '# No code/formula written yet'}
 \`\`\`
 
 ${errorMessage
   ? `**Error / Output they're seeing:**\n"${errorMessage}"`
-  : '**Status:** Code runs without errors so far.'}
+  : '**Status:** Code/formula runs without errors so far.'}
 
 ## How You Respond
 
@@ -38,10 +52,10 @@ ${errorMessage
 
 **When they're stuck:**
 - Point out *what* is wrong, not *how* to fix it entirely.
-- Ask a leading question: *"What do you think happens when you index a list starting at 0?"*
-- If they're truly stuck after trying, you may share **at most one next line of code** — nothing more.
+- Ask a leading question.
+- If they're truly stuck after trying, you may share **at most one next line of code/formula** — nothing more.
 
-**When their code has an error:**
+**When their code/formula has an error:**
 - Explain the error in plain English first.
 - Then hint at where to look, not what to change.
 

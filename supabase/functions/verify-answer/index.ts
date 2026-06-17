@@ -69,7 +69,23 @@ serve(async (req) => {
 
     // 5. Ported Server-Side Validation logic
     const rawCode = userCode.trim();
-    const cleanCode = rawCode.replace(/#.*/g, '').trim().toLowerCase();
+    
+    let kernel = 'python';
+    if (dayId.startsWith('sql-')) {
+      kernel = 'sql';
+    } else if (dayId.startsWith('excel-')) {
+      kernel = 'excel';
+    }
+
+    let cleanCode = rawCode;
+    if (kernel === 'sql') {
+      cleanCode = rawCode.replace(/(--.*)|(\/\*[\s\S]*?\*\/)/g, '').trim().toLowerCase();
+    } else if (kernel === 'excel') {
+      cleanCode = rawCode.trim().toLowerCase();
+    } else {
+      cleanCode = rawCode.replace(/#.*/g, '').trim().toLowerCase();
+    }
+
     const outText = (stdout || '').trim().toLowerCase();
 
     let verified = false;
@@ -100,6 +116,9 @@ serve(async (req) => {
         if (verified && questionText) {
           const codeTokens = cleanCode.match(/[a-z0-9_]+/g) || [];
           let ignore = ['print', 'type', 'len', 'def', 'class', 'import', 'list', 'dict', 'set', 'tuple', 'int', 'float', 'str', 'bool', 'true', 'false'];
+          if (kernel === 'sql') {
+            ignore = ['select', 'from', 'where', 'join', 'on', 'and', 'or', 'group', 'by', 'order', 'having', 'limit', 'as', 'in', 'is', 'null', 'not', 'count', 'sum', 'avg', 'min', 'max'];
+          }
           if (rubric.ignore_tokens && Array.isArray(rubric.ignore_tokens)) {
             ignore = [...ignore, ...rubric.ignore_tokens.map((t: string) => t.toLowerCase())];
           }

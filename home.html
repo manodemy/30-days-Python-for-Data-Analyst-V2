@@ -193,6 +193,171 @@
       align-items: center;
       gap: 4px;
     }
+    /* Course Selector Grid and Cards */
+    .courses-selector-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 1.75rem;
+    }
+    @media (max-width: 900px) {
+      .courses-selector-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .course-select-card {
+      background: rgba(15, 23, 42, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      user-select: none;
+    }
+    .course-select-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      border-radius: 16px 16px 0 0;
+      background: transparent;
+      transition: background 0.3s ease;
+    }
+    .course-select-card:hover {
+      transform: translateY(-3px);
+      background: rgba(15, 23, 42, 0.6);
+      border-color: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+    .course-select-card.active {
+      background: rgba(15, 23, 42, 0.7);
+    }
+    
+    /* Active & Accents */
+    .course-select-card.active.course--python {
+      border-color: rgba(48, 105, 152, 0.6);
+      box-shadow: 0 0 20px rgba(48, 105, 152, 0.2), 0 8px 30px rgba(0, 0, 0, 0.3);
+    }
+    .course-select-card.active.course--python::before {
+      background: linear-gradient(90deg, #306998, #74b9e8);
+    }
+    
+    .course-select-card.active.course--sql {
+      border-color: rgba(168, 85, 247, 0.6);
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.2), 0 8px 30px rgba(0, 0, 0, 0.3);
+    }
+    .course-select-card.active.course--sql::before {
+      background: linear-gradient(90deg, #a855f7, #c084fc);
+    }
+    
+    .course-select-card.active.course--excel {
+      border-color: rgba(16, 185, 129, 0.6);
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.2), 0 8px 30px rgba(0, 0, 0, 0.3);
+    }
+    .course-select-card.active.course--excel::before {
+      background: linear-gradient(90deg, #10b981, #34d399);
+    }
+    
+    .course-select-card.locked {
+      opacity: 0.65;
+    }
+    .course-select-card.locked:hover {
+      border-color: rgba(255, 176, 32, 0.25);
+      background: rgba(15, 23, 42, 0.45);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      transform: none;
+    }
+
+    .course-select-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .course-select-icon {
+      font-size: 1.75rem;
+      line-height: 1;
+    }
+    .course-select-title-group {
+      display: flex;
+      flex-direction: column;
+    }
+    .course-select-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #fff;
+      margin: 0;
+      line-height: 1.2;
+    }
+    .course-select-days {
+      font-size: 0.75rem;
+      color: var(--ink-dim);
+    }
+    
+    .course-select-progress-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      margin-top: 0.25rem;
+    }
+    .course-select-progress-text {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--ink-dim);
+    }
+    .course-select-progress-val {
+      font-weight: 700;
+      color: #fff;
+    }
+    .course-select-progress-bar {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .course-select-progress-fill {
+      height: 100%;
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+    .course--python .course-select-progress-fill {
+      background: linear-gradient(90deg, #306998, #74b9e8);
+    }
+    .course--sql .course-select-progress-fill {
+      background: linear-gradient(90deg, #a855f7, #c084fc);
+    }
+    .course--excel .course-select-progress-fill {
+      background: linear-gradient(90deg, #10b981, #34d399);
+    }
+    
+    .course-select-badge {
+      position: absolute;
+      top: 10px; right: 10px;
+      font-size: 8px;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      padding: 3px 8px;
+      border-radius: 12px;
+    }
+    .course-select-badge.badge--locked {
+      background: rgba(255, 176, 32, 0.08);
+      color: var(--gold);
+      border: 1px solid rgba(255, 176, 32, 0.25);
+    }
+    .course-select-badge.badge--active {
+      background: rgba(0, 230, 246, 0.08);
+      color: #00E6F6;
+      border: 1px solid rgba(0, 230, 246, 0.25);
+    }
+
 
 
 
@@ -5199,6 +5364,9 @@
 
       <div class="dashboard-left-col">
 
+        <!-- Course Selection Grid -->
+        <div class="courses-selector-grid" id="coursesSelectorGrid"></div>
+
 
 
         <!-- Premium Score Card and Segmented Milestone Timeline Dashboard -->
@@ -5912,69 +6080,138 @@
 
   <script>
 
-    const DAY_METADATA = [
-
+    const PYTHON_METADATA = [
       { day: "01", title: "Data Types and Memory", emoji: "🔢", totalCells: 80, category: "basics" },
-
       { day: "02", title: "Operators and Expressions", emoji: "➕", totalCells: 80, category: "basics" },
-
       { day: "03", title: "Strings", emoji: "📝", totalCells: 70, category: "structures" },
-
       { day: "04", title: "Lists", emoji: "📋", totalCells: 70, category: "structures" },
-
       { day: "05", title: "Tuples", emoji: "📦", totalCells: 60, category: "structures" },
-
       { day: "06", title: "Sets", emoji: "⭕", totalCells: 60, category: "structures" },
-
       { day: "07", title: "Dictionaries", emoji: "🗂️", totalCells: 65, category: "structures" },
-
       { day: "08", title: "Conditionals", emoji: "🔀", totalCells: 55, category: "basics" },
-
       { day: "09", title: "Loops", emoji: "🔄", totalCells: 65, category: "basics" },
-
       { day: "10", title: "Functions", emoji: "⚙️", totalCells: 45, category: "basics" },
-
       { day: "11", title: "Modules", emoji: "📦", totalCells: 45, category: "basics" },
-
       { day: "12", title: "Comprehensions", emoji: "🧮", totalCells: 40, category: "structures" },
-
       { day: "13", title: "Lambda Functions", emoji: "λ", totalCells: 40, category: "basics" },
-
       { day: "14", title: "Exceptions", emoji: "⚠️", totalCells: 45, category: "basics" },
-
       { day: "15", title: "File Handling", emoji: "📂", totalCells: 45, category: "basics" },
-
       { day: "16", title: "OOP Basics", emoji: "🧩", totalCells: 45, category: "basics" },
-
       { day: "17", title: "OOP Advanced", emoji: "🏗️", totalCells: 45, category: "basics" },
-
       { day: "18", title: "Regex", emoji: "🔍", totalCells: 45, category: "structures" },
-
       { day: "19", title: "Generators and Iterators", emoji: "⚡", totalCells: 45, category: "structures" },
-
       { day: "20", title: "Capstone Project", emoji: "🏆", totalCells: 45, category: "advanced" },
-
       { day: "21", title: "NumPy Fundamentals", emoji: "📊", totalCells: 45, category: "analysis" },
-
       { day: "22", title: "NumPy Advanced", emoji: "📈", totalCells: 45, category: "analysis" },
-
       { day: "23", title: "Pandas Introduction", emoji: "🐼", totalCells: 45, category: "analysis" },
-
       { day: "24", title: "Pandas Selection", emoji: "🎯", totalCells: 45, category: "analysis" },
-
       { day: "25", title: "Pandas Cleaning", emoji: "🧹", totalCells: 45, category: "analysis" },
-
       { day: "26", title: "Pandas GroupBy", emoji: "🗃️", totalCells: 45, category: "analysis" },
-
       { day: "27", title: "Pandas Merging", emoji: "🔗", totalCells: 45, category: "analysis" },
-
       { day: "28", title: "Pandas Time Series", emoji: "📉", totalCells: 45, category: "analysis" },
-
       { day: "29", title: "Data Visualization", emoji: "🎨", totalCells: 45, category: "analysis" },
-
       { day: "30", title: "Phase Analysis & Review", emoji: "🔬", totalCells: 45, category: "advanced" }
-
     ];
+
+    const SQL_METADATA = [
+      { day: "01", title: "Introduction to SQL & Databases", emoji: "🗄️", totalCells: 6, category: "basics" },
+      { day: "02", title: "Filtering Data with WHERE", emoji: "🔍", totalCells: 6, category: "basics" },
+      { day: "03", title: "Pattern Matching & NULL Handling", emoji: "📝", totalCells: 6, category: "basics" },
+      { day: "04", title: "Sorting & Limiting Results", emoji: "📈", totalCells: 6, category: "basics" },
+      { day: "05", title: "Aggregate Functions", emoji: "📊", totalCells: 6, category: "basics" },
+      { day: "06", title: "GROUP BY & HAVING", emoji: "🗃️", totalCells: 6, category: "structures" },
+      { day: "07", title: "Data Types, Casting & Expressions", emoji: "➕", totalCells: 6, category: "structures" },
+      { day: "08", title: "CASE WHEN (Conditional Logic)", emoji: "🔀", totalCells: 6, category: "structures" },
+      { day: "09", title: "Understanding Relationships & INNER JOIN", emoji: "🔗", totalCells: 6, category: "structures" },
+      { day: "10", title: "LEFT, RIGHT & FULL OUTER JOIN", emoji: "🔄", totalCells: 6, category: "structures" },
+      { day: "11", title: "SELF JOIN & Multi-Table Queries", emoji: "👥", totalCells: 6, category: "structures" },
+      { day: "12", title: "Subqueries", emoji: "🧠", totalCells: 6, category: "analysis" },
+      { day: "13", title: "CTEs (Common Table Expressions)", emoji: "🏗️", totalCells: 6, category: "analysis" },
+      { day: "14", title: "Window Functions Part 1 (Ranking)", emoji: "🔢", totalCells: 6, category: "analysis" },
+      { day: "15", title: "Window Functions Part 2 (Analytic)", emoji: "📈", totalCells: 6, category: "analysis" },
+      { day: "16", title: "String Functions", emoji: "🧹", totalCells: 6, category: "advanced" },
+      { day: "17", title: "Date & Time Functions", emoji: "📅", totalCells: 6, category: "advanced" },
+      { day: "18", title: "UNION, INTERSECT & EXCEPT (SET Operations)", emoji: "🥞", totalCells: 6, category: "advanced" },
+      { day: "19", title: "Query Optimization & Best Practices", emoji: "⚡", totalCells: 6, category: "advanced" },
+      { day: "20", title: "SQL Capstone Project", emoji: "🏆", totalCells: 9, category: "advanced" }
+    ];
+
+    const EXCEL_METADATA = [
+      { day: "01", title: "Excel Orientation & Essential Formulas", emoji: "📊", totalCells: 6, category: "basics" },
+      { day: "02", title: "Formatting, Sorting & Filtering", emoji: "🎨", totalCells: 4, category: "basics" },
+      { day: "03", title: "Data Cleaning Essentials", emoji: "🧹", totalCells: 4, category: "basics" },
+      { day: "04", title: "Excel Tables", emoji: "📋", totalCells: 4, category: "structures" },
+      { day: "05", title: "Lookup & Reference Functions", emoji: "🔍", totalCells: 4, category: "structures" },
+      { day: "06", title: "Logic Functions", emoji: "🔀", totalCells: 4, category: "structures" },
+      { day: "07", title: "Text Functions", emoji: "📝", totalCells: 4, category: "analysis" },
+      { day: "08", title: "Date & Time Functions", emoji: "📅", totalCells: 4, category: "analysis" },
+      { day: "09", title: "Conditional Aggregation", emoji: "🧮", totalCells: 4, category: "analysis" },
+      { day: "10", title: "PivotTables Core Mechanics", emoji: "⚙️", totalCells: 4, category: "advanced" },
+      { day: "11", title: "PivotTables Advanced & Charts", emoji: "📈", totalCells: 4, category: "advanced" },
+      { day: "12", title: "Data Validation, What-If & Capstone", emoji: "🏆", totalCells: 4, category: "advanced" }
+    ];
+
+    let currentCourse = localStorage.getItem('manodemy_active_course') || 'python';
+    let DAY_METADATA = PYTHON_METADATA;
+    if (currentCourse === 'sql') DAY_METADATA = SQL_METADATA;
+    if (currentCourse === 'excel') DAY_METADATA = EXCEL_METADATA;
+
+    let TOTAL_CHALLENGES = DAY_METADATA.reduce((sum, item) => sum + item.totalCells, 0);
+    let sectionMaxes = { basics: 0, structures: 0, analysis: 0, advanced: 0 };
+
+    const getCourseStats = (courseName) => {
+      let metadata = [];
+      let keyPrefix = '';
+      if (courseName === 'python') {
+        metadata = PYTHON_METADATA;
+        keyPrefix = '';
+      } else if (courseName === 'sql') {
+        metadata = SQL_METADATA;
+        keyPrefix = 'sql-';
+      } else if (courseName === 'excel') {
+        metadata = EXCEL_METADATA;
+        keyPrefix = 'excel-';
+      }
+
+      let totalSolved = 0;
+      let totalCells = 0;
+      let completedDays = 0;
+
+      metadata.forEach(d => {
+        const solved = parseInt(localStorage.getItem(`manodemy_${keyPrefix}day${d.day}_solved_count`) || '0', 10);
+        totalSolved += solved;
+        totalCells += d.totalCells;
+        if (solved >= d.totalCells && d.totalCells > 0) {
+          completedDays++;
+        }
+      });
+
+      return { totalSolved, totalCells, completedDays, totalDays: metadata.length };
+    };
+
+    const getDayUrl = (course, dayNum) => {
+      const isNextJS = window.location.port === '3000' || window.location.hostname.includes('vercel.app') || window.location.hostname.includes('manodemy.com');
+      if (isNextJS) {
+        if (course === 'sql') return `/notebook/sql-day${dayNum}`;
+        if (course === 'excel') return `/notebook/excel-day${dayNum}`;
+        return `/notebook/day${dayNum}`;
+      } else {
+        if (course === 'sql') return `sql/day${dayNum}.html`;
+        if (course === 'excel') return `excel/day${dayNum}.html`;
+        return `day${dayNum}.html`;
+      }
+    };
+
+    const updateSectionMaxLabels = () => {
+      const basicsMaxEl = document.querySelector('.box-basics .section-card-score-max');
+      if (basicsMaxEl) basicsMaxEl.textContent = sectionMaxes.basics.toFixed(1);
+      const structuresMaxEl = document.querySelector('.box-structures .section-card-score-max');
+      if (structuresMaxEl) structuresMaxEl.textContent = sectionMaxes.structures.toFixed(1);
+      const analysisMaxEl = document.querySelector('.box-analysis .section-card-score-max');
+      if (analysisMaxEl) analysisMaxEl.textContent = sectionMaxes.analysis.toFixed(1);
+      const advancedMaxEl = document.querySelector('.box-advanced .section-card-score-max');
+      if (advancedMaxEl) advancedMaxEl.textContent = sectionMaxes.advanced.toFixed(1);
+    };
 
 
 
@@ -6041,99 +6278,43 @@
 
 
     document.addEventListener('DOMContentLoaded', async () => {
-
       // Setup Supabase
-
       const SUPA_URL = 'https://erqoyvbuhmkyvcqgwcbz.supabase.co';
-
       const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVycW95dmJ1aG1reXZjcWd3Y2J6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzODk1MTIsImV4cCI6MjA5NDk2NTUxMn0.9UnIfq8xMrKANPPTtoOADKH-NJ_it9HDp7xrJL4FXtw';
-
       const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
 
-
-
       // Load session details
-
-      const { data: { session } } = await sb.auth.getSession();
-
+      const sessionData = await sb.auth.getSession();
+      const session = sessionData.data.session;
       if (!session) return;
 
-
-
       const user = session.user;
-
       const profileName = user.user_metadata?.full_name || user.email.split('@')[0];
-
       const firstName = profileName.split(' ')[0];
 
-
-
       // Update Navigation User UI
-
       document.getElementById('profileName').textContent = profileName;
-
       document.getElementById('profileEmail').textContent = user.email;
 
-
-
       const avatarText = profileName.charAt(0).toUpperCase();
-
       document.getElementById('avatarCircle').textContent = avatarText;
 
-
-
       // Tailor Greeting
-
       const hrs = new Date().getHours();
-
       let greetWord = "Welcome back";
-
       if (hrs < 12) greetWord = "Good morning";
-
       else if (hrs < 18) greetWord = "Good afternoon";
-
       else greetWord = "Good evening";
-
       document.getElementById('welcomeGreeting').textContent = `${greetWord}, ${firstName}! 🚀`;
 
-
-
-      // Profile Dropdown Toggle Logic
-
-      const avatarWrapper = document.getElementById('profileAvatar');
-
-      avatarWrapper.addEventListener('click', (e) => {
-
-        e.stopPropagation();
-
-        avatarWrapper.classList.toggle('active');
-
-      });
-
-      document.addEventListener('click', () => {
-
-        avatarWrapper.classList.remove('active');
-
-      });
-
-
-
       // Admin access toggle
-
       try {
-
         const { data: profile } = await sb.from('profiles').select('role').eq('id', user.id).single();
-
         if (profile?.role === 'admin') {
-
           document.getElementById('adminLink').style.display = 'block';
-
         }
-
       } catch (err) {
-
         console.warn("Failed checking admin privileges", err);
-
       }
 
       // Check referral program status
@@ -6152,25 +6333,14 @@
         console.warn("Failed checking referral program status", err);
       }
 
-
-
       // Logout handler
-
       document.getElementById('logoutBtn').addEventListener('click', async (e) => {
-
         e.preventDefault();
-
         await sb.auth.signOut();
-
         localStorage.removeItem('manodemy_auth');
-
         localStorage.removeItem('manodemy_enrolled');
-
         window.location.replace("landing_v2/index.html");
-
       });
-
-
 
       // Cryptographically verified progress sync
       const restoreVerifiedProgress = async () => {
@@ -6181,36 +6351,42 @@
             return;
           }
           if (progress) {
-            DAY_METADATA.forEach(item => {
-              const dayId = `day${item.day}`;
-              const dayData = progress[dayId] || { solved_count: 0, solved_cells: [] };
-              const count = dayData.solved_count || 0;
-              
-              // Prevent overwriting active challenge progress if a challenge is currently running
-              const startTimeStr = localStorage.getItem(`manodemy_${dayId}_start_time`);
-              let isChallengeActive = false;
-              if (startTimeStr) {
-                const startTime = parseInt(startTimeStr, 10);
-                isChallengeActive = (Date.now() - startTime) < 24 * 3600 * 1000;
-              }
+            const allCourses = [
+              { meta: PYTHON_METADATA, prefix: '', total: 1000 },
+              { meta: SQL_METADATA, prefix: 'sql-', total: 123 },
+              { meta: EXCEL_METADATA, prefix: 'excel-', total: 50 }
+            ];
+            
+            allCourses.forEach(course => {
+              const courseChallenges = course.meta.reduce((sum, item) => sum + item.totalCells, 0);
+              course.meta.forEach(item => {
+                const dayId = `${course.prefix}day${item.day}`;
+                const dayData = progress[dayId] || { solved_count: 0, solved_cells: [] };
+                const count = dayData.solved_count || 0;
 
-              const localCount = parseInt(localStorage.getItem(`manodemy_${dayId}_solved_count`) || '0', 10);
-              const finalCount = isChallengeActive ? Math.max(localCount, count) : count;
-              
-              localStorage.setItem(`manodemy_${dayId}_solved_count`, finalCount.toString());
-              
-              // Calculate score exactly matching dashboard XP system
-              const score = 1000 * (finalCount / TOTAL_CHALLENGES);
-              
-              // Only merge local best score if the challenge is actively running; otherwise lock to DB verified score
-              const localBestScore = parseFloat(localStorage.getItem(`manodemy_day${item.day}_best_score`) || '0');
-              const finalBestScore = isChallengeActive ? Math.max(score, localBestScore) : score;
-              
-              localStorage.setItem(`manodemy_day${item.day}_best_score`, finalBestScore.toFixed(2));
-              
-              const localBestSolved = parseInt(localStorage.getItem(`manodemy_${dayId}_best_solved`) || '0', 10);
-              const finalBestSolved = isChallengeActive ? Math.max(finalCount, localBestSolved) : finalCount;
-              localStorage.setItem(`manodemy_${dayId}_best_solved`, finalBestSolved.toString());
+                const startTimeStr = localStorage.getItem(`manodemy_${dayId}_start_time`);
+                let isChallengeActive = false;
+                if (startTimeStr) {
+                  const startTime = parseInt(startTimeStr, 10);
+                  isChallengeActive = (Date.now() - startTime) < 24 * 3600 * 1000;
+                }
+
+                const localCount = parseInt(localStorage.getItem(`manodemy_${dayId}_solved_count`) || '0', 10);
+                const finalCount = isChallengeActive ? Math.max(localCount, count) : count;
+
+                localStorage.setItem(`manodemy_${dayId}_solved_count`, finalCount.toString());
+
+                const score = 1000 * (finalCount / courseChallenges);
+
+                const localBestScore = parseFloat(localStorage.getItem(`manodemy_${course.prefix}day${item.day}_best_score`) || '0');
+                const finalBestScore = isChallengeActive ? Math.max(score, localBestScore) : score;
+
+                localStorage.setItem(`manodemy_${course.prefix}day${item.day}_best_score`, finalBestScore.toFixed(2));
+
+                const localBestSolved = parseInt(localStorage.getItem(`manodemy_${dayId}_best_solved`) || '0', 10);
+                const finalBestSolved = isChallengeActive ? Math.max(finalCount, localBestSolved) : finalCount;
+                localStorage.setItem(`manodemy_${dayId}_best_solved`, finalBestSolved.toString());
+              });
             });
           }
         } catch (err) {
@@ -6218,114 +6394,59 @@
         }
       };
 
+      // Check dynamic course enrollments
+      try {
+        const [{ data: enrolledPython }, { data: enrolledSql }, { data: enrolledExcel }] = await Promise.all([
+          sb.rpc('check_enrollment', { p_course_id: 'python-30day' }),
+          sb.rpc('check_enrollment', { p_course_id: 'sql-20day' }),
+          sb.rpc('check_enrollment', { p_course_id: 'excel-12day' })
+        ]);
+
+        localStorage.setItem('manodemy_enrolled_python', enrolledPython ? 'true' : 'false');
+        localStorage.setItem('manodemy_enrolled_sql', enrolledSql ? 'true' : 'false');
+        localStorage.setItem('manodemy_enrolled_excel', enrolledExcel ? 'true' : 'false');
+      } catch (err) {
+        console.warn("Failed checking dynamic course enrollments", err);
+      }
+
+      const isEnrolledLocal = localStorage.getItem('manodemy_enrolled') === 'true';
+      const plan = session.user.user_metadata?.plan;
+      if (plan === 'pro' || isEnrolledLocal) {
+        localStorage.setItem('manodemy_enrolled_python', 'true');
+        localStorage.setItem('manodemy_enrolled_sql', 'true');
+        localStorage.setItem('manodemy_enrolled_excel', 'true');
+      }
+
+      const isEnrolledPython = localStorage.getItem('manodemy_enrolled_python') === 'true';
+      const isEnrolledSql = localStorage.getItem('manodemy_enrolled_sql') === 'true';
+      const isEnrolledExcel = localStorage.getItem('manodemy_enrolled_excel') === 'true';
+      
+      let defaultCourse = 'python';
+      if (!isEnrolledPython) {
+        if (isEnrolledSql) defaultCourse = 'sql';
+        else if (isEnrolledExcel) defaultCourse = 'excel';
+      }
+      
+      currentCourse = localStorage.getItem('manodemy_active_course');
+      if (!currentCourse || (currentCourse === 'python' && !isEnrolledPython && (isEnrolledSql || isEnrolledExcel))) {
+        currentCourse = defaultCourse;
+        localStorage.setItem('manodemy_active_course', currentCourse);
+      }
+
       await restoreVerifiedProgress();
 
-      // Retrieve resume learning link mapping to last active day and pre-calculate totalSolvedCount
-
       let totalSolvedCount = 0;
-
       let totalTimeSpentSeconds = 0;
-
-      DAY_METADATA.forEach(d => {
-
-        const solved = parseInt(localStorage.getItem(`manodemy_day${d.day}_solved_count`) || '0', 10);
-
-        const time = parseInt(localStorage.getItem(`manodemy_day${d.day}_time_spent`) || '0', 10);
-
-        totalSolvedCount += solved;
-
-        totalTimeSpentSeconds += time;
-
-      });
-
-
-
-      const lastVisitedDayId = localStorage.getItem('mano_last_day');
-
       let resumeTarget = "day01.html";
-
       let resumeText = "Resume Learning";
 
-
-
-      if (lastVisitedDayId) {
-
-        const match = lastVisitedDayId.match(/(\d{2})/);
-
-        if (match) {
-
-          resumeTarget = `day${match[1]}.html`;
-
-          resumeText = `Resume Day ${match[1]}`;
-
-        }
-
-      } else if (totalSolvedCount > 0) {
-
-        let highestDay = 1;
-
-        DAY_METADATA.forEach(d => {
-
-          const solved = parseInt(localStorage.getItem(`manodemy_day${d.day}_solved_count`) || '0', 10);
-
-          if (solved > 0) highestDay = Math.max(highestDay, parseInt(d.day, 10));
-
-        });
-
-        const nextDayNum = Math.min(highestDay + 1, 30);
-
-        const dayStr = nextDayNum < 10 ? `0${nextDayNum}` : nextDayNum;
-
-        resumeTarget = `day${dayStr}.html`;
-
-        resumeText = `Continue to Day ${dayStr}`;
-
-      }
-
-
-
-      const ctaBtn = document.getElementById('resumeLearningBtn');
-
-      if (ctaBtn) {
-
-        ctaBtn.href = resumeTarget + "?v=2.1";
-
-        ctaBtn.innerHTML = `${resumeText} <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>`;
-
-      }
-
-      const dropDownResume = document.getElementById('dropdownResumeLink');
-
-      if (dropDownResume) dropDownResume.href = resumeTarget + "?v=2.1";
-
-
-
-      // Calculate XP from stats — scaled to 1668 real challenges
-
-      // Formula: Each challenge = 10 XP | Focus = 200 XP/hr | Streak = 50 XP/day
-
-      // Day completion bonus: 50 XP per fully completed day
-
-      // Category bonus: 500 XP per category (basics/structures/analysis/advanced) fully done
-
-      // Milestone bonuses: 500 (25%), 1500 (50%), 3000 (75%), 7500 (100%)
-
-      // Calculate XP based strictly on the 1,000 XP gamified marking system.
-
-      // Returns the sum of manodemy_day[D]_best_score from local storage.
-
       const calculateXP = () => {
-
         let total = 0;
-
+        const keyPrefix = currentCourse === 'sql' ? 'sql-' : (currentCourse === 'excel' ? 'excel-' : '');
         DAY_METADATA.forEach(d => {
-
-          total += parseFloat(localStorage.getItem(`manodemy_day${d.day}_best_score`) || '0');
-
+          total += parseFloat(localStorage.getItem(`manodemy_${keyPrefix}day${d.day}_best_score`) || '0');
         });
-
-        return Math.min(total, 1000); // Strict global 1000 XP cap
-
+        return Math.min(total, 1000);
       };
 
 

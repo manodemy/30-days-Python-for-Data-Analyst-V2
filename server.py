@@ -59,6 +59,44 @@ DAYS = [
     ('Day30_Phase_Analysis_Blank.ipynb',  'Phase Analysis & Review',   '🔬'),
 ]
 
+SQL_DAYS = [
+    ('Day01_SQL_Blank.ipynb', 'Introduction to SQL & Databases', '🗄️'),
+    ('Day02_SQL_Blank.ipynb', 'Filtering Data with WHERE', '🔍'),
+    ('Day03_SQL_Blank.ipynb', 'Pattern Matching & NULL Handling', '📝'),
+    ('Day04_SQL_Blank.ipynb', 'Sorting & Limiting Results', '📈'),
+    ('Day05_SQL_Blank.ipynb', 'Aggregate Functions', '📊'),
+    ('Day06_SQL_Blank.ipynb', 'GROUP BY & HAVING', '🗃️'),
+    ('Day07_SQL_Blank.ipynb', 'Data Types, Casting & Expressions', '➕'),
+    ('Day08_SQL_Blank.ipynb', 'CASE WHEN (Conditional Logic)', '🔀'),
+    ('Day09_SQL_Blank.ipynb', 'Understanding Relationships & INNER JOIN', '🔗'),
+    ('Day10_SQL_Blank.ipynb', 'LEFT, RIGHT & FULL OUTER JOIN', '🔄'),
+    ('Day11_SQL_Blank.ipynb', 'SELF JOIN & Multi-Table Queries', '👥'),
+    ('Day12_SQL_Blank.ipynb', 'Subqueries', '🧠'),
+    ('Day13_SQL_Blank.ipynb', 'CTEs (Common Table Expressions)', '🏗️'),
+    ('Day14_SQL_Blank.ipynb', 'Window Functions Part 1 (Ranking)', '🔢'),
+    ('Day15_SQL_Blank.ipynb', 'Window Functions Part 2 (Analytic)', '📈'),
+    ('Day16_SQL_Blank.ipynb', 'String Functions', '🧹'),
+    ('Day17_SQL_Blank.ipynb', 'Date & Time Functions', '📅'),
+    ('Day18_SQL_Blank.ipynb', 'UNION, INTERSECT & EXCEPT (SET Operations)', '🥞'),
+    ('Day19_SQL_Blank.ipynb', 'Query Optimization & Best Practices', '⚡'),
+    ('Day20_SQL_Blank.ipynb', 'SQL Capstone Project', '🏆')
+]
+
+EXCEL_DAYS = [
+    ('Day01_Excel_Blank.ipynb', 'Excel Orientation & Essential Formulas', '📊'),
+    ('Day02_Excel_Blank.ipynb', 'Formatting, Sorting & Filtering', '🎨'),
+    ('Day03_Excel_Blank.ipynb', 'Data Cleaning Essentials', '🧹'),
+    ('Day04_Excel_Blank.ipynb', 'Excel Tables', '📋'),
+    ('Day05_Excel_Blank.ipynb', 'Lookup & Reference Functions', '🔍'),
+    ('Day06_Excel_Blank.ipynb', 'Logic Functions', '🔀'),
+    ('Day07_Excel_Blank.ipynb', 'Text Functions', '📝'),
+    ('Day08_Excel_Blank.ipynb', 'Date & Time Functions', '📅'),
+    ('Day09_Excel_Blank.ipynb', 'Conditional Aggregation', '🧮'),
+    ('Day10_Excel_Blank.ipynb', 'PivotTables Core Mechanics', '⚙️'),
+    ('Day11_Excel_Blank.ipynb', 'PivotTables Advanced & Charts', '📈'),
+    ('Day12_Excel_Blank.ipynb', 'Data Validation, What-If & Capstone', '🏆')
+]
+
 # ═══════════════════════════════════════════════════════════════════════════
 # HELPERS
 # ═══════════════════════════════════════════════════════════════════════════
@@ -329,54 +367,37 @@ def _render_md_block(text, w, day_num):
             w(f'<p>{nm.group(1)}. {md(nm.group(2))}</p>')
             continue
 
-        # ── HEADERS ──
-        if stripped.startswith('### '):
-            w(f'<h3>{md(stripped[4:])}</h3>')
-        elif stripped.startswith('## '):
-            w(f'<h2>{md(stripped[3:])}</h2>')
-        elif stripped.startswith('# '):
-            w(f'<h1>{md(stripped[2:])}</h1>')
-        # ── CHECKLIST ──
-        elif stripped.startswith('- ['):
-            item = re.sub(r'^- \[.\]\s*', '', stripped)
-            w(f'<label class="check-item"><input type="checkbox"><span>{md(item)}</span></label>')
-        # ── PARAGRAPH ──
-        else:
-            w(f'<p>{md(stripped)}</p>')
-
-    # Flush remaining
-    if in_code_fence and code_lines:
-        code = esc('\n'.join(code_lines))
-        w(f'<pre class="nb-code-block"><code>{code}</code></pre>')
-    if in_table and table_rows:
-        _flush_table(table_rows, w)
-    if in_interview_q:
-        w('</div>')
-
-
-def _flush_table(rows, w):
-    """Convert collected table rows into an HTML table."""
-    if not rows: return
-    w('<table>')
-    for idx, row in enumerate(rows):
-        cols = [c.strip() for c in row.split('|')[1:-1]]
-        if idx == 0:
-            w('<thead><tr>' + ''.join(f'<th>{md(c)}</th>' for c in cols) + '</tr></thead><tbody>')
-        else:
-            w('<tr>' + ''.join(f'<td>{md(c)}</td>' for c in cols) + '</tr>')
-    w('</tbody></table>')
-
-# ═══════════════════════════════════════════════════════════════════════════
-# HTML PAGE TEMPLATE
-# ═══════════════════════════════════════════════════════════════════════════
-def build_page(day_num, title, body, secs, cells):
+def build_page(day_num, title, body, secs, cells, course_type='python'):
     dd = f'{day_num:02d}'
+    
+    # Select appropriate mapping and configurations based on course type
+    if course_type == 'sql':
+        course_days = SQL_DAYS
+        max_days = 20
+        course_title = "SQL for Data Analyst"
+        course_id = "sql-20day"
+        sub_dir = "sql/"
+        robots_threshold = 3
+    elif course_type == 'excel':
+        course_days = EXCEL_DAYS
+        max_days = 12
+        course_title = "Excel for Data Analyst"
+        course_id = "excel-12day"
+        sub_dir = "excel/"
+        robots_threshold = 3
+    else:
+        course_days = DAYS
+        max_days = 30
+        course_title = "Python for Data Analyst"
+        course_id = "python-30day"
+        sub_dir = ""
+        robots_threshold = 3
 
     prev = '<a href="#" class="nav-icon-btn prev-btn disabled" aria-label="Previous Day" title="Previous Day"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></a>' if day_num == 1 \
         else f'<a href="day{day_num-1:02d}.html" class="nav-icon-btn prev-btn" aria-label="Previous Day" title="Previous Day"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></a>'
     
-    if day_num >= 30:
-        nxt = '<a href="index.html" class="nav-icon-btn next-btn finish-btn" aria-label="Finish Course" title="Finish Course"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></a>'
+    if day_num >= max_days:
+        nxt = '<a href="../index.html" class="nav-icon-btn next-btn finish-btn" aria-label="Finish Course" title="Finish Course"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></a>'
     elif day_num == 2:
         nxt = f'<a href="day03.html" id="topNextBtn" class="nav-icon-btn next-btn" aria-label="Next Day" title="Next Day"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></a>'
     else:
@@ -388,7 +409,7 @@ def build_page(day_num, title, body, secs, cells):
             return f'''<div class="next-day-wrapper" style="margin-top: 3.5rem; margin-bottom: 2rem; text-align: center;">
                 <a href="day03.html" id="bottomNextBtn" class="cta-btn cta-cyan" style="display: inline-flex; width: 100%; max-width: 450px; justify-content: center; font-size: 1.15rem; padding: 1.1rem; box-shadow: 0 4px 15px rgba(0, 230, 246, 0.3);">🚀 Continue to {m.group(1)}</a>
             </div>'''
-        elif day_num < 30:
+        elif day_num < max_days:
             return f'''<div class="next-day-wrapper" style="margin-top: 3.5rem; margin-bottom: 2rem; text-align: center;">
                 <a href="day{nxt_day}.html" class="cta-btn cta-cyan" style="display: inline-flex; width: 100%; max-width: 450px; justify-content: center; font-size: 1.15rem; padding: 1.1rem; box-shadow: 0 4px 15px rgba(0, 230, 246, 0.3);">🚀 Continue to {m.group(1)}</a>
             </div>'''
@@ -399,19 +420,30 @@ def build_page(day_num, title, body, secs, cells):
     toc = '\n'.join(f'<li><a href="#{a}" class="toc-link">{t}</a></li>' for a, t in secs)
 
     dropdown_list = ''
-    for i, (f, t, e) in enumerate(DAYS, 1):
+    for i, (f, t, e) in enumerate(course_days, 1):
         active = 'active' if i == day_num else ''
         dropdown_list += f'<a href="day{i:02d}.html" class="dropdown-item {active}"><span class="day-num">Day {i:02d}</span> <span class="day-em">{e}</span> {t}</a>\n'
 
-    noindex_tag = '<meta name="robots" content="noindex, nofollow">' if day_num >= 3 else ''
+    noindex_tag = '<meta name="robots" content="noindex, nofollow">' if day_num >= robots_threshold else ''
+
+    # Python vs non-Python script integrations
+    if course_type == 'python':
+        engine_status = '<div class="pyodide-status" id="pyStatus">⏳ Loading Python Engine...</div>'
+        engine_script = '<script defer src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>'
+    elif course_type == 'sql':
+        engine_status = '<div class="pyodide-status" id="pyStatus">🔌 Connected to SQL Server Database</div>'
+        engine_script = ''
+    elif course_type == 'excel':
+        engine_status = '<div class="pyodide-status" id="pyStatus">📊 Loading Excel Formula Engine...</div>'
+        engine_script = '<script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>'
 
     return f'''<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Day {dd}: {title} — Manodemy</title>
-<meta name="description" content="Day {dd}: {title} — Interactive Python coding workbook with hands-on challenges. Part of Manodemy's 30-Day Python for Data Analyst course.">
+<title>Day {dd}: {title} — {course_title} — Manodemy</title>
+<meta name="description" content="Day {dd}: {title} — Interactive workbook with hands-on challenges. Part of Manodemy's {course_title} course.">
 {noindex_tag}
 <!-- Performance: Preconnect to critical origins -->
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
@@ -439,7 +471,7 @@ def build_page(day_num, title, body, secs, cells):
 
     try {{
       if (typeof window.supabase === 'undefined') {{
-        window.location.href = 'index.html?reason=sdk_blocked';
+        window.location.href = '../index.html?reason=sdk_blocked';
         return;
       }}
       const SUPA_URL = 'https://erqoyvbuhmkyvcqgwcbz.supabase.co';
@@ -449,7 +481,7 @@ def build_page(day_num, title, body, secs, cells):
       const {{ data: {{ session }}, error }} = await sb.auth.getSession();
       
       if (error || !session) {{
-        window.location.href = `index.html?redirect=${{encodeURIComponent(currentPath)}}`;
+        window.location.href = `../index.html?redirect=${{encodeURIComponent(currentPath)}}`;
         return;
       }}
       
@@ -463,7 +495,7 @@ def build_page(day_num, title, body, secs, cells):
       
       // Fallback: verify enrollment server-side via Supabase RPC
       try {{
-        const {{ data: enrolled }} = await sb.rpc('check_enrollment', {{ p_course_id: 'python-30day' }});
+        const {{ data: enrolled }} = await sb.rpc('check_enrollment', {{ p_course_id: '{course_id}' }});
         if (enrolled) {{
           localStorage.setItem('manodemy_enrolled', 'true');
           removePreload();
@@ -473,17 +505,17 @@ def build_page(day_num, title, body, secs, cells):
         // RPC failed — don't grant access
       }}
       
-      window.location.href = `index.html#pricing?locked=true`;
+      window.location.href = `../index.html#pricing?locked=true`;
       
     }} catch (err) {{
-      window.location.href = `index.html`;
+      window.location.href = `../index.html`;
     }}
   }});
 </script>
 <!-- Non-render-blocking fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
-<link rel="stylesheet" href="notebook.css">
+<link rel="stylesheet" href="../notebook.css">
 <!-- PWA Web App Manifest and Mobile Capabilities -->
 <link rel="manifest" href="/manifest.json">
 <link rel="icon" type="image/png" sizes="192x192" href="/icon-192x192.png">
@@ -491,7 +523,7 @@ def build_page(day_num, title, body, secs, cells):
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#060913">
 </head>
-<body>
+<body data-kernel="{course_type}">
 <!-- Paywall Preload Screen -->
 <div id="paywall-preload-screen" class="paywall-preload" aria-hidden="true">
   <div class="paywall-preload__spinner"></div>
@@ -541,7 +573,7 @@ def build_page(day_num, title, body, secs, cells):
   <div class="nav-zone--right">
     <!-- App Navigation -->
     <div class="nav-controls">
-      <a href="home.html" class="nav-icon-btn scorecard-btn" title="Back to Dashboard" aria-label="Score Card">
+      <a href="../home.html" class="nav-icon-btn scorecard-btn" title="Back to Dashboard" aria-label="Score Card">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
         Score Card
       </a>
@@ -571,7 +603,7 @@ def build_page(day_num, title, body, secs, cells):
   <button class="profile-card__signout" id="signOutBtn">Sign Out</button>
 </div>
 
-<div class="pyodide-status" id="pyStatus">⏳ Loading Python Engine...</div>
+{engine_status}
 <div class="layout">
   <main class="notebook" id="notebook">
     <div class="nb-title"><h1>📊 Day {dd} : {title}</h1></div>
@@ -594,10 +626,10 @@ def build_page(day_num, title, body, secs, cells):
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/indent-fold.min.js"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.js"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/anyword-hint.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
-<script defer src="notebook.js?v=2.1"></script>
-<script src="voice.js" defer></script>\r
-<script src="hints.js" defer></script>
+{engine_script}
+<script defer src="../notebook.js?v=2.1"></script>
+<script src="../voice.js" defer></script>
+<script src="../hints.js" defer></script>
 {f"""
 <script>
   document.addEventListener('DOMContentLoaded', () => {{
@@ -608,7 +640,7 @@ def build_page(day_num, title, body, secs, cells):
       const isEnrolled = localStorage.getItem('manodemy_enrolled') === 'true';
       if (!isEnrolled) {{
         e.preventDefault();
-        window.location.href = 'index.html#pricing?locked=true';
+        window.location.href = '../index.html#pricing?locked=true';
       }}
     }};
     
@@ -640,16 +672,33 @@ class LiveHandler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         # Intercept dayXX.html requests — generate on the fly from notebook
-        m = re.match(r'/day(\d{2})\.html', self.path)
+        m_py = re.match(r'/day(\d{2})\.html', self.path)
+        m_sql = re.match(r'/sql/day(\d{2})\.html', self.path)
+        m_excel = re.match(r'/excel/day(\d{2})\.html', self.path)
+        
+        m = m_py or m_sql or m_excel
         if m:
             day_num = int(m.group(1))
-            if 1 <= day_num <= len(DAYS):
-                nb_file, title, emoji = DAYS[day_num - 1]
-                nb_path = NB_DIR / nb_file
+            if m_sql:
+                course_type = 'sql'
+                course_days = SQL_DAYS
+                nb_subdir = 'sql'
+            elif m_excel:
+                course_type = 'excel'
+                course_days = EXCEL_DAYS
+                nb_subdir = 'excel'
+            else:
+                course_type = 'python'
+                course_days = DAYS
+                nb_subdir = ''
+                
+            if 1 <= day_num <= len(course_days):
+                nb_file, title, emoji = course_days[day_num - 1]
+                nb_path = (NB_DIR / nb_subdir / nb_file) if nb_subdir else (NB_DIR / nb_file)
                 if nb_path.exists():
                     try:
                         body, secs, cells = parse_notebook(nb_path, day_num)
-                        html = build_page(day_num, title, body, secs, cells)
+                        html = build_page(day_num, title, body, secs, cells, course_type=course_type)
                         data = html.encode('utf-8')
                         self.send_response(200)
                         self.send_header('Content-Type', 'text/html; charset=utf-8')
@@ -658,7 +707,7 @@ class LiveHandler(SimpleHTTPRequestHandler):
                         self.end_headers()
                         self.wfile.write(data)
                         ts = time.strftime('%H:%M:%S')
-                        print(f'  📄 [{ts}] day{day_num:02d}.html → {cells} cells, {len(secs)} sections (live from {nb_file})')
+                        print(f'  📄 [{ts}] {course_type}/day{day_num:02d}.html → {cells} cells, {len(secs)} sections (live from {nb_file})')
                         return
                     except Exception as e:
                         self.send_error(500, f'Error generating page: {e}')
@@ -675,42 +724,64 @@ class LiveHandler(SimpleHTTPRequestHandler):
 # ═══════════════════════════════════════════════════════════════════════════
 # STATIC BUILD — for GitHub Pages deployment
 # ═══════════════════════════════════════════════════════════════════════════
-def build_static(start=1, end=30):
+def build_static(course_type='python', start=1, end=None):
     total_c, total_s = 0, 0
+    
+    if course_type == 'sql':
+        course_days = SQL_DAYS
+        nb_subdir = 'sql'
+        default_end = 20
+    elif course_type == 'excel':
+        course_days = EXCEL_DAYS
+        nb_subdir = 'excel'
+        default_end = 12
+    else:
+        course_type = 'python'
+        course_days = DAYS
+        nb_subdir = ''
+        default_end = 30
+        
+    if end is None:
+        end = default_end
+        
+    out_dir = ROOT / nb_subdir if nb_subdir else ROOT
+    out_dir.mkdir(parents=True, exist_ok=True)
+    
     for day_num in range(start, end + 1):
-        if day_num < 1 or day_num > len(DAYS): continue
-        nb_file, title, emoji = DAYS[day_num - 1]
-        nb_path = NB_DIR / nb_file
+        if day_num < 1 or day_num > len(course_days): continue
+        nb_file, title, emoji = course_days[day_num - 1]
+        nb_path = (NB_DIR / nb_subdir / nb_file) if nb_subdir else (NB_DIR / nb_file)
         if not nb_path.exists():
             print(f'  ⚠️  {nb_file} not found — skipping.')
             continue
         body, secs, cells = parse_notebook(nb_path, day_num)
-        html = build_page(day_num, title, body, secs, cells)
-        out = ROOT / f'day{day_num:02d}.html'
+        html = build_page(day_num, title, body, secs, cells, course_type=course_type)
+        out = out_dir / f'day{day_num:02d}.html'
         out.write_text(html, encoding='utf-8')
         total_c += cells; total_s += len(secs)
-        print(f'  ✅ day{day_num:02d}.html — {cells} cells, {len(secs)} sections')
+        print(f'  ✅ {course_type}/day{day_num:02d}.html — {cells} cells, {len(secs)} sections')
 
     # Update landing page links
-    lp = ROOT / 'index.html'
-    if lp.exists():
-        h = lp.read_text(encoding='utf-8')
-        skills = []
-        for idx, (_, title, emoji) in enumerate(DAYS):
-            dd = f'{idx+1:02d}'
-            if idx >= 2:
-                # Add lock tag for premium days
-                lock_svg = '<div class="lock-tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>'
-                skills.append(f'        <a href="day{dd}.html" class="skill day-card--locked"><span class="skill-badge">{dd}</span><span class="skill-icon">{emoji}</span><span class="skill-title">{title}</span>{lock_svg}</a>')
-            else:
-                skills.append(f'        <a href="day{dd}.html" class="skill"><span class="skill-badge">{dd}</span><span class="skill-icon">{emoji}</span><span class="skill-title">{title}</span></a>')
-        new_grid = '\n'.join(skills)
-        h2 = re.sub(r'(<div class="skills-grid s30">)\s*(.*?)\s*(</div>\s*</div>\s*</div>\s*</section>)',
-                     r'\1\n' + new_grid + r'\n      \3', h, flags=re.DOTALL)
-        lp.write_text(h2, encoding='utf-8')
-        print('  ✅ index.html — all 30 days linked.')
+    if course_type == 'python':
+        lp = ROOT / 'index.html'
+        if lp.exists():
+            h = lp.read_text(encoding='utf-8')
+            skills = []
+            for idx, (_, title, emoji) in enumerate(DAYS):
+                dd = f'{idx+1:02d}'
+                if idx >= 2:
+                    # Add lock tag for premium days
+                    lock_svg = '<div class="lock-tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>'
+                    skills.append(f'        <a href="day{dd}.html" class="skill day-card--locked"><span class="skill-badge">{dd}</span><span class="skill-icon">{emoji}</span><span class="skill-title">{title}</span>{lock_svg}</a>')
+                else:
+                    skills.append(f'        <a href="day{dd}.html" class="skill"><span class="skill-badge">{dd}</span><span class="skill-icon">{emoji}</span><span class="skill-title">{title}</span></a>')
+            new_grid = '\n'.join(skills)
+            h2 = re.sub(r'(<div class="skills-grid s30">)\s*(.*?)\s*(</div>\s*</div>\s*</div>\s*</section>)',
+                         r'\1\n' + new_grid + r'\n      \3', h, flags=re.DOTALL)
+            lp.write_text(h2, encoding='utf-8')
+            print('  ✅ index.html — all 30 days linked.')
 
-    print(f'\n🎉 Built {end-start+1} pages, {total_c} code cells, {total_s} sidebar sections.')
+    print(f'\n🎉 Built {end-start+1} {course_type} pages, {total_c} code cells, {total_s} sidebar sections.')
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -720,14 +791,28 @@ if __name__ == '__main__':
     args = sys.argv[1:]
 
     if args and args[0] == 'build':
-        # Static build mode
-        if len(args) == 1:
-            build_static(1, 30)
-        elif len(args) == 2:
-            n = int(args[1])
-            build_static(n, n)
-        else:
-            build_static(int(args[1]), int(args[2]))
+        course_type = 'python'
+        start = 1
+        end = None
+        
+        if len(args) > 1:
+            if args[1] in ('sql', 'excel', 'python'):
+                course_type = args[1]
+                if len(args) == 3:
+                    start = int(args[2])
+                    end = start
+                elif len(args) == 4:
+                    start = int(args[2])
+                    end = int(args[3])
+            else:
+                # Legacy positional build arguments: python server.py build [start] [end]
+                start = int(args[1])
+                if len(args) == 3:
+                    end = int(args[2])
+                else:
+                    end = start
+        
+        build_static(course_type, start, end)
     else:
         # Live server mode
         port = int(args[0]) if args else 8080

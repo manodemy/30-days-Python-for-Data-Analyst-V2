@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 05: Lookup & Reference Functions — Excel for Data Analyst — Manodemy</title>
+<meta name="description" content="Day 05: Lookup & Reference Functions — Interactive workbook with hands-on challenges. Part of Manodemy's Excel for Data Analyst course.">
+<meta name="robots" content="noindex, nofollow">
+<!-- Performance: Preconnect to critical origins -->
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="https://erqoyvbuhmkyvcqgwcbz.supabase.co">
+<!-- Supabase SDK (deferred — no longer render-blocking) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<!-- Authentication + Enrollment Route Guard (runs after deferred SDK loads) -->
+<script>
+  document.addEventListener('DOMContentLoaded', async function PaywallGuard() {
+    const currentPath = window.location.pathname;
+    const isProtectedDay = currentPath.match(/day(0[3-9]|[1-2][0-9]|30)\.html/);
+
+    const removePreload = () => {
+      const p = document.getElementById('paywall-preload-screen');
+      if (p) p.remove();
+    };
+
+    if (!isProtectedDay) {
+      removePreload();
+      return;
+    }
+
+    try {
+      if (typeof window.supabase === 'undefined') {
+        window.location.href = '../index.html?reason=sdk_blocked';
+        return;
+      }
+      const SUPA_URL = 'https://erqoyvbuhmkyvcqgwcbz.supabase.co';
+      const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVycW95dmJ1aG1reXZjcWd3Y2J6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzODk1MTIsImV4cCI6MjA5NDk2NTUxMn0.9UnIfq8xMrKANPPTtoOADKH-NJ_it9HDp7xrJL4FXtw';
+      const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+      
+      const { data: { session }, error } = await sb.auth.getSession();
+      
+      if (error || !session) {
+        window.location.href = `../index.html?redirect=${encodeURIComponent(currentPath)}`;
+        return;
+      }
+      
+      const plan = session.user.user_metadata?.plan;
+      const isEnrolledLocal = localStorage.getItem('manodemy_enrolled') === 'true';
+      
+      if (plan === 'pro' || isEnrolledLocal) {
+        removePreload();
+        return;
+      }
+      
+      // Fallback: verify enrollment server-side via Supabase RPC
+      try {
+        const { data: enrolled } = await sb.rpc('check_enrollment', { p_course_id: 'excel-12day' });
+        if (enrolled) {
+          localStorage.setItem('manodemy_enrolled', 'true');
+          removePreload();
+          return;
+        }
+      } catch (rpcErr) {
+        // RPC failed — don't grant access
+      }
+      
+      window.location.href = `../index.html#pricing?locked=true`;
+      
+    } catch (err) {
+      window.location.href = `../index.html`;
+    }
+  });
+</script>
+<!-- Non-render-blocking fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<link rel="stylesheet" href="../notebook.css">
+<!-- PWA Web App Manifest and Mobile Capabilities -->
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192x192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#060913">
+</head>
+<body data-kernel="excel">
+<!-- Paywall Preload Screen -->
+<div id="paywall-preload-screen" class="paywall-preload" aria-hidden="true">
+  <div class="paywall-preload__spinner"></div>
+</div>
+
+<nav class="top-bar nav-container" id="topBar">
+  <div class="nav-zone--left">
+    <!-- Profile Avatar -->
+    <div class="avatar-wrapper" id="profileAvatar" 
+         role="button" 
+         tabindex="0" 
+         aria-label="Open profile card"
+         aria-expanded="false"
+         aria-haspopup="true">
+      <div class="avatar-circle" id="avatarCircle"></div>
+      <div class="avatar-status-dot" aria-hidden="true"></div>
+    </div>
+
+    <!-- Score Card -->
+    <div class="nav-score-card">
+      <div class="score-info">
+        <span class="score-label">Solved</span>
+        <span class="score-values"><span id="scoreSolved" class="score-highlight">0</span> / <span id="scoreTotal">0</span></span>
+      </div>
+      <div class="score-track"><div class="score-fill" id="scoreProgress" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <div class="nav-center has-dropdown">
+    <div class="nav-center-flex">
+      <a href="day04.html" class="nav-icon-btn prev-btn" aria-label="Previous Day" title="Previous Day"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></a>
+      <button class="nav-dropdown-btn" id="dayDropdownBtn">
+        <span class="day-badge">Day 05</span>
+        <span class="day-title">Lookup & Reference Functions</span>
+        <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </button>
+      <a href="day06.html" class="nav-icon-btn next-btn" aria-label="Next Day" title="Next Day"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></a>
+    </div>
+    <div class="nav-dropdown-menu" id="dayDropdownMenu">
+      <div class="dropdown-header">Jump to another day</div>
+      <div class="dropdown-scroll">
+        <a href="day01.html" class="dropdown-item "><span class="day-num">Day 01</span> <span class="day-em">📊</span> Excel Orientation & Essential Formulas</a>
+<a href="day02.html" class="dropdown-item "><span class="day-num">Day 02</span> <span class="day-em">🎨</span> Formatting, Sorting & Filtering</a>
+<a href="day03.html" class="dropdown-item "><span class="day-num">Day 03</span> <span class="day-em">🧹</span> Data Cleaning Essentials</a>
+<a href="day04.html" class="dropdown-item "><span class="day-num">Day 04</span> <span class="day-em">📋</span> Excel Tables</a>
+<a href="day05.html" class="dropdown-item active"><span class="day-num">Day 05</span> <span class="day-em">🔍</span> Lookup & Reference Functions</a>
+<a href="day06.html" class="dropdown-item "><span class="day-num">Day 06</span> <span class="day-em">🔀</span> Logic Functions</a>
+<a href="day07.html" class="dropdown-item "><span class="day-num">Day 07</span> <span class="day-em">📝</span> Text Functions</a>
+<a href="day08.html" class="dropdown-item "><span class="day-num">Day 08</span> <span class="day-em">📅</span> Date & Time Functions</a>
+<a href="day09.html" class="dropdown-item "><span class="day-num">Day 09</span> <span class="day-em">🧮</span> Conditional Aggregation</a>
+<a href="day10.html" class="dropdown-item "><span class="day-num">Day 10</span> <span class="day-em">⚙️</span> PivotTables Core Mechanics</a>
+<a href="day11.html" class="dropdown-item "><span class="day-num">Day 11</span> <span class="day-em">📈</span> PivotTables Advanced & Charts</a>
+<a href="day12.html" class="dropdown-item "><span class="day-num">Day 12</span> <span class="day-em">🏆</span> Data Validation, What-If & Capstone</a>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-zone--right">
+    <!-- App Navigation -->
+    <div class="nav-controls">
+      <a href="../home.html" class="nav-icon-btn scorecard-btn" title="Back to Dashboard" aria-label="Score Card">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+        Score Card
+      </a>
+    </div>
+  </div>
+</nav>
+
+<div class="profile-card" id="profileCard" 
+     role="dialog" 
+     aria-label="User profile summary"
+     aria-modal="false">
+  <div class="profile-card__header">
+    <div class="profile-card__info">
+      <h2 class="profile-card__name" id="profileName">Loading...</h2>
+      <p class="profile-card__email" id="profileEmail">loading@... </p>
+    </div>
+    <span class="profile-card__badge" id="profileBadge">Free</span>
+  </div>
+  
+  <div class="profile-card__progress-section">
+    <div class="profile-card__progress-labels">
+      <span class="profile-card__progress-text">Overall Progress</span>
+      <span class="profile-card__progress-pct" id="profileProgressPct">0%</span>
+    </div>
+  </div>
+  
+  <button class="profile-card__signout" id="signOutBtn">Sign Out</button>
+</div>
+
+<div class="pyodide-status" id="pyStatus">📊 Loading Excel Formula Engine...</div>
+<div class="layout">
+  <main class="notebook" id="notebook">
+    <div class="nb-title"><h1>📊 Day 05 : Lookup & Reference Functions</h1></div>
+<div class="nb-section" id="sec-0">
+<div class="nb-rich"><div class="excel-grid-container" style="margin: 20px 0; overflow-x: auto;">
+  <table class="excel-grid" style="border-collapse: collapse; width: 100%; max-width: 500px; background-color: #0b0f19; border: 1px solid #1f293d; font-family: sans-serif; font-size: 14px; text-align: center;">
+    <thead>
+      <tr style="background-color: #161f30; color: #9ab4e9;">
+        <th style="border: 1px solid #1f293d; padding: 8px; font-weight: bold; width: 40px;"></th>
+        <th style="border: 1px solid #1f293d; padding: 8px; font-weight: bold;">A (Item ID)</th>
+        <th style="border: 1px solid #1f293d; padding: 8px; font-weight: bold;">B (Item Name)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="border: 1px solid #1f293d; padding: 8px; background-color: #161f30; color: #9ab4e9; font-weight: bold;">1</td>
+        <td id="cell-A1" data-val="101" style="border: 1px solid #1f293d; padding: 8px; color: #e2e8f0;">101</td>
+        <td id="cell-B1" data-val="Tablet" style="border: 1px solid #1f293d; padding: 8px; color: #e2e8f0;">Tablet</td>
+      </tr>
+      <tr>
+        <td style="border: 1px solid #1f293d; padding: 8px; background-color: #161f30; color: #9ab4e9; font-weight: bold;">2</td>
+        <td id="cell-A2" data-val="102" style="border: 1px solid #1f293d; padding: 8px; color: #e2e8f0;">102</td>
+        <td id="cell-B2" data-val="Phone" style="border: 1px solid #1f293d; padding: 8px; color: #e2e8f0;">Phone</td>
+      </tr>
+    </tbody>
+  </table>
+</div></div>
+</div>
+<div class="nb-section" id="sec-1">
+<div class="nb-rich"><h2 style="color: #000000ff; background-color: #02fff2ff; border-left: 6px solid #0c0c0cff; padding: 12px 15px; margin-top: 40px; border-radius: 4px;">
+    <b>1. Lookup References : <span style="color: #070707ff; font-size: 0.85em; font-weight: normal;">Lookup and Matching Functions</span></b>
+</h2>
+<div style="border-left: 4px solid #4DB6AC; padding-left: 15px; margin: 15px 0; color: #CCCCCC;">
+    <b>🔍 Concept</b><br>
+</div></div>
+<div class="code-cell" id="cell-1">
+<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-1')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-1')">✕ Clear</button></div></div>
+<textarea class="cm-source" id="src-1">=UPPER(B1)</textarea>
+<div class="cell-output hidden"></div></div>
+</div>
+<div class="nb-section" id="checks-Reference Lookups-3">
+<div class="nb-rich"><h3 style="color: #C7D2FE; background-color: #0e0e0fff; border-left: 6px solid #6366F1; padding: 12px 15px; margin-top: 50px; margin-bottom: 20px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+    <b>🧪 Concept Checks: <code>Reference Lookups</code></b>
+</h3></div>
+<div class="question"><p><strong>Q1.</strong> Convert B2 item name to uppercase.</p></div>
+<div class="code-cell" id="cell-2">
+<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-2')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-2')">✕ Clear</button></div></div>
+<textarea class="cm-source" id="src-2">=Write your Excel formula here</textarea>
+<div class="cell-output hidden"></div></div>
+<div class="question"><p><strong>Q2.</strong> Convert B1 item name to lowercase.</p></div>
+<div class="code-cell" id="cell-3">
+<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-3')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-3')">✕ Clear</button></div></div>
+<textarea class="cm-source" id="src-3">=Write your Excel formula here</textarea>
+<div class="cell-output hidden"></div></div>
+<div class="question"><p><strong>Q3.</strong> Find sum of A1 and A2.</p></div>
+<div class="code-cell" id="cell-4">
+<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-4')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-4')">✕ Clear</button></div></div>
+<textarea class="cm-source" id="src-4">=Write your Excel formula here</textarea>
+<div class="cell-output hidden"></div></div>
+</div>
+<div class="nb-section" id="practice">
+<div class="section-header gold"><h2>🛠️ Professional Practice Tasks</h2></div>
+<div class="question task"><p><strong>Task 1 (ID Casing):</strong> Convert item name Tablet in B1 to uppercase.</p></div>
+<div class="code-cell" id="cell-5">
+<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-5')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-5')">✕ Clear</button></div></div>
+<textarea class="cm-source" id="src-5">=Write your Excel formula here</textarea>
+<div class="cell-output hidden"></div></div>
+</div>
+<div class="nb-section" id="interview">
+<div class="section-header purple"><h2>💻 Pure Coding Interview Questions</h2></div>
+</div>
+<div class="nb-section" id="sec-14">
+<div class="question interview"><p><strong>Q1.</strong></p>
+<div class="code-cell" id="cell-6">
+<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-6')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-6')">✕ Clear</button></div></div>
+<textarea class="cm-source" id="src-6">=Write your Excel formula here</textarea>
+<div class="cell-output hidden"></div></div>
+</div>
+  </main>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-top"><div class="sidebar-header"><span class="icon">📄</span> CONTENTS</div></div>
+    <ul class="toc-list"><li><a href="#sec-0" class="toc-link">🎯 Enterprise Objective: Lookup & Reference Functions</a></li>
+<li><a href="#sec-1" class="toc-link">1. Lookup References : Lookup and Matching Functions</a></li>
+<li><a href="#checks-Reference Lookups-3" class="toc-link">🧪 Checks: Reference Lookups</a></li>
+<li><a href="#practice" class="toc-link">🛠️ Practice Tasks</a></li>
+<li><a href="#interview" class="toc-link">💻 Interview Questions</a></li>
+<li><a href="#sec-14" class="toc-link">Q1.</a></li></ul>
+    <div class="sidebar-resize" id="sidebarResize"></div>
+  </nav>
+</div>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/comment/comment.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/selection/active-line.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldcode.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldgutter.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/indent-fold.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/anyword-hint.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script defer src="../notebook.js?v=2.1"></script>
+<script src="../voice.js" defer></script>
+<script src="../hints.js" defer></script>
+
+<!-- PWA Service Worker Registration -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('[Service Worker] Registered scope:', reg.scope))
+        .catch(err => console.error('[Service Worker] Registration failed:', err));
+    });
+  }
+</script>
+</body>
+</html>

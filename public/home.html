@@ -6215,7 +6215,7 @@
 
 
 
-    const TOTAL_CHALLENGES = DAY_METADATA.reduce((sum, item) => sum + item.totalCells, 0);
+
 
 
 
@@ -6433,12 +6433,118 @@
         localStorage.setItem('manodemy_active_course', currentCourse);
       }
 
+      // Sync active course metadata
+      DAY_METADATA = PYTHON_METADATA;
+      if (currentCourse === 'sql') DAY_METADATA = SQL_METADATA;
+      if (currentCourse === 'excel') DAY_METADATA = EXCEL_METADATA;
+      TOTAL_CHALLENGES = DAY_METADATA.reduce((sum, item) => sum + item.totalCells, 0);
+
       await restoreVerifiedProgress();
 
       let totalSolvedCount = 0;
       let totalTimeSpentSeconds = 0;
-      let resumeTarget = "day01.html";
+
+      // Find first incomplete day for current course
+      let activeDayNum = DAY_METADATA[0].day;
+      const activePrefix = currentCourse === 'sql' ? 'sql-' : (currentCourse === 'excel' ? 'excel-' : '');
+      for (let i = 0; i < DAY_METADATA.length; i++) {
+        const item = DAY_METADATA[i];
+        const solved = parseInt(localStorage.getItem(`manodemy_${activePrefix}day${item.day}_solved_count`) || '0', 10);
+        if (solved < item.totalCells) {
+          activeDayNum = item.day;
+          break;
+        }
+      }
+      let resumeTarget = getDayUrl(currentCourse, activeDayNum);
       let resumeText = "Resume Learning";
+
+      const dropdownResumeEl = document.getElementById('dropdownResumeLink');
+      if (dropdownResumeEl) {
+        dropdownResumeEl.href = resumeTarget;
+      }
+
+      // Render Course Selector Cards
+      const renderCourseSelectorGrid = () => {
+        const container = document.getElementById('coursesSelectorGrid');
+        if (!container) return;
+        
+        container.innerHTML = '';
+        
+        const courses = [
+          {
+            id: 'python',
+            title: 'Python for Data Analyst',
+            icon: '🐍',
+            days: '30 Days',
+            class: 'course--python',
+            enrolled: isEnrolledPython
+          },
+          {
+            id: 'sql',
+            title: 'SQL for Data Analyst',
+            icon: '🗄️',
+            days: '20 Days',
+            class: 'course--sql',
+            enrolled: isEnrolledSql
+          },
+          {
+            id: 'excel',
+            title: 'Excel for Data Analyst',
+            icon: '📊',
+            days: '12 Days',
+            class: 'course--excel',
+            enrolled: isEnrolledExcel
+          }
+        ];
+        
+        courses.forEach(c => {
+          const stats = getCourseStats(c.id);
+          const percent = stats.totalCells > 0 ? Math.round((stats.totalSolved / stats.totalCells) * 100) : 0;
+          
+          const card = document.createElement('div');
+          card.className = `course-select-card ${c.class}` + (currentCourse === c.id ? ' active' : '') + (!c.enrolled ? ' locked' : '');
+          
+          let badgeHTML = '';
+          if (currentCourse === c.id) {
+            badgeHTML = `<span class="course-select-badge badge--active">ACTIVE</span>`;
+          } else if (!c.enrolled) {
+            badgeHTML = `<span class="course-select-badge badge--locked">LOCKED 🔒</span>`;
+          }
+          
+          card.innerHTML = `
+            ${badgeHTML}
+            <div class="course-select-header">
+              <span class="course-select-icon">${c.icon}</span>
+              <div class="course-select-title-group">
+                <h3 class="course-select-title">${c.title}</h3>
+                <span class="course-select-days">${c.days}</span>
+              </div>
+            </div>
+            <div class="course-select-progress-container">
+              <div class="course-select-progress-text">
+                <span>Progress</span>
+                <span class="course-select-progress-val">${stats.totalSolved} / ${stats.totalCells} Solved (${percent}%)</span>
+              </div>
+              <div class="course-select-progress-bar">
+                <div class="course-select-progress-fill" style="width: ${percent}%;"></div>
+              </div>
+            </div>
+          `;
+          
+          card.addEventListener('click', () => {
+            if (!c.enrolled) {
+              window.location.href = 'landing_v2/index.html#pricing?locked=true';
+            } else if (currentCourse !== c.id) {
+              localStorage.setItem('manodemy_active_course', c.id);
+              window.location.reload();
+            }
+          });
+          
+          container.appendChild(card);
+        });
+      };
+      
+      renderCourseSelectorGrid();
 
       const calculateXP = () => {
         let total = 0;
@@ -6711,15 +6817,19 @@
 
       const recalculateStatsAndReload = () => {
 
+        const keyPrefix = currentCourse === 'sql' ? 'sql-' : (currentCourse === 'excel' ? 'excel-' : '');
+
+
+
         // One-time automatic migration of historical solved counts to best scores
 
         DAY_METADATA.forEach(d => {
 
-          const bestScoreKey = `manodemy_day${d.day}_best_score`;
+          const bestScoreKey = `manodemy_${keyPrefix}day${d.day}_best_score`;
 
           const existingBest = parseFloat(localStorage.getItem(bestScoreKey) || '0');
 
-          const solvedCount = parseInt(localStorage.getItem(`manodemy_day${d.day}_solved_count`) || '0', 10);
+          const solvedCount = parseInt(localStorage.getItem(`manodemy_${keyPrefix}day${d.day}_solved_count`) || '0', 10);
 
 
 
@@ -6747,9 +6857,9 @@
 
         DAY_METADATA.forEach(d => {
 
-          const solved = parseInt(localStorage.getItem(`manodemy_day${d.day}_solved_count`) || '0', 10);
+          const solved = parseInt(localStorage.getItem(`manodemy_${keyPrefix}day${d.day}_solved_count`) || '0', 10);
 
-          const time = parseInt(localStorage.getItem(`manodemy_day${d.day}_time_spent`) || '0', 10);
+          const time = parseInt(localStorage.getItem(`manodemy_${keyPrefix}day${d.day}_time_spent`) || '0', 10);
 
 
 
@@ -6857,7 +6967,7 @@
 
 
 
-        // Calculate Category Scores
+        // Calculate Category Scores and category maximums dynamically
 
         let categoryScores = {
 
@@ -6871,13 +6981,25 @@
 
         };
 
+        let categoryMaxes = { basics: 0, structures: 0, analysis: 0, advanced: 0 };
+
+
+
         DAY_METADATA.forEach(d => {
 
-          const bestScore = parseFloat(localStorage.getItem(`manodemy_day${d.day}_best_score`) || '0');
+          const bestScore = parseFloat(localStorage.getItem(`manodemy_${keyPrefix}day${d.day}_best_score`) || '0');
 
           if (categoryScores[d.category] !== undefined) {
 
             categoryScores[d.category] += bestScore;
+
+          }
+
+          const maxDayXP = 1000 * (d.totalCells / TOTAL_CHALLENGES);
+
+          if (categoryMaxes[d.category] !== undefined) {
+
+            categoryMaxes[d.category] += maxDayXP;
 
           }
 
@@ -6905,23 +7027,42 @@
 
 
 
-        // Update visual progress bars for each section
+        // Update dynamic section card score max text labels
+
+        const basicsMaxEl = document.querySelector('.box-basics .section-card-score-max');
+
+        if (basicsMaxEl) basicsMaxEl.textContent = categoryMaxes.basics.toFixed(1);
+
+        const structuresMaxEl = document.querySelector('.box-structures .section-card-score-max');
+
+        if (structuresMaxEl) structuresMaxEl.textContent = categoryMaxes.structures.toFixed(1);
+
+        const analysisMaxEl = document.querySelector('.box-analysis .section-card-score-max');
+        if (analysisMaxEl) analysisMaxEl.textContent = categoryMaxes.analysis.toFixed(1);
+
+        const advancedMaxEl = document.querySelector('.box-advanced .section-card-score-max');
+
+        if (advancedMaxEl) advancedMaxEl.textContent = categoryMaxes.advanced.toFixed(1);
+
+
+
+        // Update visual progress bars for each section dynamically
 
         const basicsBar = document.getElementById('sectionBasicsBar');
 
-        if (basicsBar) basicsBar.style.width = `${Math.min((categoryScores.basics / 383.1) * 100, 100)}%`;
+        if (basicsBar) basicsBar.style.width = `${categoryMaxes.basics > 0 ? Math.min((categoryScores.basics / categoryMaxes.basics) * 100, 100) : 0}%`;
 
         const structuresBar = document.getElementById('sectionStructuresBar');
 
-        if (structuresBar) structuresBar.style.width = `${Math.min((categoryScores.structures / 295.5) * 100, 100)}%`;
+        if (structuresBar) structuresBar.style.width = `${categoryMaxes.structures > 0 ? Math.min((categoryScores.structures / categoryMaxes.structures) * 100, 100) : 0}%`;
 
         const analysisBar = document.getElementById('sectionAnalysisBar');
 
-        if (analysisBar) analysisBar.style.width = `${Math.min((categoryScores.analysis / 263.0) * 100, 100)}%`;
+        if (analysisBar) analysisBar.style.width = `${categoryMaxes.analysis > 0 ? Math.min((categoryScores.analysis / categoryMaxes.analysis) * 100, 100) : 0}%`;
 
         const advancedBar = document.getElementById('sectionAdvancedBar');
 
-        if (advancedBar) advancedBar.style.width = `${Math.min((categoryScores.advanced / 58.4) * 100, 100)}%`;
+        if (advancedBar) advancedBar.style.width = `${categoryMaxes.advanced > 0 ? Math.min((categoryScores.advanced / categoryMaxes.advanced) * 100, 100) : 0}%`;
 
 
 
@@ -6961,19 +7102,25 @@
 
         if (motivationLabel) {
 
+          let courseRole = currentCourse === 'sql' ? 'SQL Alchemist' : (currentCourse === 'excel' ? 'Excel Specialist' : 'Python Alchemist');
+
+          let courseTitle = currentCourse === 'sql' ? 'SQL' : (currentCourse === 'excel' ? 'Excel' : 'Python');
+
+
+
           let text = "Start your coding journey! 🚀";
 
           if (solvedPercentage === 100) {
 
-            text = "Python Alchemist Certified! 🏆";
+            text = `${courseRole} Certified! 🏆`;
 
           } else if (solvedPercentage >= 80) {
 
-            text = "Almost a Python Master! Finish strong! 🎓";
+            text = `Almost a ${courseTitle} Master! Finish strong! 🎓`;
 
           } else if (solvedPercentage >= 50) {
 
-            text = "Incredible progress, you are mastering Python! ⚡";
+            text = `Incredible progress, you are mastering ${courseTitle}! ⚡`;
 
           } else if (solvedPercentage >= 20) {
 
@@ -6991,7 +7138,7 @@
 
 
 
-        // Render 30-Day Segmented Milestone Timeline
+        // Render Segmented Milestone Timeline
 
         const timelineTrack = document.getElementById('timelineSegmentedTrack');
 
@@ -7005,21 +7152,33 @@
 
 
 
+          // Set dynamic columns mapping for the active course day count
+
+          timelineTrack.style.gridTemplateColumns = `repeat(${DAY_METADATA.length}, 1fr)`;
+
+          if (timelineLabelsRow) {
+
+            timelineLabelsRow.style.gridTemplateColumns = `repeat(${DAY_METADATA.length}, 1fr)`;
+
+          }
+
+
+
           DAY_METADATA.forEach(item => {
 
-            const solvedCount = parseInt(localStorage.getItem(`manodemy_day${item.day}_solved_count`) || '0', 10);
+            const solvedCount = parseInt(localStorage.getItem(`manodemy_${keyPrefix}day${item.day}_solved_count`) || '0', 10);
 
             const targetPercent = Math.min(Math.round((solvedCount / item.totalCells) * 100), 100);
 
             const maxDayXP = 1000 * (item.totalCells / TOTAL_CHALLENGES);
 
-            const bestScore = parseFloat(localStorage.getItem(`manodemy_day${item.day}_best_score`) || '0');
+            const bestScore = parseFloat(localStorage.getItem(`manodemy_${keyPrefix}day${item.day}_best_score`) || '0');
 
 
 
             const segment = document.createElement('div');
 
-            segment.className = 'timeline-segment' + (resumeTarget === `day${item.day}.html` ? ' active-segment' : '');
+            segment.className = 'timeline-segment' + (resumeTarget === getDayUrl(currentCourse, item.day) ? ' active-segment' : '');
 
             segment.setAttribute('data-day', item.day);
 
@@ -7049,7 +7208,7 @@
 
               label.id = `timeline-label-day-${item.day}`;
 
-              label.className = 'timeline-segment-label' + (resumeTarget === `day${item.day}.html` ? ' active-label' : '');
+              label.className = 'timeline-segment-label' + (resumeTarget === getDayUrl(currentCourse, item.day) ? ' active-label' : '');
 
               label.textContent = item.day;
 
@@ -7139,11 +7298,11 @@
 
               if (label) {
 
-                label.style.color = (resumeTarget === `day${item.day}.html`) ? 'var(--cyan)' : 'rgba(255, 255, 255, 0.25)';
+                label.style.color = (resumeTarget === getDayUrl(currentCourse, item.day)) ? 'var(--cyan)' : 'rgba(255, 255, 255, 0.25)';
 
                 label.style.transform = 'none';
 
-                label.style.textShadow = (resumeTarget === `day${item.day}.html`) ? '0 0 6px rgba(0, 230, 246, 0.4)' : 'none';
+                label.style.textShadow = (resumeTarget === getDayUrl(currentCourse, item.day)) ? '0 0 6px rgba(0, 230, 246, 0.4)' : 'none';
 
               }
 
@@ -7165,7 +7324,7 @@
 
             segment.addEventListener('click', () => {
 
-              window.location.href = `day${item.day}.html?v=2.1`;
+              window.location.href = getDayUrl(currentCourse, item.day) + `?v=2.1`;
 
             });
 
@@ -7193,7 +7352,7 @@
 
 
 
-        // Dynamic welcome subtitle — calibrated to 1668 total challenges
+        // Dynamic welcome subtitle — calibrated to active course total challenges
 
         const welcomeSub = document.getElementById('welcomeSubtitle');
 
@@ -7201,7 +7360,11 @@
 
           let sub;
 
-          if (totalSolvedCount >= Math.round(0.8 * TOTAL_CHALLENGES)) sub = "You're in elite territory! Python mastery is within reach! 🏆"; // 80%+
+          let courseName = currentCourse === 'sql' ? 'SQL' : (currentCourse === 'excel' ? 'Excel' : 'Python');
+
+
+
+          if (totalSolvedCount >= Math.round(0.8 * TOTAL_CHALLENGES)) sub = `You're in elite territory! ${courseName} mastery is within reach! 🏆`; // 80%+
 
           else if (totalSolvedCount >= Math.round(0.5 * TOTAL_CHALLENGES)) sub = "Incredible progress — you're clearly built for this! 🔥"; // 50%+
 
@@ -7213,7 +7376,7 @@
 
           else if (totalSolvedCount >= 1) sub = "You've begun the journey — the hardest step is taken! ✨";
 
-          else sub = "Start your Python journey today — every line of code matters! 🌟";
+          else sub = `Start your ${courseName} journey today — every line of code matters! 🌟`;
 
           welcomeSub.textContent = sub;
 
@@ -7353,6 +7516,44 @@
 
 
 
+      const SQL_QUESTS = {
+        "01": { icon: "🗄️", quest: "<strong>Understand relational database basics</strong> — learn about tables, schemas, and query execution. Completing today earns up to <strong>+50.0 Marks</strong>!", tip: "💡 Tip: A relational database stores data in structured tables." },
+        "02": { icon: "🔍", quest: "<strong>Master the WHERE clause</strong> — filter database records using comparison and logical operators. Completing today earns up to <strong>+50.0 Marks</strong>!", tip: "💡 Tip: WHERE filters rows before they are grouped or aggregated." },
+        "03": { icon: "📝", quest: "<strong>Learn pattern matching & NULLs</strong> — use LIKE, ILIKE, and IS NULL to find records. Completing today earns up to <strong>+50.0 Marks</strong>!", tip: "💡 Tip: NULL represents the absence of a value, not zero or space." },
+        "04": { icon: "📈", quest: "<strong>Sort and limit query outputs</strong> — learn ORDER BY, LIMIT, and OFFSET for pagination. Completing today earns up to <strong>+50.0 Marks</strong>!", tip: "💡 Tip: ORDER BY sorts in ascending order (ASC) by default." },
+        "05": { icon: "📊", quest: "<strong>Master aggregate functions</strong> — calculate averages, sums, minimums, and maximums. Completing today earns up to <strong>+50.0 Marks</strong>!", tip: "💡 Tip: Aggregates ignore NULL values (except COUNT(*))." },
+        "06": { icon: "🗃️", quest: "<strong>Group rows with GROUP BY</strong> — aggregate data across categories and filter groups with HAVING. Completing today earns up to <strong>+50.0 Marks</strong>!", tip: "💡 Tip: Use HAVING to filter groups, and WHERE to filter individual rows." },
+        "07": { icon: "➕", quest: "<strong>Learn data types and type casting</strong> — convert data types and use mathematical expressions. Completing today earns up to <strong>+50.0 Marks</strong>!", tip: "💡 Tip: CAST(value AS type) or value::type converts data types in PostgreSQL." },
+        "08": { icon: "🔀", quest: "<strong>Write conditional logic with CASE WHEN</strong> — build dynamic columns in database results. Completing today earns up to <strong>+50.0 Marks</strong>!", tip: "💡 Tip: CASE WHEN acts like an if-then-else statement inside queries." },
+        "09": { icon: "🔗", quest: "<strong>Join related tables</strong> — master INNER JOIN to combine data from different sources. Completing today earns up to <strong>+50.0 Marks</strong>!", tip: "💡 Tip: Joins combine columns from two tables based on foreign key relationships." },
+        "10": { icon: "🔄", quest: "<strong>Master Outer Joins</strong> — learn how LEFT, RIGHT, and FULL JOIN handle unmatched rows. Completing today earns up to <strong>+50.0 Marks</strong>!", tip: "💡 Tip: LEFT JOIN returns all rows from the left table, and matched rows from the right." },
+        "11": { icon: "👥", quest: "<strong>Write complex joins</strong> — join tables to themselves and run multi-table joins. Completing today earns up to <strong>+50.0 Marks</strong>!", tip: "💡 Tip: A SELF JOIN requires table aliases to distinguish the same table." },
+        "12": { icon: "🧠", quest: "<strong>Write subqueries</strong> — construct nested queries in SELECT, WHERE, and FROM clauses. Completing today earns up to <strong>+50.0 Marks</strong>!", tip: "💡 Tip: Correlated subqueries refer to columns in the outer query." },
+        "13": { icon: "🏗️", quest: "<strong>Master CTEs</strong> — use WITH clauses to make complex queries highly readable and clean. Completing today earns up to <strong>+50.0 Marks</strong>!", tip: "💡 Tip: CTEs create temporary named result sets that exist for the query duration." },
+        "14": { icon: "🔢", quest: "<strong>Learn Window Functions</strong> — use ROW_NUMBER, RANK, and DENSE_RANK to rank records. Completing today earns up to <strong>+50.0 Marks</strong>!", tip: "💡 Tip: Window functions do not collapse rows like GROUP BY does." },
+        "15": { icon: "📈", quest: "<strong>Master advanced window calculations</strong> — use LAG, LEAD, and running sums for trend analysis. Completing today earns up to <strong>+50.0 Marks</strong>!", tip: "💡 Tip: LAG accesses rows before the current row, and LEAD accesses rows after." },
+        "16": { icon: "🧹", quest: "<strong>Clean text data in SQL</strong> — use SUBSTRING, TRIM, REPLACE, and string concatenation. Completing today earns up to <strong>+50.0 Marks</strong>!", tip: "💡 Tip: TRIM removes leading and trailing spaces from text." },
+        "17": { icon: "📅", quest: "<strong>Analyze temporal data</strong> — extract intervals, format dates, and calculate age differences. Completing today earns up to <strong>+50.0 Marks</strong>!", tip: "💡 Tip: EXTRACT(YEAR FROM date) gets the year value as an integer." },
+        "18": { icon: "🥞", quest: "<strong>Master SET operations</strong> — combine and compare result sets using UNION, INTERSECT, and EXCEPT. Completing today earns up to <strong>+50.0 Marks</strong>!", tip: "💡 Tip: UNION removes duplicates; use UNION ALL to keep all rows." },
+        "19": { icon: "⚡", quest: "<strong>Optimize slow queries</strong> — understand indexing, query planners, and explain plans. Completing today earns up to <strong>+50.0 Marks</strong>!", tip: "💡 Tip: EXPLAIN shows the execution plan of a query without running it." },
+        "20": { icon: "🏆", quest: "<strong>Complete the SQL Capstone</strong> — solve a complex business database case study to prove your skills! Completing today earns up to <strong>+50.0 Marks</strong>!", tip: "🏆 Finish strong! Apply all your joining, grouping, and window function skills." }
+      };
+
+      const EXCEL_QUESTS = {
+        "01": { icon: "📊", quest: "<strong>Master Excel fundamentals</strong> — navigate cells and write sum, average, count, and logical expressions. Completing today earns up to <strong>+83.3 Marks</strong>!", tip: "💡 Tip: Press F4 while editing a cell to toggle absolute ($A$1) reference." },
+        "02": { icon: "🎨", quest: "<strong>Format & organize worksheets</strong> — use conditional formatting, sorting, and advanced filters. Completing today earns up to <strong>+83.3 Marks</strong>!", tip: "💡 Tip: Conditional formatting makes important cells pop based on rules." },
+        "03": { icon: "🧹", quest: "<strong>Clean messy worksheets</strong> — handle duplicates, empty cells, and split text columns. Completing today earns up to <strong>+83.3 Marks</strong>!", tip: "💡 Tip: Use TRIM to remove unnecessary spaces in cell values." },
+        "04": { icon: "📋", quest: "<strong>Structure data with Excel Tables</strong> — use structured references and dynamic sorting. Completing today earns up to <strong>+83.3 Marks</strong>!", tip: "💡 Tip: Excel Tables automatically expand when you add new rows." },
+        "05": { icon: "🔍", quest: "<strong>Retrieve values dynamically</strong> — master VLOOKUP, INDEX, MATCH, and XLOOKUP. Completing today earns up to <strong>+83.3 Marks</strong>!", tip: "💡 Tip: XLOOKUP is the modern successor to VLOOKUP and searches in any direction." },
+        "06": { icon: "🔀", quest: "<strong>Build decision trees in cells</strong> — nest IF, AND, OR, and IFS formulas. Completing today earns up to <strong>+83.3 Marks</strong>!", tip: "💡 Tip: IFS is cleaner than nested IF when checking multiple conditions." },
+        "07": { icon: "📝", quest: "<strong>Manipulate text strings</strong> — use LEFT, RIGHT, MID, FIND, and TEXTJOIN. Completing today earns up to <strong>+83.3 Marks</strong>!", tip: "💡 Tip: TEXTJOIN merges values with a specified delimiter like a comma." },
+        "08": { icon: "📅", quest: "<strong>Work with timelines</strong> — use NETWORKDAYS, DATE, YEAR, and dynamic calendars. Completing today earns up to <strong>+83.3 Marks</strong>!", tip: "💡 Tip: NETWORKDAYS computes only working weekdays between dates." },
+        "09": { icon: "🧮", quest: "<strong>Summarize data selectively</strong> — master SUMIFS, AVERAGEIFS, and COUNTIFS. Completing today earns up to <strong>+83.3 Marks</strong>!", tip: "💡 Tip: SUMIFS takes range, criteria_range1, criteria1..." },
+        "10": { icon: "⚙️", quest: "<strong>Build PivotTables</strong> — summarize thousands of rows of business data instantly. Completing today earns up to <strong>+83.3 Marks</strong>!", tip: "💡 Tip: PivotTables make grouping and aggregations visual and drag-drop." },
+        "11": { icon: "📈", quest: "<strong>Create interactive charts</strong> — build dashboards with slicers and timeline controls. Completing today earns up to <strong>+83.3 Marks</strong>!", tip: "💡 Tip: Slicers act as visual filters for PivotTables and Charts." },
+        "12": { icon: "🏆", quest: "<strong>Complete the Excel Capstone</strong> — build a full budgeting & analysis model! Completing today earns up to <strong>+83.3 Marks</strong>!", tip: "🏆 Finish strong! Build your own professional financial model." }
+      };
+
       const questTextEl = document.getElementById('questText');
 
       const questIconEl = document.getElementById('questIcon');
@@ -7362,12 +7563,13 @@
         // Find the first incomplete day
 
         let activeDay = null;
+        const keyPrefix = currentCourse === 'sql' ? 'sql-' : (currentCourse === 'excel' ? 'excel-' : '');
 
         for (let i = 0; i < DAY_METADATA.length; i++) {
 
           const item = DAY_METADATA[i];
 
-          const solved = parseInt(localStorage.getItem(`manodemy_day${item.day}_solved_count`) || '0', 10);
+          const solved = parseInt(localStorage.getItem(`manodemy_${keyPrefix}day${item.day}_solved_count`) || '0', 10);
 
           if (solved < item.totalCells) {
 
@@ -7381,9 +7583,13 @@
 
 
 
-        if (activeDay && DAY_QUESTS[activeDay]) {
+        let currentQuests = DAY_QUESTS;
+        if (currentCourse === 'sql') currentQuests = SQL_QUESTS;
+        if (currentCourse === 'excel') currentQuests = EXCEL_QUESTS;
 
-          const q = DAY_QUESTS[activeDay];
+        if (activeDay && currentQuests[activeDay]) {
+
+          const q = currentQuests[activeDay];
 
           // Primary quest
 
@@ -7415,7 +7621,11 @@
 
         } else {
 
-          questTextEl.innerHTML = `🎓 <strong>Capstone Completed!</strong> You're a certified Python Data Analyst. Start your own project — analyse a Kaggle dataset today!`;
+          let courseNameText = "Python Data Analyst";
+          if (currentCourse === 'sql') courseNameText = "SQL Data Analyst";
+          if (currentCourse === 'excel') courseNameText = "Excel Data Specialist";
+
+          questTextEl.innerHTML = `🎓 <strong>Capstone Completed!</strong> You're a certified ${courseNameText}. Start your own project today!`;
 
           if (questIconEl) questIconEl.textContent = "🏆";
 
@@ -7432,8 +7642,9 @@
       const isUserEnrolled = (session.user.user_metadata?.plan === 'pro' || localStorage.getItem('manodemy_enrolled') === 'true');
 
       DAY_METADATA.forEach(item => {
+        const keyPrefix = currentCourse === 'sql' ? 'sql-' : (currentCourse === 'excel' ? 'excel-' : '');
 
-        const solvedCount = parseInt(localStorage.getItem(`manodemy_day${item.day}_solved_count`) || '0', 10);
+        const solvedCount = parseInt(localStorage.getItem(`manodemy_${keyPrefix}day${item.day}_solved_count`) || '0', 10);
 
         const targetPercent = Math.min(Math.round((solvedCount / item.totalCells) * 100), 100);
 
@@ -7465,7 +7676,7 @@
 
         const maxDayXP = 1000 * (item.totalCells / TOTAL_CHALLENGES);
 
-        const bestScore = parseFloat(localStorage.getItem(`manodemy_day${item.day}_best_score`) || '0');
+        const bestScore = parseFloat(localStorage.getItem(`manodemy_${keyPrefix}day${item.day}_best_score`) || '0');
 
 
 
@@ -7483,7 +7694,7 @@
 
 
 
-        const isCurrentActive = resumeTarget === `day${item.day}.html`;
+        const isCurrentActive = resumeTarget === getDayUrl(currentCourse, item.day);
 
 
 
@@ -7491,7 +7702,7 @@
 
         card.className = 'day-card' + (isCurrentActive ? ' active-day' : '') + (isLockedDay ? ' day-card--locked' : '');
 
-        card.href = isLockedDay ? 'landing_v2/index.html#pricing?locked=true' : `day${item.day}.html?v=2.1`;
+        card.href = isLockedDay ? 'landing_v2/index.html#pricing?locked=true' : getDayUrl(currentCourse, item.day) + `?v=2.1`;
 
         card.setAttribute('data-day', item.day);
 
@@ -7892,8 +8103,10 @@
 
       function getTotalXP() {
         let total = 0;
-        for (let d = 1; d <= 30; d++) {
-          total += parseFloat(localStorage.getItem(`manodemy_day${d}_best_score`) || '0');
+        const keyPrefix = currentCourse === 'sql' ? 'sql-' : (currentCourse === 'excel' ? 'excel-' : '');
+        for (let d = 1; d <= DAY_METADATA.length; d++) {
+          const dayStr = String(d).padStart(2, '0');
+          total += parseFloat(localStorage.getItem(`manodemy_${keyPrefix}day${dayStr}_best_score`) || '0');
         }
         return Math.min(total, 1000);
       }
@@ -7908,12 +8121,14 @@
 
       function getSectionScores() {
         const sections = [];
-        for (let d = 1; d <= 30; d++) {
-          const best = parseFloat(localStorage.getItem(`manodemy_day${d}_best_score`) || '0');
+        const keyPrefix = currentCourse === 'sql' ? 'sql-' : (currentCourse === 'excel' ? 'excel-' : '');
+        for (let d = 1; d <= DAY_METADATA.length; d++) {
+          const dayStr = String(d).padStart(2, '0');
+          const best = parseFloat(localStorage.getItem(`manodemy_${keyPrefix}day${dayStr}_best_score`) || '0');
           const maxXP = parseFloat((1000 * challengesPerDay[d] / TOTAL_CHALLENGES).toFixed(2));
           sections.push({
             day: d,
-            label: `Day ${String(d).padStart(2, '0')}`,
+            label: `Day ${dayStr}`,
             earned: parseFloat(best.toFixed(2)),
             max: maxXP,
             pct: maxXP > 0 ? Math.round((best / maxXP) * 100) : 0

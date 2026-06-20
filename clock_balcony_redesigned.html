@@ -87,12 +87,12 @@
       <!-- bottom vignette for control contrast -->
       <div style="position:absolute; bottom:0; left:0; right:0; height:64px; background:linear-gradient(transparent,rgba(7,11,17,0.85) 70%); pointer-events:none;"></div>
 
-      <!-- bottom transport controls: prev/next move to bottom-left, auto-play stays bottom-right -->
-      <div style="position:absolute; bottom:16px; left:16px; display:flex; align-items:center; gap:8px;">
+      <!-- top transport controls: prev/next at top-left, auto-play at top-right -->
+      <div style="position:absolute; top:16px; left:16px; display:flex; align-items:center; gap:8px; z-index:5;">
         <button id="btnPrev" class="rm-ctrl" aria-label="Previous day">‹</button>
         <button id="btnNext" class="rm-ctrl" aria-label="Next day">›</button>
       </div>
-      <button id="btnAuto" class="rm-ctrl rm-ctrlWide" aria-label="Toggle autoplay" style="position:absolute; bottom:16px; right:16px;">⏸ &nbsp;Auto-play</button>
+      <button id="btnAuto" class="rm-ctrl rm-ctrlWide" aria-label="Toggle autoplay" style="position:absolute; top:16px; right:16px; z-index:5;">⏸ &nbsp;Auto-play</button>
     </div>
   </div>
 </div>

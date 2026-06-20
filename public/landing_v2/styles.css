@@ -746,7 +746,7 @@ button {
 
 /* â•â•â•â•â•â• Previews Section â•â•â•â•â•â• */
 .preview-section {
-  padding: 48px 0 80px;
+  padding: 64px 0;
 }
 
 .free-preview-grid {
@@ -3312,15 +3312,15 @@ th.col-mano {
 
 /* -- UNIFORM SECTION SPACING ------------------------------------- */
 .proof-strip        { padding: 40px 0; }
-.preview-section    { padding: 48px 0 80px; }
-.how-section        { padding: 48px 0 80px; }
-.courses-section    { padding: 48px 0 80px; }
-.curriculum-section { padding: 48px 0 80px; }
-.compare-section    { padding: 48px 0 80px; }
-.reviews-section    { padding: 48px 0 80px; }
-.pricing-section    { padding: 48px 0 80px; }
-.faq-section        { padding: 48px 0 80px; }
-.final-cta-section  { padding: 48px 0 80px; }
+.preview-section    { padding: 64px 0; }
+.how-section        { padding: 64px 0; }
+.courses-section    { padding: 64px 0; }
+.curriculum-section { padding: 64px 0; }
+.compare-section    { padding: 64px 0; }
+.reviews-section    { padding: 64px 0; }
+.pricing-section    { padding: 64px 0; }
+.faq-section        { padding: 64px 0; }
+.final-cta-section  { padding: 64px 0; }
 .footer             { padding: 64px 0; }
 
 /* -- SECTION HEAD ------------------------------------------------ */

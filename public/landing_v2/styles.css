@@ -710,7 +710,7 @@ button {
 /* â•â•â•â•â•â• General Section Head â•â•â•â•â•â• */
 .section-head {
   text-align: center;
-  max-width: 650px;
+  max-width: 900px;
   margin: 0 auto 3rem;
 }
 
@@ -746,7 +746,7 @@ button {
 
 /* â•â•â•â•â•â• Previews Section â•â•â•â•â•â• */
 .preview-section {
-  padding: 80px 0;
+  padding: 48px 0 80px;
 }
 
 .free-preview-grid {
@@ -3320,7 +3320,7 @@ th.col-mano {
 
 /* -- UNIFORM SECTION SPACING ------------------------------------- */
 .proof-strip        { padding: 40px 0; }
-.preview-section    { padding: 100px 0; }
+.preview-section    { padding: 48px 0 80px; }
 .how-section        { padding: 100px 0; }
 .courses-section    { padding: 100px 0; }
 .curriculum-section { padding: 100px 0; }

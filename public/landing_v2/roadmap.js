@@ -84,7 +84,7 @@ const wrap = root.querySelector('#rm-dialWrap');
 const canvas = root.querySelector('#c3d');
 
 let W = wrap.clientWidth || 680;
-let H = Math.min(Math.round(W*0.92), 560);
+let H = Math.min(Math.round(W*0.80), 480);
 canvas.width  = W * (window.devicePixelRatio||1);
 canvas.height = H * (window.devicePixelRatio||1);
 canvas.style.height = H + 'px';
@@ -118,7 +118,7 @@ function updateCameraPosition(){
     camHeight,
     Math.cos(camAngle)*camRadius
   );
-  camera.lookAt(0, camLookY, -1.15);
+  camera.lookAt(0, camLookY, 1.4);
 }
 updateCameraPosition();
 
@@ -564,7 +564,7 @@ canvas.addEventListener('touchend',()=>{
 
 function handleResize(){
   W = wrap.clientWidth || 680;
-  H = Math.min(Math.round(W*0.92), 560);
+  H = Math.min(Math.round(W*0.80), 480);
   renderer.setSize(W, H);
   canvas.style.height = H + 'px';
   camera.aspect = W/H;

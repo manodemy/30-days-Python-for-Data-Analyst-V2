@@ -1,3 +1,156 @@
+<div id="roadmap-root" style="
+  --ink:#eef3f7; --ink-dim:#9fb4c6; --ink-faint:#5c7186;
+  --bg:#0a0f16; --panel:#11171f; --panel-line:#202a35;
+  --sql:#2dd4a7; --excel:#f5a623; --py:#38bdf8;
+  width:100%; background:var(--bg); border-radius:16px; overflow:hidden;
+  font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+  border:1px solid var(--panel-line);
+">
+
+  <!-- ============ HEADER ============ -->
+  <div style="padding:22px 24px 18px; border-bottom:1px solid var(--panel-line); background:linear-gradient(180deg,#0d131b,#0a0f16);">
+    <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+      <div>
+        <div style="font-size:11px; font-weight:600; letter-spacing:0.12em; color:var(--ink-faint); text-transform:uppercase; margin-bottom:6px;">60-Days Data Analytics Roadmap</div>
+        <h1 style="margin:0; font-size:22px; font-weight:700; color:var(--ink); letter-spacing:-0.01em;">SQL → Excel → Python</h1>
+      </div>
+      <div id="rm-headerStats" style="display:flex; gap:18px; align-items:center;">
+        <div style="text-align:right;">
+          <div id="rm-statDay" style="font-size:20px; font-weight:700; color:var(--ink); font-variant-numeric:tabular-nums;">Day 1</div>
+          <div style="font-size:11px; color:var(--ink-faint);">of 60</div>
+        </div>
+        <div style="width:1px; height:30px; background:var(--panel-line);"></div>
+        <div style="text-align:right;">
+          <div id="rm-statPct" style="font-size:20px; font-weight:700; color:var(--ink); font-variant-numeric:tabular-nums;">2%</div>
+          <div style="font-size:11px; color:var(--ink-faint);">complete</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ BODY: dial ============ -->
+  <div id="rm-body" style="display:flex; flex-wrap:wrap;">
+
+    <!-- 3D dial -->
+    <div id="rm-dialWrap" style="position:relative; flex:1 1 100%; min-width:300px; background:#070b11;">
+      <canvas id="c3d" style="width:100%; display:block; cursor:grab;"></canvas>
+
+      <!-- Active day number — tracks the bright highlighted sphere on the
+           ring as it orbits to the current day, so the moving marker is
+           always labeled with its own day number. Badge color follows the
+           sphere's phase color (set live in updateHUD). -->
+      <div id="rm-activeNum" style="
+        position:absolute; left:0; top:0; transform:translate(-50%,-50%);
+        font-size:12px; font-weight:800; color:#06140f;
+        background:var(--sql); width:24px; height:24px;
+        border-radius:50%; display:flex; align-items:center; justify-content:center;
+        box-shadow:0 0 12px var(--sql), 0 0 4px var(--sql);
+        pointer-events:none; z-index:4; font-variant-numeric:tabular-nums;
+        transition:background 0.3s, box-shadow 0.3s;
+      ">1</div>
+
+      <!-- Center day card — positioned in screen space over the dial hub.
+           Replaces the old 3D hub label / floating info-card so it never
+           rotates oddly or gets clipped by the clock hand underneath it. -->
+      <div id="rm-dayCard" style="
+        position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+        width:178px; padding:14px 16px 12px; text-align:center;
+        background:rgba(8,14,24,0.92); border:1px solid rgba(56,189,248,0.3);
+        border-radius:16px; backdrop-filter:blur(10px);
+        box-shadow:0 0 36px rgba(56,189,248,0.16), inset 0 0 22px rgba(45,212,167,0.05);
+        pointer-events:none; z-index:3;
+      ">
+        <div id="rm-cardPill" style="
+          display:inline-block; font-size:10px; font-weight:700; letter-spacing:0.05em;
+          padding:3px 10px; border-radius:20px; margin-bottom:9px;
+          background:rgba(45,212,167,0.16); border:1px solid rgba(45,212,167,0.5);
+          color:var(--sql); transition:color 0.3s,border-color 0.3s,background 0.3s;
+        ">SQL · FREE</div>
+        <div id="rm-cardDay" style="font-size:25px; font-weight:800; color:var(--ink); line-height:1; margin-bottom:5px; letter-spacing:-0.01em;">Day 1</div>
+        <div id="rm-cardIcon" style="font-size:19px; margin-bottom:5px;">🗄️</div>
+        <div id="rm-cardTopic" style="font-size:11px; font-weight:500; color:var(--ink-dim); line-height:1.4; min-height:28px;">SQL Basics &amp; SELECT</div>
+        <div style="margin-top:9px; height:4px; background:rgba(255,255,255,0.08); border-radius:2px; overflow:hidden;">
+          <div id="rm-cardProgBar" style="height:100%; background:linear-gradient(90deg,var(--sql),var(--py)); border-radius:2px; transition:width 0.4s; width:1.67%;"></div>
+        </div>
+        <div id="rm-cardProgLabel" style="font-size:10px; color:var(--ink-faint); margin-top:4px; font-variant-numeric:tabular-nums;">1 / 60</div>
+      </div>
+
+      <!-- top vignette so legend pills have visible breathing room above dial content -->
+      <div style="position:absolute; top:0; left:0; right:0; height:88px; background:linear-gradient(rgba(7,11,17,0.8),transparent); pointer-events:none;"></div>
+
+      <!-- legend / phase filter, anchored top-left, never overlaps dial center -->
+      <div style="position:absolute; top:14px; left:14px; right:14px; display:flex; flex-direction:row; flex-wrap:wrap; gap:8px;">
+        <button class="rm-legendBtn" data-phase="SQL">
+          <span style="width:9px;height:9px;border-radius:50%;background:var(--sql);box-shadow:0 0 6px var(--sql);flex:none;"></span>SQL <span style="color:var(--ink-faint); font-weight:400;">· Days 1–18</span>
+        </button>
+        <button class="rm-legendBtn" data-phase="Excel">
+          <span style="width:9px;height:9px;border-radius:50%;background:var(--excel);box-shadow:0 0 6px var(--excel);flex:none;"></span>Excel <span style="color:var(--ink-faint); font-weight:400;">· Days 19–30</span>
+        </button>
+        <button class="rm-legendBtn" data-phase="Python">
+          <span style="width:9px;height:9px;border-radius:50%;background:var(--py);box-shadow:0 0 6px var(--py);flex:none;"></span>Python <span style="color:var(--ink-faint); font-weight:400;">· Days 31–60</span>
+        </button>
+      </div>
+
+
+      <!-- drag hint -->
+      <div id="rm-dragHint" style="position:absolute; top:14px; right:16px; font-size:11px; font-weight:500; color:var(--ink-faint); opacity:0.9; transition:opacity 0.6s; display:flex; align-items:center; gap:5px; z-index:2;">
+        <span style="font-size:13px;">⟲</span> drag to rotate
+      </div>
+
+      <!-- bottom vignette for control contrast -->
+      <div style="position:absolute; bottom:0; left:0; right:0; height:64px; background:linear-gradient(transparent,rgba(7,11,17,0.85) 70%); pointer-events:none;"></div>
+
+      <!-- bottom transport controls: prev/next move to bottom-left, auto-play stays bottom-right -->
+      <div style="position:absolute; bottom:16px; left:16px; display:flex; align-items:center; gap:8px;">
+        <button id="btnPrev" class="rm-ctrl" aria-label="Previous day">‹</button>
+        <button id="btnNext" class="rm-ctrl" aria-label="Next day">›</button>
+      </div>
+      <button id="btnAuto" class="rm-ctrl rm-ctrlWide" aria-label="Toggle autoplay" style="position:absolute; bottom:16px; right:16px;">⏸ &nbsp;Auto-play</button>
+    </div>
+
+  </div>
+</div>
+
+<style>
+  #roadmap-root .rm-ctrl{
+    background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.14); color:#dce8f2;
+    font-size:15px; font-weight:600; padding:8px 16px; border-radius:22px; cursor:pointer;
+    font-family:inherit; transition:background 0.15s,border-color 0.15s;
+  }
+  #roadmap-root .rm-ctrl:hover{ background:rgba(255,255,255,0.12); border-color:rgba(255,255,255,0.28); }
+  #roadmap-root .rm-ctrlWide{ font-size:12px; padding:8px 18px; }
+  
+  #roadmap-root .rm-legendBtn {
+    all: unset;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-dim);
+    background: rgba(10, 15, 22, 0.75);
+    border: 1px solid var(--panel-line);
+    padding: 5px 10px 5px 8px;
+    border-radius: 7px;
+    backdrop-filter: blur(6px);
+    white-space: nowrap;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  #roadmap-root .rm-legendBtn:hover {
+    color: var(--ink);
+    background: rgba(16, 23, 33, 0.9);
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
+  }
+  #roadmap-root .rm-legendBtn[data-active="true"] {
+    border-color: currentColor;
+    background: rgba(16, 23, 33, 0.95);
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.05);
+  }
+</style>
+
+<script>
 (function(){
 const root = document.getElementById('roadmap-root');
 const DATA=[
@@ -672,3 +825,4 @@ updateHUD(0);
 startAuto();
 animate();
 })();
+</script>

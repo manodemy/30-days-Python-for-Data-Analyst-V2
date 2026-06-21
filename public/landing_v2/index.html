@@ -70,7 +70,7 @@
         <div class="nav-right">
           <!-- Logged out states -->
           <a href="javascript:void(0)" id="navSignin" class="btn-ghost" onclick="document.getElementById('authModal').classList.add('active');" aria-label="Sign in to your account">Sign In</a>
-          <a href="#pricing" class="btn-nav-buy" data-cta="buy">Buy Now — <span class="dynamic-price">$49</span></a>
+          <a href="#pricing" class="btn-nav-buy" data-cta="buy" data-tier="selfpaced">Enroll — From <span class="dynamic-price-from">$49</span></a>
 
           <!-- Logged in states (hidden by default, managed by app.js) -->
           <div class="dropdown" id="navMyCoursesDropdown" style="display: none; position: relative;">
@@ -107,7 +107,7 @@
     <a href="#testimonials">Reviews</a>
     <a href="#faq">FAQ</a>
     <div class="mob-menu-divider" aria-hidden="true"></div>
-    <a href="#pricing" class="mob-menu-buy" data-cta="buy">Buy Now — <span class="dynamic-price">$49</span></a>
+    <a href="#pricing" class="mob-menu-buy" data-cta="buy" data-tier="selfpaced">Enroll — From <span class="dynamic-price-from">$49</span></a>
   </div>
 
   <main id="main-content">
@@ -1157,6 +1157,94 @@
       </div>
     </div>
 
+    <!-- Pricing Section -->
+    <section class="pricing-section" id="pricing">
+      <div class="container">
+        <div class="section-head reveal">
+          <h2>Choose Your <span>Learning Path</span></h2>
+          <p>One-time payment. Lifetime access. Start learning today.</p>
+        </div>
+
+        <div class="pricing-grid reveal">
+
+          <!-- Self-Paced Card -->
+          <div class="pricing-card pricing-card--selfpaced">
+            <span class="pricing-type-badge pricing-type-badge--selfpaced">⚡ Self-Paced</span>
+            <h3 class="pricing-card-title">60-Day Masterclass</h3>
+            <p class="pricing-card-subtitle">Complete SQL, Excel &amp; Python curriculum at your own pace — with interactive browser coding.</p>
+
+            <div class="pricing-price-group">
+              <div class="pricing-price-row">
+                <span class="pricing-price-now" id="priceSelfNow">$49</span>
+                <span class="pricing-price-old" id="priceSelfOld">$149</span>
+                <span class="pricing-discount-badge" id="priceSelfDiscount">67% OFF</span>
+              </div>
+              <div class="pricing-price-note">One-time payment · Lifetime access</div>
+            </div>
+
+            <div class="pricing-divider"></div>
+
+            <ul class="pricing-feature-list">
+              <li><span class="feat-icon">✅</span><span><strong>60-day structured curriculum</strong> — SQL (18) + Excel (12) + Python (30)</span></li>
+              <li><span class="feat-icon">✅</span><span><strong>Browser-based coding</strong> — zero install, run code instantly</span></li>
+              <li><span class="feat-icon">✅</span><span><strong>Interactive exercises</strong> — write real queries &amp; scripts</span></li>
+              <li><span class="feat-icon">✅</span><span><strong>Downloadable certificate</strong> on completion</span></li>
+              <li><span class="feat-icon">✅</span><span><strong>Lifetime access</strong> including future updates</span></li>
+              <li><span class="feat-icon">✅</span><span><strong>7-day money-back</strong> guarantee</span></li>
+            </ul>
+
+            <button class="pricing-buy-btn pricing-buy-btn--selfpaced" data-cta="buy" data-tier="selfpaced" id="buyBtnSelfpaced">
+              🚀 Start Self-Paced
+            </button>
+            <div class="pricing-guarantee">🔒 Secure payment · Instant access</div>
+          </div>
+
+          <!-- Daily Live Card -->
+          <div class="pricing-card pricing-card--live">
+            <span class="pricing-popular-badge">⭐ Most Popular</span>
+            <span class="pricing-type-badge pricing-type-badge--live">🎥 Daily Live Classes</span>
+            <h3 class="pricing-card-title">Live Masterclass</h3>
+            <p class="pricing-card-subtitle">Everything in Self-Paced, plus a daily live session with real-time doubt clearing every evening.</p>
+
+            <div class="pricing-live-schedule">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Live Daily: 7:30 PM – 8:30 PM IST
+            </div>
+
+            <div class="pricing-price-group">
+              <div class="pricing-price-row">
+                <span class="pricing-price-now pricing-price-now--live" id="priceLiveNow">$149</span>
+                <span class="pricing-price-old" id="priceLiveOld">$499</span>
+                <span class="pricing-discount-badge" id="priceLiveDiscount">70% OFF</span>
+              </div>
+              <div class="pricing-price-note">One-time payment · Lifetime access</div>
+            </div>
+
+            <div class="pricing-divider"></div>
+
+            <ul class="pricing-feature-list">
+              <li><span class="feat-icon">✅</span><span>Everything in Self-Paced</span></li>
+              <li><span class="feat-icon">🎥</span><span class="pricing-feature-highlight"><strong>Daily 1-hour live class</strong> — 7:30–8:30 PM IST, every day</span></li>
+              <li><span class="feat-icon">💬</span><span class="pricing-feature-highlight"><strong>Real-time doubt clearing</strong> with the instructor</span></li>
+              <li><span class="feat-icon">🔗</span><span class="pricing-feature-highlight"><strong>Google Meet access</strong> link shared after enrollment</span></li>
+              <li><span class="feat-icon">👥</span><span><strong>Live community</strong> — learn alongside a cohort</span></li>
+              <li><span class="feat-icon">🏆</span><span><strong>Priority certificate</strong> with instructor signature</span></li>
+            </ul>
+
+            <button class="pricing-buy-btn pricing-buy-btn--live" data-cta="buy" data-tier="live" id="buyBtnLive">
+              🎥 Join Daily Live
+            </button>
+            <a href="https://meet.google.com/uik-pmtd-ewu" target="_blank" rel="noopener noreferrer" class="pricing-meet-link" id="meetPreviewLink">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 10l4.553-2.07A1 1 0 0121 8.845v6.31a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg>
+              Preview Free Demo Class on Google Meet →
+            </a>
+            <div class="pricing-guarantee">🔒 Secure payment · Instant access</div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
     <!-- Final CTA Section -->
     <section class="final-cta-section">
       <div class="container reveal">
@@ -1165,9 +1253,9 @@
         
         <div class="final-cta-btn-group">
           <a href="/sql/day01.html" class="btn-primary">Try Day 01 SQL Free</a>
-          <a href="/excel/day01.html" class="btn-primary">Try Day 01 Excel Free</a>
           <a href="/day01.html" class="btn-primary">Try Day 01 Python Free</a>
-          <a href="#pricing" class="btn-secondary" data-cta="buy">Buy Full Masterclass</a>
+          <button class="btn-secondary" data-cta="buy" data-tier="selfpaced">Self-Paced — <span class="dynamic-price-from">$49</span></button>
+          <button class="btn-primary" data-cta="buy" data-tier="live" style="background:linear-gradient(135deg,var(--gold),#ff8c00);color:#000;">Daily Live — <span class="dynamic-price-live">$149</span></button>
         </div>
       </div>
     </section>
@@ -1178,19 +1266,24 @@
     <div class="checkout-modal">
       <button class="checkout-close" id="checkoutClose">✕</button>
       <div class="checkout-header">
+        <div id="checkoutTierPill" class="checkout-tier-pill checkout-tier-pill--selfpaced">⚡ Self-Paced Plan</div>
         <h3>🎓 Complete Your Purchase</h3>
-        <p>30-Day Python + SQL &amp; Excel Masterclass</p>
+        <p id="checkoutPlanName">60-Day Self-Paced Masterclass</p>
       </div>
 
       <div class="checkout-price-display">
         <span class="checkout-amount" id="checkoutAmount">$49</span>
-        <span class="checkout-original" id="checkoutOriginal">$199</span>
-        <span class="checkout-label">One-time payment • Lifetime access</span>
+        <span class="checkout-original" id="checkoutOriginal">$149</span>
+        <span class="checkout-label">One-time payment · Lifetime access</span>
       </div>
 
       <div class="coupon-section">
         <input type="text" id="couponInput" placeholder="Coupon code (optional)" maxlength="20">
         <button class="coupon-apply" id="couponApply">Apply</button>
+      </div>
+
+      <div style="text-align:center; margin-bottom:8px;">
+        <button class="checkout-switch-link" id="checkoutSwitchTier">Switch to Daily Live plan ($149)</button>
       </div>
 
       <div class="checkout-divider"><span>Choose Payment Method</span></div>
@@ -1255,9 +1348,9 @@
     <div class="mobile-cta-inner">
       <div class="cta-price-group">
         <span class="m-price">$49</span>
-        <span class="m-price-old">$199</span>
+        <span class="m-price-old">$149</span>
       </div>
-      <a href="#pricing" class="btn-primary btn-mobile-cta" data-cta="buy">Buy Now</a>
+      <a href="#pricing" class="btn-primary btn-mobile-cta" data-cta="buy" data-tier="selfpaced">Enroll Now</a>
     </div>
   </div>
 

@@ -441,7 +441,11 @@ document.addEventListener('DOMContentLoaded', () => {
   
   let supabaseClient = null;
   let userCountry = 'US';
-  let pricingConfig = { amount: 4900, currency: 'USD', display: '$49', original: '$199', discount: '75% OFF' };
+  let pricingConfigs = {
+    selfpaced: { amount: 4900,  currency: 'USD', display: '$49',   original: '$149',    discount: '67% OFF', planName: '60-Day Self-Paced Masterclass' },
+    live:      { amount: 14900, currency: 'USD', display: '$149',  original: '$499',    discount: '70% OFF', planName: '60-Day Daily Live Masterclass' }
+  };
+  let activeTier = 'selfpaced';
 
   if (window.supabase) {
     try {
@@ -474,7 +478,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Setup regional checkout pricing ($49/₹4,999)
+  // Setup regional checkout pricing (two-tier: self-paced + daily live)
   async function detectGeoPricing() {
     // Timezone check
     try {
@@ -494,47 +498,96 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } catch (err) {}
 
-    const priceNow = document.getElementById('priceNow');
-    const priceOld = document.getElementById('priceOld');
-    const discountBadge = document.getElementById('discountBadge');
-    const checkoutAmount = document.getElementById('checkoutAmount');
-    const checkoutOriginal = document.getElementById('checkoutOriginal');
-
     if (userCountry === 'IN') {
-      pricingConfig = { amount: 499900, currency: 'INR', display: '₹4,999', original: '₹19,999', discount: '75% OFF' };
+      pricingConfigs.selfpaced = { amount: 299900, currency: 'INR', display: '₹2,999',  original: '₹9,999',   discount: '70% OFF', planName: '60-Day Self-Paced Masterclass' };
+      pricingConfigs.live      = { amount: 999900, currency: 'INR', display: '₹9,999',  original: '₹39,999',  discount: '75% OFF', planName: '60-Day Daily Live Masterclass' };
     } else {
-      pricingConfig = { amount: 4900, currency: 'USD', display: '$49', original: '$199', discount: '75% OFF' };
+      pricingConfigs.selfpaced = { amount: 4900,   currency: 'USD', display: '$49',     original: '$149',     discount: '67% OFF', planName: '60-Day Self-Paced Masterclass' };
+      pricingConfigs.live      = { amount: 14900,  currency: 'USD', display: '$149',    original: '$499',     discount: '70% OFF', planName: '60-Day Daily Live Masterclass' };
     }
 
-    if (priceNow) priceNow.textContent = pricingConfig.display;
-    if (priceOld) priceOld.textContent = pricingConfig.original;
-    if (discountBadge) discountBadge.textContent = pricingConfig.discount;
-    if (checkoutAmount) checkoutAmount.textContent = pricingConfig.display;
-    if (checkoutOriginal) checkoutOriginal.textContent = pricingConfig.original;
+    const sp = pricingConfigs.selfpaced;
+    const lv = pricingConfigs.live;
 
-    // Update sticky mobile price group
-    const mPrice = document.querySelector('.m-price');
+    // Update self-paced pricing card
+    const priceSelfNow      = document.getElementById('priceSelfNow');
+    const priceSelfOld      = document.getElementById('priceSelfOld');
+    const priceSelfDiscount = document.getElementById('priceSelfDiscount');
+    if (priceSelfNow)      priceSelfNow.textContent      = sp.display;
+    if (priceSelfOld)      priceSelfOld.textContent      = sp.original;
+    if (priceSelfDiscount) priceSelfDiscount.textContent = sp.discount;
+
+    // Update live pricing card
+    const priceLiveNow      = document.getElementById('priceLiveNow');
+    const priceLiveOld      = document.getElementById('priceLiveOld');
+    const priceLiveDiscount = document.getElementById('priceLiveDiscount');
+    if (priceLiveNow)      priceLiveNow.textContent      = lv.display;
+    if (priceLiveOld)      priceLiveOld.textContent      = lv.original;
+    if (priceLiveDiscount) priceLiveDiscount.textContent = lv.discount;
+
+    // Update nav / mobile menu "from" price (self-paced is the entry price)
+    document.querySelectorAll('.dynamic-price-from').forEach(el => el.textContent = sp.display);
+
+    // Update live price in final CTA
+    document.querySelectorAll('.dynamic-price-live').forEach(el => el.textContent = lv.display);
+
+    // Update sticky mobile CTA (shows self-paced price)
+    const mPrice    = document.querySelector('.m-price');
     const mPriceOld = document.querySelector('.m-price-old');
-    if (mPrice) mPrice.textContent = pricingConfig.display;
-    if (mPriceOld) mPriceOld.textContent = pricingConfig.original;
+    if (mPrice)    mPrice.textContent    = sp.display;
+    if (mPriceOld) mPriceOld.textContent = sp.original;
 
-    // Update comparison table costs
+    // Update comparison table cost row
     const compareCostMano = document.getElementById('compare-cost-mano');
-    if (compareCostMano) compareCostMano.textContent = `${pricingConfig.display} (One-Time)`;
+    if (compareCostMano) compareCostMano.textContent = `From ${sp.display} (One-Time)`;
+
+    // Set checkout to default tier
+    updateCheckoutForTier('selfpaced');
   }
 
   detectGeoPricing();
+
+  // Update checkout modal UI for the selected tier
+  function updateCheckoutForTier(tier) {
+    activeTier = tier;
+    const cfg = pricingConfigs[tier];
+    const isLive = tier === 'live';
+
+    const checkoutAmount   = document.getElementById('checkoutAmount');
+    const checkoutOriginal = document.getElementById('checkoutOriginal');
+    const checkoutTierPill = document.getElementById('checkoutTierPill');
+    const checkoutPlanName = document.getElementById('checkoutPlanName');
+    const switchBtn        = document.getElementById('checkoutSwitchTier');
+
+    if (checkoutAmount)   checkoutAmount.textContent   = cfg.display;
+    if (checkoutOriginal) checkoutOriginal.textContent = cfg.original;
+    if (checkoutPlanName) checkoutPlanName.textContent = cfg.planName;
+
+    if (checkoutTierPill) {
+      checkoutTierPill.textContent  = isLive ? '🎥 Daily Live Plan' : '⚡ Self-Paced Plan';
+      checkoutTierPill.className    = `checkout-tier-pill checkout-tier-pill--${tier}`;
+    }
+
+    const other    = isLive ? 'selfpaced' : 'live';
+    const otherCfg = pricingConfigs[other];
+    if (switchBtn) {
+      switchBtn.textContent = isLive
+        ? `Switch to Self-Paced plan (${otherCfg.display})`
+        : `Switch to Daily Live plan (${otherCfg.display})`;
+    }
+  }
 
   /* ═══ CHECKOUT MODAL FLOW ═══ */
   const checkoutOverlay = document.getElementById('checkoutOverlay');
   const checkoutClose = document.getElementById('checkoutClose');
   const buyButtons = document.querySelectorAll('[data-cta="buy"]');
 
-  const openCheckout = () => {
+  const openCheckout = (tier = 'selfpaced') => {
     if (localStorage.getItem('manodemy_enrolled') === 'true') {
       window.location.href = '/home.html';
       return;
     }
+    updateCheckoutForTier(tier);
     if (checkoutOverlay) {
       checkoutOverlay.classList.add('active');
       document.body.style.overflow = 'hidden';
@@ -551,8 +604,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   buyButtons.forEach(btn => btn.addEventListener('click', (e) => {
     e.preventDefault();
-    openCheckout();
+    const tier = btn.dataset.tier || 'selfpaced';
+    openCheckout(tier);
   }));
+
+  // Tier switch button inside checkout modal
+  const switchTierBtn = document.getElementById('checkoutSwitchTier');
+  if (switchTierBtn) {
+    switchTierBtn.addEventListener('click', () => {
+      const newTier = activeTier === 'live' ? 'selfpaced' : 'live';
+      updateCheckoutForTier(newTier);
+      renderPaymentGateways();
+    });
+  }
 
   if (checkoutClose) checkoutClose.addEventListener('click', closeCheckout);
   if (checkoutOverlay) {
@@ -561,7 +625,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Render gate selection: Razorpay for INR, PayPal for USD (removing Stripe)
+  // Render gate selection: Razorpay for INR, PayPal for USD
   function renderPaymentGateways() {
     const gateContainer = document.getElementById('gatewayButtons');
     if (!gateContainer) return;
@@ -587,11 +651,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function triggerRazorpayPayment() {
-    alert("Razorpay checkout mock selected. Price: " + pricingConfig.display);
+    const cfg = pricingConfigs[activeTier];
+    alert("Razorpay checkout mock selected. Plan: " + cfg.planName + " — Price: " + cfg.display);
   }
 
   function triggerPayPalPayment() {
-    alert("PayPal checkout mock selected. Price: " + pricingConfig.display);
+    const cfg = pricingConfigs[activeTier];
+    alert("PayPal checkout mock selected. Plan: " + cfg.planName + " — Price: " + cfg.display);
   }
 
   /* ═══ DAY CARD NAVIGATION ═══ */

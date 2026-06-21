@@ -3653,6 +3653,10 @@ th.col-mano { letter-spacing: 0.01em; }
   display: none;
 }
 
+#c3d {
+  max-width: 100% !important;
+}
+
 /* -- RESPONSIVE ---------------------------------------------------- */
 
 /* ═══ GLOBAL OVERFLOW PREVENTION ═══ */

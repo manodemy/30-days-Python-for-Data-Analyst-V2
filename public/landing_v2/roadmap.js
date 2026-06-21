@@ -93,7 +93,7 @@ function angForIndex(i){
 const wrap = root.querySelector('#rm-dialWrap');
 const canvas = root.querySelector('#c3d');
 
-let W = wrap.clientWidth || 680;
+let W = wrap.clientWidth || 320;
 let H = Math.min(Math.round(W*0.68), 410);
 canvas.width  = W * (window.devicePixelRatio||1);
 canvas.height = H * (window.devicePixelRatio||1);
@@ -575,7 +575,7 @@ canvas.addEventListener('touchend',()=>{
 });
 
 function handleResize(){
-  W = wrap.clientWidth || 680;
+  W = wrap.clientWidth || 320;
   H = Math.min(Math.round(W*0.68), 410);
   renderer.setSize(W, H);
   canvas.style.height = H + 'px';

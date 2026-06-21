@@ -3887,6 +3887,41 @@ html, body {
   /* Roadmap day card (3D clock section) */
   .roadmap-day-card { max-width: 100%; }
 
+  /* Reduce day card size inside 3D clock on mobile to prevent hiding clock content */
+  #rm-dayCard {
+    width: 126px !important;
+    padding: 8px 10px !important;
+    border-radius: 12px !important;
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.1) !important;
+  }
+  #rm-cardPill {
+    display: none !important;
+  }
+  #rm-cardDay {
+    font-size: 16px !important;
+    margin-bottom: 2px !important;
+  }
+  #rm-cardIcon {
+    height: 18px !important;
+    margin-bottom: 2px !important;
+  }
+  #rm-cardIcon .tech-logo {
+    width: 18px !important;
+    height: 18px !important;
+    padding: 1px !important;
+  }
+  #rm-cardTopic {
+    font-size: 9.5px !important;
+    min-height: auto !important;
+    line-height: 1.2 !important;
+  }
+  #rm-dayCard > div:nth-child(5) {
+    display: none !important;
+  }
+  #rm-cardProgLabel {
+    display: none !important;
+  }
+
   /* Sticky Mobile CTA Bar */
   .sticky-mobile-cta {
     position: fixed;

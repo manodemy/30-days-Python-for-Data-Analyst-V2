@@ -3814,7 +3814,7 @@ html, body {
   .footer-col { gap: 10px; }
 
   /* Dividers */
-  .diff-divider-wrapper { padding: 0 1rem; }
+  .diff-divider-wrapper { display: none !important; }
 
   /* Roadmap day card (3D clock section) */
   .roadmap-day-card { max-width: 100%; }

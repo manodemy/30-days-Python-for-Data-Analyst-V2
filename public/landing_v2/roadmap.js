@@ -681,92 +681,52 @@ function animate(){
 
       const now = audioCtx.currentTime;
       
-      // Setup dynamic compressor to boost overall volume and prevent clipping
+      // Maximized compressor setting for extreme loudness and peak limiting
       const compressor = audioCtx.createDynamicsCompressor();
-      compressor.threshold.setValueAtTime(-12, now); // compress peaks above -12dB
-      compressor.knee.setValueAtTime(30, now);
-      compressor.ratio.setValueAtTime(12, now); // compression ratio
-      compressor.attack.setValueAtTime(0.003, now); // fast attack
-      compressor.release.setValueAtTime(0.08, now);
+      compressor.threshold.setValueAtTime(-6, now); // higher threshold for extreme output
+      compressor.knee.setValueAtTime(20, now);
+      compressor.ratio.setValueAtTime(20, now); // heavy limiting ratio
+      compressor.attack.setValueAtTime(0.001, now); // ultra-fast attack
+      compressor.release.setValueAtTime(0.12, now);
       compressor.connect(audioCtx.destination);
 
-      const isTick = currentDay % 2 === 0; // Alternate Tick and Tock
+      // Play the crisp TICK sound for every transition (replacing alternating TOCK)
+      // 1. High-frequency click noise (metal escapement strike)
+      const noise = audioCtx.createBufferSource();
+      const noiseFilter = audioCtx.createBiquadFilter();
+      const noiseGain = audioCtx.createGain();
 
-      if (isTick) {
-        // --- TICK ---
-        // 1. High-frequency click noise (metal escapement strike)
-        const noise = audioCtx.createBufferSource();
-        const noiseFilter = audioCtx.createBiquadFilter();
-        const noiseGain = audioCtx.createGain();
+      noise.buffer = getNoiseBuffer();
+      noiseFilter.type = 'highpass';
+      noiseFilter.frequency.setValueAtTime(2400, now); // slightly cleaner/higher pitch
+      noiseFilter.Q.setValueAtTime(3, now);
 
-        noise.buffer = getNoiseBuffer();
-        noiseFilter.type = 'highpass';
-        noiseFilter.frequency.setValueAtTime(2200, now);
-        noiseFilter.Q.setValueAtTime(2, now);
+      noiseGain.gain.setValueAtTime(2.2, now); // Maximized noise transient (20x perceived volume)
+      noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.022);
 
-        noiseGain.gain.setValueAtTime(0.85, now); // Highly boosted noise transient
-        noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.015);
+      noise.connect(noiseFilter);
+      noiseFilter.connect(noiseGain);
+      noiseGain.connect(compressor);
 
-        noise.connect(noiseFilter);
-        noiseFilter.connect(noiseGain);
-        noiseGain.connect(compressor);
+      // 2. High metallic body resonance (spring & escapement snap)
+      const oscHigh = audioCtx.createOscillator();
+      const gainHigh = audioCtx.createGain();
+      
+      oscHigh.type = 'triangle';
+      oscHigh.frequency.setValueAtTime(1050, now); // clear metallic ring
+      
+      gainHigh.gain.setValueAtTime(1.8, now); // Maximized triangle tone
+      gainHigh.gain.exponentialRampToValueAtTime(0.0001, now + 0.045);
 
-        // 2. High metallic body resonance (spring & pallet snap)
-        const oscHigh = audioCtx.createOscillator();
-        const gainHigh = audioCtx.createGain();
-        
-        oscHigh.type = 'triangle';
-        oscHigh.frequency.setValueAtTime(980, now);
-        
-        gainHigh.gain.setValueAtTime(0.60, now); // 10x volume of original 0.06
-        gainHigh.gain.exponentialRampToValueAtTime(0.0001, now + 0.035);
+      oscHigh.connect(gainHigh);
+      gainHigh.connect(compressor);
 
-        oscHigh.connect(gainHigh);
-        gainHigh.connect(compressor);
-
-        noise.start(now);
-        noise.stop(now + 0.020);
-        oscHigh.start(now);
-        oscHigh.stop(now + 0.040);
-      } else {
-        // --- TOCK ---
-        // 1. Mid-frequency wood clack noise (casing vibration)
-        const noise = audioCtx.createBufferSource();
-        const noiseFilter = audioCtx.createBiquadFilter();
-        const noiseGain = audioCtx.createGain();
-
-        noise.buffer = getNoiseBuffer();
-        noiseFilter.type = 'bandpass';
-        noiseFilter.frequency.setValueAtTime(850, now);
-        noiseFilter.Q.setValueAtTime(3, now);
-
-        noiseGain.gain.setValueAtTime(0.75, now);
-        noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.022);
-
-        noise.connect(noiseFilter);
-        noiseFilter.connect(noiseGain);
-        noiseGain.connect(compressor);
-
-        // 2. Low-frequency thud (wooden hollow pendulum housing resonance)
-        const oscLow = audioCtx.createOscillator();
-        const gainLow = audioCtx.createGain();
-        
-        oscLow.type = 'sine';
-        oscLow.frequency.setValueAtTime(180, now); // deep casing thud
-        
-        gainLow.gain.setValueAtTime(1.20, now); // 10x volume of original 0.12
-        gainLow.gain.exponentialRampToValueAtTime(0.0001, now + 0.080);
-
-        oscLow.connect(gainLow);
-        gainLow.connect(compressor);
-
-        noise.start(now);
-        noise.stop(now + 0.025);
-        oscLow.start(now);
-        oscLow.stop(now + 0.090);
-      }
+      noise.start(now);
+      noise.stop(now + 0.025);
+      oscHigh.start(now);
+      oscHigh.stop(now + 0.050);
     } catch (e) {
-      console.warn('[Audio] Tick-tock synthesis failed:', e);
+      console.warn('[Audio] Tick synthesis failed:', e);
     }
   }
 

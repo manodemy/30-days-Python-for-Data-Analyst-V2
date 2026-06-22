@@ -120,6 +120,7 @@ button {
   background: rgba(6, 9, 19, 0.75);
   border-bottom: 1px solid var(--border);
   transition: var(--transition);
+  will-change: background, height, border-color;
 }
 
 .nav--scrolled {
@@ -3962,7 +3963,7 @@ th.col-mano { letter-spacing: 0.01em; }
 .back-to-top:hover { border-color: var(--cyan); color: var(--cyan); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,230,246,0.2); }
 
 /* -- REVEAL -------------------------------------------------------- */
-.reveal { opacity: 0; transform: translateY(24px); transition: transform 700ms var(--ease), opacity 700ms var(--ease); }
+.reveal { opacity: 0; transform: translateY(24px); transition: transform 700ms var(--ease), opacity 700ms var(--ease); will-change: transform, opacity; }
 .reveal.visible { opacity: 1; transform: translateY(0); }
 .diff-divider-wrapper { margin: 0; }
 

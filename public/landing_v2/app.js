@@ -81,9 +81,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ═══ NAV SCROLL ═══ */
   const nav = document.querySelector('.nav');
+  let navScrolled = false;
   const onScroll = () => {
-    if (window.scrollY > 60) nav.classList.add('nav--scrolled');
-    else nav.classList.remove('nav--scrolled');
+    const shouldScroll = window.scrollY > 60;
+    if (shouldScroll !== navScrolled) {
+      navScrolled = shouldScroll;
+      nav.classList.toggle('nav--scrolled', shouldScroll);
+    }
   };
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
@@ -114,13 +118,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ═══ STICKY BOTTOM MOBILE CTA ═══ */
   const stickyCta = document.getElementById('stickyMobileCta');
+  let stickyVisible = false;
   const checkStickyCta = () => {
     if (!stickyCta) return;
     // Show sticky bottom bar only after scrolling past 600px on mobile
-    if (window.innerWidth <= 768 && window.scrollY > 600) {
-      stickyCta.style.display = 'block';
-    } else {
-      stickyCta.style.display = 'none';
+    const shouldBeVisible = (window.innerWidth <= 768 && window.scrollY > 600);
+    if (shouldBeVisible !== stickyVisible) {
+      stickyVisible = shouldBeVisible;
+      stickyCta.style.display = shouldBeVisible ? 'block' : 'none';
     }
   };
   window.addEventListener('scroll', checkStickyCta, { passive: true });
@@ -386,11 +391,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Scroll linked fallback tilt if sensors not active/granted
+    let heroStackTop = 0;
+    let heroStackHeight = 0;
+
+    const measureHeroStack = () => {
+      if (heroStack) {
+        const rect = heroStack.getBoundingClientRect();
+        heroStackTop = rect.top + window.scrollY;
+        heroStackHeight = rect.height;
+      }
+    };
+    measureHeroStack();
+    window.addEventListener('resize', measureHeroStack, { passive: true });
+
     window.addEventListener('scroll', () => {
       if (useGyro) return;
-      const rect = heroStack.getBoundingClientRect();
-      const viewHeight = window.innerHeight;
-      const centerPercent = (rect.top + rect.height / 2) / viewHeight;
+      const centerPercent = (heroStackTop - window.scrollY + heroStackHeight / 2) / window.innerHeight;
       // Map scroll location to ±3deg card tilt fallback
       const scrollTilt = (centerPercent * 2 - 1) * 3;
       currentRotY = scrollTilt;

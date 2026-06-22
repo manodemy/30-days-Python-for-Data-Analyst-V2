@@ -194,53 +194,112 @@
           <!-- Custom css styles for 3D Clock Dial -->
           <style>
             #roadmap-root .rm-ctrl {
-              background: rgba(255, 255, 255, 0.06);
-              border: 1px solid rgba(255, 255, 255, 0.14);
-              color: #dce8f2;
-              font-size: 15px;
-              font-weight: 600;
-              padding: 8px 16px;
-              border-radius: 22px;
+              background: rgba(255, 255, 255, 0.05);
+              border: 1px solid rgba(255, 255, 255, 0.12);
+              color: #e2ecf5;
+              font-size: 14px;
+              font-weight: 700;
+              padding: 8px 14px;
+              border-radius: 20px;
               cursor: pointer;
               font-family: inherit;
-              transition: background 0.15s, border-color 0.15s;
+              transition: all 0.2s ease;
             }
             #roadmap-root .rm-ctrl:hover {
               background: rgba(255, 255, 255, 0.12);
-              border-color: rgba(255, 255, 255, 0.28);
+              border-color: rgba(255, 255, 255, 0.25);
+              transform: scale(1.05);
             }
             #roadmap-root .rm-ctrlWide {
-              font-size: 12px;
-              padding: 8px 18px;
+              font-size: 11px;
+              padding: 8px 16px;
+              border-radius: 20px;
+            }
+            #roadmap-root .rm-ctrls-left {
+              position: absolute;
+              top: 16px;
+              left: 16px;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              z-index: 5;
+              transition: all 0.2s ease;
+            }
+            #roadmap-root #btnAuto {
+              position: absolute;
+              top: 16px;
+              right: 16px;
+              z-index: 5;
+              transition: all 0.2s ease;
             }
             #roadmap-root .rm-legendBtn {
               all: unset;
               cursor: pointer;
               display: inline-flex;
               align-items: center;
-              gap: 7px;
-              font-size: 12px;
-              font-weight: 600;
+              gap: 8px;
+              font-size: 11px;
+              font-weight: 700;
               color: var(--ink-dim);
-              background: rgba(10, 15, 22, 0.75);
-              border: 1px solid var(--panel-line);
-              padding: 5px 10px 5px 8px;
-              border-radius: 7px;
-              backdrop-filter: blur(6px);
+              background: rgba(255, 255, 255, 0.02);
+              border: 1px solid rgba(255, 255, 255, 0.07);
+              padding: 6px 14px 6px 10px;
+              border-radius: 20px;
+              backdrop-filter: blur(8px);
               white-space: nowrap;
-              transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+              transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
             }
             #roadmap-root .rm-legendBtn:hover {
               color: var(--ink);
-              background: rgba(16, 23, 33, 0.9);
-              border-color: rgba(255, 255, 255, 0.15);
+              background: rgba(255, 255, 255, 0.05);
+              border-color: rgba(255, 255, 255, 0.18);
               transform: translateY(-1px);
             }
-            #roadmap-root .rm-legendBtn[data-active="true"] {
-              border-color: currentColor;
-              background: rgba(16, 23, 33, 0.95);
-              box-shadow: 0 0 12px rgba(255, 255, 255, 0.05);
+            #roadmap-root .rm-legendBtn[data-active="true"][data-phase="SQL"] {
+              border-color: var(--sql);
+              background: rgba(45, 212, 167, 0.08);
+              box-shadow: 0 0 10px rgba(45, 212, 167, 0.12);
+              color: var(--sql);
             }
+            #roadmap-root .rm-legendBtn[data-active="true"][data-phase="Excel"] {
+              border-color: var(--excel);
+              background: rgba(245, 166, 35, 0.08);
+              box-shadow: 0 0 10px rgba(245, 166, 35, 0.12);
+              color: var(--excel);
+            }
+            #roadmap-root .rm-legendBtn[data-active="true"][data-phase="Python"] {
+              border-color: var(--py);
+              background: rgba(56, 189, 248, 0.08);
+              box-shadow: 0 0 10px rgba(56, 189, 248, 0.12);
+              color: var(--py);
+            }
+            
+            @keyframes pulseGlow {
+              0% { opacity: 0.6; transform: scale(0.95); }
+              100% { opacity: 1; transform: scale(1.05); }
+            }
+
+            @media (max-width: 600px) {
+              #roadmap-root .rm-ctrls-left {
+                top: 10px;
+                left: 10px;
+                gap: 6px;
+              }
+              #roadmap-root #btnAuto {
+                top: 10px;
+                right: 10px;
+              }
+              #roadmap-root .rm-ctrl {
+                font-size: 11px;
+                padding: 4px 8px;
+                border-radius: 12px;
+              }
+              #roadmap-root .rm-ctrlWide {
+                font-size: 9px;
+                padding: 4px 10px;
+              }
+            }
+
             /* Fade in HUD controls and cards only after WebGL clock is loaded and rendered */
             #roadmap-root #rm-dayCard,
             #roadmap-root #rm-activeNum,
@@ -273,27 +332,75 @@
             box-shadow: var(--shadow-card), 0 0 50px rgba(56,189,248,0.06);
           ">
             <!-- ============ HEADER ============ -->
-            <div style="padding:18px 24px 16px; border-bottom:1px solid var(--panel-line); background:linear-gradient(180deg,#0d131b,#0a0f16);">
-              <div style="display:flex; flex-direction:column; gap:12px;">
+            <div id="rm-header" style="
+              padding: 20px 24px 18px; 
+              border-bottom: 1px solid rgba(255, 255, 255, 0.08); 
+              background: linear-gradient(180deg, rgba(13, 22, 37, 0.85), rgba(7, 11, 20, 0.95));
+              backdrop-filter: blur(12px);
+              position: relative;
+            ">
+              <!-- Top ambient glow line -->
+              <div id="rm-headerGlow" style="
+                position: absolute; 
+                top: 0; left: 0; right: 0; 
+                height: 1px; 
+                background: linear-gradient(90deg, transparent, var(--sql), transparent);
+                transition: background 0.4s ease;
+              "></div>
+              
+              <div style="display:flex; flex-direction:column; gap:14px;">
                 <!-- Top Row: title + stats inline -->
-                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; width:100%;">
-                  <div style="font-size:11px; font-weight:600; letter-spacing:0.08em; color:var(--ink-faint); text-transform:uppercase;">60-Days Data Analytics Roadmap</div>
-                  <div id="rm-headerStats" style="display:flex; align-items:center; gap:8px; font-size:11px; font-weight:600; color:var(--ink-faint); text-transform:uppercase; letter-spacing:0.05em;">
-                    <span style="color:var(--ink); font-weight:700; font-variant-numeric:tabular-nums;" id="rm-statDay">Day 1</span> of 60
-                    <span style="width:1px; height:12px; background:var(--panel-line);"></span>
-                    <span style="color:var(--ink); font-weight:700; font-variant-numeric:tabular-nums;" id="rm-statPct">2%</span> complete
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; width:100%;">
+                  <div style="
+                    display: inline-flex; 
+                    align-items: center; 
+                    gap: 8px; 
+                    background: rgba(255, 255, 255, 0.03); 
+                    border: 1px solid rgba(255, 255, 255, 0.07); 
+                    padding: 5px 12px; 
+                    border-radius: 20px; 
+                    font-size: 10px; 
+                    font-weight: 700; 
+                    letter-spacing: 0.08em; 
+                    color: var(--ink-dim); 
+                    text-transform: uppercase;
+                  ">
+                    <span style="
+                      width: 6px; 
+                      height: 6px; 
+                      border-radius: 50%; 
+                      background: #10b981; 
+                      box-shadow: 0 0 8px #10b981;
+                      animation: pulseGlow 1.5s infinite alternate;
+                    "></span>
+                    60-Days Data Analytics Roadmap
+                  </div>
+                  
+                  <div id="rm-headerStats" style="
+                    display: flex; 
+                    align-items: center; 
+                    gap: 8px; 
+                    font-size: 11px; 
+                    font-weight: 700; 
+                    color: var(--ink-faint); 
+                    text-transform: uppercase; 
+                    letter-spacing: 0.05em;
+                  ">
+                    <span id="rm-statDay" style="font-weight:800; font-variant-numeric:tabular-nums;">Day 1</span> of 60
+                    <span style="width:1px; height:12px; background:rgba(255, 255, 255, 0.12);"></span>
+                    <span id="rm-statPct" style="font-weight:800; font-variant-numeric:tabular-nums;">2%</span> complete
                   </div>
                 </div>
                 <!-- Bottom Row: legend buttons -->
                 <div style="display:flex; gap:8px; align-items:center; flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; width:100%; max-width:100%; box-sizing:border-box;">
                   <button class="rm-legendBtn" data-phase="SQL">
-                    <span style="width:8px;height:8px;border-radius:50%;background:var(--sql);box-shadow:0 0 6px var(--sql);flex:none;"></span>SQL <span style="color:var(--ink-faint); font-weight:400;">· Days 1–18</span>
+                    <span style="width:7px;height:7px;border-radius:50%;background:var(--sql);box-shadow:0 0 6px var(--sql);flex:none;"></span>SQL <span style="color:var(--ink-faint); font-weight:400;">· Days 1–18</span>
                   </button>
                   <button class="rm-legendBtn" data-phase="Excel">
-                    <span style="width:8px;height:8px;border-radius:50%;background:var(--excel);box-shadow:0 0 6px var(--excel);flex:none;"></span>Excel <span style="color:var(--ink-faint); font-weight:400;">· Days 19–30</span>
+                    <span style="width:7px;height:7px;border-radius:50%;background:var(--excel);box-shadow:0 0 6px var(--excel);flex:none;"></span>Excel <span style="color:var(--ink-faint); font-weight:400;">· Days 19–30</span>
                   </button>
                   <button class="rm-legendBtn" data-phase="Python">
-                    <span style="width:8px;height:8px;border-radius:50%;background:var(--py);box-shadow:0 0 6px var(--py);flex:none;"></span>Python <span style="color:var(--ink-faint); font-weight:400;">· Days 31–60</span>
+                    <span style="width:7px;height:7px;border-radius:50%;background:var(--py);box-shadow:0 0 6px var(--py);flex:none;"></span>Python <span style="color:var(--ink-faint); font-weight:400;">· Days 31–60</span>
                   </button>
                 </div>
               </div>
@@ -347,11 +454,11 @@
                 <div style="position:absolute; bottom:0; left:0; right:0; height:64px; background:linear-gradient(transparent,rgba(7,11,17,0.85) 70%); pointer-events:none;"></div>
 
                 <!-- top transport controls -->
-                <div style="position:absolute; top:16px; left:16px; display:flex; align-items:center; gap:8px; z-index:5;">
+                <div class="rm-ctrls-left">
                   <button id="btnPrev" class="rm-ctrl" aria-label="Previous day">‹</button>
                   <button id="btnNext" class="rm-ctrl" aria-label="Next day">›</button>
                 </div>
-                <button id="btnAuto" class="rm-ctrl rm-ctrlWide" aria-label="Toggle autoplay" style="position:absolute; top:16px; right:16px; z-index:5;">⏸ &nbsp;Auto-play</button>
+                <button id="btnAuto" class="rm-ctrl rm-ctrlWide" aria-label="Toggle autoplay">⏸ &nbsp;Auto-play</button>
               </div>
             </div>
           </div>
@@ -1481,7 +1588,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="reviews.js?v=6.0" defer></script>
   <script src="app.js?v=6.7" defer></script>
-  <script src="roadmap.js?v=7.9" defer></script>
+  <script src="roadmap.js?v=8.0" defer></script>
 
   <!-- PWA SW Registration -->
   <script>

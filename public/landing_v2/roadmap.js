@@ -427,8 +427,24 @@ function updateActiveNumPosition(){
 function updateHUD(idx){
   const d=DATA[idx];
   const pc=PC[d.phase];
-  root.querySelector('#rm-statDay').textContent=`Day ${idx+1}`;
-  root.querySelector('#rm-statPct').textContent=`${Math.round((idx+1)/N*100)}%`;
+  
+  const statDay = root.querySelector('#rm-statDay');
+  const statPct = root.querySelector('#rm-statPct');
+  const headerGlow = root.querySelector('#rm-headerGlow');
+
+  if (statDay) {
+    statDay.textContent = `Day ${idx+1}`;
+    statDay.style.color = pc.css;
+    statDay.style.textShadow = `0 0 8px ${pc.css}50`;
+  }
+  if (statPct) {
+    statPct.textContent = `${Math.round((idx+1)/N*100)}%`;
+    statPct.style.color = pc.css;
+    statPct.style.textShadow = `0 0 8px ${pc.css}50`;
+  }
+  if (headerGlow) {
+    headerGlow.style.background = `linear-gradient(90deg, transparent, ${pc.css}, transparent)`;
+  }
 
   const cardDayEl = root.querySelector('#rm-cardDay');
   const cardIconEl = root.querySelector('#rm-cardIcon');
@@ -440,7 +456,7 @@ function updateHUD(idx){
   if(idx === 59) {
     cardDayEl.textContent = "Day 60";
     cardIconEl.innerHTML = "🏆";
-    cardTopicEl.textContent = d.topic; // "Phase Analysis & Review"
+    cardTopicEl.textContent = d.topic;
     
     pill.textContent = "GRADUATION · CERTIFICATE";
     pill.style.color = "#f5a623";
@@ -462,7 +478,7 @@ function updateHUD(idx){
     
     const pct = ((idx+1)/N*100).toFixed(1);
     progBar.style.width = pct+'%';
-    progBar.style.background = "linear-gradient(90deg, var(--sql), var(--py))";
+    progBar.style.background = `linear-gradient(90deg, var(--sql), var(--py))`;
     progLabel.textContent = `${idx+1} / ${N}`;
   }
 
@@ -528,7 +544,6 @@ function applyFilter(phase){
   activeFilter = (activeFilter===phase) ? null : phase;
   root.querySelectorAll('.rm-legendBtn').forEach(b=>{
     b.setAttribute('data-active', b.getAttribute('data-phase')===activeFilter ? 'true':'false');
-    b.style.color = b.getAttribute('data-phase')===activeFilter ? PC[activeFilter].css : '';
   });
   spheres.forEach((s,i)=>{
     const dim = activeFilter && DATA[i].phase!==activeFilter;
@@ -650,6 +665,7 @@ function animate(){
 
   // ── MECHANICAL TICK SYNTHESIZER (WEB AUDIO API) ─────────────
   let audioCtx = null;
+  let compressor = null; // Reused to eliminate creation latency/lag
   let clockInViewport = false;
   let noiseBuffer = null;
 
@@ -679,16 +695,18 @@ function animate(){
         return;
       }
 
+      // Pre-initialize and reuse compressor to avoid latency delay
+      if (!compressor && audioCtx) {
+        compressor = audioCtx.createDynamicsCompressor();
+        compressor.threshold.setValueAtTime(-6, audioCtx.currentTime);
+        compressor.knee.setValueAtTime(20, audioCtx.currentTime);
+        compressor.ratio.setValueAtTime(20, audioCtx.currentTime);
+        compressor.attack.setValueAtTime(0.001, audioCtx.currentTime);
+        compressor.release.setValueAtTime(0.12, audioCtx.currentTime);
+        compressor.connect(audioCtx.destination);
+      }
+
       const now = audioCtx.currentTime;
-      
-      // Maximized compressor setting for extreme loudness and peak limiting
-      const compressor = audioCtx.createDynamicsCompressor();
-      compressor.threshold.setValueAtTime(-6, now); // higher threshold for extreme output
-      compressor.knee.setValueAtTime(20, now);
-      compressor.ratio.setValueAtTime(20, now); // heavy limiting ratio
-      compressor.attack.setValueAtTime(0.001, now); // ultra-fast attack
-      compressor.release.setValueAtTime(0.12, now);
-      compressor.connect(audioCtx.destination);
 
       // Play the crisp TICK sound for every transition (replacing alternating TOCK)
       // 1. High-frequency click noise (metal escapement strike)
@@ -734,6 +752,16 @@ function animate(){
     try {
       if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      // Initialize compressor inside user gesture to unlock route
+      if (!compressor && audioCtx) {
+        compressor = audioCtx.createDynamicsCompressor();
+        compressor.threshold.setValueAtTime(-6, audioCtx.currentTime);
+        compressor.knee.setValueAtTime(20, audioCtx.currentTime);
+        compressor.ratio.setValueAtTime(20, audioCtx.currentTime);
+        compressor.attack.setValueAtTime(0.001, audioCtx.currentTime);
+        compressor.release.setValueAtTime(0.12, audioCtx.currentTime);
+        compressor.connect(audioCtx.destination);
       }
       if (audioCtx.state === 'suspended') {
         audioCtx.resume();

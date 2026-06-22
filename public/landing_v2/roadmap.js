@@ -481,6 +481,9 @@ function setDay(i, doBurst=true){
       setTimeout(() => burst(18), 300);
       setTimeout(() => burst(30), 450);
     }
+    if (clockInViewport) {
+      playMechanicalTick();
+    }
   }
   actMat.color.setHex(PC[DATA[currentDay].phase].hex);
   actMat.emissive.setHex(PC[DATA[currentDay].phase].hex);
@@ -512,9 +515,10 @@ function startAuto(){
 function stopAuto(){ clearInterval(autoTimer); }
 function stopAutoUI(){ stopAuto(); autoPlay=false; root.querySelector('#btnAuto').innerHTML='▶ &nbsp;Auto-play'; }
 
-root.querySelector('#btnNext').onclick=()=>{stopAutoUI();setDay(currentDay+1);};
-root.querySelector('#btnPrev').onclick=()=>{stopAutoUI();setDay(currentDay-1);};
+root.querySelector('#btnNext').onclick=()=>{stopAutoUI();resumeAudio();setDay(currentDay+1);};
+root.querySelector('#btnPrev').onclick=()=>{stopAutoUI();resumeAudio();setDay(currentDay-1);};
 root.querySelector('#btnAuto').onclick=()=>{
+  resumeAudio();
   autoPlay=!autoPlay;
   root.querySelector('#btnAuto').innerHTML=autoPlay?'⏸ &nbsp;Auto-play':'▶ &nbsp;Auto-play';
   if(autoPlay) startAuto(); else stopAuto();
@@ -556,6 +560,7 @@ canvas.addEventListener('mouseleave',()=>{mouse.set(-999,-999);hoveredDay=null;}
 canvas.addEventListener('click',()=>{
   if(hoveredDay!=null){
     stopAutoUI();
+    resumeAudio();
     setDay(hoveredDay);
   }
 });
@@ -569,6 +574,7 @@ canvas.addEventListener('touchmove',e=>{
 canvas.addEventListener('touchend',()=>{
   if(hoveredDay!=null){
     stopAutoUI();
+    resumeAudio();
     setDay(hoveredDay);
   }
   mouse.set(-999,-999); hoveredDay=null;
@@ -641,6 +647,72 @@ function animate(){
   tickParticles();
   renderer.render(scene, camera);
 }
+
+  // ── MECHANICAL TICK SYNTHESIZER (WEB AUDIO API) ─────────────
+  let audioCtx = null;
+  let clockInViewport = false;
+
+  function playMechanicalTick() {
+    try {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      if (audioCtx.state === 'suspended') return;
+
+      const now = audioCtx.currentTime;
+
+      // 1. High-frequency click (metal strike)
+      const oscHigh = audioCtx.createOscillator();
+      const gainHigh = audioCtx.createGain();
+      oscHigh.type = 'triangle';
+      oscHigh.frequency.setValueAtTime(1600, now);
+      gainHigh.gain.setValueAtTime(0.015, now);
+      gainHigh.gain.exponentialRampToValueAtTime(0.0001, now + 0.008);
+      oscHigh.connect(gainHigh);
+      gainHigh.connect(audioCtx.destination);
+
+      // 2. Mid-frequency thud (casing resonance)
+      const oscLow = audioCtx.createOscillator();
+      const gainLow = audioCtx.createGain();
+      oscLow.type = 'sine';
+      oscLow.frequency.setValueAtTime(320, now);
+      gainLow.gain.setValueAtTime(0.035, now);
+      gainLow.gain.exponentialRampToValueAtTime(0.0001, now + 0.022);
+      oscLow.connect(gainLow);
+      gainLow.connect(audioCtx.destination);
+
+      oscHigh.start(now);
+      oscHigh.stop(now + 0.012);
+
+      oscLow.start(now);
+      oscLow.stop(now + 0.028);
+    } catch (e) {
+      console.warn('[Audio] Tick synthesis failed:', e);
+    }
+  }
+
+  function resumeAudio() {
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+  }
+  document.addEventListener('click', resumeAudio, { once: true });
+  document.addEventListener('touchstart', resumeAudio, { once: true });
+
+  // Clock Viewport Visibility Observer
+  if (window.IntersectionObserver && wrap) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        clockInViewport = entry.isIntersecting;
+      });
+    }, { threshold: 0.15 });
+    observer.observe(wrap);
+  } else {
+    clockInViewport = true;
+  }
 
 setDay(0,false);
 updateHUD(0);

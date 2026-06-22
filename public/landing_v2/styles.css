@@ -4312,9 +4312,9 @@ th.col-mano { letter-spacing: 0.01em; }
 /* Cloned card styling inside checkout overlay */
 #checkoutCardContainer .pricing-card {
   margin: 0 auto;
-  border-radius: 20px;
-  padding: 24px 20px 20px;
-  border: 1.5px solid var(--border-strong);
+  border-radius: 16px;
+  padding: 16px 20px 14px;
+  border: 1.2px solid var(--border-strong);
   box-shadow: none;
   background: var(--surface-1);
 }
@@ -4330,8 +4330,75 @@ th.col-mano { letter-spacing: 0.01em; }
   padding: 3px 12px;
 }
 
+#checkoutCardContainer .pricing-card-title {
+  font-size: 16px;
+  margin-bottom: 4px;
+  margin-top: 4px;
+}
+
+#checkoutCardContainer .pricing-card-subtitle {
+  font-size: 11px;
+  margin-bottom: 8px;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
 #checkoutCardContainer .pricing-price-now {
-  font-size: 38px;
+  font-size: 28px;
+}
+
+#checkoutCardContainer .pricing-price-old {
+  font-size: 13px;
+}
+
+#checkoutCardContainer .pricing-discount-badge {
+  font-size: 9px;
+  padding: 2px 6px;
+}
+
+#checkoutCardContainer .pricing-price-group {
+  margin-bottom: 6px;
+}
+
+#checkoutCardContainer .pricing-divider {
+  margin: 8px 0;
+}
+
+#checkoutCardContainer .pricing-feature-list {
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+#checkoutCardContainer .pricing-feature-list li {
+  font-size: 11.5px;
+  line-height: 1.35;
+}
+
+#checkoutCardContainer .pricing-feature-list li span {
+  font-size: 11.5px;
+}
+
+#checkoutCardContainer .pricing-feature-list .feat-icon {
+  font-size: 10px;
+  width: 14px;
+  height: 14px;
+}
+
+#checkoutCardContainer .pricing-guarantee {
+  font-size: 10px;
+  margin-top: 4px;
+}
+
+#checkoutCardContainer .pricing-live-schedule {
+  font-size: 11px;
+  padding: 4px 10px;
+  margin-bottom: 8px;
+}
+
+#checkoutCardContainer .pricing-type-badge {
+  font-size: 9px;
+  padding: 2px 8px;
+  margin-bottom: 8px;
 }
 
 .checkout-form-col {

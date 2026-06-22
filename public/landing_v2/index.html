@@ -70,7 +70,26 @@
         <div class="nav-right">
           <!-- Logged out states -->
           <a href="javascript:void(0)" id="navSignin" class="btn-ghost" onclick="document.getElementById('authModal').classList.add('active');" aria-label="Sign in to your account">Sign In</a>
-          <a href="#pricing" class="btn-nav-buy" data-cta="buy" data-tier="selfpaced">Enroll — From <span class="dynamic-price-from">$49</span></a>
+          <div class="nav-buy-dropdown-container">
+            <a href="javascript:void(0)" class="btn-nav-buy" id="navEnrollBtn" aria-label="Toggle enroll options">Enroll Full Course</a>
+            <div class="nav-buy-dropdown-menu" id="navEnrollDropdown">
+              <div class="dropdown-tier-item">
+                <div class="dropdown-tier-info">
+                  <span class="dropdown-tier-name">⚡ Self-Paced Plan</span>
+                  <span class="dropdown-tier-price dynamic-price-from">$49</span>
+                </div>
+                <button class="dropdown-tier-buy" data-tier="selfpaced">Enroll</button>
+              </div>
+              <div class="dropdown-tier-divider"></div>
+              <div class="dropdown-tier-item">
+                <div class="dropdown-tier-info">
+                  <span class="dropdown-tier-name">🎥 Daily Live Classes</span>
+                  <span class="dropdown-tier-price dynamic-price-live">$149</span>
+                </div>
+                <button class="dropdown-tier-buy" data-tier="live">Enroll</button>
+              </div>
+            </div>
+          </div>
 
           <!-- Logged in states (hidden by default, managed by app.js) -->
           <div class="dropdown" id="navMyCoursesDropdown" style="display: none; position: relative;">
@@ -107,7 +126,26 @@
     <a href="#testimonials">Reviews</a>
     <a href="#faq">FAQ</a>
     <div class="mob-menu-divider" aria-hidden="true"></div>
-    <a href="#pricing" class="mob-menu-buy" data-cta="buy" data-tier="selfpaced">Enroll — From <span class="dynamic-price-from">$49</span></a>
+    <div class="mob-buy-dropdown-container">
+      <a href="javascript:void(0)" class="mob-menu-buy" id="mobEnrollBtn" aria-label="Toggle enroll options">Enroll Full Course</a>
+      <div class="mob-buy-dropdown-menu" id="mobEnrollDropdown">
+        <div class="dropdown-tier-item">
+          <div class="dropdown-tier-info">
+            <span class="dropdown-tier-name">⚡ Self-Paced Plan</span>
+            <span class="dropdown-tier-price dynamic-price-from">$49</span>
+          </div>
+          <button class="dropdown-tier-buy" data-tier="selfpaced">Enroll</button>
+        </div>
+        <div class="dropdown-tier-divider"></div>
+        <div class="dropdown-tier-item">
+          <div class="dropdown-tier-info">
+            <span class="dropdown-tier-name">🎥 Daily Live Classes</span>
+            <span class="dropdown-tier-price dynamic-price-live">$149</span>
+          </div>
+          <button class="dropdown-tier-buy" data-tier="live">Enroll</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <main id="main-content">

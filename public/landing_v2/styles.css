@@ -4168,6 +4168,123 @@ th.col-mano { letter-spacing: 0.01em; }
   box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
 }
 
+/* -- NAV ENROLL DROPDOWN -------------------------------------------- */
+.nav-buy-dropdown-container,
+.mob-buy-dropdown-container {
+  position: relative;
+  display: inline-block;
+}
+
+.nav-buy-dropdown-menu,
+.mob-buy-dropdown-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 290px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 230, 246, 0.05);
+  z-index: 1000;
+  animation: slideDownFade 0.25s var(--ease);
+}
+
+.mob-buy-dropdown-menu {
+  right: 50%;
+  transform: translateX(50%);
+  width: 290px;
+}
+
+@keyframes slideDownFade {
+  from { transform: translateY(-10px) translateX(var(--tx, 0)); opacity: 0; }
+  to { transform: translateY(0) translateX(var(--tx, 0)); opacity: 1; }
+}
+
+/* Adjust mobile translateX animation variables */
+.nav-buy-dropdown-container {
+  --tx: 0;
+}
+.mob-buy-dropdown-container {
+  --tx: 50%;
+}
+
+.nav-buy-dropdown-menu.active,
+.mob-buy-dropdown-menu.active {
+  display: block;
+}
+
+.dropdown-tier-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.dropdown-tier-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dropdown-tier-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.dropdown-tier-price {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--cyan);
+}
+
+/* live pricing class color */
+.dropdown-tier-price.dynamic-price-live {
+  color: var(--gold) !important;
+}
+
+.dropdown-tier-buy {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dropdown-tier-buy:hover {
+  background: var(--cyan);
+  border-color: var(--cyan);
+  color: #000;
+  box-shadow: 0 0 10px rgba(0, 230, 246, 0.3);
+}
+
+.dropdown-tier-item:nth-of-type(2) .dropdown-tier-buy:hover {
+  /* target selfpaced enroll button */
+  background: var(--cyan);
+  border-color: var(--cyan);
+  color: #000;
+}
+
+.dropdown-tier-item:nth-of-type(3) .dropdown-tier-buy:hover {
+  /* target live enroll button */
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #000;
+  box-shadow: 0 0 10px rgba(255, 176, 32, 0.3);
+}
+
+.dropdown-tier-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 12px 0;
+}
+
 /* -- RESPONSIVE ---------------------------------------------------- */
 
 /* ═══ GLOBAL OVERFLOW PREVENTION ═══ */

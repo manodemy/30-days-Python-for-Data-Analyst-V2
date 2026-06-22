@@ -869,6 +869,71 @@ document.addEventListener('DOMContentLoaded', () => {
   updateLiveScheduler();
   setInterval(updateLiveScheduler, 1000);
 
+  /* ═══ NAVBAR ENROLL DROPDOWNS ═══ */
+  const navEnrollBtn = document.getElementById('navEnrollBtn');
+  const navEnrollDropdown = document.getElementById('navEnrollDropdown');
+  const mobEnrollBtn = document.getElementById('mobEnrollBtn');
+  const mobEnrollDropdown = document.getElementById('mobEnrollDropdown');
+
+  const toggleDropdown = (btn, menu) => {
+    if (!menu) return;
+    const isActive = menu.classList.contains('active');
+    
+    // Close other nav buy dropdowns first
+    if (navEnrollDropdown && navEnrollDropdown !== menu) navEnrollDropdown.classList.remove('active');
+    if (mobEnrollDropdown && mobEnrollDropdown !== menu) mobEnrollDropdown.classList.remove('active');
+    
+    if (isActive) {
+      menu.classList.remove('active');
+    } else {
+      menu.classList.add('active');
+    }
+  };
+
+  if (navEnrollBtn && navEnrollDropdown) {
+    navEnrollBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleDropdown(navEnrollBtn, navEnrollDropdown);
+    });
+  }
+
+  if (mobEnrollBtn && mobEnrollDropdown) {
+    mobEnrollBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleDropdown(mobEnrollBtn, mobEnrollDropdown);
+    });
+  }
+
+  // Prevent dropdown closing when clicking inside the menus
+  document.querySelectorAll('.nav-buy-dropdown-menu, .mob-buy-dropdown-menu').forEach(menu => {
+    menu.addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
+  });
+
+  // Bind clicks on "Enroll" buttons inside the dropdown menus
+  document.querySelectorAll('.dropdown-tier-buy').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const tier = btn.dataset.tier || 'selfpaced';
+      
+      // Close dropdown menus
+      if (navEnrollDropdown) navEnrollDropdown.classList.remove('active');
+      if (mobEnrollDropdown) mobEnrollDropdown.classList.remove('active');
+      
+      // Open Checkout
+      openCheckout(tier);
+    });
+  });
+
+  // Close dropdowns when clicking anywhere outside
+  document.addEventListener('click', () => {
+    if (navEnrollDropdown) navEnrollDropdown.classList.remove('active');
+    if (mobEnrollDropdown) mobEnrollDropdown.classList.remove('active');
+  });
+
   /* ═══ V6 MOTION SYSTEM: TEXT SCRAMBLER REVEAL ═══ */
   function scrambleText(element, durationMs = 1000) {
     // Disabled text scrambling animation to display all content immediately on refresh/scroll

@@ -4907,50 +4907,66 @@ html, body {
 #roadmap-root .rm-legendRow::-webkit-scrollbar { display: none; }
 
 @media (max-width: 600px) {
-  /* Header: allow pill to shrink on very small screens */
+  /* Pill title */
   #rm-cardPillTitle {
-    font-size: 9px !important;
-    padding: 5px 10px !important;
-    letter-spacing: 0.07em !important;
+    font-size: 8.5px !important;
+    padding: 4px 9px !important;
+    letter-spacing: 0.06em !important;
   }
 
-  /* Header top row: keep on one line, shrink pill, keep stats visible */
+  /* Header top row gap */
   #rm-headerTopRow {
+    gap: 6px !important;
+  }
+
+  /* Header padding: tighter */
+  #rm-header {
+    padding: 12px 14px 12px !important;
+  }
+
+  /* Stats gap */
+  #rm-headerStats {
     gap: 8px !important;
   }
 
-  /* Stats values slightly smaller on mobile */
-  #rm-headerStats {
-    gap: 10px !important;
-  }
-  #rm-headerStats span[style*="font-size:18px"] {
-    font-size: 15px !important;
+  /* Stats numbers */
+  #rm-statDay,
+  #rm-statPct {
+    font-size: 13px !important;
   }
 
-  /* Legend row: scroll horizontally, never wrap, never crop */
+  /* Legend row */
   #roadmap-root div[style*="flex-wrap:nowrap"][style*="overflow-x:auto"] {
     padding-bottom: 2px;
     -webkit-overflow-scrolling: touch;
   }
 
-  /* Legend buttons: slightly smaller on mobile to all fit */
+  /* Legend buttons: compact so all 3 fit */
   #roadmap-root .rm-legendBtn {
-    font-size: 10px !important;
-    padding: 5px 10px 5px 8px !important;
-    gap: 6px !important;
+    font-size: 9px !important;
+    padding: 4px 8px 4px 7px !important;
+    gap: 5px !important;
+    border-radius: 14px !important;
     white-space: nowrap;
     flex-shrink: 0;
   }
 
-  /* Dial wrap: add bottom padding so bottom buttons don't clip content */
+  /* Dot inside legend button */
+  #roadmap-root .rm-legendBtn > span:first-child {
+    width: 5px !important;
+    height: 5px !important;
+    min-width: 5px !important;
+  }
+
+  /* Dial wrap bottom padding */
   #rm-dialWrap {
     padding-bottom: 52px;
   }
 
-  /* Day card: narrower on small screens to not be cropped */
+  /* Day card */
   #rm-dayCard {
     width: 152px !important;
-    padding: 10px 12px 10px !important;
+    padding: 10px 12px !important;
   }
 
   #rm-cardDay {
@@ -4962,19 +4978,30 @@ html, body {
     min-height: 24px !important;
   }
 
-  /* Prevent bottom vignette from covering controls */
+  /* Vignette */
   #rm-dialWrap > div[style*="bottom:0"][style*="height:64px"] {
     height: 48px !important;
   }
 }
 
 @media (max-width: 400px) {
-  /* Extra small: shrink pill text even more */
   #rm-cardPillTitle {
-    font-size: 8px !important;
-    padding: 4px 8px !important;
+    font-size: 7.5px !important;
+    padding: 3px 7px !important;
   }
   #rm-headerStats {
-    gap: 8px !important;
+    gap: 6px !important;
+  }
+  #rm-header {
+    padding: 10px 12px !important;
+  }
+  #rm-statDay,
+  #rm-statPct {
+    font-size: 11px !important;
+  }
+  #roadmap-root .rm-legendBtn {
+    font-size: 8px !important;
+    padding: 3px 6px 3px 5px !important;
+    gap: 4px !important;
   }
 }

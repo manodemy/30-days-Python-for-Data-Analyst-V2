@@ -43,7 +43,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 
   <!-- Style Link -->
-  <link rel="stylesheet" href="styles.css?v=7.6">
+  <link rel="stylesheet" href="styles.css?v=7.7">
 </head>
 <body class="pricing-loading">
   <!-- Skip Navigation for Accessibility -->
@@ -325,6 +325,26 @@
                 padding: 0 12px;
                 font-size: 10px;
                 border-radius: 15px;
+              }
+              /* ── Legend buttons: shrink to fit all 3 in one row ── */
+              #roadmap-root .rm-legendBtn {
+                font-size: 9.5px !important;
+                padding: 5px 9px 5px 7px !important;
+                gap: 5px !important;
+                border-radius: 14px !important;
+              }
+              /* Dot inside legend button */
+              #roadmap-root .rm-legendBtn > span:first-child {
+                width: 5px !important;
+                height: 5px !important;
+              }
+            }
+            @media (max-width: 420px) {
+              /* Extra compact for very small phones */
+              #roadmap-root .rm-legendBtn {
+                font-size: 8.5px !important;
+                padding: 4px 7px 4px 6px !important;
+                gap: 4px !important;
               }
             }
 

@@ -156,7 +156,99 @@
 </h2>
 <div style="border-left: 4px solid #4DB6AC; padding-left: 15px; margin: 15px 0; color: #CCCCCC;">
     <b>🔍 Concept</b><br>
-    Learn about Subqueries.
+    <h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">What is a Subquery?</h3>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;">A subquery (also called an inner query or nested query) is a SQL query nested inside another query. The inner query runs first and passes its result to the outer query.</p>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Types of Subqueries by Location</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- 1. Subquery in WHERE
+SELECT * FROM employees
+WHERE salary &gt; (SELECT AVG(salary) FROM employees);
+
+-- 2. Subquery in FROM (Derived Table / Inline View)
+SELECT dept_avg.department_id, dept_avg.avg_sal
+FROM (
+    SELECT department_id, AVG(salary) AS avg_sal
+    FROM employees
+    GROUP BY department_id
+) AS dept_avg
+WHERE dept_avg.avg_sal &gt; 60000;
+
+-- 3. Subquery in SELECT (Scalar Subquery)
+SELECT
+    employee_id,
+    first_name,
+    salary,
+    (SELECT AVG(salary) FROM employees) AS company_avg,  -- same value for all rows
+    salary - (SELECT AVG(salary) FROM employees) AS diff_from_avg
+FROM employees;
+
+-- 4. Subquery in HAVING
+SELECT department_id, AVG(salary) AS dept_avg
+FROM employees
+GROUP BY department_id
+HAVING AVG(salary) &gt; (SELECT AVG(salary) FROM employees);</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Correlated vs. Non-Correlated Subqueries</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- NON-CORRELATED: inner query runs ONCE, independently of outer query
+SELECT * FROM employees
+WHERE salary &gt; (SELECT AVG(salary) FROM employees);
+-- AVG(salary) is computed once and reused for all rows
+
+-- CORRELATED: inner query runs ONCE PER ROW of the outer query
+SELECT e.first_name, e.salary, e.department_id
+FROM employees e
+WHERE e.salary &gt; (
+    SELECT AVG(salary)
+    FROM employees
+    WHERE department_id = e.department_id  -- References outer query's e.department_id
+);
+-- For each employee row, the subquery computes average for THAT employee's department
+-- This is expensive on large tables but very powerful</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">IN and EXISTS with Subqueries</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- IN with subquery (returns list of values)
+SELECT first_name FROM employees
+WHERE department_id IN (
+    SELECT department_id FROM departments
+    WHERE location = 'Mumbai'
+);
+
+-- EXISTS with subquery (returns TRUE/FALSE per row — often faster)
+SELECT d.department_name
+FROM departments d
+WHERE EXISTS (
+    SELECT 1 FROM employees e
+    WHERE e.department_id = d.department_id
+    AND e.salary &gt; 100000
+);
+
+-- NOT EXISTS (find departments with NO high earners)
+SELECT d.department_name
+FROM departments d
+WHERE NOT EXISTS (
+    SELECT 1 FROM employees e
+    WHERE e.department_id = d.department_id
+    AND e.salary &gt; 100000
+);</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">EXISTS vs. IN Performance</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- EXISTS is generally faster when:
+-- - The outer result set is large
+-- - The inner result may have duplicates (EXISTS short-circuits at first match)
+
+-- IN is simpler and fine for small subquery result sets
+-- IN with NULL in the list behaves unpredictably (avoid NOT IN with nullable columns)</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Derived Tables (Subquery in FROM)</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Calculate per-department stats, then filter and rank
+SELECT *
+FROM (
+    SELECT
+        department_id,
+        COUNT(*) AS headcount,
+        AVG(salary) AS avg_salary,
+        RANK() OVER (ORDER BY AVG(salary) DESC) AS salary_rank  -- preview window functions
+    FROM employees
+    GROUP BY department_id
+) AS dept_stats
+WHERE headcount &gt;= 5
+ORDER BY salary_rank;</code></pre>
+<hr style="border:none;border-top:1px solid #1e293b;margin:24px 0;">
 </div></div>
 <div class="code-cell" id="cell-1">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-1')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-1')">✕ Clear</button></div></div>

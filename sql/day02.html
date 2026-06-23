@@ -155,7 +155,68 @@
 </h2>
 <div style="border-left: 4px solid #4DB6AC; padding-left: 15px; margin: 15px 0; color: #CCCCCC;">
     <b>🔍 Concept</b><br>
-    Learn about Filtering Data with WHERE.
+    <h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">The Role of WHERE</h3>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;"><code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">WHERE</code> is the <strong style="color:#f1f5f9;">row-level filter</strong> in SQL. It runs at <strong style="color:#f1f5f9;">Step 3</strong> of the SQL Order of Execution (after <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">FROM</code>/<code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">JOIN</code>, before <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">GROUP BY</code>). It evaluates each row individually and keeps only rows where the condition evaluates to <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">TRUE</code>.</p>
+<blockquote style="border-left:4px solid #f59e0b;background:#1c1a0e;padding:10px 16px;margin:12px 0;color:#fcd34d;border-radius:4px;"><strong style="color:#f1f5f9;">Key insight:</strong> A row is excluded if a condition evaluates to <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">FALSE</code> <strong style="color:#f1f5f9;">or to <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">NULL</code></strong> (three-valued logic: TRUE, FALSE, UNKNOWN). This is why filtering on NULL requires special handling (covered in Day 3).</blockquote>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Comparison Operators</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">=        Equal to
+&lt;&gt;  !=   Not equal to  (both work in most databases)
+&gt;        Greater than
+&lt;        Less than
+&gt;=       Greater than or equal to
+&lt;=       Less than or equal to</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Logical Operators: AND, OR, NOT</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- AND: both conditions must be TRUE
+SELECT * FROM employees
+WHERE salary &gt; 50000 AND department_id = 3;
+
+-- OR: at least one condition must be TRUE
+SELECT * FROM employees
+WHERE department_id = 3 OR department_id = 5;
+
+-- NOT: reverses the condition
+SELECT * FROM employees
+WHERE NOT department_id = 3;  -- same as department_id &lt;&gt; 3</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Operator Precedence — Critical for Complex Filters</h3>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;">SQL evaluates <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">NOT</code> first, then <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">AND</code>, then <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">OR</code>. This catches many beginners off guard.</p>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- WRONG INTENT — This is read as: department=3 AND (salary&gt;70000 OR department=5)
+SELECT * FROM employees
+WHERE department_id = 3 AND salary &gt; 70000 OR department_id = 5;
+
+-- CORRECT — Use parentheses to enforce your intended logic:
+SELECT * FROM employees
+WHERE (department_id = 3 OR department_id = 5) AND salary &gt; 70000;</code></pre>
+<blockquote style="border-left:4px solid #f59e0b;background:#1c1a0e;padding:10px 16px;margin:12px 0;color:#fcd34d;border-radius:4px;"><strong style="color:#f1f5f9;">Rule:</strong> Always use parentheses when combining <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">AND</code> and <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">OR</code>. Never rely on implicit precedence in complex conditions.</blockquote>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">BETWEEN ... AND</h3>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;">Inclusive range filter — both endpoints are included.</p>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- salary &gt;= 40000 AND salary &lt;= 80000
+SELECT * FROM employees
+WHERE salary BETWEEN 40000 AND 80000;
+
+-- Works on dates too
+SELECT * FROM orders
+WHERE order_date BETWEEN '2024-01-01' AND '2024-12-31';</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">IN Operator — Clean alternative to multiple OR conditions</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Instead of this (verbose and error-prone):
+WHERE department_id = 1 OR department_id = 3 OR department_id = 7
+
+-- Use this (clean and readable):
+WHERE department_id IN (1, 3, 7)
+
+-- NOT IN — exclude values
+WHERE job_title NOT IN ('Manager', 'Director', 'VP')</code></pre>
+<blockquote style="border-left:4px solid #f59e0b;background:#1c1a0e;padding:10px 16px;margin:12px 0;color:#fcd34d;border-radius:4px;"><strong style="color:#f1f5f9;">Caution:</strong> <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">NOT IN</code> behaves unexpectedly if the list contains a <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">NULL</code> value. The result can be an empty set. (Covered more in Day 3.)</blockquote>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Filtering Text — Case Sensitivity</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Exact match (case-sensitive in PostgreSQL, case-insensitive in MySQL by default)
+SELECT * FROM employees WHERE first_name = 'Alice';
+
+-- Case-insensitive search (PostgreSQL)
+SELECT * FROM employees WHERE LOWER(first_name) = 'alice';</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Arithmetic in WHERE</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- You can use arithmetic expressions in WHERE
+SELECT * FROM employees
+WHERE salary * 1.10 &gt; 90000;  -- employees who'd earn &gt;90k after a 10% raise</code></pre>
+<hr style="border:none;border-top:1px solid #1e293b;margin:24px 0;">
 </div></div>
 <div class="code-cell" id="cell-1">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-1')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-1')">✕ Clear</button></div></div>

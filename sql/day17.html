@@ -156,7 +156,79 @@
 </h2>
 <div style="border-left: 4px solid #4DB6AC; padding-left: 15px; margin: 15px 0; color: #CCCCCC;">
     <b>🔍 Concept</b><br>
-    Learn about Date & Time Functions.
+    <h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Why Date Functions are Critical for Analysts</h3>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;">90% of analytical SQL queries involve date filters, date arithmetic, or date-based grouping (daily/weekly/monthly reporting). Mastering date functions is non-negotiable.</p>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Getting the Current Date and Time</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">CURRENT_DATE         -- Current date: '2024-06-15'
+CURRENT_TIME         -- Current time: '14:30:00'
+CURRENT_TIMESTAMP    -- Current datetime: '2024-06-15 14:30:00'
+NOW()                -- Same as CURRENT_TIMESTAMP (PostgreSQL/MySQL)
+GETDATE()            -- SQL Server equivalent
+SYSDATE              -- Oracle equivalent</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Extracting Parts of a Date</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- EXTRACT function (SQL Standard)
+EXTRACT(YEAR FROM hire_date)       → 2022
+EXTRACT(MONTH FROM hire_date)      → 6
+EXTRACT(DAY FROM hire_date)        → 15
+EXTRACT(QUARTER FROM order_date)   → 2  (Q2 = April-June)
+EXTRACT(DOW FROM hire_date)        → 0-6 (0=Sunday in PostgreSQL)
+EXTRACT(WEEK FROM hire_date)       → 24  (ISO week number)
+EXTRACT(EPOCH FROM timestamp)      → Unix timestamp (seconds since 1970-01-01)
+
+-- DATE_PART (PostgreSQL) — equivalent to EXTRACT
+DATE_PART('year', hire_date)       → 2022
+
+-- DATE_TRUNC — truncate to a time unit
+DATE_TRUNC('month', '2024-06-15'::DATE)   → '2024-06-01'  -- start of month
+DATE_TRUNC('year', '2024-06-15'::DATE)    → '2024-01-01'  -- start of year
+DATE_TRUNC('week', '2024-06-15'::DATE)    → '2024-06-10'  -- start of week (Monday)
+DATE_TRUNC('quarter', '2024-06-15'::DATE) → '2024-04-01'  -- start of quarter</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Date Arithmetic</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Adding and subtracting days (PostgreSQL)
+CURRENT_DATE + INTERVAL '7 days'       -- one week from today
+CURRENT_DATE - INTERVAL '1 month'      -- one month ago
+hire_date + INTERVAL '90 days'         -- 90 days after hire
+
+-- DATE_ADD / DATE_SUB (MySQL)
+DATE_ADD(hire_date, INTERVAL 30 DAY)
+DATE_SUB(CURRENT_DATE, INTERVAL 3 MONTH)
+
+-- Difference between dates
+age(CURRENT_DATE, hire_date)                    -- PostgreSQL: returns interval '5 years 3 months...'
+CURRENT_DATE - hire_date                        -- Returns number of days
+DATEDIFF(CURRENT_DATE, hire_date)               -- MySQL: number of days
+
+-- Years of service
+EXTRACT(YEAR FROM AGE(CURRENT_DATE, hire_date)) AS years_of_service</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Formatting Dates for Output</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- TO_CHAR (PostgreSQL/Oracle): format a date as a string
+TO_CHAR(hire_date, 'DD/MM/YYYY')    → '15/06/2024'
+TO_CHAR(hire_date, 'Month DD, YYYY') → 'June 15, 2024'
+TO_CHAR(hire_date, 'YYYY-"Q"Q')    → '2024-Q2'
+TO_CHAR(hire_date, 'Day, DD Mon')   → 'Saturday, 15 Jun'
+
+-- DATE_FORMAT (MySQL)
+DATE_FORMAT(hire_date, '%d/%m/%Y')  → '15/06/2024'
+DATE_FORMAT(hire_date, '%M %Y')     → 'June 2024'</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Common Analytical Patterns</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Filter by date range (last 30 days)
+WHERE order_date &gt;= CURRENT_DATE - INTERVAL '30 days';
+
+-- Filter by current month
+WHERE DATE_TRUNC('month', order_date) = DATE_TRUNC('month', CURRENT_DATE);
+
+-- Filter by year
+WHERE EXTRACT(YEAR FROM order_date) = 2024;
+
+-- Monthly aggregation
+SELECT
+    DATE_TRUNC('month', order_date) AS month,
+    COUNT(*) AS order_count,
+    SUM(amount) AS monthly_revenue
+FROM orders
+GROUP BY DATE_TRUNC('month', order_date)
+ORDER BY month;</code></pre>
+<hr style="border:none;border-top:1px solid #1e293b;margin:24px 0;">
 </div></div>
 <div class="code-cell" id="cell-1">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-1')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-1')">✕ Clear</button></div></div>

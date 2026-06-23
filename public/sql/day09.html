@@ -156,7 +156,77 @@
 </h2>
 <div style="border-left: 4px solid #4DB6AC; padding-left: 15px; margin: 15px 0; color: #CCCCCC;">
     <b>🔍 Concept</b><br>
-    Learn about Understanding Relationships & INNER JOIN.
+    <h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Why JOINs Exist</h3>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;">In a normalized relational database, data is split across multiple tables to avoid redundancy. JOINs <strong style="color:#f1f5f9;">reassemble</strong> this data when needed for querying. The cost of JOIN operations is why query optimization matters — JOIN runs at <strong style="color:#f1f5f9;">Step 2</strong> of the SQL Order of Execution.</p>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Types of JOINs (Overview)</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">INNER JOIN      — Only matching rows from BOTH tables
+LEFT JOIN       — All rows from left + matching rows from right
+RIGHT JOIN      — All rows from right + matching rows from left
+FULL OUTER JOIN — All rows from both tables
+CROSS JOIN      — Every row from left combined with every row from right (Cartesian product)
+SELF JOIN       — A table joined to itself</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">INNER JOIN — The Most Common JOIN</h3>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;">Returns only rows where the join condition is <strong style="color:#f1f5f9;">TRUE in both tables</strong>.</p>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Basic INNER JOIN syntax
+SELECT
+    e.employee_id,
+    e.first_name,
+    e.last_name,
+    d.department_name,
+    e.salary
+FROM employees e
+INNER JOIN departments d
+    ON e.department_id = d.department_id;
+-- Only employees WITH a matching department appear in results
+-- Employees with NULL department_id are EXCLUDED</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Table Aliases — Best Practice</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Always use short aliases for readability
+FROM employees e
+FROM departments d
+FROM orders o
+FROM customers c
+FROM products p
+
+-- Multi-table join with aliases
+SELECT
+    e.first_name,
+    e.last_name,
+    d.department_name,
+    j.job_title_description
+FROM employees e
+INNER JOIN departments d ON e.department_id = d.department_id
+INNER JOIN job_levels j ON e.job_level_id = j.job_level_id;</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">JOIN on Multiple Conditions (Composite Join)</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Join on more than one column
+SELECT *
+FROM orders o
+INNER JOIN order_items oi
+    ON o.order_id = oi.order_id
+   AND o.tenant_id = oi.tenant_id;  -- Multi-tenant safety check</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">JOIN with WHERE (Filtering After JOIN)</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Filter after joining
+SELECT e.first_name, d.department_name, e.salary
+FROM employees e
+INNER JOIN departments d ON e.department_id = d.department_id
+WHERE e.salary &gt; 60000
+  AND d.department_name = 'Engineering';</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Equi-Join vs. Non-Equi Join</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Equi-Join (equality condition — most common)
+ON e.department_id = d.department_id
+
+-- Non-Equi Join (range or inequality condition)
+SELECT e.first_name, e.salary, sg.grade
+FROM employees e
+INNER JOIN salary_grades sg
+    ON e.salary BETWEEN sg.min_salary AND sg.max_salary;</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Understanding the Result Set</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- employees: 100 rows
+-- departments: 10 rows
+-- After INNER JOIN: could be 0 to many rows
+-- If every employee has a valid department_id → 100 rows
+-- If 5 employees have NULL department_id → 95 rows
+-- If all department_ids are invalid → 0 rows</code></pre>
+<hr style="border:none;border-top:1px solid #1e293b;margin:24px 0;">
 </div></div>
 <div class="code-cell" id="cell-1">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-1')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-1')">✕ Clear</button></div></div>

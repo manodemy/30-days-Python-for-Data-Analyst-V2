@@ -156,7 +156,84 @@
 </h2>
 <div style="border-left: 4px solid #4DB6AC; padding-left: 15px; margin: 15px 0; color: #CCCCCC;">
     <b>🔍 Concept</b><br>
-    Learn about Data Types, Casting & Expressions.
+    <h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Why Data Types Matter for Analysts</h3>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;">Data analysts frequently encounter data type mismatches when joining tables, performing arithmetic, or building reports. Understanding casting prevents silent data corruption and query errors.</p>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Type Casting: CAST and ::</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Standard SQL CAST syntax
+SELECT CAST('2024-01-15' AS DATE);
+SELECT CAST(salary AS VARCHAR);
+SELECT CAST('125.50' AS DECIMAL(10,2));
+SELECT CAST(is_active AS INTEGER);  -- TRUE → 1, FALSE → 0
+
+-- PostgreSQL shorthand (:: operator)
+SELECT '2024-01-15'::DATE;
+SELECT salary::VARCHAR;
+SELECT '125.50'::DECIMAL(10,2);</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Implicit vs. Explicit Casting</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Implicit casting (database does it automatically)
+SELECT 5 + 2.0;  -- Result: 7.0 (integer is implicitly cast to decimal)
+
+-- Explicit casting is always safer and more readable
+SELECT CAST(5 AS DECIMAL) / 2;  -- Result: 2.5 (not 2!)
+
+-- Integer division trap
+SELECT 5 / 2;    -- Result: 2 (integer division in most databases!)
+SELECT 5.0 / 2;  -- Result: 2.5 (one operand is decimal)</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Numeric Data Types Deep Dive</h3>
+<div style="overflow-x:auto;margin:16px 0;"><table style="border-collapse:collapse;width:100%;font-size:0.9em;color:#e2e8f0;background:#0b1120;">
+<tr><th style="border:1px solid #1e293b;padding:8px 12px;background:#162032;color:#93c5fd;font-weight:bold;">Type</th><th style="border:1px solid #1e293b;padding:8px 12px;background:#162032;color:#93c5fd;font-weight:bold;">Storage</th><th style="border:1px solid #1e293b;padding:8px 12px;background:#162032;color:#93c5fd;font-weight:bold;">Precision</th><th style="border:1px solid #1e293b;padding:8px 12px;background:#162032;color:#93c5fd;font-weight:bold;">Use Case</th></tr>
+<tr><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">SMALLINT</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">2 bytes</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">-32,768 to 32,767</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Age, rating</td></tr>
+<tr><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">INT / INTEGER</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">4 bytes</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">~±2.1 billion</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">IDs, counts</td></tr>
+<tr><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">BIGINT</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">8 bytes</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">~±9.2 quintillion</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Large IDs, timestamps</td></tr>
+<tr><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">DECIMAL(p,s) / NUMERIC(p,s)</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Variable</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Exact</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Currency, financial</td></tr>
+<tr><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">FLOAT / DOUBLE</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">4-8 bytes</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Approximate</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Scientific data</td></tr>
+</table></div>
+<blockquote style="border-left:4px solid #f59e0b;background:#1c1a0e;padding:10px 16px;margin:12px 0;color:#fcd34d;border-radius:4px;"><strong style="color:#f1f5f9;">Critical:</strong> Never use <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">FLOAT</code> for money. Floating-point arithmetic is approximate.</blockquote>
+<blockquote style="border-left:4px solid #f59e0b;background:#1c1a0e;padding:10px 16px;margin:12px 0;color:#fcd34d;border-radius:4px;">```sql</blockquote>
+<blockquote style="border-left:4px solid #f59e0b;background:#1c1a0e;padding:10px 16px;margin:12px 0;color:#fcd34d;border-radius:4px;">SELECT 0.1 + 0.2 = 0.3;  -- Result: FALSE (floating point imprecision!)</blockquote>
+<blockquote style="border-left:4px solid #f59e0b;background:#1c1a0e;padding:10px 16px;margin:12px 0;color:#fcd34d;border-radius:4px;">SELECT CAST(0.1 AS DECIMAL(10,1)) + CAST(0.2 AS DECIMAL(10,1)) = 0.3;  -- TRUE</blockquote>
+<blockquote style="border-left:4px solid #f59e0b;background:#1c1a0e;padding:10px 16px;margin:12px 0;color:#fcd34d;border-radius:4px;">```</blockquote>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Text / String Data Types</h3>
+<div style="overflow-x:auto;margin:16px 0;"><table style="border-collapse:collapse;width:100%;font-size:0.9em;color:#e2e8f0;background:#0b1120;">
+<tr><th style="border:1px solid #1e293b;padding:8px 12px;background:#162032;color:#93c5fd;font-weight:bold;">Type</th><th style="border:1px solid #1e293b;padding:8px 12px;background:#162032;color:#93c5fd;font-weight:bold;">Behavior</th><th style="border:1px solid #1e293b;padding:8px 12px;background:#162032;color:#93c5fd;font-weight:bold;">Use Case</th></tr>
+<tr><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">CHAR(n)</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Fixed-length, right-padded with spaces</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Country code 'IN', state code</td></tr>
+<tr><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">VARCHAR(n)</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Variable-length, max n characters</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Names, emails</td></tr>
+<tr><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">TEXT</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Unlimited length</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Descriptions, comments</td></tr>
+</table></div>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Date/Time Data Types</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">DATE        -- '2024-01-15'               (date only)
+TIME        -- '14:30:00'                 (time only)
+TIMESTAMP   -- '2024-01-15 14:30:00'      (date and time, no timezone)
+TIMESTAMPTZ -- '2024-01-15 14:30:00+05:30' (with timezone — preferred)
+INTERVAL    -- '3 months', '7 days'       (a duration)</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Expressions and Computed Columns</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Arithmetic
+SELECT
+    salary,
+    salary * 12                    AS annual_salary,
+    salary * 0.20                  AS tax_deduction,
+    salary - (salary * 0.20)       AS net_monthly_salary,
+    ROUND((salary / 100000.0) * 100, 2) AS salary_pct_of_100k
+FROM employees;
+
+-- String expressions
+SELECT
+    UPPER(first_name)                              AS upper_name,
+    LOWER(email)                                   AS lower_email,
+    LENGTH(job_title)                              AS title_length,
+    first_name || ' ' || last_name                AS full_name,
+    TRIM('   hello   ')                            AS trimmed  -- 'hello'
+FROM employees;</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">TRY_CAST / Safe Casting</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- SQL Server: TRY_CAST returns NULL instead of error on invalid cast
+SELECT TRY_CAST('not_a_number' AS INT);  -- Returns: NULL (not an error)
+
+-- PostgreSQL equivalent using REGEXP
+SELECT CASE
+    WHEN value ~ '^[0-9]+$' THEN CAST(value AS INT)
+    ELSE NULL
+END FROM my_table;</code></pre>
+<hr style="border:none;border-top:1px solid #1e293b;margin:24px 0;">
 </div></div>
 <div class="code-cell" id="cell-1">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-1')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-1')">✕ Clear</button></div></div>

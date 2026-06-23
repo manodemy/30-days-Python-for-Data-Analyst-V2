@@ -156,7 +156,96 @@
 </h2>
 <div style="border-left: 4px solid #4DB6AC; padding-left: 15px; margin: 15px 0; color: #CCCCCC;">
     <b>🔍 Concept</b><br>
-    Learn about Window Functions Part 2 (Analytic).
+    <h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Analytic Window Functions</h3>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;">These functions look at rows before and after the current row to compute running totals, moving averages, lead/lag comparisons, and cumulative sums.</p>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">LAG and LEAD — Accessing Adjacent Rows</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- LAG: access the previous row's value
+-- LEAD: access the next row's value
+LAG(column, offset, default)  OVER (PARTITION BY ... ORDER BY ...)
+LEAD(column, offset, default) OVER (PARTITION BY ... ORDER BY ...)
+
+-- Month-over-month sales comparison
+SELECT
+    month,
+    total_sales,
+    LAG(total_sales, 1, 0) OVER (ORDER BY month) AS prev_month_sales,
+    total_sales - LAG(total_sales, 1, 0) OVER (ORDER BY month) AS mom_change
+FROM monthly_sales;
+
+-- Predict next month (or peek at next row)
+SELECT
+    order_date,
+    amount,
+    LEAD(amount) OVER (ORDER BY order_date) AS next_order_amount
+FROM orders;</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">SUM OVER — Running Total (Cumulative Sum)</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">SELECT
+    order_date,
+    amount,
+    SUM(amount) OVER (
+        ORDER BY order_date
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+    ) AS running_total
+FROM orders;</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Window Frame Clause — Controlling the Window</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- ROWS vs. RANGE:
+ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW  -- cumulative from start to current row
+ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING          -- 3-row moving window (prev, current, next)
+RANGE BETWEEN INTERVAL '7' DAY PRECEDING AND CURRENT ROW  -- 7-day rolling window (by date value)</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Moving/Rolling Average</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- 3-month rolling average of sales
+SELECT
+    month,
+    total_sales,
+    AVG(total_sales) OVER (
+        ORDER BY month
+        ROWS BETWEEN 2 PRECEDING AND CURRENT ROW  -- current + 2 prior months
+    ) AS rolling_3m_avg
+FROM monthly_sales;</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">FIRST_VALUE and LAST_VALUE</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">SELECT
+    employee_id,
+    salary,
+    department_id,
+    FIRST_VALUE(salary) OVER (
+        PARTITION BY department_id
+        ORDER BY salary DESC
+    ) AS dept_max_salary,   -- Highest salary in department (same for all rows in dept)
+    LAST_VALUE(salary) OVER (
+        PARTITION BY department_id
+        ORDER BY salary DESC
+        ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+    ) AS dept_min_salary    -- IMPORTANT: must extend frame to include all rows
+FROM employees;</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">PERCENT_RANK and CUME_DIST</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">SELECT
+    salary,
+    PERCENT_RANK() OVER (ORDER BY salary) AS pct_rank,  -- 0 to 1
+    CUME_DIST() OVER (ORDER BY salary) AS cume_dist      -- 0 to 1
+FROM employees;
+
+-- Practical: what percentile is an employee in?
+SELECT first_name, salary,
+       ROUND(PERCENT_RANK() OVER (ORDER BY salary) * 100, 2) AS salary_percentile
+FROM employees;</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Combining Window Functions for Complex Analysis</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Year-over-year growth analysis
+WITH yearly_revenue AS (
+    SELECT
+        EXTRACT(YEAR FROM order_date) AS year,
+        SUM(amount) AS revenue
+    FROM orders
+    GROUP BY EXTRACT(YEAR FROM order_date)
+)
+SELECT
+    year,
+    revenue,
+    LAG(revenue) OVER (ORDER BY year)                           AS prev_year_revenue,
+    ROUND((revenue - LAG(revenue) OVER (ORDER BY year))
+          / LAG(revenue) OVER (ORDER BY year) * 100, 2)         AS yoy_growth_pct,
+    SUM(revenue) OVER (ORDER BY year)                           AS cumulative_revenue
+FROM yearly_revenue;</code></pre>
+<hr style="border:none;border-top:1px solid #1e293b;margin:24px 0;">
 </div></div>
 <div class="code-cell" id="cell-1">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-1')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-1')">✕ Clear</button></div></div>

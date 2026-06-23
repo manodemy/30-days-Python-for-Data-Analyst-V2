@@ -156,7 +156,72 @@
 </h2>
 <div style="border-left: 4px solid #4DB6AC; padding-left: 15px; margin: 15px 0; color: #CCCCCC;">
     <b>🔍 Concept</b><br>
-    Learn about Sorting & Limiting Results.
+    <h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">ORDER BY — Sorting Query Results</h3>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;"><code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">ORDER BY</code> executes at <strong style="color:#f1f5f9;">Step 8</strong> of the SQL Order of Execution — after <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">SELECT</code>. This means you CAN reference column aliases defined in <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">SELECT</code>.</p>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Basic ascending sort (default)
+SELECT first_name, salary FROM employees ORDER BY salary;           -- ASC is default
+SELECT first_name, salary FROM employees ORDER BY salary ASC;
+SELECT first_name, salary FROM employees ORDER BY salary DESC;
+
+-- Sort by multiple columns (primary sort, then secondary)
+SELECT first_name, last_name, department_id, salary
+FROM employees
+ORDER BY department_id ASC, salary DESC;
+-- Within each department, employees are sorted highest salary first
+
+-- Sort by column alias (works because ORDER BY runs after SELECT)
+SELECT first_name, salary * 1.10 AS new_salary
+FROM employees
+ORDER BY new_salary DESC;  -- ✅ This works
+
+-- Sort by column position (1-indexed) — avoid in production code, fragile
+SELECT first_name, last_name, salary
+FROM employees
+ORDER BY 3 DESC;  -- sorts by the 3rd column (salary)</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">LIMIT and OFFSET — Pagination</h3>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;"><code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">LIMIT</code> restricts the number of rows returned. <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">OFFSET</code> skips a specified number of rows.</p>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Get the top 5 highest-paid employees
+SELECT first_name, salary
+FROM employees
+ORDER BY salary DESC
+LIMIT 5;
+
+-- Pagination: get page 2 (rows 11–20) assuming page size of 10
+SELECT first_name, salary
+FROM employees
+ORDER BY employee_id
+LIMIT 10 OFFSET 10;  -- Skip first 10 rows, take next 10
+
+-- Page 3 (rows 21-30)
+LIMIT 10 OFFSET 20;</code></pre>
+<blockquote style="border-left:4px solid #f59e0b;background:#1c1a0e;padding:10px 16px;margin:12px 0;color:#fcd34d;border-radius:4px;"><strong style="color:#f1f5f9;">Always pair LIMIT with ORDER BY.</strong> Without ORDER BY, the database can return rows in <em style="color:#e2e8f0;">any</em> order — your "top 5" is meaningless without specifying top 5 of <em style="color:#e2e8f0;">what</em>.</blockquote>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">FETCH FIRST (SQL Standard)</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- SQL Standard syntax (works in PostgreSQL, Oracle, SQL Server 2012+)
+SELECT first_name, salary
+FROM employees
+ORDER BY salary DESC
+FETCH FIRST 5 ROWS ONLY;
+
+-- With offset
+OFFSET 10 ROWS FETCH NEXT 5 ROWS ONLY;</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">DISTINCT — Remove Duplicate Rows</h3>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;"><code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">DISTINCT</code> executes at <strong style="color:#f1f5f9;">Step 7</strong> of the SQL Order of Execution — after <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">SELECT</code> but before <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">ORDER BY</code>.</p>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Return unique department IDs
+SELECT DISTINCT department_id FROM employees;
+
+-- Distinct combination of two columns
+SELECT DISTINCT department_id, job_title FROM employees;
+
+-- DISTINCT with COUNT — count unique values
+SELECT COUNT(DISTINCT department_id) AS num_departments FROM employees;</code></pre>
+<blockquote style="border-left:4px solid #f59e0b;background:#1c1a0e;padding:10px 16px;margin:12px 0;color:#fcd34d;border-radius:4px;"><strong style="color:#f1f5f9;">Performance:</strong> <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">DISTINCT</code> is expensive — it sorts the result set to remove duplicates. Don't use it as a band-aid for duplicates from incorrect JOINs. Fix the JOIN instead.</blockquote>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">RANDOM Sampling</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Get 5 random employees (PostgreSQL)
+SELECT * FROM employees ORDER BY RANDOM() LIMIT 5;
+
+-- MySQL equivalent
+SELECT * FROM employees ORDER BY RAND() LIMIT 5;</code></pre>
+<hr style="border:none;border-top:1px solid #1e293b;margin:24px 0;">
 </div></div>
 <div class="code-cell" id="cell-1">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-1')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-1')">✕ Clear</button></div></div>

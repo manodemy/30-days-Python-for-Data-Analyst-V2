@@ -156,7 +156,89 @@
 </h2>
 <div style="border-left: 4px solid #4DB6AC; padding-left: 15px; margin: 15px 0; color: #CCCCCC;">
     <b>🔍 Concept</b><br>
-    Learn about CASE WHEN (Conditional Logic).
+    <h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">What is CASE WHEN?</h3>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;"><code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">CASE WHEN</code> is SQL's conditional expression — it's the equivalent of <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">IF/ELSE</code> from programming. It evaluates conditions row-by-row and returns a value based on the first matching condition.</p>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Syntax: Simple CASE vs. Searched CASE</h3>
+<h4 style="color:#7dd3fc;margin:20px 0 8px;font-size:1em;font-weight:600;">Simple CASE (equality checks only)</h4>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">SELECT
+    employee_id,
+    department_id,
+    CASE department_id
+        WHEN 1 THEN 'Engineering'
+        WHEN 2 THEN 'Sales'
+        WHEN 3 THEN 'HR'
+        WHEN 4 THEN 'Finance'
+        ELSE 'Other'
+    END AS department_name
+FROM employees;</code></pre>
+<h4 style="color:#7dd3fc;margin:20px 0 8px;font-size:1em;font-weight:600;">Searched CASE (any condition, most flexible)</h4>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">SELECT
+    employee_id,
+    salary,
+    CASE
+        WHEN salary &gt;= 100000 THEN 'Senior Level'
+        WHEN salary &gt;= 70000  THEN 'Mid Level'
+        WHEN salary &gt;= 40000  THEN 'Junior Level'
+        ELSE 'Entry Level'
+    END AS salary_band
+FROM employees;</code></pre>
+<blockquote style="border-left:4px solid #f59e0b;background:#1c1a0e;padding:10px 16px;margin:12px 0;color:#fcd34d;border-radius:4px;"><strong style="color:#f1f5f9;">Execution:</strong> <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">CASE WHEN</code> evaluates conditions <strong style="color:#f1f5f9;">top to bottom</strong> and returns the value of the <strong style="color:#f1f5f9;">first match</strong>. Once matched, it stops checking remaining conditions — order matters!</blockquote>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">CASE WHEN in SELECT, WHERE, ORDER BY, GROUP BY</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- In SELECT (most common use)
+SELECT first_name,
+       CASE WHEN is_active THEN 'Active' ELSE 'Inactive' END AS status
+FROM employees;
+
+-- In ORDER BY (custom sort order)
+SELECT first_name, job_title
+FROM employees
+ORDER BY
+    CASE job_title
+        WHEN 'CEO' THEN 1
+        WHEN 'VP' THEN 2
+        WHEN 'Director' THEN 3
+        ELSE 4
+    END;
+
+-- In GROUP BY (create dynamic categories)
+SELECT
+    CASE
+        WHEN salary &gt;= 100000 THEN 'High'
+        WHEN salary &gt;= 60000  THEN 'Medium'
+        ELSE 'Low'
+    END AS salary_bracket,
+    COUNT(*) AS headcount
+FROM employees
+GROUP BY
+    CASE
+        WHEN salary &gt;= 100000 THEN 'High'
+        WHEN salary &gt;= 60000  THEN 'Medium'
+        ELSE 'Low'
+    END;
+
+-- In WHERE (conditional filtering)
+SELECT *
+FROM orders
+WHERE
+    CASE
+        WHEN status = 'priority' THEN amount
+        ELSE 0
+    END &gt; 1000;</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">CASE WHEN for Conditional Aggregation</h3>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;">This is the <strong style="color:#f1f5f9;">most powerful</strong> and interview-frequent use of CASE WHEN.</p>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Count by category in a SINGLE query (pivot-style)
+SELECT
+    COUNT(*)                                      AS total_employees,
+    COUNT(CASE WHEN department_id = 1 THEN 1 END) AS engineering_count,
+    COUNT(CASE WHEN department_id = 2 THEN 1 END) AS sales_count,
+    SUM(CASE WHEN is_active THEN salary ELSE 0 END) AS active_payroll,
+    AVG(CASE WHEN gender = 'F' THEN salary END)   AS avg_female_salary
+FROM employees;</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">IIF — Shorthand (SQL Server / Access)</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- SQL Server shorthand for simple CASE:
+SELECT IIF(salary &gt; 70000, 'High', 'Low') AS pay_tier
+FROM employees;</code></pre>
+<hr style="border:none;border-top:1px solid #1e293b;margin:24px 0;">
 </div></div>
 <div class="code-cell" id="cell-1">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-1')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-1')">✕ Clear</button></div></div>

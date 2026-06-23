@@ -156,7 +156,81 @@
 </h2>
 <div style="border-left: 4px solid #4DB6AC; padding-left: 15px; margin: 15px 0; color: #CCCCCC;">
     <b>🔍 Concept</b><br>
-    Learn about String Functions.
+    <h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Why String Functions Matter for Analysts</h3>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;">Real-world data is messy. Product names have extra spaces, emails are in inconsistent case, phone numbers have dashes and parentheses, and names are split or combined differently across systems. String functions are the data analyst's cleansing toolkit.</p>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Core String Functions</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Case functions
+UPPER('hello world')          → 'HELLO WORLD'
+LOWER('HELLO WORLD')          → 'hello world'
+INITCAP('hello world')        → 'Hello World'  -- PostgreSQL
+
+-- Length
+LENGTH('hello')               → 5
+CHAR_LENGTH('hello')          → 5  (counts characters, not bytes)
+
+-- Trimming whitespace
+TRIM('  hello  ')             → 'hello'
+LTRIM('  hello  ')            → 'hello  '
+RTRIM('  hello  ')            → '  hello'
+TRIM(BOTH '-' FROM '--hello--') → 'hello'  -- trim specific characters
+
+-- Padding
+LPAD('42', 5, '0')            → '00042'  -- pad left to width 5 with '0'
+RPAD('hello', 10, '.')        → 'hello.....'
+
+-- Concatenation
+'hello' || ' ' || 'world'     → 'hello world'  -- PostgreSQL
+CONCAT('hello', ' ', 'world') → 'hello world'   -- Standard SQL
+CONCAT_WS(', ', 'Alice', 'Bob', 'Charlie')       → 'Alice, Bob, Charlie'</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Substring Extraction</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- SUBSTRING(string, start, length)
+SUBSTRING('Hello World', 1, 5)          → 'Hello'  -- 1-indexed
+SUBSTRING('Hello World', 7)             → 'World'  -- from position 7 to end
+
+-- LEFT and RIGHT
+LEFT('Hello World', 5)                  → 'Hello'
+RIGHT('Hello World', 5)                 → 'World'
+
+-- Extract email domain
+SELECT RIGHT(email, LENGTH(email) - POSITION('@' IN email)) AS domain
+FROM employees;
+-- 'alice@manodemy.com' → 'manodemy.com'</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Pattern Search</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- POSITION / STRPOS: find character position
+POSITION('@' IN 'alice@manodemy.com')   → 6
+STRPOS('alice@manodemy.com', '@')       → 6  -- PostgreSQL
+
+-- LIKE (already covered Day 3)
+-- REGEXP_MATCH / ~ (regex)
+SELECT * FROM employees WHERE email ~ '^[a-z]+\.[a-z]+@manodemy\.com$';</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">String Replacement</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- REPLACE: replaces all occurrences
+REPLACE('hello world', 'world', 'SQL')  → 'hello SQL'
+REPLACE(phone, '-', '')                 → removes all dashes from phone number
+
+-- REGEXP_REPLACE: replace using regex
+REGEXP_REPLACE('Hello  World', '\s+', ' ', 'g')  → 'Hello World'  -- normalize spaces
+REGEXP_REPLACE(phone, '[^0-9]', '', 'g')          → keeps only digits</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">SPLIT_PART — Splitting Strings by Delimiter</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- SPLIT_PART(string, delimiter, field_number)
+SPLIT_PART('John|Doe|35', '|', 1)       → 'John'
+SPLIT_PART('John|Doe|35', '|', 2)       → 'Doe'
+SPLIT_PART('John|Doe|35', '|', 3)       → '35'
+
+-- Extract username from email
+SELECT SPLIT_PART(email, '@', 1) AS username FROM employees;</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Practical Data Cleaning Example</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Clean a messy name column in one query
+SELECT
+    TRIM(                            -- remove leading/trailing spaces
+        REGEXP_REPLACE(              -- normalize multiple spaces
+            INITCAP(                 -- proper case
+                LOWER(name)          -- normalize case first
+            ),
+        '\s+', ' ', 'g')
+    ) AS clean_name
+FROM raw_customers;</code></pre>
+<hr style="border:none;border-top:1px solid #1e293b;margin:24px 0;">
 </div></div>
 <div class="code-cell" id="cell-1">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-1')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-1')">✕ Clear</button></div></div>

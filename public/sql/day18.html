@@ -156,7 +156,78 @@
 </h2>
 <div style="border-left: 4px solid #4DB6AC; padding-left: 15px; margin: 15px 0; color: #CCCCCC;">
     <b>🔍 Concept</b><br>
-    Learn about UNION, INTERSECT & EXCEPT (SET Operations).
+    <h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">What are Set Operations?</h3>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;">Set operations combine the result sets of two or more SELECT queries into a single result. They operate on the <strong style="color:#f1f5f9;">entire result sets</strong> (unlike JOINs which operate row-by-row).</p>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Rules for All Set Operations</h3>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;">1. <strong style="color:#f1f5f9;">Same number of columns</strong> in all SELECT statements</p>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;">2. <strong style="color:#f1f5f9;">Compatible data types</strong> in corresponding columns</p>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;">3. <strong style="color:#f1f5f9;">Column names</strong> are taken from the first SELECT statement</p>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;">4. <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">ORDER BY</code> can only appear <strong style="color:#f1f5f9;">once, at the very end</strong> of the final combined query</p>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">UNION — Combine and Remove Duplicates</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Returns all distinct rows from either query
+SELECT employee_id, first_name, 'Active' AS source
+FROM active_employees
+UNION
+SELECT employee_id, first_name, 'Archived' AS source
+FROM archived_employees;
+-- Duplicates are REMOVED (expensive — sorts the result)</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">UNION ALL — Combine Without Removing Duplicates</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Returns ALL rows including duplicates (much faster than UNION)
+SELECT customer_id FROM orders_2023
+UNION ALL
+SELECT customer_id FROM orders_2024;
+-- Use UNION ALL when you know there are no duplicates (or when duplicates are desired)
+-- ALWAYS prefer UNION ALL for performance unless deduplication is required</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">INTERSECT — Common Rows in Both Queries</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Returns only rows that appear in BOTH result sets
+SELECT customer_id FROM orders_2023
+INTERSECT
+SELECT customer_id FROM orders_2024;
+-- Customers who ordered in BOTH 2023 AND 2024 (returning customers)</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">EXCEPT (MINUS in Oracle) — Rows in First but Not Second</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Returns rows from the first query that do NOT appear in the second
+SELECT customer_id FROM customers
+EXCEPT
+SELECT customer_id FROM orders;
+-- Customers who have NEVER placed an order
+-- Equivalent to LEFT JOIN anti-join pattern</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Real-World Use Cases</h3>
+<h4 style="color:#7dd3fc;margin:20px 0 8px;font-size:1em;font-weight:600;">UNION for Report Consolidation</h4>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Combine sales data from multiple regions into one report
+SELECT region, product_id, SUM(sales) AS total_sales
+FROM north_region_sales
+GROUP BY region, product_id
+UNION ALL
+SELECT region, product_id, SUM(sales) AS total_sales
+FROM south_region_sales
+GROUP BY region, product_id
+ORDER BY region, total_sales DESC;</code></pre>
+<h4 style="color:#7dd3fc;margin:20px 0 8px;font-size:1em;font-weight:600;">UNION ALL for Time-Based Comparisons</h4>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Year-over-year comparison in one result set
+SELECT 2023 AS year, COUNT(*) AS signups FROM signups_2023
+UNION ALL
+SELECT 2024 AS year, COUNT(*) AS signups FROM signups_2024;</code></pre>
+<h4 style="color:#7dd3fc;margin:20px 0 8px;font-size:1em;font-weight:600;">EXCEPT for Data Quality / Delta Detection</h4>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Find records in source that are missing from target (data migration validation)
+SELECT employee_id FROM source_database.employees
+EXCEPT
+SELECT employee_id FROM target_database.employees;</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">UNION vs. JOIN — Critical Difference</h3>
+<div style="overflow-x:auto;margin:16px 0;"><table style="border-collapse:collapse;width:100%;font-size:0.9em;color:#e2e8f0;background:#0b1120;">
+<tr><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;"><strong style="color:#f1f5f9;">Direction</strong></td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Vertical (stacks rows)</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Horizontal (adds columns)</td></tr>
+<tr><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;"><strong style="color:#f1f5f9;">Requirement</strong></td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Same column count/types</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Related key columns</td></tr>
+<tr><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;"><strong style="color:#f1f5f9;">Use case</strong></td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Combine same-structured data</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Enrich data from related tables</td></tr>
+</table></div>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">ORDER BY with Set Operations</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- ORDER BY goes LAST, after all UNIONs, and references column names from first SELECT
+SELECT employee_id, first_name FROM active_employees
+UNION ALL
+SELECT employee_id, first_name FROM archived_employees
+ORDER BY first_name ASC;  -- ✅ Valid — references column from first SELECT
+
+-- OR use positional reference
+ORDER BY 2 ASC;  -- Sort by 2nd column (first_name)</code></pre>
+<hr style="border:none;border-top:1px solid #1e293b;margin:24px 0;">
 </div></div>
 <div class="code-cell" id="cell-1">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-1')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-1')">✕ Clear</button></div></div>

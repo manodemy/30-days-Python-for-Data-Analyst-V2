@@ -156,7 +156,82 @@
 </h2>
 <div style="border-left: 4px solid #4DB6AC; padding-left: 15px; margin: 15px 0; color: #CCCCCC;">
     <b>🔍 Concept</b><br>
-    Learn about CTEs (Common Table Expressions).
+    <h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">What is a CTE?</h3>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;">A Common Table Expression (CTE) is a <strong style="color:#f1f5f9;">named, temporary result set</strong> defined with the <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">WITH</code> keyword at the start of a query. It exists only for the duration of the query execution.</p>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Basic CTE Syntax</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">WITH cte_name AS (
+    -- Your subquery here
+    SELECT ...
+    FROM ...
+    WHERE ...
+)
+SELECT *
+FROM cte_name;</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">CTE vs. Derived Table vs. Subquery</h3>
+<div style="overflow-x:auto;margin:16px 0;"><table style="border-collapse:collapse;width:100%;font-size:0.9em;color:#e2e8f0;background:#0b1120;">
+<tr><th style="border:1px solid #1e293b;padding:8px 12px;background:#162032;color:#93c5fd;font-weight:bold;">Feature</th><th style="border:1px solid #1e293b;padding:8px 12px;background:#162032;color:#93c5fd;font-weight:bold;">Subquery</th><th style="border:1px solid #1e293b;padding:8px 12px;background:#162032;color:#93c5fd;font-weight:bold;">Derived Table</th><th style="border:1px solid #1e293b;padding:8px 12px;background:#162032;color:#93c5fd;font-weight:bold;">CTE</th></tr>
+<tr><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;"><strong style="color:#f1f5f9;">Reusability</strong></td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Once</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Once</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Multiple times in same query</td></tr>
+<tr><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;"><strong style="color:#f1f5f9;">Readability</strong></td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Low</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Medium</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">High</td></tr>
+<tr><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;"><strong style="color:#f1f5f9;">Recursion</strong></td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">No</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">No</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Yes (recursive CTE)</td></tr>
+<tr><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;"><strong style="color:#f1f5f9;">Debug-friendliness</strong></td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Hard</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Medium</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Easy (run inner part alone)</td></tr>
+</table></div>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Multiple CTEs in One Query</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">WITH
+dept_averages AS (
+    SELECT department_id, AVG(salary) AS avg_salary
+    FROM employees
+    GROUP BY department_id
+),
+top_departments AS (
+    SELECT department_id
+    FROM dept_averages
+    WHERE avg_salary &gt; 70000
+)
+SELECT e.first_name, e.salary, e.department_id
+FROM employees e
+INNER JOIN top_departments td ON e.department_id = td.department_id;</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Recursive CTE — Organizational Hierarchy</h3>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;">Recursive CTEs allow querying hierarchical data (like org charts, bill of materials, category trees).</p>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">WITH RECURSIVE org_chart AS (
+    -- Anchor member: top-level employees (no manager)
+    SELECT employee_id, first_name, manager_id, 1 AS level
+    FROM employees
+    WHERE manager_id IS NULL
+
+    UNION ALL
+
+    -- Recursive member: find employees managed by previous level
+    SELECT e.employee_id, e.first_name, e.manager_id, oc.level + 1
+    FROM employees e
+    INNER JOIN org_chart oc ON e.manager_id = oc.employee_id
+)
+SELECT employee_id, first_name, level
+FROM org_chart
+ORDER BY level, employee_id;</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">CTE Best Practices</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- CTEs improve readability of complex analytics
+WITH
+monthly_sales AS (
+    SELECT
+        EXTRACT(MONTH FROM order_date) AS month,
+        SUM(amount) AS total_sales
+    FROM orders
+    WHERE EXTRACT(YEAR FROM order_date) = 2024
+    GROUP BY EXTRACT(MONTH FROM order_date)
+),
+monthly_avg AS (
+    SELECT AVG(total_sales) AS avg_monthly_sales
+    FROM monthly_sales
+)
+SELECT
+    ms.month,
+    ms.total_sales,
+    ma.avg_monthly_sales,
+    ms.total_sales - ma.avg_monthly_sales AS diff_from_avg
+FROM monthly_sales ms, monthly_avg ma
+ORDER BY ms.month;</code></pre>
+<blockquote style="border-left:4px solid #f59e0b;background:#1c1a0e;padding:10px 16px;margin:12px 0;color:#fcd34d;border-radius:4px;"><strong style="color:#f1f5f9;">Performance Note:</strong> In PostgreSQL, CTEs are <strong style="color:#f1f5f9;">optimization fences</strong> by default (pre-v12). The planner cannot optimize the CTE and outer query together. Use <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">WITH ... AS MATERIALIZED</code> or <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">AS NOT MATERIALIZED</code> to control this. In newer versions, the optimizer is smarter.</blockquote>
+<hr style="border:none;border-top:1px solid #1e293b;margin:24px 0;">
 </div></div>
 <div class="code-cell" id="cell-1">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-1')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-1')">✕ Clear</button></div></div>

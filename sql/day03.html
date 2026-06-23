@@ -156,7 +156,91 @@
 </h2>
 <div style="border-left: 4px solid #4DB6AC; padding-left: 15px; margin: 15px 0; color: #CCCCCC;">
     <b>🔍 Concept</b><br>
-    Learn about Pattern Matching & NULL Handling.
+    <h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">LIKE Operator — Pattern Matching</h3>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;"><code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">LIKE</code> performs <strong style="color:#f1f5f9;">partial text matching</strong> using two wildcard characters:</p>
+<div style="overflow-x:auto;margin:16px 0;"><table style="border-collapse:collapse;width:100%;font-size:0.9em;color:#e2e8f0;background:#0b1120;">
+<tr><th style="border:1px solid #1e293b;padding:8px 12px;background:#162032;color:#93c5fd;font-weight:bold;">Wildcard</th><th style="border:1px solid #1e293b;padding:8px 12px;background:#162032;color:#93c5fd;font-weight:bold;">Meaning</th><th style="border:1px solid #1e293b;padding:8px 12px;background:#162032;color:#93c5fd;font-weight:bold;">Example</th></tr>
+<tr><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;"><code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">%</code></td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Zero or more characters</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;"><code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">'%analyst'</code> matches "data analyst", "business analyst", "analyst"</td></tr>
+<tr><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;"><code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">_</code></td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Exactly one character</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;"><code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">'An_a'</code> matches "Anna", "Anya"</td></tr>
+</table></div>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Starts with 'Sales'
+SELECT * FROM employees WHERE job_title LIKE 'Sales%';
+
+-- Ends with 'Manager'
+SELECT * FROM employees WHERE job_title LIKE '%Manager';
+
+-- Contains 'data' anywhere (case-insensitive with ILIKE in PostgreSQL)
+SELECT * FROM employees WHERE job_title ILIKE '%data%';
+
+-- Exactly 5 characters starting with 'A'
+SELECT * FROM employees WHERE first_name LIKE 'A____';
+
+-- Escape a literal % or _ character using ESCAPE
+SELECT * FROM products WHERE discount_code LIKE '20\%' ESCAPE '\';</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">ILIKE (PostgreSQL) vs LOWER() + LIKE</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- PostgreSQL-specific case-insensitive LIKE
+WHERE email ILIKE '%@gmail.com'
+
+-- Standard SQL approach (works in all databases)
+WHERE LOWER(email) LIKE '%@gmail.com'</code></pre>
+<blockquote style="border-left:4px solid #f59e0b;background:#1c1a0e;padding:10px 16px;margin:12px 0;color:#fcd34d;border-radius:4px;"><strong style="color:#f1f5f9;">Performance Warning:</strong> <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">LIKE '%text%'</code> (leading wildcard) cannot use indexes and will trigger a full table scan. Avoid leading wildcards on large tables.</blockquote>
+<hr style="border:none;border-top:1px solid #1e293b;margin:24px 0;">
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">NULL Handling — The Most Misunderstood Topic in SQL</h3>
+<h4 style="color:#7dd3fc;margin:20px 0 8px;font-size:1em;font-weight:600;">What is NULL?</h4>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;"><code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">NULL</code> represents the <strong style="color:#f1f5f9;">absence of a value</strong> — it is not zero, not empty string, not false. It is <em style="color:#e2e8f0;">unknown</em>.</p>
+<h4 style="color:#7dd3fc;margin:20px 0 8px;font-size:1em;font-weight:600;">NULL in Comparisons</h4>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- These ALWAYS return NULL (neither TRUE nor FALSE):
+SELECT NULL = NULL;     -- NULL
+SELECT NULL = 5;        -- NULL
+SELECT NULL &lt;&gt; 5;       -- NULL
+SELECT NULL &gt; 5;        -- NULL
+
+-- This is why NULL rows are excluded from WHERE conditions:
+-- WHERE salary = NULL  → evaluates to NULL → row is excluded</code></pre>
+<h4 style="color:#7dd3fc;margin:20px 0 8px;font-size:1em;font-weight:600;">IS NULL and IS NOT NULL</h4>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Correct way to filter NULL values:
+SELECT * FROM employees WHERE manager_id IS NULL;      -- Find top-level employees
+SELECT * FROM employees WHERE phone_number IS NOT NULL; -- Find employees with phone
+
+-- WRONG (always returns 0 rows):
+SELECT * FROM employees WHERE manager_id = NULL;  -- ❌</code></pre>
+<h4 style="color:#7dd3fc;margin:20px 0 8px;font-size:1em;font-weight:600;">COALESCE — Replace NULL with a default value</h4>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;"><code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">COALESCE(value1, value2, ..., valueN)</code> — returns the first non-NULL value in the list.</p>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Replace NULL commission with 0 for calculations
+SELECT
+    employee_id,
+    salary,
+    COALESCE(commission, 0) AS commission,
+    salary + COALESCE(commission, 0) AS total_compensation
+FROM employees;
+
+-- Multiple fallbacks
+SELECT COALESCE(preferred_name, first_name, 'Unknown') AS display_name
+FROM employees;</code></pre>
+<h4 style="color:#7dd3fc;margin:20px 0 8px;font-size:1em;font-weight:600;">NULLIF — Returns NULL if two values are equal</h4>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;"><code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">NULLIF(value1, value2)</code> — returns NULL if value1 = value2, otherwise returns value1.</p>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Common use: prevent division by zero
+SELECT revenue / NULLIF(units_sold, 0) AS revenue_per_unit
+FROM sales;
+-- When units_sold = 0, NULLIF returns NULL, making the division NULL (not an error)</code></pre>
+<h4 style="color:#7dd3fc;margin:20px 0 8px;font-size:1em;font-weight:600;">NULL in Aggregate Functions</h4>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;">Aggregate functions like <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">SUM</code>, <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">AVG</code>, <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">COUNT</code> <strong style="color:#f1f5f9;">ignore NULL values</strong> by default.</p>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- If 3 out of 10 employees have NULL commission, AVG ignores the 3 NULLs
+SELECT AVG(commission) FROM employees;  -- averages only 7 non-NULL values
+
+-- COUNT(*) counts all rows; COUNT(column) ignores NULLs
+SELECT
+    COUNT(*)           AS total_rows,
+    COUNT(commission)  AS rows_with_commission
+FROM employees;</code></pre>
+<h4 style="color:#7dd3fc;margin:20px 0 8px;font-size:1em;font-weight:600;">NULL in ORDER BY</h4>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- NULL sorts LAST by default in ascending order (PostgreSQL/MySQL)
+SELECT * FROM employees ORDER BY commission ASC;
+
+-- Control NULL sort position:
+SELECT * FROM employees ORDER BY commission ASC NULLS FIRST;
+SELECT * FROM employees ORDER BY commission ASC NULLS LAST;</code></pre>
+<hr style="border:none;border-top:1px solid #1e293b;margin:24px 0;">
 </div></div>
 <div class="code-cell" id="cell-1">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-1')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-1')">✕ Clear</button></div></div>

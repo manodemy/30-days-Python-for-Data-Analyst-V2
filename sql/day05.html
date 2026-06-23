@@ -156,7 +156,66 @@
 </h2>
 <div style="border-left: 4px solid #4DB6AC; padding-left: 15px; margin: 15px 0; color: #CCCCCC;">
     <b>🔍 Concept</b><br>
-    Learn about Aggregate Functions.
+    <h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">What are Aggregate Functions?</h3>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;">Aggregate functions collapse <strong style="color:#f1f5f9;">multiple rows</strong> into a <strong style="color:#f1f5f9;">single result value</strong>. They perform calculations across a set of rows.</p>
+<blockquote style="border-left:4px solid #f59e0b;background:#1c1a0e;padding:10px 16px;margin:12px 0;color:#fcd34d;border-radius:4px;"><strong style="color:#f1f5f9;">Execution context:</strong> Aggregate functions run during the <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">SELECT</code> phase — but they operate on the row groups produced after <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">WHERE</code> and <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">GROUP BY</code> have been processed.</blockquote>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Core Aggregate Functions</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">COUNT(*)          -- Count all rows (including NULLs)
+COUNT(column)     -- Count non-NULL values in column
+SUM(column)       -- Sum of all non-NULL values
+AVG(column)       -- Average of all non-NULL values
+MIN(column)       -- Minimum value (works on numbers, dates, text)
+MAX(column)       -- Maximum value (works on numbers, dates, text)</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Practical Examples</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Global aggregations (across the entire table)
+SELECT
+    COUNT(*)                    AS total_employees,
+    COUNT(commission)           AS employees_with_commission,
+    SUM(salary)                 AS total_payroll,
+    AVG(salary)                 AS average_salary,
+    MIN(salary)                 AS lowest_salary,
+    MAX(salary)                 AS highest_salary,
+    MAX(hire_date)              AS most_recent_hire,
+    MIN(hire_date)              AS earliest_hire
+FROM employees;</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">COUNT Nuances</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- COUNT(*): counts all rows regardless of NULLs
+SELECT COUNT(*) FROM employees;  -- Returns: 500
+
+-- COUNT(column): counts only non-NULL values
+SELECT COUNT(manager_id) FROM employees;  -- Returns: 490 (if 10 have NULL)
+
+-- COUNT(DISTINCT column): counts unique non-NULL values
+SELECT COUNT(DISTINCT department_id) FROM employees;  -- Returns: 8 (if 8 departments)</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">AVG and NULL</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- AVG ignores NULLs — this can be misleading
+SELECT AVG(commission) FROM employees;
+-- If 100 employees have commission, only those 100 are averaged
+-- If you want average across ALL employees (treating NULL as 0):
+SELECT AVG(COALESCE(commission, 0)) FROM employees;</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Combining Aggregates with WHERE</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Aggregates after filtering
+SELECT
+    COUNT(*)    AS dept3_headcount,
+    AVG(salary) AS dept3_avg_salary,
+    MAX(salary) AS dept3_top_salary
+FROM employees
+WHERE department_id = 3;
+-- WHERE runs first (filters to dept 3 rows), then aggregates apply</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">ROUND — Formatting Aggregate Results</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">SELECT ROUND(AVG(salary), 2) AS avg_salary  -- Round to 2 decimal places
+FROM employees;</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">STRING_AGG / GROUP_CONCAT — Aggregating Text</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- PostgreSQL: concatenate names into a comma-separated list
+SELECT STRING_AGG(first_name, ', ' ORDER BY first_name) AS all_names
+FROM employees
+WHERE department_id = 3;
+
+-- MySQL equivalent
+SELECT GROUP_CONCAT(first_name ORDER BY first_name SEPARATOR ', ') AS all_names
+FROM employees
+WHERE department_id = 3;</code></pre>
+<hr style="border:none;border-top:1px solid #1e293b;margin:24px 0;">
 </div></div>
 <div class="code-cell" id="cell-1">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-1')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-1')">✕ Clear</button></div></div>

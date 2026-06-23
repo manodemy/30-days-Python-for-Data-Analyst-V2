@@ -156,7 +156,78 @@
 </h2>
 <div style="border-left: 4px solid #4DB6AC; padding-left: 15px; margin: 15px 0; color: #CCCCCC;">
     <b>🔍 Concept</b><br>
-    Learn about SELF JOIN & Multi-Table Queries.
+    <h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">What is a SELF JOIN?</h3>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;">A SELF JOIN is when a table is joined to <strong style="color:#f1f5f9;">itself</strong>. This is necessary when a table has a <strong style="color:#f1f5f9;">hierarchical or recursive relationship</strong> — the most common being an employees table where each employee has a <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">manager_id</code> that references another <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">employee_id</code> in the same table.</p>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Employee table has: employee_id, first_name, manager_id
+-- manager_id references employee_id of the manager (who is also an employee)
+
+-- Self JOIN to show employee + their manager's name
+SELECT
+    e.employee_id,
+    e.first_name    AS employee_name,
+    e.salary        AS employee_salary,
+    m.first_name    AS manager_name
+FROM employees e            -- e = the employee
+INNER JOIN employees m      -- m = the same table, representing the manager
+    ON e.manager_id = m.employee_id;
+
+-- Use LEFT JOIN to include top-level employees (who have no manager):
+SELECT
+    e.first_name   AS employee_name,
+    COALESCE(m.first_name, 'Top-Level') AS manager_name
+FROM employees e
+LEFT JOIN employees m
+    ON e.manager_id = m.employee_id;</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Finding Peers (employees in the same department)</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Find all pairs of employees in the same department
+SELECT
+    a.first_name AS employee1,
+    b.first_name AS employee2,
+    a.department_id
+FROM employees a
+INNER JOIN employees b
+    ON a.department_id = b.department_id
+   AND a.employee_id &lt; b.employee_id;  -- Prevent duplicates and self-pairing
+-- a.employee_id &lt; b.employee_id ensures (Alice, Bob) appears but not (Bob, Alice) or (Alice, Alice)</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Multi-Table Queries — Best Practices</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Joining 4+ tables: define relationships clearly
+SELECT
+    o.order_id,
+    c.customer_name,
+    p.product_name,
+    oi.quantity,
+    oi.unit_price,
+    oi.quantity * oi.unit_price AS line_total,
+    e.first_name AS sales_rep
+FROM orders o
+INNER JOIN customers c     ON o.customer_id = c.customer_id
+INNER JOIN order_items oi  ON o.order_id = oi.order_id
+INNER JOIN products p      ON oi.product_id = p.product_id
+LEFT JOIN employees e      ON o.sales_rep_id = e.employee_id;  -- LEFT: some orders may have no rep</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">CROSS JOIN — All Combinations</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Generates every combination of rows from two tables
+SELECT a.size, b.color
+FROM sizes a
+CROSS JOIN colors b;
+-- 5 sizes × 4 colors = 20 combination rows
+
+-- Real use case: generate a date range or all possible category combinations
+SELECT d.date, p.product_id
+FROM date_dimension d
+CROSS JOIN products p
+WHERE d.date BETWEEN '2024-01-01' AND '2024-12-31';</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">LATERAL JOIN (PostgreSQL) / APPLY (SQL Server)</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- LATERAL allows the right side to reference columns from the left table
+SELECT e.first_name, e.salary, latest_order.order_date
+FROM employees e
+CROSS JOIN LATERAL (
+    SELECT order_date
+    FROM orders o
+    WHERE o.sales_rep_id = e.employee_id
+    ORDER BY order_date DESC
+    LIMIT 1
+) latest_order;</code></pre>
+<hr style="border:none;border-top:1px solid #1e293b;margin:24px 0;">
 </div></div>
 <div class="code-cell" id="cell-1">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-1')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-1')">✕ Clear</button></div></div>

@@ -156,7 +156,92 @@
 </h2>
 <div style="border-left: 4px solid #4DB6AC; padding-left: 15px; margin: 15px 0; color: #CCCCCC;">
     <b>🔍 Concept</b><br>
-    Learn about Window Functions Part 1 (Ranking).
+    <h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">What are Window Functions?</h3>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;">Window functions perform calculations <strong style="color:#f1f5f9;">across a set of rows related to the current row</strong> — without collapsing those rows the way <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">GROUP BY</code> does. They are called "window" functions because each row looks out a "window" of related rows.</p>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Key Difference: Aggregate vs. Window</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Aggregate (GROUP BY): collapses rows
+SELECT department_id, AVG(salary)  -- 8 rows returned (one per dept)
+FROM employees
+GROUP BY department_id;
+
+-- Window function: preserves all rows
+SELECT department_id, salary,
+       AVG(salary) OVER (PARTITION BY department_id)  -- 100 rows, each with dept avg
+FROM employees;</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Syntax of OVER()</h3>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">function_name() OVER (
+    [PARTITION BY column1, column2]  -- define groups (like GROUP BY)
+    [ORDER BY column ASC/DESC]       -- define order within window
+    [frame_clause]                   -- define window frame (Day 15)
+)</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Ranking Functions</h3>
+<h4 style="color:#7dd3fc;margin:20px 0 8px;font-size:1em;font-weight:600;">ROW_NUMBER() — Unique sequential number</h4>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">SELECT
+    first_name,
+    salary,
+    department_id,
+    ROW_NUMBER() OVER (
+        PARTITION BY department_id
+        ORDER BY salary DESC
+    ) AS row_num
+FROM employees;
+-- Within each department, assigns 1, 2, 3... regardless of ties
+-- Tied salaries get different row numbers (non-deterministic which gets which)</code></pre>
+<h4 style="color:#7dd3fc;margin:20px 0 8px;font-size:1em;font-weight:600;">RANK() — Rank with gaps for ties</h4>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">SELECT
+    first_name,
+    salary,
+    RANK() OVER (ORDER BY salary DESC) AS rank
+FROM employees;
+-- If two employees have salary 90000:
+-- Position 1: 90000
+-- Position 1: 90000 (tie)
+-- Position 3: 85000 (gap — no position 2)</code></pre>
+<h4 style="color:#7dd3fc;margin:20px 0 8px;font-size:1em;font-weight:600;">DENSE_RANK() — Rank without gaps</h4>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">SELECT
+    first_name,
+    salary,
+    DENSE_RANK() OVER (ORDER BY salary DESC) AS dense_rank
+FROM employees;
+-- If two employees tie at position 1:
+-- Position 1: 90000
+-- Position 1: 90000 (tie)
+-- Position 2: 85000 (NO gap — continues from 2)</code></pre>
+<h4 style="color:#7dd3fc;margin:20px 0 8px;font-size:1em;font-weight:600;">NTILE(n) — Divide rows into n equal buckets</h4>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">SELECT
+    first_name,
+    salary,
+    NTILE(4) OVER (ORDER BY salary DESC) AS quartile
+FROM employees;
+-- Divides all employees into 4 equal salary quartiles (Q1=highest, Q4=lowest)</code></pre>
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Practical Patterns</h3>
+<h4 style="color:#7dd3fc;margin:20px 0 8px;font-size:1em;font-weight:600;">Top N per Group (classic interview problem)</h4>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Get top 3 earners per department
+WITH ranked_employees AS (
+    SELECT
+        first_name,
+        salary,
+        department_id,
+        RANK() OVER (PARTITION BY department_id ORDER BY salary DESC) AS salary_rank
+    FROM employees
+)
+SELECT *
+FROM ranked_employees
+WHERE salary_rank &lt;= 3;
+-- Cannot use window function directly in WHERE — must use CTE or subquery!</code></pre>
+<h4 style="color:#7dd3fc;margin:20px 0 8px;font-size:1em;font-weight:600;">Percentile with NTILE</h4>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Mark employees in the top 10% salary bracket
+WITH salary_percentiles AS (
+    SELECT
+        first_name,
+        salary,
+        NTILE(10) OVER (ORDER BY salary DESC) AS decile
+    FROM employees
+)
+SELECT *
+FROM salary_percentiles
+WHERE decile = 1;  -- Top 10%</code></pre>
+<hr style="border:none;border-top:1px solid #1e293b;margin:24px 0;">
 </div></div>
 <div class="code-cell" id="cell-1">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-1')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-1')">✕ Clear</button></div></div>

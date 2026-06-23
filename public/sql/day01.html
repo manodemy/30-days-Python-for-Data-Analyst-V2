@@ -155,7 +155,89 @@
 </h2>
 <div style="border-left: 4px solid #4DB6AC; padding-left: 15px; margin: 15px 0; color: #CCCCCC;">
     <b>🔍 Concept</b><br>
-    Learn about Introduction to SQL & Databases.
+    <h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">What is SQL?</h3>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;">SQL (Structured Query Language) is the standard language used to communicate with relational databases. Unlike programming languages that tell the computer <em style="color:#e2e8f0;">how</em> to do something (imperative), SQL is <strong style="color:#f1f5f9;">declarative</strong> — you tell the database <em style="color:#e2e8f0;">what</em> you want, and the database engine figures out <em style="color:#e2e8f0;">how</em> to fetch it.</p>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;">SQL is divided into five sub-languages:</p>
+<div style="overflow-x:auto;margin:16px 0;"><table style="border-collapse:collapse;width:100%;font-size:0.9em;color:#e2e8f0;background:#0b1120;">
+<tr><th style="border:1px solid #1e293b;padding:8px 12px;background:#162032;color:#93c5fd;font-weight:bold;">Sub-language</th><th style="border:1px solid #1e293b;padding:8px 12px;background:#162032;color:#93c5fd;font-weight:bold;">Purpose</th><th style="border:1px solid #1e293b;padding:8px 12px;background:#162032;color:#93c5fd;font-weight:bold;">Common Commands</th></tr>
+<tr><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;"><strong style="color:#f1f5f9;">DDL</strong> (Data Definition Language)</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Define structure</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">CREATE, ALTER, DROP, TRUNCATE</td></tr>
+<tr><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;"><strong style="color:#f1f5f9;">DML</strong> (Data Manipulation Language)</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Modify data</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">INSERT, UPDATE, DELETE</td></tr>
+<tr><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;"><strong style="color:#f1f5f9;">DQL</strong> (Data Query Language)</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Query/retrieve data</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">SELECT</td></tr>
+<tr><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;"><strong style="color:#f1f5f9;">DCL</strong> (Data Control Language)</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Access control</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">GRANT, REVOKE</td></tr>
+<tr><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;"><strong style="color:#f1f5f9;">TCL</strong> (Transaction Control Language)</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Transaction management</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">COMMIT, ROLLBACK, SAVEPOINT</td></tr>
+</table></div>
+<blockquote style="border-left:4px solid #f59e0b;background:#1c1a0e;padding:10px 16px;margin:12px 0;color:#fcd34d;border-radius:4px;"><strong style="color:#f1f5f9;">For Data Analysts</strong>, you will spend 90% of your time writing <strong style="color:#f1f5f9;">DQL</strong> (SELECT statements).</blockquote>
+<hr style="border:none;border-top:1px solid #1e293b;margin:24px 0;">
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">What is a Relational Database?</h3>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;">A relational database stores data in <strong style="color:#f1f5f9;">tables</strong> (also called relations). Each table has:</p>
+<ul style="margin:10px 0 10px 20px;color:#cbd5e1;line-height:1.7;">
+<li><strong style="color:#f1f5f9;">Rows</strong> (Records / Tuples) — a single data entry</li>
+<li><strong style="color:#f1f5f9;">Columns</strong> (Fields / Attributes) — a single property of the data</li>
+<li><strong style="color:#f1f5f9;">Primary Key</strong> — a column or set of columns that uniquely identifies each row</li>
+<li><strong style="color:#f1f5f9;">Foreign Key</strong> — a column that references the Primary Key of another table</li>
+</ul>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;"><strong style="color:#f1f5f9;">Why Relational?</strong> Because tables can be <em style="color:#e2e8f0;">related</em> to each other through shared key columns — this avoids data redundancy and keeps data consistent.</p>
+<hr style="border:none;border-top:1px solid #1e293b;margin:24px 0;">
+<h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">The Five Most Important Concepts of Day 1</h3>
+<h4 style="color:#7dd3fc;margin:20px 0 8px;font-size:1em;font-weight:600;">1. Schemas</h4>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;">A <strong style="color:#f1f5f9;">schema</strong> is a logical container for database objects (tables, views, functions). Think of it as a folder that organises your tables. Example: <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">sales.orders</code>, <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">hr.employees</code>.</p>
+<h4 style="color:#7dd3fc;margin:20px 0 8px;font-size:1em;font-weight:600;">2. Tables, Rows, and Columns</h4>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- A simple table structure
+CREATE TABLE employees (
+    employee_id   INT          PRIMARY KEY,  -- Unique identifier
+    first_name    VARCHAR(50)  NOT NULL,     -- Text, cannot be empty
+    last_name     VARCHAR(50)  NOT NULL,
+    salary        DECIMAL(10,2),             -- Numeric, 10 digits, 2 decimal places
+    hire_date     DATE,
+    department_id INT                        -- Foreign key reference
+);</code></pre>
+<h4 style="color:#7dd3fc;margin:20px 0 8px;font-size:1em;font-weight:600;">3. Data Types (Core)</h4>
+<div style="overflow-x:auto;margin:16px 0;"><table style="border-collapse:collapse;width:100%;font-size:0.9em;color:#e2e8f0;background:#0b1120;">
+<tr><th style="border:1px solid #1e293b;padding:8px 12px;background:#162032;color:#93c5fd;font-weight:bold;">Category</th><th style="border:1px solid #1e293b;padding:8px 12px;background:#162032;color:#93c5fd;font-weight:bold;">Data Type</th><th style="border:1px solid #1e293b;padding:8px 12px;background:#162032;color:#93c5fd;font-weight:bold;">Example</th></tr>
+<tr><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Integer</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">INT, BIGINT, SMALLINT</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">employee_id: 1001</td></tr>
+<tr><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Decimal</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">DECIMAL(p,s), NUMERIC</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">salary: 75000.50</td></tr>
+<tr><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Text</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">VARCHAR(n), CHAR(n), TEXT</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">name: 'Alice'</td></tr>
+<tr><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Date/Time</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">DATE, TIME, TIMESTAMP</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">hire_date: '2022-01-15'</td></tr>
+<tr><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">Boolean</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">BOOLEAN</td><td style="border:1px solid #1e293b;padding:8px 12px;background:#0b1120;color:#e2e8f0;">is_active: TRUE</td></tr>
+</table></div>
+<h4 style="color:#7dd3fc;margin:20px 0 8px;font-size:1em;font-weight:600;">4. Your First SELECT Query</h4>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- Basic SELECT — retrieve all rows and all columns
+SELECT *
+FROM employees;
+
+-- Selective columns — better practice in production
+SELECT employee_id, first_name, last_name, salary
+FROM employees;
+
+-- Add a column alias using AS
+SELECT
+    employee_id         AS emp_id,
+    first_name || ' ' || last_name AS full_name,  -- String concatenation
+    salary * 1.10       AS salary_with_raise       -- Arithmetic expression
+FROM employees;</code></pre>
+<h4 style="color:#7dd3fc;margin:20px 0 8px;font-size:1em;font-weight:600;">5. ⭐ SQL ORDER OF EXECUTION (The Most Critical Concept)</h4>
+<p style="color:#cbd5e1;line-height:1.75;margin:10px 0;">This is how the SQL engine <em style="color:#e2e8f0;">actually</em> processes a query — NOT the order you write it.</p>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">Written Order:          Execution Order:
+1. SELECT          →    1. FROM          (identify the data source)
+2. FROM            →    2. JOIN          (combine tables if applicable)
+3. WHERE           →    3. WHERE         (filter rows)
+4. GROUP BY        →    4. GROUP BY      (group remaining rows)
+5. HAVING          →    5. HAVING        (filter groups)
+6. ORDER BY        →    6. SELECT        (compute and select output columns)
+7. LIMIT           →    7. DISTINCT      (remove duplicates if specified)
+                        8. ORDER BY      (sort results)
+                        9. LIMIT/OFFSET  (restrict number of output rows)</code></pre>
+<blockquote style="border-left:4px solid #f59e0b;background:#1c1a0e;padding:10px 16px;margin:12px 0;color:#fcd34d;border-radius:4px;"><strong style="color:#f1f5f9;">Why this matters:</strong> Column aliases defined in <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">SELECT</code> <strong style="color:#f1f5f9;">cannot</strong> be used in <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">WHERE</code> because <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">WHERE</code> runs <em style="color:#e2e8f0;">before</em> <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">SELECT</code>. This is one of the most common interview trick questions.</blockquote>
+<pre style="background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;overflow-x:auto;margin:16px 0;"><code class="language-sql" style="color:#e6edf3;font-family:JetBrains Mono,monospace;font-size:0.88em;white-space:pre;">-- This FAILS because 'net_salary' is not yet computed when WHERE runs:
+SELECT salary - 5000 AS net_salary
+FROM employees
+WHERE net_salary &gt; 50000;  -- ❌ Error: column "net_salary" does not exist
+
+-- This WORKS:
+SELECT salary - 5000 AS net_salary
+FROM employees
+WHERE salary - 5000 &gt; 50000;  -- ✅ Repeat the expression</code></pre>
+<hr style="border:none;border-top:1px solid #1e293b;margin:24px 0;">
 </div></div>
 <div class="code-cell" id="cell-1">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-1')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-1')">✕ Clear</button></div></div>

@@ -483,6 +483,47 @@ EXCEL_CURRICULUM = [
 ]
 
 
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SQL SCHEMAS REFERENCE METADATA
+# ─────────────────────────────────────────────────────────────────────────────
+SQL_SCHEMAS = {
+    'retail.db': {
+        'employees': ['employee_id (PK)', 'first_name', 'last_name', 'salary', 'hire_date', 'department_id (FK)', 'job_title', 'email', 'is_active', 'manager_id', 'commission'],
+        'departments': ['department_id (PK)', 'department_name', 'budget', 'manager_id'],
+        'customers': ['customer_id (PK)', 'first_name', 'last_name', 'email', 'signup_date', 'region'],
+        'orders': ['order_id (PK)', 'customer_id (FK)', 'order_date', 'total_amount', 'status', 'shipped_date'],
+        'products': ['product_id (PK)', 'name', 'unit_price', 'stock_qty', 'category_id (FK)', 'cost_price'],
+        'order_items': ['id (PK)', 'order_id (FK)', 'product_id (FK)', 'qty', 'unit_price'],
+        'categories': ['id (PK)', 'name', 'parent_id'],
+        'sales': ['id (PK)', 'product_id (FK)', 'revenue', 'units_sold', 'amount', 'sale_date', 'customer_id (FK)', 'customer_signup_month', 'order_id (FK)'],
+        'returns': ['order_id (PK/FK)', 'return_date', 'reason'],
+        'sales_reps': ['id (PK)', 'name', 'region_id (FK)'],
+        'regions': ['id (PK)', 'name', 'zone', 'manager']
+    },
+    'company.db': {
+        'employees': ['employee_id (PK)', 'first_name', 'last_name', 'salary', 'hire_date', 'department_id (FK)', 'job_title', 'email', 'is_active', 'manager_id', 'commission'],
+        'departments': ['department_id (PK)', 'department_name', 'budget', 'manager_id'],
+        'salaries': ['emp_id (PK/FK)', 'amount', 'effective_date (PK)'],
+        'projects': ['id (PK)', 'name', 'status', 'deadline'],
+        'emp_projects': ['emp_id (PK/FK)', 'project_id (PK/FK)', 'role']
+    },
+    'ecommerce.db': {
+        'customers': ['customer_id (PK)', 'first_name', 'last_name', 'email', 'signup_date', 'region'],
+        'orders': ['order_id (PK)', 'customer_id (FK)', 'order_date', 'total_amount', 'status', 'shipped_date'],
+        'products': ['product_id (PK)', 'name', 'unit_price', 'stock_qty', 'category_id (FK)', 'cost_price']
+    },
+    'capstone_retail.db': {
+        'employees': ['employee_id (PK)', 'first_name', 'last_name', 'salary', 'hire_date', 'department_id (FK)', 'job_title', 'email', 'is_active', 'manager_id', 'commission'],
+        'departments': ['department_id (PK)', 'department_name', 'budget', 'manager_id'],
+        'customers': ['customer_id (PK)', 'first_name', 'last_name', 'email', 'signup_date', 'region'],
+        'orders': ['order_id (PK)', 'customer_id (FK)', 'order_date', 'total_amount', 'status', 'shipped_date'],
+        'products': ['product_id (PK)', 'name', 'unit_price', 'stock_qty', 'category_id (FK)', 'cost_price'],
+        'order_items': ['id (PK)', 'order_id (FK)', 'product_id (FK)', 'qty', 'unit_price']
+    }
+}
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # HTML GENERATOR
 # ─────────────────────────────────────────────────────────────────────────────
@@ -499,11 +540,13 @@ def build_dropdown(curriculum, current_day, course_type):
     return '\n'.join(lines)
 
 
-def build_toc(sections, checks_ids, has_summary=True):
+def build_toc(sections, checks_ids, has_summary=True, has_try_it=False):
     lines = []
     lines.append('<li><a href="#sec-0" class="toc-link">🎯 Enterprise Objective</a></li>')
     for sec in sections:
         lines.append(f'<li><a href="#sec-{sec["num"]}" class="toc-link">{sec["num"]}. {sec["title"]}</a></li>')
+        if has_try_it:
+            lines.append(f'<li><a href="#try-it-{sec["num"]}" class="toc-link">🔬 Try It Yourself</a></li>')
         lines.append(f'<li><a href="#{checks_ids[sec["num"]]}" class="toc-link">🧪 Checks: {sec["cc"]}</a></li>')
     lines.append('<li><a href="#practice" class="toc-link">🛠️ Practice Tasks</a></li>')
     lines.append('<li><a href="#interview" class="toc-link">💻 Interview Questions</a></li>')
@@ -567,6 +610,28 @@ def generate_page(item, curriculum, course_type):
         sec0_content = f'''<div class="nb-section" id="sec-0">
 <div class="nb-rich">{grid}</div>
 </div>'''
+    elif course_type == 'sql':
+        db_name = item.get('db', 'retail.db')
+        schema_info = SQL_SCHEMAS.get(db_name, {})
+        schema_html = f'''<div class="schema-ref" id="schema-ref-card">
+  <div class="schema-ref-header" onclick="document.getElementById('schema-ref-card').classList.toggle('collapsed')">
+    <span>📋 Database Schema Reference ({db_name})</span>
+    <span class="schema-ref-toggle-icon">▼</span>
+  </div>
+  <div class="schema-ref-content">'''
+        for tbl, cols in schema_info.items():
+            cols_li = ''.join(f'<li>{c}</li>' for c in cols)
+            schema_html += f'''
+    <div class="schema-table-card">
+      <div class="schema-table-name">📁 {tbl}</div>
+      <ul class="schema-cols-list">
+        {cols_li}
+      </ul>
+    </div>'''
+        schema_html += '\n  </div>\n</div>'
+        sec0_content = f'''<div class="nb-section" id="sec-0">
+{schema_html}
+</div>'''
     else:
         sec0_content = '<div class="nb-section" id="sec-0">\n</div>'
     notebook_sections.append(sec0_content)
@@ -586,7 +651,17 @@ def generate_page(item, curriculum, course_type):
         checks_ids[sec_num] = checks_id
 
         # Theory section
-        theory_html = f'''<div class="nb-section" id="sec-{sec_num}">
+        if course_type == 'sql':
+            theory_html = f'''<div class="nb-section" id="sec-{sec_num}">
+<div class="nb-rich"><h2 class="nb-topic-header">
+    <b>{sec_num}. {sec["title"]} : <span style="font-size: 0.85em; font-weight: normal; opacity: 0.85;">{sec["subtitle"]}</span></b>
+</h2>
+<div class="concept-review-block">
+    <b>🔍 Concept</b><br>
+    {sec_theory}
+</div></div>'''
+        else:
+            theory_html = f'''<div class="nb-section" id="sec-{sec_num}">
 <div class="nb-rich"><h2 style="color: #000000ff; background-color: #02fff2ff; border-left: 6px solid #0c0c0cff; padding: 12px 15px; margin-top: 40px; border-radius: 4px;">
     <b>{sec_num}. {sec["title"]} : <span style="color: #070707ff; font-size: 0.85em; font-weight: normal;">{sec["subtitle"]}</span></b>
 </h2>
@@ -605,6 +680,30 @@ def generate_page(item, curriculum, course_type):
 <div class="cell-output hidden"></div></div>
 </div>'''
         notebook_sections.append(theory_html)
+
+        # Try It Yourself section (NEW)
+        if course_type == 'sql' and 'try_it' in item and len(item['try_it']) > 0:
+            try_it_html = f'''<div class="nb-section" id="try-it-{sec_num}">
+<div class="nb-rich"><h3 style="color: #C7D2FE; background-color: #0e0e0fff; border-left: 6px solid #818CF8; padding: 12px 15px; margin-top: 50px; margin-bottom: 20px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+    <b>🔬 Try It Yourself: Interactive Practice</b>
+</h3></div>'''
+            for idx, q in enumerate(item['try_it'], 1):
+                qcell_id = next_cell()
+                qcell_num = qcell_id.split('-')[1]
+                starter = "-- Write your SQL query here"
+                if isinstance(q, dict):
+                    q_text = q['question']
+                    starter = q.get('starter', starter)
+                else:
+                    q_text = q
+                try_it_html += f'''
+<div class="question"><p><strong>Q{idx}.</strong> {q_text}</p></div>
+<div class="code-cell" id="{qcell_id}">
+<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('{qcell_id}')">▶ Run</button><button class="clear-btn" onclick="clearOutput('{qcell_id}')">✕ Clear</button></div></div>
+<textarea class="cm-source" id="src-{qcell_num}">{starter}</textarea>
+<div class="cell-output hidden"></div></div>'''
+            try_it_html += '\n</div>'
+            notebook_sections.append(try_it_html)
 
         # Concept checks section
         checks_html = f'''<div class="nb-section" id="{checks_id}">
@@ -660,7 +759,8 @@ def generate_page(item, curriculum, course_type):
     notebook_sections.append(summary_html)
 
     # TOC
-    toc_items = build_toc(item['sections'], checks_ids)
+    has_try_it = (course_type == 'sql' and 'try_it' in item and len(item['try_it']) > 0)
+    toc_items = build_toc(item['sections'], checks_ids, has_try_it=has_try_it)
     dropdown_items = build_dropdown(curriculum, day, course_type)
 
     html = f'''<!DOCTYPE html>

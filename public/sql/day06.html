@@ -149,12 +149,86 @@
   <main class="notebook" id="notebook">
     <div class="nb-title"><h1>🗃️ Day 06 : GROUP BY & HAVING</h1></div>
 <div class="nb-section" id="sec-0">
+<div class="schema-ref" id="schema-ref-card">
+  <div class="schema-ref-header" onclick="document.getElementById('schema-ref-card').classList.toggle('collapsed')">
+    <span>📋 Database Schema Reference (retail.db)</span>
+    <span class="schema-ref-toggle-icon">▼</span>
+  </div>
+  <div class="schema-ref-content">
+    <div class="schema-table-card">
+      <div class="schema-table-name">📁 employees</div>
+      <ul class="schema-cols-list">
+        <li>employee_id (PK)</li><li>first_name</li><li>last_name</li><li>salary</li><li>hire_date</li><li>department_id (FK)</li><li>job_title</li><li>email</li><li>is_active</li><li>manager_id</li><li>commission</li>
+      </ul>
+    </div>
+    <div class="schema-table-card">
+      <div class="schema-table-name">📁 departments</div>
+      <ul class="schema-cols-list">
+        <li>department_id (PK)</li><li>department_name</li><li>budget</li><li>manager_id</li>
+      </ul>
+    </div>
+    <div class="schema-table-card">
+      <div class="schema-table-name">📁 customers</div>
+      <ul class="schema-cols-list">
+        <li>customer_id (PK)</li><li>first_name</li><li>last_name</li><li>email</li><li>signup_date</li><li>region</li>
+      </ul>
+    </div>
+    <div class="schema-table-card">
+      <div class="schema-table-name">📁 orders</div>
+      <ul class="schema-cols-list">
+        <li>order_id (PK)</li><li>customer_id (FK)</li><li>order_date</li><li>total_amount</li><li>status</li><li>shipped_date</li>
+      </ul>
+    </div>
+    <div class="schema-table-card">
+      <div class="schema-table-name">📁 products</div>
+      <ul class="schema-cols-list">
+        <li>product_id (PK)</li><li>name</li><li>unit_price</li><li>stock_qty</li><li>category_id (FK)</li><li>cost_price</li>
+      </ul>
+    </div>
+    <div class="schema-table-card">
+      <div class="schema-table-name">📁 order_items</div>
+      <ul class="schema-cols-list">
+        <li>id (PK)</li><li>order_id (FK)</li><li>product_id (FK)</li><li>qty</li><li>unit_price</li>
+      </ul>
+    </div>
+    <div class="schema-table-card">
+      <div class="schema-table-name">📁 categories</div>
+      <ul class="schema-cols-list">
+        <li>id (PK)</li><li>name</li><li>parent_id</li>
+      </ul>
+    </div>
+    <div class="schema-table-card">
+      <div class="schema-table-name">📁 sales</div>
+      <ul class="schema-cols-list">
+        <li>id (PK)</li><li>product_id (FK)</li><li>revenue</li><li>units_sold</li><li>amount</li><li>sale_date</li><li>customer_id (FK)</li><li>customer_signup_month</li><li>order_id (FK)</li>
+      </ul>
+    </div>
+    <div class="schema-table-card">
+      <div class="schema-table-name">📁 returns</div>
+      <ul class="schema-cols-list">
+        <li>order_id (PK/FK)</li><li>return_date</li><li>reason</li>
+      </ul>
+    </div>
+    <div class="schema-table-card">
+      <div class="schema-table-name">📁 sales_reps</div>
+      <ul class="schema-cols-list">
+        <li>id (PK)</li><li>name</li><li>region_id (FK)</li>
+      </ul>
+    </div>
+    <div class="schema-table-card">
+      <div class="schema-table-name">📁 regions</div>
+      <ul class="schema-cols-list">
+        <li>id (PK)</li><li>name</li><li>zone</li><li>manager</li>
+      </ul>
+    </div>
+  </div>
+</div>
 </div>
 <div class="nb-section" id="sec-1">
-<div class="nb-rich"><h2 style="color: #000000ff; background-color: #02fff2ff; border-left: 6px solid #0c0c0cff; padding: 12px 15px; margin-top: 40px; border-radius: 4px;">
-    <b>1. GROUP BY & HAVING : <span style="color: #070707ff; font-size: 0.85em; font-weight: normal;">Concept Review</span></b>
+<div class="nb-rich"><h2 class="nb-topic-header">
+    <b>1. GROUP BY & HAVING : <span style="font-size: 0.85em; font-weight: normal; opacity: 0.85;">Concept Review</span></b>
 </h2>
-<div style="border-left: 4px solid #4DB6AC; padding-left: 15px; margin: 15px 0; color: #CCCCCC;">
+<div class="concept-review-block">
     <b>🔍 Concept</b><br>
     <h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">GROUP BY — Aggregating by Category</h3>
 <p style="color:#cbd5e1;line-height:1.75;margin:10px 0;"><code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">GROUP BY</code> collapses rows with the same value in specified columns into single summary rows. It runs at <strong style="color:#f1f5f9;">Step 4</strong> of the SQL Order of Execution — after <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">WHERE</code>, before <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">SELECT</code>.</p>
@@ -238,169 +312,127 @@ GROUP BY ROLLUP(department_id, job_title);
 <textarea class="cm-source" id="src-1">SELECT * FROM sales LIMIT 5;</textarea>
 <div class="cell-output hidden"></div></div>
 </div>
+<div class="nb-section" id="try-it-1">
+<div class="nb-rich"><h3 style="color: #C7D2FE; background-color: #0e0e0fff; border-left: 6px solid #818CF8; padding: 12px 15px; margin-top: 50px; margin-bottom: 20px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+    <b>🔬 Try It Yourself: Interactive Practice</b>
+</h3></div>
+<div class="question"><p><strong>Q1.</strong> Find the number of employees in each department.</p></div>
+<div class="code-cell" id="cell-2">
+<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-2')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-2')">✕ Clear</button></div></div>
+<textarea class="cm-source" id="src-2">SELECT department_id, COUNT(*) FROM employees GROUP BY department_id;</textarea>
+<div class="cell-output hidden"></div></div>
+<div class="question"><p><strong>Q2.</strong> Find the average salary for each job_title, showing only job titles with average salary > 60000.</p></div>
+<div class="code-cell" id="cell-3">
+<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-3')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-3')">✕ Clear</button></div></div>
+<textarea class="cm-source" id="src-3">SELECT job_title, AVG(salary) FROM employees GROUP BY job_title HAVING AVG(salary) > 60000;</textarea>
+<div class="cell-output hidden"></div></div>
+<div class="question"><p><strong>Q3.</strong> Find the total amount spent by each customer on orders, showing only customers who spent more than 500.</p></div>
+<div class="code-cell" id="cell-4">
+<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-4')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-4')">✕ Clear</button></div></div>
+<textarea class="cm-source" id="src-4">SELECT customer_id, SUM(total_amount) FROM orders GROUP BY customer_id HAVING SUM(total_amount) > 500;</textarea>
+<div class="cell-output hidden"></div></div>
+</div>
 <div class="nb-section" id="checks-Concept Checks-3">
 <div class="nb-rich"><h3 style="color: #C7D2FE; background-color: #0e0e0fff; border-left: 6px solid #6366F1; padding: 12px 15px; margin-top: 50px; margin-bottom: 20px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
     <b>🧪 Concept Checks: <code>Concept Checks</code></b>
 </h3></div>
 <div class="question"><p><strong>Q1.</strong> Write a query that shows the number of employees and average salary for each <code>department_id</code>. Order results by average salary descending.</p></div>
-<div class="code-cell" id="cell-2">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-2')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-2')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-2">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question"><p><strong>Q2.</strong> Find all departments where the average salary exceeds ₹65,000 AND the headcount is at least 5. Use <code>GROUP BY</code> with <code>HAVING</code>.</p></div>
-<div class="code-cell" id="cell-3">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-3')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-3')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-3">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question"><p><strong>Q3.</strong> Write a query that shows, for each <code>job_title</code>, the number of employees with that title, the minimum salary, and the maximum salary. Only include job titles that appear more than 3 times.</p></div>
-<div class="code-cell" id="cell-4">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-4')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-4')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-4">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question"><p><strong>Q4.</strong> Find the year with the most employee hires. Show the <code>hire_year</code> and the count of hires for that year only. (You need to GROUP BY the extracted year from <code>hire_date</code>.)</p></div>
 <div class="code-cell" id="cell-5">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-5')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-5')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-5">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question"><p><strong>Q5.</strong> A manager asks: "Show me departments where more than 20% of employees are inactive." Write the query using <code>GROUP BY</code> and <code>HAVING</code> with aggregate expressions.
-
----</p></div>
+<div class="question"><p><strong>Q2.</strong> Find all departments where the average salary exceeds ₹65,000 AND the headcount is at least 5. Use <code>GROUP BY</code> with <code>HAVING</code>.</p></div>
 <div class="code-cell" id="cell-6">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-6')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-6')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-6">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-</div>
-<div class="nb-section" id="practice">
-<div class="section-header gold"><h2>🛠️ Professional Practice Tasks</h2></div>
-</div>
-<div class="nb-section" id="interview">
-<div class="section-header purple"><h2>💻 Pure Coding Interview Questions</h2></div>
-<div class="question interview"><p><strong>Q1.</strong> What does <code>GROUP BY</code> do in SQL? At which execution step does it run?</p></div>
+<div class="question"><p><strong>Q3.</strong> Write a query that shows, for each <code>job_title</code>, the number of employees with that title, the minimum salary, and the maximum salary. Only include job titles that appear more than 3 times.</p></div>
 <div class="code-cell" id="cell-7">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-7')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-7')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-7">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q2.</strong> Explain the Golden Rule of <code>GROUP BY</code> — which columns must be in GROUP BY?</p></div>
+<div class="question"><p><strong>Q4.</strong> Find the year with the most employee hires. Show the <code>hire_year</code> and the count of hires for that year only. (You need to GROUP BY the extracted year from <code>hire_date</code>.)</p></div>
 <div class="code-cell" id="cell-8">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-8')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-8')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-8">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q3.</strong> What is <code>HAVING</code> and how is it different from <code>WHERE</code>?</p></div>
+<div class="question"><p><strong>Q5.</strong> A manager asks: "Show me departments where more than 20% of employees are inactive." Write the query using <code>GROUP BY</code> and <code>HAVING</code> with aggregate expressions.
+
+---</p></div>
 <div class="code-cell" id="cell-9">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-9')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-9')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-9">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q4.</strong> Can you use <code>WHERE</code> to filter based on the result of an aggregate function? Why not?</p></div>
+</div>
+<div class="nb-section" id="practice">
+<div class="section-header gold"><h2>🛠️ Professional Practice Tasks</h2></div>
+<div class="question task"><p><strong>Task 1 (Region Signups Count):</strong> Find the total number of customer signups in each region.</p></div>
 <div class="code-cell" id="cell-10">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-10')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-10')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-10">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q5.</strong> Can you use <code>HAVING</code> without <code>GROUP BY</code>?</p></div>
+<div class="question task"><p><strong>Task 2 (Product Category Valuation):</strong> Calculate total stock and average price for each product category_id.</p></div>
 <div class="code-cell" id="cell-11">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-11')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-11')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-11">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q6.</strong> What is the execution order of WHERE, GROUP BY, and HAVING?</p></div>
+<div class="question task"><p><strong>Task 3 (High Sales Reps):</strong> Identify sales reps with high average sales. Find average amount in sales grouped by product_id, having average amount > 10000.</p></div>
 <div class="code-cell" id="cell-12">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-12')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-12')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-12">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q7.</strong> Write a query to find the department with the highest average salary.</p></div>
+</div>
+<div class="nb-section" id="interview">
+<div class="section-header purple"><h2>💻 Pure Coding Interview Questions</h2></div>
+<div class="question interview"><p><strong>Q1.</strong> Write a query to find departments with more than 3 active employees. In a comment, explain the difference between WHERE and HAVING.</p></div>
 <div class="code-cell" id="cell-13">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-13')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-13')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-13">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q8.</strong> What is the difference between grouping by one column vs. two columns?</p></div>
+<div class="question interview"><p><strong>Q2.</strong> Write a query to list regions with more than 5 customers. Explain why you cannot use HAVING without a GROUP BY.</p></div>
 <div class="code-cell" id="cell-14">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-14')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-14')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-14">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q9.</strong> Can you use a column alias from SELECT in a HAVING clause?</p></div>
+<div class="question interview"><p><strong>Q3.</strong> Write a query to calculate total sales revenue by product_id. Explain in a comment what happens if you include a non-aggregated column in the SELECT list that is not in the GROUP BY clause.</p></div>
 <div class="code-cell" id="cell-15">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-15')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-15')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-15">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q10.</strong> Write a query to find all job titles that appear more than 5 times.</p></div>
+<div class="question interview"><p><strong>Q4.</strong> Write a query to show average product unit_price by category_id having AVG(unit_price) > 50. In a comment, explain the execution order of WHERE, GROUP BY, HAVING, and SELECT.</p></div>
 <div class="code-cell" id="cell-16">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-16')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-16')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-16">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q11.</strong> What does <code>GROUP BY ROLLUP</code> do?</p></div>
+<div class="question interview"><p><strong>Q5.</strong> Write a query to find customer_id and total order amount, filtered to orders in 2024, showing only customers with total > 200. Explain why the year filter goes in WHERE and the total filter goes in HAVING.</p></div>
 <div class="code-cell" id="cell-17">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-17')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-17')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-17">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q12.</strong> If a GROUP BY query returns 0 rows, what are the likely causes?</p></div>
+<div class="question interview"><p><strong>Q6.</strong> Write a query to find the number of departments with a budget greater than 100000. Explain why we can group by a primary key column.</p></div>
 <div class="code-cell" id="cell-18">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-18')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-18')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-18">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q13.</strong> Write a query to find the total payroll per department.</p></div>
+<div class="question interview"><p><strong>Q7.</strong> Write a query to find active employees count by manager_id. In a comment, explain how GROUP BY processes NULL values.</p></div>
 <div class="code-cell" id="cell-19">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-19')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-19')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-19">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q14.</strong> How do NULLs behave in GROUP BY? Are all NULLs grouped together?</p></div>
+<div class="question interview"><p><strong>Q8.</strong> Write a query to find the max total_amount for orders grouped by customer_id. Explain how database engines optimize GROUP BY.</p></div>
 <div class="code-cell" id="cell-20">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-20')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-20')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-20">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q15.</strong> What is the difference between <code>HAVING COUNT(*) > 5</code> and <code>WHERE count > 5</code>?</p></div>
+<div class="question interview"><p><strong>Q9.</strong> Write a query to find the total units sold grouped by customer_signup_month.</p></div>
 <div class="code-cell" id="cell-21">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-21')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-21')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-21">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q16.</strong> How would you find departments with the highest and lowest headcount in one query?</p></div>
+<div class="question interview"><p><strong>Q10.</strong> Write a query to list all active employees grouped by department_id. Explain why GROUP BY is a CPU-intensive operation.</p></div>
 <div class="code-cell" id="cell-22">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-22')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-22')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-22">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q17.</strong> Write a query to show the number of employees hired per month of 2023.</p></div>
-<div class="code-cell" id="cell-23">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-23')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-23')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-23">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q18.</strong> Can you GROUP BY a column that is not in the SELECT list?</p></div>
-<div class="code-cell" id="cell-24">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-24')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-24')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-24">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q19.</strong> Write a query that finds, per department, the difference between the max and min salary.</p></div>
-<div class="code-cell" id="cell-25">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-25')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-25')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-25">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q20.</strong> Explain this query: <code>SELECT department_id, AVG(salary) FROM employees GROUP BY 1</code> — what does GROUP BY 1 mean?</p></div>
-<div class="code-cell" id="cell-26">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-26')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-26')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-26">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q21.</strong> A query uses <code>GROUP BY</code> on 3 columns. How many groups are possible at maximum?</p></div>
-<div class="code-cell" id="cell-27">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-27')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-27')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-27">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q22.</strong> What is <code>GROUP BY CUBE</code>?</p></div>
-<div class="code-cell" id="cell-28">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-28')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-28')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-28">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q23.</strong> You have a query that counts orders per customer. How do you find customers with exactly 0 orders? (Preview of JOINs.)</p></div>
-<div class="code-cell" id="cell-29">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-29')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-29')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-29">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q24.</strong> Write a query to find the most common job title in the company.</p></div>
-<div class="code-cell" id="cell-30">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-30')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-30')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-30">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q25.</strong> Business question: "Which departments have a salary spread (max - min) greater than ₹40,000?" Write the SQL.
-
----</p></div>
-<div class="code-cell" id="cell-31">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-31')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-31')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-31">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
 </div>
 <div class="nb-section" id="summary">
@@ -412,6 +444,7 @@ GROUP BY ROLLUP(department_id, job_title);
     <div class="sidebar-top"><div class="sidebar-header"><span class="icon">📄</span> CONTENTS</div></div>
     <ul class="toc-list"><li><a href="#sec-0" class="toc-link">🎯 Enterprise Objective</a></li>
 <li><a href="#sec-1" class="toc-link">1. GROUP BY & HAVING</a></li>
+<li><a href="#try-it-1" class="toc-link">🔬 Try It Yourself</a></li>
 <li><a href="#checks-Concept Checks-3" class="toc-link">🧪 Checks: Concept Checks</a></li>
 <li><a href="#practice" class="toc-link">🛠️ Practice Tasks</a></li>
 <li><a href="#interview" class="toc-link">💻 Interview Questions</a></li>

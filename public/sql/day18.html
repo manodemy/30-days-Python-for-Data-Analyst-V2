@@ -149,12 +149,56 @@
   <main class="notebook" id="notebook">
     <div class="nb-title"><h1>🥞 Day 18 : UNION, INTERSECT & EXCEPT (SET Operations)</h1></div>
 <div class="nb-section" id="sec-0">
+<div class="schema-ref" id="schema-ref-card">
+  <div class="schema-ref-header" onclick="document.getElementById('schema-ref-card').classList.toggle('collapsed')">
+    <span>📋 Database Schema Reference (capstone_retail.db)</span>
+    <span class="schema-ref-toggle-icon">▼</span>
+  </div>
+  <div class="schema-ref-content">
+    <div class="schema-table-card">
+      <div class="schema-table-name">📁 employees</div>
+      <ul class="schema-cols-list">
+        <li>employee_id (PK)</li><li>first_name</li><li>last_name</li><li>salary</li><li>hire_date</li><li>department_id (FK)</li><li>job_title</li><li>email</li><li>is_active</li><li>manager_id</li><li>commission</li>
+      </ul>
+    </div>
+    <div class="schema-table-card">
+      <div class="schema-table-name">📁 departments</div>
+      <ul class="schema-cols-list">
+        <li>department_id (PK)</li><li>department_name</li><li>budget</li><li>manager_id</li>
+      </ul>
+    </div>
+    <div class="schema-table-card">
+      <div class="schema-table-name">📁 customers</div>
+      <ul class="schema-cols-list">
+        <li>customer_id (PK)</li><li>first_name</li><li>last_name</li><li>email</li><li>signup_date</li><li>region</li>
+      </ul>
+    </div>
+    <div class="schema-table-card">
+      <div class="schema-table-name">📁 orders</div>
+      <ul class="schema-cols-list">
+        <li>order_id (PK)</li><li>customer_id (FK)</li><li>order_date</li><li>total_amount</li><li>status</li><li>shipped_date</li>
+      </ul>
+    </div>
+    <div class="schema-table-card">
+      <div class="schema-table-name">📁 products</div>
+      <ul class="schema-cols-list">
+        <li>product_id (PK)</li><li>name</li><li>unit_price</li><li>stock_qty</li><li>category_id (FK)</li><li>cost_price</li>
+      </ul>
+    </div>
+    <div class="schema-table-card">
+      <div class="schema-table-name">📁 order_items</div>
+      <ul class="schema-cols-list">
+        <li>id (PK)</li><li>order_id (FK)</li><li>product_id (FK)</li><li>qty</li><li>unit_price</li>
+      </ul>
+    </div>
+  </div>
+</div>
 </div>
 <div class="nb-section" id="sec-1">
-<div class="nb-rich"><h2 style="color: #000000ff; background-color: #02fff2ff; border-left: 6px solid #0c0c0cff; padding: 12px 15px; margin-top: 40px; border-radius: 4px;">
-    <b>1. UNION, INTERSECT & EXCEPT (SET Operations) : <span style="color: #070707ff; font-size: 0.85em; font-weight: normal;">Concept Review</span></b>
+<div class="nb-rich"><h2 class="nb-topic-header">
+    <b>1. UNION, INTERSECT & EXCEPT (SET Operations) : <span style="font-size: 0.85em; font-weight: normal; opacity: 0.85;">Concept Review</span></b>
 </h2>
-<div style="border-left: 4px solid #4DB6AC; padding-left: 15px; margin: 15px 0; color: #CCCCCC;">
+<div class="concept-review-block">
     <b>🔍 Concept</b><br>
     <h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">What are Set Operations?</h3>
 <p style="color:#cbd5e1;line-height:1.75;margin:10px 0;">Set operations combine the result sets of two or more SELECT queries into a single result. They operate on the <strong style="color:#f1f5f9;">entire result sets</strong> (unlike JOINs which operate row-by-row).</p>
@@ -234,29 +278,49 @@ ORDER BY 2 ASC;  -- Sort by 2nd column (first_name)</code></pre>
 <textarea class="cm-source" id="src-1">SELECT * FROM sales LIMIT 5;</textarea>
 <div class="cell-output hidden"></div></div>
 </div>
+<div class="nb-section" id="try-it-1">
+<div class="nb-rich"><h3 style="color: #C7D2FE; background-color: #0e0e0fff; border-left: 6px solid #818CF8; padding: 12px 15px; margin-top: 50px; margin-bottom: 20px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+    <b>🔬 Try It Yourself: Interactive Practice</b>
+</h3></div>
+<div class="question"><p><strong>Q1.</strong> Write a query to combine first_name from active_employees and archived_employees using UNION.</p></div>
+<div class="code-cell" id="cell-2">
+<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-2')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-2')">✕ Clear</button></div></div>
+<textarea class="cm-source" id="src-2">SELECT first_name FROM active_employees UNION SELECT first_name FROM archived_employees;</textarea>
+<div class="cell-output hidden"></div></div>
+<div class="question"><p><strong>Q2.</strong> Write a query to find employee first_names that exist in both active_employees and archived_employees using INTERSECT.</p></div>
+<div class="code-cell" id="cell-3">
+<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-3')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-3')">✕ Clear</button></div></div>
+<textarea class="cm-source" id="src-3">SELECT first_name FROM active_employees INTERSECT SELECT first_name FROM archived_employees;</textarea>
+<div class="cell-output hidden"></div></div>
+<div class="question"><p><strong>Q3.</strong> Write a query to find employee first_names in active_employees that do NOT exist in archived_employees using EXCEPT.</p></div>
+<div class="code-cell" id="cell-4">
+<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-4')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-4')">✕ Clear</button></div></div>
+<textarea class="cm-source" id="src-4">SELECT first_name FROM active_employees EXCEPT SELECT first_name FROM archived_employees;</textarea>
+<div class="cell-output hidden"></div></div>
+</div>
 <div class="nb-section" id="checks-Concept Checks-3">
 <div class="nb-rich"><h3 style="color: #C7D2FE; background-color: #0e0e0fff; border-left: 6px solid #6366F1; padding: 12px 15px; margin-top: 50px; margin-bottom: 20px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
     <b>🧪 Concept Checks: <code>Concept Checks</code></b>
 </h3></div>
 <div class="question"><p><strong>Q1.</strong> Combine all orders from <code>orders_2023</code> and <code>orders_2024</code> into a single result set. Add a column <code>year</code> (2023 or 2024) to identify the source. Use <code>UNION ALL</code>. Then count total orders and revenue per year in the outer query using a CTE.</p></div>
-<div class="code-cell" id="cell-2">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-2')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-2')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-2">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question"><p><strong>Q2.</strong> Using <code>INTERSECT</code>, find all customers who placed orders in **both** 2023 and 2024. Display their <code>customer_id</code> and fetch their <code>name</code> from the customers table (use a CTE or subquery).</p></div>
-<div class="code-cell" id="cell-3">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-3')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-3')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-3">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question"><p><strong>Q3.</strong> Using <code>EXCEPT</code>, find all customers who placed orders in 2023 but NOT in 2024 (i.e., they churned). Display their <code>customer_id</code> and <code>name</code>.</p></div>
-<div class="code-cell" id="cell-4">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-4')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-4')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-4">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question"><p><strong>Q4.</strong> You are validating a data migration. The <code>source_employees</code> table should match <code>target_employees</code>. Write two queries: (1) records in source missing from target, (2) records in target not in source (using EXCEPT). Combine both results using UNION ALL and add a <code>direction</code> column ('Source Only', 'Target Only').</p></div>
 <div class="code-cell" id="cell-5">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-5')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-5')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-5">-- Write your SQL query here</textarea>
+<div class="cell-output hidden"></div></div>
+<div class="question"><p><strong>Q2.</strong> Using <code>INTERSECT</code>, find all customers who placed orders in **both** 2023 and 2024. Display their <code>customer_id</code> and fetch their <code>name</code> from the customers table (use a CTE or subquery).</p></div>
+<div class="code-cell" id="cell-6">
+<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-6')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-6')">✕ Clear</button></div></div>
+<textarea class="cm-source" id="src-6">-- Write your SQL query here</textarea>
+<div class="cell-output hidden"></div></div>
+<div class="question"><p><strong>Q3.</strong> Using <code>EXCEPT</code>, find all customers who placed orders in 2023 but NOT in 2024 (i.e., they churned). Display their <code>customer_id</code> and <code>name</code>.</p></div>
+<div class="code-cell" id="cell-7">
+<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-7')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-7')">✕ Clear</button></div></div>
+<textarea class="cm-source" id="src-7">-- Write your SQL query here</textarea>
+<div class="cell-output hidden"></div></div>
+<div class="question"><p><strong>Q4.</strong> You are validating a data migration. The <code>source_employees</code> table should match <code>target_employees</code>. Write two queries: (1) records in source missing from target, (2) records in target not in source (using EXCEPT). Combine both results using UNION ALL and add a <code>direction</code> column ('Source Only', 'Target Only').</p></div>
+<div class="code-cell" id="cell-8">
+<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-8')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-8')">✕ Clear</button></div></div>
+<textarea class="cm-source" id="src-8">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
 <div class="question"><p><strong>Q5.</strong> Build a comprehensive report using <code>UNION ALL</code> that shows:
 - Row 1: Total employees from <code>active_employees</code>
@@ -266,142 +330,80 @@ ORDER BY 2 ASC;  -- Sort by 2nd column (first_name)</code></pre>
 Label each with a <code>category</code> column ('Active', 'Archived', 'Total'). Use ROLLUP or UNION ALL with a summary row.
 
 ---</p></div>
-<div class="code-cell" id="cell-6">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-6')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-6')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-6">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-</div>
-<div class="nb-section" id="practice">
-<div class="section-header gold"><h2>🛠️ Professional Practice Tasks</h2></div>
-</div>
-<div class="nb-section" id="interview">
-<div class="section-header purple"><h2>💻 Pure Coding Interview Questions</h2></div>
-<div class="question interview"><p><strong>Q1.</strong> What is a set operation in SQL? Name the three main set operations.</p></div>
-<div class="code-cell" id="cell-7">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-7')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-7')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-7">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q2.</strong> What is the difference between <code>UNION</code> and <code>UNION ALL</code>?</p></div>
-<div class="code-cell" id="cell-8">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-8')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-8')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-8">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q3.</strong> When should you use <code>UNION ALL</code> instead of <code>UNION</code> for performance?</p></div>
 <div class="code-cell" id="cell-9">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-9')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-9')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-9">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q4.</strong> What are the three rules that all set operations must follow?</p></div>
+</div>
+<div class="nb-section" id="practice">
+<div class="section-header gold"><h2>🛠️ Professional Practice Tasks</h2></div>
+<div class="question task"><p><strong>Task 1 (Total Staff Pool):</strong> Combine active_employees and archived_employees first_name, keeping duplicates using UNION ALL.</p></div>
 <div class="code-cell" id="cell-10">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-10')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-10')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-10">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q5.</strong> What is <code>INTERSECT</code> and what does it return?</p></div>
+<div class="question task"><p><strong>Task 2 (Overlap Audit):</strong> Find duplicate first_names appearing in both active and archived lists using INTERSECT.</p></div>
 <div class="code-cell" id="cell-11">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-11')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-11')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-11">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q6.</strong> What is <code>EXCEPT</code> and what is its Oracle equivalent?</p></div>
+<div class="question task"><p><strong>Task 3 (Exclusively Active Staff):</strong> List employee_id of employees in active_employees who are not in archived_employees.</p></div>
 <div class="code-cell" id="cell-12">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-12')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-12')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-12">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q7.</strong> Write a query to find customers who ordered in 2023 but NOT in 2024 using EXCEPT.</p></div>
+</div>
+<div class="nb-section" id="interview">
+<div class="section-header purple"><h2>💻 Pure Coding Interview Questions</h2></div>
+<div class="question interview"><p><strong>Q1.</strong> Write a query to combine active and archived lists. In a comment, explain the difference between UNION and UNION ALL.</p></div>
 <div class="code-cell" id="cell-13">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-13')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-13')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-13">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q8.</strong> Write a query to find customers who ordered in BOTH 2023 AND 2024 using INTERSECT.</p></div>
+<div class="question interview"><p><strong>Q2.</strong> Write a query to find common customer names in two datasets. In a comment, explain columns and datatype requirements for SET operations.</p></div>
 <div class="code-cell" id="cell-14">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-14')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-14')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-14">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q9.</strong> What is the difference between UNION (vertical combine) and JOIN (horizontal combine)?</p></div>
+<div class="question interview"><p><strong>Q3.</strong> Write a query using EXCEPT. In a comment, explain EXCEPT vs NOT IN / NOT EXISTS.</p></div>
 <div class="code-cell" id="cell-15">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-15')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-15')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-15">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q10.</strong> Where does <code>ORDER BY</code> appear when using set operations?</p></div>
+<div class="question interview"><p><strong>Q4.</strong> Write a query that combines orders_2023 and orders_2024. In a comment, explain how ORDER BY is applied to SET queries.</p></div>
 <div class="code-cell" id="cell-16">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-16')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-16')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-16">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q11.</strong> Can you use <code>ORDER BY</code> inside each individual SELECT of a UNION? Why not?</p></div>
+<div class="question interview"><p><strong>Q5.</strong> Write a query to intersect employee lists. Explain how database engines optimize INTERSECT.</p></div>
 <div class="code-cell" id="cell-17">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-17')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-17')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-17">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q12.</strong> Does <code>UNION</code> guarantee the order of results? Explain.</p></div>
+<div class="question interview"><p><strong>Q6.</strong> Write a query using UNION. Explain if you can use alias names in SET parts.</p></div>
 <div class="code-cell" id="cell-18">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-18')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-18')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-18">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q13.</strong> What happens if the number of columns doesn't match in a UNION query?</p></div>
+<div class="question interview"><p><strong>Q7.</strong> Write a query to subtract active employees from archived employees. Explain standard EXCEPT requirements.</p></div>
 <div class="code-cell" id="cell-19">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-19')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-19')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-19">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q14.</strong> Can column data types differ in a UNION query? What does the database do?</p></div>
+<div class="question interview"><p><strong>Q8.</strong> Write a query using UNION ALL. In a comment, explain why UNION ALL is faster than UNION.</p></div>
 <div class="code-cell" id="cell-20">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-20')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-20')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-20">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q15.</strong> Write a query to consolidate sales from three regional tables into one summary report.</p></div>
+<div class="question interview"><p><strong>Q9.</strong> Write a query to list all unique product IDs sold in both North and South regions using INTERSECT.</p></div>
 <div class="code-cell" id="cell-21">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-21')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-21')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-21">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q16.</strong> How would you simulate <code>INTERSECT</code> in a database that doesn't support it (e.g., MySQL doesn't support INTERSECT directly)?</p></div>
+<div class="question interview"><p><strong>Q10.</strong> Write a query to combine active and archived employees. In a comment, explain how NULLs are handled in UNION comparison.</p></div>
 <div class="code-cell" id="cell-22">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-22')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-22')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-22">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q17.</strong> How would you simulate <code>EXCEPT</code> using a JOIN?</p></div>
-<div class="code-cell" id="cell-23">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-23')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-23')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-23">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q18.</strong> What is the difference between <code>EXCEPT</code> and <code>NOT EXISTS</code>/<code>NOT IN</code>?</p></div>
-<div class="code-cell" id="cell-24">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-24')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-24')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-24">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q19.</strong> Can you UNION more than two queries?</p></div>
-<div class="code-cell" id="cell-25">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-25')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-25')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-25">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q20.</strong> Write a query that uses UNION ALL to create a year-over-year comparison with a 'Year' label column.</p></div>
-<div class="code-cell" id="cell-26">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-26')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-26')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-26">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q21.</strong> When would you use <code>EXCEPT</code> over LEFT JOIN anti-join pattern?</p></div>
-<div class="code-cell" id="cell-27">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-27')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-27')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-27">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q22.</strong> What is the performance impact of <code>UNION</code> vs. <code>UNION ALL</code> on large result sets?</p></div>
-<div class="code-cell" id="cell-28">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-28')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-28')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-28">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q23.</strong> Write a query to identify data quality issues: rows that exist in a source table but are missing from a target table after a data migration.</p></div>
-<div class="code-cell" id="cell-29">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-29')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-29')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-29">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q24.</strong> Can set operations be combined with GROUP BY, HAVING, or window functions?</p></div>
-<div class="code-cell" id="cell-30">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-30')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-30')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-30">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q25.</strong> A report requires combining employee data from 5 different subsidiary companies, all with the same schema. Which set operation would you use and why? Write the query structure.
-
----</p></div>
-<div class="code-cell" id="cell-31">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-31')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-31')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-31">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
 </div>
 <div class="nb-section" id="summary">
@@ -413,6 +415,7 @@ Label each with a <code>category</code> column ('Active', 'Archived', 'Total'). 
     <div class="sidebar-top"><div class="sidebar-header"><span class="icon">📄</span> CONTENTS</div></div>
     <ul class="toc-list"><li><a href="#sec-0" class="toc-link">🎯 Enterprise Objective</a></li>
 <li><a href="#sec-1" class="toc-link">1. UNION, INTERSECT & EXCEPT (SET Operations)</a></li>
+<li><a href="#try-it-1" class="toc-link">🔬 Try It Yourself</a></li>
 <li><a href="#checks-Concept Checks-3" class="toc-link">🧪 Checks: Concept Checks</a></li>
 <li><a href="#practice" class="toc-link">🛠️ Practice Tasks</a></li>
 <li><a href="#interview" class="toc-link">💻 Interview Questions</a></li>

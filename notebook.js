@@ -422,7 +422,8 @@ function initializeNotebook() {
       if (hint) hint.classList.add('show');
     }
     // Auto-clear helper placeholder comment
-    if (instance.getValue().trim() === '# Write your answer here') {
+    const trimVal = instance.getValue().trim();
+    if (trimVal === '# Write your answer here' || trimVal === '-- Write your SQL query here') {
       instance.setValue('');
     }
   });

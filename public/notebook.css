@@ -2863,3 +2863,113 @@ body.focus-mode-active .symbol-helper-bar {
 a[href*="referral-earnings"] {
   display: none !important;
 }
+
+/* ─── Premium Schema Reference Card ─── */
+.schema-ref {
+  background: rgba(30, 41, 59, 0.45);
+  backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(99, 102, 241, 0.25);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 20px 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s ease;
+}
+.schema-ref:hover {
+  border-color: rgba(99, 102, 241, 0.5);
+  box-shadow: 0 6px 24px rgba(99, 102, 241, 0.15);
+}
+.schema-ref-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 700;
+  color: #c7d2fe;
+  font-size: 1.05rem;
+}
+.schema-ref-toggle-icon {
+  transition: transform 0.2s ease;
+}
+.schema-ref.collapsed .schema-ref-toggle-icon {
+  transform: rotate(-90deg);
+}
+.schema-ref-content {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+.schema-ref.collapsed .schema-ref-content {
+  display: none !important;
+}
+.schema-table-card {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+.schema-table-name {
+  color: #818cf8;
+  font-weight: 600;
+  font-family: var(--font-c);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 4px;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+}
+.schema-cols-list {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  line-height: 1.4;
+  margin: 0;
+  padding-left: 14px;
+}
+
+/* ─── Improved Topic Header Accent Styling ─── */
+.nb-topic-header {
+  background: linear-gradient(135deg, #111827 0%, #1e1b4b 100%) !important;
+  color: #e0e7ff !important;
+  border-left: 6px solid #6366f1 !important;
+  padding: 14px 18px !important;
+  border-radius: 6px !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.12) !important;
+  margin-top: 40px !important;
+  margin-bottom: 20px !important;
+  font-size: 1.15rem !important;
+}
+
+.concept-review-block {
+  border-left: 4px solid #6366f1 !important;
+  padding-left: 15px !important;
+  margin: 15px 0 !important;
+  color: #cbd5e1 !important;
+}
+
+/* ─── Mobile Viewport Customizations ─── */
+@media (max-width: 768px) {
+  .CodeMirror {
+    min-height: 90px !important;
+    font-size: 14px !important;
+  }
+  
+  .sql-results-wrapper {
+    overflow-x: auto !important;
+    max-width: 100% !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .cell-actions {
+    flex-direction: column !important;
+    gap: 6px !important;
+  }
+  .cell-actions button {
+    width: 100% !important;
+  }
+}
+

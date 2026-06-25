@@ -149,12 +149,38 @@
   <main class="notebook" id="notebook">
     <div class="nb-title"><h1>🏗️ Day 13 : CTEs (Common Table Expressions)</h1></div>
 <div class="nb-section" id="sec-0">
+<div class="schema-ref" id="schema-ref-card">
+  <div class="schema-ref-header" onclick="document.getElementById('schema-ref-card').classList.toggle('collapsed')">
+    <span>📋 Database Schema Reference (ecommerce.db)</span>
+    <span class="schema-ref-toggle-icon">▼</span>
+  </div>
+  <div class="schema-ref-content">
+    <div class="schema-table-card">
+      <div class="schema-table-name">📁 customers</div>
+      <ul class="schema-cols-list">
+        <li>customer_id (PK)</li><li>first_name</li><li>last_name</li><li>email</li><li>signup_date</li><li>region</li>
+      </ul>
+    </div>
+    <div class="schema-table-card">
+      <div class="schema-table-name">📁 orders</div>
+      <ul class="schema-cols-list">
+        <li>order_id (PK)</li><li>customer_id (FK)</li><li>order_date</li><li>total_amount</li><li>status</li><li>shipped_date</li>
+      </ul>
+    </div>
+    <div class="schema-table-card">
+      <div class="schema-table-name">📁 products</div>
+      <ul class="schema-cols-list">
+        <li>product_id (PK)</li><li>name</li><li>unit_price</li><li>stock_qty</li><li>category_id (FK)</li><li>cost_price</li>
+      </ul>
+    </div>
+  </div>
+</div>
 </div>
 <div class="nb-section" id="sec-1">
-<div class="nb-rich"><h2 style="color: #000000ff; background-color: #02fff2ff; border-left: 6px solid #0c0c0cff; padding: 12px 15px; margin-top: 40px; border-radius: 4px;">
-    <b>1. CTEs (Common Table Expressions) : <span style="color: #070707ff; font-size: 0.85em; font-weight: normal;">Concept Review</span></b>
+<div class="nb-rich"><h2 class="nb-topic-header">
+    <b>1. CTEs (Common Table Expressions) : <span style="font-size: 0.85em; font-weight: normal; opacity: 0.85;">Concept Review</span></b>
 </h2>
-<div style="border-left: 4px solid #4DB6AC; padding-left: 15px; margin: 15px 0; color: #CCCCCC;">
+<div class="concept-review-block">
     <b>🔍 Concept</b><br>
     <h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">What is a CTE?</h3>
 <p style="color:#cbd5e1;line-height:1.75;margin:10px 0;">A Common Table Expression (CTE) is a <strong style="color:#f1f5f9;">named, temporary result set</strong> defined with the <code style="background:#1e2d40;color:#7dd3fc;padding:2px 6px;border-radius:3px;font-family:JetBrains Mono,monospace;font-size:0.88em;">WITH</code> keyword at the start of a query. It exists only for the duration of the query execution.</p>
@@ -238,6 +264,26 @@ ORDER BY ms.month;</code></pre>
 <textarea class="cm-source" id="src-1">SELECT * FROM sales LIMIT 5;</textarea>
 <div class="cell-output hidden"></div></div>
 </div>
+<div class="nb-section" id="try-it-1">
+<div class="nb-rich"><h3 style="color: #C7D2FE; background-color: #0e0e0fff; border-left: 6px solid #818CF8; padding: 12px 15px; margin-top: 50px; margin-bottom: 20px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+    <b>🔬 Try It Yourself: Interactive Practice</b>
+</h3></div>
+<div class="question"><p><strong>Q1.</strong> Write a simple CTE to calculate average order amount, then query it.</p></div>
+<div class="code-cell" id="cell-2">
+<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-2')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-2')">✕ Clear</button></div></div>
+<textarea class="cm-source" id="src-2">WITH AvgOrder AS (SELECT AVG(total_amount) AS avg_amt FROM orders) SELECT * FROM orders, AvgOrder WHERE total_amount > avg_amt;</textarea>
+<div class="cell-output hidden"></div></div>
+<div class="question"><p><strong>Q2.</strong> Write a query using a CTE to count orders per customer, and find customers with more than 1 order.</p></div>
+<div class="code-cell" id="cell-3">
+<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-3')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-3')">✕ Clear</button></div></div>
+<textarea class="cm-source" id="src-3">WITH CustOrders AS (SELECT customer_id, COUNT(*) AS ord_count FROM orders GROUP BY customer_id) SELECT * FROM CustOrders WHERE ord_count > 1;</textarea>
+<div class="cell-output hidden"></div></div>
+<div class="question"><p><strong>Q3.</strong> Write a query with two CTEs: one for department budget averages and one for employee salaries.</p></div>
+<div class="code-cell" id="cell-4">
+<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-4')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-4')">✕ Clear</button></div></div>
+<textarea class="cm-source" id="src-4">WITH DeptAvg AS (SELECT department_id, AVG(salary) AS avg_sal FROM employees GROUP BY department_id), HighEarners AS (SELECT * FROM employees) SELECT * FROM HighEarners h JOIN DeptAvg d ON h.department_id = d.department_id WHERE h.salary > d.avg_sal;</textarea>
+<div class="cell-output hidden"></div></div>
+</div>
 <div class="nb-section" id="checks-Concept Checks-3">
 <div class="nb-rich"><h3 style="color: #C7D2FE; background-color: #0e0e0fff; border-left: 6px solid #6366F1; padding: 12px 15px; margin-top: 50px; margin-bottom: 20px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
     <b>🧪 Concept Checks: <code>Concept Checks</code></b>
@@ -248,164 +294,102 @@ SELECT e.first_name, e.salary
 FROM employees e
 WHERE e.salary > (SELECT AVG(salary) FROM employees);
 </code>``</p></div>
-<div class="code-cell" id="cell-2">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-2')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-2')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-2">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question"><p><strong>Q2.</strong> Write a multi-CTE query that first computes the department-wise average salary, then identifies "premium departments" (avg > ₹75,000), then shows all employees from those premium departments along with their department's average.</p></div>
-<div class="code-cell" id="cell-3">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-3')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-3')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-3">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question"><p><strong>Q3.</strong> Write a recursive CTE to traverse the employee hierarchy starting from the CEO (the employee with <code>manager_id IS NULL</code>). Display each employee's name and their level in the org chart (CEO = Level 1, direct reports = Level 2, etc.).</p></div>
-<div class="code-cell" id="cell-4">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-4')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-4')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-4">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question"><p><strong>Q4.</strong> Using a CTE, compute the monthly revenue for 2024. Then, in the outer query, show each month, its revenue, and whether it is 'Above Average', 'Below Average', or 'Average' compared to the annual monthly average.</p></div>
 <div class="code-cell" id="cell-5">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-5')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-5')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-5">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question"><p><strong>Q5.</strong> Use two chained CTEs to: (1) find the top 5 sales reps by total order value, (2) then look up their employee details (name, department) from the employees table. Display the final ranked result.
-
----</p></div>
+<div class="question"><p><strong>Q2.</strong> Write a multi-CTE query that first computes the department-wise average salary, then identifies "premium departments" (avg > ₹75,000), then shows all employees from those premium departments along with their department's average.</p></div>
 <div class="code-cell" id="cell-6">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-6')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-6')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-6">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-</div>
-<div class="nb-section" id="practice">
-<div class="section-header gold"><h2>🛠️ Professional Practice Tasks</h2></div>
-</div>
-<div class="nb-section" id="interview">
-<div class="section-header purple"><h2>💻 Pure Coding Interview Questions</h2></div>
-<div class="question interview"><p><strong>Q1.</strong> What is a CTE and what keyword defines it?</p></div>
+<div class="question"><p><strong>Q3.</strong> Write a recursive CTE to traverse the employee hierarchy starting from the CEO (the employee with <code>manager_id IS NULL</code>). Display each employee's name and their level in the org chart (CEO = Level 1, direct reports = Level 2, etc.).</p></div>
 <div class="code-cell" id="cell-7">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-7')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-7')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-7">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q2.</strong> What is the difference between a CTE and a derived table (subquery in FROM)?</p></div>
+<div class="question"><p><strong>Q4.</strong> Using a CTE, compute the monthly revenue for 2024. Then, in the outer query, show each month, its revenue, and whether it is 'Above Average', 'Below Average', or 'Average' compared to the annual monthly average.</p></div>
 <div class="code-cell" id="cell-8">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-8')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-8')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-8">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q3.</strong> Can a CTE be referenced multiple times in the same query?</p></div>
+<div class="question"><p><strong>Q5.</strong> Use two chained CTEs to: (1) find the top 5 sales reps by total order value, (2) then look up their employee details (name, department) from the employees table. Display the final ranked result.
+
+---</p></div>
 <div class="code-cell" id="cell-9">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-9')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-9')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-9">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q4.</strong> What is a recursive CTE? What are the two parts of a recursive CTE?</p></div>
+</div>
+<div class="nb-section" id="practice">
+<div class="section-header gold"><h2>🛠️ Professional Practice Tasks</h2></div>
+<div class="question task"><p><strong>Task 1 (Customer Orders CTE):</strong> Calculate order summaries per client. Use a CTE to calculate total spent and count of orders per customer_id.</p></div>
 <div class="code-cell" id="cell-10">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-10')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-10')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-10">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q5.</strong> What is the "anchor member" in a recursive CTE?</p></div>
+<div class="question task"><p><strong>Task 2 (Top Priced Products CTE):</strong> Find products priced higher than average category price. Use a CTE to pre-calculate average price per category_id.</p></div>
 <div class="code-cell" id="cell-11">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-11')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-11')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-11">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q6.</strong> What happens if a recursive CTE has no termination condition?</p></div>
+<div class="question task"><p><strong>Task 3 (Active Reps Sales CTE):</strong> Calculate average sales per rep. Use a CTE to aggregate sales amount grouped by product_id.</p></div>
 <div class="code-cell" id="cell-12">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-12')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-12')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-12">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q7.</strong> Write a CTE query to find employees earning above the company average.</p></div>
+</div>
+<div class="nb-section" id="interview">
+<div class="section-header purple"><h2>💻 Pure Coding Interview Questions</h2></div>
+<div class="question interview"><p><strong>Q1.</strong> Write a query using a CTE to list active employees. In a comment, explain the difference between a CTE and a subquery.</p></div>
 <div class="code-cell" id="cell-13">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-13')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-13')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-13">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q8.</strong> What is the difference between <code>WITH RECURSIVE</code> in PostgreSQL and recursive CTEs in SQL Server?</p></div>
+<div class="question interview"><p><strong>Q2.</strong> Write a query using a CTE to find departments with total budget > 1000000. In a comment, explain if a CTE is materialized or computed inline.</p></div>
 <div class="code-cell" id="cell-14">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-14')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-14')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-14">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q9.</strong> Can a CTE reference another CTE defined before it in the same WITH clause?</p></div>
+<div class="question interview"><p><strong>Q3.</strong> Write a query utilizing multiple CTEs joined together. Explain the benefits of CTEs for query readability and debugging.</p></div>
 <div class="code-cell" id="cell-15">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-15')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-15')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-15">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q10.</strong> What is an "optimization fence" in the context of CTEs in PostgreSQL?</p></div>
+<div class="question interview"><p><strong>Q4.</strong> Write a query using a CTE to find the top customer by order count. In a comment, explain the difference between CTE and temporary table.</p></div>
 <div class="code-cell" id="cell-16">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-16')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-16')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-16">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q11.</strong> Write a CTE to traverse an organizational hierarchy 3 levels deep.</p></div>
+<div class="question interview"><p><strong>Q5.</strong> Write a query using a CTE to calculate employee salary relative to department average. In a comment, explain CTE scope.</p></div>
 <div class="code-cell" id="cell-17">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-17')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-17')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-17">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q12.</strong> When should you use a CTE vs. a VIEW?</p></div>
+<div class="question interview"><p><strong>Q6.</strong> Write a query using a CTE to list products with stock_qty < 10. In a comment, explain recursive CTE syntax and use cases.</p></div>
 <div class="code-cell" id="cell-18">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-18')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-18')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-18">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q13.</strong> Can CTEs be used with INSERT, UPDATE, or DELETE statements?</p></div>
+<div class="question interview"><p><strong>Q7.</strong> Write a query using a CTE to identify departments without managers. Explain if you can update data through a CTE.</p></div>
 <div class="code-cell" id="cell-19">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-19')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-19')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-19">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q14.</strong> What is the lifecycle of a CTE — when does it get materialized?</p></div>
+<div class="question interview"><p><strong>Q8.</strong> Write a query using a CTE to calculate total amount shipped. In a comment, explain CTE naming conventions.</p></div>
 <div class="code-cell" id="cell-20">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-20')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-20')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-20">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q15.</strong> Write a multi-CTE query that computes running totals.</p></div>
+<div class="question interview"><p><strong>Q9.</strong> Write a query using a CTE to find orders in 2024 and customer region.</p></div>
 <div class="code-cell" id="cell-21">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-21')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-21')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-21">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q16.</strong> What is <code>MATERIALIZED</code> vs. <code>NOT MATERIALIZED</code> in a CTE?</p></div>
+<div class="question interview"><p><strong>Q10.</strong> Write a query using a CTE to find product price margins. In a comment, explain query optimization for CTEs.</p></div>
 <div class="code-cell" id="cell-22">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-22')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-22')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-22">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q17.</strong> What is the maximum depth of recursion in a recursive CTE (in PostgreSQL)?</p></div>
-<div class="code-cell" id="cell-23">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-23')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-23')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-23">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q18.</strong> Can you put an ORDER BY inside a CTE? What is the effect?</p></div>
-<div class="code-cell" id="cell-24">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-24')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-24')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-24">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q19.</strong> What are the advantages of CTEs over subqueries from a code maintenance perspective?</p></div>
-<div class="code-cell" id="cell-25">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-25')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-25')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-25">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q20.</strong> Write a CTE that finds the top 3 departments by headcount.</p></div>
-<div class="code-cell" id="cell-26">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-26')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-26')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-26">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q21.</strong> What is a "bill of materials" query and how does a recursive CTE solve it?</p></div>
-<div class="code-cell" id="cell-27">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-27')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-27')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-27">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q22.</strong> How do you debug a multi-CTE query?</p></div>
-<div class="code-cell" id="cell-28">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-28')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-28')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-28">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q23.</strong> What is the difference between <code>UNION</code> and <code>UNION ALL</code> inside a recursive CTE?</p></div>
-<div class="code-cell" id="cell-29">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-29')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-29')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-29">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q24.</strong> Write a CTE that computes a 3-month rolling average of sales.</p></div>
-<div class="code-cell" id="cell-30">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-30')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-30')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-30">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q25.</strong> When should you NOT use a CTE for performance reasons?
-
----</p></div>
-<div class="code-cell" id="cell-31">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-31')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-31')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-31">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
 </div>
 <div class="nb-section" id="summary">
@@ -417,6 +401,7 @@ WHERE e.salary > (SELECT AVG(salary) FROM employees);
     <div class="sidebar-top"><div class="sidebar-header"><span class="icon">📄</span> CONTENTS</div></div>
     <ul class="toc-list"><li><a href="#sec-0" class="toc-link">🎯 Enterprise Objective</a></li>
 <li><a href="#sec-1" class="toc-link">1. CTEs (Common Table Expressions)</a></li>
+<li><a href="#try-it-1" class="toc-link">🔬 Try It Yourself</a></li>
 <li><a href="#checks-Concept Checks-3" class="toc-link">🧪 Checks: Concept Checks</a></li>
 <li><a href="#practice" class="toc-link">🛠️ Practice Tasks</a></li>
 <li><a href="#interview" class="toc-link">💻 Interview Questions</a></li>

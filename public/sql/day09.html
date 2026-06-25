@@ -149,12 +149,50 @@
   <main class="notebook" id="notebook">
     <div class="nb-title"><h1>🔗 Day 09 : Understanding Relationships & INNER JOIN</h1></div>
 <div class="nb-section" id="sec-0">
+<div class="schema-ref" id="schema-ref-card">
+  <div class="schema-ref-header" onclick="document.getElementById('schema-ref-card').classList.toggle('collapsed')">
+    <span>📋 Database Schema Reference (company.db)</span>
+    <span class="schema-ref-toggle-icon">▼</span>
+  </div>
+  <div class="schema-ref-content">
+    <div class="schema-table-card">
+      <div class="schema-table-name">📁 employees</div>
+      <ul class="schema-cols-list">
+        <li>employee_id (PK)</li><li>first_name</li><li>last_name</li><li>salary</li><li>hire_date</li><li>department_id (FK)</li><li>job_title</li><li>email</li><li>is_active</li><li>manager_id</li><li>commission</li>
+      </ul>
+    </div>
+    <div class="schema-table-card">
+      <div class="schema-table-name">📁 departments</div>
+      <ul class="schema-cols-list">
+        <li>department_id (PK)</li><li>department_name</li><li>budget</li><li>manager_id</li>
+      </ul>
+    </div>
+    <div class="schema-table-card">
+      <div class="schema-table-name">📁 salaries</div>
+      <ul class="schema-cols-list">
+        <li>emp_id (PK/FK)</li><li>amount</li><li>effective_date (PK)</li>
+      </ul>
+    </div>
+    <div class="schema-table-card">
+      <div class="schema-table-name">📁 projects</div>
+      <ul class="schema-cols-list">
+        <li>id (PK)</li><li>name</li><li>status</li><li>deadline</li>
+      </ul>
+    </div>
+    <div class="schema-table-card">
+      <div class="schema-table-name">📁 emp_projects</div>
+      <ul class="schema-cols-list">
+        <li>emp_id (PK/FK)</li><li>project_id (PK/FK)</li><li>role</li>
+      </ul>
+    </div>
+  </div>
+</div>
 </div>
 <div class="nb-section" id="sec-1">
-<div class="nb-rich"><h2 style="color: #000000ff; background-color: #02fff2ff; border-left: 6px solid #0c0c0cff; padding: 12px 15px; margin-top: 40px; border-radius: 4px;">
-    <b>1. Understanding Relationships & INNER JOIN : <span style="color: #070707ff; font-size: 0.85em; font-weight: normal;">Concept Review</span></b>
+<div class="nb-rich"><h2 class="nb-topic-header">
+    <b>1. Understanding Relationships & INNER JOIN : <span style="font-size: 0.85em; font-weight: normal; opacity: 0.85;">Concept Review</span></b>
 </h2>
-<div style="border-left: 4px solid #4DB6AC; padding-left: 15px; margin: 15px 0; color: #CCCCCC;">
+<div class="concept-review-block">
     <b>🔍 Concept</b><br>
     <h3 style="color:#a5b4fc;margin:28px 0 10px;font-size:1.05em;font-weight:700;border-bottom:1px solid #1e293b;padding-bottom:6px;">Why JOINs Exist</h3>
 <p style="color:#cbd5e1;line-height:1.75;margin:10px 0;">In a normalized relational database, data is split across multiple tables to avoid redundancy. JOINs <strong style="color:#f1f5f9;">reassemble</strong> this data when needed for querying. The cost of JOIN operations is why query optimization matters — JOIN runs at <strong style="color:#f1f5f9;">Step 2</strong> of the SQL Order of Execution.</p>
@@ -233,169 +271,127 @@ INNER JOIN salary_grades sg
 <textarea class="cm-source" id="src-1">SELECT * FROM sales LIMIT 5;</textarea>
 <div class="cell-output hidden"></div></div>
 </div>
+<div class="nb-section" id="try-it-1">
+<div class="nb-rich"><h3 style="color: #C7D2FE; background-color: #0e0e0fff; border-left: 6px solid #818CF8; padding: 12px 15px; margin-top: 50px; margin-bottom: 20px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+    <b>🔬 Try It Yourself: Interactive Practice</b>
+</h3></div>
+<div class="question"><p><strong>Q1.</strong> Write an INNER JOIN query to show employees first_name and their department_name.</p></div>
+<div class="code-cell" id="cell-2">
+<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-2')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-2')">✕ Clear</button></div></div>
+<textarea class="cm-source" id="src-2">SELECT e.first_name, d.department_name FROM employees e INNER JOIN departments d ON e.department_id = d.department_id;</textarea>
+<div class="cell-output hidden"></div></div>
+<div class="question"><p><strong>Q2.</strong> Write a query to list all projects that employees are assigned to, showing employee name and project name.</p></div>
+<div class="code-cell" id="cell-3">
+<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-3')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-3')">✕ Clear</button></div></div>
+<textarea class="cm-source" id="src-3">SELECT e.first_name, p.name FROM employees e INNER JOIN emp_projects ep ON e.employee_id = ep.emp_id INNER JOIN projects p ON ep.project_id = p.id;</textarea>
+<div class="cell-output hidden"></div></div>
+<div class="question"><p><strong>Q3.</strong> Find the total budget of departments that have active employees.</p></div>
+<div class="code-cell" id="cell-4">
+<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-4')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-4')">✕ Clear</button></div></div>
+<textarea class="cm-source" id="src-4">SELECT DISTINCT d.department_name, d.budget FROM departments d INNER JOIN employees e ON d.department_id = e.department_id WHERE e.is_active = 1;</textarea>
+<div class="cell-output hidden"></div></div>
+</div>
 <div class="nb-section" id="checks-Concept Checks-3">
 <div class="nb-rich"><h3 style="color: #C7D2FE; background-color: #0e0e0fff; border-left: 6px solid #6366F1; padding: 12px 15px; margin-top: 50px; margin-bottom: 20px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
     <b>🧪 Concept Checks: <code>Concept Checks</code></b>
 </h3></div>
 <div class="question"><p><strong>Q1.</strong> Write a query that shows each employee's <code>first_name</code>, <code>last_name</code>, <code>salary</code>, and their <code>department_name</code>. Use INNER JOIN to link employees to departments.</p></div>
-<div class="code-cell" id="cell-2">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-2')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-2')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-2">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question"><p><strong>Q2.</strong> Extend Challenge 1 to include a third table: <code>job_titles</code>. Join the employees table to <code>job_titles</code> on <code>job_title_id</code>. Display <code>first_name</code>, <code>department_name</code>, and <code>title_name</code>.</p></div>
-<div class="code-cell" id="cell-3">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-3')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-3')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-3">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question"><p><strong>Q3.</strong> Write a query to find all employees in the 'Sales' department with a salary above ₹60,000. Use INNER JOIN and filter with WHERE.</p></div>
-<div class="code-cell" id="cell-4">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-4')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-4')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-4">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question"><p><strong>Q4.</strong> Using a non-equi JOIN, write a query that maps each employee's salary to a salary grade from the <code>salary_grades</code> table (columns: grade, min_salary, max_salary). Display <code>first_name</code>, <code>salary</code>, and <code>grade</code>.</p></div>
 <div class="code-cell" id="cell-5">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-5')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-5')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-5">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question"><p><strong>Q5.</strong> Count how many employees are in each department. Display <code>department_name</code> and <code>employee_count</code>. Sort by <code>employee_count</code> descending. (Use INNER JOIN + GROUP BY.)
-
----</p></div>
+<div class="question"><p><strong>Q2.</strong> Extend Challenge 1 to include a third table: <code>job_titles</code>. Join the employees table to <code>job_titles</code> on <code>job_title_id</code>. Display <code>first_name</code>, <code>department_name</code>, and <code>title_name</code>.</p></div>
 <div class="code-cell" id="cell-6">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-6')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-6')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-6">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-</div>
-<div class="nb-section" id="practice">
-<div class="section-header gold"><h2>🛠️ Professional Practice Tasks</h2></div>
-</div>
-<div class="nb-section" id="interview">
-<div class="section-header purple"><h2>💻 Pure Coding Interview Questions</h2></div>
-<div class="question interview"><p><strong>Q1.</strong> What is a JOIN in SQL and why is it necessary?</p></div>
+<div class="question"><p><strong>Q3.</strong> Write a query to find all employees in the 'Sales' department with a salary above ₹60,000. Use INNER JOIN and filter with WHERE.</p></div>
 <div class="code-cell" id="cell-7">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-7')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-7')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-7">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q2.</strong> What is an INNER JOIN? What rows does it exclude?</p></div>
+<div class="question"><p><strong>Q4.</strong> Using a non-equi JOIN, write a query that maps each employee's salary to a salary grade from the <code>salary_grades</code> table (columns: grade, min_salary, max_salary). Display <code>first_name</code>, <code>salary</code>, and <code>grade</code>.</p></div>
 <div class="code-cell" id="cell-8">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-8')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-8')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-8">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q3.</strong> At which step of SQL Order of Execution does JOIN run?</p></div>
+<div class="question"><p><strong>Q5.</strong> Count how many employees are in each department. Display <code>department_name</code> and <code>employee_count</code>. Sort by <code>employee_count</code> descending. (Use INNER JOIN + GROUP BY.)
+
+---</p></div>
 <div class="code-cell" id="cell-9">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-9')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-9')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-9">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q4.</strong> What is a table alias and why is it recommended?</p></div>
+</div>
+<div class="nb-section" id="practice">
+<div class="section-header gold"><h2>🛠️ Professional Practice Tasks</h2></div>
+<div class="question task"><p><strong>Task 1 (Employee Managers):</strong> Join employees table with departments to display department name and manager id.</p></div>
 <div class="code-cell" id="cell-10">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-10')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-10')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-10">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q5.</strong> What is the difference between <code>JOIN</code> and <code>INNER JOIN</code>? Are they the same?</p></div>
+<div class="question task"><p><strong>Task 2 (Project Assignment Roles):</strong> List employee first_name, project name, and role for all assigned projects.</p></div>
 <div class="code-cell" id="cell-11">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-11')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-11')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-11">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q6.</strong> What happens when you join on a column that has NULL values?</p></div>
+<div class="question task"><p><strong>Task 3 (Active DS Staff):</strong> Retrieve active employees working in 'Data Science' department using INNER JOIN.</p></div>
 <div class="code-cell" id="cell-12">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-12')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-12')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-12">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q7.</strong> Write a query that joins employees to departments and shows only the department name and headcount.</p></div>
+</div>
+<div class="nb-section" id="interview">
+<div class="section-header purple"><h2>💻 Pure Coding Interview Questions</h2></div>
+<div class="question interview"><p><strong>Q1.</strong> Write a query to list employees and their departments. In a comment, explain what happens to rows in either table that have no matching records during an INNER JOIN.</p></div>
 <div class="code-cell" id="cell-13">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-13')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-13')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-13">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q8.</strong> What is a composite join? Give a real-world example.</p></div>
+<div class="question interview"><p><strong>Q2.</strong> Write a query to show employee assignments on projects. Explain the difference between primary keys and foreign keys in database relationships.</p></div>
 <div class="code-cell" id="cell-14">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-14')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-14')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-14">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q9.</strong> What is a non-equi join? Give a business example.</p></div>
+<div class="question interview"><p><strong>Q3.</strong> Write a query to join employees, emp_projects, and projects. Explain how join order impacts performance of relational databases.</p></div>
 <div class="code-cell" id="cell-15">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-15')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-15')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-15">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q10.</strong> How many rows can an INNER JOIN produce between two tables with 100 and 10 rows?</p></div>
+<div class="question interview"><p><strong>Q4.</strong> Write a query to join employees with departments on department_id. In a comment, explain the difference between explicit JOIN and implicit comma-based JOIN.</p></div>
 <div class="code-cell" id="cell-16">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-16')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-16')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-16">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q11.</strong> What is a foreign key and how does it relate to JOIN operations?</p></div>
+<div class="question interview"><p><strong>Q5.</strong> Write a query to find departments with budgets > 1000000 joined with employees. In a comment, explain Cartesian product and how joins avoid it.</p></div>
 <div class="code-cell" id="cell-17">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-17')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-17')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-17">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q12.</strong> Write a query to join 3 tables: employees, departments, and office_locations.</p></div>
+<div class="question interview"><p><strong>Q6.</strong> Write a query to join active_employees with archived_employees on employee_id. Explain if you can join on columns of different data types.</p></div>
 <div class="code-cell" id="cell-18">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-18')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-18')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-18">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q13.</strong> What is the difference between filtering with WHERE and filtering with ON in a JOIN?</p></div>
+<div class="question interview"><p><strong>Q7.</strong> Write a query to join projects and emp_projects. In a comment, explain what a junction (or bridge) table is.</p></div>
 <div class="code-cell" id="cell-19">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-19')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-19')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-19">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q14.</strong> Can you JOIN a table to itself? Is that an INNER JOIN?</p></div>
+<div class="question interview"><p><strong>Q8.</strong> Write a query to display employee details joined with departments. In a comment, explain how database indexes help optimize join operations.</p></div>
 <div class="code-cell" id="cell-20">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-20')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-20')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-20">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q15.</strong> What is referential integrity and what happens to JOINs when it is violated?</p></div>
+<div class="question interview"><p><strong>Q9.</strong> Write a query to join employees and salaries tables to show historical salary amounts.</p></div>
 <div class="code-cell" id="cell-21">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-21')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-21')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-21">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q16.</strong> What is a Cartesian product and how does it happen accidentally in JOINs?</p></div>
+<div class="question interview"><p><strong>Q10.</strong> Write a query to list projects with status 'In Progress' and their assigned roles. Explain why we use alias prefixes for columns in multi-table queries.</p></div>
 <div class="code-cell" id="cell-22">
 <div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-22')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-22')">✕ Clear</button></div></div>
 <textarea class="cm-source" id="src-22">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q17.</strong> Write a query to find all employees whose department is located in 'Mumbai'.</p></div>
-<div class="code-cell" id="cell-23">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-23')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-23')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-23">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q18.</strong> Can you JOIN on a non-key column? What are the risks?</p></div>
-<div class="code-cell" id="cell-24">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-24')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-24')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-24">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q19.</strong> What is the visual representation (Venn diagram) of INNER JOIN?</p></div>
-<div class="code-cell" id="cell-25">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-25')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-25')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-25">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q20.</strong> What is the difference between a fact table and a dimension table in data warehouse context?</p></div>
-<div class="code-cell" id="cell-26">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-26')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-26')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-26">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q21.</strong> Write a query to find managers (employees whose employee_id appears as manager_id for someone else). (Preview of self join.)</p></div>
-<div class="code-cell" id="cell-27">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-27')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-27')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-27">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q22.</strong> What are the performance implications of JOIN on large tables?</p></div>
-<div class="code-cell" id="cell-28">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-28')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-28')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-28">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q23.</strong> When is it appropriate to use a JOIN vs. a subquery?</p></div>
-<div class="code-cell" id="cell-29">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-29')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-29')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-29">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q24.</strong> What index would you create to optimize an INNER JOIN query?</p></div>
-<div class="code-cell" id="cell-30">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-30')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-30')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-30">-- Write your SQL query here</textarea>
-<div class="cell-output hidden"></div></div>
-<div class="question interview"><p><strong>Q25.</strong> A business asks: "List all employees with their team lead names." Given one employees table that stores manager relationships, how would you approach this?
-
----</p></div>
-<div class="code-cell" id="cell-31">
-<div class="cell-bar"><span class="cell-label">In [ ]:</span><div class="cell-actions"><button class="run-btn" onclick="runCell('cell-31')">▶ Run</button><button class="clear-btn" onclick="clearOutput('cell-31')">✕ Clear</button></div></div>
-<textarea class="cm-source" id="src-31">-- Write your SQL query here</textarea>
 <div class="cell-output hidden"></div></div>
 </div>
 <div class="nb-section" id="summary">
@@ -407,6 +403,7 @@ INNER JOIN salary_grades sg
     <div class="sidebar-top"><div class="sidebar-header"><span class="icon">📄</span> CONTENTS</div></div>
     <ul class="toc-list"><li><a href="#sec-0" class="toc-link">🎯 Enterprise Objective</a></li>
 <li><a href="#sec-1" class="toc-link">1. Understanding Relationships & INNER JOIN</a></li>
+<li><a href="#try-it-1" class="toc-link">🔬 Try It Yourself</a></li>
 <li><a href="#checks-Concept Checks-3" class="toc-link">🧪 Checks: Concept Checks</a></li>
 <li><a href="#practice" class="toc-link">🛠️ Practice Tasks</a></li>
 <li><a href="#interview" class="toc-link">💻 Interview Questions</a></li>

@@ -43,7 +43,7 @@ NAMED PRODUCT FEATURES (confirmed — include all of these, do not drop any)
 PRICING
 - $49 one-time (was $199) / ₹4,999 (was ₹19,999)
 - 7-day money-back guarantee
-- Payment rails: Stripe, PayPal, Razorpay
+- Payment rails: PayPal, Razorpay
 
 ⚠ UNCONFIRMED — DO NOT BUILD UNTIL FOUNDER CONFIRMS (see Section 0.1)
 - "Community Access" as a bundle line item — this was in V4 but has no
@@ -343,8 +343,8 @@ Bundle includes (corrected list — matches Section 0, drops the unconfirmed lin
 ✓ SQL Course (Coming Soon — included free at launch, per Option A)
 ✓ Excel Course (Coming Soon — included free at launch, per Option A)
 ✓ 1,000+ Challenges
-✓ Mano AI Tutor — all courses
-✓ XP System & Leaderboard
+✓ AI Tutor — all courses
+✓ Marks System & Leaderboard
 ✓ Lifetime Access
 ✓ Certificates
 ✓ Future Updates
@@ -372,7 +372,7 @@ Accessible accordion. Questions:
 
 Headline: `Start Solving. Start Building Real Skills.`
 Subheadline: Join thousands of learners mastering Python, SQL, and Excel through practice-first learning.
-Buttons: `Try Day 01 Free` · `Buy Full Masterclass`
+Buttons: `Try Day 01 SQL Free` `Try Day 01 Excel Free` `Try Day 01 Python Free` · `Buy Full Masterclass`
 
 ---
 ## SECTION 17 — FOOTER

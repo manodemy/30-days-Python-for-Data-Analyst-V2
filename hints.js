@@ -53,6 +53,11 @@
       errorContext = '\nMy ' + (course === 'excel' ? 'formula' : 'code') + ' currently throws this error/output:\n' + errorText + '\n';
     }
 
+    var instruction = 'Please act as a ' + tutorName + '. Guide me to solve this step-by-step. Do not provide the full solution code. If I am stuck, you may provide at most one line of ' + (course === 'excel' ? 'formula' : 'code') + ' showing the next step.';
+    if (course === 'sql') {
+      instruction = 'Please act as a Socratic SQL tutor. Give me ONE short hint (max 2 sentences) about what SQL clause, function, or logic to use next. Do NOT give the full solution code.';
+    }
+
     return 'I am learning ' + langName + ' and working on this exercise:\n' +
       '"' + questionText + '"\n\n' +
       'Here is my current ' + (course === 'excel' ? 'formula' : 'code') + ':\n' +
@@ -60,7 +65,7 @@
       (userCode || (course === 'excel' ? '# No formula written yet' : '# No code written yet')) +
       '\n```\n' +
       errorContext + '\n' +
-      'Please act as a ' + tutorName + '. Guide me to solve this step-by-step. Do not provide the full solution code. If I am stuck, you may provide at most one line of ' + (course === 'excel' ? 'formula' : 'code') + ' showing the next step.';
+      instruction;
   }
 
   // Robust clipboard copy function

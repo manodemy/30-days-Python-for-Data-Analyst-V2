@@ -113,10 +113,20 @@ export default async function NotebookPage({ params }: { params: { dayId: string
 
     // If user is admin or paid, grant access immediately — no need for check_enrollment
     if (!isAdmin && !isPro) {
-      // Fall back to enrollment check only for free users
-      const { data: enrolled } = await supabase.rpc('check_enrollment', { p_course_id: courseId });
-      if (!enrolled) {
-        redirect('/landing_v2/index.html#pricing?locked=true');
+      if (courseType === 'python') {
+        const [{ data: enrolledSql }, { data: enrolledExcel }] = await Promise.all([
+          supabase.rpc('check_enrollment', { p_course_id: 'sql-20day' }),
+          supabase.rpc('check_enrollment', { p_course_id: 'excel-12day' })
+        ]);
+        if (!enrolledSql && !enrolledExcel) {
+          redirect('/landing_v2/index.html#pricing?locked=true');
+        }
+      } else {
+        // Fall back to enrollment check only for free users
+        const { data: enrolled } = await supabase.rpc('check_enrollment', { p_course_id: courseId });
+        if (!enrolled) {
+          redirect('/landing_v2/index.html#pricing?locked=true');
+        }
       }
     }
   }

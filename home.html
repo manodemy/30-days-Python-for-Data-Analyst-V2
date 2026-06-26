@@ -146,8 +146,19 @@
         }
 
         // Verify with Supabase RPC
-
-        const { data: enrolled } = await sb.rpc('check_enrollment', { p_course_id: 'python-30day' });
+        const { data: profile } = await sb.from('profiles').select('plan, plan_type, role').eq('id', session.user.id).single();
+        const [{ data: enrolledSql }, { data: enrolledExcel }] = await Promise.all([
+          sb.rpc('check_enrollment', { p_course_id: 'sql-20day' }),
+          sb.rpc('check_enrollment', { p_course_id: 'excel-12day' })
+        ]);
+        const enrolled = (
+          enrolledSql === true ||
+          enrolledExcel === true ||
+          profile?.plan === 'pro' ||
+          profile?.plan_type === 'premium' ||
+          profile?.plan_type === 'pro' ||
+          profile?.role === 'admin'
+        );
 
         if (enrolled) {
 
@@ -7798,7 +7809,29 @@
 
       const grid = document.getElementById('curriculumGrid');
 
-      const isUserEnrolled = (session.user.user_metadata?.plan === 'pro' || localStorage.getItem('manodemy_enrolled') === 'true');
+      let isUserEnrolled = false;
+      const isPaidUser = (
+        session.user.user_metadata?.plan === 'pro' ||
+        localStorage.getItem('manodemy_enrolled') === 'true' ||
+        (typeof userProfile !== 'undefined' && userProfile && (
+          userProfile.plan === 'pro' ||
+          userProfile.plan_type === 'premium' ||
+          userProfile.plan_type === 'pro' ||
+          userProfile.role === 'admin'
+        ))
+      );
+
+      if (isPaidUser) {
+        isUserEnrolled = true;
+      } else {
+        if (currentCourse === 'sql') {
+          isUserEnrolled = localStorage.getItem('manodemy_enrolled_sql') === 'true';
+        } else if (currentCourse === 'excel') {
+          isUserEnrolled = localStorage.getItem('manodemy_enrolled_excel') === 'true';
+        } else {
+          isUserEnrolled = false; // Lock python day03+ for non-purchased users
+        }
+      }
 
       DAY_METADATA.forEach(item => {
         const keyPrefix = currentCourse === 'sql' ? 'sql-' : (currentCourse === 'excel' ? 'excel-' : '');

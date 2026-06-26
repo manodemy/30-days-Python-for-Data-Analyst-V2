@@ -1650,16 +1650,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function checkPurchaseStatus(sb, userId) {
     try {
-      const { data: isEnrolled } = await sb.rpc('check_enrollment', { p_course_id: 'python-30day' });
-      const { data: profile } = await sb.from('profiles').select('plan, role').eq('id', userId).single();
+      const { data: enrolledSql } = await sb.rpc('check_enrollment', { p_course_id: 'sql-20day' });
+      const { data: enrolledExcel } = await sb.rpc('check_enrollment', { p_course_id: 'excel-12day' });
+      const { data: profile } = await sb.from('profiles').select('plan, plan_type, role').eq('id', userId).single();
       
-      if (isEnrolled === true || profile?.plan === 'pro' || profile?.plan === 'paid') {
+      const hasPurchased = (
+        enrolledSql === true ||
+        enrolledExcel === true ||
+        profile?.plan === 'pro' ||
+        profile?.plan_type === 'premium' ||
+        profile?.plan_type === 'pro' ||
+        profile?.role === 'admin'
+      );
+      
+      if (hasPurchased) {
         localStorage.setItem('manodemy_enrolled', 'true');
         unlockAllDays();
         updateCTAsForPaidUser();
         const pricingSection = document.getElementById('pricing');
         if (pricingSection) pricingSection.style.display = 'none';
         closeCheckout();
+      } else {
+        localStorage.setItem('manodemy_enrolled', 'false');
+        const pricingSection = document.getElementById('pricing');
+        if (pricingSection) pricingSection.style.display = 'block';
       }
     } catch (e) {
       console.warn("Purchase status check skipped:", e.message);

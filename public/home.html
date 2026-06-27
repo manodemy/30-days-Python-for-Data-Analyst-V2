@@ -995,7 +995,7 @@
 
     .dashboard-grid {
       display: grid;
-      grid-template-columns: 1fr 360px;
+      grid-template-columns: 1fr 440px;
       gap: 2.5rem;
       margin-bottom: 2.5rem;
       align-items: start;
@@ -5184,7 +5184,7 @@
     
     .roadmap-day-card {
       width: 100%;
-      max-width: 220px; /* Hard cap - never lets text stretch into opposite lane */
+      max-width: 175px; /* Compact design, fits perfectly on both sides of the road inside the sidebar */
       border-radius: 12px;
       padding: 10px 12px;
       cursor: pointer;
@@ -5193,33 +5193,21 @@
       display: flex;
       flex-direction: column;
       gap: 4px;
-      
-      /* Hide cards by default for a clean, non-cluttered map layout */
-      opacity: 0;
-      visibility: hidden;
-      transform: scale(0.9) translateY(10px);
-      pointer-events: none;
       transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      box-shadow: 0 3px 12px rgba(99, 102, 241, 0.05), inset 0 1px 0 rgba(255,255,255,0.95);
+      position: relative;
+      z-index: 5;
     }
     
-    /* Only display the active/current call-to-action pointer card by default */
+    /* Lift active/current card to look extremely prominent and premium */
     .roadmap-day-card.current {
-      opacity: 1;
-      visibility: visible;
-      transform: scale(1) translateY(0);
-      pointer-events: auto;
       border: 2px solid var(--dashboard-accent) !important;
-      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.12), inset 0 1px 0 rgba(255,255,255,0.95) !important;
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.15), inset 0 1px 0 rgba(255,255,255,0.95) !important;
     }
     
-    /* Reveal completed or locked day cards dynamically on node hover */
-    .roadmap-day-node:hover .roadmap-day-card {
-      opacity: 1;
-      visibility: visible;
-      transform: scale(1) translateY(0);
-      pointer-events: auto;
-      z-index: 10;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
+    .roadmap-day-card:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 10px 25px rgba(99, 102, 241, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
     }
     
     /* Card content alignment & right-align status row for left cards */
@@ -5310,6 +5298,38 @@
       box-shadow: 0 3px 12px rgba(0,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.95);
     }
     
+    /* Mobile responsive roadmap formatting */
+    @media (max-width: 768px) {
+      .roadmap-day-node {
+        min-height: 80px !important;
+        margin-bottom: 24px !important;
+      }
+      .roadmap-day-node.left, .roadmap-day-node.right {
+        justify-content: flex-start !important;
+        padding-left: 70px !important;
+        padding-right: 16px !important;
+      }
+      .roadmap-day-node.left .roadmap-day-card, .roadmap-day-node.right .roadmap-day-card {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        text-align: left !important;
+        max-width: 100% !important;
+      }
+      .roadmap-day-node.left .card-status-row, .roadmap-day-node.right .card-status-row {
+        justify-content: flex-start !important;
+      }
+      /* Align dots, post, and postshadow to the left road timeline lane */
+      .roadmap-day-node.left .roadmap-checkpoint-dot, .roadmap-day-node.right .roadmap-checkpoint-dot {
+        left: 35px !important;
+      }
+      .roadmap-day-node.left .post, .roadmap-day-node.right .post {
+        left: 35px !important;
+      }
+      .roadmap-day-node.left .postshadow, .roadmap-day-node.right .postshadow {
+        left: 35px !important;
+      }
+    }
+
     /* Node Anatomy: Post shadows beneath post */
     .postshadow {
       position: absolute;

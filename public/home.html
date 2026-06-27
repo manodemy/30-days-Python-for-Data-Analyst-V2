@@ -5871,7 +5871,7 @@
 
           <!-- Winding Road Scrollable Viewport -->
           <div class="roadmap-viewport" id="roadmapViewport" style="position: relative; flex: 1; overflow-y: auto; padding: 0; background: linear-gradient(180deg, #e0f2fe 0%, #f0fdf4 100%); border-radius: 12px; scroll-behavior: smooth; box-sizing: border-box;">
-            <canvas id="roadmapCanvas" style="display: block; width: 100%; cursor: default;"></canvas>
+            <canvas id="roadmapCanvas" style="display: block; width: 100%; cursor: default; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;"></canvas>
           </div>
           </div>
         </div>
@@ -8533,7 +8533,7 @@
         if (!viewport || !canvas) return;
 
         const ctx = canvas.getContext('2d');
-        const dpr = window.devicePixelRatio || 1;
+        const dpr = Math.min(Math.max(window.devicePixelRatio || 1, 2.0), 2.5); /* Set minimum 2x resolution for extreme crispness, capped at 2.5x to prevent texture limit issues */
         
         const width = viewport.clientWidth || 400;
         const height = 6100; // 60 days * 96px + generous certificate area

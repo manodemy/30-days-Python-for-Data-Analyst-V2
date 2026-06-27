@@ -8542,6 +8542,8 @@
         if (!viewport || !canvas) return;
 
         const ctx = canvas.getContext('2d');
+        // Disable image smoothing so pixel-aligned text stays crisp
+        ctx.imageSmoothingEnabled = false;
         const dpr = Math.min(Math.max(window.devicePixelRatio || 1, 2.0), 2.5); /* Set minimum 2x resolution for extreme crispness, capped at 2.5x to prevent texture limit issues */
         
         const width = viewport.clientWidth || 400;
@@ -8973,24 +8975,36 @@
           ctx.fillText(badgeText, badgeX, badgeY);
           ctx.restore();
 
-          // h) Card Details Text (Text wrapping + full labels)
+          // h) Card Details Text — ZERO shadow before text to prevent blur bleed
+          ctx.save();
+          ctx.shadowColor = 'transparent';
+          ctx.shadowBlur = 0;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 0;
+
+          // Phase label (e.g. "PYTHON D16") — rounded coords for pixel-perfect rendering
           ctx.fillStyle = colors.dark;
-          ctx.font = 'bold 9.5px Outfit';
+          ctx.font = '800 11.5px Outfit';
           ctx.textAlign = 'left';
           ctx.textBaseline = 'top';
-          ctx.fillText(`${day.phase.toUpperCase()} D${parseInt(day.courseDay, 10).toString().padStart(2, '0')}`, cardX + 12, cardY + 9);
+          ctx.fillText(
+            `${day.phase.toUpperCase()} D${parseInt(day.courseDay, 10).toString().padStart(2, '0')}`,
+            Math.round(cardX + 10),
+            Math.round(cardY + 8)
+          );
 
-          // Wrap title to multiple lines dynamically to show complete detail
-          ctx.fillStyle = isDark ? '#e2e8f0' : '#334155';
-          ctx.font = '600 9px Inter';
-          const maxTextW = cardW - 24;
-          const startTitleY = cardY + 22;
-          const endTitleY = wrapText(ctx, `${day.emoji} ${day.title}`, cardX + 12, startTitleY, maxTextW, 11);
+          // Title text — larger, heavier weight, rounded coords
+          ctx.fillStyle = isDark ? '#e2e8f0' : '#1e293b';
+          ctx.font = '700 11px Outfit';
+          const maxTextW = cardW - 22;
+          const startTitleY = Math.round(cardY + 24);
+          const endTitleY = wrapText(ctx, `${day.emoji} ${day.title}`, Math.round(cardX + 10), startTitleY, maxTextW, 13);
 
-          // Progress Status Detail — status text = saturated mid-tone, dot drawn in light tint
-          const statusY = cardY + 48;
+          // Status row — dot + label
+          const statusY = Math.round(cardY + 50);
           const dotRadius = 3.5;
-          const dotX = isRight ? cardX + 12 + dotRadius : cardX + 12 + dotRadius;
+          const dotCx = Math.round(cardX + 10 + dotRadius);
+          const dotCy = Math.round(statusY + 4);
 
           let progressLabel = day.isCompleted
             ? 'Solved'
@@ -8999,25 +9013,25 @@
             progressLabel += ` • ${day.solvedCount}/${day.cells}`;
           }
 
-          // Draw the status dot in colors.light (light tint of the hue)
+          // Status dot: fill = light tint, stroke = mid-tone ring
           ctx.fillStyle = day.isLocked ? '#cbd5e1' : colors.light;
           ctx.beginPath();
-          ctx.arc(dotX, statusY + 3.5, dotRadius, 0, 2 * Math.PI);
+          ctx.arc(dotCx, dotCy, dotRadius, 0, 2 * Math.PI);
           ctx.fill();
-
-          // Draw a thin outline ring in colors.mid on the dot
           ctx.strokeStyle = day.isLocked ? '#94a3b8' : colors.mid;
-          ctx.lineWidth = 0.9;
+          ctx.lineWidth = 1.0;
           ctx.beginPath();
-          ctx.arc(dotX, statusY + 3.5, dotRadius, 0, 2 * Math.PI);
+          ctx.arc(dotCx, dotCy, dotRadius, 0, 2 * Math.PI);
           ctx.stroke();
 
-          // Status text in saturated mid-tone
+          // Status label: saturated mid-tone, bold, crisp
           ctx.fillStyle = day.isLocked ? '#94a3b8' : colors.mid;
-          ctx.font = '600 8px Inter';
+          ctx.font = '700 10px Inter';
           ctx.textAlign = 'left';
-          ctx.textBaseline = 'top';
-          ctx.fillText(progressLabel, dotX + dotRadius + 4, statusY);
+          ctx.textBaseline = 'middle';
+          ctx.fillText(progressLabel, Math.round(dotCx + dotRadius + 4), dotCy);
+
+          ctx.restore();
         });
 
         // 12. Render Stunning 3D Display Pedestal and Download Button at GOAL

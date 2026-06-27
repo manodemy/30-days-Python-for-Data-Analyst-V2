@@ -273,9 +273,12 @@
     /* Course Selector Grid and Cards */
     .dashboard-left-content {
       will-change: opacity, transform;
+      transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .dashboard-right-col {
-      will-change: opacity, transform;
+    .dashboard-left-content.switching {
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
     }
     .courses-selector-grid {
       display: grid;
@@ -286,9 +289,12 @@
     @media (max-width: 900px) {
       .dashboard-left-content {
       will-change: opacity, transform;
+      transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .dashboard-right-col {
-      will-change: opacity, transform;
+    .dashboard-left-content.switching {
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
     }
     .courses-selector-grid {
         grid-template-columns: 1fr;
@@ -8976,7 +8982,8 @@
       };
 
       // Define refreshDashboardUI to bundle rendering updates
-      const refreshDashboardUI = async () => {
+      let _roadmapInitialized = false;
+      const refreshDashboardUI = async (skipRoadmap = false) => {
         let activeDayNum = DAY_METADATA[0].day;
         const activePrefix = currentCourse === 'sql' ? 'sql-' : (currentCourse === 'excel' ? 'excel-' : '');
         for (let i = 0; i < DAY_METADATA.length; i++) {
@@ -8998,27 +9005,30 @@
         renderMilestoneTimeline();
         renderDailyQuest();
         renderCurriculumGrid();
-        renderWindingRoadmap();
+        if (!skipRoadmap && !_roadmapInitialized) {
+          renderWindingRoadmap();
+          _roadmapInitialized = true;
+        }
         buildHeatmap();
       };
 
       // Declare switchActiveCourse for smooth dynamic transitions between tabs
+      let _isSwitching = false;
       const switchActiveCourse = async (newCourseId) => {
+        if (_isSwitching || newCourseId === currentCourse) return;
+        _isSwitching = true;
+
         const leftContent = document.querySelector('.dashboard-left-content');
-        const rightCol = document.querySelector('.dashboard-right-col');
         
-        if (leftContent && rightCol) {
-          leftContent.style.transition = 'opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
-          rightCol.style.transition = 'opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
-          
-          leftContent.style.opacity = '0';
-          leftContent.style.transform = 'translateY(15px)';
-          rightCol.style.opacity = '0';
-          rightCol.style.transform = 'translateY(15px)';
+        // Step 1: Fade out only the left content column using CSS class transition
+        if (leftContent) {
+          leftContent.classList.add('switching');
         }
         
-        await new Promise(r => setTimeout(r, 250));
+        // Step 2: Wait for CSS transition to complete (0.3s)
+        await new Promise(r => setTimeout(r, 300));
         
+        // Step 3: Update course state silently while hidden
         currentCourse = newCourseId;
         localStorage.setItem('manodemy_active_course', newCourseId);
         
@@ -9026,20 +9036,20 @@
         DAY_METADATA = newCourseId === 'sql' ? SQL_METADATA : (newCourseId === 'excel' ? EXCEL_METADATA : PYTHON_METADATA);
         TOTAL_CHALLENGES = DAY_METADATA.reduce((sum, item) => sum + item.totalCells, 0);
         
-        await refreshDashboardUI();
+        // Step 4: Re-render only left column (skip roadmap - it stays, just scrolls to phase)
+        await refreshDashboardUI(true);
         
+        // Step 5: Scroll roadmap viewport to the correct course phase
         if (window.scrollToRoadmapPhase) {
           window.scrollToRoadmapPhase(newCourseId);
         }
         
-        await new Promise(r => setTimeout(r, 50));
-        
-        if (leftContent && rightCol) {
-          leftContent.style.opacity = '1';
-          leftContent.style.transform = 'translateY(0)';
-          rightCol.style.opacity = '1';
-          rightCol.style.transform = 'translateY(0)';
+        // Step 6: Fade back in
+        if (leftContent) {
+          leftContent.classList.remove('switching');
         }
+
+        _isSwitching = false;
       };
 
       // Initial dashboard render (safe from TDZ since all constants are declared above!)

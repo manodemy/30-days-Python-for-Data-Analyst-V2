@@ -277,7 +277,7 @@
     .roadmap-day-card .card-day-label { color: #3B82F6 !important; opacity: 1 !important; }
     .roadmap-day-card .card-title-text { color: #1e293b !important; }
     .roadmap-day-card.locked .card-title-text { color: #94a3b8 !important; }
-    .roadmap-day-card .card-status-row { color: rgba(30, 41, 59, 0.55) !important; }
+    .roadmap-day-card .card-status-row { color: #475569 !important; }
 
     /* Checkpoint dot locked text */
     .roadmap-checkpoint-dot { color: #475569 !important; }
@@ -5199,20 +5199,23 @@
     
     .roadmap-day-card {
       width: 100%;
-      max-width: 155px;
-      border-radius: 4px; /* Clean rectangular design */
-      padding: 10px 12px;
+      max-width: 180px; /* Increased card width for bigger, cleaner display */
+      border-radius: 6px; /* Smooth corners */
+      padding: 12px 14px; /* Enhanced padding */
       cursor: pointer;
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 5px;
       transition: all 0.25s ease-out;
       background: #ffffff !important;
-      border: 1px solid #e2e8f0 !important;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.02), inset 0 1px 0 #ffffff;
+      border: 1px solid #cbd5e1 !important; /* Slightly more defined borders */
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06), inset 0 1px 0 #ffffff;
       position: relative;
       z-index: 2;
+      -webkit-font-smoothing: antialiased !important;
+      -moz-osx-font-smoothing: grayscale !important;
+      text-rendering: optimizeLegibility !important;
     }
     
     /* Elegant side-border indicators depending on left/right alignment */
@@ -5281,7 +5284,7 @@
     /* Card Sublabel Day Tag */
     .roadmap-day-card .card-day-label {
       font-family: 'Outfit', sans-serif;
-      font-size: 11px; /* Increased font size for summary labels */
+      font-size: 12px; /* Slightly larger */
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.06em;
@@ -5291,8 +5294,8 @@
     /* Card Title line clamping & Outfit font */
     .roadmap-day-card .card-title-text {
       font-family: 'Outfit', sans-serif;
-      font-size: 11.5px;
-      font-weight: 700;
+      font-size: 13.5px; /* Larger font size */
+      font-weight: 800; /* Extra bold for high-contrast legibility */
       line-height: 1.35;
       color: #1e293b;
       display: -webkit-box;
@@ -5305,10 +5308,10 @@
     /* Card Status Pill Row */
     .roadmap-day-card .card-status-row {
       font-family: 'Inter', sans-serif;
-      font-size: 11px; /* Increased font size for summary labels */
-      font-weight: 500;
-      color: rgba(30, 41, 59, 0.55);
-      margin-top: 2px;
+      font-size: 11.5px; /* Larger status text */
+      font-weight: 600; /* Bolder */
+      color: #475569; /* Solid high-contrast slate grey */
+      margin-top: 3px;
     }
     
     /* Hover effect for clean rectangular cards */

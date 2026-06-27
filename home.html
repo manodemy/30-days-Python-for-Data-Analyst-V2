@@ -8749,48 +8749,63 @@
         for (let i = 1; i < rightBot.length; i++) ctx.lineTo(rightBot[i].x, rightBot[i].y);
         ctx.stroke();
 
-        // 10. Render 3D START Banner Billboard
-        const startY = 70;
+        // 10. Render 3D START Entrance Archway spanning across the road
+        const startY = 65;
         const startX = centerX + A * Math.sin((2 * Math.PI * startY) / lambda);
-        
+
         ctx.save();
-        // Stand poles for billboard
-        ctx.fillStyle = '#64748b';
-        ctx.fillRect(startX - 35, startY - 50, 3, 20);
-        ctx.fillRect(startX + 32, startY - 50, 3, 20);
-        
-        // Billboard shadow
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.15)';
-        ctx.shadowBlur = 6;
-        ctx.shadowOffsetY = 3;
-        
-        // Billboard board
-        const billGrad = ctx.createLinearGradient(startX, startY - 50, startX, startY - 30);
-        billGrad.addColorStop(0, '#10b981');
-        billGrad.addColorStop(1, '#059669');
-        ctx.fillStyle = billGrad;
+        // Left Column (base shadow)
+        ctx.fillStyle = 'rgba(0,0,0,0.3)';
+        ctx.beginPath();
+        ctx.ellipse(startX - 38, startY + 12, 6, 2.5, 0, 0, 2 * Math.PI);
+        ctx.ellipse(startX + 38, startY + 12, 6, 2.5, 0, 0, 2 * Math.PI);
+        ctx.fill();
+
+        // 3D Pillar columns flanking the road
+        const columnGrad = ctx.createLinearGradient(startX - 42, startY - 40, startX - 34, startY + 10);
+        columnGrad.addColorStop(0, '#cbd5e1');
+        columnGrad.addColorStop(0.3, '#f1f5f9');
+        columnGrad.addColorStop(0.8, '#475569');
+        columnGrad.addColorStop(1, '#1e293b');
+
+        // Left Pillar
+        ctx.fillStyle = columnGrad;
+        ctx.fillRect(startX - 41, startY - 45, 6, 56);
+        ctx.fillStyle = '#334155';
+        ctx.fillRect(startX - 43, startY + 9, 10, 3); // base cap
+        ctx.fillRect(startX - 42, startY - 48, 8, 3);  // top cap
+
+        // Right Pillar
+        ctx.fillStyle = columnGrad;
+        ctx.fillRect(startX + 35, startY - 45, 6, 56);
+        ctx.fillStyle = '#334155';
+        ctx.fillRect(startX + 33, startY + 9, 10, 3); // base cap
+        ctx.fillRect(startX + 34, startY - 48, 8, 3);  // top cap
+
+        // 3D Cross Archway Signboard
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.22)';
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetY = 4;
+
+        const archGrad = ctx.createLinearGradient(startX, startY - 50, startX, startY - 26);
+        archGrad.addColorStop(0, '#10b981');
+        archGrad.addColorStop(1, '#047857');
+        ctx.fillStyle = archGrad;
         ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 2;
-        drawRoundedRect(ctx, startX - 50, startY - 55, 100, 24, 4);
+        ctx.lineWidth = 1.8;
+        
+        // Curved banner path for archway
+        drawRoundedRect(ctx, startX - 52, startY - 56, 104, 24, 3);
         ctx.fill();
         ctx.stroke();
         ctx.restore();
 
+        // Text inside Archway
         ctx.fillStyle = '#ffffff';
         ctx.font = '900 9.5px Outfit';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText('🏁 STARTING POINT', startX, startY - 43);
-        
-        // Connection indicator
-        ctx.strokeStyle = 'rgba(16, 185, 129, 0.4)';
-        ctx.lineWidth = 1.2;
-        ctx.setLineDash([3, 3]);
-        ctx.beginPath();
-        ctx.moveTo(startX, startY - 31);
-        ctx.lineTo(startX, startY);
-        ctx.stroke();
-        ctx.setLineDash([]);
+        ctx.fillText('🏁 START: EXCEL', startX, startY - 44);
 
         // 11. Plot and draw all 60 Day nodes
         const cardW = 130;
@@ -8961,27 +8976,34 @@
           ctx.fillText(progressDetail, cardX + 12, cardY + 48);
         });
 
-        // 12. Render Stunning 3D Rolled Diploma and Interactive Certificate Download Button at GOAL
+        // 12. Render Stunning 3D Display Pedestal and Download Button at GOAL
         const goalY = height - 160; // Placed at 5940px, well below Day 60 (5784px) to completely avoid overlaps
         const goalX = centerX + A * Math.sin((2 * Math.PI * goalY) / lambda);
 
-        // Stand / Pedestal base plate
-        ctx.fillStyle = '#64748b';
-        ctx.fillRect(goalX - 20, goalY + 8, 40, 6);
+        // Pedestal base plate (Shadow & Concrete)
+        ctx.fillStyle = 'rgba(0,0,0,0.25)';
+        ctx.beginPath();
+        ctx.ellipse(goalX, goalY + 16, 28, 8, 0, 0, 2 * Math.PI);
+        ctx.fill();
+
+        ctx.fillStyle = '#475569';
+        ctx.fillRect(goalX - 25, goalY + 8, 50, 8);
+        ctx.fillStyle = '#334155';
+        ctx.fillRect(goalX - 20, goalY, 40, 8);
 
         // a) 3D Rolled Diploma
         ctx.save();
-        // Glowing backing halo
-        ctx.shadowColor = 'rgba(251, 191, 36, 0.6)';
-        ctx.shadowBlur = 20;
-        ctx.fillStyle = 'rgba(251, 191, 36, 0.12)';
+        // Glowing backing halo (Aura of Achievement)
+        ctx.shadowColor = 'rgba(251, 191, 36, 0.7)';
+        ctx.shadowBlur = 24;
+        ctx.fillStyle = 'rgba(251, 191, 36, 0.14)';
         ctx.beginPath();
-        ctx.arc(goalX, goalY - 10, 24, 0, 2 * Math.PI);
+        ctx.arc(goalX, goalY - 12, 28, 0, 2 * Math.PI);
         ctx.fill();
         ctx.restore();
 
         ctx.save();
-        ctx.translate(goalX, goalY - 10);
+        ctx.translate(goalX, goalY - 12);
         ctx.rotate(-Math.PI / 6); // 30 deg rotation
 
         // Paper cylinder
@@ -9037,16 +9059,16 @@
         ctx.fill();
         ctx.restore();
 
-        // b) Stunning Capsule Button
+        // b) Stunning Capsule Button (Expanded 160x32px for better readability)
         ctx.save();
-        const btnW = 144;
-        const btnH = 26;
+        const btnW = 160;
+        const btnH = 30;
         const btnX = goalX - btnW / 2;
         const btnY = goalY + 24;
 
-        ctx.shadowColor = window.hoveredCert ? 'rgba(217, 119, 6, 0.35)' : 'rgba(0, 0, 0, 0.12)';
-        ctx.shadowBlur = window.hoveredCert ? 14 : 6;
-        ctx.shadowOffsetY = window.hoveredCert ? 4 : 2;
+        ctx.shadowColor = window.hoveredCert ? 'rgba(217, 119, 6, 0.4)' : 'rgba(0, 0, 0, 0.12)';
+        ctx.shadowBlur = window.hoveredCert ? 16 : 8;
+        ctx.shadowOffsetY = window.hoveredCert ? 6 : 3;
 
         // Gold/Amber gradient
         const btnGrad = ctx.createLinearGradient(btnX, btnY, btnX, btnY + btnH);
@@ -9059,16 +9081,17 @@
         }
         ctx.fillStyle = btnGrad;
         ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = window.hoveredCert ? 2.0 : 1.5;
+        ctx.lineWidth = window.hoveredCert ? 2.2 : 1.5;
 
-        drawRoundedRect(ctx, btnX, btnY, btnW, btnH, 13);
+        // drawRoundedRect has been fixed in this file so this pill will draw perfectly!
+        drawRoundedRect(ctx, btnX, btnY, btnW, btnH, 15);
         ctx.fill();
         ctx.stroke();
         ctx.restore();
 
         // Button Text
         ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 9.5px Outfit';
+        ctx.font = 'bold 10px Outfit';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText('🎓 Download Certificate', goalX, btnY + btnH / 2);
@@ -9121,7 +9144,7 @@
         ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
         ctx.lineTo(x + width, y + height - radius);
         ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-        ctx.lineTo(x + radius, y + height - radius);
+        ctx.lineTo(x + radius, y + height); // FIXED: line to bottom edge y+height
         ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
         ctx.lineTo(x, y + radius);
         ctx.quadraticCurveTo(x, y, x + radius, y);
@@ -9205,8 +9228,8 @@
             // Check hovered certificate landmark
             const goalY = 6100 - 160;
             const goalX = (canvas.width / dpr) / 2 + (viewport.clientWidth * 0.16) * Math.sin((2 * Math.PI * goalY) / 720);
-            const inCert = mouseX >= goalX - 72 && mouseX <= goalX + 72 &&
-                           mouseY >= goalY + 24 && mouseY <= goalY + 50;
+            const inCert = mouseX >= goalX - 80 && mouseX <= goalX + 80 &&
+                           mouseY >= goalY + 24 && mouseY <= goalY + 54;
 
             let changed = false;
             if (window.hoveredCert !== inCert) {
@@ -9251,8 +9274,8 @@
             // Check if clicking certificate button
             const goalY = 6100 - 160;
             const goalX = (canvas.width / dpr) / 2 + (viewport.clientWidth * 0.16) * Math.sin((2 * Math.PI * goalY) / 720);
-            if (mouseX >= goalX - 72 && mouseX <= goalX + 72 &&
-                mouseY >= goalY + 24 && mouseY <= goalY + 50) {
+            if (mouseX >= goalX - 80 && mouseX <= goalX + 80 &&
+                mouseY >= goalY + 24 && mouseY <= goalY + 54) {
               window.triggerCertificateDownload();
             }
           });

@@ -5175,29 +5175,60 @@
     */
     .roadmap-day-node.left {
       justify-content: flex-end;
-      padding-right: calc(50% + 4px);
+      padding-right: calc(50% + 60px); /* Guaranteed 5px gap from maximum road curve excursion */
     }
     .roadmap-day-node.right {
       justify-content: flex-start;
-      padding-left: calc(50% + 4px);
+      padding-left: calc(50% + 60px); /* Guaranteed 5px gap from maximum road curve excursion */
     }
     
     .roadmap-day-card {
       width: 100%;
-      max-width: 155px; /* Compact design, leaves room for wider road and map-pins */
-      border-radius: 12px;
+      max-width: 155px;
+      border-radius: 4px; /* Clean rectangular design */
       padding: 10px 12px;
       cursor: pointer;
       box-sizing: border-box;
-      backdrop-filter: blur(8px);
       display: flex;
       flex-direction: column;
       gap: 4px;
-      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-      box-shadow: 0 3px 12px rgba(99, 102, 241, 0.05), inset 0 1px 0 rgba(255,255,255,0.95);
+      transition: all 0.25s ease-out;
+      background: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.02), inset 0 1px 0 #ffffff;
       position: relative;
-      z-index: 2; /* Layer 2: Behind the road track and signpost dots */
+      z-index: 2;
     }
+    
+    /* Elegant side-border indicators depending on left/right alignment */
+    .roadmap-day-node.left .roadmap-day-card {
+      border-right: 4px solid #cbd5e1 !important;
+      border-left: 1px solid #e2e8f0 !important;
+      border-top: 1px solid #e2e8f0 !important;
+      border-bottom: 1px solid #e2e8f0 !important;
+    }
+    .roadmap-day-node.right .roadmap-day-card {
+      border-left: 4px solid #cbd5e1 !important;
+      border-right: 1px solid #e2e8f0 !important;
+      border-top: 1px solid #e2e8f0 !important;
+      border-bottom: 1px solid #e2e8f0 !important;
+    }
+    
+    /* Phase specific border colors when completed */
+    .roadmap-day-node.excel.completed.left .roadmap-day-card { border-right-color: #F5A623 !important; }
+    .roadmap-day-node.excel.completed.right .roadmap-day-card { border-left-color: #F5A623 !important; }
+    .roadmap-day-node.sql.completed.left .roadmap-day-card { border-right-color: #06B6D4 !important; }
+    .roadmap-day-node.sql.completed.right .roadmap-day-card { border-left-color: #06B6D4 !important; }
+    .roadmap-day-node.python.completed.left .roadmap-day-card { border-right-color: #10B981 !important; }
+    .roadmap-day-node.python.completed.right .roadmap-day-card { border-left-color: #10B981 !important; }
+    
+    /* Glowing active indicators for current card */
+    .roadmap-day-node.excel.current.left .roadmap-day-card { border-right-color: #3b82f6 !important; border-right-width: 5px !important; box-shadow: 0 4px 14px rgba(59,130,246,0.15) !important; }
+    .roadmap-day-node.excel.current.right .roadmap-day-card { border-left-color: #3b82f6 !important; border-left-width: 5px !important; box-shadow: 0 4px 14px rgba(59,130,246,0.15) !important; }
+    .roadmap-day-node.sql.current.left .roadmap-day-card { border-right-color: #3b82f6 !important; border-right-width: 5px !important; box-shadow: 0 4px 14px rgba(59,130,246,0.15) !important; }
+    .roadmap-day-node.sql.current.right .roadmap-day-card { border-left-color: #3b82f6 !important; border-left-width: 5px !important; box-shadow: 0 4px 14px rgba(59,130,246,0.15) !important; }
+    .roadmap-day-node.python.current.left .roadmap-day-card { border-right-color: #3b82f6 !important; border-right-width: 5px !important; box-shadow: 0 4px 14px rgba(59,130,246,0.15) !important; }
+    .roadmap-day-node.python.current.right .roadmap-day-card { border-left-color: #3b82f6 !important; border-left-width: 5px !important; box-shadow: 0 4px 14px rgba(59,130,246,0.15) !important; }
     
     /* Lift active/current card to look extremely prominent and premium */
     .roadmap-day-card.current {
@@ -5206,8 +5237,8 @@
     }
     
     .roadmap-day-card:hover {
-      transform: translateY(-3px) scale(1.02);
-      box-shadow: 0 10px 25px rgba(99, 102, 241, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px -1px rgba(0, 0, 0, 0.08), 0 4px 6px -1px rgba(0, 0, 0, 0.04) !important;
     }
     
     /* Card content alignment & right-align status row for left cards */
@@ -5265,27 +5296,10 @@
       margin-top: 2px;
     }
     
-    /* Card Hover Glows */
+    /* Hover effect for clean rectangular cards */
     .roadmap-day-card:hover {
       transform: translateY(-2px);
-    }
-    
-    /* Color System (Cards with translucent gradients) */
-    .roadmap-day-card.completed {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.06)) !important;
-      border: 1px solid rgba(16, 185, 129, 0.4) !important;
-    }
-    .roadmap-day-card.completed:hover {
-      border-color: rgba(16, 185, 129, 0.5) !important;
-      box-shadow: 0 6px 24px rgba(16, 185, 129, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    }
-    .roadmap-day-card.current {
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(29, 78, 216, 0.04)) !important;
-      border: 1px solid rgba(59, 130, 246, 0.45) !important;
-    }
-    .roadmap-day-card.current:hover {
-      border-color: rgba(59, 130, 246, 0.7) !important;
-      box-shadow: 0 6px 24px rgba(59, 130, 246, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      box-shadow: 0 6px 12px -1px rgba(0, 0, 0, 0.08), 0 4px 6px -1px rgba(0, 0, 0, 0.04) !important;
     }
     .roadmap-day-card.locked {
       opacity: 0.6;
@@ -5323,19 +5337,25 @@
       .roadmap-day-node.right .roadmap-checkpoint-dot { left: 35px !important; }
       .roadmap-day-node.left  .postshadow,
       .roadmap-day-node.right .postshadow             { left: 35px !important; }
+      .roadmap-day-node.left  .post,
+      .roadmap-day-node.right .post                   { left: 35px !important; }
     }
 
-    /* Node Anatomy: Post shadows beneath post */
+    /* ═══════════════════════════════════════════
+       REALISTIC 3D STEEL SIGNPOSTS
+       ═══════════════════════════════════════════ */
+
+    /* Round ground shadow under the base of the metal post */
     .postshadow {
       position: absolute;
-      top: calc(50% + 12px);
-      width: 16px;
+      top: 50%;
+      width: 14px;
       height: 5px;
-      background: rgba(0,0,0,0.12);
+      background: rgba(0, 0, 0, 0.35);
       border-radius: 50%;
-      filter: blur(2px);
-      transform: translateX(-50%) translateY(-50%);
-      z-index: 3; /* Layer 3: Render above cards, below post and dots */
+      filter: blur(1.5px);
+      transform: translateX(-50%) translateY(16px);
+      z-index: 3; /* Rendered on top of the road surface */
     }
     .roadmap-day-node.left .postshadow {
       left: calc(50% + 24px);
@@ -5344,16 +5364,18 @@
       left: calc(50% - 24px);
     }
 
-    /* Node Anatomy: Tapered Post planted behind the dot */
+    /* Cylinder steel pole planted in asphalt */
     .post {
+      display: block !important;
       position: absolute;
-      top: calc(50% - 28px);
-      width: 5px;
-      height: 40px;
-      background: linear-gradient(90deg, #94a3b8, #64748b 60%, #475569);
+      top: 50%;
+      width: 4px;
+      height: 32px;
+      background: linear-gradient(90deg, #94a3b8 0%, #f1f5f9 35%, #475569 85%, #334155 100%);
       border-radius: 1px;
-      transform: translateX(-50%);
-      z-index: 4; /* Layer 4: Render above road SVG */
+      transform: translateX(-50%) translateY(-16px);
+      z-index: 4;
+      box-shadow: 1px 1px 2px rgba(0,0,0,0.15);
     }
     .roadmap-day-node.left .post {
       left: calc(50% + 24px);
@@ -5362,27 +5384,31 @@
       left: calc(50% - 24px);
     }
 
-    /* Node Anatomy: Dot is 32px circle, raised 28px above center */
+    /* Signboard mounted at the top of the pole */
     .roadmap-checkpoint-dot {
       position: absolute;
       top: 50%;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 30%, #e2e8f0, #cbd5e1);
-      border: 3px solid #e2e8f0;
-      transform: translate(-50%, -50%) translateY(-28px);
-      z-index: 5; /* Layer 5: Render at the very top */
-      transition: all 0.3s ease;
+      width: 28px;
+      height: 20px;
+      border-radius: 3px;
+      background: #475569;
+      border: 1.5px solid #ffffff;
+      transform: translate(-50%, -50%) translateY(-26px); /* Raised above pole top */
+      z-index: 5;
+      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 13px;
-      color: #475569;
-      box-shadow:
-        0 2px 8px rgba(0,0,0,.10),
-        inset 0 1px 2px rgba(255,255,255,.9),
-        inset 0 -1px 2px rgba(0,0,0,.06);
+      font-size: 11px;
+      font-weight: 800;
+      font-family: 'Outfit', sans-serif;
+      color: #ffffff;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.3);
+      transition: all 0.2s ease-out;
+    }
+    .roadmap-checkpoint-dot:hover {
+      transform: translate(-50%, -50%) translateY(-28px) scale(1.1);
+      box-shadow: 0 6px 10px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.4);
     }
     .roadmap-day-node.left .roadmap-checkpoint-dot {
       left: calc(50% + 24px);
@@ -5391,33 +5417,31 @@
       left: calc(50% - 24px);
     }
 
-    /* Dot Color State & Radial Gradient Grays, Greens, Blues */
-    .roadmap-checkpoint-dot.completed {
-      background: radial-gradient(circle at 35% 30%, #34d399, #059669) !important;
-      border-color: #6ee7b7 !important;
-      color: #fff !important;
+    /* Phase specific colors for Signboard */
+    .roadmap-day-node.excel .roadmap-checkpoint-dot {
+      background: linear-gradient(135deg, #f59e0b, #d97706) !important;
     }
+    .roadmap-day-node.sql .roadmap-checkpoint-dot {
+      background: linear-gradient(135deg, #06b6d4, #0891b2) !important;
+    }
+    .roadmap-day-node.python .roadmap-checkpoint-dot {
+      background: linear-gradient(135deg, #10b981, #059669) !important;
+    }
+
+    /* Active state animation */
     .roadmap-checkpoint-dot.current {
-      background: radial-gradient(circle at 35% 30%, #60a5fa, #2563eb) !important;
-      border-color: #93c5fd !important;
-      color: #fff !important;
-      animation: pulseDotRing 1.8s ease-out infinite;
+      animation: pulsePinRing 1.8s ease-out infinite;
+      border-color: #60a5fa !important;
     }
     .roadmap-checkpoint-dot.locked {
-      background: radial-gradient(circle at 35% 30%, #f1f5f9, #cbd5e1) !important;
-      border-color: #cbd5e1 !important;
-      color: #64748b !important;
+      background: linear-gradient(135deg, #94a3b8, #64748b) !important;
+      border-color: #e2e8f0 !important;
+      opacity: 0.9;
     }
     
-    /* Phase specific border colors for locked state */
-    .roadmap-day-node.excel .roadmap-checkpoint-dot.locked {
-      border-color: #F5A623 !important; /* Amber */
-    }
-    .roadmap-day-node.sql .roadmap-checkpoint-dot.locked {
-      border-color: #06B6D4 !important; /* Teal */
-    }
-    .roadmap-day-node.python .roadmap-checkpoint-dot.locked {
-      border-color: #a855f7 !important; /* Purple */
+    @keyframes pulsePinRing {
+      0%   { box-shadow: 0 4px 6px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.3), 0 0 0 0 rgba(96,165,250,0.6); }
+      70%  { box-shadow: 0 4px 6px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.3), 0 0 0 10px rgba(96,165,250,0); }
     }
 
     @keyframes pulsePinRing {
@@ -5861,11 +5885,11 @@
               </defs>
               <rect width="100%" height="100%" fill="url(#vignette)" style="mix-blend-mode: normal; opacity: 0.1; pointer-events: none;" />
               <!-- 1. Shoulder: 48px stroke + drop shadow -->
-              <path id="roadmapBorder" fill="none" stroke="#1e293b" stroke-width="62" stroke-linecap="round" stroke-linejoin="round" filter="url(#roadShadow)" />
+              <path id="roadmapBorder" fill="none" stroke="#94a3b8" stroke-width="62" stroke-linecap="round" stroke-linejoin="round" filter="url(#roadShadow)" style="transform: translate(0, 4px);" />
               <!-- 2. Shoulder texture: 48px stroke + shoulderNoise -->
-              <path id="roadmapBorderTexture" fill="none" stroke="#1e293b" stroke-width="62" stroke-linecap="round" stroke-linejoin="round" filter="url(#shoulderNoise)" style="opacity: 0.6;" />
+              <path id="roadmapBorderTexture" fill="none" stroke="#94a3b8" stroke-width="62" stroke-linecap="round" stroke-linejoin="round" filter="url(#shoulderNoise)" style="opacity: 0.4; transform: translate(0, 4px);" />
               <!-- 3. Dirt transition: 40px stroke -->
-              <path id="roadmapDirt" fill="none" stroke="#374151" stroke-width="54" stroke-linecap="round" stroke-linejoin="round" />
+              <path id="roadmapDirt" fill="none" stroke="#475569" stroke-width="54" stroke-linecap="round" stroke-linejoin="round" style="transform: translate(0, 2px);" />
               <!-- 4. Asphalt: 32px stroke -->
               <path id="roadmapAsphalt" fill="none" stroke="#1c1c2e" stroke-width="44" stroke-linecap="round" stroke-linejoin="round" />
               <!-- 5. Asphalt texture: 32px stroke + asphaltNoise -->
@@ -8502,13 +8526,11 @@
           const pinLabel = isCompleted ? '\u2713' : (isLocked ? '\U0001F512' : day.globalDay);
           node.innerHTML = `
             <div class="postshadow"></div>
+            <div class="post"></div>
             <div class="roadmap-checkpoint-dot ${stateClass}"
                  onclick="event.stopPropagation(); ${clickHandler}"
                  title="Day ${day.globalDay}: ${day.title}">
-              <div class="pin-body">
-                <div class="pin-circle"></div>
-                <div class="pin-label">${pinLabel}</div>
-              </div>
+              ${pinLabel}
             </div>
             <div class="roadmap-day-card ${stateClass}" onclick="${clickHandler}">
               <div class="card-day-label" style="color: ${day.phase === 'excel' ? '#F5A623' : (day.phase === 'sql' ? '#06B6D4' : '#10B981')}">
@@ -8602,10 +8624,9 @@
         let points = [];
         dots.forEach(dot => {
           const node = dot.parentElement;
-          // pin tip: transform translate(-50%, -100%), so centre is at left+18, top
           const x = dot.offsetLeft + dot.offsetWidth / 2;
-          // Road centre = CSS top:50% of the node
-          const y = node.offsetTop + dot.offsetTop;
+          // Steel post base aligns exactly with the vertical center of the node/row (no vertical offset)
+          const y = node.offsetTop + dot.offsetTop + dot.offsetHeight / 2;
           points.push({ x, y });
         });
         

@@ -155,9 +155,23 @@ export default async function NotebookPage({ params }: { params: { dayId: string
   const sections = (notebook.sections || []) as Section[];
 
   // Dynamically rewrite static day links (e.g. day03.html or /day03.html) to Next.js routes (/notebook/day03)
-  const cleanHtmlBody = notebook.html_body
+  let cleanHtmlBody = notebook.html_body
     ? notebook.html_body.replace(/href=(["'])\/?day(\d+)\.html/g, 'href=$1/notebook/day$2')
     : '';
+
+  // Clean inline color, background, and borders designed for dark theme to fallback on premium stylesheet styles
+  if (cleanHtmlBody) {
+    cleanHtmlBody = cleanHtmlBody.replace(/style="([^"]*)"/gi, (match, styleContent) => {
+      const cleaned = styleContent
+        .replace(/color\s*:\s*([^;]+)(;|$)/gi, '')
+        .replace(/background\s*:\s*([^;]+)(;|$)/gi, '')
+        .replace(/background-color\s*:\s*([^;]+)(;|$)/gi, '')
+        .replace(/border-bottom\s*:\s*([^;]+)(;|$)/gi, '')
+        .replace(/border\s*:\s*([^;]+)(;|$)/gi, '')
+        .trim();
+      return cleaned ? `style="${cleaned}"` : '';
+    });
+  }
 
   // Curriculum maps for all courses
   const PYTHON_DAYS = [

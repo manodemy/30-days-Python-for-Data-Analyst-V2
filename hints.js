@@ -140,9 +140,6 @@
     var count = 0;
     for (var i = 0; i < cells.length; i++) {
       var cell = cells[i];
-      var prev = cell.previousElementSibling;
-      if (!prev) continue;
-      if (!prev.classList.contains('question') && !prev.classList.contains('interview')) continue;
 
       var actions = cell.querySelector('.cell-actions');
       if (!actions) continue;

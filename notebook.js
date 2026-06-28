@@ -470,12 +470,6 @@ function initializeNotebook() {
   // Accessibility & Keyboard traps helpers
   if (cellEl) {
     cellEl.setAttribute('aria-label', 'Python code cell. Press Escape to exit editor.');
-    
-    // Add visual keyboard tooltip hint
-    const hint = document.createElement('div');
-    hint.className = 'keyboard-hint';
-    hint.innerText = 'Press Esc to exit editor';
-    cellEl.appendChild(hint);
   }
 
   const inputField = cm.getInputField();
@@ -487,10 +481,6 @@ function initializeNotebook() {
     if (window.innerWidth <= 768) {
       showSymbolHelperBar(instance);
     }
-    if (cellEl) {
-      const hint = cellEl.querySelector('.keyboard-hint');
-      if (hint) hint.classList.add('show');
-    }
     // Auto-clear helper placeholder comment
     const trimVal = instance.getValue().trim();
     if (trimVal === '# Write your answer here' || trimVal === '-- Write your SQL query here') {
@@ -500,10 +490,6 @@ function initializeNotebook() {
 
   cm.on('blur', function (instance) {
     setTimeout(hideSymbolHelperBar, 200);
-    if (cellEl) {
-      const hint = cellEl.querySelector('.keyboard-hint');
-      if (hint) hint.classList.remove('show');
-    }
   });
 
 
@@ -2680,11 +2666,11 @@ function initializePracticeModeSidebar() {
 
   const readBtn = document.createElement('button');
   readBtn.className = 'mode-segment-btn segment-read' + (!isPracticeMode ? ' active' : '');
-  readBtn.innerHTML = '📖 Read';
+  readBtn.innerHTML = '<span class="segment-icon">📖</span><span class="segment-label">Read</span>';
 
   const practiceBtn = document.createElement('button');
   practiceBtn.className = 'mode-segment-btn segment-practice' + (isPracticeMode ? ' active' : '');
-  practiceBtn.innerHTML = '💻 Practice';
+  practiceBtn.innerHTML = '<span class="segment-icon">💻</span><span class="segment-label">Practice</span>';
 
   toggleContainer.appendChild(readBtn);
   toggleContainer.appendChild(practiceBtn);
@@ -2785,10 +2771,24 @@ function showSymbolHelperBar(cmInstance) {
   initSymbolHelperBar();
   if (symbolHelperBarEl) {
     symbolHelperBarEl.classList.add('visible');
-    symbolHelperBarEl.style.position = 'fixed';
-    symbolHelperBarEl.style.bottom = '0';
-    symbolHelperBarEl.style.left = '0';
-    symbolHelperBarEl.style.right = '0';
+    const focusOverlay = document.getElementById('focusOverlay');
+    if (document.body.classList.contains('focus-mode-active') && focusOverlay) {
+      if (symbolHelperBarEl.parentNode !== focusOverlay) {
+        focusOverlay.appendChild(symbolHelperBarEl);
+      }
+      symbolHelperBarEl.style.removeProperty('position');
+      symbolHelperBarEl.style.removeProperty('bottom');
+      symbolHelperBarEl.style.removeProperty('left');
+      symbolHelperBarEl.style.removeProperty('right');
+    } else {
+      if (symbolHelperBarEl.parentNode !== document.body) {
+        document.body.appendChild(symbolHelperBarEl);
+      }
+      symbolHelperBarEl.style.position = 'fixed';
+      symbolHelperBarEl.style.bottom = '0';
+      symbolHelperBarEl.style.left = '0';
+      symbolHelperBarEl.style.right = '0';
+    }
   }
 }
 
@@ -2977,33 +2977,21 @@ function initializeMobileFeatures() {
     focusOverlayEl.id = 'focusOverlay';
     focusOverlayEl.innerHTML = `
       <div class="focus-header">
-        <button class="focus-exit-btn" id="focusExitBtn">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-          Exit Focus
-        </button>
-        <div class="focus-counter" id="focusCounter">Question 0 of 0</div>
+        <div class="focus-header-left">
+          <button class="focus-exit-btn" id="focusExitBtn" title="Exit Focus">✕</button>
+          <button class="focus-hint-btn" id="focusHintBtn"><svg style="width:14px;height:14px;display:inline-block;vertical-align:-2px;margin-right:6px;" viewBox="0 0 24 24"><defs><linearGradient id="geminiSparkGradFocus" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00E6F6" /><stop offset="100%" stop-color="#8B5CF6" /></linearGradient></defs><path fill="url(#geminiSparkGradFocus)" d="M11.04 19.32Q12 21.51 12 24q0-2.49.93-4.68.96-2.19 2.58-3.81t3.81-2.55Q21.51 12 24 12q-2.49 0-4.68-.93a12.3 12.3 0 0 1-3.81-2.58 12.3 12.3 0 0 1-2.58-3.81Q12 2.49 12 0q0 2.49-.96 4.68-.93 2.19-2.55 3.81a12.3 12.3 0 0 1-3.81 2.58Q2.49 12 0 12q2.49 0 4.68.96 2.19.93 3.81 2.55t2.55 3.81"/></svg><span class="gemini-btn-text">Ask Gemini</span></button>
+          <button class="focus-run-btn" id="focusRunBtn">▶ Run</button>
+          <button class="focus-clear-btn" id="focusClearBtn">✕ Clear</button>
+        </div>
+        <div class="focus-header-right">
+          <div class="focus-counter" id="focusCounter">Question 0 of 0</div>
+          <div class="focus-nav-group">
+            <button class="focus-nav-btn" id="focusPrevBtn">&lt; Prev</button>
+            <button class="focus-nav-btn" id="focusNextBtn">Next &gt;</button>
+          </div>
+        </div>
       </div>
       <div class="focus-content" id="focusContent"></div>
-      <div class="focus-action-bar">
-        <button class="focus-nav-btn" id="focusPrevBtn">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="15 18 9 12 15 6"></polyline>
-          </svg>
-          Prev
-        </button>
-        <button class="focus-run-btn" id="focusRunBtn">▶ Run</button>
-        <button class="focus-clear-btn" id="focusClearBtn">✕ Clear</button>
-        <button class="focus-hint-btn" id="focusHintBtn"><svg style="width:14px;height:14px;display:inline-block;vertical-align:-2px;margin-right:6px;" viewBox="0 0 24 24"><defs><linearGradient id="geminiSparkGradFocus" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00E6F6" /><stop offset="100%" stop-color="#8B5CF6" /></linearGradient></defs><path fill="url(#geminiSparkGradFocus)" d="M11.04 19.32Q12 21.51 12 24q0-2.49.93-4.68.96-2.19 2.58-3.81t3.81-2.55Q21.51 12 24 12q-2.49 0-4.68-.93a12.3 12.3 0 0 1-3.81-2.58 12.3 12.3 0 0 1-2.58-3.81Q12 2.49 12 0q0 2.49-.96 4.68-.93 2.19-2.55 3.81a12.3 12.3 0 0 1-3.81 2.58Q2.49 12 0 12q2.49 0 4.68.96 2.19.93 3.81 2.55t2.55 3.81"/></svg><span class="gemini-btn-text">Ask Gemini</span></button>
-        <button class="focus-nav-btn" id="focusNextBtn">
-          Next
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </button>
-      </div>
     `;
 
     document.body.appendChild(focusOverlayEl);
@@ -3082,6 +3070,7 @@ function initializeMobileFeatures() {
     // Show overlay
     document.body.classList.add('focus-mode-active');
     focusOverlayEl.classList.add('active');
+    updateViewportSizing();
 
     // Update Counter
     focusCounterEl.textContent = `Question ${currentIndex + 1} of ${focusPairs.length}`;
@@ -3134,6 +3123,22 @@ function initializeMobileFeatures() {
     document.body.classList.remove('focus-mode-active');
     if (focusOverlayEl) {
       focusOverlayEl.classList.remove('active');
+      focusOverlayEl.style.removeProperty('height');
+      focusOverlayEl.style.removeProperty('top');
+      focusOverlayEl.style.removeProperty('bottom');
+    }
+
+    // Hide symbol helper bar on exit
+    hideSymbolHelperBar();
+
+    if (symbolHelperBarEl) {
+      if (symbolHelperBarEl.parentNode !== document.body) {
+        document.body.appendChild(symbolHelperBarEl);
+      }
+      symbolHelperBarEl.style.position = 'fixed';
+      symbolHelperBarEl.style.bottom = '0';
+      symbolHelperBarEl.style.left = '0';
+      symbolHelperBarEl.style.right = '0';
     }
 
     // Re-attach the MutationObserver now that DOM is stable again
@@ -3174,5 +3179,49 @@ function initializeMobileFeatures() {
     injectFocusButtons();
   });
   focusModeObserver.observe(document.body, { childList: true, subtree: true });
+
+  function updateViewportSizing() {
+    if (!focusOverlayEl || !document.body.classList.contains('focus-mode-active')) {
+      return;
+    }
+    if (window.visualViewport) {
+      const vv = window.visualViewport;
+      focusOverlayEl.style.setProperty('height', `${vv.height}px`, 'important');
+      focusOverlayEl.style.setProperty('top', `${vv.offsetTop}px`, 'important');
+      focusOverlayEl.style.setProperty('bottom', 'auto', 'important');
+    } else {
+      focusOverlayEl.style.removeProperty('height');
+      focusOverlayEl.style.removeProperty('top');
+      focusOverlayEl.style.removeProperty('bottom');
+    }
+  }
+
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', updateViewportSizing);
+    window.visualViewport.addEventListener('scroll', updateViewportSizing);
+  }
+  window.addEventListener('resize', updateViewportSizing);
+
+  // Prevent background scrolling/panning when focus mode is active
+  window.addEventListener('scroll', () => {
+    if (document.body.classList.contains('focus-mode-active')) {
+      window.scrollTo(0, 0);
+    }
+  }, { passive: true });
+
+  // Defensively trigger viewport adjustment when focusing inputs
+  document.addEventListener('focusin', (e) => {
+    if (document.body.classList.contains('focus-mode-active') && 
+        (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT')) {
+      setTimeout(updateViewportSizing, 100);
+      setTimeout(updateViewportSizing, 300);
+    }
+  });
+  document.addEventListener('focusout', (e) => {
+    if (document.body.classList.contains('focus-mode-active') && 
+        (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT')) {
+      setTimeout(updateViewportSizing, 100);
+    }
+  });
 }
 

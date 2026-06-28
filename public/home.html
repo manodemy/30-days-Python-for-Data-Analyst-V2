@@ -5208,113 +5208,104 @@
     
     .roadmap-day-card {
       width: auto !important;
-      min-width: 190px !important;
-      max-width: 250px !important;
-      border-radius: 10px !important; /* Premium sleek rounded corners */
-      padding: 8px 12px !important; /* Decreased padding to reduce height */
+      height: auto !important; /* Override external stylesheet fixed 110px height on desktop */
+      min-width: 175px !important;
+      max-width: 215px !important;
+      border-radius: 12px !important; /* Scaled down rounded corners */
+      padding: 6px 12px 6px 12px !important; /* Reduced top/bottom padding to make card shorter */
       cursor: pointer;
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
-      gap: 4px; /* Tighter gap */
+      gap: 5px !important; /* Scaled down gaps */
       transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
-      background: #ffffff !important;
-      border: 1px solid #cbd5e1 !important; /* Sleek outline */
-      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04), inset 0 1px 0 #ffffff !important;
       position: relative;
       z-index: 2;
+      border: 1px solid rgba(148, 163, 184, 0.15) !important;
+      box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.04), 0 6px 12px -5px rgba(0, 0, 0, 0.02) !important;
       -webkit-font-smoothing: antialiased !important;
       -moz-osx-font-smoothing: grayscale !important;
       text-rendering: optimizeLegibility !important;
+      background: #ffffff !important;
     }
+
+    /* Phase specific light theme card backgrounds */
+    .roadmap-day-card.excel { background: #fffdf5 !important; border-color: rgba(245, 158, 11, 0.2) !important; }
+    .roadmap-day-card.sql { background: #ecfeff !important; border-color: rgba(6, 182, 212, 0.2) !important; }
+    .roadmap-day-card.python { background: #ecfdf5 !important; border-color: rgba(16, 185, 129, 0.2) !important; }
+    .roadmap-day-card.locked { background: #f8fafc !important; border-color: rgba(148, 163, 184, 0.2) !important; opacity: 0.7; }
 
     /* Dark theme overrides for roadmap cards */
     body.dark-theme .roadmap-day-card,
     body.dark .roadmap-day-card {
-      background: #1e293b !important; /* Dark slate-800 background */
-      border: 1px solid rgba(255, 255, 255, 0.08) !important;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+      box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.3), 0 6px 12px -5px rgba(0, 0, 0, 0.2) !important;
+      border: 1px solid rgba(255, 255, 255, 0.04) !important;
     }
-    
-    /* Elegant side-border indicators depending on left/right alignment */
-    .roadmap-day-node.left .roadmap-day-card {
-      border-right: 4px solid #cbd5e1 !important;
-      border-left: 1px solid #e2e8f0 !important;
-      border-top: 1px solid #e2e8f0 !important;
-      border-bottom: 1px solid #e2e8f0 !important;
-    }
-    .roadmap-day-node.right .roadmap-day-card {
-      border-left: 4px solid #cbd5e1 !important;
-      border-right: 1px solid #e2e8f0 !important;
-      border-top: 1px solid #e2e8f0 !important;
-      border-bottom: 1px solid #e2e8f0 !important;
-    }
-    
-    /* Phase specific border colors when completed */
-    .roadmap-day-node.excel.completed.left .roadmap-day-card { border-right-color: #F5A623 !important; }
-    .roadmap-day-node.excel.completed.right .roadmap-day-card { border-left-color: #F5A623 !important; }
-    .roadmap-day-node.sql.completed.left .roadmap-day-card { border-right-color: #06B6D4 !important; }
-    .roadmap-day-node.sql.completed.right .roadmap-day-card { border-left-color: #06B6D4 !important; }
-    .roadmap-day-node.python.completed.left .roadmap-day-card { border-right-color: #10B981 !important; }
-    .roadmap-day-node.python.completed.right .roadmap-day-card { border-left-color: #10B981 !important; }
-    
-    /* Glowing active indicators — current card border + glow matches PHASE color */
-    .roadmap-day-node.excel.current.left .roadmap-day-card  { border-right-color: #f59e0b !important; border-right-width: 5px !important; box-shadow: 0 4px 18px rgba(245,158,11,0.28) !important; }
-    .roadmap-day-node.excel.current.right .roadmap-day-card { border-left-color:  #f59e0b !important; border-left-width:  5px !important; box-shadow: 0 4px 18px rgba(245,158,11,0.28) !important; }
-    .roadmap-day-node.sql.current.left .roadmap-day-card    { border-right-color: #06b6d4 !important; border-right-width: 5px !important; box-shadow: 0 4px 18px rgba(6,182,212,0.28)   !important; }
-    .roadmap-day-node.sql.current.right .roadmap-day-card   { border-left-color:  #06b6d4 !important; border-left-width:  5px !important; box-shadow: 0 4px 18px rgba(6,182,212,0.28)   !important; }
-    .roadmap-day-node.python.current.left .roadmap-day-card { border-right-color: #10b981 !important; border-right-width: 5px !important; box-shadow: 0 4px 18px rgba(16,185,129,0.28)  !important; }
-    .roadmap-day-node.python.current.right .roadmap-day-card{ border-left-color:  #10b981 !important; border-left-width:  5px !important; box-shadow: 0 4px 18px rgba(16,185,129,0.28)  !important; }
-    
-    /* Lift active/current card to look extremely prominent and premium */
-    .roadmap-day-card.current {
-      border: 2px solid var(--dashboard-accent) !important;
-      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.15), inset 0 1px 0 rgba(255,255,255,0.95) !important;
-    }
-    
+    body.dark-theme .roadmap-day-card.excel, body.dark .roadmap-day-card.excel { background: #1c1917 !important; border-color: rgba(245, 158, 11, 0.25) !important; }
+    body.dark-theme .roadmap-day-card.sql, body.dark .roadmap-day-card.sql { background: #0f172a !important; border-color: rgba(6, 182, 212, 0.25) !important; }
+    body.dark-theme .roadmap-day-card.python, body.dark .roadmap-day-card.python { background: #062f22 !important; border-color: rgba(16, 185, 129, 0.25) !important; }
+    body.dark-theme .roadmap-day-card.locked, body.dark .roadmap-day-card.locked { background: #1e293b !important; border-color: rgba(71, 85, 105, 0.3) !important; opacity: 0.6; }
+
+    /* Hover effect */
     .roadmap-day-card:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 20px -2px rgba(0, 0, 0, 0.14), 0 4px 8px -2px rgba(0, 0, 0, 0.06) !important;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px -4px rgba(0, 0, 0, 0.08), 0 8px 16px -5px rgba(0, 0, 0, 0.04) !important;
     }
-    
-    /* Card content alignment & right-align status row for left cards */
-    .roadmap-day-node.left .roadmap-day-card {
-      margin-right: 12px;
-      text-align: right;
-      margin-left: auto;
+    body.dark-theme .roadmap-day-card:hover, body.dark .roadmap-day-card:hover {
+      box-shadow: 0 10px 24px -4px rgba(0, 0, 0, 0.45), 0 8px 16px -5px rgba(0, 0, 0, 0.3) !important;
     }
-    .roadmap-day-node.right .roadmap-day-card {
-      margin-left: 12px;
-      text-align: left;
+
+    /* Active current card border glow matches phase */
+    .roadmap-day-card.current {
+      outline: 2px solid var(--dashboard-accent) !important;
+      outline-offset: 1px;
     }
-    .roadmap-day-node.left .card-status-row {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      width: 100%;
-    }
-    .roadmap-day-node.right .card-status-row {
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-    }
-    
-    /* Card Sublabel Day Tag */
-    .roadmap-day-card .card-day-label {
+    .roadmap-day-card.excel.current { outline-color: #f59e0b !important; }
+    .roadmap-day-card.sql.current { outline-color: #06b6d4 !important; }
+    .roadmap-day-card.python.current { outline-color: #10b981 !important; }
+
+    /* Card Top Pill Badge */
+    .roadmap-day-card .card-pill {
+      align-self: center;
       font-family: 'Outfit', sans-serif !important;
-      font-size: 10px !important; /* Crisp, readable small subheader */
-      font-weight: 750 !important;
+      font-size: 8.5px !important; /* Scaled down font size */
+      font-weight: 800 !important;
       text-transform: uppercase !important;
-      letter-spacing: 0.07em !important;
-      line-height: 1.1 !important;
+      letter-spacing: 0.08em !important;
+      padding: 2px 8px !important; /* Reduced padding to make card shorter */
+      border-radius: 999px !important;
+      color: #ffffff !important;
+      text-shadow: 0 1px 1px rgba(0,0,0,0.15);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      margin-bottom: 0px !important; /* Removed margin-bottom */
+      display: inline-block;
+      text-align: center;
+      white-space: nowrap;
     }
     
-    /* Card Title & Outfit font - fits text on 1-2 lines nicely */
+    .roadmap-day-card.excel .card-pill { background: linear-gradient(135deg, #fbbf24, #f59e0b) !important; }
+    .roadmap-day-card.sql .card-pill { background: linear-gradient(135deg, #22d3ee, #06b6d4) !important; }
+    .roadmap-day-card.python .card-pill { background: linear-gradient(135deg, #34d399, #10b981) !important; }
+    .roadmap-day-card.locked .card-pill { background: #94a3b8 !important; color: #ffffff !important; }
+
+    /* Card Middle Content Row: Icon + Title */
+    .roadmap-day-card .card-content-row {
+      display: flex !important;
+      align-items: center !important;
+      gap: 6px !important; /* Reduced gap */
+      width: 100% !important;
+      text-align: left !important;
+    }
+    .roadmap-day-card .card-emoji {
+      font-size: 15px !important; /* Reduced emoji slightly */
+      line-height: 1 !important;
+      flex-shrink: 0 !important;
+    }
     .roadmap-day-card .card-title-text {
       font-family: 'Outfit', sans-serif !important;
-      font-size: 12.5px !important; /* Crisp, readable title size suitable for the map */
-      font-weight: 700 !important; /* Heavy geometric boldness */
-      line-height: 1.3 !important;
+      font-size: 10.5px !important; /* Reduced title size slightly */
+      font-weight: 700 !important;
+      line-height: 1.25 !important;
       color: #0f172a !important; /* Premium Slate-900 */
       white-space: normal !important;
       word-wrap: break-word !important;
@@ -5322,32 +5313,59 @@
       -webkit-line-clamp: 2 !important;
       -webkit-box-orient: vertical !important;
       overflow: visible !important;
-      text-align: inherit !important;
     }
-    
-    /* Card Status Pill Row */
-    .roadmap-day-card .card-status-row {
-      font-family: 'Outfit', sans-serif !important;
-      font-size: 10px !important; /* Sleek status row */
-      font-weight: 600 !important;
-      color: #64748b !important;
-      margin-top: 2px !important;
+    body.dark-theme .roadmap-day-card .card-title-text,
+    body.dark .roadmap-day-card .card-title-text {
+      color: #f1f5f9 !important; /* Slate-100 */
+    }
+
+    /* Card Bottom Progress Bar Section */
+    .roadmap-day-card .card-progress-section {
+      width: 100% !important;
       display: flex !important;
+      flex-direction: column !important;
+      gap: 2px !important; /* Reduced gap */
       align-items: center !important;
-      gap: 5px !important;
+      margin-top: 1px !important; /* Reduced margin-top */
     }
-    
-    /* Hover effect for clean rectangular cards */
-    /* (hover rule defined above) */
+    .roadmap-day-card .card-progress-bar-wrapper {
+      width: 100% !important;
+      height: 3px !important; /* Reduced height */
+      background: #e2e8f0 !important;
+      border-radius: 999px !important;
+      overflow: hidden !important;
+    }
+    body.dark-theme .roadmap-day-card .card-progress-bar-wrapper,
+    body.dark .roadmap-day-card .card-progress-bar-wrapper {
+      background: #334155 !important; /* slate-700 track */
+    }
+    .roadmap-day-card .card-progress-bar-fill {
+      height: 100% !important;
+      border-radius: 999px !important;
+      transition: width 0.4s ease !important;
+    }
+    .roadmap-day-card.excel .card-progress-bar-fill { background: #f59e0b !important; }
+    .roadmap-day-card.sql .card-progress-bar-fill { background: #06b6d4 !important; }
+    .roadmap-day-card.python .card-progress-bar-fill { background: #10b981 !important; }
+    .roadmap-day-card.locked .card-progress-bar-fill { background: #cbd5e1 !important; }
+
+    .roadmap-day-card .card-progress-text {
+      font-family: 'Outfit', sans-serif !important;
+      font-size: 8.5px !important; /* Scaled down progress text size */
+      font-weight: 700 !important;
+      color: #64748b !important; /* slate-500 */
+    }
+    body.dark-theme .roadmap-day-card .card-progress-text,
+    body.dark .roadmap-day-card .card-progress-text {
+      color: #94a3b8 !important; /* slate-400 */
+    }
+
     .roadmap-day-card.locked {
-      opacity: 0.6;
-      cursor: not-allowed;
-      background: rgba(148, 163, 184, 0.10) !important;
-      border: 1px solid rgba(148, 163, 184, 0.2) !important;
+      cursor: not-allowed !important;
     }
     .roadmap-day-card.locked:hover {
-      transform: none;
-      box-shadow: 0 3px 12px rgba(0,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.95);
+      transform: none !important;
+      box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.04), 0 6px 12px -5px rgba(0, 0, 0, 0.02) !important;
     }
     
     /* Mobile responsive roadmap formatting */
@@ -8529,7 +8547,9 @@
         if (currentDay && !window.hasAutoScrolledRoadmap) {
           window.hasAutoScrolledRoadmap = true;
           setTimeout(() => {
-            const targetY = 120 + (currentDay.globalDay - 1) * 108;
+            const isMobile = window.innerWidth <= 768;
+            const spacing = isMobile ? 140 : 108;
+            const targetY = 120 + (currentDay.globalDay - 1) * spacing;
             const viewport = document.getElementById('roadmapViewport');
             if (viewport) {
               viewport.scrollTop = targetY - viewport.clientHeight / 2;
@@ -8559,7 +8579,10 @@
         const dpr = Math.min(Math.max(window.devicePixelRatio || 1, 2.0), 2.5); /* Set minimum 2x resolution for extreme crispness, capped at 2.5x to prevent texture limit issues */
         
         const width = viewport.clientWidth || 400;
-        const height = 6100; // 60 days * 96px + generous certificate area
+        const isMobile = window.innerWidth <= 768;
+        const spacing = isMobile ? 140 : 108;
+        const goalY = 120 + 59 * spacing + (isMobile ? 160 : 140);
+        const height = goalY + (isMobile ? 140 : 120);
 
         // Dynamic viewport sizing
         if (canvas.width !== width * dpr || canvas.height !== height * dpr) {
@@ -8631,7 +8654,6 @@
         const rightBot = [];
 
         const step = 6;
-        const isMobile = window.innerWidth <= 768;
         const A = isMobile ? 8 : width * 0.16; // Curve amplitude
         const lambda = 720;     // Wave length (cycle)
         const ROAD_W = isMobile ? 18 : 32;      // Half road width
@@ -8869,7 +8891,7 @@
         const cardH = 88; // Wide and tall native DOM cards
 
         roadmapDays.forEach((day, index) => {
-          const cy = 120 + index * 108; // 108px spacing for taller 88px cards
+          const cy = 120 + index * spacing; // Dynamic spacing to completely avoid card overlap on mobile/desktop
           const cx = centerX + A * Math.sin((2 * Math.PI * cy) / lambda);
 
           // Alternating placement rules
@@ -8962,38 +8984,43 @@
           const cardEl = document.createElement('div');
           cardEl.className = `roadmap-day-node ${day.phase} ${day.isCompleted ? 'completed' : ''} ${day.isLocked ? 'locked' : ''} ${day.isCurrent ? 'current' : ''} ${isRight ? 'right' : 'left'}`;
           cardEl.style.position = 'absolute';
-          cardEl.style.left = `${isRight ? cx + 28 : cx - 28}px`;
+          cardEl.style.left = `${isRight ? cx + gap : cx - gap}px`;
           cardEl.style.top = `${cy}px`;
           cardEl.style.width = 'auto';
           cardEl.style.height = 'auto';
           cardEl.style.transform = isRight ? 'translateY(-50%)' : 'translate(-100%, -50%)';
           cardEl.style.pointerEvents = 'auto';
 
-          const solvedCount = day.solvedCount;
-          const cells = day.cells;
-          let statusText = day.isCompleted 
-            ? 'Solved' 
-            : (day.isLocked ? 'Locked' : (day.isCurrent ? 'In progress' : 'Unstarted'));
-          if (!day.isLocked) {
-            statusText += ` • ${solvedCount}/${cells}`;
+          const solvedCount = day.solvedCount || 0;
+          const cells = day.cells || 1;
+          const progressPercent = day.isLocked ? 0 : Math.min((solvedCount / cells) * 100, 100);
+
+          let pillText = `${day.phase.toUpperCase()} - DAY ${parseInt(day.courseDay, 10).toString().padStart(2, '0')}`;
+          if (day.isLocked) {
+            pillText = `🔒 LOCKED`;
+          } else if (day.isCompleted) {
+            pillText = `🏆 DAY ${parseInt(day.courseDay, 10).toString().padStart(2, '0')} COMPLETE`;
           }
 
-          const dotColor = day.isLocked ? '#cbd5e1' : colors.light;
-          const midColor = day.isLocked ? '#94a3b8' : colors.mid;
-          const darkColor = day.isLocked ? '#64748b' : colors.dark;
-
           cardEl.innerHTML = `
-            <div class="roadmap-day-card ${day.isLocked ? 'locked' : ''} ${day.isCurrent ? 'current' : ''}">
-              <div class="card-day-label" style="color: ${darkColor} !important;">
-                DAY ${day.globalDay.toString().padStart(2, '0')} • ${day.phase.toUpperCase()} D${parseInt(day.courseDay, 10).toString().padStart(2, '0')}
+            <div class="roadmap-day-card ${day.phase} ${day.isLocked ? 'locked' : ''} ${day.isCurrent ? 'current' : ''}">
+              <!-- 1. Centered Top Pill -->
+              <div class="card-pill">
+                ${pillText}
               </div>
-              <div class="card-title-text" style="color: ${day.isLocked ? '#94a3b8' : '#0f172a'} !important;">
-                ${day.emoji} ${day.title}
+              
+              <!-- 2. Middle Row: Icon + Title -->
+              <div class="card-content-row">
+                <span class="card-emoji">${day.emoji}</span>
+                <span class="card-title-text">${day.title}</span>
               </div>
-              <div class="card-status-row">
-                ${isRight ? `<span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:${dotColor}; border:1px solid ${midColor}; flex-shrink:0;"></span>` : ''}
-                <span class="status-label" style="color:${midColor} !important;">${statusText}</span>
-                ${!isRight ? `<span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:${dotColor}; border:1px solid ${midColor}; flex-shrink:0;"></span>` : ''}
+              
+              <!-- 3. Bottom Row: Progress Section -->
+              <div class="card-progress-section">
+                <div class="card-progress-bar-wrapper">
+                  <div class="card-progress-bar-fill" style="width: ${progressPercent}%;"></div>
+                </div>
+                <div class="card-progress-text">${day.isLocked ? 'Locked' : `${solvedCount}/${cells}`}</div>
               </div>
             </div>
           `;
@@ -9010,7 +9037,6 @@
         });
 
         // 12. Render Stunning 3D Display Pedestal and Download Button at GOAL
-        const goalY = height - 160; // Placed at 5940px, well below Day 60 (5784px) to completely avoid overlaps
         const goalX = centerX + A * Math.sin((2 * Math.PI * goalY) / lambda);
 
         // Pedestal base plate (Shadow & Concrete)
@@ -9303,7 +9329,10 @@
       // Mouse interactive listeners mapping coordinates on home load
       document.addEventListener('DOMContentLoaded', () => {
         const canvas = document.getElementById('roadmapCanvas');
-        if (canvas) {
+        const viewport = document.getElementById('roadmapViewport');
+        if (canvas && viewport) {
+          const dpr = Math.min(Math.max(window.devicePixelRatio || 1, 2.0), 2.5);
+
           canvas.addEventListener('mousemove', (e) => {
             const rect = canvas.getBoundingClientRect();
             const mouseX = e.clientX - rect.left;
@@ -9322,8 +9351,10 @@
               }
             });
 
-            // Check hovered certificate landmark
-            const goalY = 6100 - 160;
+            // Check hovered certificate landmark using dynamic spacing calculations
+            const isMobile = window.innerWidth <= 768;
+            const spacing = isMobile ? 140 : 108;
+            const goalY = 120 + 59 * spacing + (isMobile ? 160 : 140);
             const goalX = (canvas.width / dpr) / 2 + (viewport.clientWidth * 0.16) * Math.sin((2 * Math.PI * goalY) / 720);
             const inCert = mouseX >= goalX - 80 && mouseX <= goalX + 80 &&
                            mouseY >= goalY + 24 && mouseY <= goalY + 54;
@@ -9368,8 +9399,10 @@
               return;
             }
 
-            // Check if clicking certificate button
-            const goalY = 6100 - 160;
+            // Check if clicking certificate button using dynamic spacing calculations
+            const isMobile = window.innerWidth <= 768;
+            const spacing = isMobile ? 140 : 108;
+            const goalY = 120 + 59 * spacing + (isMobile ? 160 : 140);
             const goalX = (canvas.width / dpr) / 2 + (viewport.clientWidth * 0.16) * Math.sin((2 * Math.PI * goalY) / 720);
             if (mouseX >= goalX - 80 && mouseX <= goalX + 80 &&
                 mouseY >= goalY + 24 && mouseY <= goalY + 54) {
@@ -9394,22 +9427,25 @@
 
         const viewport = document.getElementById('roadmapViewport');
         if (viewport) {
-          const offsetTop = 120 + targetDayIndex * 96 - 30;
+          const isMobile = window.innerWidth <= 768;
+          const spacing = isMobile ? 140 : 108;
+          const offsetTop = 120 + targetDayIndex * spacing - 30;
           viewport.scrollTo({
             top: offsetTop,
             behavior: 'smooth'
           });
-
-          const summaryItems = document.querySelectorAll('.roadmap-summary-item');
-          summaryItems.forEach(item => {
-            if (item.classList.contains(phase)) {
-              item.classList.add('active');
-            } else {
-              item.classList.remove('active');
-            }
-          });
         }
-      }      // Define standalone UI update functions
+
+        const summaryItems = document.querySelectorAll('.roadmap-summary-item');
+        summaryItems.forEach(item => {
+          if (item.classList.contains(phase)) {
+            item.classList.add('active');
+          } else {
+            item.classList.remove('active');
+          }
+        });
+      };
+      // Define standalone UI update functions
       const renderMilestoneTimeline = () => {
         const activePrefix = currentCourse === 'sql' ? 'sql-' : (currentCourse === 'excel' ? 'excel-' : '');
         // Render Segmented Milestone Timeline

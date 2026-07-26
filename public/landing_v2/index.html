@@ -954,16 +954,13 @@
         </div>
 
         <div class="comparison-tab-switcher">
-          <div class="comparison-tab-pill active" onclick="switchComparisonTab('comp-mano')">Manodemy</div>
-          <div class="comparison-tab-pill" onclick="switchComparisonTab('comp-traditional')">Video Courses</div>
-          <div class="comparison-tab-pill" onclick="switchComparisonTab('comp-sub')">Subscriptions</div>
-          <div class="comparison-tab-pill" onclick="switchComparisonTab('comp-bootcamp')">Bootcamps</div>
+          <button class="comparison-tab-pill active" data-col="1">Manodemy</button>
+          <button class="comparison-tab-pill" data-col="2">Video Courses</button>
+          <button class="comparison-tab-pill" data-col="3">Subscriptions</button>
+          <button class="comparison-tab-pill" data-col="4">Bootcamps</button>
         </div>
 
-        <div class="mobile-swipe-hint">
-          <span>👉 Swipe table sideways to compare all features</span>
-        </div>
-        <div class="compare-wrap reveal" data-active-tab="comp-mano">
+<div class="compare-wrap reveal" data-active-tab="comp-mano">
           <table>
             <thead>
               <tr>
@@ -1677,6 +1674,65 @@
           if (launchBtn) launchBtn.setAttribute('href', url);
         });
       });
+    })();
+  </script>
+
+
+  <!-- Comparison Table Scroll Sync Script -->
+  <script>
+    (function() {
+      const container = document.querySelector('.compare-wrap');
+      const tabs = document.querySelectorAll('.comparison-tab-pill');
+      if (!container || !tabs.length) return;
+
+      const table = container.querySelector('table');
+      if (!table) return;
+
+      // Click tab to scroll table horizontally to target column
+      tabs.forEach((tab, index) => {
+        tab.addEventListener('click', () => {
+          const colIdx = index + 2; // 2nd th is Manodemy, 3rd is Video, 4th is Subscriptions, 5th is Bootcamps
+          const targetTh = table.querySelector(`tr th:nth-child(${colIdx})`);
+          if (targetTh) {
+            const stickyWidth = table.querySelector('tr th:first-child')?.offsetWidth || 140;
+            const scrollLeftTarget = targetTh.offsetLeft - stickyWidth;
+            container.scrollTo({
+              left: Math.max(0, scrollLeftTarget),
+              behavior: 'smooth'
+            });
+          }
+          tabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+        });
+      });
+
+      // Scroll listener to update active tab based on scroll position
+      let isScrolling;
+      container.addEventListener('scroll', () => {
+        clearTimeout(isScrolling);
+        isScrolling = setTimeout(() => {
+          const scrollLeft = container.scrollLeft;
+          const stickyWidth = table.querySelector('tr th:first-child')?.offsetWidth || 140;
+          const colHeaders = table.querySelectorAll('tr th');
+
+          let activeIndex = 0;
+          colHeaders.forEach((th, idx) => {
+            if (idx === 0) return;
+            const colLeft = th.offsetLeft - stickyWidth;
+            if (scrollLeft >= colLeft - 30) {
+              activeIndex = idx - 1;
+            }
+          });
+
+          tabs.forEach((t, i) => {
+            if (i === activeIndex) {
+              t.classList.add('active');
+            } else {
+              t.classList.remove('active');
+            }
+          });
+        }, 30);
+      }, { passive: true });
     })();
   </script>
 

@@ -7504,3 +7504,50 @@ th.col-mano {
   font-size: 14px !important;
   font-weight: 900 !important;
 }
+
+
+/* ══════════════ COMPARISON TAB SWITCHER STYLES ══════════════ */
+.comparison-tab-switcher {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  margin-bottom: 14px !important;
+  overflow-x: auto !important;
+  padding-bottom: 4px !important;
+  scrollbar-width: none !important;
+}
+
+.comparison-tab-switcher::-webkit-scrollbar {
+  display: none !important;
+}
+
+.comparison-tab-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 8px 18px !important;
+  border-radius: 50px !important;
+  background: rgba(15, 23, 42, 0.05) !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+  color: #475569 !important;
+  font-family: var(--font-display) !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.comparison-tab-pill:hover {
+  background: rgba(0, 180, 216, 0.08) !important;
+  color: #00B4D8 !important;
+  border-color: rgba(0, 180, 216, 0.3) !important;
+}
+
+.comparison-tab-pill.active {
+  background: #00B4D8 !important;
+  color: #FFFFFF !important;
+  border-color: #00B4D8 !important;
+  box-shadow: 0 4px 14px rgba(0, 180, 216, 0.35) !important;
+}

@@ -7749,3 +7749,7 @@ th.col-mano {
   margin-top: 12px !important;
   font-weight: 600 !important;
 }
+
+.pricing-popular-tag {
+  display: none !important;
+}

@@ -93,8 +93,8 @@ function angForIndex(i){
 const wrap = root.querySelector('#rm-dialWrap');
 const canvas = root.querySelector('#c3d');
 
-let W = wrap.clientWidth || 320;
-let H = W; // Perfect 1:1 circular aspect ratio
+let W = wrap.clientWidth || 520;
+let H = wrap.clientHeight || 380; // Perfect 1:1 circular aspect ratio
 canvas.width  = W * (window.devicePixelRatio||1);
 canvas.height = H * (window.devicePixelRatio||1);
 canvas.style.height = H + 'px';

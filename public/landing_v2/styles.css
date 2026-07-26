@@ -981,7 +981,7 @@ button {
 
 /* ════════════════ How it Works Timeline ════════════════ */
 .how-section {
-  padding: 80px 0;
+  padding: 36px 0;
   background: var(--surface);
 }
 
@@ -1053,14 +1053,14 @@ button {
 
 /* â•â•â•â•â•â• Courses Section â•â•â•â•â•â• */
 .courses-section {
-  padding: 80px 0;
+  padding: 36px 0;
 }
 
 .courses-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
-  margin-bottom: 3rem;
+  margin-bottom: 1.5rem;
 }
 
 .course-card {
@@ -1221,7 +1221,7 @@ button {
 
 /* â•â•â•â•â•â• Curriculum Section â•â•â•â•â•â• */
 .curriculum-section {
-  padding: 80px 0;
+  padding: 36px 0;
 }
 
 .curr-tabs {
@@ -1357,7 +1357,7 @@ button {
 
 /* â•â•â•â•â•â• Comparison Section â•â•â•â•â•â• */
 .compare-section {
-  padding: 80px 0;
+  padding: 36px 0;
   background: rgba(255, 255, 255, 0.005);
 }
 
@@ -1417,7 +1417,7 @@ th.col-mano {
 
 /* â•â•â•â•â•â• Testimonials Section â•â•â•â•â•â• */
 .reviews-section {
-  padding: 80px 0;
+  padding: 36px 0;
 }
 
 /* ── Reviews container: stacked column ── */
@@ -1912,7 +1912,7 @@ th.col-mano {
 
 /* â•â•â•â•â•â• Pricing Section â•â•â•â•â•â• */
 .pricing-section {
-  padding: 80px 0;
+  padding: 36px 0;
 }
 
 .pricing-container {
@@ -2049,7 +2049,7 @@ th.col-mano {
 
 /* â•â•â•â•â•â• FAQ Section â•â•â•â•â•â• */
 .faq-section {
-  padding: 80px 0;
+  padding: 36px 0;
   background: rgba(255, 255, 255, 0.005);
 }
 
@@ -2116,7 +2116,7 @@ th.col-mano {
 
 /* ═════ Pricing Section ═════ */
 .pricing-section {
-  padding: 100px 0;
+  padding: 40px 0;
   background: radial-gradient(ellipse at 50% 0%, rgba(0, 180, 216, 0.04) 0%, transparent 60%);
 }
 
@@ -2428,7 +2428,7 @@ th.col-mano {
 
 /* ═════ Final CTA Section ═════ */
 .final-cta-section {
-  padding: 100px 0;
+  padding: 40px 0;
   text-align: center;
   background: linear-gradient(180deg, var(--base) 0%, var(--void) 100%);
   position: relative;
@@ -3912,7 +3912,7 @@ th.col-mano {
 .how-step p { font-size: 14px; line-height: 1.7; }
 
 /* -- COURSES ------------------------------------------------------ */
-.courses-grid { gap: 1.75rem; margin-bottom: 4rem; }
+.courses-grid { gap: 1.75rem; margin-bottom: 2rem; }
 .course-card {
   border-radius: var(--radius-lg);
   padding: 2.25rem 1.75rem;
@@ -3926,7 +3926,7 @@ th.col-mano {
 .bcmp-header, .bcmp-row { padding: 16px 28px; }
 
 /* -- CURRICULUM --------------------------------------------------- */
-.curr-tabs { gap: 10px; margin-bottom: 3rem; }
+.curr-tabs { gap: 10px; margin-bottom: 1.5rem; }
 .curr-tab { padding: 11px 26px; font-size: 14.5px; }
 .day-card { border-radius: var(--radius-md); padding: 1.4rem; }
 .day-card:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.25); }
@@ -4038,7 +4038,7 @@ th.col-mano { letter-spacing: 0.01em; }
 
 /* -- LIVE HUB SECTION ---------------------------------------------- */
 .live-hub-section {
-  padding: 100px 0;
+  padding: 40px 0;
   position: relative;
   background: var(--surface);
 }
@@ -4657,7 +4657,7 @@ html, body {
   .rev-score-massive { font-size: 48px; }
   .footer-inner { gap: 2.5rem; flex-wrap: wrap; }
   .section-head { margin-bottom: 2.5rem; }
-  .courses-grid { margin-bottom: 3rem; }
+  .courses-grid { margin-bottom: 1.5rem; }
 
   /* How it works: stack vertically */
   .how-steps { flex-direction: column; }
@@ -5945,7 +5945,7 @@ html, body {
 
 /* ══════════════ FREE PREVIEW CARDS ══════════════ */
 .preview-section {
-  padding: 80px 0;
+  padding: 36px 0;
   background: #F8FAFC;
 }
 
@@ -6167,7 +6167,7 @@ td.col-mano {
 
 /* ══════════════ PRICING SECTION REDESIGN ══════════════ */
 .pricing-section {
-  padding: 100px 0;
+  padding: 40px 0;
   background: #ffffff;
   background-image: radial-gradient(ellipse at 50% 0%, rgba(2, 132, 199, 0.04) 0%, transparent 55%);
 }
@@ -7345,4 +7345,26 @@ td.col-mano {
   box-shadow: 0 0 10px rgba(245, 158, 11, 0.4) !important;
   display: inline-block !important;
   line-height: 1.3 !important;
+}
+
+
+/* ══════════════ CLEANUP UNNECESSARY SPACES & DIVIDERS ══════════════ */
+.diff-divider-wrapper {
+  display: none !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.curriculum-section,
+.pricing-section,
+.testimonials-section,
+.faq-section,
+.proof-strip {
+  padding-top: 36px !important;
+  padding-bottom: 36px !important;
+}
+
+.section-head {
+  margin-bottom: 20px !important;
 }

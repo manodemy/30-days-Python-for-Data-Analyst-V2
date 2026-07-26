@@ -536,6 +536,136 @@
       </div>
     </section>
 
+    <!-- ==================== INTERACTIVE PLAY LESSON DEMO ==================== -->
+    <section id="play-lesson-demo" class="play-lesson-section">
+      <div class="container">
+        <div class="section-header text-center" style="margin-bottom:36px;">
+          <div class="section-badge" style="display:inline-flex; align-items:center; gap:6px; background:rgba(5,150,105,0.08); color:var(--emerald); padding:6px 14px; border-radius:20px; font-size:12px; font-weight:700; border:1px solid rgba(5,150,105,0.2); margin-bottom:12px;">
+            <span class="badge-dot" style="width:8px; height:8px; border-radius:50%; background:var(--emerald); box-shadow:0 0 10px var(--emerald);"></span> INTERACTIVE LESSON PREVIEW
+          </div>
+          <h2 class="section-title" style="font-family:var(--font-display); font-size:36px; font-weight:900; color:#0F172A; margin-bottom:12px; letter-spacing:-0.02em;">
+            Learn By Doing — Not By Watching Videos
+          </h2>
+          <p class="section-sub" style="font-size:16px; color:#475569; max-width:640px; margin:0 auto; line-height:1.6;">
+            Listen to voice narration, watch real code write itself line-by-line, and execute live queries directly inside your browser notebook.
+          </p>
+        </div>
+
+        <div class="demo-card-container">
+          <!-- Day Tabs -->
+          <div class="demo-tabs">
+            <button class="demo-tab active" data-day="1">
+              <span class="tab-day">Day 01</span>
+              <span class="tab-title">SQL SELECT &amp; Basics</span>
+              <span class="tab-tag tag-free">FREE</span>
+            </button>
+            <button class="demo-tab" data-day="2">
+              <span class="tab-day">Day 02</span>
+              <span class="tab-title">WHERE &amp; Filtering</span>
+              <span class="tab-tag tag-free">FREE</span>
+            </button>
+            <button class="demo-tab" data-day="3">
+              <span class="tab-day">Day 03</span>
+              <span class="tab-title">GROUP BY &amp; Aggregation</span>
+              <span class="tab-tag tag-free">FREE</span>
+            </button>
+            <button class="demo-tab" data-day="4">
+              <span class="tab-day">Day 04</span>
+              <span class="tab-title">SQL JOINS &amp; Mapping</span>
+              <span class="tab-tag tag-free">FREE</span>
+            </button>
+          </div>
+
+          <!-- Live Interactive Mock Code Terminal -->
+          <div class="demo-terminal">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <span class="dot dot-red"></span>
+                <span class="dot dot-yellow"></span>
+                <span class="dot dot-green"></span>
+              </div>
+              <div class="terminal-title" id="demoFileTitle">📄 day01_select_queries.sql</div>
+              <div class="terminal-status">
+                <span class="audio-pulse"></span>
+                <span id="demoAudioStatus">🎙️ Voice Narration: "SELECT retrieves specific columns from analytics_customers..."</span>
+              </div>
+            </div>
+
+            <div class="terminal-body">
+              <!-- Code Pane -->
+              <div class="code-pane">
+                <div class="code-line-nums" id="demoLineNums">
+                  <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+                </div>
+                <div class="code-content">
+                  <pre id="demoCodeText"><span class="kwd">SELECT</span> customer_id, name, total_spent, segment
+<span class="kwd">FROM</span> analytics_customers
+<span class="kwd">WHERE</span> total_spent &gt; 1500
+<span class="kwd">ORDER BY</span> total_spent <span class="kwd">DESC</span>
+<span class="kwd">LIMIT</span> 4;</pre>
+                </div>
+              </div>
+
+              <!-- Output Result Pane -->
+              <div class="output-pane">
+                <div class="output-header">
+                  <span>📊 LIVE QUERY RESULT TABLE</span>
+                  <span class="exec-time">⚡ Executed in 12ms · WASM Engine</span>
+                </div>
+                <div class="output-table-wrap">
+                  <table class="demo-result-table" id="demoResultTable">
+                    <thead>
+                      <tr>
+                        <th>customer_id</th>
+                        <th>name</th>
+                        <th>total_spent</th>
+                        <th>segment</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>1042</td>
+                        <td>Aarav Sharma</td>
+                        <td>$4,250.00</td>
+                        <td>Enterprise</td>
+                      </tr>
+                      <tr>
+                        <td>1089</td>
+                        <td>Priya Patel</td>
+                        <td>$3,890.00</td>
+                        <td>Enterprise</td>
+                      </tr>
+                      <tr>
+                        <td>1104</td>
+                        <td>Rahul Verma</td>
+                        <td>$2,740.00</td>
+                        <td>Growth</td>
+                      </tr>
+                      <tr>
+                        <td>1152</td>
+                        <td>Ananya Gupta</td>
+                        <td>$1,980.00</td>
+                        <td>Growth</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div class="terminal-footer">
+              <div class="demo-actions">
+                <a id="demoLaunchBtn" href="/Version-3/index.html?day=1" class="btn-demo-launch">
+                  <span>⚡ Play Full Day 01 Interactive Lesson (Free Preview)</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Social Proof Strip -->
     <section class="proof-strip">
       <div class="container proof-grid">
@@ -1623,5 +1753,108 @@
   </script>
 
   <button id="backToTop" class="back-to-top" aria-label="Back to top">&#x2191;</button>
+
+  <!-- Interactive Play Lesson Showcase Switcher Script -->
+  <script>
+    (function() {
+      const demoData = {
+        1: {
+          file: '📄 day01_select_queries.sql',
+          narration: '🎙️ Voice Narration: "SELECT retrieves specific columns from analytics_customers..."',
+          lines: ['1', '2', '3', '4', '5'],
+          code: `<span class="kwd">SELECT</span> customer_id, name, total_spent, segment\n<span class="kwd">FROM</span> analytics_customers\n<span class="kwd">WHERE</span> total_spent &gt; 1500\n<span class="kwd">ORDER BY</span> total_spent <span class="kwd">DESC</span>\n<span class="kwd">LIMIT</span> 4;`,
+          headers: ['customer_id', 'name', 'total_spent', 'segment'],
+          rows: [
+            ['1042', 'Aarav Sharma', '$4,250.00', 'Enterprise'],
+            ['1089', 'Priya Patel', '$3,890.00', 'Enterprise'],
+            ['1104', 'Rahul Verma', '$2,740.00', 'Growth'],
+            ['1152', 'Ananya Gupta', '$1,980.00', 'Growth']
+          ],
+          url: '/Version-3/index.html?day=1',
+          btnText: '⚡ Play Full Day 01 Interactive Lesson (Free Preview)'
+        },
+        2: {
+          file: '📄 day02_where_filters.sql',
+          narration: '🎙️ Voice Narration: "Filtering rows dynamically with WHERE and LIKE pattern matching..."',
+          lines: ['1', '2', '3', '4', '5'],
+          code: `<span class="kwd">SELECT</span> order_id, customer_name, region, status\n<span class="kwd">FROM</span> sales_orders\n<span class="kwd">WHERE</span> region = <span class="str">'North America'</span>\n  <span class="kwd">AND</span> status <span class="kwd">LIKE</span> <span class="str">'Completed%'</span>\n<span class="kwd">ORDER BY</span> order_id <span class="kwd">DESC</span>;`,
+          headers: ['order_id', 'customer_name', 'region', 'status'],
+          rows: [
+            ['ORD-9801', 'Vikram Singh', 'North America', 'Completed (Paid)'],
+            ['ORD-9784', 'Sarah Jenkins', 'North America', 'Completed (Paid)'],
+            ['ORD-9752', 'Marcus Vance', 'North America', 'Completed (Paid)'],
+            ['ORD-9710', 'Elena Rostova', 'North America', 'Completed (Paid)']
+          ],
+          url: '/Version-3/index.html?day=2',
+          btnText: '⚡ Play Full Day 02 Interactive Lesson (Free Preview)'
+        },
+        3: {
+          file: '📄 day03_group_by_aggregations.sql',
+          narration: '🎙️ Voice Narration: "Aggregating metrics by segment using GROUP BY and HAVING filters..."',
+          lines: ['1', '2', '3', '4', '5'],
+          code: `<span class="kwd">SELECT</span> segment, <span class="kwd">COUNT</span>(customer_id) <span class="kwd">AS</span> total_users, <span class="kwd">SUM</span>(total_spent) <span class="kwd">AS</span> revenue\n<span class="kwd">FROM</span> analytics_customers\n<span class="kwd">GROUP BY</span> segment\n<span class="kwd">HAVING</span> <span class="kwd">SUM</span>(total_spent) &gt; 10000\n<span class="kwd">ORDER BY</span> revenue <span class="kwd">DESC</span>;`,
+          headers: ['segment', 'total_users', 'revenue'],
+          rows: [
+            ['Enterprise', '142', '$284,500.00'],
+            ['Growth', '385', '$142,300.00'],
+            ['SMB', '890', '$68,900.00']
+          ],
+          url: '/Version-3/index.html?day=3',
+          btnText: '⚡ Play Full Day 03 Interactive Lesson (Free Preview)'
+        },
+        4: {
+          file: '📄 day04_inner_left_joins.sql',
+          narration: '🎙️ Voice Narration: "Combining customer profiles and order histories with INNER JOIN..."',
+          lines: ['1', '2', '3', '4', '5'],
+          code: `<span class="kwd">SELECT</span> c.name, c.email, o.order_id, o.amount\n<span class="kwd">FROM</span> analytics_customers c\n<span class="kwd">INNER JOIN</span> sales_orders o <span class="kwd">ON</span> c.customer_id = o.customer_id\n<span class="kwd">WHERE</span> o.amount &gt; 500\n<span class="kwd">ORDER BY</span> o.amount <span class="kwd">DESC</span>;`,
+          headers: ['name', 'email', 'order_id', 'amount'],
+          rows: [
+            ['Aarav Sharma', 'aarav@enterprise.com', 'ORD-9801', '$1,450.00'],
+            ['Priya Patel', 'priya@techcorp.io', 'ORD-9784', '$1,290.00'],
+            ['Rahul Verma', 'rahul@growthlab.co', 'ORD-9752', '$890.00'],
+            ['Ananya Gupta', 'ananya@fintech.in', 'ORD-9710', '$750.00']
+          ],
+          url: '/Version-3/index.html?day=4',
+          btnText: '⚡ Play Full Day 04 Interactive Lesson (Free Preview)'
+        }
+      };
+
+      const tabs = document.querySelectorAll('.demo-tab');
+      const fileTitle = document.getElementById('demoFileTitle');
+      const audioStatus = document.getElementById('demoAudioStatus');
+      const lineNums = document.getElementById('demoLineNums');
+      const codeText = document.getElementById('demoCodeText');
+      const resultTable = document.getElementById('demoResultTable');
+      const launchBtn = document.getElementById('demoLaunchBtn');
+
+      if (!tabs.length || !codeText) return;
+
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          const day = tab.getAttribute('data-day');
+          const data = demoData[day];
+          if (!data) return;
+
+          tabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+
+          fileTitle.textContent = data.file;
+          audioStatus.textContent = data.narration;
+          lineNums.innerHTML = data.lines.map(l => `<span>${l}</span>`).join('');
+          codeText.innerHTML = data.code;
+
+          // Render Table
+          let tableHtml = '<thead><tr>' + data.headers.map(h => `<th>${h}</th>`).join('') + '</tr></thead>';
+          tableHtml += '<tbody>' + data.rows.map(r => '<tr>' + r.map(c => `<td>${c}</td>`).join('') + '</tr>').join('') + '</tbody>';
+          resultTable.innerHTML = tableHtml;
+
+          // Render Launch Button
+          launchBtn.setAttribute('href', data.url);
+          launchBtn.querySelector('span').textContent = data.btnText;
+        });
+      });
+    })();
+  </script>
+
 </body>
 </html>

@@ -6852,7 +6852,7 @@ td.col-mano {
   display: grid;
   grid-template-columns: 1.05fr 0.95fr;
   gap: 48px;
-  align-items: center;
+  align-items: flex-start;
 }
 
 @media (max-width: 992px) {
@@ -7547,6 +7547,7 @@ td.col-mano {
   width: 100%;
   max-width: 520px;
   margin: 0 auto;
+  align-self: flex-start;
 }
 
 #roadmap-root {

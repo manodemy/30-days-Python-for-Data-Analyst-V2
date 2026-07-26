@@ -7890,3 +7890,94 @@ p, .section-head p, .pricing-card-subtitle, .hero-sub {
 .curr-panel--sql .day-card[data-day="02"] {
   font-family: inherit;
 }
+
+
+/* ══════════════ STICKY MOBILE CTA BAR REDESIGN ══════════════ */
+.sticky-mobile-cta {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 1000 !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border-top: 1px solid rgba(226, 232, 240, 0.9) !important;
+  box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.1) !important;
+  padding: 10px 16px !important;
+}
+
+.mobile-cta-inner {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  max-width: 600px !important;
+  margin: 0 auto !important;
+  gap: 12px !important;
+}
+
+.mobile-cta-info {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+}
+
+.mobile-cta-badge {
+  font-size: 10.5px !important;
+  font-weight: 800 !important;
+  color: #00B4D8 !important;
+  letter-spacing: 0.04em !important;
+  font-family: var(--font-display) !important;
+}
+
+.mobile-cta-price-row {
+  display: flex !important;
+  align-items: baseline !important;
+  gap: 6px !important;
+}
+
+.mobile-cta-price-row .m-price {
+  font-family: var(--font-display) !important;
+  font-weight: 900 !important;
+  font-size: 22px !important;
+  color: #0F172A !important;
+  line-height: 1 !important;
+}
+
+.mobile-cta-price-row .m-price-old {
+  font-size: 12px !important;
+  color: #94A3B8 !important;
+  text-decoration: line-through !important;
+}
+
+.mobile-cta-price-row .m-discount-pill {
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  background: rgba(16, 185, 129, 0.14) !important;
+  color: #059669 !important;
+  padding: 2px 6px !important;
+  border-radius: 12px !important;
+}
+
+.btn-mobile-cta-primary {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 46px !important;
+  padding: 0 22px !important;
+  border-radius: 50px !important;
+  background: linear-gradient(135deg, #059669 0%, #00B4D8 100%) !important;
+  color: #FFFFFF !important;
+  font-family: var(--font-display) !important;
+  font-weight: 900 !important;
+  font-size: 15px !important;
+  text-decoration: none !important;
+  box-shadow: 0 4px 16px rgba(5, 150, 105, 0.35) !important;
+  white-space: nowrap !important;
+  border: none !important;
+  transition: transform 0.2s ease !important;
+}
+
+.btn-mobile-cta-primary:active {
+  transform: scale(0.96) !important;
+}

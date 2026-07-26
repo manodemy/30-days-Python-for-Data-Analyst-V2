@@ -94,7 +94,7 @@ const wrap = root.querySelector('#rm-dialWrap');
 const canvas = root.querySelector('#c3d');
 
 let W = wrap.clientWidth || 320;
-let H = Math.min(Math.round(W*0.68), 410);
+let H = W; // Perfect 1:1 circular aspect ratio
 canvas.width  = W * (window.devicePixelRatio||1);
 canvas.height = H * (window.devicePixelRatio||1);
 canvas.style.height = H + 'px';

@@ -7542,27 +7542,36 @@ td.col-mano {
   border: none;
 }
 
-/* 3D Clock Dial Fit & Visibility Fix */
+/* 3D Clock Dial Fit & Perfect Circular Aspect Ratio Fix */
 .hero-right {
   width: 100%;
-  max-width: 580px;
+  max-width: 480px;
   margin: 0 auto;
 }
 
 #roadmap-root {
   width: 100% !important;
+  max-width: 480px;
+  margin: 0 auto;
   box-sizing: border-box;
   overflow: hidden;
+  border-radius: 16px;
 }
 
 #rm-dialWrap {
   width: 100% !important;
-  min-height: 420px;
+  aspect-ratio: 1 / 1;
+  max-height: 380px;
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #c3d {
   width: 100% !important;
-  height: 420px !important;
+  height: 100% !important;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
   display: block;
 }

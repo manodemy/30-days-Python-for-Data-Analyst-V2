@@ -418,10 +418,13 @@ function updateCardPosition(){
   dayCard.style.top  = p.y + 'px';
 }
 
+const activeWorldPos = new THREE.Vector3();
+
 function updateActiveNumPosition(){
   const sp = spheres[currentDay];
   if (sp) {
-    const p = projectToScreen(sp.position);
+    sp.getWorldPosition(activeWorldPos);
+    const p = projectToScreen(activeWorldPos);
     activeNumEl.style.left = p.x + 'px';
     activeNumEl.style.top  = p.y + 'px';
   }

@@ -6834,7 +6834,7 @@ td.col-mano {
 }
 
 .demo-card-container {
-  max-width: 1040px;
+  max-width: 1280px;
   margin: 0 auto;
   background: rgba(15, 23, 42, 0.85);
   border: 1px solid rgba(56, 189, 248, 0.25);
@@ -7159,4 +7159,8 @@ td.col-mano {
   .workspace-iframe {
     height: 540px;
   }
+}
+
+.play-lesson-section .container {
+  max-width: 1280px !important;
 }

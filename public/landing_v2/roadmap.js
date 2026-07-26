@@ -637,11 +637,11 @@ canvas.addEventListener('touchend',()=>{
 });
 
 function handleResize(){
-  W = wrap.clientWidth || 320;
-  H = W; // Perfect 1:1 circular aspect ratio
+  W = wrap.clientWidth || 360;
+  H = wrap.clientHeight || W;
   renderer.setSize(W, H);
   canvas.style.height = H + 'px';
-  camera.aspect = 1.0;
+  camera.aspect = W / H;
   camera.updateProjectionMatrix();
 }
 window.addEventListener('resize', handleResize);

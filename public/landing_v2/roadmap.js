@@ -419,9 +419,12 @@ function updateCardPosition(){
 }
 
 function updateActiveNumPosition(){
-  const p = projectToScreen(actSphere.position);
-  activeNumEl.style.left = p.x + 'px';
-  activeNumEl.style.top  = p.y + 'px';
+  const sp = spheres[currentDay];
+  if (sp) {
+    const p = projectToScreen(sp.position);
+    activeNumEl.style.left = p.x + 'px';
+    activeNumEl.style.top  = p.y + 'px';
+  }
 }
 
 function updateHUD(idx){
@@ -632,10 +635,10 @@ canvas.addEventListener('touchend',()=>{
 
 function handleResize(){
   W = wrap.clientWidth || 320;
-  H = Math.min(Math.round(W*0.68), 410);
+  H = W; // Perfect 1:1 circular aspect ratio
   renderer.setSize(W, H);
   canvas.style.height = H + 'px';
-  camera.aspect = W/H;
+  camera.aspect = 1.0;
   camera.updateProjectionMatrix();
 }
 window.addEventListener('resize', handleResize);

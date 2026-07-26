@@ -3820,11 +3820,18 @@ window.addEventListener('DOMContentLoaded', async () => {
     // Populate Day Selector from COURSE_MANIFEST
     populateDaySelector();
 
-    // Detect default day dynamically from page pathname (e.g. day02.html -> day02)
+    // Detect default day dynamically from the page URL so a refresh keeps the
+    // user on the SAME day. Matches BOTH modern routes ("/notebook/sql-day05")
+    // and legacy ones ("/sql/day05.html"), plus an optional "?day=5" query
+    // fallback. Mirrors the proven getDayId() logic in /notebook.js.
     let defaultDay = 'day01';
-    const pathMatch = window.location.pathname.match(/day(\d+)\.html/i);
-    if (pathMatch) {
-      defaultDay = `day${pathMatch[1]}`;
+    const __path = window.location.pathname;
+    const __pathMatch = __path.match(/(?:sql-day|excel-day|day)(\d{1,2})/i);
+    if (__pathMatch) {
+      defaultDay = `day${__pathMatch[1].padStart(2, '0')}`;
+    } else {
+      const __qp = new URLSearchParams(window.location.search).get('day');
+      if (__qp) defaultDay = `day${__qp.padStart(2, '0')}`;
     }
 
     // Load initial day content (lazy-loads matching module script if needed)
@@ -3880,12 +3887,17 @@ window.addEventListener('DOMContentLoaded', async () => {
         badge.textContent = `DAY ${dayNum}`;
       }
 
-      // Update URL in address bar if pathname ends with a dayXX.html format
-      const path = window.location.pathname;
-      const pathMatch = path.match(/day\d+\.html/i);
-      if (pathMatch) {
-        const newPath = path.replace(/day\d+\.html/i, `${selectedDay}.html`);
-        history.pushState(null, '', newPath);
+      // Keep the address bar in sync with the active day so a refresh (or
+      // browser back/forward) lands on the SAME day. Handles BOTH route
+      // shapes: modern "/notebook/sql-dayNN" and legacy "/sql/dayNN.html".
+      const __syncPath = window.location.pathname;
+      const __num = (selectedDay.match(/\d+/) || ['01'])[0].padStart(2, '0');
+      if (/(?:sql-day|excel-day|day)\d{1,2}/i.test(__syncPath)) {
+        const __newPath = __syncPath.replace(/(sql-day|excel-day|day)\d{1,2}/i, (m, p) => `${p}${__num}`);
+        if (__newPath !== __syncPath) history.pushState({ day: selectedDay }, '', __newPath);
+      } else if (/day\d{1,2}\.html/i.test(__syncPath)) {
+        const __newPath = __syncPath.replace(/day\d{1,2}\.html/i, `day${__num}.html`);
+        history.pushState({ day: selectedDay }, '', __newPath);
       }
 
       // Sync active slide and topicSelect to match the day
@@ -3900,6 +3912,19 @@ window.addEventListener('DOMContentLoaded', async () => {
 
       // Load day-specific practice questions
       loadQuestionsForDay(selectedDay);
+    });
+
+    // Browser back/forward: reload the day the URL now points to, so history
+    // navigation (and refresh after navigating) always shows the right day.
+    window.addEventListener('popstate', () => {
+      const __pp = window.location.pathname;
+      const __pm = __pp.match(/(?:sql-day|excel-day|day)(\d{1,2})/i);
+      if (__pm) {
+        const __target = `day${__pm[1].padStart(2, '0')}`;
+        const __sel = document.getElementById('daySelect');
+        if (__sel && __sel.value !== __target) __sel.value = __target;
+        loadDayContent(__target);
+      }
     });
 
     // Populate topicSelect dropdown

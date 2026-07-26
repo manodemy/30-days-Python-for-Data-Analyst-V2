@@ -672,10 +672,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Update checkout modal UI for the selected tier
-  function updateCheckoutForTier(tier) {
-    activeTier = tier;
-    const cfg = pricingConfigs[tier];
-    const isLive = tier === 'live';
+  function updateCheckoutForTier(tier = 'selfpaced') {
+    activeTier = 'selfpaced';
+    const cfg = pricingConfigs['selfpaced'] || pricingConfigs[tier] || { amount: 49, currency: 'USD', display: '$49', original: '$199', planName: 'Full Access Pass' };
 
     currentPricing = {
       amount: cfg.amount,
@@ -689,7 +688,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const checkoutOriginal = document.getElementById('checkoutOriginal');
     const checkoutTierPill = document.getElementById('checkoutTierPill');
     const checkoutPlanName = document.getElementById('checkoutPlanName');
-    const switchBtn        = document.getElementById('checkoutSwitchTier');
     const batchSection     = document.getElementById('checkoutBatchSection');
 
     if (checkoutAmount)   checkoutAmount.textContent   = cfg.display;
@@ -697,20 +695,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (checkoutPlanName) checkoutPlanName.textContent = cfg.planName;
 
     if (checkoutTierPill) {
-      checkoutTierPill.textContent  = isLive ? '🎥 Live Class Plan' : '⚡ Self-Paced Plan';
-      checkoutTierPill.className    = `checkout-tier-pill checkout-tier-pill--${tier}`;
+      checkoutTierPill.textContent  = '⚡ Self-Paced Plan';
+      checkoutTierPill.className    = 'checkout-tier-pill checkout-tier-pill--selfpaced';
     }
 
     if (batchSection) {
-      batchSection.style.display = isLive ? 'block' : 'none';
-    }
-
-    const other    = isLive ? 'selfpaced' : 'live';
-    const otherCfg = pricingConfigs[other];
-    if (switchBtn) {
-      switchBtn.textContent = isLive
-        ? `Switch to Self-Paced plan (${otherCfg.display})`
-        : `Switch to Live Class Plan (${otherCfg.display})`;
+      batchSection.style.display = 'none';
     }
   }
 
@@ -719,32 +709,23 @@ document.addEventListener('DOMContentLoaded', () => {
   const checkoutClose = document.getElementById('checkoutClose');
   const buyButtons = document.querySelectorAll('[data-cta="buy"]');
 
-  const openCheckout = (tier = 'selfpaced', preferredBatchId = null) => {
+  const openCheckout = (tier = 'selfpaced') => {
     if (localStorage.getItem('manodemy_enrolled') === 'true') {
       window.location.href = '/home.html';
       return;
     }
-    updateCheckoutForTier(tier);
-    
-    // Set active batch if live class plan selected
-    if (tier === 'live') {
-      // Populate checkout batch options from loaded batches
-      populateCheckoutBatches(preferredBatchId);
-    } else {
-      window.selectedBatchId = null;
-    }
-    
+    updateCheckoutForTier('selfpaced');
+    window.selectedBatchId = null;
+
     // Clone pricing card to show inside checkout
     const container = document.getElementById('checkoutCardContainer');
     if (container) {
       container.innerHTML = '';
-      const originalCard = document.querySelector(`.pricing-card--${tier}`);
+      const originalCard = document.querySelector('.pricing-card--selfpaced') || document.querySelector('.pricing-card');
       if (originalCard) {
         const clonedCard = originalCard.cloneNode(true);
         const buyBtn = clonedCard.querySelector('.pricing-buy-btn');
         if (buyBtn) buyBtn.style.display = 'none';
-        const previewLink = clonedCard.querySelector('.pricing-meet-link');
-        if (previewLink) previewLink.style.display = 'none';
         container.appendChild(clonedCard);
       }
     }
@@ -765,34 +746,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   buyButtons.forEach(btn => btn.addEventListener('click', (e) => {
     e.preventDefault();
-    const tier = btn.dataset.tier || 'selfpaced';
-    openCheckout(tier);
+    openCheckout('selfpaced');
   }));
-
-  // Tier switch button inside checkout modal
-  const switchTierBtn = document.getElementById('checkoutSwitchTier');
-  if (switchTierBtn) {
-    switchTierBtn.addEventListener('click', () => {
-      const newTier = activeTier === 'live' ? 'selfpaced' : 'live';
-      updateCheckoutForTier(newTier);
-      
-      const container = document.getElementById('checkoutCardContainer');
-      if (container) {
-        container.innerHTML = '';
-        const originalCard = document.querySelector(`.pricing-card--${newTier}`);
-        if (originalCard) {
-          const clonedCard = originalCard.cloneNode(true);
-          const buyBtn = clonedCard.querySelector('.pricing-buy-btn');
-          if (buyBtn) buyBtn.style.display = 'none';
-          const previewLink = clonedCard.querySelector('.pricing-meet-link');
-          if (previewLink) previewLink.style.display = 'none';
-          container.appendChild(clonedCard);
-        }
-      }
-
-      renderPaymentGateways();
-    });
-  }
 
   if (checkoutClose) checkoutClose.addEventListener('click', closeCheckout);
   if (checkoutOverlay) {
@@ -1129,277 +1084,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  /* ═══ DYNAMIC LIVE CLASS SCHEDULER & COUNTDOWNS (IST) ═══ */
-  /* Fetches batch data from Supabase and renders cards dynamically */
-
-  window._liveBatches = []; // Global store for batch data
-
-  function getISTDate() {
-    const now = new Date();
-    const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-    return new Date(utc + (3600000 * 5.5)); // IST is UTC + 5:30
-  }
-
-  function getBatchSessionStatus(batch) {
-    const istNow = getISTDate();
-    const currentDay = istNow.getDay();
-    const currentHours = istNow.getHours();
-    const currentMinutes = istNow.getMinutes();
-    const currentSeconds = istNow.getSeconds();
-    const currentWeekMinutes = (currentDay * 24 * 60) + (currentHours * 60) + currentMinutes;
-
-    const startH = parseInt(batch.start_time?.split(':')[0] || '19');
-    const startM = parseInt(batch.start_time?.split(':')[1] || '30');
-    const endH = parseInt(batch.end_time?.split(':')[0] || '20');
-    const endM = parseInt(batch.end_time?.split(':')[1] || '30');
-    const days = batch.schedule_days || [0,1,2,3,4,5,6];
-
-    // Build sessions from DB data
-    const sessions = days.map(d => ({ day: d, startH, startM, endH, endM }));
-
-    // 1. Check if active right now
-    for (let s of sessions) {
-      if (currentDay === s.day) {
-        const nowMin = (currentHours * 60) + currentMinutes;
-        const sMin = (s.startH * 60) + s.startM;
-        const eMin = (s.endH * 60) + s.endM;
-        if (nowMin >= sMin && nowMin < eMin) {
-          const minRemaining = eMin - nowMin - 1;
-          const secRemaining = 60 - currentSeconds;
-          return { isActive: true, statusText: '🟢 LIVE NOW', countdownText: `Ends in ${minRemaining}m ${secRemaining}s` };
-        }
-      }
-    }
-
-    // 2. Calculate time to next session
-    let minDiff = Infinity;
-    for (let s of sessions) {
-      const sessionWeekMinutes = (s.day * 24 * 60) + (s.startH * 60) + s.startM;
-      let diff = sessionWeekMinutes - currentWeekMinutes;
-      if (diff <= 0) diff += 7 * 24 * 60;
-      if (diff < minDiff) minDiff = diff;
-    }
-
-    minDiff = Math.max(0, minDiff - 1);
-    const d = Math.floor(minDiff / (24 * 60));
-    const h = Math.floor((minDiff % (24 * 60)) / 60);
-    const m = minDiff % 60;
-    const sec = 60 - currentSeconds;
-
-    return { isActive: false, statusText: '🔴 Scheduled', d, h, m, sec };
-  }
-
-  function formatTimeDisplay(timeStr) {
-    if (!timeStr) return '';
-    const [h, m] = timeStr.split(':').map(Number);
-    const period = h >= 12 ? 'PM' : 'AM';
-    const displayH = h > 12 ? h - 12 : h === 0 ? 12 : h;
-    return `${displayH}:${String(m).padStart(2, '0')} ${period}`;
-  }
-
-  function formatScheduleDaysLanding(days) {
-    if (!days || days.length === 7) return 'Daily (Mon – Sun)';
-    if (JSON.stringify(days.sort()) === JSON.stringify([1,2,3,4,5])) return 'Weekdays (Mon – Fri)';
-    if (JSON.stringify(days.sort()) === JSON.stringify([0,6])) return 'Saturday & Sunday';
-    const names = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    return days.map(d => names[d]).join(', ');
-  }
-
-  function renderLiveHubCards(batches) {
-    const skeleton = document.getElementById('liveHubSkeleton');
-    const grid = document.getElementById('liveHubGrid');
-    const empty = document.getElementById('liveHubEmpty');
-
-    if (skeleton) skeleton.classList.add('hidden');
-
-    if (!batches || batches.length === 0) {
-      if (grid) grid.classList.add('hidden');
-      if (empty) empty.classList.remove('hidden');
-      return;
-    }
-
-    if (empty) empty.classList.add('hidden');
-    if (grid) {
-      grid.classList.remove('hidden');
-      grid.innerHTML = '';
-
-      batches.forEach(batch => {
-        const isDemo = batch.batch_type === 'free_demo';
-        const card = document.createElement('div');
-        card.className = 'live-hub-card';
-        card.id = `card-${batch.batch_slug}`;
-        card.dataset.batchId = batch.batch_id;
-
-        const avatarHtml = batch.instructor_avatar
-          ? `<img src="${batch.instructor_avatar}" alt="${batch.instructor_name || 'Instructor'}" class="live-hub-instructor-avatar">`
-          : `<div class="live-hub-instructor-avatar live-hub-instructor-avatar--placeholder">${(batch.instructor_name || '?')[0].toUpperCase()}</div>`;
-
-        card.innerHTML = `
-          <div class="live-hub-badge-row">
-            <span class="live-type-badge live-type-badge--${isDemo ? 'demo' : 'live'}">${isDemo ? '✨ Free Demo' : '🎥 Live Class'}</span>
-            <span class="live-status-pill" id="status-${batch.batch_slug}">🔴 Scheduled</span>
-          </div>
-          <h3>${batch.batch_name}</h3>
-          <div class="live-hub-instructor-row">
-            ${avatarHtml}
-            <div class="live-hub-instructor-info">
-              <span class="live-hub-instructor-name">${batch.instructor_name || 'Instructor'}</span>
-              <span class="live-hub-instructor-spec">${batch.instructor_specialization || ''}</span>
-            </div>
-          </div>
-          <p class="live-hub-time">🗓️ ${formatScheduleDaysLanding(batch.schedule_days)}<br>🕒 ${formatTimeDisplay(batch.start_time)} – ${formatTimeDisplay(batch.end_time)} IST</p>
-          ${batch.max_students ? `<div class="live-hub-seats">👥 ${batch.current_students || 0} / ${batch.max_students} seats filled</div>` : ''}
-          <div class="live-hub-countdown" id="countdown-${batch.batch_slug}">Starts in --h --m --s</div>
-          <button class="live-join-btn" id="btn-${batch.batch_slug}" data-batch-id="${batch.batch_id}" data-batch-type="${batch.batch_type}" data-meet-link="${batch.meet_link || ''}">
-            ${isDemo ? '🎥 Join Free Demo Class' : '🔑 Join Class'}
-          </button>
-        `;
-
-        grid.appendChild(card);
-      });
-
-      // Bind join button handlers
-      grid.querySelectorAll('.live-join-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.preventDefault();
-          if (!btn.classList.contains('active')) return;
-
-          const batchType = btn.dataset.batchType;
-          const meetLink = btn.dataset.meetLink;
-          const batchId = btn.dataset.batchId;
-
-          if (batchType === 'free_demo' && meetLink) {
-            window.open(meetLink, '_blank', 'noopener,noreferrer');
-          } else {
-            const enrolled = localStorage.getItem('manodemy_enrolled') === 'true';
-            if (enrolled && meetLink) {
-              window.open(meetLink, '_blank', 'noopener,noreferrer');
-            } else {
-              alert('🔒 This batch is for enrolled students only. Please enroll in the Live Class Plan to access cohort links!');
-              openCheckout('live', batchId);
-            }
-          }
-        });
-      });
-
-      // Bind carousel arrow clicks dynamically
-      const prevBtn = document.getElementById('liveHubPrev');
-      const nextBtn = document.getElementById('liveHubNext');
-      
-      if (prevBtn && nextBtn) {
-        const checkArrows = () => {
-          if (grid.scrollWidth > grid.clientWidth) {
-            prevBtn.style.display = grid.scrollLeft > 10 ? 'flex' : 'none';
-            nextBtn.style.display = (grid.scrollLeft + grid.clientWidth < grid.scrollWidth - 10) ? 'flex' : 'none';
-          } else {
-            prevBtn.style.display = 'none';
-            nextBtn.style.display = 'none';
-          }
-        };
-
-        grid.addEventListener('scroll', checkArrows);
-        window.addEventListener('resize', checkArrows);
-        
-        prevBtn.addEventListener('click', () => {
-          grid.scrollBy({ left: -360, behavior: 'smooth' });
-        });
-        
-        nextBtn.addEventListener('click', () => {
-          grid.scrollBy({ left: 360, behavior: 'smooth' });
-        });
-
-        // Trigger check after rendering finishes and styles apply
-        setTimeout(checkArrows, 400);
-      }
-    }
-  }
-
-  function updateDynamicLiveScheduler() {
-    const batches = window._liveBatches || [];
-    batches.forEach(batch => {
-      const status = getBatchSessionStatus(batch);
-      const statusPill = document.getElementById(`status-${batch.batch_slug}`);
-      const countdownBox = document.getElementById(`countdown-${batch.batch_slug}`);
-      const joinBtn = document.getElementById(`btn-${batch.batch_slug}`);
-
-      if (statusPill) {
-        statusPill.textContent = status.statusText;
-        statusPill.classList.toggle('live-now', status.isActive);
-      }
-      if (countdownBox) {
-        countdownBox.classList.toggle('active', status.isActive);
-        if (status.isActive) {
-          countdownBox.innerHTML = `<span class="live-pulse-dot"></span> ${status.countdownText}`;
-        } else {
-          countdownBox.innerHTML = `
-            <div class="countdown-label">Starts in</div>
-            <div class="countdown-digits">
-              <div class="digit-block">
-                <span class="digit">${String(status.d).padStart(2, '0')}</span>
-                <span class="label">Days</span>
-              </div>
-              <div class="digit-sep">:</div>
-              <div class="digit-block">
-                <span class="digit">${String(status.h).padStart(2, '0')}</span>
-                <span class="label">Hrs</span>
-              </div>
-              <div class="digit-sep">:</div>
-              <div class="digit-block">
-                <span class="digit">${String(status.m).padStart(2, '0')}</span>
-                <span class="label">Min</span>
-              </div>
-              <div class="digit-sep">:</div>
-              <div class="digit-block">
-                <span class="digit">${String(status.sec).padStart(2, '0')}</span>
-                <span class="label">Sec</span>
-              </div>
-            </div>
-          `;
-        }
-      }
-      if (joinBtn) {
-        if (status.isActive) {
-          joinBtn.removeAttribute('disabled');
-          joinBtn.classList.add('active');
-          joinBtn.classList.remove('disabled');
-        } else {
-          joinBtn.setAttribute('disabled', 'true');
-          joinBtn.classList.remove('active');
-          joinBtn.classList.add('disabled');
-        }
-      }
-    });
-  }
-
-  // Fetch batches from Supabase and render
-  async function initLiveHub() {
-    try {
-      const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_public_batches`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-        },
-        body: '{}'
-      });
-
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const batches = await res.json();
-      window._liveBatches = batches || [];
-      renderLiveHubCards(batches);
-      updateDynamicLiveScheduler();
-      setInterval(updateDynamicLiveScheduler, 1000);
-    } catch (err) {
-      console.warn('[LiveHub] Failed to fetch batches from DB, hiding section:', err.message);
-      const skeleton = document.getElementById('liveHubSkeleton');
-      const empty = document.getElementById('liveHubEmpty');
-      if (skeleton) skeleton.classList.add('hidden');
-      if (empty) empty.classList.remove('hidden');
-    }
-  }
-
-  initLiveHub();
+  /* ═══ CLEANED LANDING CORE ═══ */
 
   /* ═══ NAVBAR ENROLL DROPDOWNS ═══ */
   const navEnrollBtn = document.getElementById('navEnrollBtn');

@@ -7545,13 +7545,13 @@ td.col-mano {
 /* 3D Clock Dial Fit & Perfect Circular Aspect Ratio Fix */
 .hero-right {
   width: 100%;
-  max-width: 440px;
+  max-width: 380px;
   margin: 0 auto;
 }
 
 #roadmap-root {
   width: 100% !important;
-  max-width: 440px;
+  max-width: 380px;
   margin: 0 auto;
   box-sizing: border-box;
   overflow: hidden;
@@ -7560,7 +7560,7 @@ td.col-mano {
 
 #rm-dialWrap {
   width: 100% !important;
-  height: 440px !important;
+  height: 380px !important;
   position: relative;
   overflow: hidden;
 }

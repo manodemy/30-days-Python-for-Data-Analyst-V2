@@ -558,29 +558,23 @@
           <!-- Compact Sleek Day Switcher Pills -->
           <div class="demo-pills-row">
             <button class="demo-pill demo-tab active" data-day="1">
-              <span class="pill-dot"></span>
+              <span class="pill-badge-free">⚡ TRY FOR FREE</span>
               <span class="pill-day">Day 01</span>
               <span class="pill-sep">•</span>
               <span class="pill-title">SQL Basics &amp; Databases</span>
             </button>
             <button class="demo-pill demo-tab" data-day="2">
-              <span class="pill-dot"></span>
+              <span class="pill-badge-free">⚡ TRY FOR FREE</span>
               <span class="pill-day">Day 02</span>
               <span class="pill-sep">•</span>
               <span class="pill-title">WHERE &amp; Filtering</span>
             </button>
-            <button class="demo-pill demo-tab" data-day="3">
-              <span class="pill-dot"></span>
-              <span class="pill-day">Day 03</span>
+            <a href="javascript:void(0)" onclick="document.getElementById('navEnrollBtn')?.click() || document.getElementById('authModal')?.classList.add('active');" class="demo-pill demo-pill-lock" title="Unlock complete 30-Day curriculum">
+              <span class="pill-badge-lock">🔒 PRO</span>
+              <span class="pill-day">Days 03–30</span>
               <span class="pill-sep">•</span>
-              <span class="pill-title">GROUP BY &amp; Aggregation</span>
-            </button>
-            <button class="demo-pill demo-tab" data-day="4">
-              <span class="pill-dot"></span>
-              <span class="pill-day">Day 04</span>
-              <span class="pill-sep">•</span>
-              <span class="pill-title">SQL JOINS &amp; Mapping</span>
-            </button>
+              <span class="pill-title">Unlock Full 30-Day Course ↗</span>
+            </a>
           </div>
 
           <!-- Live Interactive iFrame Container -->
@@ -1696,9 +1690,7 @@
     (function() {
       const titles = {
         1: '🖥️ Live Platform — Day 01: Introduction to SQL & Databases',
-        2: '🖥️ Live Platform — Day 02: WHERE Filtering & Wildcard Search',
-        3: '🖥️ Live Platform — Day 03: GROUP BY, Aggregations & HAVING',
-        4: '🖥️ Live Platform — Day 04: SQL JOINS & Relational Mapping'
+        2: '🖥️ Live Platform — Day 02: WHERE Filtering & Wildcard Search'
       };
 
       const tabs = document.querySelectorAll('.demo-tab');

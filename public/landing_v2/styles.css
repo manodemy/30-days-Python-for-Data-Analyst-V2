@@ -8485,3 +8485,24 @@ p, .section-head p, .pricing-card-subtitle, .hero-sub {
 .btn-mobile-cta-primary:active {
   transform: scale(0.96) !important;
 }
+
+
+/* ══════════════ HERO SECTION TOP SPACING REDUCTION ══════════════ */
+.hero {
+  padding-top: 90px !important;
+  padding-bottom: 36px !important;
+}
+
+@media (max-width: 991px) {
+  .hero {
+    padding-top: 84px !important;
+    padding-bottom: 28px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero {
+    padding-top: 78px !important;
+    padding-bottom: 20px !important;
+  }
+}

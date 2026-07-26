@@ -7541,3 +7541,28 @@ td.col-mano {
   font-size: 14px;
   border: none;
 }
+
+/* 3D Clock Dial Fit & Visibility Fix */
+.hero-right {
+  width: 100%;
+  max-width: 580px;
+  margin: 0 auto;
+}
+
+#roadmap-root {
+  width: 100% !important;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+#rm-dialWrap {
+  width: 100% !important;
+  min-height: 420px;
+  position: relative;
+}
+
+#c3d {
+  width: 100% !important;
+  height: 420px !important;
+  display: block;
+}

@@ -1076,98 +1076,10 @@
     </div>
   </div>
 
-  <!-- Load Real Manifest Data & Terminal Interactive Demo Script -->
-  <script src="/Version-3/content/manifest.js?v=19.0"></script>
-  <script>
-    // 1. Dynamic SQL Manifest Title Synchronization
-    window.addEventListener('DOMContentLoaded', () => {
-      const manifest = window.COURSE_MANIFEST || [];
-      if (manifest.length > 0) {
-        const grid = document.getElementById('sqlCurriculumGrid');
-        if (grid) {
-          const cards = grid.querySelectorAll('.curriculum-day-card');
-          cards.forEach((card, idx) => {
-            if (manifest[idx]) {
-              const dayData = manifest[idx];
-              const titleEl = card.querySelector('.day-card-title');
-              if (titleEl) {
-                const emoji = dayData.emoji || '⚡';
-                titleEl.textContent = `${emoji} ${dayData.title}`;
-              }
-            }
-          });
-        }
-      }
-
-      // 2. Curriculum Track Tab Switching Logic
-      const trackBtns = document.querySelectorAll('.curriculum-tab-btn');
-      trackBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          trackBtns.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          const track = btn.dataset.curriculumTrack;
-          document.querySelectorAll('.curriculum-grid-wrapper').forEach(w => {
-            w.style.display = 'none';
-          });
-          const targetWrapper = document.getElementById(`curriculum-track-${track}`);
-          if (targetWrapper) targetWrapper.style.display = 'block';
-        });
-      });
-
-      // 3. Hero Interactive Terminal Demo Switcher & Typewriter
-      const snippets = {
-        sql: {
-          code: `-- Calculating monthly compensation\nSELECT name, salary, salary / 12.0 AS monthly_pay\nFROM   employees\nWHERE  salary > 60000;`,
-          headers: ['name', 'salary', 'monthly_pay'],
-          rows: [
-            ['Alice Smith', '85000', '7083.33'],
-            ['Bob Jones', '72000', '6000.00']
-          ]
-        },
-        python: {
-          code: `# Pandas Top Product Revenue Analysis\nimport pandas as pd\ndf = pd.read_csv('sales.csv')\ndf.groupby('product')['revenue'].sum().nlargest(2)`,
-          headers: ['product', 'revenue'],
-          rows: [
-            ['Enterprise Plan', '$124,500'],
-            ['Pro Tier', '$86,200']
-          ]
-        },
-        excel: {
-          code: `' Lookup employee salary & calculate total\n=XLOOKUP(A2, Employees[ID], Employees[Salary])\n=SUMIFS(Sales[Amount], Sales[Region], "North")`,
-          headers: ['formula', 'result'],
-          rows: [
-            ['XLOOKUP Salary', '$85,000'],
-            ['SUMIFS Regional Total', '$452,100']
-          ]
-        }
-      };
-
-      let currentDemoTrack = 'sql';
-      const codeEl = document.getElementById('demoCodeText');
-      const headEl = document.getElementById('demoTableHeader');
-      const bodyEl = document.getElementById('demoTableBody');
-
-      function updateDemo(track) {
-        const data = snippets[track];
-        if (!data || !codeEl) return;
-        codeEl.textContent = data.code;
-        if (headEl) headEl.innerHTML = data.headers.map(h => `<th>${h}</th>`).join('');
-        if (bodyEl) bodyEl.innerHTML = data.rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('');
-      }
-
-      document.querySelectorAll('.demo-tab').forEach(btn => {
-        btn.addEventListener('click', () => {
-          document.querySelectorAll('.demo-tab').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          currentDemoTrack = btn.dataset.track;
-          updateDemo(currentDemoTrack);
-        });
-      });
-    });
-  </script>
-
-  <!-- App Core JS -->
+  <!-- 3D Clock Dial Dependencies -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="app.js?v=9.5"></script>
   <script src="reviews.js?v=9.5"></script>
+  <script src="roadmap.js?v=11.0" defer></script>
 </body>
 </html>

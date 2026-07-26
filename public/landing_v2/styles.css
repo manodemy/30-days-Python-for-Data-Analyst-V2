@@ -7226,7 +7226,7 @@ td.col-mano {
   font-size: 13px;
   color: #94A3B8;
   margin: 0;
-  max-width: 480px;
+  max-width: 100% !important; text-align: justify !important; text-justify: inter-word !important;
   line-height: 1.4;
 }
 

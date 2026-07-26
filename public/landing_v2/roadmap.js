@@ -93,8 +93,8 @@ function angForIndex(i){
 const wrap = root.querySelector('#rm-dialWrap');
 const canvas = root.querySelector('#c3d');
 
-let W = wrap.clientWidth || 520;
-let H = wrap.clientHeight || 380; // Perfect 1:1 circular aspect ratio
+let W = wrap.clientWidth || 320;
+let H = Math.min(Math.round(W*0.68), 410);
 canvas.width  = W * (window.devicePixelRatio||1);
 canvas.height = H * (window.devicePixelRatio||1);
 canvas.style.height = H + 'px';
@@ -418,16 +418,10 @@ function updateCardPosition(){
   dayCard.style.top  = p.y + 'px';
 }
 
-const activeWorldPos = new THREE.Vector3();
-
 function updateActiveNumPosition(){
-  const sp = spheres[currentDay];
-  if (sp) {
-    sp.getWorldPosition(activeWorldPos);
-    const p = projectToScreen(activeWorldPos);
-    activeNumEl.style.left = p.x + 'px';
-    activeNumEl.style.top  = p.y + 'px';
-  }
+  const p = projectToScreen(actSphere.position);
+  activeNumEl.style.left = p.x + 'px';
+  activeNumEl.style.top  = p.y + 'px';
 }
 
 function updateHUD(idx){
@@ -637,11 +631,11 @@ canvas.addEventListener('touchend',()=>{
 });
 
 function handleResize(){
-  W = wrap.clientWidth || 360;
-  H = wrap.clientHeight || W;
+  W = wrap.clientWidth || 320;
+  H = Math.min(Math.round(W*0.68), 410);
   renderer.setSize(W, H);
   canvas.style.height = H + 'px';
-  camera.aspect = W / H;
+  camera.aspect = W/H;
   camera.updateProjectionMatrix();
 }
 window.addEventListener('resize', handleResize);

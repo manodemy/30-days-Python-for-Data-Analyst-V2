@@ -43,7 +43,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 
   <!-- Style Link -->
-  <link rel="stylesheet" href="styles.css?v=9.0">
+  <link rel="stylesheet" href="styles.css?v=8.2">
 </head>
 <body class="pricing-loading">
   <!-- Skip Navigation for Accessibility -->
@@ -60,7 +60,7 @@
 
         <div class="nav-links">
           <div class="nav-pill dropdown" style="position:relative;">
-            <span style="display:inline-flex; align-items:center; gap:4px; font-weight:600; cursor:pointer;">Try Free ▾</span>
+            <span style="display:inline-flex; align-items:center; gap:4px; font-weight:600;">Try Free ▾</span>
             <div class="dropdown-menu" style="left:0; right:auto;">
               <a href="/sql/day01.html" style="color: var(--emerald); font-weight:600;">⚡ Try SQL Free</a>
               <a href="/excel/day01.html" style="color: var(--gold); font-weight:600;">📈 Try Excel Free</a>
@@ -75,7 +75,28 @@
         <div class="nav-right">
           <!-- Logged out states -->
           <a href="javascript:void(0)" id="navSignin" class="btn-ghost" onclick="document.getElementById('authModal').classList.add('active');" aria-label="Sign in to your account">Sign In</a>
-          <button class="btn-nav-buy" data-cta="buy" aria-label="Enroll in course">Enroll $49</button>
+          <div class="nav-buy-dropdown-container">
+            <a href="javascript:void(0)" class="btn-nav-buy" id="navEnrollBtn" aria-label="Toggle enroll options">Enroll Full Course</a>
+            <div class="nav-buy-dropdown-menu" id="navEnrollDropdown">
+              <div class="dropdown-tier-item">
+                <div class="dropdown-tier-info">
+                  <span class="dropdown-tier-name">⚡ Self-Paced Plan</span>
+                  <span class="dropdown-tier-price dynamic-price-from">$49</span>
+                </div>
+                <button class="dropdown-tier-buy" data-tier="selfpaced">Enroll</button>
+              </div>
+              <div class="dropdown-tier-divider"></div>
+              <div class="dropdown-tier-item">
+                <div class="dropdown-tier-info">
+                  <span class="dropdown-tier-name">🎥 Live Class Plan</span>
+                  <span class="dropdown-tier-price dynamic-price-live">$149</span>
+                </div>
+                <button class="dropdown-tier-buy" data-tier="live">Enroll</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Logged in states (hidden by default, managed by app.js) -->
         </div>
 
         <!-- Hamburger for Mobile -->
@@ -90,108 +111,424 @@
 
   <!-- Mobile Dropdown Menu -->
   <div class="mobile-overlay" id="mobileOverlay" role="dialog" aria-modal="true" aria-label="Mobile Navigation">
-    <a href="/sql/day01.html" style="color: var(--emerald); font-weight:700;">⚡ Try SQL Free</a>
-    <a href="/excel/day01.html" style="color: var(--gold); font-weight:700;">📈 Try Excel Free</a>
-    <a href="/day01.html" style="color: var(--cyan); font-weight:700;">🐍 Try Python Free</a>
+    <a href="/sql/day01.html" style="color: var(--emerald)">Try SQL Free</a>
+    <a href="/excel/day01.html" style="color: var(--gold)">Try Excel Free</a>
+    <a href="/day01.html" style="color: var(--cyan)">Try Python Free</a>
     <a href="#curriculum">Curriculum</a>
     <a href="#testimonials">Reviews</a>
     <a href="#faq">FAQ</a>
     <div class="mob-menu-divider" aria-hidden="true"></div>
-    <button class="mob-menu-buy" data-cta="buy" style="width:100%; border:none; padding:12px 20px; border-radius:10px; background:var(--emerald); color:#fff; font-weight:800; font-size:16px;">Enroll Full Course ($49)</button>
+    <div class="mob-buy-dropdown-container">
+      <a href="javascript:void(0)" class="mob-menu-buy" id="mobEnrollBtn" aria-label="Toggle enroll options">Enroll Full Course</a>
+      <div class="mob-buy-dropdown-menu" id="mobEnrollDropdown">
+        <div class="dropdown-tier-item">
+          <div class="dropdown-tier-info">
+            <span class="dropdown-tier-name">⚡ Self-Paced Plan</span>
+            <span class="dropdown-tier-price dynamic-price-from">$49</span>
+          </div>
+          <button class="dropdown-tier-buy" data-tier="selfpaced">Enroll</button>
+        </div>
+        <div class="dropdown-tier-divider"></div>
+        <div class="dropdown-tier-item">
+          <div class="dropdown-tier-info">
+            <span class="dropdown-tier-name">🎥 Live Class Plan</span>
+            <span class="dropdown-tier-price dynamic-price-live">$149</span>
+          </div>
+          <button class="dropdown-tier-buy" data-tier="live">Enroll</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <main id="main-content">
-    <!-- Hero Section: Split-Hero (Max CTR) -->
-    <section class="hero hero--split">
-      <div class="container hero-container hero-container--split">
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="container hero-container">
         <!-- Hero Left Side Content -->
         <div class="hero-left">
-          <div class="hero-badge">
-            <span class="hero-badge-dot"></span>
-            <span>Zero Video Bloat · 100% In-Browser Coding</span>
-          </div>
-
           <h1 class="hero-title">
-            Stop watching. <br>
-            <span class="gradient-actually">Start coding data skills.</span>
+            <span style="white-space: nowrap;">Stop watching <span class="gradient-actually">videos.</span></span><br>
+            <span class="typed-learn">Start coding</span><br><span class="gradient-coding">actual data skills.</span>
           </h1>
-
           <p class="hero-sub">
-            Master <strong>SQL</strong>, <strong>Excel</strong>, and <strong>Python</strong> through 60 days of interactive browser notebooks, real-world data queries, and automated test grading.
+            Master SQL, Excel, and Python through 1,000+ interactive coding challenges inside real browser-based notebooks. Get job-ready with active, practice-first learning.
           </p>
 
-          <div class="hero-cta-group">
-            <a href="/sql/day01.html" class="btn-primary btn-hero-cta">
-              <span>Start Coding Free →</span>
-            </a>
-            <a href="#curriculum" class="btn-secondary">
-              <span>View Curriculum</span>
-            </a>
+          <div class="hero-ctas">
+            <a href="#curriculum" class="btn-primary">Start Coding Free &rarr;</a>
+            <a href="#curriculum" class="btn-secondary">View Curriculum</a>
           </div>
 
-          <!-- Trust Stack -->
-          <div class="hero-trust-stack">
-            <div class="trust-rating">
-              <div class="stars">★★★★★</div>
-              <span class="trust-score">4.8 / 5.0</span>
-              <span class="trust-count">(1,240+ verified reviews)</span>
+          <!-- Trust Row -->
+          <div class="hero-proof">
+            <div class="proof-card rating-card">
+              <svg class="proof-icon star-icon" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+              <span id="hero-average-rating">4.8/5 Student Rating</span>
             </div>
-            <div class="trust-features">
-              <span>✓ 10,000+ Active Students</span>
-              <span>✓ Verified Certificate</span>
-              <span>✓ 7-Day Guarantee</span>
+            <div class="proof-card learners-card">
+              <svg class="proof-icon users-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+              <span id="hero-active-learners">... Sign Ups</span>
+            </div>
+            <div class="proof-card cert-card">
+              <svg class="proof-icon cert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"></path>
+              </svg>
+              <span>Certificate Included</span>
             </div>
           </div>
+          
+          <div class="trust-extra-row">
+            <span class="trust-badge">🛡️ 7-Day Money-Back Guarantee</span>
+          </div>
+
+
         </div>
 
-        <!-- Hero Right Side: Interactive Terminal Notebook Demo -->
+        <!-- Hero Right Side — 3D Interactive Clock Dial -->
         <div class="hero-right">
-          <div class="hero-demo-card">
-            <div class="hero-demo-header">
-              <div class="demo-window-controls">
-                <span class="dot red"></span>
-                <span class="dot yellow"></span>
-                <span class="dot green"></span>
+          <!-- Custom css styles for 3D Clock Dial -->
+          <style>
+            #roadmap-root .rm-ctrl {
+              background: rgba(255, 255, 255, 0.04);
+              border: 1px solid rgba(255, 255, 255, 0.12);
+              color: #e2ecf5;
+              font-family: inherit;
+              transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+              cursor: pointer;
+            }
+            #roadmap-root .rm-ctrl:hover {
+              background: rgba(255, 255, 255, 0.12);
+              border-color: rgba(255, 255, 255, 0.28);
+              transform: scale(1.06);
+              box-shadow: 0 0 12px rgba(255, 255, 255, 0.08);
+            }
+            /* Arrow and Volume buttons circular */
+            #roadmap-root #btnPrev,
+            #roadmap-root #btnNext,
+            #roadmap-root #btnVolume {
+              width: 38px;
+              height: 38px;
+              border-radius: 50%;
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 20px;
+              font-weight: 700;
+              padding: 0;
+              line-height: 1;
+            }
+            #roadmap-root #btnVolume {
+              font-size: 14px;
+            }
+            /* Auto-play button wide pill */
+            #roadmap-root #btnAuto {
+              position: absolute;
+              top: 16px;
+              right: 16px;
+              height: 38px;
+              padding: 0 18px;
+              border-radius: 19px;
+              font-size: 11px;
+              font-weight: 700;
+              z-index: 5;
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+            #roadmap-root .rm-ctrls-left {
+              position: absolute;
+              top: 16px;
+              left: 16px;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              z-index: 5;
+              transition: all 0.2s ease;
+            }
+            #roadmap-root .rm-legendBtn {
+              all: unset;
+              cursor: pointer;
+              display: inline-flex;
+              align-items: center;
+              gap: 8px;
+              font-size: 11px;
+              font-weight: 700;
+              color: var(--ink-dim);
+              background: rgba(255, 255, 255, 0.02);
+              border: 1px solid rgba(255, 255, 255, 0.07);
+              padding: 6px 14px 6px 10px;
+              border-radius: 20px;
+              backdrop-filter: blur(8px);
+              white-space: nowrap;
+              transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+            #roadmap-root .rm-legendBtn:hover {
+              color: var(--ink);
+              background: rgba(255, 255, 255, 0.05);
+              border-color: rgba(255, 255, 255, 0.18);
+              transform: translateY(-1px);
+            }
+            #roadmap-root .rm-legendBtn[data-active="true"][data-phase="SQL"] {
+              border-color: var(--sql);
+              background: rgba(45, 212, 167, 0.1);
+              box-shadow: 0 0 12px rgba(45, 212, 167, 0.15), inset 0 0 8px rgba(45, 212, 167, 0.1);
+              color: var(--sql);
+            }
+            #roadmap-root .rm-legendBtn[data-active="true"][data-phase="Excel"] {
+              border-color: var(--excel);
+              background: rgba(245, 166, 35, 0.1);
+              box-shadow: 0 0 12px rgba(245, 166, 35, 0.15), inset 0 0 8px rgba(245, 166, 35, 0.1);
+              color: var(--excel);
+            }
+            #roadmap-root .rm-legendBtn[data-active="true"][data-phase="Python"] {
+              border-color: var(--py);
+              background: rgba(56, 189, 248, 0.1);
+              box-shadow: 0 0 12px rgba(56, 189, 248, 0.15), inset 0 0 8px rgba(56, 189, 248, 0.1);
+              color: var(--py);
+            }
+            
+            @keyframes pulseGlow {
+              0% { opacity: 0.6; transform: scale(0.95); }
+              100% { opacity: 1; transform: scale(1.05); }
+            }
+
+            @media (max-width: 600px) {
+              #roadmap-root .rm-ctrls-left {
+                top: auto;
+                bottom: 12px;
+                left: 12px;
+                gap: 6px;
+              }
+              #roadmap-root #btnAuto {
+                top: auto;
+                bottom: 12px;
+                right: 12px;
+              }
+              #roadmap-root #btnPrev,
+              #roadmap-root #btnNext,
+              #roadmap-root #btnVolume {
+                width: 30px;
+                height: 30px;
+                font-size: 15px;
+              }
+              #roadmap-root #btnVolume {
+                font-size: 12px;
+              }
+              #roadmap-root #btnAuto {
+                height: 30px;
+                padding: 0 12px;
+                font-size: 10px;
+                border-radius: 15px;
+              }
+              /* ── Legend buttons: shrink to fit all 3 in one row ── */
+              #roadmap-root .rm-legendBtn {
+                font-size: 9.5px !important;
+                padding: 5px 9px 5px 7px !important;
+                gap: 5px !important;
+                border-radius: 14px !important;
+              }
+              /* Dot inside legend button */
+              #roadmap-root .rm-legendBtn > span:first-child {
+                width: 5px !important;
+                height: 5px !important;
+              }
+            }
+            @media (max-width: 420px) {
+              /* Extra compact for very small phones */
+              #roadmap-root .rm-legendBtn {
+                font-size: 8.5px !important;
+                padding: 4px 7px 4px 6px !important;
+                gap: 4px !important;
+              }
+            }
+
+            /* Fade in HUD controls and cards only after WebGL clock is loaded and rendered */
+            #roadmap-root #rm-dayCard,
+            #roadmap-root #rm-activeNum,
+            #roadmap-root .rm-ctrl,
+            #roadmap-root #rm-headerStats,
+            #roadmap-root .rm-legendBtn {
+              opacity: 0;
+              transition: opacity 0.5s ease, background 0.15s, border-color 0.15s, transform 0.2s;
+              pointer-events: none;
+            }
+            #roadmap-root.loaded #rm-dayCard,
+            #roadmap-root.loaded #rm-activeNum,
+            #roadmap-root.loaded #rm-headerStats {
+              opacity: 1;
+            }
+            #roadmap-root.loaded .rm-ctrl,
+            #roadmap-root.loaded .rm-legendBtn {
+              opacity: 1;
+              pointer-events: auto;
+            }
+          </style>
+
+          <div id="roadmap-root" style="
+            --ink:#eef3f7; --ink-dim:#9fb4c6; --ink-faint:#5c7186;
+            --bg:#0a0f16; --panel:#11171f; --panel-line:#202a35;
+            --sql:#2dd4a7; --excel:#f5a623; --py:#38bdf8;
+            width:100%; background:var(--bg); border-radius:16px; overflow:hidden;
+            font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+            border:1px solid var(--panel-line);
+            box-shadow: var(--shadow-card), 0 0 50px rgba(56,189,248,0.06);
+          ">
+            <!-- ============ HEADER ============ -->
+            <div id="rm-header" style="
+              padding: 22px 24px 20px; 
+              border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
+              background: linear-gradient(180deg, rgba(8, 12, 21, 0.9) 0%, rgba(4, 7, 12, 0.98) 100%);
+              backdrop-filter: blur(16px);
+              position: relative;
+              overflow: hidden;
+            ">
+              <!-- Top ambient glow line -->
+              <div id="rm-headerGlow" style="
+                position: absolute; 
+                top: 0; left: 0; right: 0; 
+                height: 1px; 
+                background: linear-gradient(90deg, transparent, var(--sql), transparent);
+                transition: background 0.5s ease;
+                z-index: 2;
+              "></div>
+
+              <!-- Dynamic ambient background phase glow -->
+              <div id="rm-headerPhaseGlow" style="
+                position: absolute; 
+                top: 0; left: 0; width: 160px; height: 160px; 
+                background: radial-gradient(circle, rgba(45, 212, 167, 0.08) 0%, transparent 70%); 
+                pointer-events: none; 
+                filter: blur(25px);
+                transition: background 0.6s ease;
+                z-index: 1;
+              "></div>
+              
+              <div style="display:flex; flex-direction:column; gap:16px; position:relative; z-index:2;">
+                <!-- Top Row: title + stats inline -->
+                <div id="rm-headerTopRow" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:nowrap; gap:12px; width:100%; min-width:0;">
+                                  <div id="rm-cardPillTitle" style="
+                    display: inline-flex; 
+                    align-items: center; 
+                    gap: 8px; 
+                    background: rgba(255, 255, 255, 0.02); 
+                    border: 1px solid rgba(255, 255, 255, 0.06); 
+                    padding: 6px 14px; 
+                    border-radius: 20px; 
+                    font-size: 10px; 
+                    font-weight: 800; 
+                    letter-spacing: 0.1em; 
+                    color: var(--ink-dim); 
+                    text-transform: uppercase;
+                    font-family: 'Outfit', sans-serif;
+                    transition: all 0.3s ease;
+                    white-space: nowrap;
+                    flex-shrink: 0;
+                  ">
+                    Data Analytics Roadmap
+                  </div>
+                  
+                  <div id="rm-headerStats" style="
+                    display: flex; 
+                    align-items: center; 
+                    gap: 16px;
+                    flex-shrink: 0;
+                  ">
+                    <div style="display:flex; flex-direction:column; align-items:center;">
+                      <span style="font-size:8px; color:var(--ink-faint); font-weight:700; letter-spacing:0.12em; text-transform:uppercase; font-family:'Outfit',sans-serif; white-space:nowrap;">Timeline</span>
+                      <span style="font-size:18px; font-weight:900; font-family:'Outfit',sans-serif; color:var(--ink); line-height:1.2; white-space:nowrap;">
+                        <span id="rm-statDay" style="color:var(--sql); text-shadow:0 0 12px rgba(45,212,167,0.3); font-variant-numeric:tabular-nums; transition:all 0.3s ease;">Day 1</span>
+                        <span style="font-size:11px; color:var(--ink-faint); font-weight:500; margin-left:2px;">/ 60</span>
+                      </span>
+                    </div>
+                    
+                    <div style="width:1px; height:28px; background:rgba(255, 255, 255, 0.1);"></div>
+                    
+                    <div style="display:flex; flex-direction:column; align-items:center;">
+                      <span style="font-size:8px; color:var(--ink-faint); font-weight:700; letter-spacing:0.12em; text-transform:uppercase; font-family:'Outfit',sans-serif; white-space:nowrap;">Completion</span>
+                      <span style="font-size:18px; font-weight:900; font-family:'Outfit',sans-serif; color:var(--ink); line-height:1.2;">
+                        <span id="rm-statPct" style="color:var(--sql); text-shadow:0 0 12px rgba(45,212,167,0.3); font-variant-numeric:tabular-nums; transition:all 0.3s ease;">2%</span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <!-- Bottom Row: legend buttons -->
+                <div style="display:flex; gap:8px; align-items:center; flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; width:100%; max-width:100%; box-sizing:border-box;">
+                  <button class="rm-legendBtn" data-phase="SQL">
+                    <span style="width:7px;height:7px;border-radius:50%;background:var(--sql);box-shadow:0 0 6px var(--sql);flex:none;"></span>SQL <span style="color:var(--ink-faint); font-weight:400;">· Days 1–18</span>
+                  </button>
+                  <button class="rm-legendBtn" data-phase="Excel">
+                    <span style="width:7px;height:7px;border-radius:50%;background:var(--excel);box-shadow:0 0 6px var(--excel);flex:none;"></span>Excel <span style="color:var(--ink-faint); font-weight:400;">· Days 19–30</span>
+                  </button>
+                  <button class="rm-legendBtn" data-phase="Python">
+                    <span style="width:7px;height:7px;border-radius:50%;background:var(--py);box-shadow:0 0 6px var(--py);flex:none;"></span>Python <span style="color:var(--ink-faint); font-weight:400;">· Days 31–60</span>
+                  </button>
+                </div>
               </div>
-              <div class="demo-tabs">
-                <button class="demo-tab active" data-track="sql">⚡ SQL</button>
-                <button class="demo-tab" data-track="python">🐍 Python</button>
-                <button class="demo-tab" data-track="excel">📈 Excel</button>
-              </div>
-              <div class="demo-status"><span class="pulse-indicator"></span> Live Sandbox</div>
             </div>
 
-            <div class="hero-demo-body">
-              <div class="demo-editor-wrap">
-                <div class="demo-line-numbers">1<br>2<br>3<br>4</div>
-                <pre class="demo-code-area"><code id="demoCodeText">-- Calculating monthly compensation
-SELECT name, salary, salary / 12.0 AS monthly_pay
-FROM   employees
-WHERE  salary > 60000;</code></pre>
-              </div>
+            <!-- ============ BODY: dial ============ -->
+            <div id="rm-body" style="display:flex; flex-wrap:wrap;">
+              <!-- 3D dial -->
+              <div id="rm-dialWrap" style="position:relative; flex:1 1 100%; min-width:300px; background:#070b11;">
+                <canvas id="c3d" style="width:100%; display:block; cursor:default;"></canvas>
 
-              <div class="demo-action-bar">
-                <button class="demo-run-btn" id="demoRunBtn">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                  <span>Run Query (Ctrl+Enter)</span>
-                </button>
-                <span class="demo-exec-time" id="demoExecTime">Query executed in 4.2ms · 2 rows</span>
-              </div>
+                <!-- Active day number -->
+                <div id="rm-activeNum" style="
+                  position:absolute; left:0; top:0; transform:translate(-50%,-50%);
+                  font-size:12px; font-weight:800; color:#06140f;
+                  background:var(--sql); width:24px; height:24px;
+                  border-radius:50%; display:flex; align-items:center; justify-content:center;
+                  box-shadow:0 0 12px var(--sql), 0 0 4px var(--sql);
+                  pointer-events:none; z-index:4; font-variant-numeric:tabular-nums;
+                  transition:background 0.3s, box-shadow 0.3s;
+                ">1</div>
 
-              <div class="demo-results-wrap" id="demoResultsWrap">
-                <table class="demo-results-table">
-                  <thead>
-                    <tr id="demoTableHeader">
-                      <th>name</th>
-                      <th>salary</th>
-                      <th>monthly_pay</th>
-                    </tr>
-                  </thead>
-                  <tbody id="demoTableBody">
-                    <tr><td>Alice Smith</td><td>85000</td><td>7083.33</td></tr>
-                    <tr><td>Bob Jones</td><td>72000</td><td>6000.00</td></tr>
-                  </tbody>
-                </table>
+                <!-- Center day card -->
+                <div id="rm-dayCard" style="
+                  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+                  width:178px; padding:14px 16px 12px; text-align:center;
+                  background:rgba(8,14,24,0.92); border:1px solid rgba(56,189,248,0.3);
+                  border-radius:16px; backdrop-filter:blur(10px);
+                  box-shadow:0 0 36px rgba(56,189,248,0.16), inset 0 0 22px rgba(45,212,167,0.05);
+                  pointer-events:none; z-index:3;
+                ">
+                  <div id="rm-cardPill" style="
+                    display:inline-block; font-size:10px; font-weight:700; letter-spacing:0.05em;
+                    padding:3px 10px; border-radius:20px; margin-bottom:9px;
+                    background:rgba(45,212,167,0.16); border:1px solid rgba(45,212,167,0.5);
+                    color:var(--sql); transition:color 0.3s,border-color 0.3s,background 0.3s;
+                  ">SQL · FREE</div>
+                  <div id="rm-cardDay" style="font-size:25px; font-weight:800; color:var(--ink); line-height:1; margin-bottom:5px; letter-spacing:-0.01em;">Day 1</div>
+                  <div id="rm-cardIcon" style="display:flex; justify-content:center; align-items:center; height:28px; margin-bottom:5px;"><span class="tech-logo logo-sql" title="SQL"><svg viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v6c0 1.66 4 3 9 3s9-1.34 9-3V5"></path><path d="M3 11v6c0 1.66 4 3 9 3s9-1.34 9-3v-6"></path></svg></span></div>
+                  <div id="rm-cardTopic" style="font-size:11px; font-weight:500; color:var(--ink-dim); line-height:1.4; min-height:28px;">SQL Basics &amp; SELECT</div>
+                  <div style="margin-top:9px; height:4px; background:rgba(255,255,255,0.08); border-radius:2px; overflow:hidden;">
+                    <div id="rm-cardProgBar" style="height:100%; background:linear-gradient(90deg,var(--sql),var(--py)); border-radius:2px; transition:width 0.4s; width:1.67%;"></div>
+                  </div>
+                  <div id="rm-cardProgLabel" style="font-size:10px; color:var(--ink-faint); margin-top:4px; font-variant-numeric:tabular-nums;">1 / 60</div>
+                </div>
+
+                <!-- top vignette -->
+                <div style="position:absolute; top:0; left:0; right:0; height:88px; background:linear-gradient(rgba(7,11,17,0.8),transparent); pointer-events:none;"></div>
+
+                <!-- bottom vignette -->
+                <div style="position:absolute; bottom:0; left:0; right:0; height:64px; background:linear-gradient(transparent,rgba(7,11,17,0.85) 70%); pointer-events:none;"></div>
+
+                <!-- top transport controls -->
+                <div class="rm-ctrls-left">
+                  <button id="btnPrev" class="rm-ctrl" aria-label="Previous day">‹</button>
+                  <button id="btnNext" class="rm-ctrl" aria-label="Next day">›</button>
+                  <button id="btnVolume" class="rm-ctrl" aria-label="Toggle sound">🔇</button>
+                </div>
+                <button id="btnAuto" class="rm-ctrl rm-ctrlWide" aria-label="Toggle autoplay">⏸ &nbsp;Auto-play</button>
               </div>
             </div>
           </div>
@@ -199,391 +536,591 @@ WHERE  salary > 60000;</code></pre>
       </div>
     </section>
 
-    <!-- Proof Strip -->
+    <!-- Social Proof Strip -->
     <section class="proof-strip">
       <div class="container proof-grid">
         <div class="proof-stat">
-          <span class="proof-number">10,000+</span>
-          <span class="proof-label">Active Learners</span>
+          <span class="proof-num" id="social-proof-learners" data-count="" data-suffix="+">...</span>
+          <span class="proof-label">Sign Ups</span>
         </div>
         <div class="proof-stat">
-          <span class="proof-number">1,000+</span>
-          <span class="proof-label">Coding Challenges</span>
+          <span class="proof-num" data-count="1000" data-suffix="+">1,000+</span>
+          <span class="proof-label">Practice Challenges</span>
         </div>
         <div class="proof-stat">
-          <span class="proof-number">60 Days</span>
-          <span class="proof-label">Structured Syllabus</span>
+          <span class="proof-num" data-count="60" data-suffix=" Days">60 Days</span>
+          <span class="proof-label">Structured Curriculum</span>
         </div>
         <div class="proof-stat">
-          <span class="proof-number">3 Courses</span>
-          <span class="proof-label">SQL, Excel & Python</span>
+          <span class="proof-num" data-count="3" data-suffix=" Courses">3 Courses</span>
+          <span class="proof-label">All-In-One Bundle</span>
         </div>
       </div>
     </section>
 
-    <!-- How Learning Works Section -->
-    <section class="how-it-works-section" id="how-it-works">
+    <!-- Divider 1 -->
+    <div class="diff-divider-wrapper reveal">
+      <svg class="diff-divider" viewBox="0 0 1200 20" preserveAspectRatio="none" fill="none">
+        <line x1="0" y1="10" x2="1200" y2="10" stroke="var(--border)" stroke-width="1.5" stroke-dasharray="1200" stroke-dashoffset="1200" />
+      </svg>
+      <div class="diff-glyphs">
+        <span class="glyph-group">+++</span>
+        <span class="glyph-group">---</span>
+        <span class="glyph-group">+++</span>
+      </div>
+    </div>
+
+    <!-- Try All 3 Day 01s Free Preview Section -->
+    <section class="preview-section" id="free-preview">
       <div class="container">
-        <div class="section-header text-center">
-          <span class="section-badge">How Manodemy Works</span>
-          <h2 class="section-title">The 3-Step Active Learning Method</h2>
-          <p class="section-sub">No passive 30-minute videos. You read a bite-sized concept, write real code, and get scored instantly.</p>
+        <div class="section-head reveal">
+          <h2>Try <span>All 3 Day 01s</span> Completely Free</h2>
+          <p>No login. No payment. No commitment. Just write and run real code in your browser.</p>
         </div>
 
-        <div class="how-steps-grid">
-          <div class="how-step-card">
-            <div class="step-num-badge">01</div>
-            <h3>Read Bite-Sized Theory</h3>
-            <p>Master core data concepts in 3 to 5 minutes with concise text slides and synchronized audio narration clips.</p>
+        <div class="free-preview-grid reveal">
+          <!-- SQL Preview Card -->
+          <div class="free-card free-card--sql">
+            <div class="free-card-badge"><span class="tech-logo logo-sql" title="SQL"><svg viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v6c0 1.66 4 3 9 3s9-1.34 9-3V5"></path><path d="M3 11v6c0 1.66 4 3 9 3s9-1.34 9-3v-6"></path></svg></span> SQL</div>
+            <div class="free-card-day">Day 01</div>
+            <h3 class="free-card-title">Introduction to SQL & Databases</h3>
+            
+            <div class="free-card-snippet">
+              <div class="snippet-bar">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+                <span class="snippet-filename">day01_sql.sql</span>
+              </div>
+              <div class="snippet-body">
+                <div class="snip-line"><span class="snip-comment">-- Your first SQL query</span></div>
+                <div class="snip-line"><span class="snip-kw">SELECT</span> product_name, revenue</div>
+                <div class="snip-line"><span class="snip-kw">FROM</span> sales</div>
+                <div class="snip-line"><span class="snip-kw">WHERE</span> revenue <span class="snip-op">&gt;</span> <span class="snip-num">10000</span></div>
+                <div class="snip-line"><span class="snip-kw">ORDER BY</span> revenue <span class="snip-kw">DESC</span>;</div>
+                <div class="snip-output"><span class="out-label">Result:</span> <span class="out-val">5 rows found ✓</span></div>
+              </div>
+            </div>
+            
+            <a href="/sql/day01.html" class="free-card-cta free-cta--sql">⚡ Start SQL Day 01 Free →</a>
+            <span class="free-card-meta">Live SQLite editor · No setup needed</span>
           </div>
 
-          <div class="how-step-card">
-            <div class="step-num-badge">02</div>
-            <h3>Code in Interactive Notebook</h3>
-            <p>Write real SQL queries, Pandas scripts, and Excel formulas in your browser with full SQLite & WebAssembly execution.</p>
+          <!-- Excel Preview Card -->
+          <div class="free-card free-card--excel">
+            <div class="free-card-badge"><span class="tech-logo logo-excel" title="Excel"><svg viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.625 0H8.625L1.5 2.625V20.375L8.625 23H14.625V0Z" fill="#107C41"/><path d="M21.5 2.625H14.625V6.375H21.5V2.625Z" fill="#1F9A55"/><path d="M21.5 6.375H14.625V10.125H21.5V6.375Z" fill="#33C481"/><path d="M21.5 10.125H14.625V13.875H21.5V10.125Z" fill="#107C41"/><path d="M21.5 13.875H14.625V17.625H21.5V13.875Z" fill="#1B9A59"/><path d="M21.5 17.625H14.625V20.375H21.5V17.625Z" fill="#107C41"/><path d="M10.125 6.375H3.375V16.625H10.125V6.375Z" fill="#107C41"/><path d="M11.813 7.875L9.938 11.25L11.813 14.625H9.563L8.438 12.75L7.313 14.625H5.063L6.938 11.25L5.063 7.875H7.313L8.438 9.75L9.563 7.875H11.813Z" fill="white"/></svg></span> Excel</div>
+            <div class="free-card-day">Day 01</div>
+            <h3 class="free-card-title">Excel Fundamentals & Formulas</h3>
+            
+            <div class="free-card-snippet">
+              <div class="snippet-bar">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+                <span class="snippet-filename">day01_excel.xlsx</span>
+              </div>
+              <div class="snippet-body">
+                <div class="snip-line"><span class="snip-comment">// Formula challenge</span></div>
+                <div class="snip-line"><span class="snip-kw">=</span><span class="snip-func">SUM</span>(B2:B10)</div>
+                <div class="snip-line"><span class="snip-kw">=</span><span class="snip-func">AVERAGE</span>(C2:C10)</div>
+                <div class="snip-line"><span class="snip-kw">=</span><span class="snip-func">IF</span>(D2<span class="snip-op">&gt;</span><span class="snip-num">1000</span>, <span class="snip-str">"High"</span>, <span class="snip-str">"Low"</span>)</div>
+                <div class="snip-output"><span class="out-label">Result:</span> <span class="out-val">Formula correct ✓</span></div>
+              </div>
+            </div>
+            
+            <a href="/excel/day01.html" class="free-card-cta free-cta--excel"><span class="tech-logo logo-excel" title="Excel"><svg viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.625 0H8.625L1.5 2.625V20.375L8.625 23H14.625V0Z" fill="#107C41"/><path d="M21.5 2.625H14.625V6.375H21.5V2.625Z" fill="#1F9A55"/><path d="M21.5 6.375H14.625V10.125H21.5V6.375Z" fill="#33C481"/><path d="M21.5 10.125H14.625V13.875H21.5V10.125Z" fill="#107C41"/><path d="M21.5 13.875H14.625V17.625H21.5V13.875Z" fill="#1B9A59"/><path d="M21.5 17.625H14.625V20.375H21.5V17.625Z" fill="#107C41"/><path d="M10.125 6.375H3.375V16.625H10.125V6.375Z" fill="#107C41"/><path d="M11.813 7.875L9.938 11.25L11.813 14.625H9.563L8.438 12.75L7.313 14.625H5.063L6.938 11.25L5.063 7.875H7.313L8.438 9.75L9.563 7.875H11.813Z" fill="white"/></svg></span> Start Excel Day 01 Free &rarr;</a>
+            <span class="free-card-meta">Interactive formula builder · No setup needed</span>
           </div>
 
-          <div class="how-step-card">
-            <div class="step-num-badge">03</div>
-            <h3>Get Instant Automated Grades</h3>
-            <p>Submit interview-style test questions after every lesson to get instant feedback, scorecards, and solution breakdowns.</p>
+          <!-- Python Preview Card -->
+          <div class="free-card free-card--python">
+            <div class="free-card-badge"><span class="tech-logo logo-python" title="Python"><svg viewBox="45.9 0 367.2 459" fill="none"><path fill="#306998" d="M229.5 0C161.4 0 122.4 15.6 122.4 53.6v34.4h107.1v15.3H122.4c-47.8 0-76.5 30.6-76.5 76.5v61.2c0 45.9 28.7 76.5 76.5 76.5h30.6v-45.9c0-51 41.3-91.8 91.8-91.8h107.1V107.1c0-53.6-47.8-107.1-122.4-107.1zM175.9 30.6c8.4 0 15.3 6.9 15.3 15.3s-6.9 15.3-15.3 15.3-15.3-6.9-15.3-15.3 6.9-15.3 15.3-15.3z" /><path fill="#FFE873" d="M229.5 459c68.1 0 107.1-15.6 107.1-53.6v-34.4H229.5v-15.3h107.1c47.8 0 76.5-30.6 76.5-76.5v-61.2c0-45.9-28.7-76.5-76.5-76.5h-30.6v45.9c0 51-41.3 91.8-91.8 91.8H122.4V351.9c0 53.6 47.8 107.1 122.4 107.1zm53.6-30.6c-8.4 0-15.3-6.9-15.3-15.3s6.9-15.3 15.3-15.3 15.3 6.9 15.3 15.3-6.9 15.3-15.3 15.3z" /></svg></span> Python</div>
+            <div class="free-card-day">Day 01</div>
+            <h3 class="free-card-title">Data Types and Memory</h3>
+            
+            <div class="free-card-snippet">
+              <div class="snippet-bar">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+                <span class="snippet-filename">day01_challenge.py</span>
+              </div>
+              <div class="snippet-body">
+                <div class="snip-line"><span class="snip-comment"># Write dynamic Python scripts</span></div>
+                <div class="snip-line"><span class="snip-kw">def</span> <span class="snip-func">verify_active_learning</span>():</div>
+                <div class="snip-line">&nbsp;&nbsp;<span class="snip-kw">return</span> <span class="snip-str">"Tutorial Hell Escaped! 🚀"</span></div>
+                <div class="snip-line"><span class="snip-func">verify_active_learning</span>()</div>
+                <div class="snip-output"><span class="out-label">Out [1]:</span> <span class="out-val">'Tutorial Hell Escaped! 🚀'</span></div>
+              </div>
+            </div>
+            
+            <a href="/day01.html" class="free-card-cta free-cta--python"><span class="tech-logo logo-python" title="Python"><svg viewBox="45.9 0 367.2 459" fill="none"><path fill="#306998" d="M229.5 0C161.4 0 122.4 15.6 122.4 53.6v34.4h107.1v15.3H122.4c-47.8 0-76.5 30.6-76.5 76.5v61.2c0 45.9 28.7 76.5 76.5 76.5h30.6v-45.9c0-51 41.3-91.8 91.8-91.8h107.1V107.1c0-53.6-47.8-107.1-122.4-107.1zM175.9 30.6c8.4 0 15.3 6.9 15.3 15.3s-6.9 15.3-15.3 15.3-15.3-6.9-15.3-15.3 6.9-15.3 15.3-15.3z" /><path fill="#FFE873" d="M229.5 459c68.1 0 107.1-15.6 107.1-53.6v-34.4H229.5v-15.3h107.1c47.8 0 76.5-30.6 76.5-76.5v-61.2c0-45.9-28.7-76.5-76.5-76.5h-30.6v45.9c0 51-41.3 91.8-91.8 91.8H122.4V351.9c0 53.6 47.8 107.1 122.4 107.1zm53.6-30.6c-8.4 0-15.3-6.9-15.3-15.3s6.9-15.3 15.3-15.3 15.3 6.9 15.3 15.3-6.9 15.3-15.3 15.3z" /></svg></span> Start Python Day 01 Free &rarr;</a>
+            <span class="free-card-meta">Live browser-compiled notebook · No setup needed</span>
           </div>
         </div>
       </div>
     </section>
+
+    <!-- Divider 2 -->
+    <div class="diff-divider-wrapper reveal">
+      <svg class="diff-divider" viewBox="0 0 1200 20" preserveAspectRatio="none" fill="none">
+        <line x1="0" y1="10" x2="1200" y2="10" stroke="var(--border)" stroke-width="1.5" stroke-dasharray="1200" stroke-dashoffset="1200" />
+      </svg>
+      <div class="diff-glyphs">
+        <span class="glyph-group">---</span>
+        <span class="glyph-group">+++</span>
+        <span class="glyph-group">---</span>
+      </div>
+    </div>
 
     <!-- Curriculum Section -->
     <section class="curriculum-section" id="curriculum">
       <div class="container">
-        <div class="section-header text-center">
-          <span class="section-badge">Complete Syllabus</span>
-          <h2 class="section-title">60 Days to Data Analyst Mastery</h2>
-          <p class="section-sub">Click any day to launch the live notebook environment. Days 01 & 02 of each track are 100% free to try!</p>
+        <div class="section-head reveal">
+          <h2>Complete <span>60-Day Curriculum</span></h2>
+          <p>Every concept a professional Data Analyst uses — in a logical, progressive sequence.</p>
         </div>
 
-        <!-- Curriculum Track Selector Tabs -->
-        <div class="curriculum-tabs">
-          <button class="curriculum-tab-btn active" data-curriculum-track="sql">⚡ SQL (18 Days)</button>
-          <button class="curriculum-tab-btn" data-curriculum-track="excel">📈 Excel (12 Days)</button>
-          <button class="curriculum-tab-btn" data-curriculum-track="python">🐍 Python (30 Days)</button>
+
+        <!-- Tabs -->
+        <div class="curr-tabs reveal">
+          <button class="curr-tab curr-tab--sql active" data-tab="sql">
+            <span class="tech-logo logo-sql" title="SQL"><svg viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v6c0 1.66 4 3 9 3s9-1.34 9-3V5"></path><path d="M3 11v6c0 1.66 4 3 9 3s9-1.34 9-3v-6"></path></svg></span> SQL <span class="curr-tab-days">18 Days</span>
+          </button>
+          <button class="curr-tab curr-tab--excel" data-tab="excel">
+            <span class="tech-logo logo-excel" title="Excel"><svg viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.625 0H8.625L1.5 2.625V20.375L8.625 23H14.625V0Z" fill="#107C41"/><path d="M21.5 2.625H14.625V6.375H21.5V2.625Z" fill="#1F9A55"/><path d="M21.5 6.375H14.625V10.125H21.5V6.375Z" fill="#33C481"/><path d="M21.5 10.125H14.625V13.875H21.5V10.125Z" fill="#107C41"/><path d="M21.5 13.875H14.625V17.625H21.5V13.875Z" fill="#1B9A59"/><path d="M21.5 17.625H14.625V20.375H21.5V17.625Z" fill="#107C41"/><path d="M10.125 6.375H3.375V16.625H10.125V6.375Z" fill="#107C41"/><path d="M11.813 7.875L9.938 11.25L11.813 14.625H9.563L8.438 12.75L7.313 14.625H5.063L6.938 11.25L5.063 7.875H7.313L8.438 9.75L9.563 7.875H11.813Z" fill="white"/></svg></span> Excel <span class="curr-tab-days">12 Days</span>
+          </button>
+          <button class="curr-tab curr-tab--python" data-tab="python">
+            <span class="tech-logo logo-python" title="Python"><svg viewBox="45.9 0 367.2 459" fill="none"><path fill="#306998" d="M229.5 0C161.4 0 122.4 15.6 122.4 53.6v34.4h107.1v15.3H122.4c-47.8 0-76.5 30.6-76.5 76.5v61.2c0 45.9 28.7 76.5 76.5 76.5h30.6v-45.9c0-51 41.3-91.8 91.8-91.8h107.1V107.1c0-53.6-47.8-107.1-122.4-107.1zM175.9 30.6c8.4 0 15.3 6.9 15.3 15.3s-6.9 15.3-15.3 15.3-15.3-6.9-15.3-15.3 6.9-15.3 15.3-15.3z" /><path fill="#FFE873" d="M229.5 459c68.1 0 107.1-15.6 107.1-53.6v-34.4H229.5v-15.3h107.1c47.8 0 76.5-30.6 76.5-76.5v-61.2c0-45.9-28.7-76.5-76.5-76.5h-30.6v45.9c0 51-41.3 91.8-91.8 91.8H122.4V351.9c0 53.6 47.8 107.1 122.4 107.1zm53.6-30.6c-8.4 0-15.3-6.9-15.3-15.3s6.9-15.3 15.3-15.3 15.3 6.9 15.3 15.3-6.9 15.3-15.3 15.3z" /></svg></span> Python <span class="curr-tab-days">30 Days</span>
+          </button>
         </div>
 
-        <!-- SQL Track Grid -->
-        <div class="curriculum-grid-wrapper active" id="curriculum-track-sql">
-          <div class="curriculum-grid" id="sqlCurriculumGrid">
-            <!-- Dynamically populated via manifest.js or static fallback -->
-            <a href="/sql/day01.html" class="curriculum-day-card free">
-              <div class="day-card-header">
-                <span class="day-card-badge free">FREE</span>
-                <span class="day-card-num">DAY 01</span>
-              </div>
-              <h4 class="day-card-title">📁 Introduction to SQL & Databases</h4>
-              <span class="day-card-action">Launch Notebook →</span>
-            </a>
-            <a href="/sql/day02.html" class="curriculum-day-card free">
-              <div class="day-card-header">
-                <span class="day-card-badge free">FREE</span>
-                <span class="day-card-num">DAY 02</span>
-              </div>
-              <h4 class="day-card-title">💾 Basic Retrieval: SELECT, DISTINCT, ORDER BY</h4>
-              <span class="day-card-action">Launch Notebook →</span>
-            </a>
-            <a href="/sql/day03.html" class="curriculum-day-card">
-              <div class="day-card-header">
-                <span class="day-card-badge lock">🔒 FULL ACCESS</span>
-                <span class="day-card-num">DAY 03</span>
-              </div>
-              <h4 class="day-card-title">🔍 Filtering Data</h4>
-              <span class="day-card-action">Launch Notebook →</span>
-            </a>
-            <a href="/sql/day04.html" class="curriculum-day-card">
-              <div class="day-card-header">
-                <span class="day-card-badge lock">🔒 FULL ACCESS</span>
-                <span class="day-card-num">DAY 04</span>
-              </div>
-              <h4 class="day-card-title">⚙️ Operators & Expressions</h4>
-              <span class="day-card-action">Launch Notebook →</span>
-            </a>
-            <a href="/sql/day05.html" class="curriculum-day-card">
-              <div class="day-card-header">
-                <span class="day-card-badge lock">🔒 FULL ACCESS</span>
-                <span class="day-card-num">DAY 05</span>
-              </div>
-              <h4 class="day-card-title">📊 Aggregate Functions</h4>
-              <span class="day-card-action">Launch Notebook →</span>
-            </a>
-            <a href="/sql/day06.html" class="curriculum-day-card">
-              <div class="day-card-header">
-                <span class="day-card-badge lock">🔒 FULL ACCESS</span>
-                <span class="day-card-num">DAY 06</span>
-              </div>
-              <h4 class="day-card-title">🗃️ GROUP BY & HAVING</h4>
-              <span class="day-card-action">Launch Notebook →</span>
-            </a>
-            <a href="/sql/day07.html" class="curriculum-day-card">
-              <div class="day-card-header">
-                <span class="day-card-badge lock">🔒 FULL ACCESS</span>
-                <span class="day-card-num">DAY 07</span>
-              </div>
-              <h4 class="day-card-title">🧵 Single-Row Functions</h4>
-              <span class="day-card-action">Launch Notebook →</span>
-            </a>
-            <a href="/sql/day08.html" class="curriculum-day-card">
-              <div class="day-card-header">
-                <span class="day-card-badge lock">🔒 FULL ACCESS</span>
-                <span class="day-card-num">DAY 08</span>
-              </div>
-              <h4 class="day-card-title">📅 Date & Time Functions</h4>
-              <span class="day-card-action">Launch Notebook →</span>
-            </a>
-            <a href="/sql/day09.html" class="curriculum-day-card">
-              <div class="day-card-header">
-                <span class="day-card-badge lock">🔒 FULL ACCESS</span>
-                <span class="day-card-num">DAY 09</span>
-              </div>
-              <h4 class="day-card-title">🔀 CASE & Conditional Logic</h4>
-              <span class="day-card-action">Launch Notebook →</span>
-            </a>
-            <a href="/sql/day10.html" class="curriculum-day-card">
-              <div class="day-card-header">
-                <span class="day-card-badge lock">🔒 FULL ACCESS</span>
-                <span class="day-card-num">DAY 10</span>
-              </div>
-              <h4 class="day-card-title">🔗 Joins Fundamentals</h4>
-              <span class="day-card-action">Launch Notebook →</span>
-            </a>
-            <a href="/sql/day11.html" class="curriculum-day-card">
-              <div class="day-card-header">
-                <span class="day-card-badge lock">🔒 FULL ACCESS</span>
-                <span class="day-card-num">DAY 11</span>
-              </div>
-              <h4 class="day-card-title">🔄 Advanced Joins</h4>
-              <span class="day-card-action">Launch Notebook →</span>
-            </a>
-            <a href="/sql/day12.html" class="curriculum-day-card">
-              <div class="day-card-header">
-                <span class="day-card-badge lock">🔒 FULL ACCESS</span>
-                <span class="day-card-num">DAY 12</span>
-              </div>
-              <h4 class="day-card-title">⛔ Set Operations</h4>
-              <span class="day-card-action">Launch Notebook →</span>
-            </a>
-            <a href="/sql/day13.html" class="curriculum-day-card">
-              <div class="day-card-header">
-                <span class="day-card-badge lock">🔒 FULL ACCESS</span>
-                <span class="day-card-num">DAY 13</span>
-              </div>
-              <h4 class="day-card-title">🧠 Subqueries</h4>
-              <span class="day-card-action">Launch Notebook →</span>
-            </a>
-            <a href="/sql/day14.html" class="curriculum-day-card">
-              <div class="day-card-header">
-                <span class="day-card-badge lock">🔒 FULL ACCESS</span>
-                <span class="day-card-num">DAY 14</span>
-              </div>
-              <h4 class="day-card-title">🏗️ Common Table Expressions (CTEs)</h4>
-              <span class="day-card-action">Launch Notebook →</span>
-            </a>
-            <a href="/sql/day15.html" class="curriculum-day-card">
-              <div class="day-card-header">
-                <span class="day-card-badge lock">🔒 FULL ACCESS</span>
-                <span class="day-card-num">DAY 15</span>
-              </div>
-              <h4 class="day-card-title">🔢 Window Functions I — Ranking</h4>
-              <span class="day-card-action">Launch Notebook →</span>
-            </a>
-            <a href="/sql/day16.html" class="curriculum-day-card">
-              <div class="day-card-header">
-                <span class="day-card-badge lock">🔒 FULL ACCESS</span>
-                <span class="day-card-num">DAY 16</span>
-              </div>
-              <h4 class="day-card-title">📈 Window Functions II — Analytic</h4>
-              <span class="day-card-action">Launch Notebook →</span>
-            </a>
-            <a href="/sql/day17.html" class="curriculum-day-card">
-              <div class="day-card-header">
-                <span class="day-card-badge lock">🔒 FULL ACCESS</span>
-                <span class="day-card-num">DAY 17</span>
-              </div>
-              <h4 class="day-card-title">🛠️ DDL, DML & Constraints</h4>
-              <span class="day-card-action">Launch Notebook →</span>
-            </a>
-            <a href="/sql/day18.html" class="curriculum-day-card">
-              <div class="day-card-header">
-                <span class="day-card-badge lock">🔒 FULL ACCESS</span>
-                <span class="day-card-num">DAY 18</span>
-              </div>
-              <h4 class="day-card-title">🚀 Query Optimization & Capstone Project</h4>
-              <span class="day-card-action">Launch Notebook →</span>
-            </a>
+        <!-- SQL Panel -->
+        <div class="curr-panel curr-panel--sql active" id="panel-sql">
+          <div class="curriculum-grid">
+            <div class="day-card" data-day="01" tabindex="0">
+              <span class="day-num" style="color:var(--emerald)">Day 01</span>
+              <span class="day-emoji"><span class="tech-logo logo-sql" title="SQL"><svg viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v6c0 1.66 4 3 9 3s9-1.34 9-3V5"></path><path d="M3 11v6c0 1.66 4 3 9 3s9-1.34 9-3v-6"></path></svg></span></span>
+              <span class="day-title">Intro to SQL &amp; Databases</span>
+              <span class="day-badge badge-free">FREE</span>
+            </div>
+            <div class="day-card" data-day="02" tabindex="0">
+              <span class="day-num" style="color:var(--emerald)">Day 02</span>
+              <span class="day-emoji">🔍</span>
+              <span class="day-title">SELECT &amp; Filtering</span>
+              <span class="day-badge badge-free">FREE</span>
+            </div>
+            <div class="day-card coming-soon" data-day="03" tabindex="0">
+              <span class="day-num" style="color:var(--emerald)">Day 03</span>
+              <span class="day-emoji">📝</span>
+              <span class="day-title">Sorting, Patterns &amp; CASE</span>
+              <span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card coming-soon" data-day="04" tabindex="0">
+              <span class="day-num" style="color:var(--emerald)">Day 04</span>
+              <span class="day-emoji">📊</span>
+              <span class="day-title">Aggregate Functions &amp; GROUP BY</span>
+              <span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card coming-soon" data-day="05" tabindex="0">
+              <span class="day-num" style="color:var(--emerald)">Day 05</span>
+              <span class="day-emoji">🔗</span>
+              <span class="day-title">Joins &amp; Relationships</span>
+              <span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card coming-soon" data-day="06" tabindex="0">
+              <span class="day-num" style="color:var(--emerald)">Day 06</span>
+              <span class="day-emoji">🧠</span>
+              <span class="day-title">Subqueries</span>
+              <span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card coming-soon" data-day="07" tabindex="0">
+              <span class="day-num" style="color:var(--emerald)">Day 07</span>
+              <span class="day-emoji">🏗️</span>
+              <span class="day-title">Common Table Expressions</span>
+              <span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card coming-soon" data-day="08" tabindex="0">
+              <span class="day-num" style="color:var(--emerald)">Day 08</span>
+              <span class="day-emoji">🔢</span>
+              <span class="day-title">Window Functions I: Ranking</span>
+              <span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card coming-soon" data-day="09" tabindex="0">
+              <span class="day-num" style="color:var(--emerald)">Day 09</span>
+              <span class="day-emoji">📈</span>
+              <span class="day-title">Window Functions II: Analytics</span>
+              <span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card coming-soon" data-day="10" tabindex="0">
+              <span class="day-num" style="color:var(--emerald)">Day 10</span>
+              <span class="day-emoji">📅</span>
+              <span class="day-title">Date &amp; Time Functions</span>
+              <span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card coming-soon" data-day="11" tabindex="0">
+              <span class="day-num" style="color:var(--emerald)">Day 11</span>
+              <span class="day-emoji">🧹</span>
+              <span class="day-title">String &amp; Type Functions</span>
+              <span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card coming-soon" data-day="12" tabindex="0">
+              <span class="day-num" style="color:var(--emerald)">Day 12</span>
+              <span class="day-emoji">🛠️</span>
+              <span class="day-title">Data Cleaning &amp; Wrangling</span>
+              <span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card coming-soon" data-day="13" tabindex="0">
+              <span class="day-num" style="color:var(--emerald)">Day 13</span>
+              <span class="day-emoji">🥞</span>
+              <span class="day-title">Set Operations &amp; Joins</span>
+              <span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card coming-soon" data-day="14" tabindex="0">
+              <span class="day-num" style="color:var(--emerald)">Day 14</span>
+              <span class="day-emoji">⚡</span>
+              <span class="day-title">Query Optimisation</span>
+              <span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card coming-soon" data-day="15" tabindex="0">
+              <span class="day-num" style="color:var(--emerald)">Day 15</span>
+              <span class="day-emoji">💾</span>
+              <span class="day-title">Views &amp; Reusable Objects</span>
+              <span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card coming-soon" data-day="16" tabindex="0">
+              <span class="day-num" style="color:var(--emerald)">Day 16</span>
+              <span class="day-emoji">🔮</span>
+              <span class="day-title">Advanced Analytics Patterns</span>
+              <span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card coming-soon" data-day="17" tabindex="0">
+              <span class="day-num" style="color:var(--emerald)">Day 17</span>
+              <span class="day-emoji">🧱</span>
+              <span class="day-title">Data Modelling &amp; dbt</span>
+              <span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card coming-soon" data-day="18" tabindex="0">
+              <span class="day-num" style="color:var(--emerald)">Day 18</span>
+              <span class="day-emoji">🏆</span>
+              <span class="day-title">BI Capstone &amp; Interview Prep</span>
+              <span class="day-badge badge-lock">🔒</span>
+            </div>
           </div>
         </div>
 
-        <!-- Excel Track Grid -->
-        <div class="curriculum-grid-wrapper" id="curriculum-track-excel" style="display:none;">
+        <!-- Excel Panel -->
+        <div class="curr-panel curr-panel--excel" id="panel-excel" style="display:none">
           <div class="curriculum-grid">
-            <a href="/excel/day01.html" class="curriculum-day-card free">
-              <div class="day-card-header">
-                <span class="day-card-badge free">FREE</span>
-                <span class="day-card-num">DAY 01</span>
-              </div>
-              <h4 class="day-card-title">📊 Excel Grid & Cell Referencing</h4>
-              <span class="day-card-action">Launch Notebook →</span>
-            </a>
-            <a href="/excel/day01.html" class="curriculum-day-card free">
-              <div class="day-card-header">
-                <span class="day-card-badge free">FREE</span>
-                <span class="day-card-num">DAY 02</span>
-              </div>
-              <h4 class="day-card-title">⚡ Essential Math & Text Formulas</h4>
-              <span class="day-card-action">Launch Notebook →</span>
-            </a>
-            <a href="/excel/day01.html" class="curriculum-day-card">
-              <div class="day-card-header">
-                <span class="day-card-badge lock">🔒 FULL ACCESS</span>
-                <span class="day-card-num">DAY 03</span>
-              </div>
-              <h4 class="day-card-title">🔍 VLOOKUP, XLOOKUP & INDEX/MATCH</h4>
-              <span class="day-card-action">Launch Notebook →</span>
-            </a>
-            <a href="/excel/day01.html" class="curriculum-day-card">
-              <div class="day-card-header">
-                <span class="day-card-badge lock">🔒 FULL ACCESS</span>
-                <span class="day-card-num">DAY 04</span>
-              </div>
-              <h4 class="day-card-title">🧮 SUMIFS, COUNTIFS & Conditional Aggregates</h4>
-              <span class="day-card-action">Launch Notebook →</span>
-            </a>
-            <a href="/excel/day01.html" class="curriculum-day-card">
-              <div class="day-card-header">
-                <span class="day-card-badge lock">🔒 FULL ACCESS</span>
-                <span class="day-card-num">DAY 05</span>
-              </div>
-              <h4 class="day-card-title">📐 PivotTables & Data Summarization</h4>
-              <span class="day-card-action">Launch Notebook →</span>
-            </a>
-            <a href="/excel/day01.html" class="curriculum-day-card">
-              <div class="day-card-header">
-                <span class="day-card-badge lock">🔒 FULL ACCESS</span>
-                <span class="day-card-num">DAY 06</span>
-              </div>
-              <h4 class="day-card-title">📈 Dynamic Charting & Dashboards</h4>
-              <span class="day-card-action">Launch Notebook →</span>
-            </a>
+            <div class="day-card" data-day="01" tabindex="0">
+              <span class="day-num" style="color:var(--gold)">Day 01</span>
+              <span class="day-emoji"><span class="tech-logo logo-excel" title="Excel"><svg viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.625 0H8.625L1.5 2.625V20.375L8.625 23H14.625V0Z" fill="#107C41"/><path d="M21.5 2.625H14.625V6.375H21.5V2.625Z" fill="#1F9A55"/><path d="M21.5 6.375H14.625V10.125H21.5V6.375Z" fill="#33C481"/><path d="M21.5 10.125H14.625V13.875H21.5V10.125Z" fill="#107C41"/><path d="M21.5 13.875H14.625V17.625H21.5V13.875Z" fill="#1B9A59"/><path d="M21.5 17.625H14.625V20.375H21.5V17.625Z" fill="#107C41"/><path d="M10.125 6.375H3.375V16.625H10.125V6.375Z" fill="#107C41"/><path d="M11.813 7.875L9.938 11.25L11.813 14.625H9.563L8.438 12.75L7.313 14.625H5.063L6.938 11.25L5.063 7.875H7.313L8.438 9.75L9.563 7.875H11.813Z" fill="white"/></svg></span></span>
+              <span class="day-title">Excel Orientation &amp; Formulas</span>
+              <span class="day-badge badge-free">FREE</span>
+            </div>
+            <div class="day-card" data-day="02" tabindex="0">
+              <span class="day-num" style="color:var(--gold)">Day 02</span>
+              <span class="day-emoji">🎨</span>
+              <span class="day-title">Formatting, Sorting &amp; Filtering</span>
+              <span class="day-badge badge-free">FREE</span>
+            </div>
+            <div class="day-card coming-soon" data-day="03" tabindex="0">
+              <span class="day-num" style="color:var(--gold)">Day 03</span>
+              <span class="day-emoji">🧹</span>
+              <span class="day-title">Data Cleaning Essentials</span>
+              <span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card coming-soon" data-day="04" tabindex="0">
+              <span class="day-num" style="color:var(--gold)">Day 04</span>
+              <span class="day-emoji">📋</span>
+              <span class="day-title">Excel Tables</span>
+              <span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card coming-soon" data-day="05" tabindex="0">
+              <span class="day-num" style="color:var(--gold)">Day 05</span>
+              <span class="day-emoji">🔍</span>
+              <span class="day-title">Lookup &amp; Reference Functions</span>
+              <span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card coming-soon" data-day="06" tabindex="0">
+              <span class="day-num" style="color:var(--gold)">Day 06</span>
+              <span class="day-emoji">🔀</span>
+              <span class="day-title">Logic Functions</span>
+              <span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card coming-soon" data-day="07" tabindex="0">
+              <span class="day-num" style="color:var(--gold)">Day 07</span>
+              <span class="day-emoji">📝</span>
+              <span class="day-title">Text Functions</span>
+              <span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card coming-soon" data-day="08" tabindex="0">
+              <span class="day-num" style="color:var(--gold)">Day 08</span>
+              <span class="day-emoji">📅</span>
+              <span class="day-title">Date &amp; Time Functions</span>
+              <span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card coming-soon" data-day="09" tabindex="0">
+              <span class="day-num" style="color:var(--gold)">Day 09</span>
+              <span class="day-emoji">🧮</span>
+              <span class="day-title">Conditional Aggregation</span>
+              <span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card coming-soon" data-day="10" tabindex="0">
+              <span class="day-num" style="color:var(--gold)">Day 10</span>
+              <span class="day-emoji">⚙️</span>
+              <span class="day-title">PivotTables Core Mechanics</span>
+              <span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card coming-soon" data-day="11" tabindex="0">
+              <span class="day-num" style="color:var(--gold)">Day 11</span>
+              <span class="day-emoji">📈</span>
+              <span class="day-title">PivotTables Advanced &amp; Charts</span>
+              <span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card coming-soon" data-day="12" tabindex="0">
+              <span class="day-num" style="color:var(--gold)">Day 12</span>
+              <span class="day-emoji">🏆</span>
+              <span class="day-title">Validation, What-If &amp; Capstone</span>
+              <span class="day-badge badge-lock">🔒</span>
+            </div>
           </div>
         </div>
 
-        <!-- Python Track Grid -->
-        <div class="curriculum-grid-wrapper" id="curriculum-track-python" style="display:none;">
+        <!-- Python Panel -->
+        <div class="curr-panel curr-panel--python" id="panel-python" style="display:none">
           <div class="curriculum-grid">
-            <a href="/day01.html" class="curriculum-day-card free">
-              <div class="day-card-header">
-                <span class="day-card-badge free">FREE</span>
-                <span class="day-card-num">DAY 01</span>
-              </div>
-              <h4 class="day-card-title">🔢 Data Types & Memory in Python</h4>
-              <span class="day-card-action">Launch Notebook →</span>
-            </a>
-            <a href="/day01.html" class="curriculum-day-card free">
-              <div class="day-card-header">
-                <span class="day-card-badge free">FREE</span>
-                <span class="day-card-num">DAY 02</span>
-              </div>
-              <h4 class="day-card-title">➕ Python Operators & Control Flow</h4>
-              <span class="day-card-action">Launch Notebook →</span>
-            </a>
-            <a href="/day01.html" class="curriculum-day-card">
-              <div class="day-card-header">
-                <span class="day-card-badge lock">🔒 FULL ACCESS</span>
-                <span class="day-card-num">DAY 03</span>
-              </div>
-              <h4 class="day-card-title">📦 Lists, Tuples & Dictionaries</h4>
-              <span class="day-card-action">Launch Notebook →</span>
-            </a>
-            <a href="/day01.html" class="curriculum-day-card">
-              <div class="day-card-header">
-                <span class="day-card-badge lock">🔒 FULL ACCESS</span>
-                <span class="day-card-num">DAY 04</span>
-              </div>
-              <h4 class="day-card-title">🐼 Pandas DataFrames & Data Cleaning</h4>
-              <span class="day-card-action">Launch Notebook →</span>
-            </a>
-            <a href="/day01.html" class="curriculum-day-card">
-              <div class="day-card-header">
-                <span class="day-card-badge lock">🔒 FULL ACCESS</span>
-                <span class="day-card-num">DAY 05</span>
-              </div>
-              <h4 class="day-card-title">📊 Matplotlib & Seaborn Data Visualization</h4>
-              <span class="day-card-action">Launch Notebook →</span>
-            </a>
-            <a href="/day01.html" class="curriculum-day-card">
-              <div class="day-card-header">
-                <span class="day-card-badge lock">🔒 FULL ACCESS</span>
-                <span class="day-card-num">DAY 06</span>
-              </div>
-              <h4 class="day-card-title">🤖 Exploratory Data Analysis (EDA) Capstone</h4>
-              <span class="day-card-action">Launch Notebook →</span>
-            </a>
+            <div class="day-card" data-day="01" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 01</span>
+              <span class="day-emoji"><span class="tech-logo logo-python" title="Python"><svg viewBox="45.9 0 367.2 459" fill="none"><path fill="#306998" d="M229.5 0C161.4 0 122.4 15.6 122.4 53.6v34.4h107.1v15.3H122.4c-47.8 0-76.5 30.6-76.5 76.5v61.2c0 45.9 28.7 76.5 76.5 76.5h30.6v-45.9c0-51 41.3-91.8 91.8-91.8h107.1V107.1c0-53.6-47.8-107.1-122.4-107.1zM175.9 30.6c8.4 0 15.3 6.9 15.3 15.3s-6.9 15.3-15.3 15.3-15.3-6.9-15.3-15.3 6.9-15.3 15.3-15.3z" /><path fill="#FFE873" d="M229.5 459c68.1 0 107.1-15.6 107.1-53.6v-34.4H229.5v-15.3h107.1c47.8 0 76.5-30.6 76.5-76.5v-61.2c0-45.9-28.7-76.5-76.5-76.5h-30.6v45.9c0 51-41.3 91.8-91.8 91.8H122.4V351.9c0 53.6 47.8 107.1 122.4 107.1zm53.6-30.6c-8.4 0-15.3-6.9-15.3-15.3s6.9-15.3 15.3-15.3 15.3 6.9 15.3 15.3-6.9 15.3-15.3 15.3z" /></svg></span></span>
+              <span class="day-title">Data Types and Memory</span>
+              <span class="day-badge badge-free">FREE</span>
+            </div>
+            <div class="day-card" data-day="02" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 02</span>
+              <span class="day-emoji">➕</span>
+              <span class="day-title">Operators and Expressions</span>
+              <span class="day-badge badge-free">FREE</span>
+            </div>
+            <!-- Loop days 3-30 as locked -->
+            <div class="day-card locked" data-day="03" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 03</span><span class="day-emoji">📝</span><span class="day-title">Strings</span><span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card locked" data-day="04" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 04</span><span class="day-emoji">📋</span><span class="day-title">Lists</span><span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card locked" data-day="05" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 05</span><span class="day-emoji">📦</span><span class="day-title">Tuples</span><span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card locked" data-day="06" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 06</span><span class="day-emoji">⭕</span><span class="day-title">Sets</span><span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card locked" data-day="07" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 07</span><span class="day-emoji">🗂️</span><span class="day-title">Dictionaries</span><span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card locked" data-day="08" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 08</span><span class="day-emoji">🔀</span><span class="day-title">Conditionals</span><span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card locked" data-day="09" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 09</span><span class="day-emoji">🔄</span><span class="day-title">Loops</span><span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card locked" data-day="10" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 10</span><span class="day-emoji">⚙️</span><span class="day-title">Functions</span><span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card locked" data-day="11" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 11</span><span class="day-emoji">🔧</span><span class="day-title">Modules</span><span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card locked" data-day="12" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 12</span><span class="day-emoji">🧮</span><span class="day-title">Comprehensions</span><span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card locked" data-day="13" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 13</span><span class="day-emoji">λ</span><span class="day-title">Lambda Functions</span><span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card locked" data-day="14" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 14</span><span class="day-emoji">⚠️</span><span class="day-title">Exceptions</span><span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card locked" data-day="15" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 15</span><span class="day-emoji">📂</span><span class="day-title">File Handling</span><span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card locked" data-day="16" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 16</span><span class="day-emoji">🧩</span><span class="day-title">OOP Basics</span><span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card locked" data-day="17" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 17</span><span class="day-emoji">🏗️</span><span class="day-title">OOP Advanced</span><span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card locked" data-day="18" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 18</span><span class="day-emoji">🔍</span><span class="day-title">Regex</span><span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card locked" data-day="19" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 19</span><span class="day-emoji">⚡</span><span class="day-title">Generators and Iterators</span><span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card locked" data-day="20" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 20</span><span class="day-emoji">🏆</span><span class="day-title">Capstone Project</span><span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card locked" data-day="21" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 21</span><span class="day-emoji">📊</span><span class="day-title">NumPy Fundamentals</span><span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card locked" data-day="22" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 22</span><span class="day-emoji">📈</span><span class="day-title">NumPy Advanced</span><span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card locked" data-day="23" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 23</span><span class="day-emoji">🐼</span><span class="day-title">Pandas Introduction</span><span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card locked" data-day="24" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 24</span><span class="day-emoji">🎯</span><span class="day-title">Pandas Selection</span><span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card locked" data-day="25" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 25</span><span class="day-emoji">🧹</span><span class="day-title">Pandas Cleaning</span><span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card locked" data-day="26" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 26</span><span class="day-emoji">🗃️</span><span class="day-title">Pandas GroupBy</span><span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card locked" data-day="27" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 27</span><span class="day-emoji">🔗</span><span class="day-title">Pandas Merging</span><span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card locked" data-day="28" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 28</span><span class="day-emoji">📉</span><span class="day-title">Pandas Time Series</span><span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card locked" data-day="29" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 29</span><span class="day-emoji">🎨</span><span class="day-title">Data Visualization</span><span class="day-badge badge-lock">🔒</span>
+            </div>
+            <div class="day-card locked" data-day="30" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 30</span><span class="day-emoji">🔬</span><span class="day-title">Phase Analysis &amp; Review</span><span class="day-badge badge-lock">🔒</span>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Why Manodemy Comparison Section -->
-    <section class="comparison-section" id="comparison">
+    <!-- Divider 3 -->
+    <div class="diff-divider-wrapper reveal">
+      <svg class="diff-divider" viewBox="0 0 1200 20" preserveAspectRatio="none" fill="none">
+        <line x1="0" y1="10" x2="1200" y2="10" stroke="var(--border)" stroke-width="1.5" stroke-dasharray="1200" stroke-dashoffset="1200" />
+      </svg>
+      <div class="diff-glyphs">
+        <span class="glyph-group">+++</span>
+        <span class="glyph-group">---</span>
+        <span class="glyph-group">+++</span>
+      </div>
+    </div>
+
+    <!-- Comparison Section -->
+    <section class="compare-section">
       <div class="container">
-        <div class="section-header text-center">
-          <span class="section-badge">Why Manodemy</span>
-          <h2 class="section-title">Built Different to Beat Tutorial Hell</h2>
-          <p class="section-sub">See how Manodemy compares against passive video courses, monthly subscription traps, and $5,000 bootcamps.</p>
+        <div class="section-head reveal">
+          <h2>Why <span>Choose Manodemy?</span></h2>
+          <p>See how interactive active learning stacks up against alternative approaches.</p>
         </div>
 
-        <div class="comparison-table-wrap">
-          <table class="comparison-table">
+        <div class="comparison-tab-switcher">
+          <div class="comparison-tab-pill active" onclick="switchComparisonTab('comp-mano')">Manodemy</div>
+          <div class="comparison-tab-pill" onclick="switchComparisonTab('comp-traditional')">Video Courses</div>
+          <div class="comparison-tab-pill" onclick="switchComparisonTab('comp-sub')">Subscriptions</div>
+          <div class="comparison-tab-pill" onclick="switchComparisonTab('comp-bootcamp')">Bootcamps</div>
+        </div>
+
+        <div class="compare-wrap reveal" data-active-tab="comp-mano">
+          <table>
             <thead>
               <tr>
-                <th>Feature</th>
-                <th class="col-highlight">Mano<span style="color:var(--cyan)">demy</span></th>
-                <th>Video Courses</th>
-                <th>$15/mo Subs</th>
-                <th>$5k Bootcamps</th>
+                <th scope="col">Feature Dimension</th>
+                <th scope="col" class="col-mano">Manodemy Masterclass</th>
+                <th scope="col">Traditional Video Courses</th>
+                <th scope="col">Subscription Platforms</th>
+                <th scope="col">Bootcamps</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td><strong>Learning Style</strong></td>
-                <td class="col-highlight"><strong>Active Coding Notebooks</strong></td>
-                <td>Passive Video Watching</td>
-                <td>Mixed Reading/Videos</td>
-                <td>Live Lectures</td>
+                <td><strong>Learning Method</strong></td>
+                <td class="col-mano yes">
+                  <div class="col-mano-inner">
+                    <svg class="micro-loop-exec" viewBox="0 0 60 40" width="45" height="30">
+                      <rect x="5" y="5" width="50" height="30" rx="4" fill="rgba(0, 230, 246, 0.1)" stroke="var(--cyan)" stroke-width="1" />
+                      <text class="exec-text" x="12" y="22" fill="var(--cyan)" font-size="9" font-family="JetBrains Mono">&gt;_ run</text>
+                      <circle class="exec-dot" cx="45" cy="20" r="3" fill="var(--cyan)" />
+                    </svg>
+                    <span>✅ Write &amp; Run Code in Browser</span>
+                  </div>
+                </td>
+                <td class="no">❌ Passive Video Watching</td>
+                <td>⚠️ Short Exercises Between Videos</td>
+                <td>✅ Hands-on Capstone Projects</td>
               </tr>
               <tr>
-                <td><strong>Setup Required</strong></td>
-                <td class="col-highlight"><strong>Zero (In-Browser WebAssembly)</strong></td>
-                <td>Complex Local Installation</td>
-                <td>In-Browser Sandbox</td>
-                <td>Local Environment Setup</td>
+                <td><strong>Setup Friction</strong></td>
+                <td class="col-mano yes">✅ Zero Installation (Browser WASM)</td>
+                <td class="no">❌ Install Python, IDEs, CDNs manually</td>
+                <td>✅ Browser-based sandboxes</td>
+                <td class="no">❌ Heavy local setups</td>
               </tr>
               <tr>
-                <td><strong>Instant Grading</strong></td>
-                <td class="col-highlight"><strong>Automated SQL/Python Evaluation</strong></td>
-                <td>None (Self-Graded)</td>
-                <td>Basic Multiple Choice</td>
-                <td>Manual T.A. Grading</td>
+                <td><strong>Daily Structure</strong></td>
+                <td class="col-mano yes">✅ 60-Day Guided Plan (1 hr/day)</td>
+                <td class="no">❌ 80+ Hours of Unending Playlists</td>
+                <td>❌ Self-paced with zero urgency</td>
+                <td class="no">❌ Rigid, high-pressure schedules</td>
               </tr>
               <tr>
-                <td><strong>Pricing Model</strong></td>
-                <td class="col-highlight"><strong>$49 One-Time (Lifetime Access)</strong></td>
-                <td>$20–$100 per course</td>
-                <td>$15–$39/month forever</td>
-                <td>$3,000–$8,000</td>
+                <td><strong>Practice Depth</strong></td>
+                <td class="col-mano yes">✅ 1,000+ Dynamic Challenges</td>
+                <td class="no">❌ 0 - 20 Basic Quizzes</td>
+                <td>⚠️ ~350 Structured Exercises</td>
+                <td>⚠️ 5 - 10 Intensive Projects</td>
               </tr>
               <tr>
-                <td><strong>Certificate Included</strong></td>
-                <td class="col-highlight"><strong>Yes (Verified ID Certificate)</strong></td>
-                <td>Completion Certificate</td>
-                <td>Badge Only</td>
-                <td>Diploma</td>
+                <td><strong>Gamification</strong></td>
+                <td class="col-mano yes">
+                  <div class="col-mano-inner">
+                    <svg class="micro-loop-xp" viewBox="0 0 40 40" width="30" height="30" fill="none" stroke="currentColor">
+                      <rect class="bar-1" x="5" y="25" width="6" height="10" rx="1" fill="var(--emerald)" stroke="none" />
+                      <rect class="bar-2" x="15" y="18" width="6" height="17" rx="1" fill="var(--emerald)" stroke="none" />
+                      <rect class="bar-3" x="25" y="10" width="6" height="25" rx="1" fill="var(--emerald)" stroke="none" />
+                      <text class="toast-xp" x="12" y="12" fill="var(--emerald)" font-size="9" font-family="JetBrains Mono" font-weight="bold">+10 XP</text>
+                    </svg>
+                    <span>✅ Marks Engine &amp; Leaderboards</span>
+                  </div>
+                </td>
+                <td class="no">❌ None (Passive progress bar)</td>
+                <td>⚠️ Basic XP (No countdowns)</td>
+                <td class="no">❌ None (Grades only)</td>
+              </tr>
+              <tr>
+                <td><strong>Completion Rate</strong></td>
+                <td class="col-mano yes">✅ 80%+ (Active Coding Model)</td>
+                <td class="no">❌ Under 12% Industry Average</td>
+                <td>⚠️ 30% - 40% Average</td>
+                <td>✅ 70% - 80% (Mentorship driven)</td>
+              </tr>
+              <tr>
+                <td><strong>Credentialing</strong></td>
+                <td class="col-mano yes">
+                  <div class="col-mano-inner">
+                    <svg class="micro-loop-marks" viewBox="0 0 40 40" width="30" height="30">
+                      <circle class="track" cx="20" cy="20" r="16" stroke="rgba(255,255,255,0.08)" stroke-width="3" fill="none" />
+                      <circle class="fill" cx="20" cy="20" r="16" stroke="var(--cyan)" stroke-width="3" fill="none" stroke-dasharray="100" stroke-dashoffset="100" />
+                      <path class="checkmark" d="M14 20 l4 4 l8 -8" stroke="var(--cyan)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                    </svg>
+                    <span>✅ Cryptographic Verified Certificate</span>
+                  </div>
+                </td>
+                <td class="no">⚠️ Unverified PDF Certificate</td>
+                <td>⚠️ Basic Platform Certificates</td>
+                <td>✅ Professional Alumni Credentials</td>
+              </tr>
+              <tr>
+                <td><strong>Refund Policy</strong></td>
+                <td class="col-mano yes">✅ 7-Day Money-Back Guarantee</td>
+                <td class="no">⚠️ 30-day variable refund</td>
+                <td class="no">❌ No refunds on subscriptions</td>
+                <td class="no">❌ Forfeited deposits</td>
+              </tr>
+              <tr>
+                <td><strong>Cost ROI</strong></td>
+                <td class="col-mano yes" id="compare-cost-mano">$49 (One-Time)</td>
+                <td class="no" id="compare-cost-video">$30 - $120 (adds up)</td>
+                <td id="compare-cost-sub">$168 - $504 / year</td>
+                <td class="no" id="compare-cost-bootcamp">$5,000 - $16,450 Upfront</td>
               </tr>
             </tbody>
           </table>
@@ -591,282 +1128,710 @@ WHERE  salary > 60000;</code></pre>
       </div>
     </section>
 
-    <!-- Reviews Section -->
+    <!-- Divider 4 -->
+    <div class="diff-divider-wrapper reveal">
+      <svg class="diff-divider" viewBox="0 0 1200 20" preserveAspectRatio="none" fill="none">
+        <line x1="0" y1="10" x2="1200" y2="10" stroke="var(--border)" stroke-width="1.5" stroke-dasharray="1200" stroke-dashoffset="1200" />
+      </svg>
+      <div class="diff-glyphs">
+        <span class="glyph-group">---</span>
+        <span class="glyph-group">+++</span>
+        <span class="glyph-group">---</span>
+      </div>
+    </div>
+
+    <!-- Testimonials & Reviews Section -->
     <section class="reviews-section" id="testimonials">
       <div class="container">
-        <div class="section-header text-center">
-          <span class="section-badge">Student Reviews</span>
-          <h2 class="section-title">Loved by 10,000+ Aspiring Data Analysts</h2>
-          <p class="section-sub">Real feedback from students who leveled up their SQL and Python skills using Manodemy.</p>
+        <div class="section-head reveal">
+          <h2>Verified <span>Student Feedback</span></h2>
+          <p>Real stories from analysts, engineers, and career-switchers who escaped tutorial hell.</p>
         </div>
 
-        <div class="reviews-grid" id="reviewsContainer">
-          <!-- Populated dynamically via reviews.js -->
-          <div class="review-card-fallback">
-            <div class="stars">★★★★★</div>
-            <p>"The interactive SQL notebook made queries click for me after months of getting nowhere on YouTube."</p>
-            <div class="review-author">— Sarah K., Data Analyst</div>
+        <div class="reviews-container reveal">
+          <!-- ── Top Summary Row ───────────────────────────── -->
+          <div class="rev-summary-top">
+            <!-- Score + Stars + Count -->
+            <div class="rev-score-block">
+              <div class="rev-score-massive">0.0 <span>/ 5</span></div>
+              <div class="rev-stars-row" aria-label="Average Star Rating"></div>
+              <div class="rev-count-sub">Loading reviews summary...</div>
+            </div>
+
+            <!-- Distribution bars -->
+            <div class="rev-distribution-list">
+              <div class="rev-dist-row" data-rating="5">
+                <span class="rev-dist-label">5 ★</span>
+                <div class="rev-dist-track"><div class="rev-dist-fill" style="width: 0%;"></div></div>
+                <span class="rev-dist-pct">0%</span>
+              </div>
+              <div class="rev-dist-row" data-rating="4">
+                <span class="rev-dist-label">4 ★</span>
+                <div class="rev-dist-track"><div class="rev-dist-fill" style="width: 0%;"></div></div>
+                <span class="rev-dist-pct">0%</span>
+              </div>
+              <div class="rev-dist-row" data-rating="3">
+                <span class="rev-dist-label">3 ★</span>
+                <div class="rev-dist-track"><div class="rev-dist-fill" style="width: 0%;"></div></div>
+                <span class="rev-dist-pct">0%</span>
+              </div>
+              <div class="rev-dist-row" data-rating="2">
+                <span class="rev-dist-label">2 ★</span>
+                <div class="rev-dist-track"><div class="rev-dist-fill" style="width: 0%;"></div></div>
+                <span class="rev-dist-pct">0%</span>
+              </div>
+              <div class="rev-dist-row" data-rating="1">
+                <span class="rev-dist-label">1 ★</span>
+                <div class="rev-dist-track"><div class="rev-dist-fill" style="width: 0%;"></div></div>
+                <span class="rev-dist-pct">0%</span>
+              </div>
+            </div>
+
+            <!-- Write a Review CTA -->
+            <div class="rev-write-block">
+              <button class="btn-write-review">🔥 Write a Review</button>
+            </div>
           </div>
-          <div class="review-card-fallback">
-            <div class="stars">★★★★★</div>
-            <p>"Instant automated grading gave me total confidence before taking technical interview assessments."</p>
-            <div class="review-author">— Marcus T., BI Engineer</div>
-          </div>
-          <div class="review-card-fallback">
-            <div class="stars">★★★★★</div>
-            <p>"No video bloat! I completed the 18-day SQL curriculum in two weeks while working full-time."</p>
-            <div class="review-author">— Priya R., Financial Analyst</div>
+
+          <!-- ── Carousel Row ──────────────────────────────── -->
+          <div class="rev-carousel-wrapper">
+            <button class="rev-carousel-btn prev-btn" id="revCarouselPrev" aria-label="Previous Reviews">&#x2190;</button>
+            <div class="rev-carousel-track-container">
+              <div class="rev-carousel-track" id="revCarouselTrack">
+                <!-- Skeleton loader cards (shown initially, replaced by reviews.js) -->
+                <div class="rev-card skeleton">
+                  <div class="rev-card-top"><div class="sk-circle"></div><div class="sk-lines"><div class="sk-line w-60"></div><div class="sk-line w-40"></div></div></div>
+                  <div class="rev-card-body"><div class="sk-line w-100"></div><div class="sk-line w-90"></div><div class="sk-line w-80"></div></div>
+                </div>
+                <div class="rev-card skeleton">
+                  <div class="rev-card-top"><div class="sk-circle"></div><div class="sk-lines"><div class="sk-line w-60"></div><div class="sk-line w-40"></div></div></div>
+                  <div class="rev-card-body"><div class="sk-line w-100"></div><div class="sk-line w-90"></div><div class="sk-line w-80"></div></div>
+                </div>
+                <div class="rev-card skeleton">
+                  <div class="rev-card-top"><div class="sk-circle"></div><div class="sk-lines"><div class="sk-line w-60"></div><div class="sk-line w-40"></div></div></div>
+                  <div class="rev-card-body"><div class="sk-line w-100"></div><div class="sk-line w-90"></div><div class="sk-line w-80"></div></div>
+                </div>
+              </div>
+            </div>
+            <button class="rev-carousel-btn next-btn" id="revCarouselNext" aria-label="Next Reviews">&#x2192;</button>
+            <div class="rev-carousel-dots" id="revCarouselDots"></div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Single Pricing Section: Self-Paced Pass ($49) -->
+
+    <!-- Divider 5 -->
+    <div class="diff-divider-wrapper reveal">
+      <svg class="diff-divider" viewBox="0 0 1200 20" preserveAspectRatio="none" fill="none">
+        <line x1="0" y1="10" x2="1200" y2="10" stroke="var(--border)" stroke-width="1.5" stroke-dasharray="1200" stroke-dashoffset="1200" />
+      </svg>
+      <div class="diff-glyphs">
+        <span class="glyph-group">+++</span>
+        <span class="glyph-group">---</span>
+        <span class="glyph-group">+++</span>
+      </div>
+    </div>
+
+
+    <!-- Pricing Section -->
     <section class="pricing-section" id="pricing">
       <div class="container">
-        <div class="section-header text-center">
-          <span class="section-badge">Simple transparent pricing</span>
-          <h2 class="section-title">One Pass. Lifetime Access.</h2>
-          <p class="section-sub">No recurring subscriptions. Pay once and get full lifetime access to all 3 data courses.</p>
+        <div class="section-head reveal">
+          <h2>Choose Your <span>Learning Path</span></h2>
+          <p>One-time payment. Lifetime access. Start learning today.</p>
         </div>
 
-        <div class="pricing-card-wrap">
-          <div class="pricing-card pricing-card--selfpaced">
-            <div class="pricing-badge">BEST VALUE · ONE-TIME PAYMENT</div>
-            <h3 class="pricing-title">Full Access Pass</h3>
-            <p class="pricing-subtitle">Master SQL, Excel, and Python for Data Analysis with complete interactive notebook access.</p>
+        <div class="pricing-grid reveal">
 
-            <div class="pricing-price-row">
-              <span class="pricing-price-now">$49</span>
-              <span class="pricing-price-old">$199</span>
-              <span class="pricing-price-discount">SAVE 75%</span>
+          <!-- Self-Paced Card -->
+          <div class="pricing-card pricing-card--selfpaced">
+            <span class="pricing-type-badge pricing-type-badge--selfpaced">⚡ Self-Paced</span>
+            <h3 class="pricing-card-title">60-Day Masterclass</h3>
+            <p class="pricing-card-subtitle">Complete SQL, Excel &amp; Python curriculum at your own pace — with interactive browser coding.</p>
+
+            <div class="pricing-price-group">
+              <div class="pricing-price-row">
+                <span class="pricing-price-now" id="priceSelfNow">$49</span>
+                <span class="pricing-price-old" id="priceSelfOld">$149</span>
+                <span class="pricing-discount-badge" id="priceSelfDiscount">67% OFF</span>
+              </div>
+              <div class="pricing-price-note">One-time payment · Lifetime access</div>
             </div>
 
-            <ul class="pricing-features">
-              <li>✓ <strong>Full Access to 60 Guided Days</strong> (SQL, Excel, Python)</li>
-              <li>✓ <strong>1,000+ In-Browser Coding Challenges</strong></li>
-              <li>✓ <strong>Instant Automated Query & Code Grading</strong></li>
-              <li>✓ <strong>Audio Narrations & Step-by-Step Slides</strong></li>
-              <li>✓ <strong>Verified Certificate of Completion</strong></li>
-              <li>✓ <strong>Lifetime Access & Free Content Updates</strong></li>
+            <div class="pricing-divider"></div>
+
+            <ul class="pricing-feature-list">
+              <li><span class="feat-icon">✅</span><span><strong>60-day structured curriculum</strong> — SQL (18) + Excel (12) + Python (30)</span></li>
+              <li><span class="feat-icon">✅</span><span><strong>Browser-based coding</strong> — zero install, run code instantly</span></li>
+              <li><span class="feat-icon">✅</span><span><strong>Interactive exercises</strong> — write real queries &amp; scripts</span></li>
+              <li><span class="feat-icon">✅</span><span><strong>Downloadable certificate</strong> on completion</span></li>
+              <li><span class="feat-icon">✅</span><span><strong>Lifetime access</strong> including future updates</span></li>
+              <li><span class="feat-icon">✅</span><span><strong>7-day money-back</strong> guarantee</span></li>
             </ul>
 
-            <button class="pricing-buy-btn" data-cta="buy">
-              <span>Enroll Now — $49 One-Time</span>
+            <button class="pricing-buy-btn pricing-buy-btn--selfpaced" data-cta="buy" data-tier="selfpaced" id="buyBtnSelfpaced">
+              🚀 Start Self-Paced
             </button>
-
-            <div class="pricing-guarantee">
-              <span class="shield-icon">🛡️</span>
-              <span><strong>7-Day 100% Money-Back Guarantee.</strong> No questions asked.</span>
-            </div>
+            <div class="pricing-guarantee">🔒 Secure payment · Instant access</div>
           </div>
+
+          <!-- Daily Live Card -->
+          <div class="pricing-card pricing-card--live">
+            <span class="pricing-popular-badge">⭐ Most Popular</span>
+            <span class="pricing-type-badge pricing-type-badge--live">🎥 Live Class Plan</span>
+            <h3 class="pricing-card-title">Live Masterclass</h3>
+            <p class="pricing-card-subtitle">Everything in Self-Paced, plus a daily live session with real-time doubt clearing every evening.</p>
+
+            <div class="pricing-live-schedule">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Live Daily: 7:30 PM – 8:30 PM IST
+            </div>
+
+            <div class="pricing-price-group">
+              <div class="pricing-price-row">
+                <span class="pricing-price-now pricing-price-now--live" id="priceLiveNow">$149</span>
+                <span class="pricing-price-old" id="priceLiveOld">$499</span>
+                <span class="pricing-discount-badge" id="priceLiveDiscount">70% OFF</span>
+              </div>
+              <div class="pricing-price-note">One-time payment · Lifetime access</div>
+            </div>
+
+            <div class="pricing-divider"></div>
+
+            <ul class="pricing-feature-list">
+              <li><span class="feat-icon">✅</span><span>Everything in Self-Paced</span></li>
+              <li><span class="feat-icon">🎥</span><span class="pricing-feature-highlight"><strong>Daily 1-hour live class</strong> — 7:30–8:30 PM IST, every day</span></li>
+              <li><span class="feat-icon">💬</span><span class="pricing-feature-highlight"><strong>Real-time doubt clearing</strong> with the instructor</span></li>
+              <li><span class="feat-icon">🔗</span><span class="pricing-feature-highlight"><strong>Google Meet access</strong> link shared after enrollment</span></li>
+              <li><span class="feat-icon">👥</span><span><strong>Live community</strong> — learn alongside a cohort</span></li>
+              <li><span class="feat-icon">🏆</span><span><strong>Priority certificate</strong> with instructor signature</span></li>
+            </ul>
+
+            <button class="pricing-buy-btn pricing-buy-btn--live" data-cta="buy" data-tier="live" id="buyBtnLive">
+              🎥 Join Live Class
+            </button>
+            <a href="#live-hub" class="pricing-meet-link" id="meetPreviewLink">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 10l4.553-2.07A1 1 0 0121 8.845v6.31a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg>
+              View Live Class Schedule &amp; Countdowns →
+            </a>
+            <div class="pricing-guarantee">🔒 Secure payment · Instant access</div>
+          </div>
+
         </div>
       </div>
     </section>
+
+
+    <!-- Divider 7 -->
+    <div class="diff-divider-wrapper reveal">
+      <svg class="diff-divider" viewBox="0 0 1200 20" preserveAspectRatio="none" fill="none">
+        <line x1="0" y1="10" x2="1200" y2="10" stroke="var(--border)" stroke-width="1.5" stroke-dasharray="1200" stroke-dashoffset="1200" />
+      </svg>
+      <div class="diff-glyphs">
+        <span class="glyph-group">+++</span>
+        <span class="glyph-group">---</span>
+        <span class="glyph-group">+++</span>
+      </div>
+    </div>
+
+
+    <!-- Live Hub Section (Dynamically populated from database) -->
+    <section class="live-hub-section" id="live-hub">
+      <div class="container reveal">
+        <div class="section-head">
+          <h2>Manodemy <span>Live Session Hub</span></h2>
+          <p>Attend daily live sessions with expert instructors. Class rooms unlock in real-time according to the schedules below (IST).</p>
+        </div>
+
+        <!-- Skeleton loader (shown while fetching) -->
+        <div class="live-hub-grid" id="liveHubSkeleton">
+          <div class="live-hub-card live-hub-skeleton">
+            <div class="skeleton-line skeleton-badge"></div>
+            <div class="skeleton-line skeleton-title"></div>
+            <div class="skeleton-line skeleton-text"></div>
+            <div class="skeleton-line skeleton-countdown"></div>
+            <div class="skeleton-line skeleton-btn"></div>
+          </div>
+          <div class="live-hub-card live-hub-skeleton">
+            <div class="skeleton-line skeleton-badge"></div>
+            <div class="skeleton-line skeleton-title"></div>
+            <div class="skeleton-line skeleton-text"></div>
+            <div class="skeleton-line skeleton-countdown"></div>
+            <div class="skeleton-line skeleton-btn"></div>
+          </div>
+          <div class="live-hub-card live-hub-skeleton">
+            <div class="skeleton-line skeleton-badge"></div>
+            <div class="skeleton-line skeleton-title"></div>
+            <div class="skeleton-line skeleton-text"></div>
+            <div class="skeleton-line skeleton-countdown"></div>
+            <div class="skeleton-line skeleton-btn"></div>
+          </div>
+        </div>
+
+        <!-- Dynamic cards rendered here by app.js -->
+        <div class="live-hub-carousel-wrapper">
+          <button class="rev-carousel-btn prev-btn" id="liveHubPrev" aria-label="Previous Batches" style="display: none; position: absolute; left: -24px; top: 50%; transform: translateY(-50%); z-index: 10;">&#x2190;</button>
+          <div class="live-hub-track-container">
+            <div class="live-hub-grid" id="liveHubGrid" style="display:none;"></div>
+          </div>
+          <button class="rev-carousel-btn next-btn" id="liveHubNext" aria-label="Next Batches" style="display: none; position: absolute; right: -24px; top: 50%; transform: translateY(-50%); z-index: 10;">&#x2192;</button>
+        </div>
+
+        <!-- Empty state if no batches -->
+        <div class="live-hub-empty" id="liveHubEmpty" style="display:none;">
+          <div class="live-hub-empty-icon">📭</div>
+          <h3>No Live Classes Scheduled</h3>
+          <p>Check back soon — our instructors are setting up new live class cohorts!</p>
+        </div>
+      </div>
+    </section>
+
 
     <!-- FAQ Section -->
     <section class="faq-section" id="faq">
       <div class="container">
-        <div class="section-header text-center">
-          <span class="section-badge">Got Questions?</span>
-          <h2 class="section-title">Frequently Asked Questions</h2>
+        <div class="section-head reveal">
+          <h2>Frequently Asked <span>Questions</span></h2>
+          <p>Clear details on courses, billing structure, and platform features.</p>
         </div>
 
-        <div class="faq-accordion">
-          <details class="faq-item" open>
-            <summary class="faq-question">How does the self-paced learning model work?</summary>
-            <div class="faq-answer">
-              You get immediate lifetime access to all 60 guided days of SQL, Excel, and Python curriculum. Each lesson consists of a 5-minute interactive theory slide with audio narration, followed by hands-on browser coding challenges and scored interview tests.
+        <div class="faq-list reveal">
+          <div class="faq-item" tabindex="0">
+            <div class="faq-question">
+              <h4>How is this different from traditional video courses?</h4>
+              <span class="faq-icon">+</span>
             </div>
-          </details>
+            <div class="faq-answer">
+              <p>Standard courses make you watch videos passively, which builds no real skill. Manodemy is 100% interactive. You write real code, run queries, build charts, and get automated feedback directly in your browser. No passive video bloat.</p>
+            </div>
+          </div>
 
-          <details class="faq-item">
-            <summary class="faq-question">Do I need to install any software like SQL Server or Python?</summary>
-            <div class="faq-answer">
-              No! Everything runs directly inside your browser using SQLite and WebAssembly. There are zero software downloads or local installation hurdles required.
+          <div class="faq-item" tabindex="0">
+            <div class="faq-question">
+              <h4>Do I need prior programming experience?</h4>
+              <span class="faq-icon">+</span>
             </div>
-          </details>
+            <div class="faq-answer">
+              <p>Not at all. The SQL, Excel, and Python modules are designed to start from absolute absolute basics and progressively build you up to advanced, industry-level data analytics skills.</p>
+            </div>
+          </div>
 
-          <details class="faq-item">
-            <summary class="faq-question">Is this a monthly subscription?</summary>
-            <div class="faq-answer">
-              No. Manodemy is a flat $49 one-time payment. You get lifetime access to all current and future curriculum updates without any recurring monthly charges.
+          <div class="faq-item" tabindex="0">
+            <div class="faq-question">
+              <h4>How does the scoring system work?</h4>
+              <span class="faq-icon">+</span>
             </div>
-          </details>
+            <div class="faq-answer">
+              <p>We use two separate systems to guide your journey:
+                <br><br>
+                <div class="faq-scoring-row">
+                  <svg class="micro-loop-xp" viewBox="0 0 40 40" width="40" height="40" fill="none" stroke="currentColor">
+                    <rect class="bar-1" x="5" y="25" width="6" height="10" rx="1" fill="var(--emerald)" stroke="none" />
+                    <rect class="bar-2" x="15" y="18" width="6" height="17" rx="1" fill="var(--emerald)" stroke="none" />
+                    <rect class="bar-3" x="25" y="10" width="6" height="25" rx="1" fill="var(--emerald)" stroke="none" />
+                    <text class="toast-xp" x="12" y="12" fill="var(--emerald)" font-size="9" font-family="JetBrains Mono" font-weight="bold">+10 XP</text>
+                  </svg>
+                  <span><strong>XP (Experience Points):</strong> Earned instantly the moment a challenge passes. It drives the competitive leaderboards, active streaks, and gamification system.</span>
+                </div>
+                <br>
+                <div class="faq-scoring-row">
+                  <svg class="micro-loop-marks" viewBox="0 0 40 40" width="40" height="40">
+                    <circle class="track" cx="20" cy="20" r="16" stroke="rgba(255,255,255,0.08)" stroke-width="3" fill="none" />
+                    <circle class="fill" cx="20" cy="20" r="16" stroke="var(--cyan)" stroke-width="3" fill="none" stroke-dasharray="100" stroke-dashoffset="100" />
+                    <path class="checkmark" d="M14 20 l4 4 l8 -8" stroke="var(--cyan)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                  </svg>
+                  <span><strong>Marks:</strong> Certification-only score. Every solved concept check awards 0.649 marks. You need to earn at least 700 out of 1000 total marks to unlock your cryptographic completion certificate. Marks are tracked on your personal progress dashboard.</span>
+                </div>
+              </p>
+            </div>
+          </div>
 
-          <details class="faq-item">
-            <summary class="faq-question">Can I try the course for free before enrolling?</summary>
-            <div class="faq-answer">
-              Yes! Days 01 and 02 for SQL, Excel, and Python are 100% free to try in your browser. You can write queries and take test assessments right now without creating an account.
+          <div class="faq-item" tabindex="0">
+            <div class="faq-question">
+              <h4>What is included with the AI Tutor?</h4>
+              <span class="faq-icon">+</span>
             </div>
-          </details>
+            <div class="faq-answer">
+              <div class="faq-scoring-row">
+                <svg class="micro-loop-tutor" viewBox="0 0 80 40" width="80" height="40">
+                  <line x1="5" y1="25" x2="75" y2="25" stroke="var(--text-muted)" stroke-width="2" stroke-linecap="round" />
+                  <path class="wavy-line" d="M 15 28 Q 20 25, 25 28 T 35 28 T 45 28" stroke="var(--red)" stroke-width="2" fill="none" stroke-linecap="round" />
+                  <g class="tooltip-group">
+                    <path d="M 30 20 L 30 13" stroke="var(--gold)" stroke-width="1.5" />
+                    <rect x="15" y="-1" width="30" height="15" rx="3" fill="rgba(255, 176, 32, 0.2)" stroke="var(--gold)" stroke-width="1" />
+                    <text x="30" y="9" fill="var(--gold)" font-size="7" font-family="JetBrains Mono" text-anchor="middle">Bug!</text>
+                  </g>
+                </svg>
+                <span>Mano AI Tutor is available inside every notebook. If you get stuck or make a syntax error, the AI Tutor points out where the bug is, explains the error in plain English, and guides you toward solving it without just giving you the answer.</span>
+              </div>
+            </div>
+          </div>
 
-          <details class="faq-item">
-            <summary class="faq-question">What happens if I get stuck on a coding challenge?</summary>
-            <div class="faq-answer">
-              Our smart error analyzer provides contextual hints whenever your query fails, highlighting syntax typos, column mismatch errors, or logical mistakes. Full reference solutions are also provided for review.
+          <div class="faq-item" tabindex="0">
+            <div class="faq-question">
+              <h4>Is access instant for SQL and Excel?</h4>
+              <span class="faq-icon">+</span>
             </div>
-          </details>
+            <div class="faq-answer">
+              <p>Yes! You get instant lifetime access to all 3 tracks: 18 days of SQL, 12 days of Excel, and 30 days of Python. You can start learning and coding in any of them immediately from your dashboard.</p>
+            </div>
+          </div>
 
-          <details class="faq-item">
-            <summary class="faq-question">Do I receive a certificate upon completion?</summary>
-            <div class="faq-answer">
-              Yes! Once you complete all module tests, you will unlock a verifiable Certificate of Completion that you can add to your LinkedIn profile and resume.
+          <div class="faq-item" tabindex="0">
+            <div class="faq-question">
+              <h4>How are certificates verified?</h4>
+              <span class="faq-icon">+</span>
             </div>
-          </details>
+            <div class="faq-answer">
+              <p>Once you achieve the required 700 marks threshold, a gold-crested, cryptographically secure certificate is generated. Each certificate has a unique ID hosted on our platform, allowing potential recruiters to instantly verify its authenticity.</p>
+            </div>
+          </div>
 
-          <details class="faq-item">
-            <summary class="faq-question">What is your refund policy?</summary>
-            <div class="faq-answer">
-              We offer a 7-day money-back guarantee. If you decide Manodemy isn't the right fit within 7 days of purchase, email us for a full 100% refund.
+          <div class="faq-item" tabindex="0">
+            <div class="faq-question">
+              <h4>What is the refund policy?</h4>
+              <span class="faq-icon">+</span>
             </div>
-          </details>
+            <div class="faq-answer">
+              <p>We provide a 7-day money-back guarantee. If you are not satisfied with your experience, simply drop us an email within 7 days of purchase and we will issue a full, prompt refund.</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- Final CTA Section -->
     <section class="final-cta-section">
-      <div class="container text-center">
-        <h2 class="final-cta-title">Ready to Stop Watching and Start Coding?</h2>
-        <p class="final-cta-sub">Join 10,000+ students mastering SQL, Excel, and Python with hands-on browser notebooks.</p>
-        <div style="margin-top: 24px;">
-          <button class="btn-primary btn-hero-cta" data-cta="buy" style="margin:0 auto;">
-            <span>Enroll Full Course ($49 One-Time) →</span>
-          </button>
-        </div>
-        <div class="free-links-row" style="margin-top:20px; display:flex; justify-content:center; gap:16px; flex-wrap:wrap; font-size:14px; font-weight:600;">
-          <a href="/sql/day01.html" style="color:var(--emerald);">⚡ Try SQL Day 01 Free</a>
-          <a href="/excel/day01.html" style="color:var(--gold);">📈 Try Excel Day 01 Free</a>
-          <a href="/day01.html" style="color:var(--cyan);">🐍 Try Python Day 01 Free</a>
+      <div class="container reveal">
+        <h2>Start Solving. Start Building Real Skills.</h2>
+        <p>Join thousands of learners mastering SQL, Excel, and Python through practice-first learning.</p>
+        
+        <div class="final-cta-btn-group">
+          <a href="/sql/day01.html" class="btn-primary">Try Day 01 SQL Free</a>
+          <a href="/excel/day01.html" class="btn-primary">Try Day 01 Excel Free</a>
+          <a href="/day01.html" class="btn-primary">Try Day 01 Python Free</a>
+          <button class="btn-secondary" data-cta="buy" data-tier="selfpaced">Self-Paced — <span class="dynamic-price-from">$49</span></button>
+          <button class="btn-primary" data-cta="buy" data-tier="live" style="background:linear-gradient(135deg,var(--gold),#ff8c00);color:#000;">Live Class — <span class="dynamic-price-live">$149</span></button>
         </div>
       </div>
     </section>
   </main>
 
+  <!-- Checkout Modal -->
+  <div class="checkout-overlay" id="checkoutOverlay">
+    <div class="checkout-modal checkout-modal--grid">
+      <button class="checkout-close" id="checkoutClose">✕</button>
+      
+      <!-- Left side: Pricing Card preview -->
+      <div class="checkout-preview-col">
+        <div id="checkoutCardContainer">
+          <!-- Dynamically cloned card goes here -->
+        </div>
+      </div>
+      
+      <!-- Right side: Payment form -->
+      <div class="checkout-form-col">
+        <div class="checkout-header">
+          <div id="checkoutTierPill" class="checkout-tier-pill checkout-tier-pill--selfpaced">⚡ Self-Paced Plan</div>
+          <h3>🎓 Complete Your Purchase</h3>
+          <p id="checkoutPlanName">60-Day Self-Paced Masterclass</p>
+        </div>
+
+        <div class="checkout-price-display">
+          <span class="checkout-amount" id="checkoutAmount">$49</span>
+          <span class="checkout-original" id="checkoutOriginal">$149</span>
+          <span class="checkout-label">One-time payment · Lifetime access</span>
+        </div>
+
+        <div class="coupon-section">
+          <input type="text" id="couponInput" placeholder="Coupon code (optional)" maxlength="20">
+          <button class="coupon-apply" id="couponApply">Apply</button>
+        </div>
+
+        <!-- Batch Selection Section (Dynamically populated for Live Class tier) -->
+        <div class="checkout-batch-section" id="checkoutBatchSection" style="display: none; margin: 15px 0; text-align: left;">
+          <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--text-primary);">
+            🗓️ Select Your Daily Cohort Batch:
+          </label>
+          <div class="checkout-batch-options" id="checkoutBatchOptions" style="display: flex; flex-direction: column; gap: 8px;">
+            <!-- Dynamically populated by app.js from database batches -->
+          </div>
+        </div>
+
+        <div style="text-align:center; margin-bottom:8px;">
+          <button class="checkout-switch-link" id="checkoutSwitchTier">Switch to Live Class Plan ($149)</button>
+        </div>
+
+        <div class="checkout-divider"><span>Choose Payment Method</span></div>
+        <div class="gateway-buttons" id="gatewayButtons">
+          <!-- Populated dynamically by app.js -->
+        </div>
+
+        <div class="checkout-spinner" id="checkoutSpinner"></div>
+
+        <div class="checkout-features">
+          <span>🔒 Secure Payment</span>
+          <span>🛡️ 7-Day Refund Policy</span>
+          <span>♾️ Lifetime Access</span>
+          <span>📧 Instant Login Access</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Review Submission Modal ─────────────────────────── -->
+  <div class="rev-modal-overlay" id="revModalOverlay">
+    <div class="rev-modal-card">
+      <div class="rev-modal-header">
+        <h3>
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.83 17.017a4.5 4.5 0 01-1.897 1.13L3 19l.85-2.933a4.5 4.5 0 011.13-1.897l8.932-8.932zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"></path>
+          </svg>
+          <span>Share Your Coding Journey</span>
+        </h3>
+        <button type="button" class="btn-close-modal" id="btnCloseRevModal" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="rev-modal-body">
+        <form id="rev-submit-form" onsubmit="return false;">
+          <div class="rev-modal-columns">
+            <!-- LEFT COLUMN -->
+            <div class="rev-modal-col-left">
+              <!-- Rating Selector -->
+              <div class="rev-rating-selector">
+                <span class="rev-selector-label">Your Rating</span>
+                <div class="rev-selector-stars">
+                  <svg data-star="1" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                  <svg data-star="2" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                  <svg data-star="3" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                  <svg data-star="4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                  <svg data-star="5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                </div>
+                <div class="rev-selector-desc">Click a star to rate</div>
+                <input type="hidden" id="rev-input-rating" required>
+              </div>
+              <!-- Identity Fields -->
+              <div class="rev-form-row">
+                <div class="rev-form-group">
+                  <label for="rev-input-name">Your Full Name *</label>
+                  <input type="text" id="rev-input-name" placeholder="e.g. Aarav Sharma" required>
+                </div>
+                <div class="rev-form-group">
+                  <label for="rev-input-email">Your Email Address *</label>
+                  <input type="email" id="rev-input-email" placeholder="e.g. aarav@gmail.com" required>
+                </div>
+              </div>
+              <div class="rev-form-row">
+                <div class="rev-form-group full-width">
+                  <label for="rev-input-role">Your Role / Profession *</label>
+                  <input type="text" id="rev-input-role" placeholder="e.g. Software Engineer, Data Analyst, Student" required>
+                </div>
+              </div>
+              <!-- Detailed Feedback -->
+              <div class="rev-form-group full-width">
+                <label for="rev-input-comment">Detailed Feedback *</label>
+                <textarea id="rev-input-comment" placeholder="What did you love? How did it help your skills?" maxlength="1000" required></textarea>
+                <span class="rev-char-counter">0/1000</span>
+              </div>
+            </div>
+            <!-- RIGHT COLUMN -->
+            <div class="rev-modal-col-right">
+              <!-- Pros and Cons -->
+              <div class="rev-form-row">
+                <div class="rev-form-group">
+                  <label for="rev-input-pro">Pros (What went well?)</label>
+                  <input type="text" id="rev-input-pro" placeholder="Type a pro and press Enter">
+                  <div class="rev-tags-container" id="pros-tags-list"></div>
+                </div>
+                <div class="rev-form-group">
+                  <label for="rev-input-con">Cons (Areas of improvement)</label>
+                  <input type="text" id="rev-input-con" placeholder="Type a con and press Enter">
+                  <div class="rev-tags-container" id="cons-tags-list"></div>
+                </div>
+              </div>
+              <!-- Photo Upload Dropzone -->
+              <div class="rev-form-group full-width">
+                <label>Upload a Photo (optional)</label>
+                <div class="rev-media-dropzone" id="mediaDropzone">
+                  <input type="file" id="rev-file-input" accept="image/*" style="display:none;">
+                  <div class="dropzone-content">
+                    <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" class="dropzone-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3 21h18a2.25 2.25 0 002.25-2.25V5.25A2.25 2.25 0 0021 3H3a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 003 21zM3 10.5h.008v.008H3V10.5z" /></svg>
+                    <span class="dropzone-text">Drag &amp; drop or <strong>click to upload</strong></span>
+                    <span class="dropzone-hint">PNG, JPG, WEBP — Max 2 MB</span>
+                  </div>
+                  <div class="media-previews-container" id="media-previews"></div>
+                </div>
+              </div>
+              <!-- Recommend Switch -->
+              <div class="rev-form-group full-width">
+                <div class="rev-rec-switch-group">
+                  <div class="rev-switch-label">
+                    <strong>Would you recommend this course?</strong>
+                    <span>Recommend to other python learners</span>
+                  </div>
+                  <label class="rev-switch-control" for="rev-input-recommend">
+                    <input type="checkbox" id="rev-input-recommend" checked>
+                    <span class="rev-switch-slider"></span>
+                  </label>
+                </div>
+              </div>
+              <!-- Modal actions -->
+              <div class="rev-modal-footer-inline">
+                <button type="button" class="btn-modal-cancel" id="btnCancelRevModal">Cancel</button>
+                <button type="submit" class="btn-modal-submit">Submit Review</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sign In / Sign Up Modal -->
+  <div class="checkout-overlay" id="authModal">
+    <div class="checkout-modal auth-modal-box">
+      <button class="checkout-close" onclick="document.getElementById('authModal').classList.remove('active');">✕</button>
+      
+      <div class="checkout-header">
+        <h3 id="authTitle">Join the Challenge</h3>
+        <p id="authSubtitle">Sign in to start learning</p>
+      </div>
+
+      <div id="socialAuthSection">
+        <button type="button" class="landing-social-btn" id="google-signin-btn">
+          <svg viewBox="0 0 48 48" width="18" height="18" style="flex-shrink:0;">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.5 24c0-1.61-.15-3.16-.42-4.67H24v8.83h12.72c-.55 2.89-2.18 5.33-4.63 6.96l7.19 5.56c4.21-3.87 6.63-9.58 6.63-16.68z"/>
+            <path fill="#FBBC05" d="M10.54 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.56 10.78l7.98-6.19z"/>
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.19-5.56c-2 1.34-4.55 2.13-7.7 2.13-6.26 0-11.57-4.22-13.46-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+          </svg>
+          Continue with Google
+        </button>
+        <div class="auth-divider" id="authDivider"><span>OR EMAIL</span></div>
+      </div>
+
+      <div id="authMessage" style="display:none;padding:0.6rem;border-radius:8px;font-size:0.85rem;text-align:center;margin-bottom:0.8rem;"></div>
+
+      <form class="auth-form" id="landingLoginForm">
+        <input type="text" id="landingName" placeholder="Full Name" class="landing-input" style="display:none;">
+        <input type="email" id="landingEmail" placeholder="name@example.com" class="landing-input" required>
+        <input type="password" id="landingPassword" placeholder="••••••••" class="landing-input" required>
+        <input type="password" id="landingConfirmPassword" placeholder="Confirm Password" class="landing-input" style="display:none;">
+        <button type="submit" class="btn-auth-submit" id="btnLandingSubmit">Login</button>
+      </form>
+
+      <div class="auth-footer-links">
+        <a href="#" id="linkLandingForgot">Forgot password?</a>
+        <a href="#" id="linkLandingSignup">Create Account</a>
+        <a href="#" id="linkBackToLogin" style="display:none;">&larr; Back to Login</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sticky Mobile CTA Bar -->
+  <div class="sticky-mobile-cta" id="stickyMobileCta">
+    <div class="mobile-cta-inner">
+      <!-- Left: Vertically stacked switches -->
+      <div class="mobile-cta-left">
+        <button type="button" class="cta-tab-btn active" data-tab-tier="selfpaced">⚡ Self-Paced</button>
+        <button type="button" class="cta-tab-btn" data-tab-tier="live">🎥 Live Class</button>
+      </div>
+      <!-- Center: Pricing displays -->
+      <div class="mobile-cta-center">
+        <div class="cta-price-group">
+          <span class="m-price">$49</span>
+          <span class="m-price-old">$149</span>
+        </div>
+      </div>
+      <!-- Right: Main action button -->
+      <div class="mobile-cta-right">
+        <a href="#pricing" class="btn-primary btn-mobile-cta" id="stickyEnrollBtn" data-cta="buy" data-tier="selfpaced">Enroll Now</a>
+      </div>
+    </div>
+  </div>
+
   <!-- Footer -->
   <footer class="footer">
-    <div class="container footer-inner">
-      <div class="footer-brand">
-        <span class="nav-brand-name">Mano<span>demy</span></span>
-        <p>Interactive Data EdTech Platform. Learn by actually coding.</p>
-        <p class="footer-copy">© 2026 Manodemy EdTech Inc. All rights reserved.</p>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-col brand-col">
+          <span class="nav-brand-name">Mano<span>demy</span></span>
+          <p>Master SQL, Excel, and Python through practice-first browser notebooks. Escape tutorial hell and build real data skills.</p>
+          <div class="footer-socials">
+            <a href="https://www.linkedin.com/company/manodemy" target="_blank" rel="noopener" class="footer-social-icon" aria-label="LinkedIn">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+            </a>
+            <a href="https://www.instagram.com/manodemy" target="_blank" rel="noopener" class="footer-social-icon" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            </a>
+            <a href="https://youtube.com/@manodemy" target="_blank" rel="noopener" class="footer-social-icon" aria-label="YouTube">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon fill="#0F172A" points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>
+            </a>
+            <a href="https://twitter.com/manodemy" target="_blank" rel="noopener" class="footer-social-icon" aria-label="Twitter / X">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+          </div>
+          <span class="copyright">Copyright &copy; 2026 Manodemy. All rights reserved.</span>
+        </div>
+        <div class="footer-col">
+          <h4>Curriculum</h4>
+          <a href="/sql/day01.html">SQL Track</a>
+          <a href="/excel/day01.html">Excel Track</a>
+          <a href="/day01.html">Python Track</a>
+          <a href="/landing_v2/#curriculum">View Full Curriculum</a>
+        </div>
+        <div class="footer-col">
+          <h4>Support</h4>
+          <a href="terms.html">Terms &amp; Conditions</a>
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="mailto:support@manodemy.com">support@manodemy.com</a>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <a href="/landing_v2/#faq">FAQ</a>
+          <a href="/landing_v2/#testimonials">Reviews</a>
+          <a href="/landing_v2/#pricing">Pricing</a>
+        </div>
       </div>
-      <div class="footer-links">
-        <a href="#curriculum">Curriculum</a>
-        <a href="#testimonials">Reviews</a>
-        <a href="#pricing">Pricing</a>
-        <a href="#faq">FAQ</a>
-        <a href="/sql/day01.html">SQL Playground</a>
+      <div class="footer-bottom">
+        <span>Made with ❤️ for data learners</span>
+        <span class="dot-sep">·</span>
+        <a href="terms.html">Terms</a>
+        <span class="dot-sep">·</span>
+        <a href="privacy.html">Privacy</a>
+        <span class="dot-sep">·</span>
+        <a href="mailto:support@manodemy.com">Contact</a>
       </div>
     </div>
   </footer>
 
-  <!-- Auth Modal -->
-  <div class="modal-overlay" id="authModal">
-    <div class="modal-card">
-      <button class="modal-close" onclick="document.getElementById('authModal').classList.remove('active');">✕</button>
-      <h3 style="margin-bottom:12px; font-family:var(--font-display); color:var(--text-primary);">Sign In to Manodemy</h3>
-      <p style="font-size:14px; color:var(--text-secondary); margin-bottom:20px;">Access your saved progress, bookmarks, and test scorecards.</p>
-      <form id="authForm">
-        <input type="email" id="authEmail" placeholder="Enter your email" required style="width:100%; padding:12px; border:1px solid var(--border); border-radius:8px; margin-bottom:12px; font-family:var(--font-body);">
-        <button type="submit" class="btn-primary" style="width:100%;">Continue →</button>
-      </form>
-    </div>
-  </div>
 
-  <!-- Load Real Manifest Data & Terminal Interactive Demo Script -->
-  <script src="/Version-3/content/manifest.js?v=19.0"></script>
+  <!-- Context Injection scripts -->
   <script>
-    // 1. Dynamic SQL Manifest Title Synchronization
-    window.addEventListener('DOMContentLoaded', () => {
-      const manifest = window.COURSE_MANIFEST || [];
-      if (manifest.length > 0) {
-        const grid = document.getElementById('sqlCurriculumGrid');
-        if (grid) {
-          const cards = grid.querySelectorAll('.curriculum-day-card');
-          cards.forEach((card, idx) => {
-            if (manifest[idx]) {
-              const dayData = manifest[idx];
-              const titleEl = card.querySelector('.day-card-title');
-              if (titleEl) {
-                const emoji = dayData.emoji || '⚡';
-                titleEl.textContent = `${emoji} ${dayData.title}`;
-              }
-            }
-          });
-        }
-      }
-
-      // 2. Curriculum Track Tab Switching Logic
-      const trackBtns = document.querySelectorAll('.curriculum-tab-btn');
-      trackBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          trackBtns.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          const track = btn.dataset.curriculumTrack;
-          document.querySelectorAll('.curriculum-grid-wrapper').forEach(w => {
-            w.style.display = 'none';
-          });
-          const targetWrapper = document.getElementById(`curriculum-track-${track}`);
-          if (targetWrapper) targetWrapper.style.display = 'block';
-        });
-      });
-
-      // 3. Hero Interactive Terminal Demo Switcher & Typewriter
-      const snippets = {
-        sql: {
-          code: `-- Calculating monthly compensation\nSELECT name, salary, salary / 12.0 AS monthly_pay\nFROM   employees\nWHERE  salary > 60000;`,
-          headers: ['name', 'salary', 'monthly_pay'],
-          rows: [
-            ['Alice Smith', '85000', '7083.33'],
-            ['Bob Jones', '72000', '6000.00']
-          ]
-        },
-        python: {
-          code: `# Pandas Top Product Revenue Analysis\nimport pandas as pd\ndf = pd.read_csv('sales.csv')\ndf.groupby('product')['revenue'].sum().nlargest(2)`,
-          headers: ['product', 'revenue'],
-          rows: [
-            ['Enterprise Plan', '$124,500'],
-            ['Pro Tier', '$86,200']
-          ]
-        },
-        excel: {
-          code: `' Lookup employee salary & calculate total\n=XLOOKUP(A2, Employees[ID], Employees[Salary])\n=SUMIFS(Sales[Amount], Sales[Region], "North")`,
-          headers: ['formula', 'result'],
-          rows: [
-            ['XLOOKUP Salary', '$85,000'],
-            ['SUMIFS Regional Total', '$452,100']
-          ]
-        }
-      };
-
-      let currentDemoTrack = 'sql';
-      const codeEl = document.getElementById('demoCodeText');
-      const headEl = document.getElementById('demoTableHeader');
-      const bodyEl = document.getElementById('demoTableBody');
-
-      function updateDemo(track) {
-        const data = snippets[track];
-        if (!data || !codeEl) return;
-        codeEl.textContent = data.code;
-        if (headEl) headEl.innerHTML = data.headers.map(h => `<th>${h}</th>`).join('');
-        if (bodyEl) bodyEl.innerHTML = data.rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('');
-      }
-
-      document.querySelectorAll('.demo-tab').forEach(btn => {
-        btn.addEventListener('click', () => {
-          document.querySelectorAll('.demo-tab').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          currentDemoTrack = btn.dataset.track;
-          updateDemo(currentDemoTrack);
-        });
-      });
-    });
+    if (!window.MANODEMY_CONFIG) {
+      window.MANODEMY_CONFIG = {};
+    }
+    window.MANODEMY_CONFIG.SUPA_URL = 'https://erqoyvbuhmkyvcqgwcbz.supabase.co';
+    window.MANODEMY_CONFIG.SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVycW95dmJ1aG1reXZjcWd3Y2J6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzODk1MTIsImV4cCI6MjA5NDk2NTUxMn0.9UnIfq8xMrKANPPTtoOADKH-NJ_it9HDp7xrJL4FXtw';
   </script>
 
-  <!-- App Core JS -->
-  <script src="app.js?v=9.0"></script>
-  <script src="reviews.js?v=9.0"></script>
+  <script src="../supabase.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="reviews.js?v=7.0" defer></script>
+  <script src="app.js?v=7.0" defer></script>
+  <script src="roadmap.js?v=11.0" defer></script>
+
+  <!-- PWA SW Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => console.log('[Service Worker] Registered V5 PWA scope:', reg.scope))
+          .catch(err => console.error('[Service Worker] V5 PWA registration failed:', err));
+      });
+    }
+  </script>
+
+  <button id="backToTop" class="back-to-top" aria-label="Back to top">&#x2191;</button>
 </body>
 </html>

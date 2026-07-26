@@ -7837,3 +7837,7 @@ th.col-mano {
   margin: 0 auto 28px auto !important;
   text-align: left !important;
 }
+
+.pricing-guarantee {
+  display: none !important;
+}

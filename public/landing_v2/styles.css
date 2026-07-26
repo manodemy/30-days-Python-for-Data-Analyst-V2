@@ -8376,3 +8376,103 @@ p, .section-head p, .pricing-card-subtitle, .hero-sub {
   border: none !important;
   flex-shrink: 0 !important;
 }
+
+
+/* ══════════════ FLOATING DARK GLASSMORPHIC MOBILE STICKY BAR ══════════════ */
+.sticky-mobile-cta {
+  position: fixed !important;
+  bottom: 14px !important;
+  left: 14px !important;
+  right: 14px !important;
+  width: auto !important;
+  max-width: 520px !important;
+  margin: 0 auto !important;
+  z-index: 1000 !important;
+  background: rgba(15, 23, 42, 0.95) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  border-radius: 50px !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+  padding: 8px 18px !important;
+}
+
+.mobile-cta-inner {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+}
+
+.mobile-cta-info {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  gap: 1px !important;
+  min-width: 0 !important;
+}
+
+.mobile-cta-badge {
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  color: #38BDF8 !important;
+  letter-spacing: 0.06em !important;
+  font-family: var(--font-display) !important;
+  text-transform: uppercase !important;
+  line-height: 1.2 !important;
+}
+
+.mobile-cta-price-row {
+  display: flex !important;
+  align-items: baseline !important;
+  gap: 6px !important;
+  flex-wrap: nowrap !important;
+}
+
+.mobile-cta-price-row .m-price {
+  font-family: var(--font-display) !important;
+  font-weight: 950 !important;
+  font-size: 21px !important;
+  color: #FFFFFF !important;
+  line-height: 1 !important;
+}
+
+.mobile-cta-price-row .m-price-old {
+  font-size: 11.5px !important;
+  color: #94A3B8 !important;
+  text-decoration: line-through !important;
+}
+
+.mobile-cta-price-row .m-discount-pill {
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  background: rgba(16, 185, 129, 0.2) !important;
+  color: #34D399 !important;
+  border: 1px solid rgba(52, 211, 153, 0.3) !important;
+  padding: 2px 7px !important;
+  border-radius: 12px !important;
+}
+
+.btn-mobile-cta-primary {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 44px !important;
+  padding: 0 20px !important;
+  border-radius: 50px !important;
+  background: linear-gradient(135deg, #059669 0%, #00B4D8 100%) !important;
+  color: #FFFFFF !important;
+  font-family: var(--font-display) !important;
+  font-weight: 900 !important;
+  font-size: 14.5px !important;
+  text-decoration: none !important;
+  box-shadow: 0 4px 18px rgba(5, 150, 105, 0.45) !important;
+  white-space: nowrap !important;
+  border: none !important;
+  flex-shrink: 0 !important;
+  transition: transform 0.2s ease !important;
+}
+
+.btn-mobile-cta-primary:active {
+  transform: scale(0.96) !important;
+}

@@ -7425,3 +7425,82 @@ td.col-mano {
     height: 15px !important;
   }
 }
+
+
+/* ══════════════ HIGH-CTR MOBILE COMPARISON TABLE SCROLLING & DESIGN ══════════════ */
+.mobile-swipe-hint {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  color: #38BDF8;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+@media (max-width: 992px) {
+  .mobile-swipe-hint {
+    display: flex !important;
+  }
+}
+
+.compare-wrap {
+  width: 100% !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(226, 232, 240, 0.9) !important;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08) !important;
+  position: relative !important;
+}
+
+.compare-wrap table {
+  min-width: 720px !important;
+  width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+.compare-wrap th,
+.compare-wrap td {
+  padding: 14px 18px !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+  vertical-align: middle !important;
+}
+
+/* Sticky First Column for Smooth Horizontal Browsing */
+.compare-wrap th:first-child,
+.compare-wrap td:first-child {
+  position: sticky !important;
+  left: 0 !important;
+  z-index: 10 !important;
+  background: #0F172A !important;
+  color: #FFFFFF !important;
+  border-right: 2px solid rgba(56, 189, 248, 0.3) !important;
+  box-shadow: 4px 0 12px rgba(0, 0, 0, 0.25) !important;
+  min-width: 140px !important;
+  max-width: 160px !important;
+}
+
+/* Highlighted Manodemy Masterclass Column */
+.col-mano {
+  background: rgba(5, 150, 105, 0.06) !important;
+  border-left: 1.5px solid rgba(16, 185, 129, 0.3) !important;
+  border-right: 1.5px solid rgba(16, 185, 129, 0.3) !important;
+  font-weight: 700 !important;
+  color: #0F172A !important;
+}
+
+th.col-mano {
+  background: rgba(5, 150, 105, 0.14) !important;
+  color: #059669 !important;
+  font-size: 14px !important;
+  font-weight: 900 !important;
+}

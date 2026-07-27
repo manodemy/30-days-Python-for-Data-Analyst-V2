@@ -111,6 +111,8 @@
 
   <!-- Mobile Dropdown Menu -->
   <div class="mobile-overlay" id="mobileOverlay" role="dialog" aria-modal="true" aria-label="Mobile Navigation">
+    <a href="javascript:void(0)" onclick="document.getElementById('mobileOverlay').classList.remove('active'); document.getElementById('authModal').classList.add('active');" style="color: var(--text-secondary); font-size: 14px; font-weight: 600;">👤 Sign In</a>
+    <div class="mob-menu-divider" aria-hidden="true"></div>
     <a href="/sql/day01.html" style="color: var(--emerald)">Try SQL Free</a>
     <a href="/excel/day01.html" style="color: var(--gold)">Try Excel Free</a>
     <a href="/day01.html" style="color: var(--cyan)">Try Python Free</a>
@@ -155,7 +157,7 @@
           </p>
 
           <div class="hero-ctas">
-            <a href="#curriculum" class="btn-primary">Start Coding Free &rarr;</a>
+            <a href="/sql/day01.html" class="btn-primary">Start Coding Free &rarr;</a>
             <a href="#curriculum" class="btn-secondary">View Curriculum</a>
           </div>
 
@@ -174,7 +176,7 @@
                 <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
                 <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
               </svg>
-              <span id="hero-active-learners">... Sign Ups</span>
+              <span id="hero-active-learners">500+ Sign Ups</span>
             </div>
             <div class="proof-card cert-card">
               <svg class="proof-icon cert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -646,109 +648,109 @@
         <!-- SQL Panel -->
         <div class="curr-panel curr-panel--sql active" id="panel-sql">
           <div class="curriculum-grid">
-            <div class="day-card" data-day="01" tabindex="0">
+            <a href="/sql/day01.html" class="day-card" data-day="01" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 01</span>
               <span class="day-emoji"><span class="tech-logo logo-sql" title="SQL"><svg viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v6c0 1.66 4 3 9 3s9-1.34 9-3V5"></path><path d="M3 11v6c0 1.66 4 3 9 3s9-1.34 9-3v-6"></path></svg></span></span>
               <span class="day-title">Intro to SQL &amp; Databases</span>
               <span class="day-badge badge-free">FREE</span>
-            </div>
-            <div class="day-card" data-day="02" tabindex="0">
+            </a>
+            <a href="/sql/day02.html" class="day-card" data-day="02" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 02</span>
               <span class="day-emoji">🔍</span>
               <span class="day-title">SELECT &amp; Filtering</span>
               <span class="day-badge badge-free">FREE</span>
-            </div>
-            <div class="day-card coming-soon" data-day="03" tabindex="0">
+            </a>
+            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="03" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 03</span>
               <span class="day-emoji">📝</span>
               <span class="day-title">Sorting, Patterns &amp; CASE</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" data-day="04" tabindex="0">
+            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="04" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 04</span>
               <span class="day-emoji">📊</span>
               <span class="day-title">Aggregate Functions &amp; GROUP BY</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" data-day="05" tabindex="0">
+            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="05" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 05</span>
               <span class="day-emoji">🔗</span>
               <span class="day-title">Joins &amp; Relationships</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" data-day="06" tabindex="0">
+            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="06" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 06</span>
               <span class="day-emoji">🧠</span>
               <span class="day-title">Subqueries</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" data-day="07" tabindex="0">
+            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="07" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 07</span>
               <span class="day-emoji">🏗️</span>
               <span class="day-title">Common Table Expressions</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" data-day="08" tabindex="0">
+            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="08" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 08</span>
               <span class="day-emoji">🔢</span>
               <span class="day-title">Window Functions I: Ranking</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" data-day="09" tabindex="0">
+            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="09" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 09</span>
               <span class="day-emoji">📈</span>
               <span class="day-title">Window Functions II: Analytics</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" data-day="10" tabindex="0">
+            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="10" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 10</span>
               <span class="day-emoji">📅</span>
               <span class="day-title">Date &amp; Time Functions</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" data-day="11" tabindex="0">
+            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="11" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 11</span>
               <span class="day-emoji">🧹</span>
               <span class="day-title">String &amp; Type Functions</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" data-day="12" tabindex="0">
+            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="12" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 12</span>
               <span class="day-emoji">🛠️</span>
               <span class="day-title">Data Cleaning &amp; Wrangling</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" data-day="13" tabindex="0">
+            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="13" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 13</span>
               <span class="day-emoji">🥞</span>
               <span class="day-title">Set Operations &amp; Joins</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" data-day="14" tabindex="0">
+            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="14" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 14</span>
               <span class="day-emoji">⚡</span>
               <span class="day-title">Query Optimisation</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" data-day="15" tabindex="0">
+            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="15" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 15</span>
               <span class="day-emoji">💾</span>
               <span class="day-title">Views &amp; Reusable Objects</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" data-day="16" tabindex="0">
+            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="16" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 16</span>
               <span class="day-emoji">🔮</span>
               <span class="day-title">Advanced Analytics Patterns</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" data-day="17" tabindex="0">
+            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="17" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 17</span>
               <span class="day-emoji">🧱</span>
               <span class="day-title">Data Modelling &amp; dbt</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" data-day="18" tabindex="0">
+            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="18" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 18</span>
               <span class="day-emoji">🏆</span>
               <span class="day-title">BI Capstone &amp; Interview Prep</span>
@@ -760,73 +762,73 @@
         <!-- Excel Panel -->
         <div class="curr-panel curr-panel--excel" id="panel-excel" style="display:none">
           <div class="curriculum-grid">
-            <div class="day-card" data-day="01" tabindex="0">
+            <a href="/excel/day01.html" class="day-card" data-day="01" tabindex="0">
               <span class="day-num" style="color:var(--gold)">Day 01</span>
               <span class="day-emoji"><span class="tech-logo logo-excel" title="Excel"><svg viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.625 0H8.625L1.5 2.625V20.375L8.625 23H14.625V0Z" fill="#107C41"/><path d="M21.5 2.625H14.625V6.375H21.5V2.625Z" fill="#1F9A55"/><path d="M21.5 6.375H14.625V10.125H21.5V6.375Z" fill="#33C481"/><path d="M21.5 10.125H14.625V13.875H21.5V10.125Z" fill="#107C41"/><path d="M21.5 13.875H14.625V17.625H21.5V13.875Z" fill="#1B9A59"/><path d="M21.5 17.625H14.625V20.375H21.5V17.625Z" fill="#107C41"/><path d="M10.125 6.375H3.375V16.625H10.125V6.375Z" fill="#107C41"/><path d="M11.813 7.875L9.938 11.25L11.813 14.625H9.563L8.438 12.75L7.313 14.625H5.063L6.938 11.25L5.063 7.875H7.313L8.438 9.75L9.563 7.875H11.813Z" fill="white"/></svg></span></span>
               <span class="day-title">Excel Orientation &amp; Formulas</span>
               <span class="day-badge badge-free">FREE</span>
-            </div>
-            <div class="day-card" data-day="02" tabindex="0">
+            </a>
+            <a href="/excel/day02.html" class="day-card" data-day="02" tabindex="0">
               <span class="day-num" style="color:var(--gold)">Day 02</span>
               <span class="day-emoji">🎨</span>
               <span class="day-title">Formatting, Sorting &amp; Filtering</span>
               <span class="day-badge badge-free">FREE</span>
-            </div>
-            <div class="day-card coming-soon" data-day="03" tabindex="0">
+            </a>
+            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="03" tabindex="0">
               <span class="day-num" style="color:var(--gold)">Day 03</span>
               <span class="day-emoji">🧹</span>
               <span class="day-title">Data Cleaning Essentials</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" data-day="04" tabindex="0">
+            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="04" tabindex="0">
               <span class="day-num" style="color:var(--gold)">Day 04</span>
               <span class="day-emoji">📋</span>
               <span class="day-title">Excel Tables</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" data-day="05" tabindex="0">
+            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="05" tabindex="0">
               <span class="day-num" style="color:var(--gold)">Day 05</span>
               <span class="day-emoji">🔍</span>
               <span class="day-title">Lookup &amp; Reference Functions</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" data-day="06" tabindex="0">
+            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="06" tabindex="0">
               <span class="day-num" style="color:var(--gold)">Day 06</span>
               <span class="day-emoji">🔀</span>
               <span class="day-title">Logic Functions</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" data-day="07" tabindex="0">
+            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="07" tabindex="0">
               <span class="day-num" style="color:var(--gold)">Day 07</span>
               <span class="day-emoji">📝</span>
               <span class="day-title">Text Functions</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" data-day="08" tabindex="0">
+            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="08" tabindex="0">
               <span class="day-num" style="color:var(--gold)">Day 08</span>
               <span class="day-emoji">📅</span>
               <span class="day-title">Date &amp; Time Functions</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" data-day="09" tabindex="0">
+            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="09" tabindex="0">
               <span class="day-num" style="color:var(--gold)">Day 09</span>
               <span class="day-emoji">🧮</span>
               <span class="day-title">Conditional Aggregation</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" data-day="10" tabindex="0">
+            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="10" tabindex="0">
               <span class="day-num" style="color:var(--gold)">Day 10</span>
               <span class="day-emoji">⚙️</span>
               <span class="day-title">PivotTables Core Mechanics</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" data-day="11" tabindex="0">
+            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="11" tabindex="0">
               <span class="day-num" style="color:var(--gold)">Day 11</span>
               <span class="day-emoji">📈</span>
               <span class="day-title">PivotTables Advanced &amp; Charts</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" data-day="12" tabindex="0">
+            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="12" tabindex="0">
               <span class="day-num" style="color:var(--gold)">Day 12</span>
               <span class="day-emoji">🏆</span>
               <span class="day-title">Validation, What-If &amp; Capstone</span>
@@ -838,101 +840,101 @@
         <!-- Python Panel -->
         <div class="curr-panel curr-panel--python" id="panel-python" style="display:none">
           <div class="curriculum-grid">
-            <div class="day-card" data-day="01" tabindex="0">
+            <a href="/day01.html" class="day-card" data-day="01" tabindex="0">
               <span class="day-num" style="color:var(--cyan)">Day 01</span>
               <span class="day-emoji"><span class="tech-logo logo-python" title="Python"><svg viewBox="45.9 0 367.2 459" fill="none"><path fill="#306998" d="M229.5 0C161.4 0 122.4 15.6 122.4 53.6v34.4h107.1v15.3H122.4c-47.8 0-76.5 30.6-76.5 76.5v61.2c0 45.9 28.7 76.5 76.5 76.5h30.6v-45.9c0-51 41.3-91.8 91.8-91.8h107.1V107.1c0-53.6-47.8-107.1-122.4-107.1zM175.9 30.6c8.4 0 15.3 6.9 15.3 15.3s-6.9 15.3-15.3 15.3-15.3-6.9-15.3-15.3 6.9-15.3 15.3-15.3z" /><path fill="#FFE873" d="M229.5 459c68.1 0 107.1-15.6 107.1-53.6v-34.4H229.5v-15.3h107.1c47.8 0 76.5-30.6 76.5-76.5v-61.2c0-45.9-28.7-76.5-76.5-76.5h-30.6v45.9c0 51-41.3 91.8-91.8 91.8H122.4V351.9c0 53.6 47.8 107.1 122.4 107.1zm53.6-30.6c-8.4 0-15.3-6.9-15.3-15.3s6.9-15.3 15.3-15.3 15.3 6.9 15.3 15.3-6.9 15.3-15.3 15.3z" /></svg></span></span>
               <span class="day-title">Data Types and Memory</span>
               <span class="day-badge badge-free">FREE</span>
-            </div>
-            <div class="day-card" data-day="02" tabindex="0">
+            </a>
+            <a href="/day02.html" class="day-card" data-day="02" tabindex="0">
               <span class="day-num" style="color:var(--cyan)">Day 02</span>
               <span class="day-emoji">➕</span>
               <span class="day-title">Operators and Expressions</span>
               <span class="day-badge badge-free">FREE</span>
-            </div>
+            </a>
             <!-- Loop days 3-30 as locked -->
-            <div class="day-card locked" data-day="03" tabindex="0">
+            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="03" tabindex="0">
               <span class="day-num" style="color:var(--cyan)">Day 03</span><span class="day-emoji">📝</span><span class="day-title">Strings</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" data-day="04" tabindex="0">
+            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="04" tabindex="0">
               <span class="day-num" style="color:var(--cyan)">Day 04</span><span class="day-emoji">📋</span><span class="day-title">Lists</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" data-day="05" tabindex="0">
+            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="05" tabindex="0">
               <span class="day-num" style="color:var(--cyan)">Day 05</span><span class="day-emoji">📦</span><span class="day-title">Tuples</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" data-day="06" tabindex="0">
+            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="06" tabindex="0">
               <span class="day-num" style="color:var(--cyan)">Day 06</span><span class="day-emoji">⭕</span><span class="day-title">Sets</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" data-day="07" tabindex="0">
+            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="07" tabindex="0">
               <span class="day-num" style="color:var(--cyan)">Day 07</span><span class="day-emoji">🗂️</span><span class="day-title">Dictionaries</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" data-day="08" tabindex="0">
+            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="08" tabindex="0">
               <span class="day-num" style="color:var(--cyan)">Day 08</span><span class="day-emoji">🔀</span><span class="day-title">Conditionals</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" data-day="09" tabindex="0">
+            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="09" tabindex="0">
               <span class="day-num" style="color:var(--cyan)">Day 09</span><span class="day-emoji">🔄</span><span class="day-title">Loops</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" data-day="10" tabindex="0">
+            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="10" tabindex="0">
               <span class="day-num" style="color:var(--cyan)">Day 10</span><span class="day-emoji">⚙️</span><span class="day-title">Functions</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" data-day="11" tabindex="0">
+            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="11" tabindex="0">
               <span class="day-num" style="color:var(--cyan)">Day 11</span><span class="day-emoji">🔧</span><span class="day-title">Modules</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" data-day="12" tabindex="0">
+            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="12" tabindex="0">
               <span class="day-num" style="color:var(--cyan)">Day 12</span><span class="day-emoji">🧮</span><span class="day-title">Comprehensions</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" data-day="13" tabindex="0">
+            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="13" tabindex="0">
               <span class="day-num" style="color:var(--cyan)">Day 13</span><span class="day-emoji">λ</span><span class="day-title">Lambda Functions</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" data-day="14" tabindex="0">
+            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="14" tabindex="0">
               <span class="day-num" style="color:var(--cyan)">Day 14</span><span class="day-emoji">⚠️</span><span class="day-title">Exceptions</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" data-day="15" tabindex="0">
+            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="15" tabindex="0">
               <span class="day-num" style="color:var(--cyan)">Day 15</span><span class="day-emoji">📂</span><span class="day-title">File Handling</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" data-day="16" tabindex="0">
+            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="16" tabindex="0">
               <span class="day-num" style="color:var(--cyan)">Day 16</span><span class="day-emoji">🧩</span><span class="day-title">OOP Basics</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" data-day="17" tabindex="0">
+            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="17" tabindex="0">
               <span class="day-num" style="color:var(--cyan)">Day 17</span><span class="day-emoji">🏗️</span><span class="day-title">OOP Advanced</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" data-day="18" tabindex="0">
+            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="18" tabindex="0">
               <span class="day-num" style="color:var(--cyan)">Day 18</span><span class="day-emoji">🔍</span><span class="day-title">Regex</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" data-day="19" tabindex="0">
+            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="19" tabindex="0">
               <span class="day-num" style="color:var(--cyan)">Day 19</span><span class="day-emoji">⚡</span><span class="day-title">Generators and Iterators</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" data-day="20" tabindex="0">
+            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="20" tabindex="0">
               <span class="day-num" style="color:var(--cyan)">Day 20</span><span class="day-emoji">🏆</span><span class="day-title">Capstone Project</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" data-day="21" tabindex="0">
+            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="21" tabindex="0">
               <span class="day-num" style="color:var(--cyan)">Day 21</span><span class="day-emoji">📊</span><span class="day-title">NumPy Fundamentals</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" data-day="22" tabindex="0">
+            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="22" tabindex="0">
               <span class="day-num" style="color:var(--cyan)">Day 22</span><span class="day-emoji">📈</span><span class="day-title">NumPy Advanced</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" data-day="23" tabindex="0">
+            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="23" tabindex="0">
               <span class="day-num" style="color:var(--cyan)">Day 23</span><span class="day-emoji">🐼</span><span class="day-title">Pandas Introduction</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" data-day="24" tabindex="0">
+            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="24" tabindex="0">
               <span class="day-num" style="color:var(--cyan)">Day 24</span><span class="day-emoji">🎯</span><span class="day-title">Pandas Selection</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" data-day="25" tabindex="0">
+            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="25" tabindex="0">
               <span class="day-num" style="color:var(--cyan)">Day 25</span><span class="day-emoji">🧹</span><span class="day-title">Pandas Cleaning</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" data-day="26" tabindex="0">
+            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="26" tabindex="0">
               <span class="day-num" style="color:var(--cyan)">Day 26</span><span class="day-emoji">🗃️</span><span class="day-title">Pandas GroupBy</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" data-day="27" tabindex="0">
+            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="27" tabindex="0">
               <span class="day-num" style="color:var(--cyan)">Day 27</span><span class="day-emoji">🔗</span><span class="day-title">Pandas Merging</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" data-day="28" tabindex="0">
+            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="28" tabindex="0">
               <span class="day-num" style="color:var(--cyan)">Day 28</span><span class="day-emoji">📉</span><span class="day-title">Pandas Time Series</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" data-day="29" tabindex="0">
+            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="29" tabindex="0">
               <span class="day-num" style="color:var(--cyan)">Day 29</span><span class="day-emoji">🎨</span><span class="day-title">Data Visualization</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" data-day="30" tabindex="0">
+            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="30" tabindex="0">
               <span class="day-num" style="color:var(--cyan)">Day 30</span><span class="day-emoji">🔬</span><span class="day-title">Phase Analysis &amp; Review</span><span class="day-badge badge-lock">🔒</span>
             </div>
           </div>
@@ -1081,7 +1083,7 @@
           <div class="rev-summary-top">
             <!-- Score + Stars + Count -->
             <div class="rev-score-block">
-              <div class="rev-score-massive">0.0 <span>/ 5</span></div>
+              <div class="rev-score-massive">4.8 <span>/ 5</span></div>
               <div class="rev-stars-row" aria-label="Average Star Rating"></div>
               <div class="rev-count-sub">Loading reviews summary...</div>
             </div>
@@ -1229,6 +1231,7 @@
             <button class="pricing-buy-btn pricing-buy-btn--selfpaced" data-cta="buy" data-tier="selfpaced" id="buyBtnSelfpaced">
               🚀 Enroll Now — Start Learning
             </button>
+            <div class="pricing-free-escape" style="text-align: center; margin-top: 14px; font-size: 13px; color: var(--text-secondary);">Not sure yet? <a href="/sql/day01.html" style="color: var(--emerald); font-weight: 600; text-decoration: underline; text-underline-offset: 3px;">Try Day 01 completely free &rarr;</a></div>
             
           </div>
         </div>
@@ -1572,7 +1575,10 @@
         </div>
       </div>
       <div class="mobile-cta-action">
-        <a href="#pricing" class="btn-mobile-cta-primary" id="stickyEnrollBtn" data-cta="buy" data-tier="selfpaced">Enroll Now 🚀</a>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <a href="/sql/day01.html" class="btn-mobile-cta-secondary" style="padding: 10px 14px; font-size: 12px; font-weight: 700; color: var(--emerald); background: rgba(5, 150, 105, 0.1); border: 1px solid rgba(5, 150, 105, 0.3); border-radius: 20px; white-space: nowrap;">Try Free</a>
+          <a href="#pricing" class="btn-mobile-cta-primary" id="stickyEnrollBtn" data-cta="buy" data-tier="selfpaced">Enroll Now 🚀</a>
+        </div>
       </div>
     </div>
   </div>

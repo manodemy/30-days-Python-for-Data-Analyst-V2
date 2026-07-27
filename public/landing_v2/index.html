@@ -125,25 +125,8 @@
         <div class="nav-right">
           <!-- Logged out states -->
           <a href="javascript:void(0)" id="navSignin" class="btn-ghost" onclick="document.getElementById('authModal').classList.add('active');" aria-label="Sign in to your account">Sign In</a>
-          <div class="nav-buy-dropdown-container">
-            <a href="javascript:void(0)" class="btn-nav-buy" id="navEnrollBtn" aria-label="Toggle enroll options">Enroll Full Course</a>
-            <div class="nav-buy-dropdown-menu" id="navEnrollDropdown">
-              <div class="dropdown-tier-item">
-                <div class="dropdown-tier-info">
-                  <span class="dropdown-tier-name">⚡ Self-Paced Plan</span>
-                  <span class="dropdown-tier-price dynamic-price-from">$49</span>
-                </div>
-                <button class="dropdown-tier-buy" data-tier="selfpaced">Enroll</button>
-              </div>
-              <div class="dropdown-tier-divider"></div>
-              <div class="dropdown-tier-item">
-                <div class="dropdown-tier-info">
-                  <span class="dropdown-tier-name">🎥 Live Class Plan</span>
-                  <span class="dropdown-tier-price dynamic-price-live">$149</span>
-                </div>
-                <button class="dropdown-tier-buy" data-tier="live">Enroll</button>
-              </div>
-            </div>
+          <a href="javascript:void(0)" class="btn-nav-buy" id="navEnrollBtn" data-cta="buy" data-tier="selfpaced" aria-label="Enroll Full Course">Enroll Full Course — <span class="dynamic-price-from">$49</span></a>
+        </div>
           </div>
 
           <!-- Logged in states (hidden by default, managed by app.js) -->
@@ -170,25 +153,8 @@
     <a href="#testimonials">Reviews</a>
     <a href="#faq">FAQ</a>
     <div class="mob-menu-divider" aria-hidden="true"></div>
-    <div class="mob-buy-dropdown-container">
-      <a href="javascript:void(0)" class="mob-menu-buy" id="mobEnrollBtn" aria-label="Toggle enroll options">Enroll Full Course</a>
-      <div class="mob-buy-dropdown-menu" id="mobEnrollDropdown">
-        <div class="dropdown-tier-item">
-          <div class="dropdown-tier-info">
-            <span class="dropdown-tier-name">⚡ Self-Paced Plan</span>
-            <span class="dropdown-tier-price dynamic-price-from">$49</span>
-          </div>
-          <button class="dropdown-tier-buy" data-tier="selfpaced">Enroll</button>
-        </div>
-        <div class="dropdown-tier-divider"></div>
-        <div class="dropdown-tier-item">
-          <div class="dropdown-tier-info">
-            <span class="dropdown-tier-name">🎥 Live Class Plan</span>
-            <span class="dropdown-tier-price dynamic-price-live">$149</span>
-          </div>
-          <button class="dropdown-tier-buy" data-tier="live">Enroll</button>
-        </div>
-      </div>
+    <a href="javascript:void(0)" class="mob-menu-buy" id="mobEnrollBtn" data-cta="buy" data-tier="selfpaced" aria-label="Enroll Full Course">Enroll Full Course — <span class="dynamic-price-from">$49</span></a>
+  </div>
     </div>
   </div>
 
@@ -1259,7 +1225,7 @@
           <span style="font-size: 12px; color: #94A3B8; font-weight: 600;">· Only 7 Seats Left at this price</span>
         </div>
 
-        <div class="pricing-grid reveal" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; align-items: stretch;">
+        <div class="pricing-grid reveal" style="display: flex; justify-content: center; max-width: 680px; margin: 0 auto;">
 
           <!-- Self-Paced Card -->
           <div class="pricing-card pricing-card--selfpaced">
@@ -1332,71 +1298,7 @@
             <div class="pricing-free-escape" style="text-align: center; margin-top: 14px; font-size: 13px; color: var(--text-secondary);">Not sure yet? <a href="/sql/day01.html" style="color: var(--emerald); font-weight: 600; text-decoration: underline; text-underline-offset: 3px;">Try Day 01 completely free &rarr;</a></div>
             
           
-          <!-- Live Class Plan Card -->
-          <div class="pricing-card pricing-card--live" style="background: var(--base); border: 1px solid var(--border-strong); border-radius: 24px; padding: 32px; display: flex; flex-direction: column; position: relative;">
-            <div class="pricing-header-center">
-              <span class="pricing-type-badge" style="background: rgba(0, 180, 216, 0.1); color: var(--cyan); border: 1px solid rgba(0, 180, 216, 0.3);">🎥 LIVE CLASS COHORT</span>
-            </div>
-
-            <h3 class="pricing-card-title">Live Class Plan</h3>
-            <p class="pricing-card-subtitle">Everything in Self-Paced + Live interactive instructor classes &amp; 1-on-1 code reviews.</p>
-
-            <div class="pricing-price-group">
-              <div class="pricing-price-row">
-                <span class="pricing-price-now" id="priceLiveNow">$149</span>
-                <span class="pricing-price-old" id="priceLiveOld">$299</span>
-                <span class="pricing-discount-badge" style="background: rgba(0, 180, 216, 0.15); color: var(--cyan);">50% OFF</span>
-              </div>
-              <div class="pricing-price-note">One-time payment · Scheduled daily cohort batches</div>
-            </div>
-
-            <div class="pricing-divider"></div>
-
-            <ul class="pricing-feature-list" style="flex: 1;">
-              <li>
-                <div class="feat-icon-box" style="background: rgba(0, 180, 216, 0.1); color: var(--cyan);">⚡</div>
-                <div class="feat-text-box">
-                  <strong>All 60-Day Self-Paced Materials</strong>
-                  <span>SQL, Excel, Python &amp; 1,000+ challenges</span>
-                </div>
-              </li>
-              <li>
-                <div class="feat-icon-box" style="background: rgba(0, 180, 216, 0.1); color: var(--cyan);">🎥</div>
-                <div class="feat-text-box">
-                  <strong>Live Daily Instructor Classes</strong>
-                  <span>Interactive online sessions with Q&amp;A</span>
-                </div>
-              </li>
-              <li>
-                <div class="feat-icon-box" style="background: rgba(0, 180, 216, 0.1); color: var(--cyan);">👥</div>
-                <div class="feat-text-box">
-                  <strong>Dedicated Cohort Batch Group</strong>
-                  <span>Peer study groups &amp; live mentor assistance</span>
-                </div>
-              </li>
-              <li>
-                <div class="feat-icon-box" style="background: rgba(0, 180, 216, 0.1); color: var(--cyan);">🔍</div>
-                <div class="feat-text-box">
-                  <strong>1-on-1 Capstone Project Review</strong>
-                  <span>Personalized code audit &amp; career guidance</span>
-                </div>
-              </li>
-              <li>
-                <div class="feat-icon-box" style="background: rgba(0, 180, 216, 0.1); color: var(--cyan);">🎓</div>
-                <div class="feat-text-box">
-                  <strong>Gold-Cranked Verified Certificate</strong>
-                  <span>Sharable credential with direct recruiter verification</span>
-                </div>
-              </li>
-            </ul>
-
-            <button class="pricing-buy-btn" data-cta="buy" data-tier="live" id="buyBtnLive" style="background: linear-gradient(135deg, #00B4D8, #0284C7); color: white; margin-top: 20px;">
-              🎥 Enroll Live Class — $149
-            </button>
-            <div style="text-align: center; margin-top: 14px; font-size: 13px; color: var(--text-secondary);">Includes 7-Day Money Back Guarantee</div>
           </div>
-
-        </div>
       </div>
     </section>
 
@@ -1557,20 +1459,10 @@
           <button class="coupon-apply" id="couponApply">Apply</button>
         </div>
 
-        <!-- Batch Selection Section (Dynamically populated for Live Class tier) -->
-        <div class="checkout-batch-section" id="checkoutBatchSection" style="display: none; margin: 15px 0; text-align: left;">
-          <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--text-primary);">
-            🗓️ Select Your Daily Cohort Batch:
-          </label>
-          <div class="checkout-batch-options" id="checkoutBatchOptions" style="display: flex; flex-direction: column; gap: 8px;">
-            <!-- Dynamically populated by app.js from database batches -->
-          </div>
+        
         </div>
 
-        <div style="text-align:center; margin-bottom:8px;">
-          <button class="checkout-switch-link" id="checkoutSwitchTier">Switch to Live Class Plan ($149)</button>
-        </div>
-
+        
         <div class="checkout-divider"><span>Choose Payment Method</span></div>
         <div class="gateway-buttons" id="gatewayButtons">
           <!-- Populated dynamically by app.js -->

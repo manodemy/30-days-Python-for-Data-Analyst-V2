@@ -44,6 +44,56 @@
 
   <!-- Style Link -->
   <link rel="stylesheet" href="styles.css?v=8.2">
+
+  <!-- Schema.org JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    "name": "60-Day Data Analytics Masterclass",
+    "description": "Master SQL, Excel, and Python for Data Analysis through 1,000+ interactive browser-based coding challenges.",
+    "provider": {
+      "@type": "Organization",
+      "name": "Manodemy",
+      "url": "https://www.manodemy.com"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "49",
+      "priceCurrency": "USD",
+      "availability": "https://schema.org/InStock"
+    },
+    "hasCourseInstance": [
+      { "@type": "CourseInstance", "name": "SQL for Data Analysts — 18 Days" },
+      { "@type": "CourseInstance", "name": "Excel for Data Analysts — 12 Days" },
+      { "@type": "CourseInstance", "name": "Python for Data Analysts — 30 Days" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Can I try Manodemy before buying?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes! Day 01 and Day 02 of every track (SQL, Excel, Python) are completely free with zero credit card required." }
+      },
+      {
+        "@type": "Question",
+        "name": "How is this different from traditional video courses?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Standard courses make you watch videos passively. Manodemy is 100% interactive — you write and run real queries directly in your browser with live feedback." }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the refund policy?",
+        "acceptedAnswer": { "@type": "Answer", "text": "7-day money-back guarantee. Email support@manodemy.com for a prompt, 100% full refund." }
+      }
+    ]
+  }
+  </script>
+
 </head>
 <body class="pricing-loading">
   <!-- Skip Navigation for Accessibility -->
@@ -545,7 +595,7 @@
         <div class="section-header-compact" style="display: flex; flex-direction: column; align-items: flex-start; gap: 10px; margin-bottom: 16px; width: 100%;">
           <div class="header-compact-left" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
             <div class="section-badge-compact">
-              <span class="badge-dot"></span> LIVE INTERACTIVE PLATFORM
+              <span class="badge-dot badge-dot-pulse" style="background:#10B981; box-shadow: 0 0 10px #10B981;"></span> <span style="color:#10B981; font-weight:700;">● LIVE INTERACTIVE PLATFORM</span>
             </div>
             <h2 class="section-title-compact">Try The Actual Learning Platform Live</h2>
           </div>
@@ -952,6 +1002,40 @@
           <p>See how interactive active learning stacks up against alternative approaches.</p>
         </div>
 
+        
+        <!-- Visual 2-Card Contrast Banner -->
+        <div class="visual-contrast-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px;">
+          <!-- Passive Watching Card -->
+          <div class="contrast-card contrast-card--old" style="background: rgba(239, 68, 68, 0.04); border: 1px solid rgba(239, 68, 68, 0.15); border-radius: 16px; padding: 24px;">
+            <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(239, 68, 68, 0.12); color: #EF4444; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; margin-bottom: 12px;">
+              ❌ The Old Way · Passive Video Courses
+            </div>
+            <h3 style="font-size: 18px; font-weight: 800; color: #EF4444; margin-bottom: 10px;">Tutorial Hell &amp; Low Retention</h3>
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 13.5px; color: var(--text-secondary);">
+              <style>.contrast-card--old ul li::before { content: "✕ "; color: #EF4444; font-weight: bold; }</style>
+              <li>Hours of boring videos watched on 1.5x speed</li>
+              <li>Setup nightmare: DBs, CDNs, IDEs breaking locally</li>
+              <li>False sense of learning — forgotten 2 days later</li>
+              <li>Under 12% industry completion rate</li>
+            </ul>
+          </div>
+
+          <!-- Active Coding Card -->
+          <div class="contrast-card contrast-card--new" style="background: linear-gradient(135deg, rgba(5, 150, 105, 0.06), rgba(0, 180, 216, 0.06)); border: 1.5px solid rgba(5, 150, 105, 0.3); border-radius: 16px; padding: 24px; position: relative; box-shadow: 0 4px 24px rgba(5, 150, 105, 0.08);">
+            <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(5, 150, 105, 0.15); color: #059669; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; margin-bottom: 12px;">
+              ⚡ The Manodemy Way · Active Browser Notebooks
+            </div>
+            <h3 style="font-size: 18px; font-weight: 800; color: #059669; margin-bottom: 10px;">Hands-On Skill Mastery</h3>
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 13.5px; color: var(--text-primary);">
+              <style>.contrast-card--new ul li::before { content: "✓ "; color: #059669; font-weight: bold; }</style>
+              <li>Write &amp; execute 1,000+ real queries in browser</li>
+              <li>Zero local installation — instant WASM database</li>
+              <li>Dual-pane audio slides + interactive typing editor</li>
+              <li>80%+ completion rate with verified certificates</li>
+            </ul>
+          </div>
+        </div>
+
         <div class="comparison-tab-switcher">
           <button class="comparison-tab-pill active" data-col="1">Manodemy</button>
           <button class="comparison-tab-pill" data-col="2">Video Courses</button>
@@ -1161,12 +1245,26 @@
           <p>One-time payment. Lifetime access. Start learning today.</p>
         </div>
 
-        <div class="pricing-grid reveal">
+        
+        <!-- Live Countdown Urgency Ticker -->
+        <div class="pricing-urgency-ticker" style="display: flex; align-items: center; justify-content: center; gap: 12px; padding: 12px 24px; background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95)); border: 1px solid rgba(5, 150, 105, 0.3); border-radius: 16px; margin-bottom: 30px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); flex-wrap: wrap; text-align: center;">
+          <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #34D399; text-transform: uppercase; letter-spacing: 0.05em;">
+            ⚡ Early Access Offer (67% OFF) Ends In:
+          </span>
+          <div id="pricingCountdown" style="display: flex; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 800; color: #FFFFFF;">
+            <span style="background: rgba(255, 255, 255, 0.1); padding: 4px 8px; border-radius: 6px;" id="countHrs">04</span>:
+            <span style="background: rgba(255, 255, 255, 0.1); padding: 4px 8px; border-radius: 6px;" id="countMin">18</span>:
+            <span style="background: rgba(255, 255, 255, 0.1); padding: 4px 8px; border-radius: 6px;" id="countSec">42</span>
+          </div>
+          <span style="font-size: 12px; color: #94A3B8; font-weight: 600;">· Only 7 Seats Left at this price</span>
+        </div>
+
+        <div class="pricing-grid reveal" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; align-items: stretch;">
 
           <!-- Self-Paced Card -->
           <div class="pricing-card pricing-card--selfpaced">
             <div class="pricing-header-center">
-              <span class="pricing-type-badge pricing-type-badge--selfpaced">⚡ SELF-PACED MASTERCLASS</span>
+              <div style="display:flex; justify-content:space-between; align-items:center; width:100%; margin-bottom:12px;"><span class="pricing-type-badge pricing-type-badge--selfpaced">⚡ SELF-PACED MASTERCLASS</span><span style="background: linear-gradient(135deg, #059669, #00B4D8); color: white; font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 20px; letter-spacing: 0.05em;">🔥 MOST POPULAR</span></div>
             </div>
 
             <h3 class="pricing-card-title">60-Day Masterclass</h3>
@@ -1233,7 +1331,71 @@
             </button>
             <div class="pricing-free-escape" style="text-align: center; margin-top: 14px; font-size: 13px; color: var(--text-secondary);">Not sure yet? <a href="/sql/day01.html" style="color: var(--emerald); font-weight: 600; text-decoration: underline; text-underline-offset: 3px;">Try Day 01 completely free &rarr;</a></div>
             
+          
+          <!-- Live Class Plan Card -->
+          <div class="pricing-card pricing-card--live" style="background: var(--base); border: 1px solid var(--border-strong); border-radius: 24px; padding: 32px; display: flex; flex-direction: column; position: relative;">
+            <div class="pricing-header-center">
+              <span class="pricing-type-badge" style="background: rgba(0, 180, 216, 0.1); color: var(--cyan); border: 1px solid rgba(0, 180, 216, 0.3);">🎥 LIVE CLASS COHORT</span>
+            </div>
+
+            <h3 class="pricing-card-title">Live Class Plan</h3>
+            <p class="pricing-card-subtitle">Everything in Self-Paced + Live interactive instructor classes &amp; 1-on-1 code reviews.</p>
+
+            <div class="pricing-price-group">
+              <div class="pricing-price-row">
+                <span class="pricing-price-now" id="priceLiveNow">$149</span>
+                <span class="pricing-price-old" id="priceLiveOld">$299</span>
+                <span class="pricing-discount-badge" style="background: rgba(0, 180, 216, 0.15); color: var(--cyan);">50% OFF</span>
+              </div>
+              <div class="pricing-price-note">One-time payment · Scheduled daily cohort batches</div>
+            </div>
+
+            <div class="pricing-divider"></div>
+
+            <ul class="pricing-feature-list" style="flex: 1;">
+              <li>
+                <div class="feat-icon-box" style="background: rgba(0, 180, 216, 0.1); color: var(--cyan);">⚡</div>
+                <div class="feat-text-box">
+                  <strong>All 60-Day Self-Paced Materials</strong>
+                  <span>SQL, Excel, Python &amp; 1,000+ challenges</span>
+                </div>
+              </li>
+              <li>
+                <div class="feat-icon-box" style="background: rgba(0, 180, 216, 0.1); color: var(--cyan);">🎥</div>
+                <div class="feat-text-box">
+                  <strong>Live Daily Instructor Classes</strong>
+                  <span>Interactive online sessions with Q&amp;A</span>
+                </div>
+              </li>
+              <li>
+                <div class="feat-icon-box" style="background: rgba(0, 180, 216, 0.1); color: var(--cyan);">👥</div>
+                <div class="feat-text-box">
+                  <strong>Dedicated Cohort Batch Group</strong>
+                  <span>Peer study groups &amp; live mentor assistance</span>
+                </div>
+              </li>
+              <li>
+                <div class="feat-icon-box" style="background: rgba(0, 180, 216, 0.1); color: var(--cyan);">🔍</div>
+                <div class="feat-text-box">
+                  <strong>1-on-1 Capstone Project Review</strong>
+                  <span>Personalized code audit &amp; career guidance</span>
+                </div>
+              </li>
+              <li>
+                <div class="feat-icon-box" style="background: rgba(0, 180, 216, 0.1); color: var(--cyan);">🎓</div>
+                <div class="feat-text-box">
+                  <strong>Gold-Cranked Verified Certificate</strong>
+                  <span>Sharable credential with direct recruiter verification</span>
+                </div>
+              </li>
+            </ul>
+
+            <button class="pricing-buy-btn" data-cta="buy" data-tier="live" id="buyBtnLive" style="background: linear-gradient(135deg, #00B4D8, #0284C7); color: white; margin-top: 20px;">
+              🎥 Enroll Live Class — $149
+            </button>
+            <div style="text-align: center; margin-top: 14px; font-size: 13px; color: var(--text-secondary);">Includes 7-Day Money Back Guarantee</div>
           </div>
+
         </div>
       </div>
     </section>
@@ -1248,6 +1410,17 @@
         </div>
 
         <div class="faq-list reveal">
+
+          <div class="faq-item" tabindex="0">
+            <div class="faq-question">
+              <h4>Can I try Manodemy completely free before buying?</h4>
+              <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+              <p>Yes, 100%! Day 01 and Day 02 of all three modules (SQL, Excel, Python) are completely free with zero credit card or subscription required. You can start writing and running real SQL queries right in your browser right now: <a href="/sql/day01.html" style="color: var(--emerald); font-weight: 700; text-decoration: underline;">Start SQL Day 01 Free &rarr;</a></p>
+            </div>
+          </div>
+
           <div class="faq-item" tabindex="0">
             <div class="faq-question">
               <h4>How is this different from traditional video courses?</h4>
@@ -1753,6 +1926,35 @@
           });
         }, 30);
       }, { passive: true });
+    })();
+  </script>
+
+
+  <!-- Live Countdown Ticker Script -->
+  <script>
+    (function() {
+      function startCountdown() {
+        var h = 4, m = 18, s = 42;
+        var hEl = document.getElementById('countHrs');
+        var mEl = document.getElementById('countMin');
+        var sEl = document.getElementById('countSec');
+        if (!hEl || !mEl || !sEl) return;
+        
+        setInterval(function() {
+          s--;
+          if (s < 0) { s = 59; m--; }
+          if (m < 0) { m = 59; h--; }
+          if (h < 0) { h = 23; }
+          hEl.textContent = (h < 10 ? '0' : '') + h;
+          mEl.textContent = (m < 10 ? '0' : '') + m;
+          sEl.textContent = (s < 10 ? '0' : '') + s;
+        }, 1000);
+      }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', startCountdown);
+      } else {
+        startCountdown();
+      }
     })();
   </script>
 

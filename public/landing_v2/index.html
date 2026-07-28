@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build-cache-bust-10000 -->
+<!-- build-cache-bust-11000 -->
 <html lang="en">
 <head>
   <!-- Google tag (gtag.js) -->
@@ -251,7 +251,7 @@
       filter: blur(0px);
     }
 
-    /* Phase 5 card resizing & positioning over hero-left content (height matches clock frame 520px) */
+    /* Phase 5 card resizing & positioning over hero-left content (exact pixel height match to clock frame) */
     .narration-showcase-stage.phase-5-card {
       justify-content: flex-start;
       padding-left: clamp(20px, calc((100vw - 1200px) / 2 + 24px), 240px);
@@ -260,12 +260,10 @@
 
     .narration-showcase-stage.phase-5-card .narration-showcase-card {
       max-width: 580px;
-      height: 520px;
-      max-height: calc(100vh - 120px);
       aspect-ratio: auto;
-      transform: scale(0.96);
+      transform: none !important;
       box-shadow: 0 25px 70px rgba(0, 180, 216, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.2);
-      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: height 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s ease;
     }
 
     /* Badge overlay */
@@ -2142,10 +2140,20 @@
         if (badgeText) badgeText.innerHTML = '🎯 PRACTICING ANALYST TECHNICAL INTERVIEWS';
       }, 8340);
 
-      // ── Phase 5 (12.54s - 15.4s): "this masterclass was built specifically for you" -> Resize card & reveal hero text
+      // ── Phase 5 (12.54s - 15.4s): "this masterclass was built specifically for you" -> Resize card & match clock height
       _navP4Timer = setTimeout(function() {
         document.body.classList.add('phase-5-active');
         if (stage) stage.classList.add('phase-5-card');
+
+        // Dynamically measure exact rendered height of the clock dial frame
+        var clockEl = document.getElementById('roadmap-root') || document.querySelector('.hero-right');
+        if (clockEl && card) {
+          var h = clockEl.getBoundingClientRect().height;
+          if (h && h > 200) {
+            card.style.height = Math.round(h) + 'px';
+          }
+        }
+
         if (badgeText) badgeText.innerHTML = '✨ BUILT SPECIFICALLY FOR YOU';
       }, 12540);
 
@@ -2153,6 +2161,7 @@
       _navEndTimer = setTimeout(function() {
         nav.classList.remove('nav-anim-p1', 'nav-anim-p2');
         if (stage) stage.classList.remove('active', 'transition-img2', 'phase-5-card');
+        if (card) card.style.height = '';
         document.body.classList.remove('narration-active', 'phase-5-active');
       }, 15400);
     }
@@ -2170,7 +2179,10 @@
 
       if (nav) nav.classList.remove('nav-anim-p1', 'nav-anim-p2');
       if (stage) stage.classList.remove('active', 'transition-img2', 'phase-5-card');
-      if (card) card.classList.remove('img2-active');
+      if (card) {
+        card.classList.remove('img2-active');
+        card.style.height = '';
+      }
       document.body.classList.remove('narration-active', 'phase-5-active');
     }
     // ──────────────────────────────────────────────────────────────────────────

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build-cache-bust-8000 -->
+<!-- build-cache-bust-9000 -->
 <html lang="en">
 <head>
   <!-- Google tag (gtag.js) -->
@@ -142,7 +142,7 @@
       transition: opacity 0.4s ease, visibility 0.4s ease;
     }
 
-    /* Phase 5: Reveal hero text on left, shrink & move showcase card to cover hero-right */
+    /* Phase 5: Reveal 3D clock widget on right (.hero-right), move showcase card to cover hero text on left (.hero-left) */
     body.narration-active.phase-5-active main {
       opacity: 1 !important;
       visibility: visible !important;
@@ -154,17 +154,19 @@
       visibility: hidden !important;
     }
 
-    body.narration-active.phase-5-active .hero-right {
+    body.narration-active.phase-5-active .hero-left {
       opacity: 0 !important;
       visibility: hidden !important;
     }
 
-    body.narration-active.phase-5-active .hero-left {
-      animation: heroLeftSlideIn 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+    body.narration-active.phase-5-active .hero-right {
+      opacity: 1 !important;
+      visibility: visible !important;
+      animation: heroRightSlideIn 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
     }
 
-    @keyframes heroLeftSlideIn {
-      from { opacity: 0; transform: translateX(-35px); }
+    @keyframes heroRightSlideIn {
+      from { opacity: 0; transform: translateX(35px); }
       to   { opacity: 1; transform: translateX(0); }
     }
 
@@ -249,14 +251,15 @@
       filter: blur(0px);
     }
 
-    /* Phase 5 card resizing & positioning over hero-right */
+    /* Phase 5 card resizing & positioning over hero-left content */
     .narration-showcase-stage.phase-5-card {
-      justify-content: flex-end;
-      padding-right: clamp(20px, calc((100vw - 1200px) / 2 + 24px), 240px);
+      justify-content: flex-start;
+      padding-left: clamp(20px, calc((100vw - 1200px) / 2 + 24px), 240px);
+      padding-right: 20px;
     }
 
     .narration-showcase-stage.phase-5-card .narration-showcase-card {
-      max-width: 550px;
+      max-width: 580px;
       transform: scale(0.95);
       box-shadow: 0 25px 70px rgba(0, 180, 216, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.2);
       transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);

@@ -1873,113 +1873,94 @@
 
       <!-- Narration Transcript -->
       <p class="audio-intro-transcript">
-        &ldquo;Welcome to Manodemy&rsquo;s 60-Day Data Analytics Course—your hands-on roadmap to master SQL, Excel, and Python with guided audio narration and 1,000+ interactive challenges. And the best part? You earn a verified certificate backed by your real, graded marks!&rdquo;
+        &ldquo;Welcome to Manodemy’s 60-Day Data Analytics Masterclass! Whether you’re a complete beginner breaking into data for the first time, or a practicing analyst gearing up to conquer next technical interviews — this masterclass was built specifically for you.&rdquo;
       </p>
 
       <!-- Player Controls -->
       <div class="audio-player-controls">
-        <button class="audio-play-trigger" id="audioPlayTrigger" onclick="toggleIntroSpeech()">
+        <button class="audio-play-trigger" id="audioPlayTrigger" onclick="playOrPauseIntroAudio()">
           <span id="audioPlayIcon">▶</span> <span id="audioPlayLabel">Play Audio</span>
         </button>
-        <span class="audio-duration-pill">0:13</span>
+        <span class="audio-duration-pill">0:15</span>
       </div>
     </div>
   </div>
 
   <script>
-    function toggleNavAudioIntro() {
+    function playOrPauseIntroAudio() {
       var audio = document.getElementById('navIntroAudioElement');
-      var hook = document.getElementById('navCenterAudioHook');
-      var circle = document.getElementById('navCenterPlayCircle');
-
       if (!audio) return;
 
-      audio.onended = resetNavAudioState;
-      audio.onpause = resetNavAudioState;
+      audio.onended = resetAllAudioState;
+      audio.onpause = resetAllAudioState;
 
       if (!audio.paused && !audio.ended) {
         audio.pause();
-        resetNavAudioState();
+        resetAllAudioState();
       } else {
         audio.currentTime = 0;
         var p = audio.play();
         if (p && p.then) {
           p.then(function() {
-            if (hook) hook.classList.add('playing');
-            if (circle) {
-              circle.innerHTML = '<svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="3.5" height="12" rx="1" fill="currentColor"/><rect x="6.5" width="3.5" height="12" rx="1" fill="currentColor"/></svg>';
-            }
+            setAllPlayingState();
           }).catch(function(err) {
-            console.error("DOM Audio Play Error:", err);
-            resetNavAudioState();
+            console.error("DOM Audio Playback Error:", err);
+            resetAllAudioState();
           });
         } else {
-          if (hook) hook.classList.add('playing');
+          setAllPlayingState();
         }
       }
     }
 
-    function resetNavAudioState() {
+    function setAllPlayingState() {
       var hook = document.getElementById('navCenterAudioHook');
       var circle = document.getElementById('navCenterPlayCircle');
-      if (hook) hook.classList.remove('playing');
-      if (circle) {
-        circle.innerHTML = '<svg width="12" height="14" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 6L1.5 10.3301L1.5 1.66987L9 6Z" fill="currentColor"/></svg>';
-      }
-    }
-
-    var introUtterance = null;
-    function openAudioIntroModal() {
-      var modal = document.getElementById('audioIntroOverlay');
-      if (modal) modal.classList.add('active');
-    }
-    function closeAudioIntroModal(e) {
-      if (e && e.target && !e.target.classList.contains('audio-intro-overlay') && !e.target.classList.contains('audio-intro-close')) return;
-      var modal = document.getElementById('audioIntroOverlay');
-      if (modal) modal.classList.remove('active');
-      if (window.speechSynthesis) window.speechSynthesis.cancel();
-      var waveform = document.getElementById('audioWaveform');
-      if (waveform) waveform.classList.remove('playing');
-      var btn = document.getElementById('audioPlayIcon');
-      if (btn) btn.textContent = '▶';
-      var label = document.getElementById('audioPlayLabel');
-      if (label) label.textContent = 'Play Audio';
-    }
-    function toggleIntroSpeech() {
-      if (!('speechSynthesis' in window)) {
-        alert("Audio speech synthesis is not supported on this browser.");
-        return;
-      }
-      var synth = window.speechSynthesis;
       var waveform = document.getElementById('audioWaveform');
       var icon = document.getElementById('audioPlayIcon');
       var label = document.getElementById('audioPlayLabel');
 
-      if (synth.speaking && !synth.paused) {
-        synth.cancel();
-        if (waveform) waveform.classList.remove('playing');
-        if (icon) icon.textContent = '▶';
-        if (label) label.textContent = 'Play Audio';
-        return;
-      }
+      if (hook) hook.classList.add('playing');
+      if (circle) circle.innerHTML = '<svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="3.5" height="12" rx="1" fill="currentColor"/><rect x="6.5" width="3.5" height="12" rx="1" fill="currentColor"/></svg>';
+      if (waveform) waveform.classList.add('playing');
+      if (icon) icon.textContent = '⏸';
+      if (label) label.textContent = 'Pause';
+    }
 
-      synth.cancel();
-      var text = "Welcome to Manodemy's 60-Day Data Analytics Masterclass! Whether you're a complete beginner breaking into data for the first time, or a practicing analyst gearing up to conquer next technical interviews — this masterclass was built specifically for you.";
-      var utter = new SpeechSynthesisUtterance(text);
-      utter.rate = 0.95;
-      utter.pitch = 1.0;
-      
-      utter.onstart = function() {
-        if (waveform) waveform.classList.add('playing');
-        if (icon) icon.textContent = '⏸';
-        if (label) label.textContent = 'Pause';
-      };
-      utter.onend = utter.onerror = function() {
-        if (waveform) waveform.classList.remove('playing');
-        if (icon) icon.textContent = '▶';
-        if (label) label.textContent = 'Replay';
-      };
-      synth.speak(utter);
+    function resetAllAudioState() {
+      var hook = document.getElementById('navCenterAudioHook');
+      var circle = document.getElementById('navCenterPlayCircle');
+      var waveform = document.getElementById('audioWaveform');
+      var icon = document.getElementById('audioPlayIcon');
+      var label = document.getElementById('audioPlayLabel');
+
+      if (hook) hook.classList.remove('playing');
+      if (circle) circle.innerHTML = '<svg width="12" height="14" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 6L1.5 10.3301L1.5 1.66987L9 6Z" fill="currentColor"/></svg>';
+      if (waveform) waveform.classList.remove('playing');
+      if (icon) icon.textContent = '▶';
+      if (label) label.textContent = 'Play Audio';
+    }
+
+    function toggleNavAudioIntro() {
+      playOrPauseIntroAudio();
+    }
+
+    function toggleIntroSpeech() {
+      playOrPauseIntroAudio();
+    }
+
+    function openAudioIntroModal() {
+      var modal = document.getElementById('audioIntroOverlay');
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeAudioIntroModal(e) {
+      if (e && e.target && !e.target.classList.contains('audio-intro-overlay') && !e.target.classList.contains('audio-intro-close')) return;
+      var modal = document.getElementById('audioIntroOverlay');
+      if (modal) modal.classList.remove('active');
+      var audio = document.getElementById('navIntroAudioElement');
+      if (audio && !audio.paused) audio.pause();
+      resetAllAudioState();
     }
   </script>
 

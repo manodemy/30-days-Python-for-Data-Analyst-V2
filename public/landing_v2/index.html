@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <!-- build-cache-bust-13000 -->
 <html lang="en">
+
 <head>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18220099107"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+    function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
     gtag('config', 'AW-18220099107');
   </script>
@@ -20,28 +21,34 @@
   <meta name="theme-color" content="#FFFFFF">
 
   <title>Manodemy — Learn Data Analytics By Actually Coding</title>
-  <meta name="description" content="Master SQL, Excel, and Python for Data Analysis. Escape tutorial hell with interactive browser notebooks, 1,000+ coding challenges, and no video bloat. $49 one-time.">
-  <meta name="keywords" content="learn SQL, learn Excel, learn Python, data analysis course, stop tutorial hell, interactive coding notebooks, pandas, data analyst certification">
+  <meta name="description"
+    content="Master SQL, Excel, and Python for Data Analysis. Escape tutorial hell with interactive browser notebooks, 1,000+ coding challenges, and no video bloat. $49 one-time.">
+  <meta name="keywords"
+    content="learn SQL, learn Excel, learn Python, data analysis course, stop tutorial hell, interactive coding notebooks, pandas, data analyst certification">
   <link rel="canonical" href="https://www.manodemy.com/">
 
   <!-- Open Graph / Facebook SEO -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.manodemy.com/">
   <meta property="og:title" content="Manodemy — Learn Data Analytics By Actually Coding">
-  <meta property="og:description" content="Stop watching videos. Write real code. 60 guided days, 1,000+ interactive challenges, zero video bloat. $49 one-time.">
+  <meta property="og:description"
+    content="Stop watching videos. Write real code. 60 guided days, 1,000+ interactive challenges, zero video bloat. $49 one-time.">
   <meta property="og:image" content="https://www.manodemy.com/landing_v2/assets/og-cover.png">
 
   <!-- Twitter SEO Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="https://www.manodemy.com/">
   <meta name="twitter:title" content="Manodemy — Learn Data Analytics By Actually Coding">
-  <meta name="twitter:description" content="Escape tutorial hell. Learn SQL, Excel, and Python through hands-on active coding notebooks in your browser.">
+  <meta name="twitter:description"
+    content="Escape tutorial hell. Learn SQL, Excel, and Python through hands-on active coding notebooks in your browser.">
   <meta name="twitter:image" content="https://www.manodemy.com/landing_v2/assets/og-cover.png">
 
   <!-- Font Setup -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Outfit:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Outfit:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet">
 
   <!-- Style Link -->
   <link rel="stylesheet" href="styles.css?v=rough202607282215">
@@ -108,11 +115,13 @@
       pointer-events: none !important;
       transition: opacity 0.2s ease;
     }
+
     .nav-anim-p1 .nav-inner {
       justify-content: center;
     }
+
     .nav-anim-p1 #navBrand {
-      animation: navLogoZoomIn 1.3s cubic-bezier(0.34,1.56,0.64,1) both;
+      animation: navLogoZoomIn 1.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
     }
 
     /* Phase 2: logo back left, pill zooms in */
@@ -120,16 +129,19 @@
       opacity: 0 !important;
       pointer-events: none !important;
     }
+
     .nav-anim-p2 .nav-inner {
       justify-content: space-between;
     }
+
     .nav-anim-p2 #navBrand {
       animation: none;
     }
+
     .nav-anim-p2 #navCenterAudioHook {
       opacity: 1 !important;
       pointer-events: auto !important;
-      animation: navPillZoomIn 0.55s cubic-bezier(0.34,1.56,0.64,1) both;
+      animation: navPillZoomIn 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
     }
 
     /* Hide all other website content during narration animation (Phases 1-4) */
@@ -166,8 +178,15 @@
     }
 
     @keyframes heroRightSlideIn {
-      from { opacity: 0; transform: translateX(35px); }
-      to   { opacity: 1; transform: translateX(0); }
+      from {
+        opacity: 0;
+        transform: translateX(35px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
 
     /* ── NARRATION SHOWCASE STAGE (BELOW NAV BAR) ────────────────── */
@@ -227,11 +246,13 @@
       filter: blur(10px);
       transition: opacity 0.7s var(--ease), transform 0.7s var(--ease), filter 0.7s var(--ease);
     }
+
     .narration-showcase-stage.active .narration-img-1 {
       opacity: 1;
       transform: scale(1);
       filter: blur(0px);
     }
+
     .narration-showcase-stage.active.transition-img2 .narration-img-1 {
       opacity: 0;
       transform: scale(1.08) rotate(-1deg);
@@ -245,6 +266,7 @@
       filter: blur(12px);
       transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     }
+
     .narration-showcase-stage.active.transition-img2 .narration-img-2 {
       opacity: 1;
       transform: scale(1) rotate(0deg);
@@ -285,11 +307,12 @@
       font-weight: 700;
       font-size: 14px;
       letter-spacing: 0.05em;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
       opacity: 0;
       transform: translateY(10px);
       transition: all 0.5s ease;
     }
+
     .narration-showcase-stage.active .narration-badge-overlay {
       opacity: 1;
       transform: translateY(0);
@@ -297,15 +320,31 @@
 
     /* Keyframes */
     @keyframes navLogoZoomIn {
-      from { transform: scale(0.05); opacity: 0; }
-      to   { transform: scale(1);    opacity: 1; }
+      from {
+        transform: scale(0.05);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
     }
+
     @keyframes navPillZoomIn {
-      from { transform: scale(0.05); opacity: 0; }
-      to   { transform: scale(1);    opacity: 1; }
+      from {
+        transform: scale(0.05);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
     }
   </style>
 </head>
+
 <body class="pricing-loading">
   <!-- Skip Navigation for Accessibility -->
   <a href="#main-content" class="skip-link">Skip to main content</a>
@@ -317,7 +356,8 @@
         <!-- 1. Left Brand Logo -->
         <a href="/landing_v2/index.html" id="navBrand" class="nav-brand" aria-label="Manodemy Home">
           <div class="nav-brand-wrapper">
-            <img class="nav-brand-symbol" src="/landing_v2/manodemy_3d_keycap.png" alt="Manodemy 3D Keycap Logo" width="38" height="38" />
+            <img class="nav-brand-symbol" src="/landing_v2/manodemy_3d_keycap.png" alt="Manodemy 3D Keycap Logo"
+              width="38" height="38" />
             <div class="nav-brand-text">
               <span class="nav-brand-name">Mano<span>demy</span></span>
               <span class="nav-brand-sub"><span class="brand-sub-dot">●</span> HANDS-ON EDTECH</span>
@@ -326,28 +366,33 @@
         </a>
 
         <!-- 2. Center Audio Intro Hook (Course Title Pill) -->
-        <div class="nav-center-audio-hook" id="navCenterAudioHook" onclick="playOrPauseIntroAudio()" title="Play / Pause Intro Narration">
+        <div class="nav-center-audio-hook" id="navCenterAudioHook" onclick="playOrPauseIntroAudio()"
+          title="Play / Pause Intro Narration">
           <span class="nav-center-play-circle" id="navCenterPlayCircle">
             <svg width="12" height="14" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M9 6L1.5 10.3301L1.5 1.66987L9 6Z" fill="currentColor"/>
+              <path d="M9 6L1.5 10.3301L1.5 1.66987L9 6Z" fill="currentColor" />
             </svg>
           </span>
           <span class="nav-center-course-title">60 Days Data Analytics Course</span>
         </div>
-        <audio id="navIntroAudioElement" src="/landing_v2/intro_narration.mp3" preload="auto" style="display:none;"></audio>
+        <audio id="navIntroAudioElement" src="/landing_v2/intro_narration.mp3" preload="auto"
+          style="display:none;"></audio>
 
         <!-- 3. Right Action Bar: Sign In & Menu Toggle Button -->
         <div class="nav-right">
-          <a href="javascript:void(0)" id="navSignin" class="btn-ghost nav-signin-btn" onclick="document.getElementById('authModal').classList.add('active');" aria-label="Sign in to your account">Sign In</a>
-          
+          <a href="javascript:void(0)" id="navSignin" class="btn-ghost nav-signin-btn"
+            onclick="document.getElementById('authModal').classList.add('active');"
+            aria-label="Sign in to your account">Sign In</a>
+
           <!-- Menu Toggle Button (Hamburger) -->
           <div class="nav-menu-wrapper" style="position: relative;">
-            <button class="nav-menu-toggle-btn" id="navMenuToggleBtn" onclick="toggleNavMenuCard(event)" aria-label="Toggle Navigation Menu">
+            <button class="nav-menu-toggle-btn" id="navMenuToggleBtn" onclick="toggleNavMenuCard(event)"
+              aria-label="Toggle Navigation Menu">
               <span class="hamburger-bar"></span>
               <span class="hamburger-bar"></span>
               <span class="hamburger-bar"></span>
             </button>
-         
+
             <!-- Floating Menu Dropdown Card — Premium Redesign -->
             <div class="nav-menu-dropdown-card" id="navMenuDropdownCard">
 
@@ -374,10 +419,12 @@
 
               <!-- Bottom Actions -->
               <div class="nav-card-actions">
-                <a href="javascript:void(0)" class="nav-card-signin" onclick="closeNavMenuCard(); document.getElementById('authModal').classList.add('active');">
+                <a href="javascript:void(0)" class="nav-card-signin"
+                  onclick="closeNavMenuCard(); document.getElementById('authModal').classList.add('active');">
                   👤 Sign In
                 </a>
-                <a href="#pricing" class="btn-nav-buy nav-card-buy-btn" data-cta="buy" data-tier="selfpaced" onclick="closeNavMenuCard()">
+                <a href="#pricing" class="btn-nav-buy nav-card-buy-btn" data-cta="buy" data-tier="selfpaced"
+                  onclick="closeNavMenuCard()">
                   Enroll Full Course — <span class="dynamic-price-from">$49</span>
                 </a>
               </div>
@@ -392,8 +439,10 @@
   <!-- Narration Showcase Stage (Appears below Nav Bar) -->
   <div id="narrationShowcaseStage" class="narration-showcase-stage">
     <div class="narration-showcase-card">
-      <img id="narrationImg1" src="/landing_v2/Landing-image-1.webp" alt="Beginner Data Analytics Career" class="narration-img narration-img-1" />
-      <img id="narrationImg2" src="/landing_v2/Landing-image-2.webp" alt="Practicing Analyst Technical Interviews" class="narration-img narration-img-2" />
+      <img id="narrationImg1" src="/landing_v2/Landing-image-1.webp" alt="Beginner Data Analytics Career"
+        class="narration-img narration-img-1" />
+      <img id="narrationImg2" src="/landing_v2/Landing-image-2.webp" alt="Practicing Analyst Technical Interviews"
+        class="narration-img narration-img-2" />
       <div class="narration-badge-overlay" id="narrationBadge">
         <span class="narration-badge-text" id="narrationBadgeText">🌱 COMPLETE BEGINNER BREAKING INTO DATA</span>
       </div>
@@ -402,22 +451,30 @@
 
   <!-- Mobile Dropdown Menu -->
   <div class="mobile-overlay" id="mobileOverlay" role="dialog" aria-modal="true" aria-label="Mobile Navigation">
-    <a href="javascript:void(0)" onclick="document.getElementById('mobileOverlay').classList.remove('active'); document.getElementById('authModal').classList.add('active');" style="color: var(--text-secondary); font-size: 14px; font-weight: 600;">👤 Sign In</a>
+    <a href="javascript:void(0)"
+      onclick="document.getElementById('mobileOverlay').classList.remove('active'); document.getElementById('authModal').classList.add('active');"
+      style="color: var(--text-secondary); font-size: 14px; font-weight: 600;">👤 Sign In</a>
     <div class="mob-menu-divider" aria-hidden="true"></div>
-    <button class="mob-play-intro-btn" onclick="document.getElementById('mobileOverlay').classList.remove('active'); openAudioIntroModal();" style="display: flex; align-items: center; gap: 8px; color: var(--emerald); font-weight: 700; font-size: 14px; margin: 4px 0;">
-      <span style="width: 24px; height: 24px; border-radius: 50%; background: rgba(5, 150, 105, 0.15); border: 1px solid rgba(5, 150, 105, 0.4); display: flex; align-items: center; justify-content: center;">▶</span>
+    <button class="mob-play-intro-btn"
+      onclick="document.getElementById('mobileOverlay').classList.remove('active'); openAudioIntroModal();"
+      style="display: flex; align-items: center; gap: 8px; color: var(--emerald); font-weight: 700; font-size: 14px; margin: 4px 0;">
+      <span
+        style="width: 24px; height: 24px; border-radius: 50%; background: rgba(5, 150, 105, 0.15); border: 1px solid rgba(5, 150, 105, 0.4); display: flex; align-items: center; justify-content: center;">▶</span>
       <span>Hear 10-Sec Audio Intro 🎧</span>
     </button>
     <a href="/sql/day01.html" style="color: var(--emerald)">Try SQL Free (Days 01-02)</a>
-    <a href="#curriculum" style="color: var(--gold)" onclick="document.getElementById('mobileOverlay').classList.remove('active');">Excel Track (Masterclass) 🔒</a>
-    <a href="#curriculum" style="color: var(--cyan)" onclick="document.getElementById('mobileOverlay').classList.remove('active');">Python Track (Masterclass) 🔒</a>
+    <a href="#curriculum" style="color: var(--gold)"
+      onclick="document.getElementById('mobileOverlay').classList.remove('active');">Excel Track (Masterclass) 🔒</a>
+    <a href="#curriculum" style="color: var(--cyan)"
+      onclick="document.getElementById('mobileOverlay').classList.remove('active');">Python Track (Masterclass) 🔒</a>
     <a href="#curriculum">Curriculum</a>
     <a href="#testimonials">Reviews</a>
     <a href="#faq">FAQ</a>
     <div class="mob-menu-divider" aria-hidden="true"></div>
-    <a href="javascript:void(0)" class="mob-menu-buy" id="mobEnrollBtn" data-cta="buy" data-tier="selfpaced" aria-label="Enroll Full Course">Enroll Full Course — <span class="dynamic-price-from">$49</span></a>
+    <a href="javascript:void(0)" class="mob-menu-buy" id="mobEnrollBtn" data-cta="buy" data-tier="selfpaced"
+      aria-label="Enroll Full Course">Enroll Full Course — <span class="dynamic-price-from">$49</span></a>
   </div>
-    </div>
+  </div>
   </div>
 
   <main id="main-content">
@@ -431,7 +488,8 @@
             <span class="typed-learn">Start coding</span><br><span class="gradient-coding">actual data skills.</span>
           </h1>
           <p class="hero-sub">
-            Master SQL, Excel, and Python through 1,000+ interactive coding challenges inside real browser-based notebooks. Get job-ready with active, practice-first learning.
+            Master SQL, Excel, and Python through 1,000+ interactive coding challenges inside real browser-based
+            notebooks. Get job-ready with active, practice-first learning.
           </p>
 
           <div class="hero-ctas">
@@ -443,12 +501,15 @@
           <div class="hero-proof">
             <div class="proof-card rating-card">
               <svg class="proof-icon star-icon" viewBox="0 0 24 24" fill="currentColor">
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                <polygon
+                  points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                </polygon>
               </svg>
               <span id="hero-average-rating">4.8/5 Student Rating</span>
             </div>
             <div class="proof-card learners-card">
-              <svg class="proof-icon users-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg class="proof-icon users-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                 <circle cx="9" cy="7" r="4"></circle>
                 <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -457,14 +518,15 @@
               <span id="hero-active-learners">500+ Sign Ups</span>
             </div>
             <div class="proof-card cert-card">
-              <svg class="proof-icon cert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg class="proof-icon cert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
                 <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
                 <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"></path>
               </svg>
               <span>Certificate Included</span>
             </div>
           </div>
-          
+
           <div class="trust-extra-row">
             <span class="trust-badge">🛡️ 7-Day Money-Back Guarantee</span>
           </div>
@@ -484,12 +546,14 @@
               transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
               cursor: pointer;
             }
+
             #roadmap-root .rm-ctrl:hover {
               background: rgba(255, 255, 255, 0.12);
               border-color: rgba(255, 255, 255, 0.28);
               transform: scale(1.06);
               box-shadow: 0 0 12px rgba(255, 255, 255, 0.08);
             }
+
             /* Arrow and Volume buttons circular */
             #roadmap-root #btnPrev,
             #roadmap-root #btnNext,
@@ -505,9 +569,11 @@
               padding: 0;
               line-height: 1;
             }
+
             #roadmap-root #btnVolume {
               font-size: 14px;
             }
+
             /* Auto-play button wide pill */
             #roadmap-root #btnAuto {
               position: absolute;
@@ -524,6 +590,7 @@
               justify-content: center;
               transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
             }
+
             #roadmap-root .rm-ctrls-left {
               position: absolute;
               top: 16px;
@@ -534,6 +601,7 @@
               z-index: 5;
               transition: all 0.2s ease;
             }
+
             #roadmap-root .rm-legendBtn {
               all: unset;
               cursor: pointer;
@@ -551,34 +619,45 @@
               white-space: nowrap;
               transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
             }
+
             #roadmap-root .rm-legendBtn:hover {
               color: var(--ink);
               background: rgba(255, 255, 255, 0.05);
               border-color: rgba(255, 255, 255, 0.18);
               transform: translateY(-1px);
             }
+
             #roadmap-root .rm-legendBtn[data-active="true"][data-phase="SQL"] {
               border-color: var(--sql);
               background: rgba(45, 212, 167, 0.1);
               box-shadow: 0 0 12px rgba(45, 212, 167, 0.15), inset 0 0 8px rgba(45, 212, 167, 0.1);
               color: var(--sql);
             }
+
             #roadmap-root .rm-legendBtn[data-active="true"][data-phase="Excel"] {
               border-color: var(--excel);
               background: rgba(245, 166, 35, 0.1);
               box-shadow: 0 0 12px rgba(245, 166, 35, 0.15), inset 0 0 8px rgba(245, 166, 35, 0.1);
               color: var(--excel);
             }
+
             #roadmap-root .rm-legendBtn[data-active="true"][data-phase="Python"] {
               border-color: var(--py);
               background: rgba(56, 189, 248, 0.1);
               box-shadow: 0 0 12px rgba(56, 189, 248, 0.15), inset 0 0 8px rgba(56, 189, 248, 0.1);
               color: var(--py);
             }
-            
+
             @keyframes pulseGlow {
-              0% { opacity: 0.6; transform: scale(0.95); }
-              100% { opacity: 1; transform: scale(1.05); }
+              0% {
+                opacity: 0.6;
+                transform: scale(0.95);
+              }
+
+              100% {
+                opacity: 1;
+                transform: scale(1.05);
+              }
             }
 
             @media (max-width: 600px) {
@@ -588,11 +667,13 @@
                 left: 12px;
                 gap: 6px;
               }
+
               #roadmap-root #btnAuto {
                 top: auto;
                 bottom: 12px;
                 right: 12px;
               }
+
               #roadmap-root #btnPrev,
               #roadmap-root #btnNext,
               #roadmap-root #btnVolume {
@@ -600,15 +681,18 @@
                 height: 30px;
                 font-size: 15px;
               }
+
               #roadmap-root #btnVolume {
                 font-size: 12px;
               }
+
               #roadmap-root #btnAuto {
                 height: 30px;
                 padding: 0 12px;
                 font-size: 10px;
                 border-radius: 15px;
               }
+
               /* ── Legend buttons: shrink to fit all 3 in one row ── */
               #roadmap-root .rm-legendBtn {
                 font-size: 9.5px !important;
@@ -616,13 +700,16 @@
                 gap: 5px !important;
                 border-radius: 14px !important;
               }
+
               /* Dot inside legend button */
-              #roadmap-root .rm-legendBtn > span:first-child {
+              #roadmap-root .rm-legendBtn>span:first-child {
                 width: 5px !important;
                 height: 5px !important;
               }
             }
+
             @media (max-width: 420px) {
+
               /* Extra compact for very small phones */
               #roadmap-root .rm-legendBtn {
                 font-size: 8.5px !important;
@@ -641,11 +728,13 @@
               transition: opacity 0.5s ease, background 0.15s, border-color 0.15s, transform 0.2s;
               pointer-events: none;
             }
+
             #roadmap-root.loaded #rm-dayCard,
             #roadmap-root.loaded #rm-activeNum,
             #roadmap-root.loaded #rm-headerStats {
               opacity: 1;
             }
+
             #roadmap-root.loaded .rm-ctrl,
             #roadmap-root.loaded .rm-legendBtn {
               opacity: 1;
@@ -691,11 +780,12 @@
                 transition: background 0.6s ease;
                 z-index: 1;
               "></div>
-              
+
               <div style="display:flex; flex-direction:column; gap:16px; position:relative; z-index:2;">
                 <!-- Top Row: title + stats inline -->
-                <div id="rm-headerTopRow" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:nowrap; gap:12px; width:100%; min-width:0;">
-                                  <div id="rm-cardPillTitle" style="
+                <div id="rm-headerTopRow"
+                  style="display:flex; justify-content:space-between; align-items:center; flex-wrap:nowrap; gap:12px; width:100%; min-width:0;">
+                  <div id="rm-cardPillTitle" style="
                     display: inline-flex; 
                     align-items: center; 
                     gap: 8px; 
@@ -715,7 +805,7 @@
                   ">
                     Data Analytics Roadmap
                   </div>
-                  
+
                   <div id="rm-headerStats" style="
                     display: flex; 
                     align-items: center; 
@@ -723,33 +813,48 @@
                     flex-shrink: 0;
                   ">
                     <div style="display:flex; flex-direction:column; align-items:center;">
-                      <span style="font-size:8px; color:var(--ink-faint); font-weight:700; letter-spacing:0.12em; text-transform:uppercase; font-family:'Outfit',sans-serif; white-space:nowrap;">Timeline</span>
-                      <span style="font-size:18px; font-weight:900; font-family:'Outfit',sans-serif; color:var(--ink); line-height:1.2; white-space:nowrap;">
-                        <span id="rm-statDay" style="color:var(--sql); text-shadow:0 0 12px rgba(45,212,167,0.3); font-variant-numeric:tabular-nums; transition:all 0.3s ease;">Day 1</span>
-                        <span style="font-size:11px; color:var(--ink-faint); font-weight:500; margin-left:2px;">/ 60</span>
+                      <span
+                        style="font-size:8px; color:var(--ink-faint); font-weight:700; letter-spacing:0.12em; text-transform:uppercase; font-family:'Outfit',sans-serif; white-space:nowrap;">Timeline</span>
+                      <span
+                        style="font-size:18px; font-weight:900; font-family:'Outfit',sans-serif; color:var(--ink); line-height:1.2; white-space:nowrap;">
+                        <span id="rm-statDay"
+                          style="color:var(--sql); text-shadow:0 0 12px rgba(45,212,167,0.3); font-variant-numeric:tabular-nums; transition:all 0.3s ease;">Day
+                          1</span>
+                        <span style="font-size:11px; color:var(--ink-faint); font-weight:500; margin-left:2px;">/
+                          60</span>
                       </span>
                     </div>
-                    
+
                     <div style="width:1px; height:28px; background:rgba(255, 255, 255, 0.1);"></div>
-                    
+
                     <div style="display:flex; flex-direction:column; align-items:center;">
-                      <span style="font-size:8px; color:var(--ink-faint); font-weight:700; letter-spacing:0.12em; text-transform:uppercase; font-family:'Outfit',sans-serif; white-space:nowrap;">Completion</span>
-                      <span style="font-size:18px; font-weight:900; font-family:'Outfit',sans-serif; color:var(--ink); line-height:1.2;">
-                        <span id="rm-statPct" style="color:var(--sql); text-shadow:0 0 12px rgba(45,212,167,0.3); font-variant-numeric:tabular-nums; transition:all 0.3s ease;">2%</span>
+                      <span
+                        style="font-size:8px; color:var(--ink-faint); font-weight:700; letter-spacing:0.12em; text-transform:uppercase; font-family:'Outfit',sans-serif; white-space:nowrap;">Completion</span>
+                      <span
+                        style="font-size:18px; font-weight:900; font-family:'Outfit',sans-serif; color:var(--ink); line-height:1.2;">
+                        <span id="rm-statPct"
+                          style="color:var(--sql); text-shadow:0 0 12px rgba(45,212,167,0.3); font-variant-numeric:tabular-nums; transition:all 0.3s ease;">2%</span>
                       </span>
                     </div>
                   </div>
                 </div>
                 <!-- Bottom Row: legend buttons -->
-                <div style="display:flex; gap:8px; align-items:center; flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; width:100%; max-width:100%; box-sizing:border-box;">
+                <div
+                  style="display:flex; gap:8px; align-items:center; flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; width:100%; max-width:100%; box-sizing:border-box;">
                   <button class="rm-legendBtn" data-phase="SQL">
-                    <span style="width:7px;height:7px;border-radius:50%;background:var(--sql);box-shadow:0 0 6px var(--sql);flex:none;"></span>SQL <span style="color:var(--ink-faint); font-weight:400;">· Days 1–18</span>
+                    <span
+                      style="width:7px;height:7px;border-radius:50%;background:var(--sql);box-shadow:0 0 6px var(--sql);flex:none;"></span>SQL
+                    <span style="color:var(--ink-faint); font-weight:400;">· Days 1–18</span>
                   </button>
                   <button class="rm-legendBtn" data-phase="Excel">
-                    <span style="width:7px;height:7px;border-radius:50%;background:var(--excel);box-shadow:0 0 6px var(--excel);flex:none;"></span>Excel <span style="color:var(--ink-faint); font-weight:400;">· Days 19–30</span>
+                    <span
+                      style="width:7px;height:7px;border-radius:50%;background:var(--excel);box-shadow:0 0 6px var(--excel);flex:none;"></span>Excel
+                    <span style="color:var(--ink-faint); font-weight:400;">· Days 19–30</span>
                   </button>
                   <button class="rm-legendBtn" data-phase="Python">
-                    <span style="width:7px;height:7px;border-radius:50%;background:var(--py);box-shadow:0 0 6px var(--py);flex:none;"></span>Python <span style="color:var(--ink-faint); font-weight:400;">· Days 31–60</span>
+                    <span
+                      style="width:7px;height:7px;border-radius:50%;background:var(--py);box-shadow:0 0 6px var(--py);flex:none;"></span>Python
+                    <span style="color:var(--ink-faint); font-weight:400;">· Days 31–60</span>
                   </button>
                 </div>
               </div>
@@ -787,20 +892,40 @@
                     background:rgba(45,212,167,0.16); border:1px solid rgba(45,212,167,0.5);
                     color:var(--sql); transition:color 0.3s,border-color 0.3s,background 0.3s;
                   ">SQL · FREE</div>
-                  <div id="rm-cardDay" style="font-size:25px; font-weight:800; color:var(--ink); line-height:1; margin-bottom:5px; letter-spacing:-0.01em;">Day 1</div>
-                  <div id="rm-cardIcon" style="display:flex; justify-content:center; align-items:center; height:28px; margin-bottom:5px;"><span class="tech-logo logo-sql" title="SQL"><svg viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v6c0 1.66 4 3 9 3s9-1.34 9-3V5"></path><path d="M3 11v6c0 1.66 4 3 9 3s9-1.34 9-3v-6"></path></svg></span></div>
-                  <div id="rm-cardTopic" style="font-size:11px; font-weight:500; color:var(--ink-dim); line-height:1.4; min-height:28px;">SQL Basics &amp; SELECT</div>
-                  <div style="margin-top:9px; height:4px; background:rgba(255,255,255,0.08); border-radius:2px; overflow:hidden;">
-                    <div id="rm-cardProgBar" style="height:100%; background:linear-gradient(90deg,var(--sql),var(--py)); border-radius:2px; transition:width 0.4s; width:1.67%;"></div>
+                  <div id="rm-cardDay"
+                    style="font-size:25px; font-weight:800; color:var(--ink); line-height:1; margin-bottom:5px; letter-spacing:-0.01em;">
+                    Day 1</div>
+                  <div id="rm-cardIcon"
+                    style="display:flex; justify-content:center; align-items:center; height:28px; margin-bottom:5px;">
+                    <span class="tech-logo logo-sql" title="SQL"><svg viewBox="0 0 24 24" fill="none" stroke="#f97316"
+                        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                        <path d="M3 5v6c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                        <path d="M3 11v6c0 1.66 4 3 9 3s9-1.34 9-3v-6"></path>
+                      </svg></span></div>
+                  <div id="rm-cardTopic"
+                    style="font-size:11px; font-weight:500; color:var(--ink-dim); line-height:1.4; min-height:28px;">SQL
+                    Basics &amp; SELECT</div>
+                  <div
+                    style="margin-top:9px; height:4px; background:rgba(255,255,255,0.08); border-radius:2px; overflow:hidden;">
+                    <div id="rm-cardProgBar"
+                      style="height:100%; background:linear-gradient(90deg,var(--sql),var(--py)); border-radius:2px; transition:width 0.4s; width:1.67%;">
+                    </div>
                   </div>
-                  <div id="rm-cardProgLabel" style="font-size:10px; color:var(--ink-faint); margin-top:4px; font-variant-numeric:tabular-nums;">1 / 60</div>
+                  <div id="rm-cardProgLabel"
+                    style="font-size:10px; color:var(--ink-faint); margin-top:4px; font-variant-numeric:tabular-nums;">1
+                    / 60</div>
                 </div>
 
                 <!-- top vignette -->
-                <div style="position:absolute; top:0; left:0; right:0; height:88px; background:linear-gradient(rgba(7,11,17,0.8),transparent); pointer-events:none;"></div>
+                <div
+                  style="position:absolute; top:0; left:0; right:0; height:88px; background:linear-gradient(rgba(7,11,17,0.8),transparent); pointer-events:none;">
+                </div>
 
                 <!-- bottom vignette -->
-                <div style="position:absolute; bottom:0; left:0; right:0; height:64px; background:linear-gradient(transparent,rgba(7,11,17,0.85) 70%); pointer-events:none;"></div>
+                <div
+                  style="position:absolute; bottom:0; left:0; right:0; height:64px; background:linear-gradient(transparent,rgba(7,11,17,0.85) 70%); pointer-events:none;">
+                </div>
 
                 <!-- top transport controls -->
                 <div class="rm-ctrls-left">
@@ -819,12 +944,14 @@
     <section id="play-lesson-demo" class="play-lesson-section">
       <div class="container">
         <!-- Centered Header Design (Matches Image 1) -->
-        <div class="section-header-compact" style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; margin-bottom: 12px; width: 100%;">
+        <div class="section-header-compact"
+          style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; margin-bottom: 12px; width: 100%;">
           <div class="platform-title-badge">
             <h2 class="section-title-compact">Try The Actual Learning Platform Live</h2>
           </div>
           <p class="section-sub-compact">
-            Experience Manodemy's interactive studio. Click Play to listen to narration, watch real-time code execution, edit queries, and inspect live database results in browser.
+            Experience Manodemy's interactive studio. Click Play to listen to narration, watch real-time code execution,
+            edit queries, and inspect live database results in browser.
           </p>
         </div>
 
@@ -841,7 +968,9 @@
               <span class="pill-day">Day 02</span>
               <span class="pill-title">WHERE &amp; Filtering</span>
             </button>
-            <a href="javascript:void(0)" onclick="document.getElementById('navEnrollBtn')?.click() || document.getElementById('authModal')?.classList.add('active');" class="demo-pill demo-pill-lock" title="Unlock complete curriculum">
+            <a href="javascript:void(0)"
+              onclick="document.getElementById('navEnrollBtn')?.click() || document.getElementById('authModal')?.classList.add('active');"
+              class="demo-pill demo-pill-lock" title="Unlock complete curriculum">
               <span class="pill-badge-lock">🔒 PRO</span>
               <span class="pill-day">Days 03–60</span>
               <span class="pill-title">Unlock Full Course ↗</span>
@@ -852,7 +981,8 @@
           <div class="live-workspace-frame">
 
 
-            <iframe id="liveLessonIframe" src="/Version-3/index.html?day=1" class="workspace-iframe" title="Live Manodemy Interactive Learning Studio" loading="lazy"></iframe>
+            <iframe id="liveLessonIframe" src="/Version-3/index.html?day=1" class="workspace-iframe"
+              title="Live Manodemy Interactive Learning Studio" loading="lazy"></iframe>
           </div>
         </div>
       </div>
@@ -880,7 +1010,7 @@
       </div>
     </section>
 
-</div>
+    </div>
 
     <!-- Curriculum Section -->
     <section class="curriculum-section" id="curriculum">
@@ -895,15 +1025,38 @@
         <div class="curr-tabs reveal">
           <button class="curr-tab curr-tab--sql active" data-tab="sql">
             <span class="curr-tab-days">18 Days</span>
-            <span class="curr-tab-label"><span class="tech-logo logo-sql" title="SQL"><svg viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v6c0 1.66 4 3 9 3s9-1.34 9-3V5"></path><path d="M3 11v6c0 1.66 4 3 9 3s9-1.34 9-3v-6"></path></svg></span> SQL</span>
+            <span class="curr-tab-label"><span class="tech-logo logo-sql" title="SQL"><svg viewBox="0 0 24 24"
+                  fill="none" stroke="#f97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                  <path d="M3 5v6c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                  <path d="M3 11v6c0 1.66 4 3 9 3s9-1.34 9-3v-6"></path>
+                </svg></span> SQL</span>
           </button>
           <button class="curr-tab curr-tab--excel" data-tab="excel">
             <span class="curr-tab-days">12 Days</span>
-            <span class="curr-tab-label"><span class="tech-logo logo-excel" title="Excel"><svg viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.625 0H8.625L1.5 2.625V20.375L8.625 23H14.625V0Z" fill="#107C41"/><path d="M21.5 2.625H14.625V6.375H21.5V2.625Z" fill="#1F9A55"/><path d="M21.5 6.375H14.625V10.125H21.5V6.375Z" fill="#33C481"/><path d="M21.5 10.125H14.625V13.875H21.5V10.125Z" fill="#107C41"/><path d="M21.5 13.875H14.625V17.625H21.5V13.875Z" fill="#1B9A59"/><path d="M21.5 17.625H14.625V20.375H21.5V17.625Z" fill="#107C41"/><path d="M10.125 6.375H3.375V16.625H10.125V6.375Z" fill="#107C41"/><path d="M11.813 7.875L9.938 11.25L11.813 14.625H9.563L8.438 12.75L7.313 14.625H5.063L6.938 11.25L5.063 7.875H7.313L8.438 9.75L9.563 7.875H11.813Z" fill="white"/></svg></span> Excel</span>
+            <span class="curr-tab-label"><span class="tech-logo logo-excel" title="Excel"><svg viewBox="0 0 23 23"
+                  fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M14.625 0H8.625L1.5 2.625V20.375L8.625 23H14.625V0Z" fill="#107C41" />
+                  <path d="M21.5 2.625H14.625V6.375H21.5V2.625Z" fill="#1F9A55" />
+                  <path d="M21.5 6.375H14.625V10.125H21.5V6.375Z" fill="#33C481" />
+                  <path d="M21.5 10.125H14.625V13.875H21.5V10.125Z" fill="#107C41" />
+                  <path d="M21.5 13.875H14.625V17.625H21.5V13.875Z" fill="#1B9A59" />
+                  <path d="M21.5 17.625H14.625V20.375H21.5V17.625Z" fill="#107C41" />
+                  <path d="M10.125 6.375H3.375V16.625H10.125V6.375Z" fill="#107C41" />
+                  <path
+                    d="M11.813 7.875L9.938 11.25L11.813 14.625H9.563L8.438 12.75L7.313 14.625H5.063L6.938 11.25L5.063 7.875H7.313L8.438 9.75L9.563 7.875H11.813Z"
+                    fill="white" />
+                </svg></span> Excel</span>
           </button>
           <button class="curr-tab curr-tab--python" data-tab="python">
             <span class="curr-tab-days">30 Days</span>
-            <span class="curr-tab-label"><span class="tech-logo logo-python" title="Python"><svg viewBox="45.9 0 367.2 459" fill="none"><path fill="#306998" d="M229.5 0C161.4 0 122.4 15.6 122.4 53.6v34.4h107.1v15.3H122.4c-47.8 0-76.5 30.6-76.5 76.5v61.2c0 45.9 28.7 76.5 76.5 76.5h30.6v-45.9c0-51 41.3-91.8 91.8-91.8h107.1V107.1c0-53.6-47.8-107.1-122.4-107.1zM175.9 30.6c8.4 0 15.3 6.9 15.3 15.3s-6.9 15.3-15.3 15.3-15.3-6.9-15.3-15.3 6.9-15.3 15.3-15.3z" /><path fill="#FFE873" d="M229.5 459c68.1 0 107.1-15.6 107.1-53.6v-34.4H229.5v-15.3h107.1c47.8 0 76.5-30.6 76.5-76.5v-61.2c0-45.9-28.7-76.5-76.5-76.5h-30.6v45.9c0 51-41.3 91.8-91.8 91.8H122.4V351.9c0 53.6 47.8 107.1 122.4 107.1zm53.6-30.6c-8.4 0-15.3-6.9-15.3-15.3s6.9-15.3 15.3-15.3 15.3 6.9 15.3 15.3-6.9 15.3-15.3 15.3z" /></svg></span> Python</span>
+            <span class="curr-tab-label"><span class="tech-logo logo-python" title="Python"><svg
+                  viewBox="45.9 0 367.2 459" fill="none">
+                  <path fill="#306998"
+                    d="M229.5 0C161.4 0 122.4 15.6 122.4 53.6v34.4h107.1v15.3H122.4c-47.8 0-76.5 30.6-76.5 76.5v61.2c0 45.9 28.7 76.5 76.5 76.5h30.6v-45.9c0-51 41.3-91.8 91.8-91.8h107.1V107.1c0-53.6-47.8-107.1-122.4-107.1zM175.9 30.6c8.4 0 15.3 6.9 15.3 15.3s-6.9 15.3-15.3 15.3-15.3-6.9-15.3-15.3 6.9-15.3 15.3-15.3z" />
+                  <path fill="#FFE873"
+                    d="M229.5 459c68.1 0 107.1-15.6 107.1-53.6v-34.4H229.5v-15.3h107.1c47.8 0 76.5-30.6 76.5-76.5v-61.2c0-45.9-28.7-76.5-76.5-76.5h-30.6v45.9c0 51-41.3 91.8-91.8 91.8H122.4V351.9c0 53.6 47.8 107.1 122.4 107.1zm53.6-30.6c-8.4 0-15.3-6.9-15.3-15.3s6.9-15.3 15.3-15.3 15.3 6.9 15.3 15.3-6.9 15.3-15.3 15.3z" />
+                </svg></span> Python</span>
           </button>
         </div>
 
@@ -912,7 +1065,12 @@
           <div class="curriculum-grid">
             <a href="/sql/day01.html" class="day-card" data-day="01" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 01</span>
-              <span class="day-emoji"><span class="tech-logo logo-sql" title="SQL"><svg viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v6c0 1.66 4 3 9 3s9-1.34 9-3V5"></path><path d="M3 11v6c0 1.66 4 3 9 3s9-1.34 9-3v-6"></path></svg></span></span>
+              <span class="day-emoji"><span class="tech-logo logo-sql" title="SQL"><svg viewBox="0 0 24 24" fill="none"
+                    stroke="#f97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                    <path d="M3 5v6c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                    <path d="M3 11v6c0 1.66 4 3 9 3s9-1.34 9-3v-6"></path>
+                  </svg></span></span>
               <span class="day-title">Intro to SQL &amp; Databases</span>
               <span class="day-badge badge-free">FREE</span>
             </a>
@@ -922,97 +1080,129 @@
               <span class="day-title">SELECT &amp; Filtering</span>
               <span class="day-badge badge-free">FREE</span>
             </a>
-            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="03" tabindex="0">
+            <div class="day-card coming-soon"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="03" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 03</span>
               <span class="day-emoji">📝</span>
               <span class="day-title">Sorting, Patterns &amp; CASE</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="04" tabindex="0">
+            <div class="day-card coming-soon"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="04" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 04</span>
               <span class="day-emoji">📊</span>
               <span class="day-title">Aggregate Functions &amp; GROUP BY</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="05" tabindex="0">
+            <div class="day-card coming-soon"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="05" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 05</span>
               <span class="day-emoji">🔗</span>
               <span class="day-title">Joins &amp; Relationships</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="06" tabindex="0">
+            <div class="day-card coming-soon"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="06" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 06</span>
               <span class="day-emoji">🧠</span>
               <span class="day-title">Subqueries</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="07" tabindex="0">
+            <div class="day-card coming-soon"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="07" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 07</span>
               <span class="day-emoji">🏗️</span>
               <span class="day-title">Common Table Expressions</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="08" tabindex="0">
+            <div class="day-card coming-soon"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="08" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 08</span>
               <span class="day-emoji">🔢</span>
               <span class="day-title">Window Functions I: Ranking</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="09" tabindex="0">
+            <div class="day-card coming-soon"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="09" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 09</span>
               <span class="day-emoji">📈</span>
               <span class="day-title">Window Functions II: Analytics</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="10" tabindex="0">
+            <div class="day-card coming-soon"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="10" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 10</span>
               <span class="day-emoji">📅</span>
               <span class="day-title">Date &amp; Time Functions</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="11" tabindex="0">
+            <div class="day-card coming-soon"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="11" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 11</span>
               <span class="day-emoji">🧹</span>
               <span class="day-title">String &amp; Type Functions</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="12" tabindex="0">
+            <div class="day-card coming-soon"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="12" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 12</span>
               <span class="day-emoji">🛠️</span>
               <span class="day-title">Data Cleaning &amp; Wrangling</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="13" tabindex="0">
+            <div class="day-card coming-soon"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="13" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 13</span>
               <span class="day-emoji">🥞</span>
               <span class="day-title">Set Operations &amp; Joins</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="14" tabindex="0">
+            <div class="day-card coming-soon"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="14" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 14</span>
               <span class="day-emoji">⚡</span>
               <span class="day-title">Query Optimisation</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="15" tabindex="0">
+            <div class="day-card coming-soon"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="15" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 15</span>
               <span class="day-emoji">💾</span>
               <span class="day-title">Views &amp; Reusable Objects</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="16" tabindex="0">
+            <div class="day-card coming-soon"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="16" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 16</span>
               <span class="day-emoji">🔮</span>
               <span class="day-title">Advanced Analytics Patterns</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="17" tabindex="0">
+            <div class="day-card coming-soon"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="17" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 17</span>
               <span class="day-emoji">🧱</span>
               <span class="day-title">Data Modelling &amp; dbt</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="18" tabindex="0">
+            <div class="day-card coming-soon"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="18" tabindex="0">
               <span class="day-num" style="color:var(--emerald)">Day 18</span>
               <span class="day-emoji">🏆</span>
               <span class="day-title">BI Capstone &amp; Interview Prep</span>
@@ -1024,73 +1214,109 @@
         <!-- Excel Panel -->
         <div class="curr-panel curr-panel--excel" id="panel-excel" style="display:none">
           <div class="curriculum-grid">
-            <div class="day-card coming-soon" onclick="document.getElementById('navEnrollBtn')?.click() || document.getElementById('authModal')?.classList.add('active');" style="cursor:pointer;" data-day="01" tabindex="0">
+            <div class="day-card coming-soon"
+              onclick="document.getElementById('navEnrollBtn')?.click() || document.getElementById('authModal')?.classList.add('active');"
+              style="cursor:pointer;" data-day="01" tabindex="0">
               <span class="day-num" style="color:var(--gold)">Day 01</span>
-              <span class="day-emoji"><span class="tech-logo logo-excel" title="Excel"><svg viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.625 0H8.625L1.5 2.625V20.375L8.625 23H14.625V0Z" fill="#107C41"/><path d="M21.5 2.625H14.625V6.375H21.5V2.625Z" fill="#1F9A55"/><path d="M21.5 6.375H14.625V10.125H21.5V6.375Z" fill="#33C481"/><path d="M21.5 10.125H14.625V13.875H21.5V10.125Z" fill="#107C41"/><path d="M21.5 13.875H14.625V17.625H21.5V13.875Z" fill="#1B9A59"/><path d="M21.5 17.625H14.625V20.375H21.5V17.625Z" fill="#107C41"/><path d="M10.125 6.375H3.375V16.625H10.125V6.375Z" fill="#107C41"/><path d="M11.813 7.875L9.938 11.25L11.813 14.625H9.563L8.438 12.75L7.313 14.625H5.063L6.938 11.25L5.063 7.875H7.313L8.438 9.75L9.563 7.875H11.813Z" fill="white"/></svg></span></span>
+              <span class="day-emoji"><span class="tech-logo logo-excel" title="Excel"><svg viewBox="0 0 23 23"
+                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14.625 0H8.625L1.5 2.625V20.375L8.625 23H14.625V0Z" fill="#107C41" />
+                    <path d="M21.5 2.625H14.625V6.375H21.5V2.625Z" fill="#1F9A55" />
+                    <path d="M21.5 6.375H14.625V10.125H21.5V6.375Z" fill="#33C481" />
+                    <path d="M21.5 10.125H14.625V13.875H21.5V10.125Z" fill="#107C41" />
+                    <path d="M21.5 13.875H14.625V17.625H21.5V13.875Z" fill="#1B9A59" />
+                    <path d="M21.5 17.625H14.625V20.375H21.5V17.625Z" fill="#107C41" />
+                    <path d="M10.125 6.375H3.375V16.625H10.125V6.375Z" fill="#107C41" />
+                    <path
+                      d="M11.813 7.875L9.938 11.25L11.813 14.625H9.563L8.438 12.75L7.313 14.625H5.063L6.938 11.25L5.063 7.875H7.313L8.438 9.75L9.563 7.875H11.813Z"
+                      fill="white" />
+                  </svg></span></span>
               <span class="day-title">Excel Orientation &amp; Formulas</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" onclick="document.getElementById('navEnrollBtn')?.click() || document.getElementById('authModal')?.classList.add('active');" style="cursor:pointer;" data-day="02" tabindex="0">
+            <div class="day-card coming-soon"
+              onclick="document.getElementById('navEnrollBtn')?.click() || document.getElementById('authModal')?.classList.add('active');"
+              style="cursor:pointer;" data-day="02" tabindex="0">
               <span class="day-num" style="color:var(--gold)">Day 02</span>
               <span class="day-emoji">🎨</span>
               <span class="day-title">Formatting, Sorting &amp; Filtering</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="03" tabindex="0">
+            <div class="day-card coming-soon"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="03" tabindex="0">
               <span class="day-num" style="color:var(--gold)">Day 03</span>
               <span class="day-emoji">🧹</span>
               <span class="day-title">Data Cleaning Essentials</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="04" tabindex="0">
+            <div class="day-card coming-soon"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="04" tabindex="0">
               <span class="day-num" style="color:var(--gold)">Day 04</span>
               <span class="day-emoji">📋</span>
               <span class="day-title">Excel Tables</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="05" tabindex="0">
+            <div class="day-card coming-soon"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="05" tabindex="0">
               <span class="day-num" style="color:var(--gold)">Day 05</span>
               <span class="day-emoji">🔍</span>
               <span class="day-title">Lookup &amp; Reference Functions</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="06" tabindex="0">
+            <div class="day-card coming-soon"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="06" tabindex="0">
               <span class="day-num" style="color:var(--gold)">Day 06</span>
               <span class="day-emoji">🔀</span>
               <span class="day-title">Logic Functions</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="07" tabindex="0">
+            <div class="day-card coming-soon"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="07" tabindex="0">
               <span class="day-num" style="color:var(--gold)">Day 07</span>
               <span class="day-emoji">📝</span>
               <span class="day-title">Text Functions</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="08" tabindex="0">
+            <div class="day-card coming-soon"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="08" tabindex="0">
               <span class="day-num" style="color:var(--gold)">Day 08</span>
               <span class="day-emoji">📅</span>
               <span class="day-title">Date &amp; Time Functions</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="09" tabindex="0">
+            <div class="day-card coming-soon"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="09" tabindex="0">
               <span class="day-num" style="color:var(--gold)">Day 09</span>
               <span class="day-emoji">🧮</span>
               <span class="day-title">Conditional Aggregation</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="10" tabindex="0">
+            <div class="day-card coming-soon"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="10" tabindex="0">
               <span class="day-num" style="color:var(--gold)">Day 10</span>
               <span class="day-emoji">⚙️</span>
               <span class="day-title">PivotTables Core Mechanics</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="11" tabindex="0">
+            <div class="day-card coming-soon"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="11" tabindex="0">
               <span class="day-num" style="color:var(--gold)">Day 11</span>
               <span class="day-emoji">📈</span>
               <span class="day-title">PivotTables Advanced &amp; Charts</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card coming-soon" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="12" tabindex="0">
+            <div class="day-card coming-soon"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="12" tabindex="0">
               <span class="day-num" style="color:var(--gold)">Day 12</span>
               <span class="day-emoji">🏆</span>
               <span class="day-title">Validation, What-If &amp; Capstone</span>
@@ -1102,109 +1328,203 @@
         <!-- Python Panel -->
         <div class="curr-panel curr-panel--python" id="panel-python" style="display:none">
           <div class="curriculum-grid">
-            <div class="day-card locked" onclick="document.getElementById('navEnrollBtn')?.click() || document.getElementById('authModal')?.classList.add('active');" style="cursor:pointer;" data-day="01" tabindex="0">
+            <div class="day-card locked"
+              onclick="document.getElementById('navEnrollBtn')?.click() || document.getElementById('authModal')?.classList.add('active');"
+              style="cursor:pointer;" data-day="01" tabindex="0">
               <span class="day-num" style="color:var(--cyan)">Day 01</span>
-              <span class="day-emoji"><span class="tech-logo logo-python" title="Python"><svg viewBox="45.9 0 367.2 459" fill="none"><path fill="#306998" d="M229.5 0C161.4 0 122.4 15.6 122.4 53.6v34.4h107.1v15.3H122.4c-47.8 0-76.5 30.6-76.5 76.5v61.2c0 45.9 28.7 76.5 76.5 76.5h30.6v-45.9c0-51 41.3-91.8 91.8-91.8h107.1V107.1c0-53.6-47.8-107.1-122.4-107.1zM175.9 30.6c8.4 0 15.3 6.9 15.3 15.3s-6.9 15.3-15.3 15.3-15.3-6.9-15.3-15.3 6.9-15.3 15.3-15.3z" /><path fill="#FFE873" d="M229.5 459c68.1 0 107.1-15.6 107.1-53.6v-34.4H229.5v-15.3h107.1c47.8 0 76.5-30.6 76.5-76.5v-61.2c0-45.9-28.7-76.5-76.5-76.5h-30.6v45.9c0 51-41.3 91.8-91.8 91.8H122.4V351.9c0 53.6 47.8 107.1 122.4 107.1zm53.6-30.6c-8.4 0-15.3-6.9-15.3-15.3s6.9-15.3 15.3-15.3 15.3 6.9 15.3 15.3-6.9 15.3-15.3 15.3z" /></svg></span></span>
+              <span class="day-emoji"><span class="tech-logo logo-python" title="Python"><svg viewBox="45.9 0 367.2 459"
+                    fill="none">
+                    <path fill="#306998"
+                      d="M229.5 0C161.4 0 122.4 15.6 122.4 53.6v34.4h107.1v15.3H122.4c-47.8 0-76.5 30.6-76.5 76.5v61.2c0 45.9 28.7 76.5 76.5 76.5h30.6v-45.9c0-51 41.3-91.8 91.8-91.8h107.1V107.1c0-53.6-47.8-107.1-122.4-107.1zM175.9 30.6c8.4 0 15.3 6.9 15.3 15.3s-6.9 15.3-15.3 15.3-15.3-6.9-15.3-15.3 6.9-15.3 15.3-15.3z" />
+                    <path fill="#FFE873"
+                      d="M229.5 459c68.1 0 107.1-15.6 107.1-53.6v-34.4H229.5v-15.3h107.1c47.8 0 76.5-30.6 76.5-76.5v-61.2c0-45.9-28.7-76.5-76.5-76.5h-30.6v45.9c0 51-41.3 91.8-91.8 91.8H122.4V351.9c0 53.6 47.8 107.1 122.4 107.1zm53.6-30.6c-8.4 0-15.3-6.9-15.3-15.3s6.9-15.3 15.3-15.3 15.3 6.9 15.3 15.3-6.9 15.3-15.3 15.3z" />
+                  </svg></span></span>
               <span class="day-title">Data Types and Memory</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" onclick="document.getElementById('navEnrollBtn')?.click() || document.getElementById('authModal')?.classList.add('active');" style="cursor:pointer;" data-day="02" tabindex="0">
+            <div class="day-card locked"
+              onclick="document.getElementById('navEnrollBtn')?.click() || document.getElementById('authModal')?.classList.add('active');"
+              style="cursor:pointer;" data-day="02" tabindex="0">
               <span class="day-num" style="color:var(--cyan)">Day 02</span>
               <span class="day-emoji">➕</span>
               <span class="day-title">Operators and Expressions</span>
               <span class="day-badge badge-lock">🔒</span>
             </div>
             <!-- Loop days 3-30 as locked -->
-            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="03" tabindex="0">
-              <span class="day-num" style="color:var(--cyan)">Day 03</span><span class="day-emoji">📝</span><span class="day-title">Strings</span><span class="day-badge badge-lock">🔒</span>
+            <div class="day-card locked"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="03" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 03</span><span class="day-emoji">📝</span><span
+                class="day-title">Strings</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="04" tabindex="0">
-              <span class="day-num" style="color:var(--cyan)">Day 04</span><span class="day-emoji">📋</span><span class="day-title">Lists</span><span class="day-badge badge-lock">🔒</span>
+            <div class="day-card locked"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="04" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 04</span><span class="day-emoji">📋</span><span
+                class="day-title">Lists</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="05" tabindex="0">
-              <span class="day-num" style="color:var(--cyan)">Day 05</span><span class="day-emoji">📦</span><span class="day-title">Tuples</span><span class="day-badge badge-lock">🔒</span>
+            <div class="day-card locked"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="05" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 05</span><span class="day-emoji">📦</span><span
+                class="day-title">Tuples</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="06" tabindex="0">
-              <span class="day-num" style="color:var(--cyan)">Day 06</span><span class="day-emoji">⭕</span><span class="day-title">Sets</span><span class="day-badge badge-lock">🔒</span>
+            <div class="day-card locked"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="06" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 06</span><span class="day-emoji">⭕</span><span
+                class="day-title">Sets</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="07" tabindex="0">
-              <span class="day-num" style="color:var(--cyan)">Day 07</span><span class="day-emoji">🗂️</span><span class="day-title">Dictionaries</span><span class="day-badge badge-lock">🔒</span>
+            <div class="day-card locked"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="07" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 07</span><span class="day-emoji">🗂️</span><span
+                class="day-title">Dictionaries</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="08" tabindex="0">
-              <span class="day-num" style="color:var(--cyan)">Day 08</span><span class="day-emoji">🔀</span><span class="day-title">Conditionals</span><span class="day-badge badge-lock">🔒</span>
+            <div class="day-card locked"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="08" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 08</span><span class="day-emoji">🔀</span><span
+                class="day-title">Conditionals</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="09" tabindex="0">
-              <span class="day-num" style="color:var(--cyan)">Day 09</span><span class="day-emoji">🔄</span><span class="day-title">Loops</span><span class="day-badge badge-lock">🔒</span>
+            <div class="day-card locked"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="09" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 09</span><span class="day-emoji">🔄</span><span
+                class="day-title">Loops</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="10" tabindex="0">
-              <span class="day-num" style="color:var(--cyan)">Day 10</span><span class="day-emoji">⚙️</span><span class="day-title">Functions</span><span class="day-badge badge-lock">🔒</span>
+            <div class="day-card locked"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="10" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 10</span><span class="day-emoji">⚙️</span><span
+                class="day-title">Functions</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="11" tabindex="0">
-              <span class="day-num" style="color:var(--cyan)">Day 11</span><span class="day-emoji">🔧</span><span class="day-title">Modules</span><span class="day-badge badge-lock">🔒</span>
+            <div class="day-card locked"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="11" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 11</span><span class="day-emoji">🔧</span><span
+                class="day-title">Modules</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="12" tabindex="0">
-              <span class="day-num" style="color:var(--cyan)">Day 12</span><span class="day-emoji">🧮</span><span class="day-title">Comprehensions</span><span class="day-badge badge-lock">🔒</span>
+            <div class="day-card locked"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="12" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 12</span><span class="day-emoji">🧮</span><span
+                class="day-title">Comprehensions</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="13" tabindex="0">
-              <span class="day-num" style="color:var(--cyan)">Day 13</span><span class="day-emoji">λ</span><span class="day-title">Lambda Functions</span><span class="day-badge badge-lock">🔒</span>
+            <div class="day-card locked"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="13" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 13</span><span class="day-emoji">λ</span><span
+                class="day-title">Lambda Functions</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="14" tabindex="0">
-              <span class="day-num" style="color:var(--cyan)">Day 14</span><span class="day-emoji">⚠️</span><span class="day-title">Exceptions</span><span class="day-badge badge-lock">🔒</span>
+            <div class="day-card locked"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="14" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 14</span><span class="day-emoji">⚠️</span><span
+                class="day-title">Exceptions</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="15" tabindex="0">
-              <span class="day-num" style="color:var(--cyan)">Day 15</span><span class="day-emoji">📂</span><span class="day-title">File Handling</span><span class="day-badge badge-lock">🔒</span>
+            <div class="day-card locked"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="15" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 15</span><span class="day-emoji">📂</span><span
+                class="day-title">File Handling</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="16" tabindex="0">
-              <span class="day-num" style="color:var(--cyan)">Day 16</span><span class="day-emoji">🧩</span><span class="day-title">OOP Basics</span><span class="day-badge badge-lock">🔒</span>
+            <div class="day-card locked"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="16" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 16</span><span class="day-emoji">🧩</span><span
+                class="day-title">OOP Basics</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="17" tabindex="0">
-              <span class="day-num" style="color:var(--cyan)">Day 17</span><span class="day-emoji">🏗️</span><span class="day-title">OOP Advanced</span><span class="day-badge badge-lock">🔒</span>
+            <div class="day-card locked"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="17" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 17</span><span class="day-emoji">🏗️</span><span
+                class="day-title">OOP Advanced</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="18" tabindex="0">
-              <span class="day-num" style="color:var(--cyan)">Day 18</span><span class="day-emoji">🔍</span><span class="day-title">Regex</span><span class="day-badge badge-lock">🔒</span>
+            <div class="day-card locked"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="18" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 18</span><span class="day-emoji">🔍</span><span
+                class="day-title">Regex</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="19" tabindex="0">
-              <span class="day-num" style="color:var(--cyan)">Day 19</span><span class="day-emoji">⚡</span><span class="day-title">Generators and Iterators</span><span class="day-badge badge-lock">🔒</span>
+            <div class="day-card locked"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="19" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 19</span><span class="day-emoji">⚡</span><span
+                class="day-title">Generators and Iterators</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="20" tabindex="0">
-              <span class="day-num" style="color:var(--cyan)">Day 20</span><span class="day-emoji">🏆</span><span class="day-title">Capstone Project</span><span class="day-badge badge-lock">🔒</span>
+            <div class="day-card locked"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="20" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 20</span><span class="day-emoji">🏆</span><span
+                class="day-title">Capstone Project</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="21" tabindex="0">
-              <span class="day-num" style="color:var(--cyan)">Day 21</span><span class="day-emoji">📊</span><span class="day-title">NumPy Fundamentals</span><span class="day-badge badge-lock">🔒</span>
+            <div class="day-card locked"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="21" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 21</span><span class="day-emoji">📊</span><span
+                class="day-title">NumPy Fundamentals</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="22" tabindex="0">
-              <span class="day-num" style="color:var(--cyan)">Day 22</span><span class="day-emoji">📈</span><span class="day-title">NumPy Advanced</span><span class="day-badge badge-lock">🔒</span>
+            <div class="day-card locked"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="22" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 22</span><span class="day-emoji">📈</span><span
+                class="day-title">NumPy Advanced</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="23" tabindex="0">
-              <span class="day-num" style="color:var(--cyan)">Day 23</span><span class="day-emoji">🐼</span><span class="day-title">Pandas Introduction</span><span class="day-badge badge-lock">🔒</span>
+            <div class="day-card locked"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="23" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 23</span><span class="day-emoji">🐼</span><span
+                class="day-title">Pandas Introduction</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="24" tabindex="0">
-              <span class="day-num" style="color:var(--cyan)">Day 24</span><span class="day-emoji">🎯</span><span class="day-title">Pandas Selection</span><span class="day-badge badge-lock">🔒</span>
+            <div class="day-card locked"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="24" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 24</span><span class="day-emoji">🎯</span><span
+                class="day-title">Pandas Selection</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="25" tabindex="0">
-              <span class="day-num" style="color:var(--cyan)">Day 25</span><span class="day-emoji">🧹</span><span class="day-title">Pandas Cleaning</span><span class="day-badge badge-lock">🔒</span>
+            <div class="day-card locked"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="25" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 25</span><span class="day-emoji">🧹</span><span
+                class="day-title">Pandas Cleaning</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="26" tabindex="0">
-              <span class="day-num" style="color:var(--cyan)">Day 26</span><span class="day-emoji">🗃️</span><span class="day-title">Pandas GroupBy</span><span class="day-badge badge-lock">🔒</span>
+            <div class="day-card locked"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="26" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 26</span><span class="day-emoji">🗃️</span><span
+                class="day-title">Pandas GroupBy</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="27" tabindex="0">
-              <span class="day-num" style="color:var(--cyan)">Day 27</span><span class="day-emoji">🔗</span><span class="day-title">Pandas Merging</span><span class="day-badge badge-lock">🔒</span>
+            <div class="day-card locked"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="27" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 27</span><span class="day-emoji">🔗</span><span
+                class="day-title">Pandas Merging</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="28" tabindex="0">
-              <span class="day-num" style="color:var(--cyan)">Day 28</span><span class="day-emoji">📉</span><span class="day-title">Pandas Time Series</span><span class="day-badge badge-lock">🔒</span>
+            <div class="day-card locked"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="28" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 28</span><span class="day-emoji">📉</span><span
+                class="day-title">Pandas Time Series</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="29" tabindex="0">
-              <span class="day-num" style="color:var(--cyan)">Day 29</span><span class="day-emoji">🎨</span><span class="day-title">Data Visualization</span><span class="day-badge badge-lock">🔒</span>
+            <div class="day-card locked"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="29" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 29</span><span class="day-emoji">🎨</span><span
+                class="day-title">Data Visualization</span><span class="day-badge badge-lock">🔒</span>
             </div>
-            <div class="day-card locked" onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');" style="cursor:pointer;" data-day="30" tabindex="0">
-              <span class="day-num" style="color:var(--cyan)">Day 30</span><span class="day-emoji">🔬</span><span class="day-title">Phase Analysis &amp; Review</span><span class="day-badge badge-lock">🔒</span>
+            <div class="day-card locked"
+              onclick="document.getElementById(\'navEnrollBtn\')?.click() || document.getElementById(\'authModal\')?.classList.add(\'active\');"
+              style="cursor:pointer;" data-day="30" tabindex="0">
+              <span class="day-num" style="color:var(--cyan)">Day 30</span><span class="day-emoji">🔬</span><span
+                class="day-title">Phase Analysis &amp; Review</span><span class="day-badge badge-lock">🔒</span>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-</div>
+    </div>
 
     <!-- Comparison Section -->
     <section class="compare-section">
@@ -1214,7 +1534,7 @@
           <p>See how interactive active learning stacks up against alternative approaches.</p>
         </div>
 
-        
+
 
 
         <div class="comparison-tab-switcher">
@@ -1224,7 +1544,7 @@
           <button class="comparison-tab-pill" data-col="4">Bootcamps</button>
         </div>
 
-<div class="compare-wrap reveal" data-active-tab="comp-mano">
+        <div class="compare-wrap reveal" data-active-tab="comp-mano">
           <table>
             <thead>
               <tr>
@@ -1241,8 +1561,10 @@
                 <td class="col-mano yes">
                   <div class="col-mano-inner">
                     <svg class="micro-loop-exec" viewBox="0 0 60 40" width="45" height="30">
-                      <rect x="5" y="5" width="50" height="30" rx="4" fill="rgba(0, 230, 246, 0.1)" stroke="var(--cyan)" stroke-width="1" />
-                      <text class="exec-text" x="12" y="22" fill="var(--cyan)" font-size="9" font-family="JetBrains Mono">&gt;_ run</text>
+                      <rect x="5" y="5" width="50" height="30" rx="4" fill="rgba(0, 230, 246, 0.1)" stroke="var(--cyan)"
+                        stroke-width="1" />
+                      <text class="exec-text" x="12" y="22" fill="var(--cyan)" font-size="9"
+                        font-family="JetBrains Mono">&gt;_ run</text>
                       <circle class="exec-dot" cx="45" cy="20" r="3" fill="var(--cyan)" />
                     </svg>
                     <span>✅ Audio-Guided &amp; Practice-First (Run Code in Browser)</span>
@@ -1278,9 +1600,12 @@
                 <td class="col-mano yes">
                   <div class="col-mano-inner">
                     <svg class="micro-loop-marks" viewBox="0 0 40 40" width="30" height="30">
-                      <circle class="track" cx="20" cy="20" r="16" stroke="rgba(255,255,255,0.08)" stroke-width="3" fill="none" />
-                      <circle class="fill" cx="20" cy="20" r="16" stroke="var(--cyan)" stroke-width="3" fill="none" stroke-dasharray="100" stroke-dashoffset="100" />
-                      <path class="checkmark" d="M14 20 l4 4 l8 -8" stroke="var(--cyan)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                      <circle class="track" cx="20" cy="20" r="16" stroke="rgba(255,255,255,0.08)" stroke-width="3"
+                        fill="none" />
+                      <circle class="fill" cx="20" cy="20" r="16" stroke="var(--cyan)" stroke-width="3" fill="none"
+                        stroke-dasharray="100" stroke-dashoffset="100" />
+                      <path class="checkmark" d="M14 20 l4 4 l8 -8" stroke="var(--cyan)" stroke-width="3"
+                        stroke-linecap="round" stroke-linejoin="round" fill="none" />
                     </svg>
                     <span>✅ Audio Narration + 1,500 Marks System</span>
                   </div>
@@ -1301,9 +1626,12 @@
                 <td class="col-mano yes">
                   <div class="col-mano-inner">
                     <svg class="micro-loop-marks" viewBox="0 0 40 40" width="30" height="30">
-                      <circle class="track" cx="20" cy="20" r="16" stroke="rgba(255,255,255,0.08)" stroke-width="3" fill="none" />
-                      <circle class="fill" cx="20" cy="20" r="16" stroke="var(--cyan)" stroke-width="3" fill="none" stroke-dasharray="100" stroke-dashoffset="100" />
-                      <path class="checkmark" d="M14 20 l4 4 l8 -8" stroke="var(--cyan)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                      <circle class="track" cx="20" cy="20" r="16" stroke="rgba(255,255,255,0.08)" stroke-width="3"
+                        fill="none" />
+                      <circle class="fill" cx="20" cy="20" r="16" stroke="var(--cyan)" stroke-width="3" fill="none"
+                        stroke-dasharray="100" stroke-dashoffset="100" />
+                      <path class="checkmark" d="M14 20 l4 4 l8 -8" stroke="var(--cyan)" stroke-width="3"
+                        stroke-linecap="round" stroke-linejoin="round" fill="none" />
                     </svg>
                     <span>✅ Cryptographic Verified Certificate (Backed by Marks)</span>
                   </div>
@@ -1332,7 +1660,7 @@
       </div>
     </section>
 
-</div>
+    </div>
 
     <!-- Testimonials & Reviews Section -->
     <section class="reviews-section" id="testimonials">
@@ -1356,27 +1684,37 @@
             <div class="rev-distribution-list">
               <div class="rev-dist-row" data-rating="5">
                 <span class="rev-dist-label">5 ★</span>
-                <div class="rev-dist-track"><div class="rev-dist-fill" style="width: 0%;"></div></div>
+                <div class="rev-dist-track">
+                  <div class="rev-dist-fill" style="width: 0%;"></div>
+                </div>
                 <span class="rev-dist-pct">0%</span>
               </div>
               <div class="rev-dist-row" data-rating="4">
                 <span class="rev-dist-label">4 ★</span>
-                <div class="rev-dist-track"><div class="rev-dist-fill" style="width: 0%;"></div></div>
+                <div class="rev-dist-track">
+                  <div class="rev-dist-fill" style="width: 0%;"></div>
+                </div>
                 <span class="rev-dist-pct">0%</span>
               </div>
               <div class="rev-dist-row" data-rating="3">
                 <span class="rev-dist-label">3 ★</span>
-                <div class="rev-dist-track"><div class="rev-dist-fill" style="width: 0%;"></div></div>
+                <div class="rev-dist-track">
+                  <div class="rev-dist-fill" style="width: 0%;"></div>
+                </div>
                 <span class="rev-dist-pct">0%</span>
               </div>
               <div class="rev-dist-row" data-rating="2">
                 <span class="rev-dist-label">2 ★</span>
-                <div class="rev-dist-track"><div class="rev-dist-fill" style="width: 0%;"></div></div>
+                <div class="rev-dist-track">
+                  <div class="rev-dist-fill" style="width: 0%;"></div>
+                </div>
                 <span class="rev-dist-pct">0%</span>
               </div>
               <div class="rev-dist-row" data-rating="1">
                 <span class="rev-dist-label">1 ★</span>
-                <div class="rev-dist-track"><div class="rev-dist-fill" style="width: 0%;"></div></div>
+                <div class="rev-dist-track">
+                  <div class="rev-dist-fill" style="width: 0%;"></div>
+                </div>
                 <span class="rev-dist-pct">0%</span>
               </div>
             </div>
@@ -1389,21 +1727,52 @@
 
           <!-- ── Carousel Row ──────────────────────────────── -->
           <div class="rev-carousel-wrapper">
-            <button class="rev-carousel-btn prev-btn" id="revCarouselPrev" aria-label="Previous Reviews">&#x2190;</button>
+            <button class="rev-carousel-btn prev-btn" id="revCarouselPrev"
+              aria-label="Previous Reviews">&#x2190;</button>
             <div class="rev-carousel-track-container">
               <div class="rev-carousel-track" id="revCarouselTrack">
                 <!-- Skeleton loader cards (shown initially, replaced by reviews.js) -->
                 <div class="rev-card skeleton">
-                  <div class="rev-card-top"><div class="sk-circle"></div><div class="sk-lines"><div class="sk-line w-60"></div><div class="sk-line w-40"></div></div></div>
-                  <div class="rev-card-body"><div class="sk-line w-100"></div><div class="sk-line w-90"></div><div class="sk-line w-80"></div></div>
+                  <div class="rev-card-top">
+                    <div class="sk-circle"></div>
+                    <div class="sk-lines">
+                      <div class="sk-line w-60"></div>
+                      <div class="sk-line w-40"></div>
+                    </div>
+                  </div>
+                  <div class="rev-card-body">
+                    <div class="sk-line w-100"></div>
+                    <div class="sk-line w-90"></div>
+                    <div class="sk-line w-80"></div>
+                  </div>
                 </div>
                 <div class="rev-card skeleton">
-                  <div class="rev-card-top"><div class="sk-circle"></div><div class="sk-lines"><div class="sk-line w-60"></div><div class="sk-line w-40"></div></div></div>
-                  <div class="rev-card-body"><div class="sk-line w-100"></div><div class="sk-line w-90"></div><div class="sk-line w-80"></div></div>
+                  <div class="rev-card-top">
+                    <div class="sk-circle"></div>
+                    <div class="sk-lines">
+                      <div class="sk-line w-60"></div>
+                      <div class="sk-line w-40"></div>
+                    </div>
+                  </div>
+                  <div class="rev-card-body">
+                    <div class="sk-line w-100"></div>
+                    <div class="sk-line w-90"></div>
+                    <div class="sk-line w-80"></div>
+                  </div>
                 </div>
                 <div class="rev-card skeleton">
-                  <div class="rev-card-top"><div class="sk-circle"></div><div class="sk-lines"><div class="sk-line w-60"></div><div class="sk-line w-40"></div></div></div>
-                  <div class="rev-card-body"><div class="sk-line w-100"></div><div class="sk-line w-90"></div><div class="sk-line w-80"></div></div>
+                  <div class="rev-card-top">
+                    <div class="sk-circle"></div>
+                    <div class="sk-lines">
+                      <div class="sk-line w-60"></div>
+                      <div class="sk-line w-40"></div>
+                    </div>
+                  </div>
+                  <div class="rev-card-body">
+                    <div class="sk-line w-100"></div>
+                    <div class="sk-line w-90"></div>
+                    <div class="sk-line w-80"></div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1414,7 +1783,7 @@
       </div>
     </section>
 
-</div>
+    </div>
 
 
     <!-- Pricing Section -->
@@ -1425,21 +1794,28 @@
           <p>One-time payment. Lifetime access. Start learning today.</p>
         </div>
 
-        
+
         <!-- Live Countdown Urgency Ticker -->
-        <div class="pricing-urgency-ticker" style="display: flex; align-items: center; justify-content: center; gap: 12px; padding: 12px 24px; background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95)); border: 1px solid rgba(5, 150, 105, 0.3); border-radius: 16px; margin-bottom: 30px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); flex-wrap: wrap; text-align: center;">
-          <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #34D399; text-transform: uppercase; letter-spacing: 0.05em;">
+        <div class="pricing-urgency-ticker"
+          style="display: flex; align-items: center; justify-content: center; gap: 12px; padding: 12px 24px; background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95)); border: 1px solid rgba(5, 150, 105, 0.3); border-radius: 16px; margin-bottom: 30px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); flex-wrap: wrap; text-align: center;">
+          <span
+            style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #34D399; text-transform: uppercase; letter-spacing: 0.05em;">
             ⚡ Early Access Offer (<span id="tickerDiscountText" class="dynamic-discount">70% OFF</span>) Ends In:
           </span>
-          <div id="pricingCountdown" style="display: flex; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 800; color: #FFFFFF;">
-            <span style="background: rgba(255, 255, 255, 0.1); padding: 4px 8px; border-radius: 6px;" id="countHrs">04</span>:
-            <span style="background: rgba(255, 255, 255, 0.1); padding: 4px 8px; border-radius: 6px;" id="countMin">18</span>:
-            <span style="background: rgba(255, 255, 255, 0.1); padding: 4px 8px; border-radius: 6px;" id="countSec">42</span>
+          <div id="pricingCountdown"
+            style="display: flex; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 800; color: #FFFFFF;">
+            <span style="background: rgba(255, 255, 255, 0.1); padding: 4px 8px; border-radius: 6px;"
+              id="countHrs">04</span>:
+            <span style="background: rgba(255, 255, 255, 0.1); padding: 4px 8px; border-radius: 6px;"
+              id="countMin">18</span>:
+            <span style="background: rgba(255, 255, 255, 0.1); padding: 4px 8px; border-radius: 6px;"
+              id="countSec">42</span>
           </div>
           <span style="font-size: 12px; color: #94A3B8; font-weight: 600;">· Only 7 Seats Left at this price</span>
         </div>
 
-        <div class="pricing-grid reveal" style="display: flex; justify-content: center; width: 100%; max-width: 1180px; margin: 0 auto;">
+        <div class="pricing-grid reveal"
+          style="display: flex; justify-content: center; width: 100%; max-width: 1180px; margin: 0 auto;">
 
           <!-- Luxury Redesigned Horizontal Pricing Banner -->
           <div class="pricing-banner-rough pricing-banner-redesign">
@@ -1450,7 +1826,8 @@
               <h3 class="pricing-rough-title">60-Day<br>Masterclass</h3>
               <div class="pricing-rough-plus-pill">
                 <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M8 3.33331V12.6666M3.33334 7.99998H12.6667" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M8 3.33331V12.6666M3.33334 7.99998H12.6667" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
               </div>
               <div class="pricing-rough-cert">Verified Certificate</div>
@@ -1516,10 +1893,12 @@
                   <div class="pricing-price-note">One-time payment · Lifetime access · No hidden fees</div>
                 </div>
 
-                <button class="pricing-buy-btn pricing-buy-btn--selfpaced pricing-btn-rough" data-cta="buy" data-tier="selfpaced" id="buyBtnSelfpaced">
+                <button class="pricing-buy-btn pricing-buy-btn--selfpaced pricing-btn-rough" data-cta="buy"
+                  data-tier="selfpaced" id="buyBtnSelfpaced">
                   🚀 Enroll Now — Start Learning
                 </button>
-                <div class="pricing-free-escape">Not sure yet? <a href="/sql/day01.html">Try Day 01 completely free &rarr;</a></div>
+                <div class="pricing-free-escape">Not sure yet? <a href="/sql/day01.html">Try Day 01 completely free
+                    &rarr;</a></div>
               </div>
             </div>
 
@@ -1545,7 +1924,12 @@
               <span class="faq-icon">+</span>
             </div>
             <div class="faq-answer">
-              <p>Yes, 100%! Day 01 and Day 02 of the SQL track are completely free to try with zero credit card or account setup required. You can start writing and running real SQL queries in your browser right now: <a href="/sql/day01.html" style="color: var(--emerald); font-weight: 700; text-decoration: underline;">Try SQL Day 01 Free &rarr;</a>. The remaining days of SQL, along with the full Excel and Python tracks, are unlocked upon enrolling in the Masterclass.</p>
+              <p>Yes, 100%! Day 01 and Day 02 of the SQL track are completely free to try with zero credit card or
+                account setup required. You can start writing and running real SQL queries in your browser right now: <a
+                  href="/sql/day01.html"
+                  style="color: var(--emerald); font-weight: 700; text-decoration: underline;">Try SQL Day 01 Free
+                  &rarr;</a>. The remaining days of SQL, along with the full Excel and Python tracks, are unlocked upon
+                enrolling in the Masterclass.</p>
             </div>
           </div>
 
@@ -1555,7 +1939,11 @@
               <span class="faq-icon">+</span>
             </div>
             <div class="faq-answer">
-              <p>Traditional video platforms force you to passively watch 80+ hours of video playlists with zero real practice—leading to tutorial hell. Bootcamps charge ₹50,000–₹2,50,000 with rigid schedules. Manodemy combines <strong>guided audio narration</strong> with a <strong>practice-first browser coding environment</strong> (WASM)—you write real code, run queries, and solve 1,000+ challenges at your own pace for a one-time fee.</p>
+              <p>Traditional video platforms force you to passively watch 80+ hours of video playlists with zero real
+                practice—leading to tutorial hell. Bootcamps charge ₹50,000–₹2,50,000 with rigid schedules. Manodemy
+                combines <strong>guided audio narration</strong> with a <strong>practice-first browser coding
+                  environment</strong> (WASM)—you write real code, run queries, and solve 1,000+ challenges at your own
+                pace for a one-time fee.</p>
             </div>
           </div>
 
@@ -1565,7 +1953,9 @@
               <span class="faq-icon">+</span>
             </div>
             <div class="faq-answer">
-              <p>Not at all. The 60-Day Masterclass is engineered from absolute basics for complete beginners, career transitioners, and non-technical professionals. It guides you step-by-step through SQL (Days 1–18), Excel (Days 19–30), and Python (Days 31–60).</p>
+              <p>Not at all. The 60-Day Masterclass is engineered from absolute basics for complete beginners, career
+                transitioners, and non-technical professionals. It guides you step-by-step through SQL (Days 1–18),
+                Excel (Days 19–30), and Python (Days 31–60).</p>
             </div>
           </div>
 
@@ -1577,24 +1967,33 @@
             <div class="faq-answer">
               <p>We use a transparent, performance-backed 1,500 Marks evaluation system:
                 <br><br>
-                <div class="faq-scoring-row">
-                  <svg class="micro-loop-marks" viewBox="0 0 40 40" width="40" height="40">
-                    <circle class="track" cx="20" cy="20" r="16" stroke="rgba(255,255,255,0.08)" stroke-width="3" fill="none" />
-                    <circle class="fill" cx="20" cy="20" r="16" stroke="var(--cyan)" stroke-width="3" fill="none" stroke-dasharray="100" stroke-dashoffset="100" />
-                    <path class="checkmark" d="M14 20 l4 4 l8 -8" stroke="var(--cyan)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none" />
-                  </svg>
-                  <span><strong>1 Mark Per Correct Answer (1,500 Total Marks):</strong> Each of the 60 daily chapters features 25 marks (25 evaluation questions). Across all 60 days, you can earn up to 1,500 total marks.</span>
-                </div>
-                <br>
-                <div class="faq-scoring-row">
-                  <span style="font-size: 22px;">⏱️</span>
-                  <span><strong>2-Hour Timed Daily Test &amp; Unlimited Retakes:</strong> You get a 2-hour window each day to complete the chapter evaluation test. Only test scores count toward your certificate, and you can retake any daily test as many times as you wish to improve your score.</span>
-                </div>
-                <br>
-                <div class="faq-scoring-row">
-                  <span style="font-size: 22px;">🎓</span>
-                  <span><strong>1,200+ Marks Certificate Threshold:</strong> When you score 1,200 or more marks out of 1,500 (80%+ threshold), you unlock and download your official Verified Certificate with your actual earned marks printed directly on it.</span>
-                </div>
+              <div class="faq-scoring-row">
+                <svg class="micro-loop-marks" viewBox="0 0 40 40" width="40" height="40">
+                  <circle class="track" cx="20" cy="20" r="16" stroke="rgba(255,255,255,0.08)" stroke-width="3"
+                    fill="none" />
+                  <circle class="fill" cx="20" cy="20" r="16" stroke="var(--cyan)" stroke-width="3" fill="none"
+                    stroke-dasharray="100" stroke-dashoffset="100" />
+                  <path class="checkmark" d="M14 20 l4 4 l8 -8" stroke="var(--cyan)" stroke-width="3"
+                    stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                </svg>
+                <span><strong>1 Mark Per Correct Answer (1,500 Total Marks):</strong> Each of the 60 daily chapters
+                  features 25 marks (25 evaluation questions). Across all 60 days, you can earn up to 1,500 total
+                  marks.</span>
+              </div>
+              <br>
+              <div class="faq-scoring-row">
+                <span style="font-size: 22px;">⏱️</span>
+                <span><strong>2-Hour Timed Daily Test &amp; Unlimited Retakes:</strong> You get a 2-hour window each day
+                  to complete the chapter evaluation test. Only test scores count toward your certificate, and you can
+                  retake any daily test as many times as you wish to improve your score.</span>
+              </div>
+              <br>
+              <div class="faq-scoring-row">
+                <span style="font-size: 22px;">🎓</span>
+                <span><strong>1,200+ Marks Certificate Threshold:</strong> When you score 1,200 or more marks out of
+                  1,500 (80%+ threshold), you unlock and download your official Verified Certificate with your actual
+                  earned marks printed directly on it.</span>
+              </div>
               </p>
             </div>
           </div>
@@ -1605,7 +2004,9 @@
               <span class="faq-icon">+</span>
             </div>
             <div class="faq-answer">
-              <p>Zero software installation required! Manodemy’s WASM execution engine runs full Python, SQLite, and Data Engines directly inside any modern web browser (Chrome, Edge, Firefox, Safari). You can code from any laptop or desktop with zero setup friction.</p>
+              <p>Zero software installation required! Manodemy’s WASM execution engine runs full Python, SQLite, and
+                Data Engines directly inside any modern web browser (Chrome, Edge, Firefox, Safari). You can code from
+                any laptop or desktop with zero setup friction.</p>
             </div>
           </div>
 
@@ -1615,7 +2016,10 @@
               <span class="faq-icon">+</span>
             </div>
             <div class="faq-answer">
-              <p>Once you score 1,200+ marks out of 1,500 across the 60-day masterclass, a gold-crested, cryptographically signed certificate is automatically generated displaying your actual achieved score. Each certificate features a unique verification URL hosted on Manodemy, enabling recruiters and employers to instantly verify your authentic graded performance.</p>
+              <p>Once you score 1,200+ marks out of 1,500 across the 60-day masterclass, a gold-crested,
+                cryptographically signed certificate is automatically generated displaying your actual achieved score.
+                Each certificate features a unique verification URL hosted on Manodemy, enabling recruiters and
+                employers to instantly verify your authentic graded performance.</p>
             </div>
           </div>
 
@@ -1625,7 +2029,9 @@
               <span class="faq-icon">+</span>
             </div>
             <div class="faq-answer">
-              <p>We offer a 100% Risk-Free 7-Day Money-Back Guarantee. If you feel the masterclass isn't the right fit for your learning style within 7 days of purchase, simply email support@manodemy.com for a full, prompt refund—no questions asked.</p>
+              <p>We offer a 100% Risk-Free 7-Day Money-Back Guarantee. If you feel the masterclass isn't the right fit
+                for your learning style within 7 days of purchase, simply email support@manodemy.com for a full, prompt
+                refund—no questions asked.</p>
             </div>
           </div>
         </div>
@@ -1637,14 +2043,14 @@
   <div class="checkout-overlay" id="checkoutOverlay">
     <div class="checkout-modal checkout-modal--grid">
       <button class="checkout-close" id="checkoutClose">✕</button>
-      
+
       <!-- Left side: Pricing Card preview -->
       <div class="checkout-preview-col">
         <div id="checkoutCardContainer">
           <!-- Dynamically cloned card goes here -->
         </div>
       </div>
-      
+
       <!-- Right side: Payment form -->
       <div class="checkout-form-col">
         <div class="checkout-header">
@@ -1664,25 +2070,25 @@
           <button class="coupon-apply" id="couponApply">Apply</button>
         </div>
 
-        
-        </div>
 
-        
-        <div class="checkout-divider"><span>Choose Payment Method</span></div>
-        <div class="gateway-buttons" id="gatewayButtons">
-          <!-- Populated dynamically by app.js -->
-        </div>
+      </div>
 
-        <div class="checkout-spinner" id="checkoutSpinner"></div>
 
-        <div class="checkout-features">
-          <span>🔒 Secure Payment</span>
-          <span>🛡️ 7-Day Refund Policy</span>
-          <span>♾️ Lifetime Access</span>
-          <span>📧 Instant Login Access</span>
-        </div>
+      <div class="checkout-divider"><span>Choose Payment Method</span></div>
+      <div class="gateway-buttons" id="gatewayButtons">
+        <!-- Populated dynamically by app.js -->
+      </div>
+
+      <div class="checkout-spinner" id="checkoutSpinner"></div>
+
+      <div class="checkout-features">
+        <span>🔒 Secure Payment</span>
+        <span>🛡️ 7-Day Refund Policy</span>
+        <span>♾️ Lifetime Access</span>
+        <span>📧 Instant Login Access</span>
       </div>
     </div>
+  </div>
   </div>
 
   <!-- ── Review Submission Modal ─────────────────────────── -->
@@ -1690,8 +2096,11 @@
     <div class="rev-modal-card">
       <div class="rev-modal-header">
         <h3>
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.83 17.017a4.5 4.5 0 01-1.897 1.13L3 19l.85-2.933a4.5 4.5 0 011.13-1.897l8.932-8.932zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"></path>
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+            style="width:20px;height:20px;vertical-align:middle;margin-right:8px;">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.83 17.017a4.5 4.5 0 01-1.897 1.13L3 19l.85-2.933a4.5 4.5 0 011.13-1.897l8.932-8.932zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10">
+            </path>
           </svg>
           <span>Share Your Coding Journey</span>
         </h3>
@@ -1706,11 +2115,31 @@
               <div class="rev-rating-selector">
                 <span class="rev-selector-label">Your Rating</span>
                 <div class="rev-selector-stars">
-                  <svg data-star="1" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-                  <svg data-star="2" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-                  <svg data-star="3" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-                  <svg data-star="4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-                  <svg data-star="5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                  <svg data-star="1" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
+                    </path>
+                  </svg>
+                  <svg data-star="2" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
+                    </path>
+                  </svg>
+                  <svg data-star="3" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
+                    </path>
+                  </svg>
+                  <svg data-star="4" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
+                    </path>
+                  </svg>
+                  <svg data-star="5" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
+                    </path>
+                  </svg>
                 </div>
                 <div class="rev-selector-desc">Click a star to rate</div>
                 <input type="hidden" id="rev-input-rating" required>
@@ -1729,13 +2158,15 @@
               <div class="rev-form-row">
                 <div class="rev-form-group full-width">
                   <label for="rev-input-role">Your Role / Profession *</label>
-                  <input type="text" id="rev-input-role" placeholder="e.g. Software Engineer, Data Analyst, Student" required>
+                  <input type="text" id="rev-input-role" placeholder="e.g. Software Engineer, Data Analyst, Student"
+                    required>
                 </div>
               </div>
               <!-- Detailed Feedback -->
               <div class="rev-form-group full-width">
                 <label for="rev-input-comment">Detailed Feedback *</label>
-                <textarea id="rev-input-comment" placeholder="What did you love? How did it help your skills?" maxlength="1000" required></textarea>
+                <textarea id="rev-input-comment" placeholder="What did you love? How did it help your skills?"
+                  maxlength="1000" required></textarea>
                 <span class="rev-char-counter">0/1000</span>
               </div>
             </div>
@@ -1760,7 +2191,10 @@
                 <div class="rev-media-dropzone" id="mediaDropzone">
                   <input type="file" id="rev-file-input" accept="image/*" style="display:none;">
                   <div class="dropzone-content">
-                    <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" class="dropzone-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3 21h18a2.25 2.25 0 002.25-2.25V5.25A2.25 2.25 0 0021 3H3a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 003 21zM3 10.5h.008v.008H3V10.5z" /></svg>
+                    <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" class="dropzone-icon">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3 21h18a2.25 2.25 0 002.25-2.25V5.25A2.25 2.25 0 0021 3H3a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 003 21zM3 10.5h.008v.008H3V10.5z" />
+                    </svg>
                     <span class="dropzone-text">Drag &amp; drop or <strong>click to upload</strong></span>
                     <span class="dropzone-hint">PNG, JPG, WEBP — Max 2 MB</span>
                   </div>
@@ -1795,8 +2229,9 @@
   <!-- Sign In / Sign Up Modal -->
   <div class="checkout-overlay" id="authModal">
     <div class="checkout-modal auth-modal-box">
-      <button class="checkout-close" onclick="document.getElementById('authModal').classList.remove('active');">✕</button>
-      
+      <button class="checkout-close"
+        onclick="document.getElementById('authModal').classList.remove('active');">✕</button>
+
       <div class="checkout-header">
         <h3 id="authTitle">Join the Challenge</h3>
         <p id="authSubtitle">Sign in to start learning</p>
@@ -1805,23 +2240,30 @@
       <div id="socialAuthSection">
         <button type="button" class="landing-social-btn" id="google-signin-btn">
           <svg viewBox="0 0 48 48" width="18" height="18" style="flex-shrink:0;">
-            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-            <path fill="#4285F4" d="M46.5 24c0-1.61-.15-3.16-.42-4.67H24v8.83h12.72c-.55 2.89-2.18 5.33-4.63 6.96l7.19 5.56c4.21-3.87 6.63-9.58 6.63-16.68z"/>
-            <path fill="#FBBC05" d="M10.54 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.56 10.78l7.98-6.19z"/>
-            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.19-5.56c-2 1.34-4.55 2.13-7.7 2.13-6.26 0-11.57-4.22-13.46-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+            <path fill="#EA4335"
+              d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+            <path fill="#4285F4"
+              d="M46.5 24c0-1.61-.15-3.16-.42-4.67H24v8.83h12.72c-.55 2.89-2.18 5.33-4.63 6.96l7.19 5.56c4.21-3.87 6.63-9.58 6.63-16.68z" />
+            <path fill="#FBBC05"
+              d="M10.54 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.56 10.78l7.98-6.19z" />
+            <path fill="#34A853"
+              d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.19-5.56c-2 1.34-4.55 2.13-7.7 2.13-6.26 0-11.57-4.22-13.46-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
           </svg>
           Continue with Google
         </button>
         <div class="auth-divider" id="authDivider"><span>OR EMAIL</span></div>
       </div>
 
-      <div id="authMessage" style="display:none;padding:0.6rem;border-radius:8px;font-size:0.85rem;text-align:center;margin-bottom:0.8rem;"></div>
+      <div id="authMessage"
+        style="display:none;padding:0.6rem;border-radius:8px;font-size:0.85rem;text-align:center;margin-bottom:0.8rem;">
+      </div>
 
       <form class="auth-form" id="landingLoginForm">
         <input type="text" id="landingName" placeholder="Full Name" class="landing-input" style="display:none;">
         <input type="email" id="landingEmail" placeholder="name@example.com" class="landing-input" required>
         <input type="password" id="landingPassword" placeholder="••••••••" class="landing-input" required>
-        <input type="password" id="landingConfirmPassword" placeholder="Confirm Password" class="landing-input" style="display:none;">
+        <input type="password" id="landingConfirmPassword" placeholder="Confirm Password" class="landing-input"
+          style="display:none;">
         <button type="submit" class="btn-auth-submit" id="btnLandingSubmit">Login</button>
       </form>
 
@@ -1846,8 +2288,11 @@
       </div>
       <div class="mobile-cta-action">
         <div style="display:flex; gap:8px; align-items:center;">
-          <a href="/sql/day01.html" class="btn-mobile-cta-secondary" style="padding: 10px 14px; font-size: 12px; font-weight: 700; color: var(--emerald); background: rgba(5, 150, 105, 0.1); border: 1px solid rgba(5, 150, 105, 0.3); border-radius: 20px; white-space: nowrap;">Try Free</a>
-          <a href="#pricing" class="btn-mobile-cta-primary" id="stickyEnrollBtn" data-cta="buy" data-tier="selfpaced">Enroll Now 🚀</a>
+          <a href="/sql/day01.html" class="btn-mobile-cta-secondary"
+            style="padding: 10px 14px; font-size: 12px; font-weight: 700; color: var(--emerald); background: rgba(5, 150, 105, 0.1); border: 1px solid rgba(5, 150, 105, 0.3); border-radius: 20px; white-space: nowrap;">Try
+            Free</a>
+          <a href="#pricing" class="btn-mobile-cta-primary" id="stickyEnrollBtn" data-cta="buy"
+            data-tier="selfpaced">Enroll Now 🚀</a>
         </div>
       </div>
     </div>
@@ -1859,22 +2304,45 @@
       <div class="footer-inner">
         <div class="footer-col brand-col">
           <div class="nav-brand-wrapper footer-brand-wrapper">
-            <img class="nav-brand-symbol" src="/landing_v2/manodemy_3d_keycap.png" alt="Manodemy 3D Keycap Logo" width="32" height="32" style="object-fit:contain; filter: drop-shadow(0 4px 8px rgba(5, 150, 105, 0.2));" />
+            <img class="nav-brand-symbol" src="/landing_v2/manodemy_3d_keycap.png" alt="Manodemy 3D Keycap Logo"
+              width="32" height="32"
+              style="object-fit:contain; filter: drop-shadow(0 4px 8px rgba(5, 150, 105, 0.2));" />
             <span class="nav-brand-name">Mano<span>demy</span></span>
           </div>
-          <p>Master SQL, Excel, and Python through practice-first browser notebooks. Escape tutorial hell and build real data skills.</p>
+          <p>Master SQL, Excel, and Python through practice-first browser notebooks. Escape tutorial hell and build real
+            data skills.</p>
           <div class="footer-socials">
-            <a href="https://www.linkedin.com/company/manodemy" target="_blank" rel="noopener" class="footer-social-icon" aria-label="LinkedIn">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+            <a href="https://www.linkedin.com/company/manodemy" target="_blank" rel="noopener"
+              class="footer-social-icon" aria-label="LinkedIn">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                <rect x="2" y="9" width="4" height="12" />
+                <circle cx="4" cy="4" r="2" />
+              </svg>
             </a>
-            <a href="https://www.instagram.com/manodemy" target="_blank" rel="noopener" class="footer-social-icon" aria-label="Instagram">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            <a href="https://www.instagram.com/manodemy" target="_blank" rel="noopener" class="footer-social-icon"
+              aria-label="Instagram">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+              </svg>
             </a>
-            <a href="https://youtube.com/@manodemy" target="_blank" rel="noopener" class="footer-social-icon" aria-label="YouTube">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon fill="#0F172A" points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>
+            <a href="https://youtube.com/@manodemy" target="_blank" rel="noopener" class="footer-social-icon"
+              aria-label="YouTube">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path
+                  d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z" />
+                <polygon fill="#0F172A" points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" />
+              </svg>
             </a>
-            <a href="https://twitter.com/manodemy" target="_blank" rel="noopener" class="footer-social-icon" aria-label="Twitter / X">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            <a href="https://twitter.com/manodemy" target="_blank" rel="noopener" class="footer-social-icon"
+              aria-label="Twitter / X">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path
+                  d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+              </svg>
             </a>
           </div>
           <span class="copyright">Copyright &copy; 2026 Manodemy. All rights reserved.</span>
@@ -1949,7 +2417,7 @@
 
   <!-- Interactive Play Lesson Showcase Switcher Script -->
   <script>
-    (function() {
+    (function () {
       const titles = {
         1: '🖥️ Live Platform — Day 01: Introduction to SQL & Databases',
         2: '🖥️ Live Platform — Day 02: WHERE Filtering & Wildcard Search'
@@ -1980,7 +2448,7 @@
 
   <!-- Comparison Table Scroll Sync Script -->
   <script>
-    (function() {
+    (function () {
       const container = document.querySelector('.compare-wrap');
       const tabs = document.querySelectorAll('.comparison-tab-pill');
       if (!container || !tabs.length) return;
@@ -2039,15 +2507,15 @@
 
   <!-- Live Countdown Ticker Script -->
   <script>
-    (function() {
+    (function () {
       function startCountdown() {
         var h = 4, m = 18, s = 42;
         var hEl = document.getElementById('countHrs');
         var mEl = document.getElementById('countMin');
         var sEl = document.getElementById('countSec');
         if (!hEl || !mEl || !sEl) return;
-        
-        setInterval(function() {
+
+        setInterval(function () {
           s--;
           if (s < 0) { s = 59; m--; }
           if (m < 0) { m = 59; h--; }
@@ -2072,7 +2540,7 @@
       <button class="audio-intro-close" onclick="closeAudioIntroModal()">&times;</button>
       <div class="audio-intro-badge">🎙️ 10-SECOND AUDIO OVERVIEW</div>
       <h3 class="audio-intro-title">Welcome to Manodemy</h3>
-      
+
       <!-- Waveform Visualizer -->
       <div class="audio-waveform-container" id="audioWaveform">
         <span class="bar bar-1"></span>
@@ -2087,7 +2555,9 @@
 
       <!-- Narration Transcript -->
       <p class="audio-intro-transcript">
-        &ldquo;Welcome to Manodemy’s 60-Day Data Analytics Masterclass! Whether you’re a complete beginner breaking into data for the first time, or a practicing analyst gearing up to conquer next technical interviews — this masterclass was built specifically for you.&rdquo;
+        &ldquo;Welcome to Manodemy’s 60-Day Data Analytics Masterclass! Whether you’re a complete beginner breaking into
+        data for the first time, or a practicing analyst gearing up to conquer next technical interviews — this
+        masterclass was built specifically for you.&rdquo;
       </p>
 
       <!-- Player Controls -->
@@ -2121,13 +2591,13 @@
       nav.classList.add('nav-anim-p1');
 
       // ── Phase 2 (1.58s - 4.8s): "60-Days Data Analytics Masterclass!" -> Logo left, audio pill centered
-      _navP1Timer = setTimeout(function() {
+      _navP1Timer = setTimeout(function () {
         nav.classList.remove('nav-anim-p1');
         nav.classList.add('nav-anim-p2');
       }, 1580);
 
       // ── Phase 3 (4.8s - 8.34s): "Whether you're a complete beginner..." -> Image 1 below nav bar
-      _navP2Timer = setTimeout(function() {
+      _navP2Timer = setTimeout(function () {
         if (stage) {
           stage.classList.remove('transition-img2');
           stage.classList.add('active');
@@ -2137,20 +2607,20 @@
       }, 4800);
 
       // ── Phase 4 (8.34s - 12.54s): "or a practicing analyst..." -> Transition to Image 2
-      _navP3Timer = setTimeout(function() {
+      _navP3Timer = setTimeout(function () {
         if (stage) stage.classList.add('transition-img2');
         if (card) card.classList.add('img2-active');
         if (badgeText) badgeText.innerHTML = '🎯 PRACTICING ANALYST TECHNICAL INTERVIEWS';
       }, 8340);
 
       // ── Phase 5 (12.54s - 15.4s): "this masterclass was built specifically for you" -> Exact 1:1 Bounding Box Match
-      _navP4Timer = setTimeout(function() {
+      _navP4Timer = setTimeout(function () {
         document.body.classList.add('phase-5-active');
         if (stage) stage.classList.add('phase-5-card');
 
         // Defer measurement until after layout reflow of .hero-right
-        requestAnimationFrame(function() {
-          requestAnimationFrame(function() {
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
             var clockEl = document.getElementById('roadmap-root') || document.querySelector('.hero-right');
             var heroLeft = document.querySelector('.hero-left');
 
@@ -2176,7 +2646,7 @@
       }, 12540);
 
       // ── End (15.4s): Restore nav & full website content to normal
-      _navEndTimer = setTimeout(function() {
+      _navEndTimer = setTimeout(function () {
         nav.classList.remove('nav-anim-p1', 'nav-anim-p2');
         if (stage) {
           stage.classList.remove('active', 'transition-img2', 'phase-5-card');
@@ -2221,8 +2691,8 @@
         audio = new Audio('/landing_v2/intro_narration.mp3');
       }
 
-      audio.onended = function() { resetAllAudioState(); stopNavIntroAnimation(); };
-      audio.onpause = function() { resetAllAudioState(); stopNavIntroAnimation(); };
+      audio.onended = function () { resetAllAudioState(); stopNavIntroAnimation(); };
+      audio.onpause = function () { resetAllAudioState(); stopNavIntroAnimation(); };
 
       if (!audio.paused && !audio.ended) {
         audio.pause();
@@ -2232,16 +2702,16 @@
         audio.currentTime = 0;
         var p = audio.play();
         if (p && p.then) {
-          p.then(function() {
+          p.then(function () {
             setAllPlayingState();
             startNavIntroAnimation();
-          }).catch(function(err) {
+          }).catch(function (err) {
             console.warn('Primary src failed, fallback:', err);
             audio.src = '/intro_narration.mp3';
-            audio.play().then(function() {
+            audio.play().then(function () {
               setAllPlayingState();
               startNavIntroAnimation();
-            }).catch(function(e) {
+            }).catch(function (e) {
               console.error('All audio sources failed:', e);
               resetAllAudioState();
             });
@@ -2305,4 +2775,5 @@
   </script>
 
 </body>
+
 </html>

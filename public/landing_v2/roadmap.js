@@ -698,148 +698,29 @@ function animate(){
   renderer.render(scene, camera);
 }
 
-  // ── MECHANICAL TICK SYNTHESIZER (WEB AUDIO API) ─────────────
+  // ── MECHANICAL TICK SYNTHESIZER (DISABLED TO PREVENT NARRATION INTERFERENCE) ─────────────
   let audioCtx = null;
-  let compressor = null; // Reused to eliminate creation latency/lag
+  let compressor = null;
   let clockInViewport = false;
   let noiseBuffer = null;
-  let soundEnabled = true; // Enabled by default, subject to browser autoplay restrictions
+  let soundEnabled = false; // Disabled by default
 
   function updateVolumeUI() {
     const btn = root.querySelector('#btnVolume');
-    if (!btn) return;
-    if (!audioCtx || audioCtx.state !== 'running' || !soundEnabled) {
-      btn.innerHTML = '🔇';
-      btn.style.borderColor = 'rgba(255, 255, 255, 0.12)';
-      btn.style.boxShadow = 'none';
-      btn.style.color = '#a0aec0';
-    } else {
-      btn.innerHTML = '🔊';
-      btn.style.borderColor = 'var(--py)';
-      btn.style.boxShadow = '0 0 10px rgba(56, 189, 248, 0.2)';
-      btn.style.color = 'var(--py)';
-    }
+    if (btn) btn.style.display = 'none';
   }
 
   function getNoiseBuffer() {
-    if (noiseBuffer) return noiseBuffer;
-    if (!audioCtx) return null;
-    const bufferSize = audioCtx.sampleRate * 0.1; // 100ms
-    noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-    const data = noiseBuffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-      data[i] = Math.random() * 2 - 1;
-    }
-    return noiseBuffer;
+    return null;
   }
 
   function playMechanicalTick(isUserGesture = false) {
-    try {
-      if (!soundEnabled) return;
-      if (!audioCtx) {
-        if (isUserGesture) {
-          unlockAudio();
-        } else {
-          return;
-        }
-      }
-      
-      if (!isUserGesture && audioCtx.state !== 'running') {
-        return;
-      }
-
-      // Pre-initialize and reuse compressor to avoid latency delay
-      if (!compressor && audioCtx) {
-        compressor = audioCtx.createDynamicsCompressor();
-        compressor.threshold.setValueAtTime(-6, audioCtx.currentTime);
-        compressor.knee.setValueAtTime(20, audioCtx.currentTime);
-        compressor.ratio.setValueAtTime(20, audioCtx.currentTime);
-        compressor.attack.setValueAtTime(0.001, audioCtx.currentTime);
-        compressor.release.setValueAtTime(0.12, audioCtx.currentTime);
-        compressor.connect(audioCtx.destination);
-      }
-
-      const now = audioCtx.currentTime;
-      const playTime = now + 0.005; // 5ms look-ahead to eliminate jitter/latency
-
-      // Play the crisp TICK sound for every transition (replacing alternating TOCK)
-      // 1. High-frequency click noise (metal escapement strike)
-      const noise = audioCtx.createBufferSource();
-      const noiseFilter = audioCtx.createBiquadFilter();
-      const noiseGain = audioCtx.createGain();
-
-      noise.buffer = getNoiseBuffer();
-      noiseFilter.type = 'highpass';
-      noiseFilter.frequency.setValueAtTime(2400, playTime); // slightly cleaner/higher pitch
-      noiseFilter.Q.setValueAtTime(3, playTime);
-
-      noiseGain.gain.setValueAtTime(2.2, playTime); // Maximized noise transient (20x perceived volume)
-      noiseGain.gain.exponentialRampToValueAtTime(0.0001, playTime + 0.022);
-
-      noise.connect(noiseFilter);
-      noiseFilter.connect(noiseGain);
-      noiseGain.connect(compressor);
-
-      // 2. High metallic body resonance (spring & escapement snap)
-      const oscHigh = audioCtx.createOscillator();
-      const gainHigh = audioCtx.createGain();
-      
-      oscHigh.type = 'triangle';
-      oscHigh.frequency.setValueAtTime(1050, playTime); // clear metallic ring
-      
-      gainHigh.gain.setValueAtTime(1.8, playTime); // Maximized triangle tone
-      gainHigh.gain.exponentialRampToValueAtTime(0.0001, playTime + 0.045);
-
-      oscHigh.connect(gainHigh);
-      gainHigh.connect(compressor);
-
-      noise.start(playTime);
-      noise.stop(playTime + 0.025);
-      oscHigh.start(playTime);
-      oscHigh.stop(playTime + 0.050);
-    } catch (e) {
-      console.warn('[Audio] Tick synthesis failed:', e);
-    }
+    return;
   }
 
   function unlockAudio() {
-    try {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      // Initialize compressor inside user gesture to unlock route
-      if (!compressor && audioCtx) {
-        compressor = audioCtx.createDynamicsCompressor();
-        compressor.threshold.setValueAtTime(-6, audioCtx.currentTime);
-        compressor.knee.setValueAtTime(20, audioCtx.currentTime);
-        compressor.ratio.setValueAtTime(20, audioCtx.currentTime);
-        compressor.attack.setValueAtTime(0.001, audioCtx.currentTime);
-        compressor.release.setValueAtTime(0.12, audioCtx.currentTime);
-        compressor.connect(audioCtx.destination);
-      }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume().then(() => {
-          updateVolumeUI();
-        });
-      } else {
-        updateVolumeUI();
-      }
-      if (audioCtx.state === 'running') {
-        return;
-      }
-      // Play a tiny silent buffer to unlock iOS Safari
-      const buffer = audioCtx.createBuffer(1, 1, 22050);
-      const source = audioCtx.createBufferSource();
-      source.buffer = buffer;
-      source.connect(audioCtx.destination);
-      source.start(0);
-    } catch (e) {
-      console.warn('[Audio] Failed to unlock audio context:', e);
-    }
+    return;
   }
-  document.addEventListener('click', unlockAudio);
-  document.addEventListener('touchstart', unlockAudio, { passive: true });
-  document.addEventListener('touchend', unlockAudio, { passive: true });
 
   // Clock Viewport Visibility Observer
   if (window.IntersectionObserver && wrap) {

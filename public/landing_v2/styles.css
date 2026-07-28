@@ -8721,51 +8721,71 @@ p, .section-head p, .pricing-card-subtitle, .hero-sub {
 }
 
 
-/* ══════════════ 3D TEXT EFFECT & COLOR SCIENCE NAV UPGRADE ══════════════ */
+/* ══════════════ 3D TEXT EFFECT & COLOR SCIENCE NAV UPGRADE (REFINED) ══════════════ */
 
-/* Navigation Bar Glassmorphic Container & Ambient Color Science Glow */
+/* ── NAV CONTAINER & ALIGNMENT SCIENCE ── */
 .nav {
-  background: rgba(255, 255, 255, 0.82) !important;
+  background: rgba(255, 255, 255, 0.85) !important;
   backdrop-filter: blur(24px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.9) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.95) !important;
   border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
-  box-shadow: 0 4px 30px rgba(15, 23, 42, 0.04), 
+  box-shadow: 0 4px 30px rgba(15, 23, 42, 0.03), 
               inset 0 -1px 0 rgba(255, 255, 255, 0.6) !important;
   position: fixed;
   top: 0; left: 0; right: 0;
+  height: 72px !important;
   z-index: 1000;
+  display: flex !important;
+  align-items: center !important;
 }
 
 .nav--scrolled {
-  background: rgba(255, 255, 255, 0.95) !important;
-  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08), 
+  background: rgba(255, 255, 255, 0.96) !important;
+  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.06), 
               inset 0 -1px 0 rgba(255, 255, 255, 0.8) !important;
 }
 
-/* ── 3D BRAND LOGO TEXT EFFECT (Image 1 Style) ── */
+.nav-inner {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  height: 100% !important;
+  width: 100% !important;
+}
+
+.nav-links, .nav-right {
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+  height: 100% !important;
+}
+
+/* ── BRAND LOGO 3D TEXT EFFECT ── */
+.nav-brand {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+}
+
 .nav-brand-name {
   font-family: var(--font-display) !important;
   font-weight: 900 !important;
-  font-size: 26px !important;
-  color: #0F172A !important; /* Preserved dark navy font color */
+  font-size: 25px !important;
+  color: #0F172A !important; /* Original Dark Navy */
   letter-spacing: -0.03em !important;
+  line-height: 1.1 !important;
   text-shadow: 
-    0.5px 0.5px 0px #0a101d,
-    1px 1px 0px #060a12,
-    1.5px 1.5px 0px #030509,
-    0 4px 12px rgba(15, 23, 42, 0.15) !important;
+    0.5px 0.5px 0px #090e1a,
+    1px 1.5px 3px rgba(15, 23, 42, 0.12) !important;
   transition: transform 0.25s var(--ease) !important;
 }
 
 .nav-brand-name span {
-  color: #00B4D8 !important; /* Preserved vibrant cyan font color */
+  color: #00B4D8 !important; /* Original Vibrant Cyan */
   text-shadow: 
     0.5px 0.5px 0px #008ba8,
-    1px 1px 0px #00687e,
-    1.5px 1.5px 0px #004756,
-    0 0 16px rgba(0, 180, 216, 0.4),
-    0 4px 12px rgba(0, 180, 216, 0.2) !important;
+    0 0 14px rgba(0, 180, 216, 0.35) !important;
 }
 
 .nav-brand:hover .nav-brand-name {
@@ -8774,105 +8794,113 @@ p, .section-head p, .pricing-card-subtitle, .hero-sub {
 
 .nav-brand-sub {
   font-family: var(--font-data) !important;
-  font-size: 9px !important;
+  font-size: 8.5px !important;
   font-weight: 800 !important;
-  color: #475569 !important;
-  letter-spacing: 0.18em !important;
+  color: #64748B !important;
+  letter-spacing: 0.16em !important;
   text-transform: uppercase !important;
-  text-shadow: 0 1px 2px rgba(15, 23, 42, 0.1) !important;
+  line-height: 1 !important;
+  margin-top: 2px !important;
 }
 
-/* ── 3D NAV LINKS TEXT EFFECT (`Try Free ▾`, `Curriculum`, `Reviews`, `FAQ`, `Sign In`) ── */
+/* ── NAV LINKS CRISP 3D TEXT (`Try Free ▾`, `Curriculum`, `Reviews`, `FAQ`, `Sign In`) ── */
 .nav-pill,
 .btn-ghost,
 .dropdown > span {
   font-family: var(--font-display) !important;
-  font-weight: 700 !important;
-  font-size: 14px !important;
-  color: #475569 !important; /* Preserved original dark slate color */
-  text-shadow: 
-    0.5px 0.5px 0px rgba(15, 23, 42, 0.18),
-    1px 1.5px 3px rgba(15, 23, 42, 0.1) !important;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  font-weight: 600 !important;
+  font-size: 13.5px !important;
+  color: #334155 !important; /* Preserved dark slate font color */
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  height: 40px !important;
+  padding: 0 14px !important;
+  border-radius: 20px !important;
+  line-height: 1 !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .nav-pill:hover,
 .btn-ghost:hover,
 .dropdown:hover > span {
   color: #0F172A !important;
+  background: rgba(15, 23, 42, 0.04) !important;
   text-shadow: 
-    0.5px 0.5px 0px #0a101d,
-    1px 1.5px 0px rgba(15, 23, 42, 0.3),
-    0 0 10px rgba(0, 180, 216, 0.25) !important;
-  transform: translateY(-2px) scale(1.03) !important;
+    0 1px 0 #FFFFFF,
+    0 0 8px rgba(0, 180, 216, 0.2) !important;
+  transform: translateY(-1px) !important;
 }
 
-/* ── 3D HEAR INTRO AUDIO BUTTON (`▶ Hear Intro 10s`) ── */
+/* ── HEAR INTRO AUDIO BUTTON (`▶ Hear Intro 10s`) ── */
 .nav-play-intro-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 40px !important;
+  padding: 0 16px 0 10px !important;
   background: linear-gradient(135deg, rgba(5, 150, 105, 0.08), rgba(5, 150, 105, 0.14)) !important;
   border: 1px solid rgba(5, 150, 105, 0.3) !important;
-  box-shadow: 
-    inset 0 1px 0 rgba(255, 255, 255, 0.7),
-    0 3px 0 rgba(4, 120, 87, 0.2),
-    0 6px 16px rgba(5, 150, 105, 0.12) !important;
+  border-radius: 20px !important;
+  font-family: var(--font-body) !important;
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
   color: #059669 !important; /* Preserved emerald color */
-  text-shadow: 0.5px 0.5px 0px rgba(4, 120, 87, 0.3) !important;
-  font-weight: 800 !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 2px 8px rgba(5, 150, 105, 0.1) !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  line-height: 1 !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .nav-play-intro-btn:hover {
   background: linear-gradient(135deg, rgba(5, 150, 105, 0.14), rgba(5, 150, 105, 0.22)) !important;
   border-color: #059669 !important;
-  transform: translateY(-2px) !important;
+  transform: translateY(-1.5px) !important;
   box-shadow: 
-    inset 0 1px 0 rgba(255, 255, 255, 0.8),
-    0 4px 0 rgba(4, 120, 87, 0.3),
-    0 8px 24px rgba(5, 150, 105, 0.22) !important;
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 4px 14px rgba(5, 150, 105, 0.2) !important;
 }
 
 .nav-play-intro-btn:active {
-  transform: translateY(1px) !important;
-  box-shadow: 
-    inset 0 1px 0 rgba(255, 255, 255, 0.4),
-    0 1px 0 rgba(4, 120, 87, 0.2) !important;
+  transform: translateY(0) scale(0.98) !important;
 }
 
-/* ── 3D ENROLL BUTTON TEXT & EMBOSSED CONTAINER (`Enroll Full Course — ₹2,999`) ── */
+/* ── ENROLL BUTTON EMBOSSED CONTAINER (`Enroll Full Course — ₹2,999`) ── */
 .btn-nav-buy {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 40px !important;
+  padding: 0 22px !important;
   background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%) !important; /* Preserved dark navy */
   color: #FFFFFF !important;
   font-family: var(--font-display) !important;
   font-weight: 800 !important;
   font-size: 13.5px !important;
-  letter-spacing: 0.01em !important;
-  padding: 11px 22px !important;
-  border-radius: 50px !important;
+  border-radius: 20px !important;
   border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  text-shadow: 
-    0.5px 0.5px 0px #04070d,
-    1px 1px 0px #020306,
-    0 1px 1px rgba(255, 255, 255, 0.3) !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4) !important;
   box-shadow: 
     inset 0 1px 0 rgba(255, 255, 255, 0.25),
-    0 4px 0 #070c17,
-    0 8px 24px rgba(15, 23, 42, 0.3) !important;
+    0 3px 12px rgba(15, 23, 42, 0.25) !important;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .btn-nav-buy:hover {
   background: linear-gradient(135deg, #334155 0%, #1E293B 100%) !important;
-  transform: translateY(-2px) !important;
+  transform: translateY(-1.5px) !important;
   box-shadow: 
-    inset 0 1px 0 rgba(255, 255, 255, 0.4),
-    0 6px 0 #070c17,
-    0 12px 30px rgba(15, 23, 42, 0.4),
-    0 0 20px rgba(0, 180, 216, 0.25) !important;
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 6px 20px rgba(15, 23, 42, 0.35),
+    0 0 16px rgba(0, 180, 216, 0.2) !important;
 }
 
 .btn-nav-buy:active {
-  transform: translateY(2px) !important;
-  box-shadow: 
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    0 1px 0 #070c17,
-    0 4px 12px rgba(15, 23, 42, 0.2) !important;
+  transform: translateY(0) scale(0.98) !important;
 }

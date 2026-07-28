@@ -8719,3 +8719,160 @@ p, .section-head p, .pricing-card-subtitle, .hero-sub {
   padding: 6px 12px;
   border-radius: 20px;
 }
+
+
+/* ══════════════ 3D TEXT EFFECT & COLOR SCIENCE NAV UPGRADE ══════════════ */
+
+/* Navigation Bar Glassmorphic Container & Ambient Color Science Glow */
+.nav {
+  background: rgba(255, 255, 255, 0.82) !important;
+  backdrop-filter: blur(24px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.9) !important;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
+  box-shadow: 0 4px 30px rgba(15, 23, 42, 0.04), 
+              inset 0 -1px 0 rgba(255, 255, 255, 0.6) !important;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+}
+
+.nav--scrolled {
+  background: rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08), 
+              inset 0 -1px 0 rgba(255, 255, 255, 0.8) !important;
+}
+
+/* ── 3D BRAND LOGO TEXT EFFECT (Image 1 Style) ── */
+.nav-brand-name {
+  font-family: var(--font-display) !important;
+  font-weight: 900 !important;
+  font-size: 26px !important;
+  color: #0F172A !important; /* Preserved dark navy font color */
+  letter-spacing: -0.03em !important;
+  text-shadow: 
+    0.5px 0.5px 0px #0a101d,
+    1px 1px 0px #060a12,
+    1.5px 1.5px 0px #030509,
+    0 4px 12px rgba(15, 23, 42, 0.15) !important;
+  transition: transform 0.25s var(--ease) !important;
+}
+
+.nav-brand-name span {
+  color: #00B4D8 !important; /* Preserved vibrant cyan font color */
+  text-shadow: 
+    0.5px 0.5px 0px #008ba8,
+    1px 1px 0px #00687e,
+    1.5px 1.5px 0px #004756,
+    0 0 16px rgba(0, 180, 216, 0.4),
+    0 4px 12px rgba(0, 180, 216, 0.2) !important;
+}
+
+.nav-brand:hover .nav-brand-name {
+  transform: translateY(-1px) scale(1.02);
+}
+
+.nav-brand-sub {
+  font-family: var(--font-data) !important;
+  font-size: 9px !important;
+  font-weight: 800 !important;
+  color: #475569 !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase !important;
+  text-shadow: 0 1px 2px rgba(15, 23, 42, 0.1) !important;
+}
+
+/* ── 3D NAV LINKS TEXT EFFECT (`Try Free ▾`, `Curriculum`, `Reviews`, `FAQ`, `Sign In`) ── */
+.nav-pill,
+.btn-ghost,
+.dropdown > span {
+  font-family: var(--font-display) !important;
+  font-weight: 700 !important;
+  font-size: 14px !important;
+  color: #475569 !important; /* Preserved original dark slate color */
+  text-shadow: 
+    0.5px 0.5px 0px rgba(15, 23, 42, 0.18),
+    1px 1.5px 3px rgba(15, 23, 42, 0.1) !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.nav-pill:hover,
+.btn-ghost:hover,
+.dropdown:hover > span {
+  color: #0F172A !important;
+  text-shadow: 
+    0.5px 0.5px 0px #0a101d,
+    1px 1.5px 0px rgba(15, 23, 42, 0.3),
+    0 0 10px rgba(0, 180, 216, 0.25) !important;
+  transform: translateY(-2px) scale(1.03) !important;
+}
+
+/* ── 3D HEAR INTRO AUDIO BUTTON (`▶ Hear Intro 10s`) ── */
+.nav-play-intro-btn {
+  background: linear-gradient(135deg, rgba(5, 150, 105, 0.08), rgba(5, 150, 105, 0.14)) !important;
+  border: 1px solid rgba(5, 150, 105, 0.3) !important;
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 3px 0 rgba(4, 120, 87, 0.2),
+    0 6px 16px rgba(5, 150, 105, 0.12) !important;
+  color: #059669 !important; /* Preserved emerald color */
+  text-shadow: 0.5px 0.5px 0px rgba(4, 120, 87, 0.3) !important;
+  font-weight: 800 !important;
+}
+
+.nav-play-intro-btn:hover {
+  background: linear-gradient(135deg, rgba(5, 150, 105, 0.14), rgba(5, 150, 105, 0.22)) !important;
+  border-color: #059669 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 4px 0 rgba(4, 120, 87, 0.3),
+    0 8px 24px rgba(5, 150, 105, 0.22) !important;
+}
+
+.nav-play-intro-btn:active {
+  transform: translateY(1px) !important;
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 1px 0 rgba(4, 120, 87, 0.2) !important;
+}
+
+/* ── 3D ENROLL BUTTON TEXT & EMBOSSED CONTAINER (`Enroll Full Course — ₹2,999`) ── */
+.btn-nav-buy {
+  background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%) !important; /* Preserved dark navy */
+  color: #FFFFFF !important;
+  font-family: var(--font-display) !important;
+  font-weight: 800 !important;
+  font-size: 13.5px !important;
+  letter-spacing: 0.01em !important;
+  padding: 11px 22px !important;
+  border-radius: 50px !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  text-shadow: 
+    0.5px 0.5px 0px #04070d,
+    1px 1px 0px #020306,
+    0 1px 1px rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 4px 0 #070c17,
+    0 8px 24px rgba(15, 23, 42, 0.3) !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.btn-nav-buy:hover {
+  background: linear-gradient(135deg, #334155 0%, #1E293B 100%) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 6px 0 #070c17,
+    0 12px 30px rgba(15, 23, 42, 0.4),
+    0 0 20px rgba(0, 180, 216, 0.25) !important;
+}
+
+.btn-nav-buy:active {
+  transform: translateY(2px) !important;
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 1px 0 #070c17,
+    0 4px 12px rgba(15, 23, 42, 0.2) !important;
+}

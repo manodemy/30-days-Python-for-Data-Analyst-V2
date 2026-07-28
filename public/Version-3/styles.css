@@ -858,7 +858,7 @@ a { color: var(--cyan); text-decoration: none; }
 .editor-wrap {
   flex: 1;
   overflow: hidden;
-  min-height: 140px;
+  min-height: 125px;
 }
 .CodeMirror,
 .CodeMirror-gutters,

@@ -103,48 +103,14 @@
   <!-- Skip Navigation for Accessibility -->
   <a href="#main-content" class="skip-link">Skip to main content</a>
 
-  <!-- Logo Intro Animation Overlay -->
-  <div id="logoIntroOverlay" style="
-    display:none;
-    position:fixed;
-    top:76px;
-    left:0;
-    right:0;
-    bottom:0;
-    z-index:999;
-    background:rgba(7,11,17,0.97);
-    backdrop-filter:blur(4px);
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-    pointer-events:none;
-  ">
-    <div id="logoIntroCenterStage" style="
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:14px;
-      transform:scale(0.05);
-      opacity:0;
-      transition: transform 1.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.4s ease;
-      will-change:transform,opacity;
-    ">
-      <img src="/landing_v2/manodemy_3d_keycap.png" alt="Manodemy Logo" style="width:120px;height:120px;object-fit:contain;" />
-      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
-        <span style="font-family:'Inter',sans-serif;font-size:2.4rem;font-weight:800;letter-spacing:-0.02em;color:#fff;">Mano<span style="color:#38bdf8;">demy</span></span>
-        <span style="font-family:'Inter',sans-serif;font-size:0.75rem;font-weight:600;letter-spacing:0.2em;color:#64748b;">● HANDS-ON EDTECH</span>
-      </div>
-    </div>
-  </div>
-
   <!-- Floating Navigation -->
   <header>
     <nav class="nav" aria-label="Primary site navigation">
       <div class="container nav-inner">
         <!-- 1. Left Brand Logo -->
-        <a href="/landing_v2/index.html" class="nav-brand" id="navBrandLink" aria-label="Manodemy Home" style="transition:opacity 0.3s;">
+        <a href="/landing_v2/index.html" class="nav-brand" aria-label="Manodemy Home">
           <div class="nav-brand-wrapper">
-            <img class="nav-brand-symbol" id="navBrandSymbol" src="/landing_v2/manodemy_3d_keycap.png" alt="Manodemy 3D Keycap Logo" width="38" height="38" />
+            <img class="nav-brand-symbol" src="/landing_v2/manodemy_3d_keycap.png" alt="Manodemy 3D Keycap Logo" width="38" height="38" />
             <div class="nav-brand-text">
               <span class="nav-brand-name">Mano<span>demy</span></span>
               <span class="nav-brand-sub"><span class="brand-sub-dot">●</span> HANDS-ON EDTECH</span>
@@ -1917,128 +1883,34 @@
   </div>
 
   <script>
-    // ── LOGO INTRO ANIMATION ───────────────────────────────────────────────
-    var _logoAnimTimer1 = null;
-    var _logoAnimTimer2 = null;
-    var _logoAnimTimer3 = null;
-
-    function startLogoIntroAnimation() {
-      clearTimeout(_logoAnimTimer1);
-      clearTimeout(_logoAnimTimer2);
-      clearTimeout(_logoAnimTimer3);
-
-      var overlay   = document.getElementById('logoIntroOverlay');
-      var stage     = document.getElementById('logoIntroCenterStage');
-      var navBrand  = document.getElementById('navBrandLink');
-
-      if (!overlay || !stage) return;
-
-      // Hide nav brand while overlay is showing
-      if (navBrand) navBrand.style.opacity = '0';
-
-      // Show overlay
-      overlay.style.display = 'flex';
-
-      // Trigger zoom-in after one frame so transition fires
-      requestAnimationFrame(function() {
-        requestAnimationFrame(function() {
-          stage.style.transform = 'scale(1)';
-          stage.style.opacity   = '1';
-        });
-      });
-
-      // At ~1.58s ("Manodemy" spoken) — start FLIP to nav bar
-      _logoAnimTimer1 = setTimeout(function() {
-        flyLogoToNav(overlay, stage, navBrand);
-      }, 1580);
-    }
-
-    function flyLogoToNav(overlay, stage, navBrand) {
-      // Get current center position of the centered logo
-      var stageRect = stage.getBoundingClientRect();
-      var stageCX   = stageRect.left + stageRect.width  / 2;
-      var stageCY   = stageRect.top  + stageRect.height / 2;
-
-      // Get destination: nav brand center position
-      var destRect  = navBrand ? navBrand.getBoundingClientRect() : {left:20,top:24,width:160,height:38};
-      var destCX    = destRect.left + destRect.width  / 2;
-      var destCY    = destRect.top  + destRect.height / 2;
-
-      // Scale ratio: nav brand is ~40px tall, stage is ~160px tall
-      var scaleRatio = 38 / 120;
-
-      // Calculate translate offset from current center to nav center
-      var tx = destCX - stageCX;
-      var ty = destCY - stageCY;
-
-      // Apply FLIP transition
-      stage.style.transition = 'transform 0.65s cubic-bezier(0.4,0,0.2,1), opacity 0.5s ease';
-      stage.style.transform  = 'translate(' + tx + 'px, ' + ty + 'px) scale(' + scaleRatio + ')';
-      stage.style.opacity    = '0';
-
-      // After fly animation: show real nav brand, hide overlay
-      _logoAnimTimer2 = setTimeout(function() {
-        if (navBrand) {
-          navBrand.style.transition = 'opacity 0.3s ease';
-          navBrand.style.opacity    = '1';
-        }
-        _logoAnimTimer3 = setTimeout(function() {
-          overlay.style.display = 'none';
-          // Reset stage for next play
-          stage.style.transition = 'none';
-          stage.style.transform  = 'scale(0.05)';
-          stage.style.opacity    = '0';
-        }, 320);
-      }, 680);
-    }
-
-    function stopLogoIntroAnimation() {
-      clearTimeout(_logoAnimTimer1);
-      clearTimeout(_logoAnimTimer2);
-      clearTimeout(_logoAnimTimer3);
-      var overlay  = document.getElementById('logoIntroOverlay');
-      var stage    = document.getElementById('logoIntroCenterStage');
-      var navBrand = document.getElementById('navBrandLink');
-      if (overlay)  { overlay.style.display = 'none'; }
-      if (stage)    { stage.style.transition = 'none'; stage.style.transform = 'scale(0.05)'; stage.style.opacity = '0'; }
-      if (navBrand) { navBrand.style.opacity = '1'; }
-    }
-    // ──────────────────────────────────────────────────────────────────────────
-
     function playOrPauseIntroAudio() {
       var audio = document.getElementById('navIntroAudioElement');
       if (!audio) {
         audio = new Audio('/landing_v2/intro_narration.mp3');
       }
 
-      audio.onended = function() { resetAllAudioState(); stopLogoIntroAnimation(); };
-      audio.onpause = function() { resetAllAudioState(); stopLogoIntroAnimation(); };
+      audio.onended = resetAllAudioState;
+      audio.onpause = resetAllAudioState;
 
       if (!audio.paused && !audio.ended) {
         audio.pause();
         resetAllAudioState();
-        stopLogoIntroAnimation();
       } else {
         audio.currentTime = 0;
         var p = audio.play();
         if (p && p.then) {
           p.then(function() {
             setAllPlayingState();
-            startLogoIntroAnimation();
           }).catch(function(err) {
             console.warn("Primary src failed, attempting /intro_narration.mp3 fallback:", err);
             audio.src = '/intro_narration.mp3';
-            audio.play().then(function() {
-              setAllPlayingState();
-              startLogoIntroAnimation();
-            }).catch(function(e) {
+            audio.play().then(setAllPlayingState).catch(function(e) {
               console.error("All audio sources failed:", e);
               resetAllAudioState();
             });
           });
         } else {
           setAllPlayingState();
-          startLogoIntroAnimation();
         }
       }
     }

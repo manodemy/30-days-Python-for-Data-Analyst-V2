@@ -1220,55 +1220,60 @@
 
         <div class="pricing-grid reveal" style="display: flex; justify-content: center; width: 100%; max-width: 1180px; margin: 0 auto;">
 
-          <!-- Exact Rough Design Layout: Sleek Horizontal Banner -->
-          <div class="pricing-banner-rough">
+          <!-- Luxury Redesigned Horizontal Pricing Banner -->
+          <div class="pricing-banner-rough pricing-banner-redesign">
 
-            <!-- COL 1: Title + Plus + Certificate -->
+            <!-- COL 1: Title + Plus Icon Pill + Certificate -->
             <div class="pricing-rough-title-col">
+              <div class="pricing-title-badge-top">⚡ FULL ACCESS</div>
               <h3 class="pricing-rough-title">60-Day<br>Masterclass</h3>
-              <div class="pricing-rough-plus">➕</div>
-              <div class="pricing-rough-cert">Certificate</div>
+              <div class="pricing-rough-plus-pill">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 3.33331V12.6666M3.33334 7.99998H12.6667" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div class="pricing-rough-cert">Verified Certificate</div>
             </div>
 
-            <!-- COL 2: 2-Column x 3-Row Feature Grid -->
+            <!-- COL 2: 2-Column x 3-Row Feature Grid with Categorized Icon Tints -->
             <div class="pricing-rough-features-col">
               <ul class="pricing-rough-feature-grid">
-                <li>
+                <li class="feat-item--emerald">
                   <div class="feat-icon-box">⚡</div>
                   <div class="feat-text-box">
                     <strong>60–day structured curriculum</strong>
                     <span>SQL (18) + Excel (12) + Python (30)</span>
                   </div>
                 </li>
-                <li>
+                <li class="feat-item--purple">
                   <div class="feat-icon-box">🎓</div>
                   <div class="feat-text-box">
                     <strong>Verified certificate</strong>
                     <span>Sharable credential on completion</span>
                   </div>
                 </li>
-                <li>
+                <li class="feat-item--cyan">
                   <div class="feat-icon-box">💻</div>
                   <div class="feat-text-box">
                     <strong>Browser–based coding</strong>
                     <span>Zero installation, run code instantly</span>
                   </div>
                 </li>
-                <li>
+                <li class="feat-item--sky">
                   <div class="feat-icon-box">♾️</div>
                   <div class="feat-text-box">
                     <strong>Lifetime access</strong>
                     <span>Includes 2026 curriculum updates</span>
                   </div>
                 </li>
-                <li>
+                <li class="feat-item--amber">
                   <div class="feat-icon-box">🎯</div>
                   <div class="feat-text-box">
                     <strong>1,000+ Practice challenges</strong>
                     <span>Write real queries with live grading</span>
                   </div>
                 </li>
-                <li>
+                <li class="feat-item--blue">
                   <div class="feat-icon-box">🛡️</div>
                   <div class="feat-text-box">
                     <strong>7–day money–back guarantee</strong>
@@ -1278,21 +1283,23 @@
               </ul>
             </div>
 
-            <!-- COL 3: Price + CTA Button + Free Link -->
+            <!-- COL 3: Price + CTA Button + Free Link (Structured Price Card) -->
             <div class="pricing-rough-action-col">
-              <div class="pricing-price-group">
-                <div class="pricing-price-row">
-                  <span class="pricing-price-now" id="priceSelfNow">$49</span>
-                  <span class="pricing-price-old" id="priceSelfOld">$149</span>
-                  <span class="pricing-discount-badge" id="priceSelfDiscount">67% OFF</span>
+              <div class="pricing-action-card-inner">
+                <div class="pricing-price-group">
+                  <div class="pricing-price-row">
+                    <span class="pricing-price-now" id="priceSelfNow">$49</span>
+                    <span class="pricing-price-old" id="priceSelfOld">$149</span>
+                    <span class="pricing-discount-badge" id="priceSelfDiscount">67% OFF</span>
+                  </div>
+                  <div class="pricing-price-note">One-time payment · Lifetime access · No hidden fees</div>
                 </div>
-                <div class="pricing-price-note">One-time payment · Lifetime access · No hidden fees</div>
-              </div>
 
-              <button class="pricing-buy-btn pricing-buy-btn--selfpaced pricing-btn-rough" data-cta="buy" data-tier="selfpaced" id="buyBtnSelfpaced">
-                🚀 Enroll Now — Start Learning
-              </button>
-              <div class="pricing-free-escape">Not sure yet? <a href="/sql/day01.html">Try Day 01 completely free &rarr;</a></div>
+                <button class="pricing-buy-btn pricing-buy-btn--selfpaced pricing-btn-rough" data-cta="buy" data-tier="selfpaced" id="buyBtnSelfpaced">
+                  🚀 Enroll Now — Start Learning
+                </button>
+                <div class="pricing-free-escape">Not sure yet? <a href="/sql/day01.html">Try Day 01 completely free &rarr;</a></div>
+              </div>
             </div>
 
           </div>

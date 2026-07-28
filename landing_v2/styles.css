@@ -6217,197 +6217,290 @@ td.col-mano {
   border-radius: 20px 20px 0 0;
 }
 
-/* ══════════════ EXACT ROUGH DESIGN PRICING BANNER ══════════════ */
-.pricing-banner-rough {
+/* ══════════════ LUXURY REDESIGNED PRICING BANNER ══════════════ */
+.pricing-banner-redesign {
   display: grid !important;
-  grid-template-columns: 180px 1.4fr 300px !important;
+  grid-template-columns: 210px 1.45fr 320px !important;
   gap: 20px !important;
   align-items: center !important;
   width: 100% !important;
   max-width: 1180px !important;
   background: #ffffff !important;
-  padding: 16px 20px !important;
-  border-radius: 16px !important;
-  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05) !important;
-  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  padding: 20px 24px !important;
+  border-radius: 20px !important;
+  box-shadow: 0 12px 36px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.04) !important;
+  border: 1px solid rgba(15, 23, 42, 0.09) !important;
+  position: relative !important;
+  overflow: hidden !important;
 }
 
-/* COL 1: Title + Plus + Certificate */
-.pricing-rough-title-col {
+/* Glowing Accent Bar at top of card */
+.pricing-banner-redesign::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 4px !important;
+  background: linear-gradient(90deg, #0284C7 0%, #10B981 50%, #06B6D4 100%) !important;
+  border-radius: 20px 20px 0 0 !important;
+}
+
+/* COL 1: Title + Plus Icon Pill + Certificate */
+.pricing-banner-redesign .pricing-rough-title-col {
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
   text-align: center !important;
-  padding-right: 8px !important;
+  padding-right: 16px !important;
+  border-right: 1px dashed rgba(15, 23, 42, 0.10) !important;
 }
 
-.pricing-rough-title {
+.pricing-title-badge-top {
+  font-size: 9px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.1em !important;
+  color: #0284C7 !important;
+  background: rgba(2, 132, 199, 0.08) !important;
+  border: 1px solid rgba(2, 132, 199, 0.2) !important;
+  padding: 3px 8px !important;
+  border-radius: 12px !important;
+  margin-bottom: 8px !important;
+  text-transform: uppercase !important;
+}
+
+.pricing-banner-redesign .pricing-rough-title {
   font-family: var(--font-display) !important;
-  font-size: 21px !important;
+  font-size: 22px !important;
   font-weight: 900 !important;
   color: #0F172A !important;
   line-height: 1.15 !important;
   margin: 0 !important;
+  letter-spacing: -0.02em !important;
 }
 
-.pricing-rough-plus {
-  font-size: 20px !important;
-  color: #0284C7 !important;
-  margin: 4px 0 !important;
-  line-height: 1 !important;
+.pricing-rough-plus-pill {
+  width: 26px !important;
+  height: 26px !important;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, #0284C7 0%, #06B6D4 100%) !important;
+  color: #FFFFFF !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 8px 0 !important;
+  box-shadow: 0 3px 10px rgba(2, 132, 199, 0.3) !important;
 }
 
-.pricing-rough-cert {
+.pricing-banner-redesign .pricing-rough-cert {
   font-family: var(--font-display) !important;
-  font-size: 18px !important;
+  font-size: 17px !important;
   font-weight: 800 !important;
-  color: #0F172A !important;
+  color: #059669 !important;
   line-height: 1.1 !important;
 }
 
-/* COL 2: 2-Column x 3-Row Feature Grid */
-.pricing-rough-features-col {
+/* COL 2: Feature Grid with Categorized Color Tints */
+.pricing-banner-redesign .pricing-rough-features-col {
   display: flex !important;
   align-items: center !important;
+  padding-right: 12px !important;
 }
 
-.pricing-rough-feature-grid {
+.pricing-banner-redesign .pricing-rough-feature-grid {
   display: grid !important;
   grid-template-columns: 1fr 1fr !important;
-  gap: 12px 18px !important;
+  gap: 14px 20px !important;
   margin: 0 !important;
   padding: 0 !important;
   list-style: none !important;
   width: 100% !important;
 }
 
-.pricing-rough-feature-grid li {
+.pricing-banner-redesign .pricing-rough-feature-grid li {
   display: flex !important;
   align-items: flex-start !important;
   gap: 10px !important;
   margin: 0 !important;
-  padding: 0 !important;
+  padding: 4px 6px !important;
+  border-radius: 10px !important;
+  transition: all 0.2s ease !important;
 }
 
-.pricing-rough-feature-grid .feat-icon-box {
-  width: 32px !important;
-  height: 32px !important;
-  min-width: 32px !important;
-  font-size: 14px !important;
-  border-radius: 8px !important;
+.pricing-banner-redesign .pricing-rough-feature-grid li:hover {
+  background: rgba(248, 250, 252, 0.9) !important;
+  transform: translateX(2px) !important;
+}
+
+/* Custom Icon Box Color Tints */
+.feat-item--emerald .feat-icon-box {
   background: #ECFDF5 !important;
-  border: 1px solid rgba(16, 185, 129, 0.2) !important;
+  border: 1px solid rgba(16, 185, 129, 0.25) !important;
+  color: #059669 !important;
+}
+.feat-item--purple .feat-icon-box {
+  background: #F3E8FF !important;
+  border: 1px solid rgba(147, 51, 234, 0.25) !important;
+  color: #7C3AED !important;
+}
+.feat-item--cyan .feat-icon-box {
+  background: #E0F2FE !important;
+  border: 1px solid rgba(14, 165, 233, 0.25) !important;
+  color: #0284C7 !important;
+}
+.feat-item--sky .feat-icon-box {
+  background: #F0F9FF !important;
+  border: 1px solid rgba(56, 189, 248, 0.25) !important;
+  color: #0369A1 !important;
+}
+.feat-item--amber .feat-icon-box {
+  background: #FEF3C7 !important;
+  border: 1px solid rgba(245, 158, 11, 0.25) !important;
+  color: #D97706 !important;
+}
+.feat-item--blue .feat-icon-box {
+  background: #EFF6FF !important;
+  border: 1px solid rgba(59, 130, 246, 0.25) !important;
+  color: #2563EB !important;
+}
+
+.pricing-banner-redesign .feat-icon-box {
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px !important;
+  font-size: 15px !important;
+  border-radius: 9px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   flex-shrink: 0 !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03) !important;
 }
 
-.pricing-rough-feature-grid .feat-text-box strong {
+.pricing-banner-redesign .feat-text-box strong {
   display: block !important;
-  font-size: 12.5px !important;
+  font-size: 13px !important;
   font-weight: 800 !important;
   color: #0F172A !important;
   line-height: 1.25 !important;
 }
 
-.pricing-rough-feature-grid .feat-text-box span {
+.pricing-banner-redesign .feat-text-box span {
   display: block !important;
-  font-size: 11px !important;
-  color: #94A3B8 !important;
+  font-size: 11.5px !important;
+  color: #64748B !important;
+  font-weight: 500 !important;
   line-height: 1.2 !important;
   margin-top: 1px !important;
 }
 
-/* COL 3: Price + Button + Escape Link */
-.pricing-rough-action-col {
+/* COL 3: Pricing Action Card Inner Block */
+.pricing-action-card-inner {
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(241, 245, 249, 0.95)) !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  border-radius: 14px !important;
+  padding: 16px 18px !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
   text-align: center !important;
 }
 
-.pricing-rough-action-col .pricing-price-group {
-  margin-bottom: 8px !important;
+.pricing-banner-redesign .pricing-price-group {
+  margin-bottom: 10px !important;
   padding: 0 !important;
 }
 
-.pricing-rough-action-col .pricing-price-row {
+.pricing-banner-redesign .pricing-price-row {
   display: flex !important;
   align-items: baseline !important;
   justify-content: center !important;
   gap: 8px !important;
 }
 
-.pricing-rough-action-col .pricing-price-now {
-  font-size: 42px !important;
+.pricing-banner-redesign .pricing-price-now {
+  font-size: 44px !important;
   font-weight: 900 !important;
   color: #0F172A !important;
   line-height: 1 !important;
+  letter-spacing: -0.03em !important;
 }
 
-.pricing-rough-action-col .pricing-price-old {
-  font-size: 17px !important;
+.pricing-banner-redesign .pricing-price-old {
+  font-size: 18px !important;
   color: #94A3B8 !important;
   text-decoration: line-through !important;
 }
 
-.pricing-rough-action-col .pricing-discount-badge {
+.pricing-banner-redesign .pricing-discount-badge {
   background: #10B981 !important;
   color: #FFFFFF !important;
-  font-size: 11px !important;
+  font-size: 11.5px !important;
   font-weight: 800 !important;
   padding: 3px 9px !important;
   border-radius: 20px !important;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25) !important;
 }
 
-.pricing-rough-action-col .pricing-price-note {
-  font-size: 10.5px !important;
-  color: #94A3B8 !important;
+.pricing-banner-redesign .pricing-price-note {
+  font-size: 11px !important;
+  color: #64748B !important;
+  font-weight: 600 !important;
   margin-top: 4px !important;
 }
 
-.pricing-btn-rough {
+.pricing-banner-redesign .pricing-btn-rough {
   width: 100% !important;
-  padding: 10px 18px !important;
-  font-size: 13.5px !important;
+  padding: 11px 20px !important;
+  font-size: 14px !important;
   font-weight: 800 !important;
   background: linear-gradient(135deg, #059669 0%, #00B4D8 100%) !important;
   color: #FFFFFF !important;
   border: none !important;
   border-radius: 50px !important;
-  box-shadow: 0 4px 16px rgba(5, 150, 105, 0.3) !important;
+  box-shadow: 0 6px 20px rgba(5, 150, 105, 0.35) !important;
   cursor: pointer !important;
   transition: all 0.2s ease !important;
 }
 
-.pricing-btn-rough:hover {
+.pricing-banner-redesign .pricing-btn-rough:hover {
   transform: translateY(-2px) !important;
-  box-shadow: 0 8px 24px rgba(5, 150, 105, 0.4) !important;
+  box-shadow: 0 10px 28px rgba(5, 150, 105, 0.45) !important;
+  filter: brightness(1.05) !important;
 }
 
-.pricing-rough-action-col .pricing-free-escape {
-  margin-top: 6px !important;
-  font-size: 10.5px !important;
+.pricing-banner-redesign .pricing-free-escape {
+  margin-top: 8px !important;
+  font-size: 11px !important;
   color: #64748B !important;
 }
 
-.pricing-rough-action-col .pricing-free-escape a {
+.pricing-banner-redesign .pricing-free-escape a {
   color: #059669 !important;
-  font-weight: 600 !important;
+  font-weight: 700 !important;
   text-decoration: underline !important;
 }
 
+/* Mobile responsive layout */
 @media (max-width: 1024px) {
-  .pricing-banner-rough {
+  .pricing-banner-redesign {
     grid-template-columns: 1fr !important;
     gap: 20px !important;
     padding: 20px !important;
   }
-  .pricing-rough-feature-grid {
+  .pricing-banner-redesign .pricing-rough-title-col {
+    border-right: none !important;
+    border-bottom: 1px dashed rgba(15, 23, 42, 0.10) !important;
+    padding-right: 0 !important;
+    padding-bottom: 16px !important;
+  }
+  .pricing-banner-redesign .pricing-rough-features-col {
+    padding-right: 0 !important;
+  }
+  .pricing-banner-redesign .pricing-rough-feature-grid {
     grid-template-columns: 1fr !important;
-    gap: 12px !important;
+    gap: 10px !important;
   }
 }
 

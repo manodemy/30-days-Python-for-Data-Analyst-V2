@@ -1,9 +1,5 @@
 "use strict";
 
-/* Manodemy Landing v2.0 — App Logic */
-
-
-
 document.addEventListener('DOMContentLoaded', () => {
 
   /* ═══ REFERRAL LINK CAPTURE ═══ */
@@ -15,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('manodemy_ref', cleanRef);
     localStorage.setItem('manodemy_ref_time', String(Date.now()));
     
-    // Clean URL query parameters to avoid ugly urls
     const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
     window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
   }
@@ -61,7 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
       " onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">&times;</button>
     `;
     
-    // Add slideDown animation keyframes dynamically if not present
     if (!document.getElementById('refAnimationStyles')) {
       const style = document.createElement('style');
       style.id = 'refAnimationStyles';
@@ -86,404 +80,420 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ═══ NAV SCROLL ═══ */
-
   const nav = document.querySelector('.nav');
-
+  let navScrolled = false;
   const onScroll = () => {
-
-    if (window.scrollY > 60) nav.classList.add('nav--scrolled');
-
-    else nav.classList.remove('nav--scrolled');
-
+    const shouldScroll = window.scrollY > 60;
+    if (shouldScroll !== navScrolled) {
+      navScrolled = shouldScroll;
+      nav.classList.toggle('nav--scrolled', shouldScroll);
+    }
   };
-
   window.addEventListener('scroll', onScroll, { passive: true });
-
   onScroll();
 
-
-
-  /* ═══ MOBILE MENU (Dropdown) ═══ */
-
+  /* ═══ MOBILE NAV OVERLAY ═══ */
   const hamburger = document.getElementById('hamburger');
-
   const overlay = document.getElementById('mobileOverlay');
 
   if (hamburger && overlay) {
-
     const toggle = (open) => {
-
       overlay.classList.toggle('active', open);
-
       hamburger.setAttribute('aria-expanded', String(open));
-
-      if (open) {
-
-        const first = overlay.querySelector('a');
-
-        if (first) first.focus();
-
-      }
-
     };
 
-    // Toggle on hamburger click (click again to close)
     hamburger.addEventListener('click', (e) => {
-
       e.stopPropagation();
-
       toggle(!overlay.classList.contains('active'));
-
     });
 
-    // Close when a menu link is clicked
     overlay.querySelectorAll('a').forEach(a => a.addEventListener('click', () => toggle(false)));
-
-    // Close when clicking outside the dropdown
+    
     document.addEventListener('click', (e) => {
-
       if (overlay.classList.contains('active') && !overlay.contains(e.target) && e.target !== hamburger) {
-
         toggle(false);
-
       }
-
     });
-
-    // Close on Escape key
-    document.addEventListener('keydown', e => { if (e.key === 'Escape' && overlay.classList.contains('active')) toggle(false); });
-
   }
 
-
-
-  /* ═══ HERO VIDEO — Click-to-Play ═══ */
-
-  window.loadHeroVideo = function () {
-
-    const poster = document.getElementById('videoPoster');
-
-    const iframe = document.getElementById('heroVideoFrame');
-
-    if (!poster || !iframe) return;
-
-    // Inject autoplay YouTube src on click (avoids autoplay policy blocking)
-
-    iframe.src = 'https://www.youtube.com/embed/RpB3d0miEhY?autoplay=1&rel=0&modestbranding=1&color=white&iv_load_policy=3';
-
-    // Fade out poster, reveal iframe
-
-    poster.classList.add('hidden');
-
-    iframe.classList.remove('hidden');
-
+  /* ═══ STICKY BOTTOM MOBILE CTA ═══ */
+  const stickyCta = document.getElementById('stickyMobileCta');
+  let stickyVisible = false;
+  
+  const checkStickyCta = () => {
+    if (!stickyCta) return;
+    // Show sticky bottom bar only after scrolling past 600px on mobile
+    const shouldBeVisible = (window.innerWidth <= 768 && window.scrollY > 600);
+    if (shouldBeVisible !== stickyVisible) {
+      stickyVisible = shouldBeVisible;
+      stickyCta.style.display = shouldBeVisible ? 'flex' : 'none';
+    }
   };
+  window.addEventListener('scroll', checkStickyCta, { passive: true });
+  window.addEventListener('resize', checkStickyCta, { passive: true });
 
+  // Tab switching logic inside sticky bottom mobile CTA
+  const stickyTabs = document.querySelectorAll('#stickyMobileCta .cta-tab-btn');
+  const stickyEnrollBtn = document.getElementById('stickyEnrollBtn');
 
+  if (stickyTabs.length > 0) {
+    stickyTabs.forEach(tab => {
+      tab.addEventListener('click', (e) => {
+        e.preventDefault();
+        stickyTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        const tier = tab.dataset.tabTier || 'selfpaced';
+        if (stickyEnrollBtn) {
+          stickyEnrollBtn.dataset.tier = tier;
+        }
+
+        const cfg = pricingConfigs[tier];
+        const mPrice = document.querySelector('.m-price');
+        const mPriceOld = document.querySelector('.m-price-old');
+        if (mPrice && cfg) mPrice.textContent = cfg.display;
+        if (mPriceOld && cfg) mPriceOld.textContent = cfg.original;
+      });
+    });
+  }
+
+  /* ═══ FAQ ACCORDION ═══ */
+  const faqItems = document.querySelectorAll('.faq-item');
+  faqItems.forEach(item => {
+    const question = item.querySelector('.faq-question');
+    const answer = item.querySelector('.faq-answer');
+    
+    question.addEventListener('click', () => {
+      const isActive = item.classList.contains('active');
+      
+      // Close other FAQs
+      faqItems.forEach(other => {
+        other.classList.remove('active');
+        other.querySelector('.faq-answer').style.maxHeight = '0';
+      });
+
+      if (!isActive) {
+        item.classList.add('active');
+        answer.style.maxHeight = answer.scrollHeight + 'px';
+      }
+    });
+
+    item.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        question.click();
+      }
+    });
+  });
+
+  /* ═══ CURRICULUM TABS ═══ */
+  const currTabs = document.querySelectorAll('.curr-tab');
+  currTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+      currTabs.forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.curr-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.curr-panel').forEach(p => p.style.display = 'none');
+      
+      tab.classList.add('active');
+      const activePanel = document.getElementById('panel-' + target);
+      if (activePanel) {
+        activePanel.classList.add('active');
+        activePanel.style.display = 'block';
+      }
+    });
+  });
+
+  /* ═══ SCROLL REVEAL (Intersection Observer) ═══ */
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        // Stagger siblings
+        const siblings = entry.target.parentElement?.querySelectorAll('.reveal');
+        if (siblings) {
+          let idx = Array.from(siblings).indexOf(entry.target);
+          entry.target.style.transitionDelay = `${idx * 80}ms`;
+        }
+        entry.target.classList.add('visible');
+        if (entry.target.classList.contains('section-head')) {
+          const h2 = entry.target.querySelector('h2');
+          if (h2) {
+            scrambleText(h2, 800);
+          }
+        }
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
   /* ═══ COUNTER ANIMATION ═══ */
-
   function easeOutQuad(t) { return t * (2 - t); }
 
   function animateCounter(el, target, suffix, duration) {
-
     duration = duration || 1500;
-
     const start = performance.now();
-
     const update = (now) => {
-
       const elapsed = Math.min((now - start) / duration, 1);
-
       const value = Math.floor(easeOutQuad(elapsed) * target);
-
       el.textContent = value.toLocaleString('en-IN') + (suffix || '');
-
       if (elapsed < 1) requestAnimationFrame(update);
-
       else el.textContent = target.toLocaleString('en-IN') + (suffix || '');
-
     };
-
     requestAnimationFrame(update);
-
   }
-
-
-
-  /* ═══ INTERSECTION OBSERVER — Reveal + Counters ═══ */
-
-  const observer = new IntersectionObserver((entries) => {
-
-    entries.forEach((entry, i) => {
-
-      if (entry.isIntersecting) {
-
-        // Stagger siblings
-
-        const siblings = entry.target.parentElement?.querySelectorAll('.reveal');
-
-        if (siblings) {
-
-          let idx = Array.from(siblings).indexOf(entry.target);
-
-          entry.target.style.transitionDelay = `${idx * 80}ms`;
-
-        }
-
-        entry.target.classList.add('visible');
-
-        observer.unobserve(entry.target);
-
-      }
-
-    });
-
-  }, { threshold: 0.15 });
-
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-
 
   const counterObs = new IntersectionObserver((entries) => {
-
     entries.forEach(entry => {
-
       if (entry.isIntersecting) {
-
         const el = entry.target;
-
         const target = parseInt(el.dataset.count, 10);
-
         const suffix = el.dataset.suffix || '';
-
         animateCounter(el, target, suffix);
-
         counterObs.unobserve(el);
-
       }
-
     });
-
   }, { threshold: 0.5 });
 
-  document.querySelectorAll('[data-count]').forEach(el => counterObs.observe(el));
+  document.querySelectorAll('[data-count]:not(#social-proof-learners)').forEach(el => counterObs.observe(el));
 
+  /* ═══ 3D STACK INTERACTIVE PARALLAX & FLOATING ANIMATIONS ═══ */
+  const heroStack = document.getElementById('heroStack');
+  let mouseX = 0, mouseY = 0;
+  let currentRotX = 0, currentRotY = 0;
+  let useGyro = false;
+  let gyroBeta = 0, gyroGamma = 0;
 
+  // Spring smoothing constants
+  const springConstant = 0.08;
 
-  /* ═══ PRICING MODAL CONTROLLER ═══ */
-
-  const pricingModal = document.getElementById('pricingModal');
-
-  const closePricingModalBtn = document.getElementById('btnClosePricingModal');
-
-
-
-  const openPricingModal = () => {
-
-    if (window._userHasPurchased || localStorage.getItem('manodemy_enrolled') === 'true') {
-
-      window.location.href = '../home.html';
-
-      return;
-
+  // Cards definitions for stagger entrance and idle float
+  const cards = [
+    {
+      el: document.querySelector('.card-python'),
+      restingY: 48,
+      amplitude: 7,
+      period: 7, // seconds
+      phase: 0,
+      baseTransform: 'translateZ(-40px) rotateY(5deg)'
+    },
+    {
+      el: document.querySelector('.card-excel'),
+      restingY: 24,
+      amplitude: 8,
+      period: 8, // seconds
+      phase: 2,
+      baseTransform: 'translateZ(0px) rotateY(-4deg)'
+    },
+    {
+      el: document.querySelector('.card-sql'),
+      restingY: 0,
+      amplitude: 9,
+      period: 6, // seconds
+      phase: 4,
+      baseTransform: 'translateZ(40px)'
     }
+  ];
 
-    if (pricingModal) {
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let entranceSettled = false;
 
-      pricingModal.classList.add('active');
+  // Entrance choreography (on first paint / load)
+  if (prefersReducedMotion) {
+    cards.forEach(card => {
+      if (card.el) {
+        card.el.style.opacity = '1';
+        card.el.style.transform = `${card.baseTransform} translateY(${card.restingY}px)`;
+      }
+    });
+    entranceSettled = true;
+  } else {
+    // Initial states: opacity 0, translateY offset +40px, scale 0.96
+    cards.forEach(card => {
+      if (card.el) {
+        card.el.style.opacity = '0';
+        card.el.style.transform = `${card.baseTransform} translateY(${card.restingY + 40}px) scale(0.96)`;
+        card.el.style.transition = 'none';
+      }
+    });
 
-      document.body.style.overflow = 'hidden';
+    // Force reflow
+    if (cards[0] && cards[0].el) cards[0].el.offsetHeight;
 
-    }
+    // Stagger in back-to-front (Python -> Excel -> SQL)
+    cards.forEach((card, index) => {
+      if (card.el) {
+        card.el.style.transition = 'transform 600ms cubic-bezier(0.16, 1, 0.3, 1), opacity 600ms cubic-bezier(0.16, 1, 0.3, 1)';
+        setTimeout(() => {
+          card.el.style.opacity = '1';
+          card.el.style.transform = `${card.baseTransform} translateY(${card.restingY}px)`;
+        }, index * 120);
+      }
+    });
 
-  };
-
-
-
-  const closePricingModal = () => {
-
-    if (pricingModal) {
-
-      pricingModal.classList.remove('active');
-
-      document.body.style.overflow = '';
-
-    }
-
-  };
-
-
-
-  if (closePricingModalBtn) {
-
-    closePricingModalBtn.addEventListener('click', closePricingModal);
-
+    // Once settled, remove transition rules to enable lag-free rAF updates
+    setTimeout(() => {
+      entranceSettled = true;
+      cards.forEach(card => {
+        if (card.el) {
+          card.el.style.transition = 'none';
+        }
+      });
+    }, 120 * 2 + 650);
   }
 
-  if (pricingModal) {
+  let heroInViewport = true;
+  let animationFrameId = null;
 
-    pricingModal.addEventListener('click', e => {
+  const updateParallax = () => {
+    if (!heroStack) return;
 
-      if (e.target === pricingModal) closePricingModal();
+    let targetRotX = 0;
+    let targetRotY = 0;
 
-    });
+    if (useGyro) {
+      // Gyroscope tilt mapping (max ±6deg)
+      targetRotY = Math.max(-6, Math.min(6, gyroGamma / 4));
+      targetRotX = Math.max(-6, Math.min(6, (gyroBeta - 45) / 4)); // assume 45deg standard viewing tilt
+    } else {
+      // Mouse mapping (max ±6deg)
+      targetRotY = mouseX * 6;
+      targetRotX = mouseY * -6;
+    }
 
-    document.addEventListener('keydown', e => {
+    // Apply spring lerp interpolation
+    currentRotX += (targetRotX - currentRotX) * springConstant;
+    currentRotY += (targetRotY - currentRotY) * springConstant;
 
-      if (e.key === 'Escape' && pricingModal.classList.contains('active')) {
+    heroStack.style.transform = `rotateX(${currentRotX}deg) rotateY(${currentRotY}deg)`;
+    const roadmapStack = document.getElementById('roadmapStack');
+    if (roadmapStack) {
+      roadmapStack.style.transform = `rotateX(${currentRotX * 0.7}deg) rotateY(${currentRotY * 0.7}deg)`;
+    }
 
-        closePricingModal();
+    // Independent float loops (only if settled and not reduced motion)
+    if (entranceSettled && !prefersReducedMotion) {
+      const time = performance.now();
+      cards.forEach(card => {
+        if (card.el) {
+          const floatY = Math.sin((time / 1000) * (2 * Math.PI / card.period) + card.phase) * card.amplitude;
+          card.el.style.transform = `${card.baseTransform} translateY(${card.restingY + floatY}px)`;
+        }
+      });
+    }
 
-      }
+    if (!window.IntersectionObserver || heroInViewport) {
+      animationFrameId = requestAnimationFrame(updateParallax);
+    }
+  };
 
-    });
-
-  }
-
-
-
-  // Intercept click on elements linking to pricing to open pricing modal
-
-  document.querySelectorAll('a[href="#pricing"], [data-cta="buy"]').forEach(el => {
-
-    if (el.id === 'navSignin') return;
-
-    if (el.closest('.modal-version')) return;
-
-
-
-    el.addEventListener('click', e => {
-
-      e.preventDefault();
-
-      openPricingModal();
-
-    });
-
+  // Mouse move handler (desktop)
+  window.addEventListener('mousemove', (e) => {
+    if (useGyro) return;
+    const normX = (e.clientX / window.innerWidth) * 2 - 1;
+    const normY = (e.clientY / window.innerHeight) * 2 - 1;
+    mouseX = normX;
+    mouseY = normY;
   });
 
-
-
-  /* ═══ DAY CARD CLICKS ═══ */
-
-  const cards = document.querySelectorAll('.day-card');
-
-  cards.forEach(card => {
-
-    card.addEventListener('click', () => {
-
-      const isPaid = window._userHasPurchased || localStorage.getItem('manodemy_enrolled') === 'true';
-
-      if (card.dataset.day === '01') {
-
-        window.location.href = '/day01.html';
-
-      } else if (card.dataset.day === '02') {
-
-        window.location.href = '/day02.html';
-
-      } else if (isPaid) {
-
-        window.location.href = `/day${card.dataset.day}.html`;
-
-      } else {
-
-        openPricingModal();
-
+  // Tap-to-enable Gyro Tilt on mobile (using standard browser API)
+  if (heroStack) {
+    heroStack.addEventListener('click', async () => {
+      if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+        try {
+          const permissionState = await DeviceOrientationEvent.requestPermission();
+          if (permissionState === 'granted') {
+            useGyro = true;
+            window.addEventListener('deviceorientation', handleOrientation, true);
+          }
+        } catch (err) {
+          console.warn("Gyro permission denied:", err);
+        }
+      } else if (typeof DeviceOrientationEvent !== 'undefined') {
+        useGyro = true;
+        window.addEventListener('deviceorientation', handleOrientation, true);
       }
-
     });
 
-    card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); } });
+    // Scroll linked fallback tilt if sensors not active/granted
+    let heroStackTop = 0;
+    let heroStackHeight = 0;
 
-  });
-
-
-
-  /* ═══ COUNTDOWN TIMER ═══ */
-
-  const countdownEl = document.getElementById('countdown');
-
-  if (countdownEl) {
-
-    const deadline = new Date(countdownEl.dataset.deadline || '2026-12-31T23:59:59');
-
-    const urgencyBar = document.getElementById('urgencyBar');
-
-    const tick = () => {
-
-      const diff = deadline - Date.now();
-
-      if (diff <= 0) { if (urgencyBar) urgencyBar.style.display = 'none'; return; }
-
-      const d = Math.floor(diff / 86400000);
-
-      const h = Math.floor((diff % 86400000) / 3600000);
-
-      const m = Math.floor((diff % 3600000) / 60000);
-
-      const s = Math.floor((diff % 60000) / 1000);
-
-      countdownEl.innerHTML = `<span>${d}D</span> : <span>${String(h).padStart(2,'0')}H</span> : <span>${String(m).padStart(2,'0')}M</span> : <span>${String(s).padStart(2,'0')}S</span>`;
-
+    const measureHeroStack = () => {
+      if (heroStack) {
+        const rect = heroStack.getBoundingClientRect();
+        heroStackTop = rect.top + window.scrollY;
+        heroStackHeight = rect.height;
+      }
     };
+    measureHeroStack();
+    window.addEventListener('resize', measureHeroStack, { passive: true });
 
-    tick();
-
-    setInterval(tick, 1000);
-
+    window.addEventListener('scroll', () => {
+      if (useGyro) return;
+      const centerPercent = (heroStackTop - window.scrollY + heroStackHeight / 2) / window.innerHeight;
+      // Map scroll location to ±3deg card tilt fallback
+      const scrollTilt = (centerPercent * 2 - 1) * 3;
+      currentRotY = scrollTilt;
+    }, { passive: true });
   }
 
+  function handleOrientation(event) {
+    if (event.beta !== null) gyroBeta = event.beta;
+    if (event.gamma !== null) gyroGamma = event.gamma;
+  }
 
-
-  // ═══════ SUPABASE CLIENT ═══════
-
-  const SUPABASE_URL = window.MANODEMY_CONFIG?.SUPA_URL || 'https://erqoyvbuhmkyvcqgwcbz.supabase.co';
-
-  const SUPABASE_ANON_KEY = window.MANODEMY_CONFIG?.SUPA_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVycW95dmJ1aG1reXZjcWd3Y2J6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzODk1MTIsImV4cCI6MjA5NDk2NTUxMn0.9UnIfq8xMrKANPPTtoOADKH-NJ_it9HDp7xrJL4FXtw';
-
-  const RAZORPAY_KEY_ID = 'rzp_live_SnbHZn5Q7rYNAP';
-
-  const PAYPAL_CLIENT_ID = '';
-
-
-
-  let supabaseClient = null;
-
-  async function fetchAndDisplayLiveSignups() {
-    if (!supabaseClient) return;
-    try {
-      const { data: count, error } = await supabaseClient.rpc('get_signup_count');
-      if (error) {
-        console.warn("[Stats] Failed to fetch live signup count:", error.message);
-        return;
+  // Viewport checking to pause RAF when out of viewport
+  let scenesInViewport = 0;
+  const parallaxObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        scenesInViewport++;
+      } else {
+        scenesInViewport = Math.max(0, scenesInViewport - 1);
       }
-      const signupCount = parseInt(count, 10);
-      if (isNaN(signupCount)) return;
+    });
 
-      const totalCount = signupCount;
-
-      // 1. Update right column proof card
-      const activeLearnersEl = document.getElementById('hero-active-learners');
-      if (activeLearnersEl) {
-        activeLearnersEl.textContent = totalCount.toLocaleString('en-US') + '+ Sign Ups';
+    if (scenesInViewport > 0) {
+      if (!animationFrameId) {
+        animationFrameId = requestAnimationFrame(updateParallax);
       }
-
-      // 2. Update social proof strip data-count attribute
-      const socialProofEl = document.getElementById('social-proof-learners');
-      if (socialProofEl) {
-        socialProofEl.dataset.count = totalCount;
-        socialProofEl.textContent = totalCount.toLocaleString('en-US') + '+';
+    } else {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
       }
-
-
-    } catch (e) {
-      console.warn("[Stats] Error loading live signups:", e);
     }
+  }, { threshold: 0.05 });
+
+  const heroSection = document.querySelector('.hero');
+  const roadmapScene = document.querySelector('.roadmap-scene');
+  if (window.IntersectionObserver) {
+    if (heroSection) parallaxObserver.observe(heroSection);
+    if (roadmapScene) parallaxObserver.observe(roadmapScene);
+  } else {
+    // Start animation loop directly if observer not supported
+    requestAnimationFrame(updateParallax);
   }
 
-
+  /* ═══ CHECKOUT & PRICING REGIONAL GATEWAY ═══ */
+  const SUPABASE_URL = window.MANODEMY_CONFIG?.SUPA_URL || 'https://erqoyvbuhmkyvcqgwcbz.supabase.co';
+  const SUPABASE_ANON_KEY = window.MANODEMY_CONFIG?.SUPA_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVycW95dmJ1aG1reXZjcWd3Y2J6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzODk1MTIsImV4cCI6MjA5NDk2NTUxMn0.9UnIfq8xMrKANPPTtoOADKH-NJ_it9HDp7xrJL4FXtw';
+  const RAZORPAY_KEY_ID = 'rzp_live_SnbHZn5Q7rYNAP';
+  const PAYPAL_CLIENT_ID = '';
+  
+  let supabaseClient = null;
+  let userCountry = 'US';
+  let pricingConfigs = {
+    selfpaced: { amount: 4900,  currency: 'USD', display: '$49',   original: '$149',    discount: '67% OFF', planName: '60-Day Self-Paced Masterclass' },
+    live:      { amount: 14900, currency: 'USD', display: '$149',  original: '$499',    discount: '70% OFF', planName: '60-Day Live Class Masterclass' }
+  };
+  let activeTier = 'selfpaced';
+  
+  let appliedCouponCode = '';
+  let appliedCouponAmount = null;
+  let currentPricing = { amount: 4900, currency: 'USD', display: '$49', original: '$149', discount: '67% OFF' };
 
   const CustomAuthStorage = {
           getItem: (key) => {
@@ -551,1227 +561,610 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         };
 
-  try {
-
-    if (window.supabase) {
-
+  if (window.supabase) {
+    try {
       supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
         auth: {
           storage: CustomAuthStorage
         }
       });
-      fetchAndDisplayLiveSignups();
-
-    }
-
-  } catch (e) {
-
-    console.error("❌ Error initializing Supabase:", e);
-
-  }
-
-
-
-  // ═══════ GEO-PRICING & STATE ═══════
-
-  let userCountry = 'US';
-
-  let currentPricing = { amount: 1900, currency: 'USD', display: '$19', original: '$99', discount: '81% OFF' };
-
-
-
-  async function setupGeoPricing() {
-
-    const priceNow = document.getElementById('priceNow') || document.querySelector('.price-now span');
-
-    const priceOld = document.getElementById('priceOld') || document.querySelector('.price-old');
-
-    const priceInr = document.getElementById('priceInr') || document.querySelector('.price-inr');
-
-    const discountBadge = document.getElementById('discountBadge') || document.querySelector('.discount-pill');
-
-    const checkoutAmount = document.getElementById('checkoutAmount');
-
-    const checkoutOriginal = document.getElementById('checkoutOriginal');
-
-
-
-    // 1. Try URL override first (e.g. ?country=IN or ?country=US)
-    const urlParams = new URLSearchParams(window.location.search);
-    const countryParam = urlParams.get('country');
-    let geoDetected = false;
-
-    if (countryParam) {
-      const cp = countryParam.toUpperCase();
-      if (cp === 'IN' || cp === 'US') {
-        userCountry = cp;
-        geoDetected = true;
-        console.log("[Geo-pricing] Country overridden via URL:", userCountry);
-      }
-    }
-
-    // 2. Try Timezone detection (IST timezone is UTC+5:30, i.e., offset of -330 minutes)
-    if (!geoDetected) {
-      try {
-        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        const offset = new Date().getTimezoneOffset();
-        if (tz === 'Asia/Kolkata' || tz === 'Asia/Calcutta' || offset === -330) {
-          userCountry = 'IN';
-          geoDetected = true;
-          console.log("[Geo-pricing] Detected India timezone.");
-        }
-      } catch (e) {
-        console.warn("[Geo-pricing] Timezone check failed:", e);
-      }
-    }
-
-    // 3. Try logged-in user profile country from Supabase
-    if (!geoDetected && supabaseClient) {
-      try {
-        const { data: { session } } = await supabaseClient.auth.getSession();
-        if (session) {
-          const { data: profile } = await supabaseClient
-            .from('profiles')
-            .select('country')
-            .eq('id', session.user.id)
-            .single();
-          if (profile?.country && profile.country.length === 2 && profile.country !== 'Unknown') {
-            userCountry = profile.country.toUpperCase();
-            geoDetected = true;
-            console.log("[Geo-pricing] Stored profile country loaded:", userCountry);
-          }
-        }
-      } catch (e) {
-        console.warn("[Geo-pricing] Failed to fetch country from profile:", e);
-      }
-    }
-
-    // 4. Try standard Geo IP APIs if not detected yet
-    if (!geoDetected) {
-      const geoAPIs = [
-        { url: 'https://get.geojs.io/v1/ip/country.json', parse: d => d.country },
-        { url: 'https://ipapi.co/json/', parse: d => d.country_code },
-        { url: 'https://api.country.is/', parse: d => d.country },
-      ];
-
-      try {
-        const promises = geoAPIs.map(api => 
-          fetch(api.url, { signal: AbortSignal.timeout(1500) })
-            .then(res => res.json())
-            .then(data => {
-              const code = api.parse(data);
-              if (code && code.length === 2) return code.toUpperCase();
-              throw new Error("Invalid code");
-            })
-        );
-        const resolvedCountry = await Promise.any(promises);
-        if (resolvedCountry) {
-          userCountry = resolvedCountry;
-          geoDetected = true;
-          console.log("[Geo-pricing] Detected via parallel API:", userCountry);
-        }
-      } catch (err) {
-        console.warn("[Geo-pricing] Parallel lookup failed or timed out:", err);
-      }
-    }
-
-    // 5. Fallback: browser language
-    if (!geoDetected) {
-      const lang = navigator.language || navigator.languages?.[0] || '';
-      if (lang === 'en-IN' || lang.endsWith('-IN')) {
-        userCountry = 'IN';
-      } else {
-        console.warn("Geo-pricing: all APIs failed, defaulting to USD.");
-        userCountry = 'US';
-      }
-    }
-
-
-
-    let prices = { inr: 149900, usd: 1900, original_inr: 999900, original_usd: 9900, discount_label_inr: '85% OFF', discount_label_usd: '81% OFF' };
-
-    try {
-
-      if (supabaseClient) {
-
-        const { data: dbPricing } = await supabaseClient.from('settings').select('value').eq('key', 'pricing').single();
-
-        if (dbPricing && dbPricing.value) {
-
-          prices = {
-
-            inr: dbPricing.value.inr || 149900,
-
-            usd: dbPricing.value.usd || 1900,
-
-            original_inr: 999900,
-
-            original_usd: 9900,
-
-            discount_label_inr: '85% OFF',
-
-            discount_label_usd: '81% OFF'
-
-          };
-
-        } else {
-
-          const pRes = await fetch(SUPABASE_URL + '/functions/v1/get-pricing');
-
-          if (pRes.ok) prices = await pRes.json();
-
-        }
-
-      } else {
-
-        const pRes = await fetch(SUPABASE_URL + '/functions/v1/get-pricing');
-
-        if (pRes.ok) prices = await pRes.json();
-
-      }
-
+      fetchLiveCounts();
     } catch (e) {
-
-      console.log('Using fallback pricing:', e.message);
-
+      console.error("Supabase init error:", e);
     }
+  }
 
+  // Fetch live learner stats from Supabase
+  async function fetchLiveCounts() {
+    if (!supabaseClient) return;
+    try {
+      const { data: count, error } = await supabaseClient.rpc('get_signup_count');
+      if (error) throw error;
+      const num = parseInt(count, 10);
+      if (isNaN(num)) return;
 
+      const activeLearnersEl = document.getElementById('hero-active-learners');
+      if (activeLearnersEl) activeLearnersEl.textContent = num.toLocaleString('en-US') + '+ Sign Ups';
+
+      const socialProofEl = document.getElementById('social-proof-learners');
+      if (socialProofEl) {
+        socialProofEl.dataset.count = num;
+        counterObs.observe(socialProofEl);
+      }
+    } catch (err) {
+      console.warn("Learner count RPC failed, fallback active:", err);
+      const socialProofEl = document.getElementById('social-proof-learners');
+      if (socialProofEl) {
+        socialProofEl.dataset.count = 28;
+        counterObs.observe(socialProofEl);
+      }
+    }
+  }
+
+  // Setup regional checkout pricing (two-tier: self-paced + daily live)
+  async function detectGeoPricing() {
+    // Timezone check
+    try {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const offset = new Date().getTimezoneOffset();
+      if (tz === 'Asia/Kolkata' || tz === 'Asia/Calcutta' || offset === -330) {
+        userCountry = 'IN';
+      }
+    } catch (e) {}
+
+    // Geo IP lookup
+    try {
+      const res = await fetch('https://get.geojs.io/v1/ip/country.json', { signal: AbortSignal.timeout(1500) });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.country === 'IN') userCountry = 'IN';
+      }
+    } catch (err) {}
 
     if (userCountry === 'IN') {
-
-      const calcDisc = Math.round(((prices.original_inr - prices.inr) / prices.original_inr) * 100);
-
-      currentPricing = { amount: prices.inr, currency: 'INR', display: '₹' + (prices.inr/100).toLocaleString('en-IN'), original: '₹' + (prices.original_inr/100).toLocaleString('en-IN'), discount: calcDisc + '% OFF' };
-
-      if (priceInr) {
-
-        priceInr.innerHTML = '<strong>Special Offer for Indian cohort</strong>';
-
-        priceInr.style.color = 'var(--cyan)';
-
-      }
-
+      pricingConfigs.selfpaced = { amount: 299900, currency: 'INR', display: '₹2,999',  original: '₹9,999',   discount: '70% OFF', planName: '60-Day Self-Paced Masterclass' };
+      pricingConfigs.live      = { amount: 999900, currency: 'INR', display: '₹9,999',  original: '₹39,999',  discount: '75% OFF', planName: '60-Day Live Class Masterclass' };
     } else {
-
-      const calcDisc = Math.round(((prices.original_usd - prices.usd) / prices.original_usd) * 100);
-
-      currentPricing = { amount: prices.usd, currency: 'USD', display: '$' + (prices.usd/100), original: '$' + (prices.original_usd/100), discount: calcDisc + '% OFF' };
-
-      if (priceInr) {
-
-        priceInr.innerHTML = 'or dynamic international payment options';
-
-      }
-
+      pricingConfigs.selfpaced = { amount: 4900,   currency: 'USD', display: '$49',     original: '$149',     discount: '67% OFF', planName: '60-Day Self-Paced Masterclass' };
+      pricingConfigs.live      = { amount: 14900,  currency: 'USD', display: '$149',    original: '$499',     discount: '70% OFF', planName: '60-Day Live Class Masterclass' };
     }
 
+    const sp = pricingConfigs.selfpaced;
+    const lv = pricingConfigs.live;
 
+    // Update self-paced pricing card
+    const priceSelfNow      = document.getElementById('priceSelfNow');
+    const priceSelfOld      = document.getElementById('priceSelfOld');
+    const priceSelfDiscount = document.getElementById('priceSelfDiscount');
+    if (priceSelfNow)      priceSelfNow.textContent      = sp.display;
+    if (priceSelfOld)      priceSelfOld.textContent      = sp.original;
+    if (priceSelfDiscount) priceSelfDiscount.textContent = sp.discount;
 
-    if (priceNow) priceNow.textContent = currentPricing.display;
+    // Update live pricing card
+    const priceLiveNow      = document.getElementById('priceLiveNow');
+    const priceLiveOld      = document.getElementById('priceLiveOld');
+    const priceLiveDiscount = document.getElementById('priceLiveDiscount');
+    if (priceLiveNow)      priceLiveNow.textContent      = lv.display;
+    if (priceLiveOld)      priceLiveOld.textContent      = lv.original;
+    if (priceLiveDiscount) priceLiveDiscount.textContent = lv.discount;
 
-    if (priceOld) priceOld.textContent = currentPricing.original;
+    // Update nav / mobile menu "from" price (self-paced is the entry price)
+    document.querySelectorAll('.dynamic-price-from').forEach(el => el.textContent = sp.display);
 
-    if (discountBadge) discountBadge.textContent = currentPricing.discount;
+    // Update live price in final CTA
+    document.querySelectorAll('.dynamic-price-live').forEach(el => el.textContent = lv.display);
 
-    if (checkoutAmount) checkoutAmount.textContent = currentPricing.display;
+    // Update sticky mobile CTA based on active tab
+    const mPrice    = document.querySelector('.m-price');
+    const mPriceOld = document.querySelector('.m-price-old');
+    const activeTab = document.querySelector('#stickyMobileCta .cta-tab-btn.active');
+    const activeTier = activeTab ? activeTab.dataset.tabTier : 'selfpaced';
+    const activeCfg = pricingConfigs[activeTier];
+    if (mPrice && activeCfg)    mPrice.textContent    = activeCfg.display;
+    if (mPriceOld && activeCfg) mPriceOld.textContent = activeCfg.original;
 
-    if (checkoutOriginal) checkoutOriginal.textContent = currentPricing.original;
+    // Update comparison table cost row
+    const compareCostMano = document.getElementById('compare-cost-mano');
+    if (compareCostMano) compareCostMano.textContent = `From ${sp.display} (One-Time)`;
 
+    // Set checkout to default tier
+    updateCheckoutForTier('selfpaced');
+  }
 
+  // Update checkout modal UI for the selected tier
+  function updateCheckoutForTier(tier = 'selfpaced') {
+    activeTier = 'selfpaced';
+    const cfg = pricingConfigs['selfpaced'] || pricingConfigs[tier] || { amount: 49, currency: 'USD', display: '$49', original: '$199', planName: 'Full Access Pass' };
 
-    // Update comparison table costs dynamically
+    currentPricing = {
+      amount: cfg.amount,
+      currency: cfg.currency,
+      display: cfg.display,
+      original: cfg.original,
+      discount: cfg.discount
+    };
 
-    const compCostMano = document.getElementById('compare-cost-mano');
+    const checkoutAmount   = document.getElementById('checkoutAmount');
+    const checkoutOriginal = document.getElementById('checkoutOriginal');
+    const checkoutTierPill = document.getElementById('checkoutTierPill');
+    const checkoutPlanName = document.getElementById('checkoutPlanName');
+    const batchSection     = document.getElementById('checkoutBatchSection');
 
-    const compCostVideo = document.getElementById('compare-cost-video');
+    if (checkoutAmount)   checkoutAmount.textContent   = cfg.display;
+    if (checkoutOriginal) checkoutOriginal.textContent = cfg.original;
+    if (checkoutPlanName) checkoutPlanName.textContent = cfg.planName;
 
-    const compCostSub = document.getElementById('compare-cost-sub');
-
-    const compCostBootcamp = document.getElementById('compare-cost-bootcamp');
-
-
-
-    if (userCountry === 'IN') {
-
-      if (compCostMano) compCostMano.innerHTML = '&#x20B9;1,499 (One-Time)';
-
-      if (compCostVideo) compCostVideo.innerHTML = '&#x20B9;800 - &#x20B9;16,000';
-
-      if (compCostSub) compCostSub.innerHTML = '&#x20B9;13,500 - &#x20B9;40,000 / Year';
-
-      if (compCostBootcamp) compCostBootcamp.innerHTML = '&#x20B9;4,00,000 - &#x20B9;13,00,000 Upfront';
-
-    } else {
-
-      if (compCostMano) compCostMano.innerHTML = '$19 (One-Time)';
-
-      if (compCostVideo) compCostVideo.innerHTML = '$10 - $200';
-
-      if (compCostSub) compCostSub.innerHTML = '$168 - $504 / Year';
-
-      if (compCostBootcamp) compCostBootcamp.innerHTML = '$5,000 - $16,450 Upfront';
-
+    if (checkoutTierPill) {
+      checkoutTierPill.textContent  = '⚡ Self-Paced Plan';
+      checkoutTierPill.className    = 'checkout-tier-pill checkout-tier-pill--selfpaced';
     }
 
+    if (batchSection) {
+      batchSection.style.display = 'none';
+    }
+  }
 
+  /* ═══ CHECKOUT MODAL FLOW ═══ */
+  const checkoutOverlay = document.getElementById('checkoutOverlay');
+  const checkoutClose = document.getElementById('checkoutClose');
+  const buyButtons = document.querySelectorAll('[data-cta="buy"]');
 
-    document.querySelectorAll('[data-cta="buy"], .btn-nav-buy, .sticky-buy').forEach(btn => {
+  const openCheckout = (tier = 'selfpaced') => {
+    if (localStorage.getItem('manodemy_enrolled') === 'true') {
+      window.location.href = '/home.html';
+      return;
+    }
+    updateCheckoutForTier('selfpaced');
+    window.selectedBatchId = null;
 
-      btn.innerHTML = btn.innerHTML
+    // Clone pricing card to show inside checkout
+    const container = document.getElementById('checkoutCardContainer');
+    if (container) {
+      container.innerHTML = '';
+      const originalCard = document.querySelector('.pricing-card--selfpaced') || document.querySelector('.pricing-card');
+      if (originalCard) {
+        const clonedCard = originalCard.cloneNode(true);
+        const buyBtn = clonedCard.querySelector('.pricing-buy-btn');
+        if (buyBtn) buyBtn.style.display = 'none';
+        container.appendChild(clonedCard);
+      }
+    }
 
-        .replace(/\$99/g, currentPricing.display)
+    if (checkoutOverlay) {
+      checkoutOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      renderPaymentGateways();
+    }
+  };
 
-        .replace(/&#x20B9;9,999/g, currentPricing.display)
+  const closeCheckout = () => {
+    if (checkoutOverlay) {
+      checkoutOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  };
 
-        .replace(/₹9,999/g, currentPricing.display)
+  buyButtons.forEach(btn => btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    openCheckout('selfpaced');
+  }));
 
-        .replace(/\$19/g, currentPricing.display)
-
-        .replace(/&#x20B9;1,499/g, currentPricing.display)
-
-        .replace(/₹1,499/g, currentPricing.display);
-
+  if (checkoutClose) checkoutClose.addEventListener('click', closeCheckout);
+  if (checkoutOverlay) {
+    checkoutOverlay.addEventListener('click', (e) => {
+      if (e.target === checkoutOverlay) closeCheckout();
     });
-
-
-
-    setupGatewayButtons();
-
-    // Remove loading state to reveal final dynamic prices
-    document.body.classList.remove('pricing-loading');
   }
 
-
-
-  function setupGatewayButtons() {
-
-    const container = document.getElementById('gatewayButtons');
-
+  // Dynamic checkout batch selection — bound after batches are loaded
+  function populateCheckoutBatches(preferredBatchId = null) {
+    const container = document.getElementById('checkoutBatchOptions');
     if (!container) return;
+    container.innerHTML = '';
 
+    const paidBatches = (window._liveBatches || []).filter(b => b.batch_type === 'paid');
+    if (paidBatches.length === 0) return;
 
+    const selectedBatch = preferredBatchId || window.selectedBatchId || paidBatches[0]?.batch_id;
+    window.selectedBatchId = selectedBatch;
 
-    if (userCountry === 'IN') {
+    paidBatches.forEach((batch, idx) => {
+      const isCurrent = batch.batch_id === selectedBatch;
+      const card = document.createElement('div');
+      card.className = 'checkout-batch-card' + (isCurrent ? ' active' : '');
+      card.dataset.batchId = batch.batch_id;
+      card.style.cssText = `border: ${isCurrent ? '2px solid var(--cyan)' : '1px solid var(--border)'}; border-radius: 8px; padding: 10px 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: ${isCurrent ? 'rgba(0, 180, 216, 0.04)' : 'var(--base)'}; transition: var(--transition);`;
 
-      container.innerHTML = `
+      const startH = parseInt(batch.start_time?.split(':')[0] || '19');
+      const startM = parseInt(batch.start_time?.split(':')[1] || '30');
+      const endH = parseInt(batch.end_time?.split(':')[0] || '20');
+      const endM = parseInt(batch.end_time?.split(':')[1] || '30');
+      const fmtTime = (h, m) => { const p = h >= 12 ? 'PM' : 'AM'; return `${h > 12 ? h-12 : h||12}:${String(m).padStart(2,'0')} ${p}`; };
+      const days = !batch.schedule_days || batch.schedule_days.length === 7 ? 'Daily' : batch.schedule_days.length === 5 ? 'Weekdays' : batch.schedule_days.length === 2 ? 'Weekends' : 'Custom';
 
-        <button class="gateway-btn razorpay" id="payRazorpay" type="button">
-
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 4l5.5 16h3L17 7.5 14.5 20h3L23 4h-3l-4 11L12.5 4h-3l-4 11L1.5 4H3z"/></svg>
-
-          Pay with Razorpay — ${currentPricing.display}
-
-        </button>
-
-        <p style="text-align:center;font-size:0.75rem;color:var(--ink-dim);margin:0">UPI • Cards • Net Banking • Wallets</p>
-
+      card.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 10px;">
+          ${batch.instructor_avatar ? `<img src="${batch.instructor_avatar}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;" alt="">` : ''}
+          <div style="display: flex; flex-direction: column; gap: 2px;">
+            <span style="font-size: 13px; font-weight: 700; color: var(--text-primary);">${batch.batch_name}</span>
+            <span style="font-size: 11px; color: var(--text-secondary);">🕒 ${fmtTime(startH, startM)} – ${fmtTime(endH, endM)} IST (${days})</span>
+          </div>
+        </div>
+        <span class="checkout-batch-radio" style="width: 16px; height: 16px; border-radius: 50%; border: ${isCurrent ? '2px solid var(--cyan)' : '1.5px solid var(--text-muted)'}; display: flex; align-items: center; justify-content: center; background: ${isCurrent ? 'var(--cyan)' : 'transparent'}; box-shadow: ${isCurrent ? 'inset 0 0 0 3px var(--base)' : 'none'}; transition: all 0.2s ease;"></span>
       `;
 
-    } else {
-
-      container.innerHTML = `
-
-        <button class="gateway-btn razorpay" id="payRazorpay" type="button">
-
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 4l5.5 16h3L17 7.5 14.5 20h3L23 4h-3l-4 11L12.5 4h-3l-4 11L1.5 4H3z"/></svg>
-
-          Pay with Card — ${currentPricing.display}
-
-        </button>
-
-        <button class="gateway-btn paypal" id="payPaypal" type="button">
-
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797H9.603c-.564 0-1.04.408-1.13.964L7.076 21.337z"/></svg>
-
-          Pay with PayPal — ${currentPricing.display}
-
-        </button>
-
-        <p style="text-align:center;font-size:0.75rem;color:var(--ink-dim);margin:0">Visa • Mastercard • PayPal Balance</p>
-
-      `;
-
-    }
-
-
-
-    const rzpBtn = document.getElementById('payRazorpay');
-
-    const ppBtn = document.getElementById('payPaypal');
-
-
-
-    if (rzpBtn) rzpBtn.addEventListener('click', () => initiatePayment('razorpay'));
-
-    if (ppBtn) ppBtn.addEventListener('click', () => initiatePayment('paypal'));
-
-  }
-
-
-
-  // ═══════ EMBEDDED CHECKOUT ACTION FLOW ═══════
-
-  const pricingDetailsView = document.getElementById('pricingDetailsView');
-
-  const pricingCheckoutView = document.getElementById('pricingCheckoutView');
-
-  const btnPricingBuy = document.getElementById('btnPricingBuy');
-
-  const checkoutBackToDetails = document.getElementById('checkoutBackToDetails');
-
-
-
-  if (btnPricingBuy) {
-
-    btnPricingBuy.addEventListener('click', () => {
-
-      if (!supabaseClient) {
-
-        alert("Auth service offline.");
-
-        return;
-
-      }
-
-      
-
-      supabaseClient.auth.getSession().then(({ data: { session } }) => {
-
-        if (!session) {
-
-          window.pendingBuyIntent = true;
-
-          closePricingModal();
-
-          openAuthModal('login');
-
-          return;
-
-        }
-
-
-
-        if (!window._checkoutEventLogged) {
-
-          window._checkoutEventLogged = true;
-
-          supabaseClient.from('activity_logs').insert([{
-
-            user_id: session.user.id,
-
-            event_type: 'checkout_initiated',
-
-            page_url: window.location.pathname,
-
-            metadata: {
-
-              currency: currentPricing.currency,
-
-              amount: currentPricing.amount,
-
-              country: userCountry
-
-            }
-
-          }]).then(({ error }) => {
-
-            if (error) console.warn('[Telemetry] checkout_initiated Insertion failed:', error.message);
-
-          });
-
-        }
-
-
-
-        if (pricingDetailsView && pricingCheckoutView) {
-
-          pricingDetailsView.style.display = 'none';
-
-          pricingCheckoutView.style.display = 'block';
-
-        }
-
+      card.addEventListener('click', () => {
+        window.selectedBatchId = batch.batch_id;
+        container.querySelectorAll('.checkout-batch-card').forEach(c => {
+          const isC = c.dataset.batchId === batch.batch_id;
+          c.classList.toggle('active', isC);
+          c.style.borderColor = isC ? 'var(--cyan)' : 'var(--border)';
+          c.style.border = isC ? '2px solid var(--cyan)' : '1px solid var(--border)';
+          c.style.background = isC ? 'rgba(0, 180, 216, 0.04)' : 'var(--base)';
+          const radio = c.querySelector('.checkout-batch-radio');
+          if (radio) {
+            radio.style.borderColor = isC ? 'var(--cyan)' : 'var(--text-muted)';
+            radio.style.backgroundColor = isC ? 'var(--cyan)' : 'transparent';
+            radio.style.boxShadow = isC ? 'inset 0 0 0 3px var(--base)' : 'none';
+          }
+        });
       });
 
+      container.appendChild(card);
     });
-
   }
 
-
-
-  if (checkoutBackToDetails) {
-
-    checkoutBackToDetails.addEventListener('click', () => {
-
-      if (pricingDetailsView && pricingCheckoutView) {
-
-        pricingCheckoutView.style.display = 'none';
-
-        pricingDetailsView.style.display = 'block';
-
-      }
-
-    });
-
-  }
-
-
-
-  // ═══════ AUTH MODAL OVERLAY TRIGGER & LOGIC ═══════
-
-  const authModal = document.getElementById('authModal');
-
-  const btnCloseAuthModal = document.getElementById('btnCloseAuthModal');
-
-  const authForm = document.getElementById('authForm');
-
-  const authTitle = document.getElementById('authTitle');
-
-  const authSubtitle = document.getElementById('authSubtitle');
-
-  const authMsg = document.getElementById('authMessage');
-
-  const socialAuthSection = document.getElementById('socialAuthSection');
-
-  
-
-  const authNameGroup = document.getElementById('authNameGroup');
-
-  const authPasswordGroup = document.getElementById('authPasswordGroup');
-
-  const authConfirmGroup = document.getElementById('authConfirmGroup');
-
-  
-
-  const authName = document.getElementById('authName');
-
-  const authEmail = document.getElementById('authEmail');
-
-  const authPassword = document.getElementById('authPassword');
-
-  const authConfirmPassword = document.getElementById('authConfirmPassword');
-
-  const btnAuthSubmit = document.getElementById('btnAuthSubmit');
-
-  const authGoogleBtn = document.getElementById('authGoogleBtn');
-
-
-
-  const linkSignup = document.getElementById('linkSignup');
-
-  const linkForgot = document.getElementById('linkForgot');
-
-  const linkBackToLogin = document.getElementById('linkBackToLogin');
-
-
-
-  let authState = 'login';
-
-  window.pendingBuyIntent = false;
-
-
-
-  const setAuthMessage = (msg, type = 'info') => {
-
-    if (!authMsg) return;
-
-    authMsg.textContent = msg;
-
-    authMsg.style.display = 'block';
-
-    if (type === 'error') {
-
-      authMsg.style.background = 'rgba(244, 63, 94, 0.15)';
-
-      authMsg.style.color = '#F43F5E';
-
-      authMsg.style.border = '1px solid rgba(244, 63, 94, 0.3)';
-
-    } else if (type === 'success') {
-
-      authMsg.style.background = 'rgba(16, 185, 129, 0.15)';
-
-      authMsg.style.color = '#10B981';
-
-      authMsg.style.border = '1px solid rgba(16, 185, 129, 0.3)';
-
+  // Render gate selection: Razorpay for INR, PayPal for USD
+  function renderPaymentGateways() {
+    const gateContainer = document.getElementById('gatewayButtons');
+    if (!gateContainer) return;
+    
+    gateContainer.innerHTML = '';
+    
+    const displayPrice = appliedCouponAmount !== null
+      ? (currentPricing.currency === 'INR' ? '₹' + (appliedCouponAmount / 100).toLocaleString('en-IN') : '$' + (appliedCouponAmount / 100))
+      : currentPricing.display;
+    
+    if (userCountry === 'IN') {
+      const btn = document.createElement('button');
+      btn.className = 'btn-auth-submit';
+      btn.style.background = '#10B981';
+      btn.innerHTML = `💳 Pay with Razorpay (UPI, Cards, Netbanking) — ${displayPrice}`;
+      btn.onclick = () => handlePaymentClick('razorpay');
+      gateContainer.appendChild(btn);
     } else {
-
-      authMsg.style.background = 'rgba(0, 230, 246, 0.1)';
-
-      authMsg.style.color = '#00E6F6';
-
-      authMsg.style.border = '1px solid rgba(0, 230, 246, 0.2)';
-
+      const btn = document.createElement('button');
+      btn.className = 'btn-auth-submit';
+      btn.style.background = '#FFB020';
+      btn.style.color = '#000';
+      btn.innerHTML = `💳 Pay securely with PayPal — ${displayPrice}`;
+      btn.onclick = () => handlePaymentClick('paypal');
+      gateContainer.appendChild(btn);
     }
-
-  };
-
-
-
-  const clearAuthMessage = () => { if (authMsg) authMsg.style.display = 'none'; };
-
-
-
-  const openAuthModal = (state = 'login') => {
-
-    switchAuthState(state);
-
-    if (authModal) {
-
-      authModal.classList.add('active');
-
-      document.body.style.overflow = 'hidden';
-
-    }
-
-  };
-
-
-
-  const closeAuthModal = () => {
-
-    if (authModal) {
-
-      authModal.classList.remove('active');
-
-      document.body.style.overflow = '';
-
-      clearAuthMessage();
-
-    }
-
-  };
-
-
-
-  if (btnCloseAuthModal) btnCloseAuthModal.addEventListener('click', closeAuthModal);
-
-  if (authModal) {
-
-    authModal.addEventListener('click', e => { if (e.target === authModal) closeAuthModal(); });
-
   }
 
-
-
-  const switchAuthState = (state) => {
-
-    authState = state;
-
-    clearAuthMessage();
-
-
-
-    if (state === 'login') {
-
-      if (authTitle) authTitle.innerHTML = 'Join the Challenge';
-
-      if (authSubtitle) authSubtitle.textContent = 'Sign in to start learning';
-
-      if (socialAuthSection) socialAuthSection.style.display = '';
-
-      if (authNameGroup) authNameGroup.style.display = 'none';
-
-      if (authPasswordGroup) authPasswordGroup.style.display = '';
-
-      if (authConfirmGroup) authConfirmGroup.style.display = 'none';
-
-      if (btnAuthSubmit) btnAuthSubmit.textContent = 'Login';
-
-      if (linkForgot) linkForgot.style.display = '';
-
-      if (linkSignup) linkSignup.style.display = '';
-
-      if (linkBackToLogin) linkBackToLogin.style.display = 'none';
-
-    } else if (state === 'signup') {
-
-      if (authTitle) authTitle.innerHTML = 'Create Account';
-
-      if (authSubtitle) authSubtitle.textContent = 'Join thousands of learners';
-
-      if (socialAuthSection) socialAuthSection.style.display = 'none';
-
-      if (authNameGroup) authNameGroup.style.display = '';
-
-      if (authPasswordGroup) authPasswordGroup.style.display = '';
-
-      if (authConfirmGroup) authConfirmGroup.style.display = '';
-
-      if (btnAuthSubmit) btnAuthSubmit.textContent = 'Sign Up';
-
-      if (linkForgot) linkForgot.style.display = 'none';
-
-      if (linkSignup) linkSignup.style.display = 'none';
-
-      if (linkBackToLogin) linkBackToLogin.style.display = '';
-
-    } else if (state === 'forgot') {
-
-      if (authTitle) authTitle.innerHTML = 'Reset Password';
-
-      if (authSubtitle) authSubtitle.textContent = 'Enter your email to receive a reset link';
-
-      if (socialAuthSection) socialAuthSection.style.display = 'none';
-
-      if (authNameGroup) authNameGroup.style.display = 'none';
-
-      if (authPasswordGroup) authPasswordGroup.style.display = 'none';
-
-      if (authConfirmGroup) authConfirmGroup.style.display = 'none';
-
-      if (btnAuthSubmit) btnAuthSubmit.textContent = 'Send Reset Link';
-
-      if (linkForgot) linkForgot.style.display = 'none';
-
-      if (linkSignup) linkSignup.style.display = 'none';
-
-      if (linkBackToLogin) linkBackToLogin.style.display = '';
-
+  async function handlePaymentClick(gateway) {
+    if (!supabaseClient) {
+      alert("Authentication services are currently offline.");
+      return;
     }
-
-  };
-
-
-
-  if (linkSignup) linkSignup.addEventListener('click', e => { e.preventDefault(); switchAuthState('signup'); });
-
-  if (linkForgot) linkForgot.addEventListener('click', e => { e.preventDefault(); switchAuthState('forgot'); });
-
-  if (linkBackToLogin) linkBackToLogin.addEventListener('click', e => { e.preventDefault(); switchAuthState('login'); });
-
-
-
-  const navSignin = document.getElementById('navSignin');
-  if (navSignin) {
-    navSignin.addEventListener('click', async (e) => {
-      if (navSignin.textContent === 'Sign Out') {
-        e.preventDefault();
-        if (supabaseClient) {
-          await supabaseClient.auth.signOut();
-          localStorage.removeItem('manodemy_auth');
-          localStorage.removeItem('manodemy_enrolled');
-          window.location.reload();
-        }
-        return;
-      }
-      if (localStorage.getItem('manodemy_auth') === 'true' || navSignin.textContent === 'Dashboard' || navSignin.textContent === 'My Score Card') return;
-      e.preventDefault();
-      openAuthModal('login');
-    });
-  }
-
-
-
-  // Open signup modal if redirect reason is login_required
-  const pageParams = new URLSearchParams(window.location.search);
-  if (pageParams.get('reason') === 'login_required') {
-    setTimeout(() => {
-      openAuthModal('login');
-      // Clean query parameters to avoid showing ?reason=login_required on reload
-      const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-      window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
-    }, 200);
-  }
-
-
-
-  // ═══════ COUNTRY CAPTURE PIPELINE ═══════
-
-  async function saveCountryToProfile(fallbackCountry) {
-
-    if (!supabaseClient) return;
-
+    
     try {
-
       const { data: { session } } = await supabaseClient.auth.getSession();
-
-      if (!session) return;
-
-
-
-      const { data: profile } = await supabaseClient
-
-        .from('profiles')
-
-        .select('country')
-
-        .eq('id', session.user.id)
-
-        .single();
-
-
-
-      if (profile?.country && profile.country !== 'US' && profile.country !== 'Unknown') {
-
+      if (!session) {
+        window.pendingCheckout = {
+          tier: activeTier,
+          gateway: gateway
+        };
+        closeCheckout();
+        openAuthModal('login');
         return;
-
       }
-
-
-
-      let countryCode = fallbackCountry || null;
-
-      const geoApis = [
-
-        'https://get.geojs.io/v1/ip/country.json',
-
-        'https://ipapi.co/json/'
-
-      ];
-
-      for (const api of geoApis) {
-
-        try {
-
-          const res = await fetch(api, { signal: AbortSignal.timeout(4000) });
-
-          const json = await res.json();
-
-          const code = json.country || json.country_code;
-
-          if (code && code.length === 2) {
-
-            countryCode = code.toUpperCase();
-
-            break;
-
-          }
-
-        } catch (_) {}
-
-      }
-
-
-
-      if (!countryCode) {
-
-        const locale = navigator.language || navigator.languages?.[0] || '';
-
-        const parts = locale.split('-');
-
-        if (parts.length > 1 && parts[1].length === 2) {
-
-          countryCode = parts[1].toUpperCase();
-
-        }
-
-      }
-
-
-
-      if (countryCode) {
-
-        await supabaseClient
-
-          .from('profiles')
-
-          .update({ country: countryCode })
-
-          .eq('id', session.user.id);
-
-        console.log('[Manodemy] Country saved:', countryCode);
-
-      }
-
-    } catch (e) {
-
-      console.warn('[Manodemy] Country capture failed:', e.message);
-
+      
+      await initiatePayment(gateway);
+    } catch (err) {
+      console.error("Payment click handler failed:", err);
     }
-
   }
-
-
-
-  // ═══════ PAYMENT INITIATION ═══════
 
   async function initiatePayment(gateway) {
-
     const spinner = document.getElementById('checkoutSpinner');
-
     const buttons = document.getElementById('gatewayButtons');
-
-
 
     try {
-
       if (spinner) spinner.classList.add('active');
-
       if (buttons) buttons.style.opacity = '0.4';
 
-
-
       const { data: { session } } = await supabaseClient.auth.getSession();
-
       if (!session) throw new Error('Please sign in to proceed with your checkout purchase.');
 
-
-
       const couponEl = document.getElementById('couponInput');
-
       const coupon = couponEl ? couponEl.value.trim() : '';
 
-
-
       const res = await fetch(`${SUPABASE_URL}/functions/v1/create-order`, {
-
         method: 'POST',
-
         headers: {
-
           'Content-Type': 'application/json',
-
           'Authorization': `Bearer ${session.access_token}`
-
         },
-
         body: JSON.stringify({
-
           gateway,
-
           currency: currentPricing.currency,
-
           coupon_code: appliedCouponCode || coupon || undefined,
-
           final_amount: appliedCouponAmount || undefined,
-
-          referral_code: localStorage.getItem('manodemy_ref') || undefined
-
+          referral_code: localStorage.getItem('manodemy_ref') || undefined,
+          batch_id: activeTier === 'live' ? (window.selectedBatchId || 'batch-1') : undefined
         })
-
       });
 
-
-
       const data = await res.json();
-
       if (data.error) {
-
         if (data.enrolled) {
-
           alert('You already have access! Redirecting to curriculum dashboard...');
-
           unlockAllDays();
-
           updateCTAsForPaidUser();
-
-          closePricingModal();
-
-          window.location.href = '../home.html';
-
+          closeCheckout();
+          window.location.href = '/home.html';
           return;
-
         }
-
         throw new Error(data.error);
-
       }
-
-
 
       if (gateway === 'razorpay') {
-
         if (typeof Razorpay === 'undefined') {
-
           await new Promise((resolve, reject) => {
-
             const s = document.createElement('script');
-
             s.src = 'https://checkout.razorpay.com/v1/checkout.js';
-
             s.onload = resolve; s.onerror = reject;
-
             document.head.appendChild(s);
-
           });
-
         }
-
-
 
         const finalAmount = appliedCouponAmount || data.amount;
-
         const options = {
-
           key: RAZORPAY_KEY_ID,
-
           amount: finalAmount,
-
           currency: data.currency,
-
           order_id: data.razorpay_order_id,
-
           name: 'Manodemy',
-
-          description: '30-Day Python Data Analytics Masterclass',
-
+          description: '60-Day Data Analyst Masterclass',
           handler: async function (response) {
-
             try {
-
               const verifyRes = await fetch(`${SUPABASE_URL}/functions/v1/verify-payment`, {
-
                 method: 'POST',
-
                 headers: {
-
                   'Content-Type': 'application/json',
-
                   'Authorization': `Bearer ${session.access_token}`
-
                 },
-
                 body: JSON.stringify({
-
                   gateway: 'razorpay',
-
                   order_id: data.order_id,
-
                   razorpay_payment_id: response.razorpay_payment_id,
-
                   razorpay_order_id: response.razorpay_order_id,
-
                   razorpay_signature: response.razorpay_signature,
-
-                  contact: response.contact || ''   // ← buyer's phone from Razorpay checkout
-
+                  contact: response.contact || ''
                 })
-
               });
-
               const result = await verifyRes.json();
-
               if (result.success) {
-
                 unlockAllDays();
-
                 updateCTAsForPaidUser();
-
-                closePricingModal();
-
+                closeCheckout();
                 window.location.href = `payment-success.html?order_id=${data.order_id}`;
-
               } else {
-
                 window.location.href = `payment-failed.html?order_id=${data.order_id}`;
-
               }
-
             } catch (e) {
-
               window.location.href = `payment-failed.html?reason=verification`;
-
             }
-
           },
-
           prefill: { email: session.user.email },
-
           theme: { color: '#0B0F19' },
-
           modal: { ondismiss: () => { resetCheckoutUI(); } }
-
         };
-
         const rzp = new Razorpay(options);
-
         rzp.on('payment.failed', function () {
-
           window.location.href = `payment-failed.html?reason=declined`;
-
         });
-
         rzp.open();
-
-        closePricingModal();
-
-      }
-
-      else if (gateway === 'stripe') {
-
-        if (data.stripe_session_url) {
-
-          window.location.href = data.stripe_session_url;
-
-        }
-
-      }
-
-      else if (gateway === 'paypal') {
-
+        closeCheckout();
+      } else if (gateway === 'paypal') {
         await loadPayPalSDK();
-
-        closePricingModal();
-
+        closeCheckout();
         await handlePayPalPayment(data, session);
-
       }
-
-
-
     } catch (error) {
-
       console.error('Payment error:', error);
-
       alert('Payment processing failed: ' + error.message);
-
     } finally {
-
       resetCheckoutUI();
-
     }
-
   }
-
-
 
   function resetCheckoutUI() {
-
     const spinner = document.getElementById('checkoutSpinner');
-
     const buttons = document.getElementById('gatewayButtons');
-
     if (spinner) spinner.classList.remove('active');
-
     if (buttons) buttons.style.opacity = '1';
-
   }
-
-
 
   let paypalLoaded = false;
-
   function loadPayPalSDK() {
-
     if (paypalLoaded) return Promise.resolve();
-
     return new Promise((resolve, reject) => {
-
       const script = document.createElement('script');
-
       script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=${currentPricing.currency}`;
-
       script.onload = () => { paypalLoaded = true; resolve(); };
-
       script.onerror = reject;
-
       document.head.appendChild(script);
-
     });
-
   }
-
-
 
   async function handlePayPalPayment(orderData, session) {
-
     const ppContainer = document.createElement('div');
-
     ppContainer.id = 'paypal-button-container';
-
-    ppContainer.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:12000;background:#111827;padding:2rem;border-radius:16px;border:1px solid rgba(255,255,255,0.1);min-width:350px';
-
+    ppContainer.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:3000;background:#111827;padding:2rem;border-radius:16px;border:1px solid rgba(255,255,255,0.1);min-width:350px';
     document.body.appendChild(ppContainer);
 
-
-
     paypal.Buttons({
-
       createOrder: () => orderData.paypal_order_id,
-
       onApprove: async (ppData) => {
-
         try {
-
           const verifyRes = await fetch(`${SUPABASE_URL}/functions/v1/verify-payment`, {
-
             method: 'POST',
-
             headers: {
-
               'Content-Type': 'application/json',
-
               'Authorization': `Bearer ${session.access_token}`
-
             },
-
             body: JSON.stringify({
-
               gateway: 'paypal',
-
               order_id: orderData.order_id,
-
               paypal_order_id: ppData.orderID
-
             })
-
           });
-
           const result = await verifyRes.json();
-
           ppContainer.remove();
-
           if (result.success) {
-
             unlockAllDays();
-
             updateCTAsForPaidUser();
-
             window.location.href = `payment-success.html?order_id=${orderData.order_id}`;
-
           } else {
-
             window.location.href = `payment-failed.html?order_id=${orderData.order_id}`;
-
           }
-
         } catch (e) {
-
           ppContainer.remove();
-
           window.location.href = 'payment-failed.html?reason=verification';
-
         }
-
       },
-
       onCancel: () => { ppContainer.remove(); },
-
       onError: () => { ppContainer.remove(); alert('PayPal error. Checkout session cancelled.'); }
-
     }).render('#paypal-button-container');
-
   }
 
+  /* ═══ DAY CARD NAVIGATION ═══ */
+  const dayCards = document.querySelectorAll('.day-card');
+  dayCards.forEach(card => {
+    card.addEventListener('click', () => {
+      const day = card.dataset.day;
+      const isPaid = localStorage.getItem('manodemy_enrolled') === 'true'
+        || localStorage.getItem('manodemy_enrolled_sql') === 'true'
+        || localStorage.getItem('manodemy_enrolled_excel') === 'true'
+        || localStorage.getItem('manodemy_enrolled_python') === 'true';
+      let path = '/day01.html';
 
+      // Detect track type
+      const grid = card.closest('.curriculum-grid');
+      let track = 'python';
+      if (card.closest('#panel-sql')) track = 'sql';
+      else if (card.closest('#panel-excel')) track = 'excel';
+
+      if (track === 'sql') {
+        if (day === '01') window.location.href = '/sql/day01.html';
+        else if (day === '02') window.location.href = '/sql/day02.html';
+        else if (isPaid) window.location.href = `/notebook/sql-day${day}`;
+        else openCheckout();
+      } else if (track === 'excel') {
+        if (day === '01') window.location.href = '/excel/day01.html';
+        else if (day === '02') window.location.href = '/excel/day02.html';
+        else if (isPaid) window.location.href = `/notebook/excel-day${day}`;
+        else openCheckout();
+      } else {
+        if (day === '01') window.location.href = '/day01.html';
+        else if (day === '02') window.location.href = '/day02.html';
+        else if (isPaid) window.location.href = `/notebook/day${day}`;
+        else openCheckout();
+      }
+    });
+
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        card.click();
+      }
+    });
+  });
+
+  /* ═══ CLEANED LANDING CORE ═══ */
+
+  /* ═══ NAVBAR ENROLL DROPDOWNS ═══ */
+  const navEnrollBtn = document.getElementById('navEnrollBtn');
+  const navEnrollDropdown = document.getElementById('navEnrollDropdown');
+  const mobEnrollBtn = document.getElementById('mobEnrollBtn');
+  const mobEnrollDropdown = document.getElementById('mobEnrollDropdown');
+
+  const toggleDropdown = (btn, menu) => {
+    if (!menu) return;
+    const isActive = menu.classList.contains('active');
+    
+    // Close other nav buy dropdowns first
+    if (navEnrollDropdown && navEnrollDropdown !== menu) navEnrollDropdown.classList.remove('active');
+    if (mobEnrollDropdown && mobEnrollDropdown !== menu) mobEnrollDropdown.classList.remove('active');
+    
+    if (isActive) {
+      menu.classList.remove('active');
+    } else {
+      menu.classList.add('active');
+    }
+  };
+
+  if (navEnrollBtn && navEnrollDropdown) {
+    navEnrollBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleDropdown(navEnrollBtn, navEnrollDropdown);
+    });
+  }
+
+  if (mobEnrollBtn && mobEnrollDropdown) {
+    mobEnrollBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleDropdown(mobEnrollBtn, mobEnrollDropdown);
+    });
+  }
+
+  // Prevent dropdown closing when clicking inside the menus
+  document.querySelectorAll('.nav-buy-dropdown-menu, .mob-buy-dropdown-menu').forEach(menu => {
+    menu.addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
+  });
+
+  // Bind clicks on "Enroll" buttons inside the dropdown menus
+  document.querySelectorAll('.dropdown-tier-buy').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const tier = btn.dataset.tier || 'selfpaced';
+      
+      // Close dropdown menus
+      if (navEnrollDropdown) navEnrollDropdown.classList.remove('active');
+      if (mobEnrollDropdown) mobEnrollDropdown.classList.remove('active');
+      
+      // Open Checkout
+      openCheckout(tier);
+    });
+  });
+
+  // Close dropdowns when clicking anywhere outside
+  document.addEventListener('click', () => {
+    if (navEnrollDropdown) navEnrollDropdown.classList.remove('active');
+    if (mobEnrollDropdown) mobEnrollDropdown.classList.remove('active');
+  });
+
+  /* ═══ V6 MOTION SYSTEM: TEXT SCRAMBLER REVEAL ═══ */
+  function scrambleText(element, durationMs = 1000) {
+    // Disabled text scrambling animation to display all content immediately on refresh/scroll
+  }
 
   // ═══════ COUPON STATE & VALIDATION ═══════
-
-  let appliedCouponCode = '';
-
-  let appliedCouponAmount = null;
-
-
-
   const couponApplyBtn = document.getElementById('couponApply');
-
   if (couponApplyBtn) {
-
     couponApplyBtn.addEventListener('click', async () => {
-
       const input = document.getElementById('couponInput');
-
       const code = input?.value?.trim();
-
       if (!code) return;
 
-
-
       if (!supabaseClient) return;
-
       couponApplyBtn.textContent = 'Verifying...';
       couponApplyBtn.disabled = true;
 
@@ -1804,22 +1197,10 @@ document.addEventListener('DOMContentLoaded', () => {
             label = `✅ ${currencySymbol}${val} OFF!`;
           }
 
-          const displayPrice = currentPricing.currency === 'INR'
-            ? '₹' + (newAmount / 100).toLocaleString('en-IN')
-            : '$' + (newAmount / 100);
-
           appliedCouponCode = code.toUpperCase();
           appliedCouponAmount = newAmount;
-          
-          const rzpBtn = document.getElementById('payRazorpay');
-          const ppBtn = document.getElementById('payPaypal');
-          
-          if (rzpBtn) {
-            const labelText = (currentPricing.currency === 'INR') ? 'Pay with Razorpay' : 'Pay with Card';
-            rzpBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 4l5.5 16h3L17 7.5 14.5 20h3L23 4h-3l-4 11L12.5 4h-3l-4 11L1.5 4H3z"/></svg> ${labelText} — ${displayPrice}`;
-          }
-          if (ppBtn) ppBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797H9.603c-.564 0-1.04.408-1.13.964L7.076 21.337z"/></svg> Pay with PayPal — ${displayPrice}`;
 
+          renderPaymentGateways();
           couponApplyBtn.textContent = label;
           couponApplyBtn.style.color = '#10B981';
         } else {
@@ -1836,6 +1217,7 @@ document.addEventListener('DOMContentLoaded', () => {
             couponApplyBtn.textContent = 'Apply';
             couponApplyBtn.style.color = '';
           }, 2000);
+          renderPaymentGateways();
         }
       } catch (err) {
         console.error('[Coupon] Error:', err);
@@ -1845,197 +1227,205 @@ document.addEventListener('DOMContentLoaded', () => {
           couponApplyBtn.textContent = 'Apply';
           couponApplyBtn.style.color = '';
         }, 2000);
+        renderPaymentGateways();
       } finally {
         couponApplyBtn.disabled = false;
       }
     });
   }
 
+  // ═══════ AUTH REGISTRATION & EVENT LISTENERS ═══════
+  const authModal = document.getElementById('authModal');
+  const landingLoginForm = document.getElementById('landingLoginForm');
+  const googleSigninBtn = document.getElementById('google-signin-btn');
+  const btnLandingSubmit = document.getElementById('btnLandingSubmit');
+  
+  const linkLandingForgot = document.getElementById('linkLandingForgot');
+  const linkLandingSignup = document.getElementById('linkLandingSignup');
+  const linkBackToLogin = document.getElementById('linkBackToLogin');
+  
+  const authTitle = document.getElementById('authTitle');
+  const authSubtitle = document.getElementById('authSubtitle');
+  const authMsg = document.getElementById('authMessage');
+  const socialAuthSection = document.getElementById('socialAuthSection');
+  
+  const landingName = document.getElementById('landingName');
+  const landingEmail = document.getElementById('landingEmail');
+  const landingPassword = document.getElementById('landingPassword');
+  const landingConfirmPassword = document.getElementById('landingConfirmPassword');
+  
+  let authState = 'login'; // 'login' | 'signup' | 'forgot'
+  window.pendingCheckout = null;
+  window.justSignedIn = false;
+  
+  const setAuthMessage = (msg, type = 'info') => {
+    if (!authMsg) return;
+    authMsg.textContent = msg;
+    authMsg.style.display = 'block';
+    if (type === 'error') {
+      authMsg.style.background = 'rgba(244, 63, 94, 0.15)';
+      authMsg.style.color = '#F43F5E';
+      authMsg.style.border = '1px solid rgba(244, 63, 94, 0.3)';
+    } else if (type === 'success') {
+      authMsg.style.background = 'rgba(16, 185, 129, 0.15)';
+      authMsg.style.color = '#10B981';
+      authMsg.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+    } else {
+      authMsg.style.background = 'rgba(0, 230, 246, 0.1)';
+      authMsg.style.color = '#00E6F6';
+      authMsg.style.border = '1px solid rgba(0, 230, 246, 0.2)';
+    }
+  };
 
+  const clearAuthMessage = () => { if (authMsg) authMsg.style.display = 'none'; };
 
-  // ═══════ AUTH SUBMISSION PIPELINE ═══════
+  const openAuthModal = (state = 'login') => {
+    switchAuthState(state);
+    if (authModal) {
+      authModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+  };
 
-  if (authForm) {
-
-    authForm.addEventListener('submit', async (e) => {
-
-      e.preventDefault();
-
+  const closeAuthModal = () => {
+    if (authModal) {
+      authModal.classList.remove('active');
+      document.body.style.overflow = '';
       clearAuthMessage();
+    }
+  };
 
-      if (!supabaseClient) { setAuthMessage("Authentication services are currently unavailable.", "error"); return; }
+  const switchAuthState = (state) => {
+    authState = state;
+    clearAuthMessage();
 
+    if (state === 'login') {
+      if (authTitle) authTitle.innerHTML = 'Join the Challenge';
+      if (authSubtitle) authSubtitle.textContent = 'Sign in to start learning';
+      if (socialAuthSection) socialAuthSection.style.display = '';
+      if (landingName) landingName.style.display = 'none';
+      if (landingPassword) landingPassword.style.display = '';
+      if (landingConfirmPassword) landingConfirmPassword.style.display = 'none';
+      if (btnLandingSubmit) btnLandingSubmit.textContent = 'Login';
+      if (linkLandingForgot) linkLandingForgot.style.display = '';
+      if (linkLandingSignup) { linkLandingSignup.style.display = ''; linkLandingSignup.textContent = 'Create Account'; }
+      if (linkBackToLogin) linkBackToLogin.style.display = 'none';
+    } else if (state === 'signup') {
+      if (authTitle) authTitle.innerHTML = 'Create Account';
+      if (authSubtitle) authSubtitle.textContent = 'Join thousands of learners';
+      if (socialAuthSection) socialAuthSection.style.display = 'none';
+      if (landingName) landingName.style.display = '';
+      if (landingPassword) landingPassword.style.display = '';
+      if (landingConfirmPassword) landingConfirmPassword.style.display = '';
+      if (btnLandingSubmit) btnLandingSubmit.textContent = 'Sign Up';
+      if (linkLandingForgot) linkLandingForgot.style.display = 'none';
+      if (linkLandingSignup) linkLandingSignup.style.display = 'none';
+      if (linkBackToLogin) linkBackToLogin.style.display = '';
+    } else if (state === 'forgot') {
+      if (authTitle) authTitle.innerHTML = 'Reset Password';
+      if (authSubtitle) authSubtitle.textContent = 'Enter your email to receive a reset link';
+      if (socialAuthSection) socialAuthSection.style.display = 'none';
+      if (landingName) landingName.style.display = 'none';
+      if (landingPassword) landingPassword.style.display = 'none';
+      if (landingConfirmPassword) landingConfirmPassword.style.display = 'none';
+      if (btnLandingSubmit) btnLandingSubmit.textContent = 'Send Reset Link';
+      if (linkLandingForgot) linkLandingForgot.style.display = 'none';
+      if (linkLandingSignup) linkLandingSignup.style.display = 'none';
+      if (linkBackToLogin) linkBackToLogin.style.display = '';
+    }
+  };
 
+  if (linkLandingSignup) linkLandingSignup.addEventListener('click', e => { e.preventDefault(); switchAuthState('signup'); });
+  if (linkLandingForgot) linkLandingForgot.addEventListener('click', e => { e.preventDefault(); switchAuthState('forgot'); });
+  if (linkBackToLogin) linkBackToLogin.addEventListener('click', e => { e.preventDefault(); switchAuthState('login'); });
 
-      const email = authEmail.value.trim();
+  if (landingLoginForm) {
+    landingLoginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearAuthMessage();
+      if (!supabaseClient) { setAuthMessage("Authentication services are currently offline.", "error"); return; }
 
-      const password = authPassword.value;
+      const email = landingEmail.value.trim();
+      const password = landingPassword.value;
+      const name = landingName ? landingName.value.trim() : '';
+      const confirmPass = landingConfirmPassword ? landingConfirmPassword.value : '';
 
-      const name = authName ? authName.value.trim() : '';
-
-      const confirmPass = authConfirmPassword ? authConfirmPassword.value : '';
-
-
-
-      btnAuthSubmit.disabled = true;
-
-      btnAuthSubmit.style.opacity = '0.7';
-
-      const originalText = btnAuthSubmit.textContent;
-
-
+      btnLandingSubmit.disabled = true;
+      btnLandingSubmit.style.opacity = '0.7';
+      const originalText = btnLandingSubmit.textContent;
 
       try {
-
         if (authState === 'login') {
-
-          btnAuthSubmit.textContent = 'Signing in...';
-
+          btnLandingSubmit.textContent = 'Signing in...';
+          window.justSignedIn = true;
           const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-
           if (error) {
-
+            window.justSignedIn = false;
             if (error.message.toLowerCase().includes('invalid login credentials')) {
-
               throw new Error("Incorrect email or password. Need an account? Click 'Create Account'.");
-
             }
-
             throw error;
-
           }
-
           closeAuthModal();
-
-          const { data: { session } } = await supabaseClient.auth.getSession();
-
-          if (session) {
-
-            updateNavForLoggedIn(session.user);
-
-            await checkPurchaseStatus(supabaseClient, session.user.id);
-
-            await saveCountryToProfile(userCountry);
-
-            if (window.pendingBuyIntent) {
-
-              window.pendingBuyIntent = false;
-
-              if (pricingDetailsView && pricingCheckoutView) {
-
-                pricingDetailsView.style.display = 'none';
-
-                pricingCheckoutView.style.display = 'block';
-
-              }
-
-              openPricingModal();
-
-            }
-
-          }
-
-        }
-
-        else if (authState === 'signup') {
-
+        } else if (authState === 'signup') {
           if (!name) { setAuthMessage("Please enter your full name.", "error"); throw new Error("_handled"); }
-
           if (password.length < 6) { setAuthMessage("Password must be at least 6 characters.", "error"); throw new Error("_handled"); }
-
           if (password !== confirmPass) { setAuthMessage("Passwords do not match.", "error"); throw new Error("_handled"); }
 
-          
-
-          btnAuthSubmit.textContent = 'Creating Account...';
-
+          btnLandingSubmit.textContent = 'Creating Account...';
+          window.justSignedIn = true;
           const { data, error } = await supabaseClient.auth.signUp({
-
             email, password,
-
             options: { data: { full_name: name } }
-
           });
-
-          if (error) throw error;
-
-          if (data?.user?.identities?.length === 0) {
-
-            setAuthMessage("This email is already registered. Please log in.", "info");
-
-          } else {
-
-            setAuthMessage("Account created! Check your email to verify, then log in.", "success");
-
+          if (error) {
+            window.justSignedIn = false;
+            throw error;
           }
-
-        }
-
-        else if (authState === 'forgot') {
-
-          btnAuthSubmit.textContent = 'Sending...';
-
+          if (data?.user?.identities?.length === 0) {
+            window.justSignedIn = false;
+            setAuthMessage("This email is already registered. Please log in.", "info");
+          } else {
+            setAuthMessage("Account created! Check your email to verify, then log in.", "success");
+          }
+        } else if (authState === 'forgot') {
+          btnLandingSubmit.textContent = 'Sending...';
           const basePath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
-
           const resetUrl = window.location.origin + basePath + '/reset-password.html';
-
           const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: resetUrl });
-
           if (error) throw error;
-
           setAuthMessage("If an account exists, a recovery link has been sent to your email.", "success");
-
         }
-
       } catch (err) {
-
         if (err.message !== "_handled") { setAuthMessage(err.message, "error"); }
-
       } finally {
-
-        btnAuthSubmit.disabled = false;
-
-        btnAuthSubmit.style.opacity = '1';
-
-        btnAuthSubmit.textContent = originalText;
-
+        btnLandingSubmit.disabled = false;
+        btnLandingSubmit.style.opacity = '1';
+        btnLandingSubmit.textContent = originalText;
       }
-
     });
-
   }
 
-
-
-  if (authGoogleBtn) {
-
-    authGoogleBtn.addEventListener('click', async (e) => {
-
+  if (googleSigninBtn) {
+    googleSigninBtn.addEventListener('click', async (e) => {
       e.preventDefault();
+      if (!supabaseClient) { setAuthMessage("Authentication services are currently offline.", "error"); return; }
 
-      if (!supabaseClient) { setAuthMessage("Authentication services are currently unavailable.", "error"); return; }
+      const originalText = googleSigninBtn.innerHTML;
+      googleSigninBtn.innerHTML = 'Redirecting securely...';
+      googleSigninBtn.disabled = true;
+      googleSigninBtn.style.opacity = '0.7';
 
-      
-
-      const originalText = authGoogleBtn.innerHTML;
-
-      authGoogleBtn.innerHTML = 'Redirecting securely...';
-
-      authGoogleBtn.disabled = true;
-
-      authGoogleBtn.style.opacity = '0.7';
+      localStorage.setItem('manodemy_oauth_in_progress', 'true');
+      if (window.pendingCheckout) {
+        localStorage.setItem('manodemy_pending_checkout', JSON.stringify(window.pendingCheckout));
+      }
 
       try {
-
         const { error } = await supabaseClient.auth.signInWithOAuth({
-
           provider: 'google',
-
           options: {
-
             redirectTo: (() => {
-              // Use production URL when running locally (file:// or localhost)
-              // so it matches Supabase's whitelisted redirect URLs
               const isLocal = window.location.protocol === 'file:' ||
                               window.location.hostname === 'localhost' ||
                               window.location.hostname === '127.0.0.1';
@@ -2043,50 +1433,63 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? 'https://manodemy.com/landing_v2/index.html'
                 : window.location.href;
             })(),
-
             queryParams: { access_type: 'offline', prompt: 'consent' }
-
           }
-
         });
-
         if (error) {
-
           setAuthMessage('Google Login Error: ' + error.message, "error");
-
-          authGoogleBtn.innerHTML = originalText;
-
-          authGoogleBtn.disabled = false;
-
-          authGoogleBtn.style.opacity = '1';
-
+          googleSigninBtn.innerHTML = originalText;
+          googleSigninBtn.disabled = false;
+          googleSigninBtn.style.opacity = '1';
         }
-
       } catch (err) {
-
-        authGoogleBtn.innerHTML = originalText;
-
-        authGoogleBtn.disabled = false;
-
-        authGoogleBtn.style.opacity = '1';
-
+        googleSigninBtn.innerHTML = originalText;
+        googleSigninBtn.disabled = false;
+        googleSigninBtn.style.opacity = '1';
       }
-
     });
-
   }
 
-
+  const navSignin = document.getElementById('navSignin');
+  if (navSignin) {
+    navSignin.addEventListener('click', async (e) => {
+      const text = navSignin.textContent || '';
+      if (text.includes('Sign Out') || text.includes('Log Out')) {
+        e.preventDefault();
+        if (supabaseClient) {
+          await supabaseClient.auth.signOut();
+          localStorage.removeItem('manodemy_auth');
+          localStorage.removeItem('manodemy_enrolled');
+          window.location.reload();
+        }
+        return;
+      }
+      if (localStorage.getItem('manodemy_auth') === 'true' || text.includes('Dashboard') || text.includes('Score Card') || text.includes('Admin') || text.includes('Instructor') || text.includes('Panel')) return;
+      e.preventDefault();
+      openAuthModal('login');
+    });
+  }
 
   async function updateNavForLoggedIn(user) {
     const signInBtn = document.getElementById('navSignin');
+    const coursesDropdown = document.getElementById('navMyCoursesDropdown');
+    
+    if (coursesDropdown) {
+      coursesDropdown.style.display = user ? 'block' : 'none';
+    }
+    
+    // Clean up any existing dynamic extra button to prevent duplication
+    const existingExtra = document.getElementById('navInstructorExtra');
+    if (existingExtra) existingExtra.remove();
+    
     if (!signInBtn) return;
     if (!user) {
       signInBtn.textContent = 'Sign In';
-      signInBtn.href = '#';
-      signInBtn.style.display = 'inline-flex';
+      signInBtn.href = 'javascript:void(0)';
       return;
     }
+
+    signInBtn.removeAttribute('onclick');
 
     try {
       if (supabaseClient) {
@@ -2096,247 +1499,67 @@ document.addEventListener('DOMContentLoaded', () => {
           .eq('id', user.id)
           .single();
 
-        if (profile && profile.role === 'admin') {
+        const isAdmin = (profile && profile.role === 'admin') || user.email === 'manodamy25@gmail.com';
+
+        if (isAdmin) {
           signInBtn.textContent = '⚙️ Admin Panel';
-          signInBtn.href = '../admin.html';
-          signInBtn.style.display = 'inline-flex';
+          signInBtn.href = '/admin.html';
+
+          // Dynamically insert the Instructor Panel button next to it!
+          const instBtn = document.createElement('a');
+          instBtn.id = 'navInstructorExtra';
+          instBtn.className = 'btn-ghost';
+          instBtn.style.marginRight = '12px';
+          instBtn.textContent = '👨‍🏫 Instructor Panel';
+          instBtn.href = '/instructor-dashboard.html';
+          signInBtn.parentNode.insertBefore(instBtn, signInBtn);
+          return;
+        }
+
+        if (profile && profile.role === 'instructor') {
+          signInBtn.textContent = '👨‍🏫 Instructor Panel';
+          signInBtn.href = '/instructor-dashboard.html';
           return;
         }
       }
     } catch (e) {
-      console.warn('[Admin] Failed to check admin role:', e);
+      console.warn('[Admin] Failed to check roles:', e);
     }
 
     if (user.email === 'manodamy25@gmail.com') {
       signInBtn.textContent = '⚙️ Admin Panel';
-      signInBtn.href = '../admin.html';
-      signInBtn.style.display = 'inline-flex';
+      signInBtn.href = '/admin.html';
       return;
     }
 
     signInBtn.textContent = 'My Score Card';
-    signInBtn.href = '../home.html';
-    signInBtn.style.display = 'inline-flex';
+    signInBtn.href = '/home.html';
   }
-
-
 
   function unlockAllDays() {
-
-    document.querySelectorAll('.day-card.locked').forEach(card => {
-
+    document.querySelectorAll('.day-card.locked, .day-card.coming-soon').forEach(card => {
       card.classList.remove('locked');
-
-      const lock = card.querySelector('.lock-badge');
-
+      card.classList.remove('coming-soon');
+      const lock = card.querySelector('.badge-lock');
       if (lock) lock.remove();
-
     });
-
     window._userHasPurchased = true;
-
   }
-
-
 
   function updateCTAsForPaidUser() {
-
+    const navEnrollBtn = document.getElementById('navEnrollBtn');
+    if (navEnrollBtn) navEnrollBtn.style.display = 'none';
+    const mobEnrollBtn = document.getElementById('mobEnrollBtn');
+    if (mobEnrollBtn) mobEnrollBtn.style.display = 'none';
+    
     document.querySelectorAll('[data-cta="buy"]').forEach(btn => {
-      if (!btn.closest('.hero-ctas') && !btn.closest('.premium-hero-ctas')) {
-        if (btn.classList.contains('btn-nav-buy')) {
-          btn.textContent = 'Continue →';
-        } else {
-          btn.textContent = 'Continue Learning →';
-        }
-        btn.href = '../home.html';
-        btn.onclick = null;
-      }
+      btn.textContent = 'Continue Learning →';
+      btn.href = '/home.html';
+      btn.onclick = null;
     });
 
-    // 2. Hide the default hero-ctas
-    const heroCtas = document.querySelector('.hero-ctas');
-    if (heroCtas) {
-      heroCtas.style.setProperty('display', 'none', 'important');
-    }
-
-    // 3. Render the premium CTAs below the hero-proof cards in the right column
-    const heroProof = document.querySelector('.hero-proof');
-    if (heroProof) {
-      let premiumCtas = document.querySelector('.premium-hero-ctas');
-      if (!premiumCtas) {
-        premiumCtas = document.createElement('div');
-        premiumCtas.className = 'premium-hero-ctas';
-        heroProof.parentNode.insertBefore(premiumCtas, heroProof.nextSibling);
-      }
-
-      premiumCtas.innerHTML = `
-        <button id="heroShareBtn" class="premium-btn premium-btn--share" aria-label="Share this course">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; vertical-align: middle;">
-            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
-            <polyline points="16 6 12 2 8 6"></polyline>
-            <line x1="12" y1="2" x2="12" y2="15"></line>
-          </svg>
-          Share this Course
-        </button>
-        <a href="../home.html" class="premium-btn premium-btn--continue" aria-label="Continue to Dashboard">
-          🚀 Continue Learning
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 8px; transition: transform 0.3s ease; vertical-align: middle;">
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-            <polyline points="12 5 19 12 12 19"></polyline>
-          </svg>
-        </a>
-      `;
-
-      // 4. Inject premium styles dynamically
-      if (!document.getElementById('premium-paid-btn-styles')) {
-        const styleEl = document.createElement('style');
-        styleEl.id = 'premium-paid-btn-styles';
-        styleEl.textContent = `
-          .premium-hero-ctas {
-            display: flex !important;
-            flex-direction: row !important;
-            gap: 12px !important;
-            flex-wrap: nowrap !important;
-            margin-top: 1.5rem !important;
-            width: 100% !important;
-            justify-content: center !important;
-            align-items: center !important;
-          }
-          
-          .premium-btn {
-            flex: 1 1 auto !important;
-            width: auto !important;
-            min-width: 140px !important;
-            font-family: 'Outfit', sans-serif !important;
-            font-weight: 800 !important;
-            font-size: 12.5px !important;
-            letter-spacing: 0.04em !important;
-            text-transform: uppercase !important;
-            padding: 12px 20px !important;
-            border-radius: 50px !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            cursor: pointer !important;
-            transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
-            text-decoration: none !important;
-            white-space: nowrap !important;
-            border: none !important;
-          }
-          
-          .premium-btn--share {
-            background: rgba(15, 23, 42, 0.45) !important;
-            color: rgba(255, 255, 255, 0.85) !important;
-            border: 1.5px solid rgba(255, 255, 255, 0.08) !important;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35) !important;
-          }
-          
-          .premium-btn--share:hover {
-            background: rgba(15, 23, 42, 0.75) !important;
-            color: #ffffff !important;
-            border-color: rgba(0, 230, 246, 0.45) !important;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 230, 246, 0.15) !important;
-            transform: translateY(-2px) !important;
-          }
-          
-          .premium-btn--continue {
-            background: linear-gradient(135deg, #00e6f6 0%, #0072ff 100%) !important;
-            color: #ffffff !important;
-            box-shadow: 0 8px 25px rgba(0, 114, 255, 0.35), 0 0 15px rgba(0, 230, 246, 0.18) !important;
-          }
-          
-          .premium-btn--continue:hover {
-            transform: translateY(-3px) scale(1.025) !important;
-            box-shadow: 0 12px 35px rgba(0, 114, 255, 0.5), 0 0 25px rgba(0, 230, 246, 0.35) !important;
-          }
-          
-          .premium-btn--continue:hover svg {
-            transform: translateX(4px) !important;
-          }
-          
-          /* Premium Toast Style */
-          .premium-toast {
-            position: fixed !important;
-            bottom: 30px !important;
-            left: 50% !important;
-            transform: translate(-50%, 50px) scale(0.95) !important;
-            background: rgba(7, 10, 19, 0.92) !important;
-            backdrop-filter: blur(12px) !important;
-            border: 1.5px solid rgba(0, 230, 246, 0.45) !important;
-            color: #ffffff !important;
-            padding: 12px 24px !important;
-            border-radius: 12px !important;
-            font-family: 'Outfit', sans-serif !important;
-            font-weight: 700 !important;
-            font-size: 13.5px !important;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6), 0 0 20px rgba(0,230,246,0.2) !important;
-            z-index: 999999 !important;
-            opacity: 0 !important;
-            pointer-events: none !important;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-          }
-          
-          .premium-toast.show {
-            opacity: 1 !important;
-            transform: translate(-50%, 0) scale(1) !important;
-          }
-        `;
-        document.head.appendChild(styleEl);
-      }
-
-      // 5. Attach Share Handler
-      const shareBtn = document.getElementById('heroShareBtn');
-      if (shareBtn) {
-        shareBtn.addEventListener('click', (e) => {
-          e.preventDefault();
-          const shareData = {
-            title: '30 Days of Python for Data Analyst - V2',
-            text: 'Learn Python by actually coding! Check out this incredible hands-on course.',
-            url: window.location.origin + '/30-days-Python-for-Data-Analyst-V2/landing_v2/index.html'
-          };
-          
-          const displayToast = () => {
-            let toast = document.getElementById('premiumShareToast');
-            if (!toast) {
-              toast = document.createElement('div');
-              toast.id = 'premiumShareToast';
-              toast.className = 'premium-toast';
-              toast.innerHTML = '📋 Course link copied to clipboard! Share it with your friends.';
-              document.body.appendChild(toast);
-            }
-            setTimeout(() => toast.classList.add('show'), 50);
-            setTimeout(() => toast.classList.remove('show'), 3500);
-          };
-
-          if (navigator.share) {
-
-            navigator.share(shareData).catch(() => {
-
-              navigator.clipboard.writeText(shareData.url).then(displayToast);
-
-            });
-
-          } else {
-
-            navigator.clipboard.writeText(shareData.url).then(displayToast);
-
-          }
-
-        });
-
-      }
-
-    }
-
-
-
-    const stickyBar = document.getElementById('mobileSticky');
-
-    if (stickyBar) stickyBar.style.display = 'none';
-
+    unlockAllDays();
   }
-
-
 
   async function checkPurchaseStatus(sb, userId) {
     try {
@@ -2359,26 +1582,69 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCTAsForPaidUser();
         const pricingSection = document.getElementById('pricing');
         if (pricingSection) pricingSection.style.display = 'none';
-        closePricingModal();
+        closeCheckout();
       } else {
         localStorage.setItem('manodemy_enrolled', 'false');
         const pricingSection = document.getElementById('pricing');
         if (pricingSection) pricingSection.style.display = 'block';
       }
-
-      
-
-      // Admin link is handled directly in place of the dashboard button.
-
     } catch (e) {
-
       console.warn("Purchase status check skipped:", e.message);
-
     }
-
   }
 
+  async function saveCountryToProfile(fallbackCountry) {
+    if (!supabaseClient) return;
+    try {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) return;
 
+      const { data: profile } = await supabaseClient
+        .from('profiles')
+        .select('country')
+        .eq('id', session.user.id)
+        .single();
+
+      if (profile?.country && profile.country !== 'US' && profile.country !== 'Unknown') {
+        return;
+      }
+
+      let countryCode = fallbackCountry || null;
+      const geoApis = [
+        'https://get.geojs.io/v1/ip/country.json',
+        'https://ipapi.co/json/'
+      ];
+      for (const api of geoApis) {
+        try {
+          const res = await fetch(api, { signal: AbortSignal.timeout(4000) });
+          const json = await res.json();
+          const code = json.country || json.country_code;
+          if (code && code.length === 2) {
+            countryCode = code.toUpperCase();
+            break;
+          }
+        } catch (_) {}
+      }
+
+      if (!countryCode) {
+        const locale = navigator.language || navigator.languages?.[0] || '';
+        const parts = locale.split('-');
+        if (parts.length > 1 && parts[1].length === 2) {
+          countryCode = parts[1].toUpperCase();
+        }
+      }
+
+      if (countryCode) {
+        await supabaseClient
+          .from('profiles')
+          .update({ country: countryCode })
+          .eq('id', session.user.id);
+        console.log('[Manodemy] Country saved to profile:', countryCode);
+      }
+    } catch (e) {
+      console.warn('[Manodemy] Country capture failed:', e.message);
+    }
+  }
 
   const setAuthCookie = (token, expiresSec) => {
     const maxAge = expiresSec || 604800; // default 7 days
@@ -2390,120 +1656,78 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const handleUserSession = async (session) => {
-
     if (session) {
-
       localStorage.setItem('manodemy_auth', 'true');
-
       if (session.access_token) {
         setAuthCookie(session.access_token, session.expires_in);
       }
-
       updateNavForLoggedIn(session.user);
-
       await checkPurchaseStatus(supabaseClient, session.user.id);
-
       await saveCountryToProfile(userCountry);
-
     } else {
-
       localStorage.removeItem('manodemy_auth');
-
       localStorage.removeItem('manodemy_enrolled');
-
       clearAuthCookie();
-
+      updateNavForLoggedIn(null);
     }
-
   };
 
-
-
   (async () => {
+    const oauthInProgress = localStorage.getItem('manodemy_oauth_in_progress') === 'true';
+    localStorage.removeItem('manodemy_oauth_in_progress');
 
-    // Start Geo-Pricing lookup
-
-    await setupGeoPricing();
-
-
-
-    if (!supabaseClient) return;
-
-    try {
-
-      const { data: { session } } = await supabaseClient.auth.getSession();
-
-      await handleUserSession(session);
-
-      
-
-      supabaseClient.auth.onAuthStateChange(async (event, session) => {
-
-        if (event === 'SIGNED_IN' && session) {
-
-          await handleUserSession(session);
-
-          if (!window.pendingBuyIntent) {
-            window.location.href = '../home.html';
-          }
-
-        } else if (event === 'SIGNED_OUT') {
-
-          localStorage.removeItem('manodemy_auth');
-
-          localStorage.removeItem('manodemy_enrolled');
-
-          clearAuthCookie();
-
-          window.location.reload();
-
-        }
-
-      });
-
-    } catch (e) {
-
-      console.warn("Session check failed silently:", e);
-
+    const storedPending = localStorage.getItem('manodemy_pending_checkout');
+    if (storedPending) {
+      try {
+        window.pendingCheckout = JSON.parse(storedPending);
+      } catch (e) {}
+      localStorage.removeItem('manodemy_pending_checkout');
     }
 
-  })();
+    await detectGeoPricing();
 
-
-
-  /* ═══ SMOOTH SCROLL for anchor links ═══ */
-
-  document.querySelectorAll('a[href^="#"]').forEach(a => {
-
-    a.addEventListener('click', e => {
-
-      const target = document.querySelector(a.getAttribute('href'));
-
-      if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
-
-    });
-
-  });
-
-
-  /* ═══ BACK TO TOP BUTTON LOGIC ═══ */
-  const backToTopBtn = document.getElementById('backToTop');
-  if (backToTopBtn) {
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 400) {
-        backToTopBtn.classList.add('visible');
-      } else {
-        backToTopBtn.classList.remove('visible');
-      }
-    });
-
-    backToTopBtn.addEventListener('click', () => {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
+    if (!supabaseClient) return;
+    try {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      await handleUserSession(session);
+      
+      supabaseClient.auth.onAuthStateChange(async (event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+          await handleUserSession(session);
+          
+          const stored = localStorage.getItem('manodemy_pending_checkout');
+          if (stored) {
+            try { window.pendingCheckout = JSON.parse(stored); } catch(e){}
+            localStorage.removeItem('manodemy_pending_checkout');
+          }
+          
+          if (window.pendingCheckout) {
+            const currentPending = window.pendingCheckout;
+            window.pendingCheckout = null;
+            openCheckout(currentPending.tier);
+            initiatePayment(currentPending.gateway);
+          } else if (window.pendingWriteReview) {
+            // User clicked "Write Review" → stay on page; reviews.js will open the form
+            window.justSignedIn = false;
+          } else if (window.justSignedIn || oauthInProgress) {
+            window.justSignedIn = false;
+            setTimeout(() => {
+              if (!window.pendingCheckout && !window.pendingWriteReview) {
+                window.location.href = '/home.html';
+              }
+            }, 300);
+          }
+        } else if (event === 'SIGNED_OUT') {
+          localStorage.removeItem('manodemy_auth');
+          localStorage.removeItem('manodemy_enrolled');
+          clearAuthCookie();
+          window.location.reload();
+        }
       });
-    });
-  }
+    } catch (e) {
+      console.warn("Session check failed silently:", e);
+    }
+  })();
 
 });
 

@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SQL for Data Analyst — 18-Day Course | Manodemy</title>
+  <meta name="description" content="Master SQL from scratch in 18 structured days. Learn SELECT, JOINs, CTEs, Window Functions, and real-world BI analysis with interactive live queries. Part of the Manodemy Data Analytics Bundle.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --void: #060913;
+      --base: #0B0F19;
+      --surface: #121826;
+      --elevated: #1B2336;
+      --ink: #F8FAFC;
+      --ink-dim: #94A3B8;
+      --ink-muted: #475569;
+      --cyan: #00E6F6;
+      --gold: #FFB020;
+      --purple: #A855F7;
+      --purple-glow: rgba(168, 85, 247, 0.18);
+      --emerald: #10B981;
+      --rose: #F43F5E;
+      --rim: rgba(255,255,255,0.05);
+      --rim-strong: rgba(255,255,255,0.12);
+      --font-display: 'Outfit', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--base);
+      color: var(--ink);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── NAV ── */
+    .top-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid var(--rim-strong);
+      background: rgba(6,9,19,0.9);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .nav-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+      color: var(--ink-dim);
+      border: 1px solid var(--rim-strong);
+      padding: 0.4rem 0.9rem;
+      border-radius: 8px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .nav-back:hover { color: var(--ink); border-color: var(--purple); }
+
+    /* ── HERO ── */
+    .course-hero {
+      position: relative;
+      padding: 5rem 2rem 4rem;
+      text-align: center;
+      overflow: hidden;
+    }
+    .course-hero::before {
+      content: '';
+      position: absolute;
+      top: -100px; left: 50%;
+      transform: translateX(-50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(168,85,247,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .course-hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--purple);
+      border: 1px solid rgba(168,85,247,0.35);
+      background: rgba(168,85,247,0.1);
+      padding: 0.4rem 1rem;
+      border-radius: 999px;
+      margin-bottom: 1.5rem;
+    }
+    /* Emojis replaced with inline SVG logos */
+    .course-hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 1.25rem;
+    }
+    .course-hero h1 span {
+      background: linear-gradient(135deg, var(--purple), #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .course-hero-sub {
+      max-width: 600px;
+      margin: 0 auto 2rem;
+      font-size: 1.05rem;
+      color: var(--ink-dim);
+      line-height: 1.7;
+    }
+    .hero-stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      margin-bottom: 2.5rem;
+    }
+    .hero-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    .hero-stat-num {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--purple);
+    }
+    .hero-stat-label {
+      font-size: 0.75rem;
+      color: var(--ink-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-family: var(--font-mono);
+    }
+    .hero-cta-row {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.85rem 2rem;
+      background: linear-gradient(135deg, var(--purple), #c084fc);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.95rem;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(168,85,247,0.35); }
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.85rem 1.75rem;
+      background: transparent;
+      color: var(--ink);
+      font-weight: 600;
+      font-size: 0.95rem;
+      border-radius: 10px;
+      border: 1px solid var(--rim-strong);
+      transition: border-color 0.2s;
+    }
+    .btn-outline:hover { border-color: var(--purple); }
+
+    /* ── CONTAINER ── */
+    .container { max-width: 900px; margin: 0 auto; padding: 0 1.5rem; }
+
+    /* ── SECTION HEADER ── */
+    .sec-head {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    .sec-head h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+    }
+    .sec-head h2 span {
+      background: linear-gradient(135deg, var(--purple), #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .sec-head p { color: var(--ink-dim); max-width: 540px; margin: 0 auto; }
+
+    /* ── CURRICULUM PHASES ── */
+    .curriculum-section {
+      padding: 5rem 0;
+      background: var(--void);
+    }
+    .phase-block {
+      margin-bottom: 2.5rem;
+      border: 1px solid var(--rim-strong);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .phase-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.25rem 1.5rem;
+      background: var(--surface);
+      border-bottom: 1px solid var(--rim-strong);
+    }
+    .phase-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.3rem 0.75rem;
+      border-radius: 6px;
+      background: rgba(168,85,247,0.15);
+      color: var(--purple);
+      border: 1px solid rgba(168,85,247,0.3);
+      flex-shrink: 0;
+    }
+    .phase-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--ink);
+    }
+    .phase-db {
+      margin-left: auto;
+      font-size: 0.72rem;
+      color: var(--ink-muted);
+      font-family: var(--font-mono);
+      white-space: nowrap;
+    }
+    .day-list {
+      list-style: none;
+    }
+    .day-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--rim);
+      transition: background 0.15s;
+    }
+    .day-item:last-child { border-bottom: none; }
+    .day-item:hover { background: var(--surface); }
+    .day-num {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--purple);
+      padding: 0.25rem 0.5rem;
+      background: rgba(168,85,247,0.1);
+      border-radius: 5px;
+      flex-shrink: 0;
+      min-width: 48px;
+      text-align: center;
+      margin-top: 0.1rem;
+    }
+    .day-content { flex: 1; }
+    .day-title {
+      font-weight: 600;
+      font-size: 0.92rem;
+      color: var(--ink);
+      margin-bottom: 0.25rem;
+    }
+    .day-topics {
+      font-size: 0.8rem;
+      color: var(--ink-muted);
+      line-height: 1.5;
+    }
+    .day-challenge {
+      font-size: 0.75rem;
+      color: var(--gold);
+      margin-top: 0.3rem;
+      font-family: var(--font-mono);
+    }
+    .mini-project-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.55rem;
+      background: rgba(255,176,32,0.12);
+      color: var(--gold);
+      border: 1px solid rgba(255,176,32,0.3);
+      border-radius: 5px;
+      margin-left: 0.5rem;
+      vertical-align: middle;
+    }
+
+    /* ── FEATURES SECTION ── */
+    .features-section {
+      padding: 5rem 0;
+      background: linear-gradient(180deg, var(--base) 0%, var(--void) 100%);
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+    @media (max-width: 700px) { .features-grid { grid-template-columns: 1fr; } }
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--rim-strong);
+      border-radius: 14px;
+      padding: 1.5rem;
+    }
+    .feature-icon { font-size: 1.8rem; margin-bottom: 0.75rem; }
+    .feature-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 0.5rem;
+      color: var(--ink);
+    }
+    .feature-desc { font-size: 0.83rem; color: var(--ink-dim); line-height: 1.55; }
+
+    /* ── DATASET SECTION ── */
+    .datasets-section {
+      padding: 4rem 0;
+      background: var(--void);
+    }
+    .dataset-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+    @media (max-width: 600px) { .dataset-grid { grid-template-columns: 1fr; } }
+    .dataset-card {
+      background: var(--surface);
+      border: 1px solid var(--rim-strong);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .dataset-icon { font-size: 1.5rem; flex-shrink: 0; }
+    .dataset-name {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--purple);
+      margin-bottom: 0.3rem;
+    }
+    .dataset-desc { font-size: 0.8rem; color: var(--ink-dim); line-height: 1.5; }
+    .dataset-days { font-size: 0.72rem; color: var(--ink-muted); margin-top: 0.3rem; font-family: var(--font-mono); }
+
+    /* ── CTA SECTION ── */
+    .cta-section {
+      padding: 5rem 2rem;
+      text-align: center;
+      background: linear-gradient(180deg, var(--void) 0%, #0d0a1f 100%);
+      border-top: 1px solid var(--rim-strong);
+    }
+    .cta-section h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 4vw, 2.5rem);
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+    .cta-section p { color: var(--ink-dim); margin-bottom: 2rem; font-size: 1rem; }
+
+    /* ── FOOTER ── */
+    .page-footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.8rem;
+      color: var(--ink-muted);
+      border-top: 1px solid var(--rim);
+    }
+    .page-footer a { color: var(--ink-dim); }
+    .page-footer a:hover { color: var(--ink); }
+
+    /* ═══ TECH LOGO STYLES (Professional Dark Circle Logos) ═══ */
+    .tech-logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #131926; /* Dark background matching the image */
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 4.5px;
+      vertical-align: middle;
+      transition: transform 0.2s, border-color 0.2s;
+      box-sizing: border-box;
+    }
+    .tech-logo svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .tech-logo:hover {
+      transform: scale(1.1);
+      border-color: rgba(255, 255, 255, 0.35);
+    }
+    .course-hero-badge .tech-logo {
+      width: 20px;
+      height: 20px;
+      padding: 1.5px;
+      margin-right: 0.15rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="top-nav">
+    <div class="nav-logo">Manodemy</div>
+    <a href="/" class="nav-back">← Back to Home</a>
+  </nav>
+
+  <!-- Hero -->
+  <section class="course-hero">
+    <div class="course-hero-badge"><span class="tech-logo logo-sql" title="SQL"><svg viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v6c0 1.66 4 3 9 3s9-1.34 9-3V5"></path><path d="M3 11v6c0 1.66 4 3 9 3s9-1.34 9-3v-6"></path></svg></span> SQL for Data Analyst</div>
+    <h1>Master SQL in <span>18 Structured Days</span></h1>
+    <p class="course-hero-sub">
+      From your very first SELECT to advanced window functions and real-world BI reports — all with a live interactive SQL editor and Mano AI guidance.
+    </p>
+    <div class="hero-stats-row">
+      <div class="hero-stat">
+        <span class="hero-stat-num">18</span>
+        <span class="hero-stat-label">Days</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">200+</span>
+        <span class="hero-stat-label">Challenges</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">4</span>
+        <span class="hero-stat-label">Real Datasets</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">1</span>
+        <span class="hero-stat-label">Capstone BI Report</span>
+      </div>
+    </div>
+    <div class="hero-cta-row">
+      <a href="/#pricing" class="btn-primary">🎯 Get Full Bundle &rarr;</a>
+      <a href="/#bundle" class="btn-outline">See All 3 Courses</a>
+    </div>
+  </section>
+
+  <!-- Curriculum -->
+  <section class="curriculum-section">
+    <div class="container">
+      <div class="sec-head">
+        <h2>The Complete <span>18-Day SQL Curriculum</span></h2>
+        <p>Every concept a professional Data Analyst uses on the job — in a logical, progressive sequence.</p>
+      </div>
+
+      <!-- Phase 1 -->
+      <div class="phase-block">
+        <div class="phase-header">
+          <span class="phase-badge">Phase 1</span>
+          <span class="phase-title">Foundations — Days 1–4</span>
+          <span class="phase-db">📦 retail.db</span>
+        </div>
+        <ul class="day-list">
+          <li class="day-item">
+            <span class="day-num">Day 01</span>
+            <div class="day-content">
+              <div class="day-title">Database Fundamentals &amp; SQL Environment</div>
+              <div class="day-topics">Relational databases vs spreadsheets, schemas, tables, fields, SELECT *, SELECT columns, aliases (AS), DISTINCT, LIMIT</div>
+              <div class="day-challenge">🎯 Schema Explorer: Fetch unique product categories sold</div>
+            </div>
+          </li>
+          <li class="day-item">
+            <span class="day-num">Day 02</span>
+            <div class="day-content">
+              <div class="day-title">SELECT &amp; Filtering — Retrieving Rows</div>
+              <div class="day-topics">WHERE clause filtering, logical operators (AND, OR, NOT), operators (=, &lt;&gt;, &lt;, &gt;, &lt;=, &gt;=), BETWEEN, IN list filters</div>
+              <div class="day-challenge">🎯 High-Value Filter: Find transactions over ₹8,000 in the 'East' region</div>
+            </div>
+          </li>
+          <li class="day-item">
+            <span class="day-num">Day 03</span>
+            <div class="day-content">
+              <div class="day-title">Sorting, Pattern Matching &amp; CASE</div>
+              <div class="day-topics">ORDER BY sorting (ASC/DESC, multi-column), LIKE wildcard fuzzy match (% and _), NULL comparisons (IS NULL, IS NOT NULL), COALESCE fallback, CASE WHEN conditional logic</div>
+              <div class="day-challenge">🎯 Customer Clean-up: Sort 'Kumar' occurrences by transaction amounts; handle null email defaults</div>
+            </div>
+          </li>
+          <li class="day-item">
+            <span class="day-num">Day 04</span>
+            <div class="day-content">
+              <div class="day-title">Aggregate Functions &amp; GROUP BY</div>
+              <div class="day-topics">Aggregate metrics (COUNT, SUM, AVG, MIN, MAX), GROUP BY groupings, HAVING post-aggregation filter vs WHERE pre-filter</div>
+              <div class="day-challenge">🎯 Category Volume: Summarize average cost and order counts; extract high-volume cohorts</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Phase 2 -->
+      <div class="phase-block">
+        <div class="phase-header">
+          <span class="phase-badge">Phase 2</span>
+          <span class="phase-title">Joins &amp; Advanced Filtering — Days 5–7</span>
+          <span class="phase-db">📦 company.db / ecommerce.db</span>
+        </div>
+        <ul class="day-list">
+          <li class="day-item">
+            <span class="day-num">Day 05</span>
+            <div class="day-content">
+              <div class="day-title">Joins — Combining Multiple Tables</div>
+              <div class="day-topics">Primary/foreign keys, INNER JOIN, LEFT JOIN, SELF JOIN, CROSS JOIN, table aliasing, multiple table joins</div>
+              <div class="day-challenge">🎯 Department Heads: Retrieve active departments with their assigned managers and budgets</div>
+            </div>
+          </li>
+          <li class="day-item">
+            <span class="day-num">Day 06</span>
+            <div class="day-content">
+              <div class="day-title">Subqueries</div>
+              <div class="day-topics">Scalar subqueries, multi-row subqueries (IN, NOT IN), correlated subqueries, EXISTS/NOT EXISTS vs JOIN performance</div>
+              <div class="day-challenge">🎯 Spender Cohort: Retrieve orders representing spending values above the cohort's average</div>
+            </div>
+          </li>
+          <li class="day-item">
+            <span class="day-num">Day 07</span>
+            <div class="day-content">
+              <div class="day-title">Common Table Expressions (CTEs)</div>
+              <div class="day-topics">WITH clause syntax, readability improvements, chaining multiple CTEs, recursive CTE basics, CTEs vs derived tables</div>
+              <div class="day-challenge">🎯 Category Revenue: Chaining CTEs to organize and output product sales totals by category</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Phase 3 -->
+      <div class="phase-block">
+        <div class="phase-header">
+          <span class="phase-badge">Phase 3</span>
+          <span class="phase-title">Window Functions &amp; Analytics — Days 8–10</span>
+          <span class="phase-db">📦 ecommerce.db</span>
+        </div>
+        <ul class="day-list">
+          <li class="day-item">
+            <span class="day-num">Day 08</span>
+            <div class="day-content">
+              <div class="day-title">Window Functions I — Ranking &amp; Numbering</div>
+              <div class="day-topics">OVER(), PARTITION BY, ROW_NUMBER(), RANK(), DENSE_RANK() ties, NTILE(n) distribution quartiles</div>
+              <div class="day-challenge">🎯 Region Rankings: Rank customers by transactions within each region without collapsing rows</div>
+            </div>
+          </li>
+          <li class="day-item">
+            <span class="day-num">Day 09</span>
+            <div class="day-content">
+              <div class="day-title">Window Functions II — Analytics &amp; Frames</div>
+              <div class="day-topics">LAG(), LEAD() chronological offset tracking, running totals, moving average window framing (ROWS BETWEEN)</div>
+              <div class="day-challenge">🎯 Cumulative Spend: Construct running aggregates of customer orders to trace user lifetime value</div>
+            </div>
+          </li>
+          <li class="day-item">
+            <span class="day-num">Day 10</span>
+            <div class="day-content">
+              <div class="day-title">Date &amp; Time Functions</div>
+              <div class="day-topics">ISO date storage formats, STRFTIME extraction, date math, JULIANDAY intervals, weekend date analysis</div>
+              <div class="day-challenge">🎯 Signup Intervals: Calculate the average day latency between account registration and first purchase</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Phase 4 -->
+      <div class="phase-block">
+        <div class="phase-header">
+          <span class="phase-badge">Phase 4</span>
+          <span class="phase-title">Data Cleaning &amp; Optimization — Days 11–14</span>
+          <span class="phase-db">📦 ecommerce.db</span>
+        </div>
+        <ul class="day-list">
+          <li class="day-item">
+            <span class="day-num">Day 11</span>
+            <div class="day-content">
+              <div class="day-title">String &amp; Type Functions</div>
+              <div class="day-topics">Text manipulation (UPPER, LOWER, TRIM, REPLACE, SUBSTR, INSTR), CAST conversions, null fallbacks, NULLIF division safety</div>
+              <div class="day-challenge">🎯 Domain Extraction: Isolate and standardize domain patterns from messy registration emails</div>
+            </div>
+          </li>
+          <li class="day-item">
+            <span class="day-num">Day 12</span>
+            <div class="day-content">
+              <div class="day-title">Data Cleaning &amp; Wrangling in SQL</div>
+              <div class="day-topics">Deduplication using ROW_NUMBER(), data profiling, outlier detection, pivoting rows to columns (the pivot trick)</div>
+              <div class="day-challenge">🎯 Status Pivot: Transform and report purchase metrics pivoted across regional sales channels</div>
+            </div>
+          </li>
+          <li class="day-item">
+            <span class="day-num">Day 13</span>
+            <div class="day-content">
+              <div class="day-title">Set Operations &amp; Advanced Joins</div>
+              <div class="day-topics">UNION, UNION ALL duplication performance, INTERSECT overlaps, EXCEPT exclusions, anti-joins, semi-joins</div>
+              <div class="day-challenge">🎯 Active Spenders: Intersect Q3 and Q4 buyers; extract list of active dormant accounts</div>
+            </div>
+          </li>
+          <li class="day-item">
+            <span class="day-num">Day 14</span>
+            <div class="day-content">
+              <div class="day-title">Query Optimisation &amp; Execution Plans</div>
+              <div class="day-topics">EXPLAIN QUERY PLAN analysis, table scans vs index search, sargable predicates, clustered vs non-clustered indexes</div>
+              <div class="day-challenge">🎯 Index Optimization: Analyze table scans and verify index efficiency for subquery filters</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Phase 5 -->
+      <div class="phase-block">
+        <div class="phase-header">
+          <span class="phase-badge">Phase 5</span>
+          <span class="phase-title">Reusability &amp; Advanced Analytics — Days 15–17</span>
+          <span class="phase-db">📦 company.db / ecommerce.db</span>
+        </div>
+        <ul class="day-list">
+          <li class="day-item">
+            <span class="day-num">Day 15</span>
+            <div class="day-content">
+              <div class="day-title">Views, Stored Procedures &amp; Functions</div>
+              <div class="day-topics">Virtual tables (CREATE VIEW), security layers, stored procedures transactions, database triggers and audits</div>
+              <div class="day-challenge">🎯 Management View: Build a reusable view mapping staff members to managers and budgets</div>
+            </div>
+          </li>
+          <li class="day-item">
+            <span class="day-num">Day 16</span>
+            <div class="day-content">
+              <div class="day-title">Advanced Analytics Patterns</div>
+              <div class="day-topics">Cohort analysis retention grids, marketing funnel conversion ratios, RFM scoring segmentation profiles</div>
+              <div class="day-challenge">🎯 RFM Segments: Partition customers into monetary and recency brackets using NTILE</div>
+            </div>
+          </li>
+          <li class="day-item">
+            <span class="day-num">Day 17</span>
+            <div class="day-content">
+              <div class="day-title">Data Modelling &amp; Analytics Engineering</div>
+              <div class="day-topics">Dimensional schema design (fact/dimension tables), star vs snowflake structures, dbt pipelines, SCD Type 1/2 history</div>
+              <div class="day-challenge">🎯 Schema Design: Inspect foreign relationships and model a grain-specific intermediate mart layer</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Phase 6 -->
+      <div class="phase-block">
+        <div class="phase-header">
+          <span class="phase-badge" style="background:rgba(255,176,32,0.15);color:var(--gold);border-color:rgba(255,176,32,0.3);">Capstone</span>
+          <span class="phase-title">BI Capstone &amp; Interview Prep — Day 18</span>
+          <span class="phase-db">📦 capstone_retail.db</span>
+        </div>
+        <ul class="day-list">
+          <li class="day-item">
+            <span class="day-num" style="background:rgba(255,176,32,0.12);color:var(--gold);">Day 18</span>
+            <div class="day-content">
+              <div class="day-title">🏆 SQL Interview Prep &amp; Real-World Patterns</div>
+              <div class="day-topics">Capstone Business Intelligence Report: write production-ready SQL queries answering senior analytical questions. Top-N rankings, MoM revenue growth, cohort spend intervals, returns and churn rates.</div>
+              <div class="day-challenge" style="color:var(--gold);">🎯 Capstone Project: Output a clean, fully-optimized SQL report detailing retail performance KPIs</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features-section">
+    <div class="container">
+      <div class="sec-head">
+        <h2>Built for <span>Real-World Analysts</span></h2>
+        <p>Not just syntax — real skills on real data.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <div class="feature-title">Live SQL Execution</div>
+          <div class="feature-desc">Run real queries against pre-seeded SQLite databases directly in your browser. Instant results, no setup required.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🤖</div>
+          <div class="feature-title">Mano AI SQL Tutor</div>
+          <div class="feature-desc">Stuck on a JOIN? Mano AI explains errors in plain English and guides you to the right answer without giving it away.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">✅</div>
+          <div class="feature-title">Auto-Graded Challenges</div>
+          <div class="feature-desc">Every day challenge is automatically verified. Earn marks, track progress, and build confidence with each solved query.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <div class="feature-title">Real Datasets</div>
+          <div class="feature-desc">Practice on retail.db, company.db, ecommerce.db — the kind of schema you'll encounter in your first analyst job.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🏆</div>
+          <div class="feature-title">Completion Certificate</div>
+          <div class="feature-desc">Earn your SQL for Data Analyst certificate on completing all 18 days — shareable on LinkedIn.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔗</div>
+          <div class="feature-title">Part of the Bundle</div>
+          <div class="feature-desc">SQL is included in the Complete Data Analytics Package alongside Python (30d) and Excel (12d) — one purchase, all three.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Datasets -->
+  <section class="datasets-section">
+    <div class="container">
+      <div class="sec-head">
+        <h2>4 Real-World <span>Datasets</span></h2>
+        <p>Data complexity grows with your SQL knowledge.</p>
+      </div>
+      <div class="dataset-grid">
+        <div class="dataset-card">
+          <div class="dataset-icon">🛒</div>
+          <div>
+            <div class="dataset-name">retail.db</div>
+            <div class="dataset-desc">sales, products, regions tables — grows from single-table to 3-table queries.</div>
+            <div class="dataset-days">Used in Days 1–4</div>
+          </div>
+        </div>
+        <div class="dataset-card">
+          <div class="dataset-icon">🏢</div>
+          <div>
+            <div class="dataset-name">company.db</div>
+            <div class="dataset-desc">employees, departments, salaries, projects — perfect for JOIN and hierarchy practice.</div>
+            <div class="dataset-days">Used in Days 5 &amp; 15</div>
+          </div>
+        </div>
+        <div class="dataset-card">
+          <div class="dataset-icon">📦</div>
+          <div>
+            <div class="dataset-name">ecommerce.db</div>
+            <div class="dataset-desc">5-table schema: customers, orders, order_items, products, categories — full complexity.</div>
+            <div class="dataset-days">Used in Days 6–14 &amp; 16–17</div>
+          </div>
+        </div>
+        <div class="dataset-card">
+          <div class="dataset-icon">🏆</div>
+          <div>
+            <div class="dataset-name">capstone_retail.db</div>
+            <div class="dataset-desc">Extended retail dataset with orders, returns, and sales_rep tables for the BI report capstone.</div>
+            <div class="dataset-days">Used in Day 18</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <h2>Ready to Master SQL?</h2>
+    <p>Get the Complete Data Analytics Bundle — Python + SQL + Excel in one purchase.</p>
+    <div class="hero-cta-row">
+      <a href="/#pricing" class="btn-primary">🎯 Get the Full Bundle &rarr;</a>
+      <a href="/landing_v2/excel-course.html" class="btn-outline">See Excel Course →</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="page-footer">
+    <p>&copy; 2026 Manodemy · <a href="/landing_v2/privacy.html">Privacy</a> · <a href="/landing_v2/terms.html">Terms</a> · <a href="/">Home</a></p>
+  </footer>
+
+</body>
+</html>

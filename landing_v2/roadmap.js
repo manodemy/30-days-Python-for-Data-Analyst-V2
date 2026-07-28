@@ -1,623 +1,862 @@
-/**
- * Manodemy 60-Day Interactive Roadmap Animation
- * Renders an interactive, vector-based learning highway with a progress orb,
- * dynamic glassmorphic card updates, ripple effects, and responsive mobile scroll-tracking.
- */
-document.addEventListener('DOMContentLoaded', () => {
-  // 1. Curriculum Database
-  const CURRICULUM = [
-    // SQL Phase (Days 01-18)
-    { day: 1, title: "Intro to SQL & Databases", obj: "Learn relational databases and SQL query structures.", status: "FREE", phase: "sql" },
-    { day: 2, title: "SELECT & Filtering", obj: "Filter table data using SELECT and WHERE clauses.", status: "FREE", phase: "sql" },
-    { day: 3, title: "Sorting, Patterns & CASE", obj: "Use ORDER BY, LIKE wildcards, and conditional statements.", status: "PREMIUM", phase: "sql" },
-    { day: 4, title: "Aggregate Functions & GROUP BY", obj: "Summarize data using SUM, AVG, COUNT, and groups.", status: "PREMIUM", phase: "sql" },
-    { day: 5, title: "Joins & Relationships", obj: "Combine multiple tables with INNER and OUTER Joins.", status: "PREMIUM", phase: "sql" },
-    { day: 6, title: "Subqueries", obj: "Nest queries within queries for advanced filtering.", status: "PREMIUM", phase: "sql" },
-    { day: 7, title: "Common Table Expressions", obj: "Simplify complex query blocks using WITH syntax (CTEs).", status: "PREMIUM", phase: "sql" },
-    { day: 8, title: "Window Functions I: Ranking", obj: "Apply ROW_NUMBER, RANK, and DENSE_RANK partitions.", status: "PREMIUM", phase: "sql" },
-    { day: 9, title: "Window Functions II: Analytics", obj: "Compute running totals, moving averages, and LEAD/LAG values.", status: "PREMIUM", phase: "sql" },
-    { day: 10, title: "Date & Time Functions", obj: "Extract, parse, and manipulate temporal data fields.", status: "PREMIUM", phase: "sql" },
-    { day: 11, title: "String & Type Functions", obj: "Clean, trim, split, and cast text data columns.", status: "PREMIUM", phase: "sql" },
-    { day: 12, title: "Data Cleaning & Wrangling", obj: "Clean dirty records and resolve NULL values in SQL.", status: "PREMIUM", phase: "sql" },
-    { day: 13, title: "Set Operations & Joins", obj: "Combine results with UNION, INTERSECT, and EXCEPT.", status: "PREMIUM", phase: "sql" },
-    { day: 14, title: "Query Optimisation", obj: "Improve query speed using indexes and execution plans.", status: "PREMIUM", phase: "sql" },
-    { day: 15, title: "Views & Reusable Objects", obj: "Build reusable virtual tables using CREATE VIEW.", status: "PREMIUM", phase: "sql" },
-    { day: 16, title: "Advanced Analytics Patterns", obj: "Solve complex SQL case studies and business problems.", status: "PREMIUM", phase: "sql" },
-    { day: 17, title: "Data Modelling & dbt", obj: "Structure schemas and build basic data models in dbt.", status: "PREMIUM", phase: "sql" },
-    { day: 18, title: "BI Capstone & Interview Prep", obj: "Build a portfolio database and practice interview questions.", status: "PREMIUM", phase: "sql" },
-
-    // Excel Phase (Days 19-30)
-    { day: 19, title: "Excel Orientation & Formulas", obj: "Navigate worksheets and apply basic cell arithmetic.", status: "PREMIUM", phase: "excel" },
-    { day: 20, title: "Formatting, Sorting & Filtering", obj: "Apply conditional colors, sorting rules, and filter rows.", status: "PREMIUM", phase: "excel" },
-    { day: 21, title: "Data Cleaning Essentials", obj: "Remove duplicates, trim whitespace, and split text columns.", status: "PREMIUM", phase: "excel" },
-    { day: 22, title: "Excel Tables", obj: "Create dynamic data ranges and structured references.", status: "PREMIUM", phase: "excel" },
-    { day: 23, title: "Lookup & Reference Functions", obj: "Use VLOOKUP, HLOOKUP, and XLOOKUP to retrieve data.", status: "PREMIUM", phase: "excel" },
-    { day: 24, title: "Logic Functions", obj: "Run multi-criteria evaluations using IF, AND, OR, and IFS.", status: "PREMIUM", phase: "excel" },
-    { day: 25, title: "Text Functions", obj: "Extract and concatenate strings using LEFT, RIGHT, and MID.", status: "PREMIUM", phase: "excel" },
-    { day: 26, title: "Date & Time Functions", obj: "Manage date intervals and compute workdays automatically.", status: "PREMIUM", phase: "excel" },
-    { day: 27, title: "Conditional Aggregation", obj: "Aggregate data with SUMIFS, COUNTIFS, and AVERAGEIFS.", status: "PREMIUM", phase: "excel" },
-    { day: 28, title: "PivotTables Core Mechanics", obj: "Group records and build dynamic summary tables.", status: "PREMIUM", phase: "excel" },
-    { day: 29, title: "PivotTables Advanced & Charts", obj: "Design visual dashboards with dynamic charts and slicers.", status: "PREMIUM", phase: "excel" },
-    { day: 30, title: "Validation, What-If & Capstone", obj: "Set up data validation, what-if analyses, and project.", status: "PREMIUM", phase: "excel" },
-
-    // Python Phase (Days 31-60)
-    { day: 31, title: "Data Types and Memory", obj: "Understand variables, primitive types, and memory.", status: "PREMIUM", phase: "python" },
-    { day: 32, title: "Operators and Expressions", obj: "Perform math, comparison, and logic evaluations.", status: "PREMIUM", phase: "python" },
-    { day: 33, title: "Strings", obj: "Slices, format, and execute advanced string manipulations.", status: "PREMIUM", phase: "python" },
-    { day: 34, title: "Lists", obj: "Create, slice, and perform operations on list collections.", status: "PREMIUM", phase: "python" },
-    { day: 35, title: "Tuples", obj: "Work with immutable lists and tuple unpacking.", status: "PREMIUM", phase: "python" },
-    { day: 36, title: "Sets", obj: "Run set operations like union and intersections on unique items.", status: "PREMIUM", phase: "python" },
-    { day: 37, title: "Dictionaries", obj: "Structure custom data using key-value pair dictionaries.", status: "PREMIUM", phase: "python" },
-    { day: 38, title: "Conditionals", obj: "Control logic branching with if-elif-else statements.", status: "PREMIUM", phase: "python" },
-    { day: 39, title: "Loops", obj: "Write loops to repeat operations with for and while statements.", status: "PREMIUM", phase: "python" },
-    { day: 40, title: "Functions", obj: "Design modular and reusable blocks of code with arguments.", status: "PREMIUM", phase: "python" },
-    { day: 41, title: "Modules", obj: "Import external packages and build custom modules.", status: "PREMIUM", phase: "python" },
-    { day: 42, title: "Comprehensions", obj: "Generate lists, sets, and dicts using compact single-line syntax.", status: "PREMIUM", phase: "python" },
-    { day: 43, title: "Lambda Functions", obj: "Create anonymous single-expression functions.", status: "PREMIUM", phase: "python" },
-    { day: 44, title: "Exceptions", obj: "Catch runtime errors using try-except syntax.", status: "PREMIUM", phase: "python" },
-    { day: 45, title: "File Handling", obj: "Read and write text, CSV, and JSON files on local disk.", status: "PREMIUM", phase: "python" },
-    { day: 46, title: "OOP Basics", obj: "Instantiate class objects and define attributes.", status: "PREMIUM", phase: "python" },
-    { day: 47, title: "OOP Advanced", obj: "Implement inheritance, encapsulation, and polymorphism.", status: "PREMIUM", phase: "python" },
-    { day: 48, title: "Regex", obj: "Filter and search text datasets using regular expressions.", status: "PREMIUM", phase: "python" },
-    { day: 49, title: "Generators and Iterators", obj: "Build custom iterators and yield expressions.", status: "PREMIUM", phase: "python" },
-    { day: 50, title: "Capstone Project", obj: "Write a pure-Python file analyzer and data processor.", status: "PREMIUM", phase: "python" },
-    { day: 51, title: "NumPy Fundamentals", obj: "Create multi-dimensional arrays and vector operations.", status: "PREMIUM", phase: "python" },
-    { day: 52, title: "NumPy Advanced", obj: "Slice arrays, execute mathematical operations, and reshape.", status: "PREMIUM", phase: "python" },
-    { day: 53, title: "Pandas Introduction", obj: "Load data tables and explore basic DataFrame structures.", status: "PREMIUM", phase: "python" },
-    { day: 54, title: "Pandas Selection", obj: "Query specific rows and columns using loc/iloc indices.", status: "PREMIUM", phase: "python" },
-    { day: 55, title: "Pandas Cleaning", obj: "Resolve null fields, map rows, and clean tabular data.", status: "PREMIUM", phase: "python" },
-    { day: 56, title: "Pandas GroupBy", obj: "Aggregate data subsets based on grouped categories.", status: "PREMIUM", phase: "python" },
-    { day: 57, title: "Pandas Merging", obj: "Align and combine disparate DataFrames using Joins.", status: "PREMIUM", phase: "python" },
-    { day: 58, title: "Pandas Time Series", obj: "Handle datetime indexing and resample temporal intervals.", status: "PREMIUM", phase: "python" },
-    { day: 59, title: "Data Visualization", obj: "Create presentation-ready charts using Seaborn.", status: "PREMIUM", phase: "python" },
-    { day: 60, title: "Phase Analysis & Review", obj: "Conduct a full end-to-end analysis case study and earn your certificate.", status: "PREMIUM", phase: "python" }
-  ];
-
-  // 2. Initialize elements
-  const svg = document.getElementById('roadmapSvg');
-  const path = document.getElementById('road-path');
-  const nodesGroup = document.getElementById('roadmap-nodes');
-  const monumentsGroup = document.getElementById('roadmap-monuments');
-  const decorationsGroup = document.getElementById('roadmap-decorations');
-  const orb = document.getElementById('progress-orb');
-  const ripple = document.getElementById('pulse-ripple');
-  const card = document.getElementById('roadmapDayCard');
-
-  if (!svg || !path || !nodesGroup || !orb || !ripple || !card) {
-    console.warn("Roadmap elements missing from DOM. Interactive roadmap cannot start.");
-    return;
+(function(){
+const root = document.getElementById('roadmap-root');
+function getCourseSvg(phase) {
+  if (phase === 'SQL') {
+    return `<span class="tech-logo logo-sql" title="SQL"><svg viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v6c0 1.66 4 3 9 3s9-1.34 9-3V5"></path><path d="M3 11v6c0 1.66 4 3 9 3s9-1.34 9-3v-6"></path></svg></span>`;
+  } else if (phase === 'Excel') {
+    return `<span class="tech-logo logo-excel" title="Excel"><svg viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.625 0H8.625L1.5 2.625V20.375L8.625 23H14.625V0Z" fill="#107C41"/><path d="M21.5 2.625H14.625V6.375H21.5V2.625Z" fill="#1F9A55"/><path d="M21.5 6.375H14.625V10.125H21.5V6.375Z" fill="#33C481"/><path d="M21.5 10.125H14.625V13.875H21.5V10.125Z" fill="#107C41"/><path d="M21.5 13.875H14.625V17.625H21.5V13.875Z" fill="#1B9A59"/><path d="M21.5 17.625H14.625V20.375H21.5V17.625Z" fill="#107C41"/><path d="M10.125 6.375H3.375V16.625H10.125V6.375Z" fill="#107C41"/><path d="M11.813 7.875L9.938 11.25L11.813 14.625H9.563L8.438 12.75L7.313 14.625H5.063L6.938 11.25L5.063 7.875H7.313L8.438 9.75L9.563 7.875H11.813Z" fill="white"/></svg></span>`;
+  } else if (phase === 'Python') {
+    return `<span class="tech-logo logo-python" title="Python"><svg viewBox="45.9 0 367.2 459" fill="none"><path fill="#306998" d="M229.5 0C161.4 0 122.4 15.6 122.4 53.6v34.4h107.1v15.3H122.4c-47.8 0-76.5 30.6-76.5 76.5v61.2c0 45.9 28.7 76.5 76.5 76.5h30.6v-45.9c0-51 41.3-91.8 91.8-91.8h107.1V107.1c0-53.6-47.8-107.1-122.4-107.1zM175.9 30.6c8.4 0 15.3 6.9 15.3 15.3s-6.9 15.3-15.3 15.3-15.3-6.9-15.3-15.3 6.9-15.3 15.3-15.3z" /><path fill="#FFE873" d="M229.5 459c68.1 0 107.1-15.6 107.1-53.6v-34.4H229.5v-15.3h107.1c47.8 0 76.5-30.6 76.5-76.5v-61.2c0-45.9-28.7-76.5-76.5-76.5h-30.6v45.9c0 51-41.3 91.8-91.8 91.8H122.4V351.9c0 53.6 47.8 107.1 122.4 107.1zm53.6-30.6c-8.4 0-15.3-6.9-15.3-15.3s6.9-15.3 15.3-15.3 15.3 6.9 15.3 15.3-6.9 15.3-15.3 15.3z" /></svg></span>`;
   }
+  return '';
+}
+const DATA=[
+  // SQL Phase (Days 1–18)
+  {topic:"Intro to SQL & Databases",phase:"SQL",icon:"🗄️",free:true},
+  {topic:"SELECT & Filtering",phase:"SQL",icon:"🗄️",free:true},
+  {topic:"Sorting, Patterns & CASE",phase:"SQL",icon:"🗄️",free:false},
+  {topic:"Aggregate Functions & GROUP BY",phase:"SQL",icon:"🗄️",free:false},
+  {topic:"Joins & Relationships",phase:"SQL",icon:"🗄️",free:false},
+  {topic:"Subqueries",phase:"SQL",icon:"🗄️",free:false},
+  {topic:"Common Table Expressions",phase:"SQL",icon:"🗄️",free:false},
+  {topic:"Window Functions I: Ranking",phase:"SQL",icon:"🗄️",free:false},
+  {topic:"Window Functions II: Analytics",phase:"SQL",icon:"🗄️",free:false},
+  {topic:"Date & Time Functions",phase:"SQL",icon:"🗄️",free:false},
+  {topic:"String & Type Functions",phase:"SQL",icon:"🗄️",free:false},
+  {topic:"Data Cleaning & Wrangling",phase:"SQL",icon:"🗄️",free:false},
+  {topic:"Set Operations & Joins",phase:"SQL",icon:"🗄️",free:false},
+  {topic:"Query Optimisation",phase:"SQL",icon:"🗄️",free:false},
+  {topic:"Views & Reusable Objects",phase:"SQL",icon:"🗄️",free:false},
+  {topic:"Advanced Analytics Patterns",phase:"SQL",icon:"🗄️",free:false},
+  {topic:"Data Modelling & dbt",phase:"SQL",icon:"🗄️",free:false},
+  {topic:"BI Capstone & Interview Prep",phase:"SQL",icon:"🗄️",free:false},
 
-  // Pre-calculate 60 points along the path
-  const pathLength = path.getTotalLength();
-  const nodePoints = [];
+  // Excel Phase (Days 19–30)
+  {topic:"Excel Orientation & Formulas",phase:"Excel",icon:"📊",free:true},
+  {topic:"Formatting, Sorting & Filtering",phase:"Excel",icon:"📊",free:false},
+  {topic:"Data Cleaning Essentials",phase:"Excel",icon:"📊",free:false},
+  {topic:"Excel Tables",phase:"Excel",icon:"📊",free:false},
+  {topic:"Lookup & Reference Functions",phase:"Excel",icon:"📊",free:false},
+  {topic:"Logic Functions",phase:"Excel",icon:"📊",free:false},
+  {topic:"Text Functions",phase:"Excel",icon:"📊",free:false},
+  {topic:"Date & Time Functions",phase:"Excel",icon:"📊",free:false},
+  {topic:"Conditional Aggregation",phase:"Excel",icon:"📊",free:false},
+  {topic:"PivotTables Core Mechanics",phase:"Excel",icon:"📊",free:false},
+  {topic:"PivotTables Advanced & Charts",phase:"Excel",icon:"📊",free:false},
+  {topic:"Validation, What-If & Capstone",phase:"Excel",icon:"📊",free:false},
+
+  // Python Phase (Days 31–60)
+  {topic:"Data Types and Memory",phase:"Python",icon:"🐍",free:true},
+  {topic:"Operators and Expressions",phase:"Python",icon:"🐍",free:true},
+  {topic:"Strings",phase:"Python",icon:"🐍",free:false},
+  {topic:"Lists",phase:"Python",icon:"🐍",free:false},
+  {topic:"Tuples",phase:"Python",icon:"🐍",free:false},
+  {topic:"Sets",phase:"Python",icon:"🐍",free:false},
+  {topic:"Dictionaries",phase:"Python",icon:"🐍",free:false},
+  {topic:"Conditionals",phase:"Python",icon:"🐍",free:false},
+  {topic:"Loops",phase:"Python",icon:"🐍",free:false},
+  {topic:"Functions",phase:"Python",icon:"🐍",free:false},
+  {topic:"Modules",phase:"Python",icon:"🐍",free:false},
+  {topic:"Comprehensions",phase:"Python",icon:"🐍",free:false},
+  {topic:"Lambda Functions",phase:"Python",icon:"🐍",free:false},
+  {topic:"Exceptions",phase:"Python",icon:"🐍",free:false},
+  {topic:"File Handling",phase:"Python",icon:"🐍",free:false},
+  {topic:"OOP Basics",phase:"Python",icon:"🐍",free:false},
+  {topic:"OOP Advanced",phase:"Python",icon:"🐍",free:false},
+  {topic:"Regex",phase:"Python",icon:"🐍",free:false},
+  {topic:"Generators and Iterators",phase:"Python",icon:"🐍",free:false},
+  {topic:"Capstone Project",phase:"Python",icon:"🐍",free:false},
+  {topic:"NumPy Fundamentals",phase:"Python",icon:"🐍",free:false},
+  {topic:"NumPy Advanced",phase:"Python",icon:"🐍",free:false},
+  {topic:"Pandas Introduction",phase:"Python",icon:"🐍",free:false},
+  {topic:"Pandas Selection",phase:"Python",icon:"🐍",free:false},
+  {topic:"Pandas Cleaning",phase:"Python",icon:"🐍",free:false},
+  {topic:"Pandas GroupBy",phase:"Python",icon:"🐍",free:false},
+  {topic:"Pandas Merging",phase:"Python",icon:"🐍",free:false},
+  {topic:"Pandas Time Series",phase:"Python",icon:"🐍",free:false},
+  {topic:"Data Visualization",phase:"Python",icon:"🐍",free:false},
+  {topic:"Phase Analysis & Review",phase:"Python",icon:"🐍",free:false}
+];
+
+const PC={
+  SQL:    {hex:0x2dd4a7,css:'#2dd4a7'},
+  Excel:  {hex:0xf5a623,css:'#f5a623'},
+  Python: {hex:0x38bdf8,css:'#38bdf8'},
+};
+const N=60;
+const ORBIT_R=6.8;
+
+function angForIndex(i){
+  return -Math.PI/2 + (i/N)*Math.PI*2;
+}
+
+const wrap = root.querySelector('#rm-dialWrap');
+const canvas = root.querySelector('#c3d');
+
+let W = wrap.clientWidth || 320;
+let H = Math.min(Math.round(W*0.68), 410);
+canvas.width  = W * (window.devicePixelRatio||1);
+canvas.height = H * (window.devicePixelRatio||1);
+canvas.style.height = H + 'px';
+
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:false});
+renderer.setPixelRatio(window.devicePixelRatio||1);
+renderer.setSize(W, H);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.1;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x070b11);
+scene.fog = new THREE.Fog(0x070b11, 34, 58);
+
+const camera = new THREE.PerspectiveCamera(52, W/H, 0.1, 100);
+
+let camAngle = 0;
+let camAngleTarget = 0;
+const camRadius = 1.5;
+const camHeight = 16;
+const camLookY  = 0;
+let autoRotate = true;
+const AUTO_ROTATE_SPEED = 0.035;
+const AUTO_ROTATE_RANGE = 0.5;
+
+function updateCameraPosition(){
+  camera.position.set(
+    Math.sin(camAngle)*camRadius,
+    camHeight,
+    Math.cos(camAngle)*camRadius
+  );
+  camera.lookAt(0, camLookY, 0.3);
+}
+updateCameraPosition();
+
+const clockGroup = new THREE.Group();
+clockGroup.rotation.x = 0;
+clockGroup.position.y = 0;
+scene.add(clockGroup);
+
+scene.add(new THREE.AmbientLight(0x16263a, 3.5));
+const ptCenter = new THREE.PointLight(0x2d6ecc, 5, 20);
+ptCenter.position.set(0, 6, 0);
+scene.add(ptCenter);
+const sun = new THREE.DirectionalLight(0x88a4cc, 0.7);
+sun.position.set(4, 18, 6);
+sun.castShadow = true;
+scene.add(sun);
+
+const gMat = new THREE.MeshStandardMaterial({color:0x0a1018, metalness:0.9, roughness:0.15});
+const ground = new THREE.Mesh(new THREE.CircleGeometry(24,128), gMat);
+ground.rotation.x = -Math.PI/2;
+ground.position.y = -0.1;
+ground.receiveShadow = true;
+scene.add(ground);
+
+const grid = new THREE.GridHelper(28,70,0x16263a,0x0a121e);
+grid.position.y = -0.08;
+scene.add(grid);
+
+const faceMat = new THREE.MeshStandardMaterial({color:0x0c1420, metalness:0.7, roughness:0.35});
+const facePlate = new THREE.Mesh(new THREE.CylinderGeometry(ORBIT_R+0.55, ORBIT_R+0.55, 0.12, 96), faceMat);
+facePlate.position.y = -0.06;
+facePlate.receiveShadow = true;
+clockGroup.add(facePlate);
+
+const bezelMat = new THREE.MeshStandardMaterial({color:0x121f33, metalness:0.95, roughness:0.18});
+const bezel = new THREE.Mesh(new THREE.TorusGeometry(ORBIT_R+0.55, 0.18, 16, 128), bezelMat);
+bezel.rotation.x = Math.PI/2;
+bezel.position.y = 0.0;
+clockGroup.add(bezel);
+
+// Tick marks
+{
+  const minuteTickMat = new THREE.MeshBasicMaterial({color:0x2c3f56});
+  const hourTickMat = new THREE.MeshStandardMaterial({color:0xdcebf7, emissive:0x3a5a78, emissiveIntensity:0.6, metalness:0.4, roughness:0.3});
+  for(let i=0;i<60;i++){
+    const isHour = i%5===0;
+    const a = angForIndex(i);
+    const len = isHour ? 0.42 : 0.2;
+    const w = isHour ? 0.07 : 0.035;
+    const geo = new THREE.BoxGeometry(w, 0.08, len);
+    const mesh = new THREE.Mesh(geo, isHour?hourTickMat:minuteTickMat);
+    const r = ORBIT_R + 0.55 - len/2 - 0.06;
+    mesh.position.set(Math.cos(a)*r, 0.04, Math.sin(a)*r);
+    mesh.rotation.y = Math.PI/2 - a;
+    clockGroup.add(mesh);
+  }
+}
+
+// Day numerals
+for(let i=0;i<60;i+=5){
+  const label = String(i+1);
+  const size = 256;
+  const cnv2 = document.createElement('canvas');
+  cnv2.width = size; cnv2.height = size;
+  const ctx2 = cnv2.getContext('2d');
+  ctx2.clearRect(0,0,size,size);
+  ctx2.font = 'bold 120px Inter, system-ui, sans-serif';
+  ctx2.fillStyle = '#e4f0fa';
+  ctx2.textAlign = 'center';
+  ctx2.textBaseline = 'middle';
+  ctx2.shadowColor='rgba(56,189,248,0.85)';
+  ctx2.shadowBlur=12;
+  ctx2.fillText(label, size/2, size/2+4);
+  const tex2 = new THREE.CanvasTexture(cnv2);
+  tex2.minFilter = THREE.LinearFilter;
+  tex2.generateMipmaps = false;
+  tex2.needsUpdate = true;
+  const mat2 = new THREE.SpriteMaterial({map:tex2, transparent:true, depthWrite:false});
+  const sprite2 = new THREE.Sprite(mat2);
+  sprite2.scale.set(0.95, 0.95, 1);
+  const a = angForIndex(i);
+  const r = ORBIT_R - 1.25;
+  sprite2.position.set(Math.cos(a)*r, 0.5, Math.sin(a)*r);
+  clockGroup.add(sprite2);
+}
+
+function phaseRange(ph){
+  if(ph==='SQL') return {s:0,e:17};
+  if(ph==='Excel') return {s:18,e:29};
+  return {s:30,e:59};
+}
+const phaseTubes = {};
+['SQL','Excel','Python'].forEach(ph=>{
+  const {s,e} = phaseRange(ph);
+  const pc = PC[ph];
+  const pts=[];
+  for(let i=s;i<=e;i+=0.25){
+    const a=angForIndex(Math.min(i,e));
+    pts.push(new THREE.Vector3(Math.cos(a)*ORBIT_R, 0.04, Math.sin(a)*ORBIT_R));
+  }
+  const curve=new THREE.CatmullRomCurve3(pts);
+  const tubeGeo=new THREE.TubeGeometry(curve,Math.max(pts.length*2,8),0.08,12,false);
+  const tubeMat=new THREE.MeshStandardMaterial({
+    color:pc.hex, emissive:pc.hex, emissiveIntensity:1.8,
+    metalness:0.1, roughness:0.05,
+  });
+  const tubeMesh = new THREE.Mesh(tubeGeo, tubeMat);
+  clockGroup.add(tubeMesh);
+  phaseTubes[ph]=tubeMesh;
+
+  const mid=Math.floor((s+e)/2);
+  const ma=angForIndex(mid);
+  const pl=new THREE.PointLight(pc.hex, 2.0, 12);
+  pl.position.set(Math.cos(ma)*ORBIT_R, 1.5, Math.sin(ma)*ORBIT_R);
+  clockGroup.add(pl);
+});
+
+const discMat=new THREE.MeshStandardMaterial({
+  color:0x070d18, metalness:0.9, roughness:0.2, transparent:true, opacity:0.9,
+});
+const disc=new THREE.Mesh(new THREE.CylinderGeometry(2.2,2.2,0.08,64), discMat);
+disc.position.y=0.04;
+clockGroup.add(disc);
+
+const holoRingMat=new THREE.MeshBasicMaterial({color:0x38bdf8,transparent:true,opacity:0.5});
+const holoRing=new THREE.Mesh(new THREE.TorusGeometry(2.18,0.03,8,64), holoRingMat);
+holoRing.rotation.x=Math.PI/2;
+holoRing.position.y=0.08;
+clockGroup.add(holoRing);
+
+const scanRingMat=new THREE.MeshBasicMaterial({color:0x38bdf8,transparent:true,opacity:0.7});
+const scanRing=new THREE.Mesh(new THREE.TorusGeometry(1.6,0.025,8,64), scanRingMat);
+scanRing.rotation.x=Math.PI/2;
+clockGroup.add(scanRing);
+
+const sphereGeo=new THREE.SphereGeometry(0.18,32,24);
+const spheres=[], sphereMats=[], baseY=[];
+const SPHERE_R = ORBIT_R - 0.15;
+for(let i=0;i<N;i++){
+  const d=DATA[i];
+  const pc=PC[d.phase];
+  const mat=new THREE.MeshPhysicalMaterial({
+    color:pc.hex, emissive:pc.hex, emissiveIntensity:0.2,
+    metalness:0.1, roughness:0.25,
+    clearcoat:1.0, clearcoatRoughness:0.1,
+    transparent:true, opacity:0.95,
+  });
+  sphereMats.push(mat);
+  const mesh=new THREE.Mesh(sphereGeo, mat);
+  const ang=angForIndex(i);
+  const y=0.28;
+  mesh.position.set(Math.cos(ang)*SPHERE_R, y, Math.sin(ang)*SPHERE_R);
+  mesh.castShadow=true;
+  mesh.userData={day:i,ang};
+  clockGroup.add(mesh);
+  spheres.push(mesh);
+  baseY.push(y);
+}
+
+[0,17,29,59].forEach(idx=>{
+  const d=DATA[idx];
+  const pc=PC[d.phase];
+  const mat=new THREE.MeshStandardMaterial({
+    color:pc.hex, emissive:pc.hex, emissiveIntensity:2.5,
+    metalness:0.3, roughness:0.1,
+  });
+  const halo=new THREE.Mesh(new THREE.TorusGeometry(0.34,0.045,16,64), mat);
+  const ang=angForIndex(idx);
+  halo.position.set(Math.cos(ang)*SPHERE_R, 0.30, Math.sin(ang)*SPHERE_R);
+  halo.rotation.x=Math.PI/2;
+  clockGroup.add(halo);
+});
+
+const actMat=new THREE.MeshPhysicalMaterial({
+  color:0xffffff, emissive:0xffffff, emissiveIntensity:2.0,
+  metalness:0, roughness:0.1, clearcoat:1.0,
+  transparent:true, opacity:0.98,
+});
+const actSphere=new THREE.Mesh(new THREE.SphereGeometry(0.34,32,24), actMat);
+actSphere.visible=false;
+clockGroup.add(actSphere);
+const actLight=new THREE.PointLight(0xffffff, 5, 6);
+clockGroup.add(actLight);
+
+const handGroup = new THREE.Group();
+const handMat = new THREE.MeshStandardMaterial({color:0xffffff, emissive:0xffffff, emissiveIntensity:1.2, metalness:0.5, roughness:0.2});
+const handGeo = new THREE.BoxGeometry(0.06, 0.08, SPHERE_R*0.92);
+const hand = new THREE.Mesh(handGeo, handMat);
+hand.position.z = SPHERE_R*0.46;
+handGroup.add(hand);
+const handTip = new THREE.Mesh(new THREE.ConeGeometry(0.1,0.28,16), handMat);
+handTip.rotation.x = Math.PI/2;
+handTip.position.z = SPHERE_R*0.92;
+handGroup.add(handTip);
+const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.14,0.14,0.12,24), handMat);
+hub.rotation.x = Math.PI/2;
+handGroup.add(hub);
+handGroup.position.y = 0.35;
+clockGroup.add(handGroup);
+
+function pointHandAt(idx){
+  const a = angForIndex(idx);
+  handGroup.rotation.y = Math.PI/2 - a;
+}
+
+const PCOUNT=160;
+const pGeo=new THREE.BufferGeometry();
+const pPos=new Float32Array(PCOUNT*3);
+pGeo.setAttribute('position',new THREE.BufferAttribute(pPos,3));
+const pMat=new THREE.PointsMaterial({
+  color:0x38bdf8, size:0.12, transparent:true, opacity:0.9,
+  blending:THREE.AdditiveBlending, depthWrite:false,
+});
+const pSystem=new THREE.Points(pGeo,pMat);
+clockGroup.add(pSystem);
+const pData=Array.from({length:PCOUNT},()=>({active:false,ang:0,r:0,y:0,dy:0,life:0,maxLife:0,trail:false}));
+
+function burst(idx){
+  const ang=angForIndex(idx);
+  let n=0;
+  pData.forEach(p=>{
+    if(p.trail) return;
+    if(n>=35||p.active) return;
+    p.active=true; p.ang=ang+(Math.random()-.5)*0.5;
+    p.r=SPHERE_R; p.y=0.3+Math.random()*0.4;
+    p.dy=0.01+Math.random()*0.02;
+    p.life=0; p.maxLife=35+Math.random()*25; n++;
+  });
+}
+
+const TRAIL_COUNT=20;
+for(let i=PCOUNT-TRAIL_COUNT;i<PCOUNT;i++){ pData[i].trail=true; }
+let trailCursor=PCOUNT-TRAIL_COUNT;
+let lastTrailEmit=0;
+
+function emitTrail(idx,t){
+  if(t-lastTrailEmit<0.05) return;
+  lastTrailEmit=t;
+  const sp=spheres[idx];
+  const p=pData[trailCursor];
+  p.active=true;
+  p.ang=Math.atan2(sp.position.z,sp.position.x)+(Math.random()-.5)*0.06;
+  p.r=SPHERE_R+(Math.random()-.5)*0.05;
+  p.y=sp.position.y+(Math.random()-.5)*0.05;
+  p.dy=-0.002-Math.random()*0.004;
+  p.life=0; p.maxLife=22+Math.random()*10;
+  trailCursor++;
+  if(trailCursor>=PCOUNT) trailCursor=PCOUNT-TRAIL_COUNT;
+}
+
+function tickParticles(){
+  pData.forEach((p,i)=>{
+    if(!p.active){pPos[i*3]=9999;return;}
+    p.life++;
+    if(p.trail){ p.r+=0.004; p.y+=p.dy; }
+    else { p.r+=0.05; p.y+=p.dy; }
+    pPos[i*3]=Math.cos(p.ang)*p.r;
+    pPos[i*3+1]=p.y;
+    pPos[i*3+2]=Math.sin(p.ang)*p.r;
+    if(p.life>=p.maxLife){p.active=false;pPos[i*3]=9999;}
+  });
+  pGeo.attributes.position.needsUpdate=true;
+}
+
+let currentDay=0, autoPlay=true, autoTimer=null, activeFilter=null;
+const raycaster=new THREE.Raycaster();
+const mouse=new THREE.Vector2(-999,-999);
+let hoveredDay=null;
+
+const clockCenter3D = new THREE.Vector3(0, 0, 0);
+const dayCard = root.querySelector('#rm-dayCard');
+const activeNumEl = root.querySelector('#rm-activeNum');
+
+function projectToScreen(vec3){
+  const v = vec3.clone().project(camera);
+  const r = canvas.getBoundingClientRect();
+  const wrapRect = wrap.getBoundingClientRect();
+  return {
+    x: (v.x * 0.5 + 0.5) * r.width + (r.left - wrapRect.left),
+    y: (-v.y * 0.5 + 0.5) * r.height + (r.top - wrapRect.top),
+  };
+}
+
+function updateCardPosition(){
+  const p = projectToScreen(clockCenter3D);
+  dayCard.style.left = p.x + 'px';
+  dayCard.style.top  = p.y + 'px';
+}
+
+function updateActiveNumPosition(){
+  const p = projectToScreen(actSphere.position);
+  activeNumEl.style.left = p.x + 'px';
+  activeNumEl.style.top  = p.y + 'px';
+}
+
+function updateHUD(idx){
+  const d=DATA[idx];
+  const pc=PC[d.phase];
   
-  for (let i = 0; i < 60; i++) {
-    const ratio = i / 59;
-    const len = ratio * pathLength;
-    const pt = path.getPointAtLength(len);
-    nodePoints.push({ x: pt.x, y: pt.y });
+  const statDay = root.querySelector('#rm-statDay');
+  const statPct = root.querySelector('#rm-statPct');
+  const headerGlow = root.querySelector('#rm-headerGlow');
+
+  if (statDay) {
+    statDay.textContent = `Day ${idx+1}`;
+    statDay.style.color = pc.css;
+    statDay.style.textShadow = `0 0 12px ${pc.css}60`;
+  }
+  if (statPct) {
+    statPct.textContent = `${Math.round((idx+1)/N*100)}%`;
+    statPct.style.color = pc.css;
+    statPct.style.textShadow = `0 0 12px ${pc.css}60`;
+  }
+  if (headerGlow) {
+    headerGlow.style.background = `linear-gradient(90deg, transparent, ${pc.css}, transparent)`;
   }
 
-  // Render 60 circular nodes and setup colors
-  nodePoints.forEach((pt, index) => {
-    const day = index + 1;
-    const info = CURRICULUM[index];
-    let fill = '#10B981'; // SQL Emerald
-    if (day > 18 && day <= 30) fill = '#FFB020'; // Excel Gold
-    else if (day > 30) fill = '#00E6F6'; // Python Cyan
+  const pillTitle = root.querySelector('#rm-cardPillTitle');
+  if (pillTitle) {
+    pillTitle.style.background = pc.css + '16'; // ~9% opacity themed background
+    pillTitle.style.borderColor = pc.css + '40'; // 25% opacity themed border
+    pillTitle.style.color = pc.css;
+    pillTitle.style.boxShadow = `0 0 12px ${pc.css}10`;
+  }
 
-    // Create SVG Node Circle
-    const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-    circle.setAttribute('cx', pt.x);
-    circle.setAttribute('cy', pt.y);
-    circle.setAttribute('r', '5.5');
-    circle.setAttribute('fill', fill);
-    circle.setAttribute('opacity', '0.25'); // default dimmed
-    circle.setAttribute('class', `roadmap-node node-day-${day}`);
-    circle.setAttribute('data-index', index);
-    circle.style.cursor = 'pointer';
-    circle.style.transition = 'r 0.2s, opacity 0.2s, filter 0.2s';
+  const phaseGlow = root.querySelector('#rm-headerPhaseGlow');
+  if (phaseGlow) {
+    phaseGlow.style.background = `radial-gradient(circle, ${pc.css}16 0%, transparent 70%)`;
+  }
+
+  const cardDayEl = root.querySelector('#rm-cardDay');
+  const cardIconEl = root.querySelector('#rm-cardIcon');
+  const cardTopicEl = root.querySelector('#rm-cardTopic');
+  const pill = root.querySelector('#rm-cardPill');
+  const progBar = root.querySelector('#rm-cardProgBar');
+  const progLabel = root.querySelector('#rm-cardProgLabel');
+
+  if(idx === 59) {
+    cardDayEl.textContent = "Day 60";
+    cardIconEl.innerHTML = "🏆";
+    cardTopicEl.textContent = d.topic;
     
-    // Add Click listener to jump to node
-    circle.addEventListener('click', () => {
-      jumpToNode(index);
-    });
+    pill.textContent = "GRADUATION · CERTIFICATE";
+    pill.style.color = "#f5a623";
+    pill.style.borderColor = "#f5a62380";
+    pill.style.background = "#f5a62322";
+    
+    progBar.style.width = "100%";
+    progBar.style.background = "linear-gradient(90deg, #f5a623, #ffb020)";
+    progLabel.textContent = "60 / 60";
+  } else {
+    cardDayEl.textContent = `Day ${idx+1}`;
+    cardIconEl.innerHTML = getCourseSvg(d.phase);
+    cardTopicEl.textContent = d.topic;
+    
+    pill.textContent = `${d.phase} · ${d.free?'FREE':'PREMIUM'}`;
+    pill.style.color = pc.css;
+    pill.style.borderColor = pc.css+'80';
+    pill.style.background = pc.css+'22';
+    
+    const pct = ((idx+1)/N*100).toFixed(1);
+    progBar.style.width = pct+'%';
+    progBar.style.background = `linear-gradient(90deg, var(--sql), var(--py))`;
+    progLabel.textContent = `${idx+1} / ${N}`;
+  }
 
-    nodesGroup.appendChild(circle);
+  activeNumEl.textContent = idx+1;
+  activeNumEl.style.background = pc.css;
+  activeNumEl.style.boxShadow = `0 0 12px ${pc.css}, 0 0 4px ${pc.css}`;
+}
+
+function setDay(i, doBurst=true, isUserGesture=false){
+  currentDay=((i%N)+N)%N;
+  if(doBurst && clockInViewport) {
+    playMechanicalTick(isUserGesture);
+  }
+  updateHUD(currentDay);
+  if(doBurst) {
+    burst(currentDay);
+    if(currentDay === 59) {
+      setTimeout(() => burst(0), 150);
+      setTimeout(() => burst(18), 300);
+      setTimeout(() => burst(30), 450);
+    }
+  }
+  actMat.color.setHex(PC[DATA[currentDay].phase].hex);
+  actMat.emissive.setHex(PC[DATA[currentDay].phase].hex);
+  actLight.color.setHex(PC[DATA[currentDay].phase].hex);
+  pointHandAt(currentDay);
+}
+
+function advanceDay() {
+  if (currentDay === 59) {
+    setDay(0);
+    clearInterval(autoTimer);
+    autoTimer = setInterval(advanceDay, 1000);
+  } else {
+    const next = currentDay + 1;
+    setDay(next);
+    if (next === 59) {
+      clearInterval(autoTimer);
+      autoTimer = setInterval(advanceDay, 3200);
+    }
+  }
+}
+
+function startAuto(){
+  clearInterval(autoTimer);
+  const delay = currentDay === 59 ? 3200 : 1000;
+  autoTimer = setInterval(advanceDay, delay);
+}
+
+function stopAuto(){ clearInterval(autoTimer); }
+function stopAutoUI(){ stopAuto(); autoPlay=false; root.querySelector('#btnAuto').innerHTML='▶ &nbsp;Auto-play'; }
+
+root.querySelector('#btnNext').onclick=()=>{stopAutoUI();unlockAudio();setDay(currentDay+1, true, true);};
+root.querySelector('#btnPrev').onclick=()=>{stopAutoUI();unlockAudio();setDay(currentDay-1, true, true);};
+root.querySelector('#btnAuto').onclick=()=>{
+  unlockAudio();
+  autoPlay=!autoPlay;
+  root.querySelector('#btnAuto').innerHTML=autoPlay?'⏸ &nbsp;Auto-play':'▶ &nbsp;Auto-play';
+  if(autoPlay) startAuto(); else stopAuto();
+};
+const btnVol = root.querySelector('#btnVolume');
+if (btnVol) {
+  btnVol.onclick = (e) => {
+    e.stopPropagation();
+    if (!audioCtx) {
+      unlockAudio();
+      soundEnabled = true;
+    } else if (audioCtx.state === 'suspended') {
+      unlockAudio();
+      soundEnabled = true;
+    } else {
+      soundEnabled = !soundEnabled;
+      if (soundEnabled && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+    updateVolumeUI();
+    if (soundEnabled) {
+      playMechanicalTick(true);
+    }
+  };
+}
+
+function applyFilter(phase){
+  activeFilter = (activeFilter===phase) ? null : phase;
+  root.querySelectorAll('.rm-legendBtn').forEach(b=>{
+    b.setAttribute('data-active', b.getAttribute('data-phase')===activeFilter ? 'true':'false');
+  });
+  spheres.forEach((s,i)=>{
+    const dim = activeFilter && DATA[i].phase!==activeFilter;
+    sphereMats[i].opacity = dim ? 0.25 : 0.95;
+  });
+  Object.entries(phaseTubes).forEach(([ph,mesh])=>{
+    const dim = activeFilter && ph!==activeFilter;
+    mesh.material.emissiveIntensity = dim ? 0.4 : 1.8;
+    mesh.material.opacity = dim?0.4:1; mesh.material.transparent = !!dim;
+  });
+}
+root.querySelectorAll('.rm-legendBtn').forEach(btn=>{
+  btn.addEventListener('click',()=>applyFilter(btn.getAttribute('data-phase')));
+});
+
+function setMouseFromEvent(e){
+  const r=canvas.getBoundingClientRect();
+  const cx=(e.touches?e.touches[0].clientX:e.clientX);
+  const cy=(e.touches?e.touches[0].clientY:e.clientY);
+  mouse.x=((cx-r.left)/r.width)*2-1;
+  mouse.y=-((cy-r.top)/r.height)*2+1;
+}
+
+canvas.addEventListener('mousemove',e=>{
+  setMouseFromEvent(e);
+});
+canvas.addEventListener('mouseleave',()=>{mouse.set(-999,-999);hoveredDay=null;});
+
+canvas.addEventListener('click',()=>{
+  if(hoveredDay!=null){
+    stopAutoUI();
+    unlockAudio();
+    setDay(hoveredDay, true, true);
+  }
+});
+
+canvas.addEventListener('touchstart',e=>{
+  setMouseFromEvent(e);
+},{passive:true});
+canvas.addEventListener('touchmove',e=>{
+  setMouseFromEvent(e);
+},{passive:true});
+canvas.addEventListener('touchend',()=>{
+  if(hoveredDay!=null){
+    stopAutoUI();
+    unlockAudio();
+    setDay(hoveredDay, true, true);
+  }
+  mouse.set(-999,-999); hoveredDay=null;
+});
+
+function handleResize(){
+  W = wrap.clientWidth || 320;
+  H = Math.min(Math.round(W*0.68), 410);
+  renderer.setSize(W, H);
+  canvas.style.height = H + 'px';
+  camera.aspect = W/H;
+  camera.updateProjectionMatrix();
+}
+window.addEventListener('resize', handleResize);
+if(window.ResizeObserver){
+  new ResizeObserver(handleResize).observe(wrap);
+}
+
+const clock3=new THREE.Clock();
+function animate(){
+  requestAnimationFrame(animate);
+  const t=clock3.getElapsedTime();
+  const dt=clock3.getDelta();
+
+  if(autoRotate) camAngleTarget = Math.sin(t*AUTO_ROTATE_SPEED)*AUTO_ROTATE_RANGE;
+  camAngle += (camAngleTarget-camAngle)*Math.min(1, dt*4);
+  updateCameraPosition();
+  updateCardPosition();
+
+  scanRing.position.y=0.25+Math.sin(t*0.9)*0.8+0.8;
+  scanRingMat.opacity=0.45+0.35*Math.sin(t*2.2);
+
+  holoRingMat.opacity=0.4+0.2*Math.sin(t*3.1);
+  ptCenter.intensity=4+Math.sin(t*1.4)*1.2;
+
+  raycaster.setFromCamera(mouse, camera);
+  const hits=raycaster.intersectObjects(spheres);
+  hoveredDay=hits.length>0?hits[0].object.userData.day:null;
+  canvas.style.cursor = (hoveredDay!=null) ? 'pointer' : 'default';
+
+  spheres.forEach((s,i)=>{
+    const mat=sphereMats[i];
+    const isAct=i===currentDay, isHov=i===hoveredDay, isPast=i<currentDay;
+    const by=baseY[i];
+    const dim = activeFilter && DATA[i].phase!==activeFilter;
+    if(isAct){
+      mat.emissiveIntensity=0.95+Math.sin(t*3)*0.25;
+      s.scale.setScalar(2.0+Math.sin(t*3)*0.07);
+      s.position.y = by + 0.32 + Math.sin(t*1.6)*0.02;
+    } else if(isHov){
+      mat.emissiveIntensity=0.65; s.scale.setScalar(1.5);
+      s.position.y = by + 0.08;
+    } else if(isPast){
+      mat.emissiveIntensity=dim?0.1:0.3; s.scale.setScalar(1.0);
+      s.position.y = by;
+    } else {
+      mat.emissiveIntensity=dim?0.02:0.06; s.scale.setScalar(0.78);
+      s.position.y = by;
+    }
   });
 
-  // Helper to calculate normal coordinate offset at any index
-  function getRoadNormal(index, offsetDistance) {
-    const pt = nodePoints[index];
-    let nextPt = nodePoints[Math.min(index + 1, 59)];
-    let prevPt = nodePoints[Math.max(index - 1, 0)];
-    
-    let dx = nextPt.x - prevPt.x;
-    let dy = nextPt.y - prevPt.y;
-    
-    if (index === 0) {
-      nextPt = nodePoints[1];
-      dx = nextPt.x - pt.x;
-      dy = nextPt.y - pt.y;
-    } else if (index === 59) {
-      prevPt = nodePoints[58];
-      dx = pt.x - prevPt.x;
-      dy = pt.y - prevPt.y;
-    }
-    
-    const len = Math.sqrt(dx * dx + dy * dy);
-    if (len === 0) return { x: pt.x, y: pt.y - offsetDistance };
-    
-    const tx = dx / len;
-    const ty = dy / len;
-    
-    // Normal vector pointing "up/left" relative to road direction
-    const nx = ty;
-    const ny = -tx;
-    
-    return {
-      x: pt.x + nx * offsetDistance,
-      y: pt.y + ny * offsetDistance
-    };
-  }
+  const sp=spheres[currentDay];
+  actSphere.position.copy(sp.position);
+  actSphere.scale.setScalar(sp.scale.x);
+  actSphere.visible=true;
+  actLight.position.copy(sp.position).y+=0.5;
+  updateActiveNumPosition();
 
-  // Helper to create waving flags similar to design image (offset to roadside curb)
-  function createWavingFlag(index, label, durationText = null, isStart = false) {
-    // Offset flags by 39px to place them exactly on the far curb (curb edge is 37px)
-    const pt = getRoadNormal(index, 39);
-    const x = pt.x;
-    const y = pt.y;
+  emitTrail(currentDay, t);
+  tickParticles();
+  renderer.render(scene, camera);
+}
 
-    const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-    
-    // Ellipse base on the curb
-    if (isStart) {
-      const el = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
-      el.setAttribute('cx', x);
-      el.setAttribute('cy', y);
-      el.setAttribute('rx', '14');
-      el.setAttribute('ry', '5');
-      el.setAttribute('fill', '#00E6F6');
-      el.setAttribute('opacity', '0.85');
-      g.appendChild(el);
+  // ── MECHANICAL TICK SYNTHESIZER (WEB AUDIO API) ─────────────
+  let audioCtx = null;
+  let compressor = null; // Reused to eliminate creation latency/lag
+  let clockInViewport = false;
+  let noiseBuffer = null;
+  let soundEnabled = true; // Enabled by default, subject to browser autoplay restrictions
+
+  function updateVolumeUI() {
+    const btn = root.querySelector('#btnVolume');
+    if (!btn) return;
+    if (!audioCtx || audioCtx.state !== 'running' || !soundEnabled) {
+      btn.innerHTML = '🔇';
+      btn.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+      btn.style.boxShadow = 'none';
+      btn.style.color = '#a0aec0';
     } else {
-      const el = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
-      el.setAttribute('cx', x);
-      el.setAttribute('cy', y);
-      el.setAttribute('rx', '10');
-      el.setAttribute('ry', '3.5');
-      el.setAttribute('fill', '#1e293b');
-      el.setAttribute('stroke', '#cbd5e1');
-      el.setAttribute('stroke-width', '1.5');
-      g.appendChild(el);
+      btn.innerHTML = '🔊';
+      btn.style.borderColor = 'var(--py)';
+      btn.style.boxShadow = '0 0 10px rgba(56, 189, 248, 0.2)';
+      btn.style.color = 'var(--py)';
     }
-    
-    // Flagpole
-    const pole = document.createElementNS("http://www.w3.org/2000/svg", "line");
-    pole.setAttribute('x1', x);
-    pole.setAttribute('y1', y - 6); // start at curb top
-    pole.setAttribute('x2', x);
-    pole.setAttribute('y2', y - 86);
-    pole.setAttribute('stroke', '#cbd5e1');
-    pole.setAttribute('stroke-width', '2.2');
-    g.appendChild(pole);
-    
-    const cap = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-    cap.setAttribute('cx', x);
-    cap.setAttribute('cy', y - 86);
-    cap.setAttribute('r', '2');
-    cap.setAttribute('fill', '#f1f5f9');
-    g.appendChild(cap);
-    
-    // Flag cloth waviness shape (Scaled 1.5x)
-    const cloth = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    const flagPath = `M ${x} ${y - 82} 
-                      C ${x + 18} ${y - 86}, ${x + 36} ${y - 78}, ${x + 54} ${y - 82} 
-                      L ${x + 54} ${y - 46} 
-                      C ${x + 36} ${y - 42}, ${x + 18} ${y - 50}, ${x} ${y - 46} 
-                      Z`;
-    cloth.setAttribute('d', flagPath);
-    cloth.setAttribute('fill', '#ffffff');
-    cloth.setAttribute('stroke', '#cbd5e1');
-    cloth.setAttribute('stroke-width', '0.6');
-    g.appendChild(cloth);
-    
-    // Text label on flag cloth (Georgia, italic, serif style, larger)
-    const txt = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    txt.setAttribute('x', x + 27);
-    txt.setAttribute('y', y - 60);
-    txt.setAttribute('text-anchor', 'middle');
-    txt.setAttribute('fill', '#0f172a');
-    txt.setAttribute('font-family', "Georgia, serif");
-    txt.setAttribute('font-style', "italic");
-    txt.setAttribute('font-weight', "bold");
-    txt.setAttribute('font-size', "11.5");
-    txt.textContent = label;
-    g.appendChild(txt);
-    
-    // Duration text below base (with a premium dark capsule badge for contrast)
-    if (durationText) {
-      // Dark capsule background
-      const badge = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-      badge.setAttribute('x', x - 32);
-      badge.setAttribute('y', y + 10);
-      badge.setAttribute('width', '64');
-      badge.setAttribute('height', '18');
-      badge.setAttribute('rx', '9');
-      badge.setAttribute('fill', '#090d16');
-      badge.setAttribute('stroke', 'rgba(255, 176, 32, 0.35)');
-      badge.setAttribute('stroke-width', '1');
-      g.appendChild(badge);
+  }
 
-      const dur = document.createElementNS("http://www.w3.org/2000/svg", "text");
-      dur.setAttribute('x', x);
-      dur.setAttribute('y', y + 22);
-      dur.setAttribute('text-anchor', 'middle');
-      dur.setAttribute('fill', '#FFB020');
-      dur.setAttribute('font-family', "Georgia, serif");
-      dur.setAttribute('font-style', "italic");
-      dur.setAttribute('font-weight', "700");
-      dur.setAttribute('font-size', "10.5");
-      dur.textContent = durationText;
-      g.appendChild(dur);
+  function getNoiseBuffer() {
+    if (noiseBuffer) return noiseBuffer;
+    if (!audioCtx) return null;
+    const bufferSize = audioCtx.sampleRate * 0.1; // 100ms
+    noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const data = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = Math.random() * 2 - 1;
     }
-    
-    return g;
+    return noiseBuffer;
   }
 
-  // A. START point flag
-  const startFlag = createWavingFlag(0, "Start", null, true);
-  monumentsGroup.appendChild(startFlag);
-
-  // B. SQL Milestone Flag (Day 18)
-  const sqlFlag = createWavingFlag(17, "SQL", "18 days");
-  monumentsGroup.appendChild(sqlFlag);
-
-  // C. Excel Milestone Flag (Day 30)
-  const excelFlag = createWavingFlag(29, "EXCEL", "12 days");
-  monumentsGroup.appendChild(excelFlag);
-
-  // D. Python Milestone Flag (Day 60)
-  const pythonFlag = createWavingFlag(59, "Python", "30 days");
-  monumentsGroup.appendChild(pythonFlag);
-
-  // E. Dynamically generate guardrail posts along the highway curves
-  for (let i = 0; i < 60; i += 3) {
-    // Far side posts (at offset 37px, connecting curb at -6 to rail at -14)
-    const farPt = getRoadNormal(i, 37);
-    const farPost = document.createElementNS("http://www.w3.org/2000/svg", "line");
-    farPost.setAttribute('x1', farPt.x);
-    farPost.setAttribute('y1', farPt.y - 6);
-    farPost.setAttribute('x2', farPt.x);
-    farPost.setAttribute('y2', farPt.y - 14);
-    farPost.setAttribute('stroke', '#475569');
-    farPost.setAttribute('stroke-width', '1.5');
-    decorationsGroup.appendChild(farPost);
-
-    // Near side posts (at offset -37px, connecting curb at -6 to rail at -14)
-    const nearPt = getRoadNormal(i, -37);
-    const nearPost = document.createElementNS("http://www.w3.org/2000/svg", "line");
-    nearPost.setAttribute('x1', nearPt.x);
-    nearPost.setAttribute('y1', nearPt.y - 6);
-    nearPost.setAttribute('x2', nearPt.x);
-    nearPost.setAttribute('y2', nearPt.y - 14);
-    nearPost.setAttribute('stroke', '#334155');
-    nearPost.setAttribute('stroke-width', '1.5');
-    decorationsGroup.appendChild(nearPost);
-  }
-
-  // 3. Animation State Management
-  let currentNodeIndex = 0;
-  let isJumping = false;
-  let timerId = null;
-
-  // Initialize first position
-  const pFirst = nodePoints[0];
-  orb.setAttribute('cx', pFirst.x);
-  orb.setAttribute('cy', pFirst.y);
-  updateNodeHighlight(0);
-  updateDayCard(1);
-
-  // Start automatic animation loop
-  startAnimationLoop();
-
-  function startAnimationLoop() {
-    if (timerId) clearTimeout(timerId);
-    timerId = setTimeout(nextStep, 1500); // initial wait of 1.5s at start
-  }
-
-  function nextStep() {
-    if (isJumping) return;
-    const prevIndex = currentNodeIndex;
-    const nextIndex = (currentNodeIndex + 1) % 60;
-    
-    triggerTransition(prevIndex, nextIndex);
-  }
-
-  function jumpToNode(index) {
-    if (index === currentNodeIndex) return;
-    isJumping = true;
-    if (timerId) clearTimeout(timerId);
-    
-    const prevIndex = currentNodeIndex;
-    triggerTransition(prevIndex, index, 300, () => {
-      isJumping = false;
-      timerId = setTimeout(nextStep, 1500); // pause longer at clicked node before resuming
-    });
-  }
-
-  function triggerTransition(prevIndex, nextIndex, speed = 150, callback = null) {
-    const startPt = nodePoints[prevIndex];
-    const endPt = nodePoints[nextIndex];
-    currentNodeIndex = nextIndex;
-
-    animateOrb(startPt, endPt, speed, () => {
-      // On Arrival
-      triggerRipple(endPt);
-      updateDayCard(nextIndex + 1);
-      updateNodeHighlight(nextIndex);
-      updateLinkLine();
-      updateMobileScroll(endPt);
-
-      if (callback) {
-        callback();
-      } else {
-        // Continue auto loop
-        timerId = setTimeout(nextStep, 750); // Pause for 0.75s at each node
-      }
-    });
-  }
-
-  // Orb animator using cubic-bezier easing
-  function animateOrb(from, to, duration, callback) {
-    const startTime = performance.now();
-    const day = currentNodeIndex + 1;
-    let phaseColor = '#10B981'; // SQL
-    let glowFilter = 'url(#glow-emerald)';
-    
-    if (day > 18 && day <= 30) {
-      phaseColor = '#FFB020'; // Excel
-      glowFilter = 'url(#glow-gold)';
-    } else if (day > 30) {
-      phaseColor = '#00E6F6'; // Python
-      glowFilter = 'url(#glow-cyan)';
-    }
-
-    orb.setAttribute('fill', phaseColor);
-    orb.setAttribute('filter', glowFilter);
-    ripple.setAttribute('stroke', phaseColor);
-
-    function tick(now) {
-      const elapsed = now - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      
-      // Easing: Cubic-bezier equivalent for natural accel/decel
-      const eased = progress * progress * (3 - 2 * progress);
-      
-      const currentX = from.x + (to.x - from.x) * eased;
-      const currentY = from.y + (to.y - from.y) * eased;
-      
-      orb.setAttribute('cx', currentX);
-      orb.setAttribute('cy', currentY);
-      updateLinkLine();
-      
-      if (elapsed < duration) {
-        requestAnimationFrame(tick);
-      } else {
-        callback();
-      }
-    }
-    requestAnimationFrame(tick);
-  }
-
-  // Ripple effect on node arrival
-  function triggerRipple(pt) {
-    ripple.setAttribute('cx', pt.x);
-    ripple.setAttribute('cy', pt.y);
-    ripple.setAttribute('r', '8');
-    ripple.setAttribute('opacity', '0.8');
-    
-    const startTime = performance.now();
-    const duration = 250; // runs during the 250ms node pause
-    
-    function tick(now) {
-      const elapsed = now - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      
-      const currentR = 8 + progress * 20; // expand from radius 8 to 28
-      const currentOpacity = 0.8 * (1 - progress); // fade out
-      
-      ripple.setAttribute('r', currentR);
-      ripple.setAttribute('opacity', currentOpacity);
-      
-      if (elapsed < duration) {
-        requestAnimationFrame(tick);
-      }
-    }
-    requestAnimationFrame(tick);
-  }
-
-  // Update illuminated/dimmed nodes
-  function updateNodeHighlight(activeIndex) {
-    const nodes = nodesGroup.querySelectorAll('circle');
-    nodes.forEach((node, idx) => {
-      if (idx === activeIndex) {
-        // Active Node
-        node.setAttribute('r', '10');
-        node.setAttribute('opacity', '1');
-        node.style.filter = 'drop-shadow(0 0 4px currentColor)';
-      } else if (idx < activeIndex) {
-        // Completed Nodes (remain lit, original size)
-        node.setAttribute('r', '5.5');
-        node.setAttribute('opacity', '0.8');
-        node.style.filter = 'none';
-      } else {
-        // Future Nodes (dimmed)
-        node.setAttribute('r', '5.5');
-        node.setAttribute('opacity', '0.25');
-        node.style.filter = 'none';
-      }
-    });
-  }
-
-  // Update card content with 0.4s slide-fade-blur transition
-  function updateDayCard(day) {
-    const topic = CURRICULUM[day - 1];
-    
-    // Add updating transition class to trigger slide/fade/blur
-    card.classList.add('updating');
-    
-    setTimeout(() => {
-      // Update DOM values
-      document.getElementById('cardDay').textContent = `Day ${String(day).padStart(2, '0')}`;
-      document.getElementById('cardTitle').textContent = topic.title;
-      document.getElementById('cardObjective').textContent = topic.obj;
-      
-      const progressPercent = ((day / 60) * 100).toFixed(1);
-      document.getElementById('cardProgressFill').style.width = `${progressPercent}%`;
-      document.getElementById('cardProgressText').textContent = `${progressPercent}% Complete`;
-
-      // Status Badge
-      const badge = document.getElementById('cardStatusBadge');
-      if (topic.status === 'FREE') {
-        badge.textContent = 'FREE';
-        badge.className = 'card-status-badge free';
-      } else {
-        badge.textContent = '🔒 PREMIUM';
-        badge.className = 'card-status-badge premium';
-      }
-
-      // Dynamic Card Icon based on course phase
-      const iconWrapper = document.getElementById('cardIconWrapper');
-      if (iconWrapper) {
-        let iconHtml = '';
-        if (topic.phase === 'sql') {
-          iconHtml = `
-            <div class="card-phase-icon" style="background: rgba(167, 139, 250, 0.15); border: 1px solid rgba(167, 139, 250, 0.35); border-radius: 12px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; box-shadow: 0 0 12px rgba(167, 139, 250, 0.1);">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 22c5.523 0 10-2.239 10-5V7c0-2.761-4.477-5-10-5S2 4.239 2 7v10c0 2.761 4.477 5 10 5z"/>
-                <path d="M2 7c0 2.761 4.477 5 10 5s10-2.239 10-5"/>
-                <path d="M2 12c0 2.761 4.477 5 10 5s10-2.239 10-5"/>
-              </svg>
-            </div>`;
-        } else if (topic.phase === 'excel') {
-          iconHtml = `
-            <div class="card-phase-icon" style="background: rgba(251, 191, 36, 0.15); border: 1px solid rgba(251, 191, 36, 0.35); border-radius: 12px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; box-shadow: 0 0 12px rgba(251, 191, 36, 0.1);">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                <line x1="9" y1="3" x2="9" y2="21"/>
-                <line x1="17" y1="3" x2="17" y2="21"/>
-                <line x1="3" y1="9" x2="21" y2="9"/>
-                <line x1="3" y1="15" x2="21" y2="15"/>
-              </svg>
-            </div>`;
+  function playMechanicalTick(isUserGesture = false) {
+    try {
+      if (!soundEnabled) return;
+      if (!audioCtx) {
+        if (isUserGesture) {
+          unlockAudio();
         } else {
-          iconHtml = `
-            <div class="card-phase-icon" style="background: rgba(34, 211, 238, 0.15); border: 1px solid rgba(34, 211, 238, 0.35); border-radius: 12px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; box-shadow: 0 0 12px rgba(34, 211, 238, 0.1);">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="16 18 22 12 16 6"/>
-                <polyline points="8 6 2 12 8 18"/>
-              </svg>
-            </div>`;
+          return;
         }
-        iconWrapper.innerHTML = iconHtml;
+      }
+      
+      if (!isUserGesture && audioCtx.state !== 'running') {
+        return;
       }
 
-      // Dynamic glow matching phase
-      let glowColor = 'rgba(16, 185, 129, 0.25)'; // SQL
-      if (day > 18 && day <= 30) glowColor = 'rgba(255, 176, 32, 0.25)'; // Excel
-      else if (day > 30) glowColor = 'rgba(0, 230, 246, 0.25)'; // Python
+      // Pre-initialize and reuse compressor to avoid latency delay
+      if (!compressor && audioCtx) {
+        compressor = audioCtx.createDynamicsCompressor();
+        compressor.threshold.setValueAtTime(-6, audioCtx.currentTime);
+        compressor.knee.setValueAtTime(20, audioCtx.currentTime);
+        compressor.ratio.setValueAtTime(20, audioCtx.currentTime);
+        compressor.attack.setValueAtTime(0.001, audioCtx.currentTime);
+        compressor.release.setValueAtTime(0.12, audioCtx.currentTime);
+        compressor.connect(audioCtx.destination);
+      }
 
-      card.style.boxShadow = `0 8px 30px rgba(0, 0, 0, 0.4), 0 0 20px ${glowColor}`;
+      const now = audioCtx.currentTime;
+      const playTime = now + 0.005; // 5ms look-ahead to eliminate jitter/latency
 
-      // Remove updating class to transition new content in
-      card.classList.remove('updating');
-    }, 150); // halfway point of the card transition
-  }
+      // Play the crisp TICK sound for every transition (replacing alternating TOCK)
+      // 1. High-frequency click noise (metal escapement strike)
+      const noise = audioCtx.createBufferSource();
+      const noiseFilter = audioCtx.createBiquadFilter();
+      const noiseGain = audioCtx.createGain();
 
-  // Mobile viewport centering scroll mechanism
-  function updateMobileScroll(pt) {
-    if (window.innerWidth > 768) return; // Only trigger scroll follow on mobile layout
-    const container = document.getElementById('interactiveRoadmap');
-    if (!container) return;
+      noise.buffer = getNoiseBuffer();
+      noiseFilter.type = 'highpass';
+      noiseFilter.frequency.setValueAtTime(2400, playTime); // slightly cleaner/higher pitch
+      noiseFilter.Q.setValueAtTime(3, playTime);
 
-    // Center coordinates
-    const containerWidth = container.clientWidth;
-    const containerHeight = container.clientHeight;
-    
-    // SVG coordinates are 800x650
-    const svgWidth = 800;
-    const svgHeight = 650;
-    
-    const ratioX = containerWidth / svgWidth;
-    const ratioY = containerHeight / svgHeight;
-    const scale = Math.min(ratioX, ratioY);
-    
-    const nodeX = pt.x * scale;
-    const nodeY = pt.y * scale;
+      noiseGain.gain.setValueAtTime(2.2, playTime); // Maximized noise transient (20x perceived volume)
+      noiseGain.gain.exponentialRampToValueAtTime(0.0001, playTime + 0.022);
 
-    container.scrollTo({
-      left: nodeX - containerWidth / 2,
-      top: nodeY - containerHeight / 2,
-      behavior: 'smooth'
-    });
-  }
+      noise.connect(noiseFilter);
+      noiseFilter.connect(noiseGain);
+      noiseGain.connect(compressor);
 
-  // Dynamic Link Line update function
-  function updateLinkLine() {
-    const linkLine = document.getElementById('link-line');
-    const arrowPath = document.querySelector('#arrow path');
-    if (!linkLine) return;
+      // 2. High metallic body resonance (spring & escapement snap)
+      const oscHigh = audioCtx.createOscillator();
+      const gainHigh = audioCtx.createGain();
+      
+      oscHigh.type = 'triangle';
+      oscHigh.frequency.setValueAtTime(1050, playTime); // clear metallic ring
+      
+      gainHigh.gain.setValueAtTime(1.8, playTime); // Maximized triangle tone
+      gainHigh.gain.exponentialRampToValueAtTime(0.0001, playTime + 0.045);
 
-    const orbRect = orb.getBoundingClientRect();
-    const cardRect = card.getBoundingClientRect();
-    const container = document.getElementById('heroRoadmapContainer');
-    if (!container) return;
-    const containerRect = container.getBoundingClientRect();
+      oscHigh.connect(gainHigh);
+      gainHigh.connect(compressor);
 
-    if (orbRect.width === 0 || cardRect.width === 0) {
-      linkLine.style.opacity = '0';
-      return;
-    } else {
-      linkLine.style.opacity = '0.8';
-    }
-
-    // Orb center relative to container
-    const x1 = (orbRect.left + orbRect.width / 2) - containerRect.left;
-    const y1 = (orbRect.top + orbRect.height / 2) - containerRect.top;
-
-    // Day card left middle relative to container
-    const x2 = cardRect.left - containerRect.left;
-    const y2 = (cardRect.top + cardRect.height / 2) - containerRect.top;
-
-    linkLine.setAttribute('x1', x1);
-    linkLine.setAttribute('y1', y1);
-    linkLine.setAttribute('x2', x2);
-    linkLine.setAttribute('y2', y2);
-
-    // Set line color based on phase
-    const day = currentNodeIndex + 1;
-    let phaseColor = '#10B981'; // SQL Emerald
-    if (day > 18 && day <= 30) {
-      phaseColor = '#FFB020'; // Excel Gold
-    } else if (day > 30) {
-      phaseColor = '#00E6F6'; // Python Cyan
-    }
-
-    linkLine.setAttribute('stroke', phaseColor);
-    if (arrowPath) {
-      arrowPath.setAttribute('fill', phaseColor);
+      noise.start(playTime);
+      noise.stop(playTime + 0.025);
+      oscHigh.start(playTime);
+      oscHigh.stop(playTime + 0.050);
+    } catch (e) {
+      console.warn('[Audio] Tick synthesis failed:', e);
     }
   }
 
-  // Setup link line update listeners
-  window.addEventListener('resize', updateLinkLine, { passive: true });
-  const roadmapContainer = document.getElementById('interactiveRoadmap');
-  if (roadmapContainer) {
-    roadmapContainer.addEventListener('scroll', updateLinkLine, { passive: true });
+  function unlockAudio() {
+    try {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      // Initialize compressor inside user gesture to unlock route
+      if (!compressor && audioCtx) {
+        compressor = audioCtx.createDynamicsCompressor();
+        compressor.threshold.setValueAtTime(-6, audioCtx.currentTime);
+        compressor.knee.setValueAtTime(20, audioCtx.currentTime);
+        compressor.ratio.setValueAtTime(20, audioCtx.currentTime);
+        compressor.attack.setValueAtTime(0.001, audioCtx.currentTime);
+        compressor.release.setValueAtTime(0.12, audioCtx.currentTime);
+        compressor.connect(audioCtx.destination);
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume().then(() => {
+          updateVolumeUI();
+        });
+      } else {
+        updateVolumeUI();
+      }
+      if (audioCtx.state === 'running') {
+        return;
+      }
+      // Play a tiny silent buffer to unlock iOS Safari
+      const buffer = audioCtx.createBuffer(1, 1, 22050);
+      const source = audioCtx.createBufferSource();
+      source.buffer = buffer;
+      source.connect(audioCtx.destination);
+      source.start(0);
+    } catch (e) {
+      console.warn('[Audio] Failed to unlock audio context:', e);
+    }
+  }
+  document.addEventListener('click', unlockAudio);
+  document.addEventListener('touchstart', unlockAudio, { passive: true });
+  document.addEventListener('touchend', unlockAudio, { passive: true });
+
+  // Clock Viewport Visibility Observer
+  if (window.IntersectionObserver && wrap) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        clockInViewport = entry.isIntersecting;
+      });
+    }, { threshold: 0.15 });
+    observer.observe(wrap);
+  } else {
+    clockInViewport = true;
   }
 
-  // Initial update after DOM loads and layout stabilizes
-  setTimeout(updateLinkLine, 200);
-});
+setDay(0,false);
+updateHUD(0);
+updateVolumeUI();
+startAuto();
+animate();
+root.classList.add('loaded');
+})();

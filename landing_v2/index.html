@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build-cache-bust-12000 -->
+<!-- build-cache-bust-13000 -->
 <html lang="en">
 <head>
   <!-- Google tag (gtag.js) -->
@@ -253,6 +253,12 @@
 
     /* Phase 5 card resizing & positioning over hero-left content (exact pixel top & height match to clock frame) */
     .narration-showcase-stage.phase-5-card {
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      display: block !important;
+      padding: 0 !important;
       transition: opacity 0.6s ease;
     }
 
@@ -2142,28 +2148,29 @@
         document.body.classList.add('phase-5-active');
         if (stage) stage.classList.add('phase-5-card');
 
-        var clockEl = document.getElementById('roadmap-root') || document.querySelector('.hero-right');
-        var heroLeft = document.querySelector('.hero-left');
+        // Defer measurement until after layout reflow of .hero-right
+        requestAnimationFrame(function() {
+          requestAnimationFrame(function() {
+            var clockEl = document.getElementById('roadmap-root') || document.querySelector('.hero-right');
+            var heroLeft = document.querySelector('.hero-left');
 
-        if (clockEl && heroLeft && card && stage) {
-          var cRect = clockEl.getBoundingClientRect();
-          var hRect = heroLeft.getBoundingClientRect();
+            if (clockEl && heroLeft && card && stage) {
+              var cRect = clockEl.getBoundingClientRect();
+              var hRect = heroLeft.getBoundingClientRect();
 
-          if (cRect.height > 200 && hRect.width > 200) {
-            stage.style.alignItems = 'flex-start';
-            stage.style.justifyContent = 'flex-start';
-            stage.style.padding = '0';
-
-            card.style.position = 'fixed';
-            card.style.top = Math.round(cRect.top) + 'px';
-            card.style.left = Math.round(hRect.left) + 'px';
-            card.style.width = Math.round(hRect.width) + 'px';
-            card.style.height = Math.round(cRect.height) + 'px';
-            card.style.maxWidth = 'none';
-            card.style.maxHeight = 'none';
-            card.style.margin = '0';
-          }
-        }
+              if (cRect.height > 200 && hRect.width > 200) {
+                card.style.position = 'fixed';
+                card.style.top = Math.round(cRect.top) + 'px';
+                card.style.left = Math.round(hRect.left) + 'px';
+                card.style.width = Math.round(hRect.width) + 'px';
+                card.style.height = Math.round(cRect.height) + 'px';
+                card.style.maxWidth = 'none';
+                card.style.maxHeight = 'none';
+                card.style.margin = '0';
+              }
+            }
+          });
+        });
 
         if (badgeText) badgeText.innerHTML = '✨ BUILT SPECIFICALLY FOR YOU';
       }, 12540);

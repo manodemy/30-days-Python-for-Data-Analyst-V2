@@ -6217,6 +6217,90 @@ td.col-mano {
   border-radius: 20px 20px 0 0;
 }
 
+/* Horizontal Landscape Pricing Card (Web View fit) */
+.pricing-card-horizontal {
+  display: grid !important;
+  grid-template-columns: 1.1fr 0.9fr !important;
+  gap: 24px !important;
+  padding: 22px 26px !important;
+  max-width: 960px !important;
+  width: 100% !important;
+  align-items: center !important;
+  border-radius: 20px !important;
+  position: relative !important;
+}
+
+.pricing-card-left {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+}
+
+.pricing-card-right {
+  background: rgba(248, 250, 252, 0.85) !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  border-radius: 14px !important;
+  padding: 14px 16px !important;
+}
+
+.pricing-feature-list--compact {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 10px 12px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+
+.pricing-feature-list--compact li {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 8px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.pricing-feature-list--compact .feat-icon-box {
+  width: 24px !important;
+  height: 24px !important;
+  min-width: 24px !important;
+  font-size: 13px !important;
+  border-radius: 6px !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+}
+
+.pricing-feature-list--compact .feat-text-box strong {
+  display: block !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  color: #0F172A !important;
+  line-height: 1.25 !important;
+}
+
+.pricing-feature-list--compact .feat-text-box span {
+  display: block !important;
+  font-size: 10.5px !important;
+  color: #64748B !important;
+  line-height: 1.2 !important;
+}
+
+@media (max-width: 860px) {
+  .pricing-card-horizontal {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    padding: 20px 16px !important;
+  }
+  .pricing-feature-list--compact {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+}
+
 /* Live card: gold top bar */
 .pricing-card--live {
   border-color: rgba(217, 119, 6, 0.30);

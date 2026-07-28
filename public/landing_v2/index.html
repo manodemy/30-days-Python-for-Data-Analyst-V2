@@ -132,6 +132,16 @@
       animation: navPillZoomIn 0.55s cubic-bezier(0.34,1.56,0.64,1) both;
     }
 
+    /* Hide all other website content during narration animation */
+    body.narration-active main,
+    body.narration-active footer,
+    body.narration-active .mobile-overlay {
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
     /* Keyframes */
     @keyframes navLogoZoomIn {
       from { transform: scale(0.05); opacity: 0; }
@@ -1935,6 +1945,8 @@
       var nav = document.querySelector('.nav');
       if (!nav) return;
 
+      document.body.classList.add('narration-active');
+
       // Phase 1: logo centered only
       nav.classList.remove('nav-anim-p2');
       nav.classList.add('nav-anim-p1');
@@ -1945,9 +1957,10 @@
         nav.classList.add('nav-anim-p2');
       }, 1580);
 
-      // End at 4.5s: restore nav to normal
+      // End at 4.5s: restore nav & page content to normal
       _navEndTimer = setTimeout(function() {
         nav.classList.remove('nav-anim-p1', 'nav-anim-p2');
+        document.body.classList.remove('narration-active');
       }, 4500);
     }
 
@@ -1955,6 +1968,7 @@
       clearTimeout(_navP1Timer); clearTimeout(_navP2Timer); clearTimeout(_navEndTimer);
       var nav = document.querySelector('.nav');
       if (nav) nav.classList.remove('nav-anim-p1', 'nav-anim-p2');
+      document.body.classList.remove('narration-active');
     }
     // ──────────────────────────────────────────────────────────────────────────
 

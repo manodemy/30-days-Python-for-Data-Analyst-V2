@@ -126,6 +126,11 @@
           </span>
           <span class="nav-center-course-title">60 Days Data Analytics Course</span>
         </div>
+        <audio id="navIntroAudioElement" preload="auto" style="display:none;">
+          <source src="/landing_v2/intro_narration.mp3" type="audio/mpeg">
+          <source src="/intro_narration.mp3" type="audio/mpeg">
+          <source src="intro_narration.mp3" type="audio/mpeg">
+        </audio>
 
         <!-- 3. Right Action Bar: Sign In & Menu Toggle Button -->
         <div class="nav-right">
@@ -1882,47 +1887,34 @@
   </div>
 
   <script>
-    var navIntroAudio = null;
     function toggleNavAudioIntro() {
+      var audio = document.getElementById('navIntroAudioElement');
       var hook = document.getElementById('navCenterAudioHook');
       var circle = document.getElementById('navCenterPlayCircle');
 
-      if (!navIntroAudio) {
-        navIntroAudio = new Audio('/landing_v2/intro_narration.mp3');
-        navIntroAudio.onended = function() {
-          resetNavAudioState();
-        };
-        navIntroAudio.onerror = function() {
-          console.warn("Primary path failed, trying fallback /intro_narration.mp3");
-          navIntroAudio = new Audio('/intro_narration.mp3');
-          navIntroAudio.onended = function() { resetNavAudioState(); };
-          navIntroAudio.play().then(function() {
-            if (hook) hook.classList.add('playing');
-            if (circle) circle.innerHTML = '<svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="3.5" height="12" rx="1" fill="currentColor"/><rect x="6.5" width="3.5" height="12" rx="1" fill="currentColor"/></svg>';
-          }).catch(resetNavAudioState);
-        };
-      }
+      if (!audio) return;
 
-      if (!navIntroAudio.paused && !navIntroAudio.ended) {
-        navIntroAudio.pause();
+      audio.onended = resetNavAudioState;
+      audio.onpause = resetNavAudioState;
+
+      if (!audio.paused && !audio.ended) {
+        audio.pause();
         resetNavAudioState();
       } else {
-        var playPromise = navIntroAudio.play();
-        if (playPromise !== undefined) {
-          playPromise.then(function() {
+        audio.currentTime = 0;
+        var p = audio.play();
+        if (p && p.then) {
+          p.then(function() {
             if (hook) hook.classList.add('playing');
             if (circle) {
               circle.innerHTML = '<svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="3.5" height="12" rx="1" fill="currentColor"/><rect x="6.5" width="3.5" height="12" rx="1" fill="currentColor"/></svg>';
             }
           }).catch(function(err) {
-            console.warn("Primary play error, trying secondary source:", err);
-            navIntroAudio = new Audio('intro_narration.mp3');
-            navIntroAudio.onended = function() { resetNavAudioState(); };
-            navIntroAudio.play().then(function() {
-              if (hook) hook.classList.add('playing');
-              if (circle) circle.innerHTML = '<svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="3.5" height="12" rx="1" fill="currentColor"/><rect x="6.5" width="3.5" height="12" rx="1" fill="currentColor"/></svg>';
-            }).catch(resetNavAudioState);
+            console.error("DOM Audio Play Error:", err);
+            resetNavAudioState();
           });
+        } else {
+          if (hook) hook.classList.add('playing');
         }
       }
     }

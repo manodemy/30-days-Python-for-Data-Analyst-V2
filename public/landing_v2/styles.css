@@ -9092,19 +9092,20 @@ p, .section-head p, .pricing-card-subtitle, .hero-sub {
   transition: all 0.25s ease !important;
 }
 
-/* Floating Menu Dropdown Card */
+
+/* Floating Menu Dropdown Card (Market Standard Position & Design) */
 .nav-menu-dropdown-card {
   position: absolute !important;
   top: 48px !important;
   right: 0 !important;
-  width: 270px !important;
-  background: rgba(255, 255, 255, 0.96) !important;
-  backdrop-filter: blur(24px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+  width: 300px !important;
+  background: rgba(255, 255, 255, 0.98) !important;
+  backdrop-filter: blur(28px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(190%) !important;
   border: 1px solid rgba(15, 23, 42, 0.12) !important;
   border-radius: 20px !important;
   padding: 16px !important;
-  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.8) inset !important;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18), 0 0 0 1px rgba(255, 255, 255, 0.9) inset !important;
   opacity: 0 !important;
   visibility: hidden !important;
   transform: translateY(-8px) scale(0.96) !important;
@@ -9118,20 +9119,26 @@ p, .section-head p, .pricing-card-subtitle, .hero-sub {
   transform: translateY(0) scale(1) !important;
 }
 
-.nav-card-menu-group {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 10px !important;
+.nav-card-section-title {
+  font-family: var(--font-data) !important;
+  font-size: 9.5px !important;
+  font-weight: 800 !important;
+  color: #94A3B8 !important;
+  letter-spacing: 0.14em !important;
+  padding: 4px 10px 2px !important;
+  display: block !important;
 }
 
 .nav-card-link {
-  display: block !important;
-  padding: 10px 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 8px 12px !important;
   font-family: var(--font-display) !important;
-  font-size: 15px !important;
+  font-size: 13.5px !important;
   font-weight: 700 !important;
   color: #334155 !important;
-  border-radius: 12px !important;
+  border-radius: 10px !important;
   transition: all 0.2s ease !important;
 }
 
@@ -9141,53 +9148,34 @@ p, .section-head p, .pricing-card-subtitle, .hero-sub {
   transform: translateX(3px) !important;
 }
 
+.nav-card-free-sql { color: #059669 !important; }
+.nav-card-free-sql:hover { background: rgba(5, 150, 105, 0.08) !important; }
+
+.nav-card-free-excel { color: #D97706 !important; }
+.nav-card-free-excel:hover { background: rgba(217, 119, 6, 0.08) !important; }
+
+.nav-card-free-python { color: #00B4D8 !important; }
+.nav-card-free-python:hover { background: rgba(0, 180, 216, 0.08) !important; }
+
 .nav-card-divider {
   height: 1px !important;
   background: rgba(15, 23, 42, 0.08) !important;
   margin: 6px 0 !important;
 }
 
-.nav-card-free-section {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 6px !important;
-  padding: 6px 0 !important;
-}
-
-.nav-card-free-title {
-  font-family: var(--font-data) !important;
-  font-size: 9.5px !important;
-  font-weight: 800 !important;
-  color: #94A3B8 !important;
-  letter-spacing: 0.12em !important;
-  padding-left: 16px !important;
-}
-
-.nav-card-free-link {
-  display: block !important;
-  padding: 8px 16px !important;
-  font-size: 13.5px !important;
-  font-weight: 700 !important;
-  border-radius: 10px !important;
-  transition: background 0.2s ease !important;
-}
-
-.nav-card-free-link:hover {
-  background: rgba(15, 23, 42, 0.04) !important;
-}
-
 .nav-card-footer {
-  margin-top: 14px !important;
-  padding-top: 12px !important;
+  margin-top: 10px !important;
+  padding-top: 10px !important;
   border-top: 1px solid rgba(15, 23, 42, 0.08) !important;
 }
 
 .nav-card-buy-btn {
   width: 100% !important;
   justify-content: center !important;
-  padding: 12px 18px !important;
-  font-size: 13.5px !important;
+  padding: 10px 16px !important;
+  font-size: 13px !important;
 }
+
 
 @media (max-width: 860px) {
   .nav-center-audio-hook {

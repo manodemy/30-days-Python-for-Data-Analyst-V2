@@ -139,19 +139,30 @@
             <!-- Floating Menu Dropdown Card (Matches Mockup) -->
             <div class="nav-menu-dropdown-card" id="navMenuDropdownCard">
               <div class="nav-card-menu-group">
-                <a href="#curriculum" class="nav-card-link" onclick="closeNavMenuCard()">Curriculum</a>
-                <a href="#testimonials" class="nav-card-link" onclick="closeNavMenuCard()">Reviews</a>
-                <a href="#faq" class="nav-card-link" onclick="closeNavMenuCard()">FAQ</a>
+                <!-- Navigation Section -->
+                <span class="nav-card-section-title">NAVIGATION</span>
+                <a href="#curriculum" class="nav-card-link" onclick="closeNavMenuCard()">📖 Curriculum & Roadmap</a>
+                <a href="#testimonials" class="nav-card-link" onclick="closeNavMenuCard()">⭐ Student Reviews</a>
+                <a href="#faq" class="nav-card-link" onclick="closeNavMenuCard()">❓ Frequently Asked Questions</a>
+                
                 <div class="nav-card-divider"></div>
-                <div class="nav-card-free-section">
-                  <span class="nav-card-free-title">FREE TRIALS</span>
-                  <a href="/sql/day01.html" class="nav-card-free-link" style="color: var(--emerald);">⚡ Try SQL Free</a>
-                  <a href="/excel/day01.html" class="nav-card-free-link" style="color: var(--gold);">📈 Try Excel Free</a>
-                  <a href="/day01.html" class="nav-card-free-link" style="color: var(--cyan);">🐍 Try Python Free</a>
-                </div>
+                
+                <!-- Free Practice Section -->
+                <span class="nav-card-section-title">FREE PRACTICE DAYS</span>
+                <a href="/sql/day01.html" class="nav-card-link nav-card-free-sql" onclick="closeNavMenuCard()">⚡ Try SQL (Day 01 & 02 Free)</a>
+                <a href="/excel/day01.html" class="nav-card-link nav-card-free-excel" onclick="closeNavMenuCard()">📈 Try Excel (Day 01 & 02 Free)</a>
+                <a href="/day01.html" class="nav-card-link nav-card-free-python" onclick="closeNavMenuCard()">🐍 Try Python (Day 01 & 02 Free)</a>
+
+                <div class="nav-card-divider"></div>
+
+                <!-- Interactive Features -->
+                <a href="javascript:void(0)" class="nav-card-link" onclick="closeNavMenuCard(); openAudioIntroModal();">🎧 Listen to 10s Audio Overview</a>
+                <a href="javascript:void(0)" class="nav-card-link" onclick="closeNavMenuCard(); document.getElementById('authModal').classList.add('active');">👤 Sign In to Account</a>
               </div>
+
+              <!-- Conversion Footer CTA -->
               <div class="nav-card-footer">
-                <a href="javascript:void(0)" class="btn-nav-buy nav-card-buy-btn" id="navEnrollBtn" data-cta="buy" data-tier="selfpaced" onclick="closeNavMenuCard()">Enroll Full Course — <span class="dynamic-price-from">$49</span></a>
+                <a href="#pricing" class="btn-nav-buy nav-card-buy-btn" id="navEnrollBtn" data-cta="buy" data-tier="selfpaced" onclick="closeNavMenuCard()">Enroll Full Course — <span class="dynamic-price-from">$49</span></a>
               </div>
             </div>
           </div>

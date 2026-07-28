@@ -8917,8 +8917,8 @@ p, .section-head p, .pricing-card-subtitle, .hero-sub {
 }
 
 .nav-brand:hover .nav-brand-symbol {
-  transform: rotate(-3deg) scale(1.06) !important;
-  box-shadow: 0 6px 20px rgba(5, 150, 105, 0.35), 0 0 16px rgba(0, 180, 216, 0.35) !important;
+  transform: translateY(-2px) scale(1.08) !important;
+  filter: drop-shadow(0 6px 14px rgba(5, 150, 105, 0.4)) !important;
 }
 
 .nav-brand-text {

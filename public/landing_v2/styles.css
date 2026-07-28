@@ -5831,7 +5831,7 @@ html, body {
 
 /* ══════════════ HERO SECTION ══════════════ */
 .hero {
-  padding: 100px 0 70px;
+  padding: 24px 0 50px !important;
   background: #ffffff;
 }
 
@@ -6948,7 +6948,7 @@ td.col-mano {
   }
 
   .hero {
-    padding: 80px 0 50px;
+    padding: 16px 0 30px !important;
   }
 }
 

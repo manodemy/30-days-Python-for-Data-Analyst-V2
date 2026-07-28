@@ -8730,7 +8730,7 @@ p, .section-head p, .pricing-card-subtitle, .hero-sub {
               inset 0 -1px 0 rgba(255, 255, 255, 0.6) !important;
   position: fixed;
   top: 0; left: 0; right: 0;
-  height: 72px !important;
+  height: 56px !important;
   z-index: 1000;
   display: flex !important;
   align-items: center !important;
@@ -8977,7 +8977,7 @@ p, .section-head p, .pricing-card-subtitle, .hero-sub {
 }
 
 
-/* ══════════════ REDESIGNED STUNNING NAV BAR (MOCKUP MATCH) ══════════════ */
+/* ══════════════ 56PX MARKET STANDARD SLEEK NAV BAR ══════════════ */
 .nav-inner {
   display: flex !important;
   align-items: center !important;
@@ -8985,99 +8985,129 @@ p, .section-head p, .pricing-card-subtitle, .hero-sub {
   height: 100% !important;
 }
 
-/* Center Audio Intro Course Title Pill */
+/* Brand Logo Compact 56px Proportions */
+.nav-brand-symbol {
+  width: 32px !important;
+  height: 32px !important;
+}
+
+.nav-brand-name {
+  font-size: 21px !important;
+  line-height: 1.1 !important;
+}
+
+.nav-brand-sub {
+  font-size: 7.5px !important;
+  margin-top: 1px !important;
+}
+
+/* Center Audio Intro Course Title Pill (Sleek Compact) */
 .nav-center-audio-hook {
   display: inline-flex !important;
   align-items: center !important;
-  gap: 14px !important;
-  padding: 8px 24px 8px 10px !important;
+  gap: 10px !important;
+  padding: 4px 18px 4px 5px !important;
   background: rgba(5, 150, 105, 0.06) !important;
-  border: 1px solid rgba(5, 150, 105, 0.22) !important;
-  border-radius: 40px !important;
+  border: 1px solid rgba(5, 150, 105, 0.2) !important;
+  border-radius: 30px !important;
   cursor: pointer !important;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
-  box-shadow: 0 2px 10px rgba(5, 150, 105, 0.08) !important;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.06) !important;
 }
 
 .nav-center-audio-hook:hover {
   background: rgba(5, 150, 105, 0.12) !important;
   border-color: #059669 !important;
-  transform: translateY(-1.5px) !important;
-  box-shadow: 0 6px 20px rgba(5, 150, 105, 0.18) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 16px rgba(5, 150, 105, 0.15) !important;
 }
 
 .nav-center-play-circle {
-  width: 36px !important;
-  height: 36px !important;
+  width: 28px !important;
+  height: 28px !important;
   border-radius: 50% !important;
   background: linear-gradient(135deg, #059669, #047857) !important;
   color: #FFFFFF !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.4) !important;
+  box-shadow: 0 3px 10px rgba(5, 150, 105, 0.35) !important;
   transition: transform 0.25s ease !important;
 }
 
+.nav-center-play-circle svg {
+  width: 8px !important;
+  height: 10px !important;
+}
+
 .nav-center-audio-hook:hover .nav-center-play-circle {
-  transform: scale(1.1) rotate(5deg) !important;
+  transform: scale(1.08) rotate(4deg) !important;
 }
 
 .nav-center-course-title {
   font-family: var(--font-display) !important;
-  font-size: 16px !important;
+  font-size: 13.5px !important;
   font-weight: 700 !important;
   color: #0F172A !important;
   letter-spacing: -0.01em !important;
 }
 
-/* Menu Toggle Button (Hamburger ≡) */
+/* Sign In Ghost Button (Sleek Compact) */
+.nav-signin-btn {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  padding: 6px 14px !important;
+  height: 34px !important;
+  border-radius: 18px !important;
+}
+
+/* Menu Toggle Button (Compact 36px Hamburger ≡) */
 .nav-menu-toggle-btn {
-  width: 44px !important;
-  height: 44px !important;
+  width: 36px !important;
+  height: 36px !important;
   border-radius: 50% !important;
-  background: rgba(15, 23, 42, 0.06) !important;
+  background: rgba(15, 23, 42, 0.05) !important;
   border: 1px solid rgba(15, 23, 42, 0.1) !important;
   display: inline-flex !important;
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 4px !important;
+  gap: 3.5px !important;
   cursor: pointer !important;
   transition: all 0.2s ease !important;
 }
 
 .nav-menu-toggle-btn:hover,
 .nav-menu-toggle-btn.active {
-  background: rgba(15, 23, 42, 0.12) !important;
-  border-color: rgba(15, 23, 42, 0.25) !important;
+  background: rgba(15, 23, 42, 0.1) !important;
+  border-color: rgba(15, 23, 42, 0.22) !important;
   transform: scale(1.05) !important;
 }
 
 .hamburger-bar {
-  width: 18px !important;
-  height: 2.2px !important;
+  width: 15px !important;
+  height: 2px !important;
   background: #0F172A !important;
   border-radius: 2px !important;
   transition: all 0.25s ease !important;
 }
 
-/* Floating Menu Dropdown Card (Matches Mockup) */
+/* Floating Menu Dropdown Card */
 .nav-menu-dropdown-card {
   position: absolute !important;
-  top: 54px !important;
+  top: 48px !important;
   right: 0 !important;
-  width: 280px !important;
-  background: rgba(255, 255, 255, 0.95) !important;
+  width: 270px !important;
+  background: rgba(255, 255, 255, 0.96) !important;
   backdrop-filter: blur(24px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
   border: 1px solid rgba(15, 23, 42, 0.12) !important;
-  border-radius: 24px !important;
-  padding: 20px !important;
-  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.8) inset !important;
+  border-radius: 20px !important;
+  padding: 16px !important;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.8) inset !important;
   opacity: 0 !important;
   visibility: hidden !important;
-  transform: translateY(-10px) scale(0.96) !important;
+  transform: translateY(-8px) scale(0.96) !important;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
   z-index: 99999 !important;
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build-cache-bust-9000 -->
+<!-- build-cache-bust-10000 -->
 <html lang="en">
 <head>
   <!-- Google tag (gtag.js) -->
@@ -251,7 +251,7 @@
       filter: blur(0px);
     }
 
-    /* Phase 5 card resizing & positioning over hero-left content */
+    /* Phase 5 card resizing & positioning over hero-left content (height matches clock frame 520px) */
     .narration-showcase-stage.phase-5-card {
       justify-content: flex-start;
       padding-left: clamp(20px, calc((100vw - 1200px) / 2 + 24px), 240px);
@@ -260,7 +260,10 @@
 
     .narration-showcase-stage.phase-5-card .narration-showcase-card {
       max-width: 580px;
-      transform: scale(0.95);
+      height: 520px;
+      max-height: calc(100vh - 120px);
+      aspect-ratio: auto;
+      transform: scale(0.96);
       box-shadow: 0 25px 70px rgba(0, 180, 216, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.2);
       transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     }

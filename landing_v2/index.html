@@ -119,7 +119,7 @@
         </a>
 
         <!-- 2. Center Audio Intro Hook (Course Title Pill) -->
-        <div class="nav-center-audio-hook" id="navCenterAudioHook" onclick="toggleNavAudioIntro()" title="Play / Pause Intro Narration">
+        <div class="nav-center-audio-hook" id="navCenterAudioHook" onclick="playOrPauseIntroAudio()" title="Play / Pause Intro Narration">
           <span class="nav-center-play-circle" id="navCenterPlayCircle">
             <svg width="12" height="14" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M9 6L1.5 10.3301L1.5 1.66987L9 6Z" fill="currentColor"/>
@@ -127,11 +127,7 @@
           </span>
           <span class="nav-center-course-title">60 Days Data Analytics Course</span>
         </div>
-        <audio id="navIntroAudioElement" preload="auto" style="display:none;">
-          <source src="/landing_v2/intro_narration.mp3" type="audio/mpeg">
-          <source src="/intro_narration.mp3" type="audio/mpeg">
-          <source src="intro_narration.mp3" type="audio/mpeg">
-        </audio>
+        <audio id="navIntroAudioElement" src="/landing_v2/intro_narration.mp3" preload="auto" style="display:none;"></audio>
 
         <!-- 3. Right Action Bar: Sign In & Menu Toggle Button -->
         <div class="nav-right">
@@ -1889,7 +1885,9 @@
   <script>
     function playOrPauseIntroAudio() {
       var audio = document.getElementById('navIntroAudioElement');
-      if (!audio) return;
+      if (!audio) {
+        audio = new Audio('/landing_v2/intro_narration.mp3');
+      }
 
       audio.onended = resetAllAudioState;
       audio.onpause = resetAllAudioState;
@@ -1904,8 +1902,12 @@
           p.then(function() {
             setAllPlayingState();
           }).catch(function(err) {
-            console.error("DOM Audio Playback Error:", err);
-            resetAllAudioState();
+            console.warn("Primary src failed, attempting /intro_narration.mp3 fallback:", err);
+            audio.src = '/intro_narration.mp3';
+            audio.play().then(setAllPlayingState).catch(function(e) {
+              console.error("All audio sources failed:", e);
+              resetAllAudioState();
+            });
           });
         } else {
           setAllPlayingState();

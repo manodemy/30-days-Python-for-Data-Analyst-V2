@@ -43,7 +43,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Outfit:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 
   <!-- Style Link -->
-  <link rel="stylesheet" href="styles.css?v=2026.07.28.1850">
+  <link rel="stylesheet" href="styles.css?v=2026.07.28.2205">
 
   <!-- Schema.org JSON-LD Structured Data -->
   <script type="application/ld+json">
@@ -1722,14 +1722,14 @@
   <script src="../supabase.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="reviews.js?v=7.0" defer></script>
-  <script src="app.js?v=2026.07.28.1920" defer></script>
+  <script src="app.js?v=2026.07.28.2205" defer></script>
   <script src="roadmap.js?v=11.0" defer></script>
 
   <!-- PWA SW Registration with Instant Auto-Update & Cache Purge -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
+        navigator.serviceWorker.register('/sw.js?v=v61')
           .then(reg => {
             console.log('[Service Worker] Registered:', reg.scope);
             reg.update();
@@ -1740,7 +1740,8 @@
           .catch(err => console.error('[Service Worker] Registration failed:', err));
 
         navigator.serviceWorker.addEventListener('controllerchange', () => {
-          console.log('[Service Worker] Controller updated - refreshing page cache');
+          console.log('[Service Worker] Controller updated - reloading for fresh assets');
+          window.location.reload();
         });
       });
     }

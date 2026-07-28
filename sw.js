@@ -1,5 +1,5 @@
-const CACHE_NAME = 'manodemy-static-cache-v55';
-const DYNAMIC_CACHE_NAME = 'manodemy-dynamic-cache-v55';
+const CACHE_NAME = 'manodemy-static-cache-v61';
+const DYNAMIC_CACHE_NAME = 'manodemy-dynamic-cache-v61';
 
 
 
@@ -133,4 +133,12 @@ self.addEventListener('fetch', event => {
       });
     })
   );
+});
+
+
+// Handle skip waiting postMessage
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });

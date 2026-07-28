@@ -1,5 +1,5 @@
-const CACHE_NAME = 'manodemy-static-cache-v60';
-const DYNAMIC_CACHE_NAME = 'manodemy-dynamic-cache-v60';
+const CACHE_NAME = 'manodemy-static-cache-v61';
+const DYNAMIC_CACHE_NAME = 'manodemy-dynamic-cache-v61';
 
 
 

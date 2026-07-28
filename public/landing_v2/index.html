@@ -118,8 +118,8 @@
         </a>
 
         <!-- 2. Center Audio Intro Hook (Course Title Pill) -->
-        <div class="nav-center-audio-hook" id="navCenterAudioHook" onclick="openAudioIntroModal()" title="Listen to 10-second Audio Overview">
-          <span class="nav-center-play-circle">
+        <div class="nav-center-audio-hook" id="navCenterAudioHook" onclick="toggleNavAudioIntro()" title="Play / Pause Intro Narration">
+          <span class="nav-center-play-circle" id="navCenterPlayCircle">
             <svg width="12" height="14" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M9 6L1.5 10.3301L1.5 1.66987L9 6Z" fill="currentColor"/>
             </svg>
@@ -1882,6 +1882,47 @@
   </div>
 
   <script>
+    var navIntroAudio = null;
+    function toggleNavAudioIntro() {
+      if (!navIntroAudio) {
+        navIntroAudio = new Audio('/landing_v2/intro_narration.mp3');
+        navIntroAudio.onended = function() {
+          resetNavAudioState();
+        };
+        navIntroAudio.onerror = function() {
+          console.warn("Failed to load intro_narration.mp3");
+          resetNavAudioState();
+        };
+      }
+
+      var hook = document.getElementById('navCenterAudioHook');
+      var circle = document.getElementById('navCenterPlayCircle');
+
+      if (!navIntroAudio.paused && !navIntroAudio.ended) {
+        navIntroAudio.pause();
+        resetNavAudioState();
+      } else {
+        navIntroAudio.play().then(function() {
+          if (hook) hook.classList.add('playing');
+          if (circle) {
+            circle.innerHTML = '<svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="3.5" height="12" rx="1" fill="currentColor"/><rect x="6.5" width="3.5" height="12" rx="1" fill="currentColor"/></svg>';
+          }
+        }).catch(function(err) {
+          console.warn("Audio playback error:", err);
+          resetNavAudioState();
+        });
+      }
+    }
+
+    function resetNavAudioState() {
+      var hook = document.getElementById('navCenterAudioHook');
+      var circle = document.getElementById('navCenterPlayCircle');
+      if (hook) hook.classList.remove('playing');
+      if (circle) {
+        circle.innerHTML = '<svg width="12" height="14" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 6L1.5 10.3301L1.5 1.66987L9 6Z" fill="currentColor"/></svg>';
+      }
+    }
+
     var introUtterance = null;
     function openAudioIntroModal() {
       var modal = document.getElementById('audioIntroOverlay');
@@ -1918,7 +1959,7 @@
       }
 
       synth.cancel();
-      var text = "Welcome to Manodemy's 60-Day Data Analytics Course! Your hands-on roadmap to master SQL, Excel, and Python with guided audio narration and 1,000+ interactive challenges. And the best part? You earn a verified certificate backed by your real, graded marks!";
+      var text = "Welcome to Manodemy's 60-Day Data Analytics Masterclass! Whether you're a complete beginner breaking into data for the first time, or a practicing analyst gearing up to conquer next technical interviews — this masterclass was built specifically for you.";
       var utter = new SpeechSynthesisUtterance(text);
       utter.rate = 0.95;
       utter.pitch = 1.0;

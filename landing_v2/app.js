@@ -648,6 +648,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (priceLiveOld)      priceLiveOld.textContent      = lv.original;
     if (priceLiveDiscount) priceLiveDiscount.textContent = lv.discount;
 
+    // Update all percentage off badges & ticker text elements across the landing page
+    document.querySelectorAll('.dynamic-discount').forEach(el => el.textContent = sp.discount);
+
     // Update nav / mobile menu "from" price (self-paced is the entry price)
     document.querySelectorAll('.dynamic-price-from').forEach(el => el.textContent = sp.display);
 

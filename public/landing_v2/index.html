@@ -1208,7 +1208,7 @@
         <!-- Live Countdown Urgency Ticker -->
         <div class="pricing-urgency-ticker" style="display: flex; align-items: center; justify-content: center; gap: 12px; padding: 12px 24px; background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95)); border: 1px solid rgba(5, 150, 105, 0.3); border-radius: 16px; margin-bottom: 30px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); flex-wrap: wrap; text-align: center;">
           <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #34D399; text-transform: uppercase; letter-spacing: 0.05em;">
-            ⚡ Early Access Offer (67% OFF) Ends In:
+            ⚡ Early Access Offer (<span id="tickerDiscountText" class="dynamic-discount">70% OFF</span>) Ends In:
           </span>
           <div id="pricingCountdown" style="display: flex; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 800; color: #FFFFFF;">
             <span style="background: rgba(255, 255, 255, 0.1); padding: 4px 8px; border-radius: 6px;" id="countHrs">04</span>:
@@ -1288,9 +1288,9 @@
               <div class="pricing-action-card-inner">
                 <div class="pricing-price-group">
                   <div class="pricing-price-row">
-                    <span class="pricing-price-now" id="priceSelfNow">$49</span>
-                    <span class="pricing-price-old" id="priceSelfOld">$149</span>
-                    <span class="pricing-discount-badge" id="priceSelfDiscount">67% OFF</span>
+                    <span class="pricing-price-now" id="priceSelfNow">₹2,999</span>
+                    <span class="pricing-price-old" id="priceSelfOld">₹9,999</span>
+                    <span class="pricing-discount-badge dynamic-discount" id="priceSelfDiscount">70% OFF</span>
                   </div>
                   <div class="pricing-price-note">One-time payment · Lifetime access · No hidden fees</div>
                 </div>
@@ -1641,7 +1641,7 @@
         <div class="mobile-cta-price-row">
           <span class="m-price" id="mPriceNow">₹2,999</span>
           <span class="m-price-old" id="mPriceOld">₹9,999</span>
-          <span class="m-discount-pill">70% OFF</span>
+          <span class="m-discount-pill dynamic-discount" id="mDiscountPill">70% OFF</span>
         </div>
       </div>
       <div class="mobile-cta-action">

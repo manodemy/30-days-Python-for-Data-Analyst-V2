@@ -858,7 +858,7 @@ a { color: var(--cyan); text-decoration: none; }
 .editor-wrap {
   flex: 1;
   overflow: hidden;
-  min-height: 90px;
+  min-height: 140px;
 }
 .CodeMirror,
 .CodeMirror-gutters,
@@ -880,7 +880,7 @@ a { color: var(--cyan); text-decoration: none; }
 .output-section {
   border-top: 1px solid var(--border);
   background: #04060b;
-  min-height: 70px;
+  min-height: 90px;
   max-height: 240px;
   overflow: auto;
   padding: 0 16px 10px 16px;

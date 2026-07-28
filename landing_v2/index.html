@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build-cache-bust-16000 -->
+<!-- build-cache-bust-17000 -->
 <html lang="en">
 
 <head>
@@ -154,7 +154,7 @@
       transition: opacity 0.4s ease, visibility 0.4s ease;
     }
 
-    /* Phase 5: Reveal 3D clock widget on right (.hero-right), move showcase card to cover hero text on left (.hero-left) */
+    /* ── PHASE 5: CINEMATIC DEPTH DISSOLVE & HERO REVEAL ────────── */
     body.narration-active.phase-5-active main {
       opacity: 1 !important;
       visibility: visible !important;
@@ -167,27 +167,50 @@
     }
 
     body.narration-active.phase-5-active .hero-left {
-      opacity: 0 !important;
-      visibility: hidden !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      animation: heroLeftDepth 0.95s cubic-bezier(0.16, 1, 0.3, 1) both;
     }
 
     body.narration-active.phase-5-active .hero-right {
       opacity: 1 !important;
       visibility: visible !important;
-      animation: clockZoomIn 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      animation: heroRightDepth 0.95s cubic-bezier(0.34, 1.56, 0.64, 1) both;
     }
 
-    @keyframes clockZoomIn {
+    @keyframes heroLeftDepth {
       from {
         opacity: 0;
-        transform: scale(0.82) translateY(12px);
-        filter: blur(8px);
+        transform: scale(0.94) translateY(20px);
+        filter: blur(6px);
       }
       to {
         opacity: 1;
         transform: scale(1) translateY(0);
         filter: blur(0px);
       }
+    }
+
+    @keyframes heroRightDepth {
+      from {
+        opacity: 0;
+        transform: scale(0.88) translateY(20px);
+        filter: blur(6px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+        filter: blur(0px);
+      }
+    }
+
+    /* Showcase stage depth dissolve out */
+    .narration-showcase-stage.phase-5-dissolve {
+      opacity: 0 !important;
+      transform: scale(0.92) translateY(-10px) !important;
+      filter: blur(16px) !important;
+      pointer-events: none !important;
+      transition: opacity 0.85s ease, transform 0.85s cubic-bezier(0.16, 1, 0.3, 1), filter 0.85s ease !important;
     }
 
     /* ── NARRATION SHOWCASE STAGE (BELOW NAV BAR) ────────────────── */
@@ -2603,46 +2626,19 @@
         if (badgeText) badgeText.innerHTML = '🎯 PRACTICING ANALYST TECHNICAL INTERVIEWS';
       }, 8340);
 
-      // ── Phase 5 (12.54s - 15.4s): "this masterclass was built specifically for you" -> Ultra-Smooth Bounding Box Morph
+      // ── Phase 5 (12.54s - 15.4s): "this masterclass was built specifically for you" -> Cinematic Depth Dissolve
       _navP4Timer = setTimeout(function() {
         document.body.classList.add('phase-5-active');
-
-        // Defer measurement until layout reflow of .hero-right completes
-        requestAnimationFrame(function() {
-          requestAnimationFrame(function() {
-            var clockEl = document.getElementById('roadmap-root') || document.querySelector('.hero-right');
-            var heroLeft = document.querySelector('.hero-left');
-
-            if (clockEl && heroLeft && card) {
-              var cRect = clockEl.getBoundingClientRect();
-              var hRect = heroLeft.getBoundingClientRect();
-
-              if (cRect.height > 200 && hRect.width > 200) {
-                card.style.top = Math.round(cRect.top) + 'px';
-                card.style.left = Math.round(hRect.left) + 'px';
-                card.style.width = Math.round(hRect.width) + 'px';
-                card.style.height = Math.round(cRect.height) + 'px';
-                card.style.transform = 'none';
-                card.style.maxWidth = 'none';
-                card.style.maxHeight = 'none';
-                card.style.margin = '0';
-              }
-            }
-          });
-        });
-
+        if (stage) stage.classList.add('phase-5-dissolve');
         if (badgeText) badgeText.innerHTML = '✨ BUILT SPECIFICALLY FOR YOU';
       }, 12540);
 
-      // ── End (15.4s): Smooth fade-out finish
+      // ── End (15.4s): Smooth finish
       _navEndTimer = setTimeout(function() {
-        if (stage) stage.classList.remove('active', 'transition-img2');
         nav.classList.remove('nav-anim-p1', 'nav-anim-p2');
-
-        setTimeout(function() {
-          if (card) card.style.cssText = '';
-          document.body.classList.remove('narration-active', 'phase-5-active');
-        }, 600);
+        if (stage) stage.classList.remove('active', 'transition-img2', 'phase-5-dissolve');
+        if (card) card.style.cssText = '';
+        document.body.classList.remove('narration-active', 'phase-5-active');
       }, 15400);
     }
 

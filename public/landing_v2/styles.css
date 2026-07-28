@@ -8782,10 +8782,10 @@ p, .section-head p, .pricing-card-subtitle, .hero-sub {
 }
 
 .nav-brand-name span {
-  color: #00B4D8 !important; /* Original Vibrant Cyan */
+  color: #059669 !important; /* Improved Emerald Green */
   text-shadow: 
     0.5px 0.5px 0px #008ba8,
-    0 0 14px rgba(0, 180, 216, 0.35) !important;
+    0 0 14px rgba(5, 150, 105, 0.35) !important;
 }
 
 .nav-brand:hover .nav-brand-name {

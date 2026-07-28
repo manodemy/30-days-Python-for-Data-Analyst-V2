@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build-cache-bust-17000 -->
+<!-- build-cache-bust-18000 -->
 <html lang="en">
 
 <head>
@@ -154,7 +154,7 @@
       transition: opacity 0.4s ease, visibility 0.4s ease;
     }
 
-    /* ── PHASE 5: CINEMATIC DEPTH DISSOLVE & HERO REVEAL ────────── */
+    /* ── PHASE 5: DUAL-SLIDE HERO REVEAL & CENTER ZOOM-OUT ───────── */
     body.narration-active.phase-5-active main {
       opacity: 1 !important;
       visibility: visible !important;
@@ -169,46 +169,46 @@
     body.narration-active.phase-5-active .hero-left {
       opacity: 1 !important;
       visibility: visible !important;
-      animation: heroLeftDepth 0.95s cubic-bezier(0.16, 1, 0.3, 1) both;
+      animation: heroSlideFromLeft 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
     }
 
     body.narration-active.phase-5-active .hero-right {
       opacity: 1 !important;
       visibility: visible !important;
-      animation: heroRightDepth 0.95s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      animation: heroSlideFromRight 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
     }
 
-    @keyframes heroLeftDepth {
+    @keyframes heroSlideFromLeft {
       from {
         opacity: 0;
-        transform: scale(0.94) translateY(20px);
-        filter: blur(6px);
+        transform: translateX(-75px);
+        filter: blur(4px);
       }
       to {
         opacity: 1;
-        transform: scale(1) translateY(0);
+        transform: translateX(0);
         filter: blur(0px);
       }
     }
 
-    @keyframes heroRightDepth {
+    @keyframes heroSlideFromRight {
       from {
         opacity: 0;
-        transform: scale(0.88) translateY(20px);
-        filter: blur(6px);
+        transform: translateX(75px);
+        filter: blur(4px);
       }
       to {
         opacity: 1;
-        transform: scale(1) translateY(0);
+        transform: translateX(0);
         filter: blur(0px);
       }
     }
 
-    /* Showcase stage depth dissolve out */
+    /* Showcase stage zooms out to center & fades away */
     .narration-showcase-stage.phase-5-dissolve {
       opacity: 0 !important;
-      transform: scale(0.92) translateY(-10px) !important;
-      filter: blur(16px) !important;
+      transform: scale(0.72) translateY(-15px) !important;
+      filter: blur(14px) !important;
       pointer-events: none !important;
       transition: opacity 0.85s ease, transform 0.85s cubic-bezier(0.16, 1, 0.3, 1), filter 0.85s ease !important;
     }

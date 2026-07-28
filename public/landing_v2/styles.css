@@ -8780,8 +8780,8 @@ p, .section-head p, .pricing-card-subtitle, .hero-sub {
 }
 
 .nav-brand-name span {
-  color: #059669 !important; /* Crisp Emerald Green */
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9), 0 1px 3px rgba(5, 150, 105, 0.12) !important;
+  color: #10B981 !important; /* Vibrant Mint Green matching User Image */
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9), 0 1px 4px rgba(16, 185, 129, 0.2) !important;
 }
 
 .nav-brand:hover .nav-brand-name {

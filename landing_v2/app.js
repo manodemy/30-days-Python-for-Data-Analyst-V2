@@ -1149,6 +1149,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('click', () => {
     if (navEnrollDropdown) navEnrollDropdown.classList.remove('active');
     if (mobEnrollDropdown) mobEnrollDropdown.classList.remove('active');
+    // Also close the nav menu card
+    const navCard = document.getElementById('navMenuDropdownCard');
+    if (navCard) navCard.classList.remove('active');
   });
 
   /* ═══ V6 MOTION SYSTEM: TEXT SCRAMBLER REVEAL ═══ */
@@ -1731,3 +1734,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 
+/* ═══════════════════════════════════════════════════════
+   NAV HAMBURGER MENU — Global functions (called from HTML onclick attrs)
+   Must live outside DOMContentLoaded so they are globally accessible.
+═══════════════════════════════════════════════════════ */
+function toggleNavMenuCard(event) {
+  if (event) event.stopPropagation();
+  const card = document.getElementById('navMenuDropdownCard');
+  if (!card) return;
+  card.classList.toggle('active');
+}
+
+function closeNavMenuCard() {
+  const card = document.getElementById('navMenuDropdownCard');
+  if (card) card.classList.remove('active');
+}

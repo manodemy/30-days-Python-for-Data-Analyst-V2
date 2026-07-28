@@ -4213,23 +4213,27 @@ function initCustomDropdowns() {
     observer.observe(select, { childList: true });
 
     // Intercept programmatic select.value updates
-    const descriptor = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value');
-    Object.defineProperty(select, 'value', {
-      get() {
-        return descriptor.get.call(this);
-      },
-      set(val) {
-        descriptor.set.call(this, val);
-        updateTriggerText();
-        optionsMenu.querySelectorAll('.custom-select-option').forEach(el => {
-          if (el.dataset.value === String(val)) {
-            el.classList.add('selected');
-          } else {
-            el.classList.remove('selected');
-          }
-        });
-      }
-    });
+    // Guard: skip re-defining if already patched (prevents TypeError on re-init)
+    if (!Object.getOwnPropertyDescriptor(select, 'value')) {
+      const descriptor = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value');
+      Object.defineProperty(select, 'value', {
+        configurable: true,
+        get() {
+          return descriptor.get.call(this);
+        },
+        set(val) {
+          descriptor.set.call(this, val);
+          updateTriggerText();
+          optionsMenu.querySelectorAll('.custom-select-option').forEach(el => {
+            if (el.dataset.value === String(val)) {
+              el.classList.add('selected');
+            } else {
+              el.classList.remove('selected');
+            }
+          });
+        }
+      });
+    }
   });
 
   // Close menu on click outside

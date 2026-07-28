@@ -1884,33 +1884,46 @@
   <script>
     var navIntroAudio = null;
     function toggleNavAudioIntro() {
+      var hook = document.getElementById('navCenterAudioHook');
+      var circle = document.getElementById('navCenterPlayCircle');
+
       if (!navIntroAudio) {
         navIntroAudio = new Audio('/landing_v2/intro_narration.mp3');
         navIntroAudio.onended = function() {
           resetNavAudioState();
         };
         navIntroAudio.onerror = function() {
-          console.warn("Failed to load intro_narration.mp3");
-          resetNavAudioState();
+          console.warn("Primary path failed, trying fallback /intro_narration.mp3");
+          navIntroAudio = new Audio('/intro_narration.mp3');
+          navIntroAudio.onended = function() { resetNavAudioState(); };
+          navIntroAudio.play().then(function() {
+            if (hook) hook.classList.add('playing');
+            if (circle) circle.innerHTML = '<svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="3.5" height="12" rx="1" fill="currentColor"/><rect x="6.5" width="3.5" height="12" rx="1" fill="currentColor"/></svg>';
+          }).catch(resetNavAudioState);
         };
       }
-
-      var hook = document.getElementById('navCenterAudioHook');
-      var circle = document.getElementById('navCenterPlayCircle');
 
       if (!navIntroAudio.paused && !navIntroAudio.ended) {
         navIntroAudio.pause();
         resetNavAudioState();
       } else {
-        navIntroAudio.play().then(function() {
-          if (hook) hook.classList.add('playing');
-          if (circle) {
-            circle.innerHTML = '<svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="3.5" height="12" rx="1" fill="currentColor"/><rect x="6.5" width="3.5" height="12" rx="1" fill="currentColor"/></svg>';
-          }
-        }).catch(function(err) {
-          console.warn("Audio playback error:", err);
-          resetNavAudioState();
-        });
+        var playPromise = navIntroAudio.play();
+        if (playPromise !== undefined) {
+          playPromise.then(function() {
+            if (hook) hook.classList.add('playing');
+            if (circle) {
+              circle.innerHTML = '<svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="3.5" height="12" rx="1" fill="currentColor"/><rect x="6.5" width="3.5" height="12" rx="1" fill="currentColor"/></svg>';
+            }
+          }).catch(function(err) {
+            console.warn("Primary play error, trying secondary source:", err);
+            navIntroAudio = new Audio('intro_narration.mp3');
+            navIntroAudio.onended = function() { resetNavAudioState(); };
+            navIntroAudio.play().then(function() {
+              if (hook) hook.classList.add('playing');
+              if (circle) circle.innerHTML = '<svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="3.5" height="12" rx="1" fill="currentColor"/><rect x="6.5" width="3.5" height="12" rx="1" fill="currentColor"/></svg>';
+            }).catch(resetNavAudioState);
+          });
+        }
       }
     }
 

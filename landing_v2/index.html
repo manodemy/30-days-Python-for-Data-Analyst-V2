@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build-cache-bust-7000 -->
+<!-- build-cache-bust-8000 -->
 <html lang="en">
 <head>
   <!-- Google tag (gtag.js) -->
@@ -132,7 +132,7 @@
       animation: navPillZoomIn 0.55s cubic-bezier(0.34,1.56,0.64,1) both;
     }
 
-    /* Hide all other website content during narration animation */
+    /* Hide all other website content during narration animation (Phases 1-4) */
     body.narration-active main,
     body.narration-active footer,
     body.narration-active .mobile-overlay {
@@ -140,6 +140,32 @@
       visibility: hidden !important;
       pointer-events: none !important;
       transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    /* Phase 5: Reveal hero text on left, shrink & move showcase card to cover hero-right */
+    body.narration-active.phase-5-active main {
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+    }
+
+    body.narration-active.phase-5-active footer {
+      opacity: 0 !important;
+      visibility: hidden !important;
+    }
+
+    body.narration-active.phase-5-active .hero-right {
+      opacity: 0 !important;
+      visibility: hidden !important;
+    }
+
+    body.narration-active.phase-5-active .hero-left {
+      animation: heroLeftSlideIn 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes heroLeftSlideIn {
+      from { opacity: 0; transform: translateX(-35px); }
+      to   { opacity: 1; transform: translateX(0); }
     }
 
     /* ── NARRATION SHOWCASE STAGE (BELOW NAV BAR) ────────────────── */
@@ -221,6 +247,19 @@
       opacity: 1;
       transform: scale(1) rotate(0deg);
       filter: blur(0px);
+    }
+
+    /* Phase 5 card resizing & positioning over hero-right */
+    .narration-showcase-stage.phase-5-card {
+      justify-content: flex-end;
+      padding-right: clamp(20px, calc((100vw - 1200px) / 2 + 24px), 240px);
+    }
+
+    .narration-showcase-stage.phase-5-card .narration-showcase-card {
+      max-width: 550px;
+      transform: scale(0.95);
+      box-shadow: 0 25px 70px rgba(0, 180, 216, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.2);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     /* Badge overlay */
@@ -2097,15 +2136,18 @@
         if (badgeText) badgeText.innerHTML = '🎯 PRACTICING ANALYST TECHNICAL INTERVIEWS';
       }, 8340);
 
-      // ── Phase 5 (12.54s - 15.4s): "this masterclass was built specifically for you" -> Fade out showcase stage
+      // ── Phase 5 (12.54s - 15.4s): "this masterclass was built specifically for you" -> Resize card & reveal hero text
       _navP4Timer = setTimeout(function() {
-        if (stage) stage.classList.remove('active', 'transition-img2');
+        document.body.classList.add('phase-5-active');
+        if (stage) stage.classList.add('phase-5-card');
+        if (badgeText) badgeText.innerHTML = '✨ BUILT SPECIFICALLY FOR YOU';
       }, 12540);
 
-      // ── End (15.4s): Restore nav & website content to normal
+      // ── End (15.4s): Restore nav & full website content to normal
       _navEndTimer = setTimeout(function() {
         nav.classList.remove('nav-anim-p1', 'nav-anim-p2');
-        document.body.classList.remove('narration-active');
+        if (stage) stage.classList.remove('active', 'transition-img2', 'phase-5-card');
+        document.body.classList.remove('narration-active', 'phase-5-active');
       }, 15400);
     }
 
@@ -2121,9 +2163,9 @@
       var card = document.querySelector('.narration-showcase-card');
 
       if (nav) nav.classList.remove('nav-anim-p1', 'nav-anim-p2');
-      if (stage) stage.classList.remove('active', 'transition-img2');
+      if (stage) stage.classList.remove('active', 'transition-img2', 'phase-5-card');
       if (card) card.classList.remove('img2-active');
-      document.body.classList.remove('narration-active');
+      document.body.classList.remove('narration-active', 'phase-5-active');
     }
     // ──────────────────────────────────────────────────────────────────────────
 

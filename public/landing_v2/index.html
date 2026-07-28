@@ -124,6 +124,14 @@
 
         <div class="nav-right">
           <!-- Logged out states -->
+          <button class="nav-play-intro-btn" id="navPlayIntroBtn" onclick="openAudioIntroModal()" title="Listen to 10-second Audio Overview">
+            <span class="play-icon-circle">
+              <svg width="9" height="11" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 6L1.5 10.3301L1.5 1.66987L9 6Z" fill="currentColor"/>
+              </svg>
+            </span>
+            <span class="play-btn-text">Hear Intro <span class="play-btn-tag">10s</span></span>
+          </button>
           <a href="javascript:void(0)" id="navSignin" class="btn-ghost" onclick="document.getElementById('authModal').classList.add('active');" aria-label="Sign in to your account">Sign In</a>
           <a href="javascript:void(0)" class="btn-nav-buy" id="navEnrollBtn" data-cta="buy" data-tier="selfpaced" aria-label="Enroll Full Course">Enroll Full Course — <span class="dynamic-price-from">$49</span></a>
         </div>
@@ -146,6 +154,10 @@
   <div class="mobile-overlay" id="mobileOverlay" role="dialog" aria-modal="true" aria-label="Mobile Navigation">
     <a href="javascript:void(0)" onclick="document.getElementById('mobileOverlay').classList.remove('active'); document.getElementById('authModal').classList.add('active');" style="color: var(--text-secondary); font-size: 14px; font-weight: 600;">👤 Sign In</a>
     <div class="mob-menu-divider" aria-hidden="true"></div>
+    <button class="mob-play-intro-btn" onclick="document.getElementById('mobileOverlay').classList.remove('active'); openAudioIntroModal();" style="display: flex; align-items: center; gap: 8px; color: var(--emerald); font-weight: 700; font-size: 14px; margin: 4px 0;">
+      <span style="width: 24px; height: 24px; border-radius: 50%; background: rgba(5, 150, 105, 0.15); border: 1px solid rgba(5, 150, 105, 0.4); display: flex; align-items: center; justify-content: center;">▶</span>
+      <span>Hear 10-Sec Audio Intro 🎧</span>
+    </button>
     <a href="/sql/day01.html" style="color: var(--emerald)">Try SQL Free</a>
     <a href="/excel/day01.html" style="color: var(--gold)">Try Excel Free</a>
     <a href="/day01.html" style="color: var(--cyan)">Try Python Free</a>
@@ -1848,6 +1860,97 @@
         startCountdown();
       }
     })();
+  </script>
+
+
+  <!-- 🎧 Audio Intro 10s Player Modal -->
+  <div class="audio-intro-overlay" id="audioIntroOverlay" onclick="closeAudioIntroModal(event)">
+    <div class="audio-intro-card" onclick="event.stopPropagation()">
+      <button class="audio-intro-close" onclick="closeAudioIntroModal()">&times;</button>
+      <div class="audio-intro-badge">🎙️ 10-SECOND AUDIO OVERVIEW</div>
+      <h3 class="audio-intro-title">Welcome to Manodemy</h3>
+      
+      <!-- Waveform Visualizer -->
+      <div class="audio-waveform-container" id="audioWaveform">
+        <span class="bar bar-1"></span>
+        <span class="bar bar-2"></span>
+        <span class="bar bar-3"></span>
+        <span class="bar bar-4"></span>
+        <span class="bar bar-5"></span>
+        <span class="bar bar-6"></span>
+        <span class="bar bar-7"></span>
+        <span class="bar bar-8"></span>
+      </div>
+
+      <!-- Narration Transcript -->
+      <p class="audio-intro-transcript">
+        &ldquo;Welcome to Manodemy&rsquo;s 60-Day Data Analytics Course—your hands-on roadmap to master SQL, Excel, and Python with guided audio narration and 1,000+ interactive challenges. And the best part? You earn a verified certificate backed by your real, graded marks!&rdquo;
+      </p>
+
+      <!-- Player Controls -->
+      <div class="audio-player-controls">
+        <button class="audio-play-trigger" id="audioPlayTrigger" onclick="toggleIntroSpeech()">
+          <span id="audioPlayIcon">▶</span> <span id="audioPlayLabel">Play Audio</span>
+        </button>
+        <span class="audio-duration-pill">0:13</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var introUtterance = null;
+    function openAudioIntroModal() {
+      var modal = document.getElementById('audioIntroOverlay');
+      if (modal) modal.classList.add('active');
+    }
+    function closeAudioIntroModal(e) {
+      if (e && e.target && !e.target.classList.contains('audio-intro-overlay') && !e.target.classList.contains('audio-intro-close')) return;
+      var modal = document.getElementById('audioIntroOverlay');
+      if (modal) modal.classList.remove('active');
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+      var waveform = document.getElementById('audioWaveform');
+      if (waveform) waveform.classList.remove('playing');
+      var btn = document.getElementById('audioPlayIcon');
+      if (btn) btn.textContent = '▶';
+      var label = document.getElementById('audioPlayLabel');
+      if (label) label.textContent = 'Play Audio';
+    }
+    function toggleIntroSpeech() {
+      if (!('speechSynthesis' in window)) {
+        alert("Audio speech synthesis is not supported on this browser.");
+        return;
+      }
+      var synth = window.speechSynthesis;
+      var waveform = document.getElementById('audioWaveform');
+      var icon = document.getElementById('audioPlayIcon');
+      var label = document.getElementById('audioPlayLabel');
+
+      if (synth.speaking && !synth.paused) {
+        synth.cancel();
+        if (waveform) waveform.classList.remove('playing');
+        if (icon) icon.textContent = '▶';
+        if (label) label.textContent = 'Play Audio';
+        return;
+      }
+
+      synth.cancel();
+      var text = "Welcome to Manodemy's 60-Day Data Analytics Course! Your hands-on roadmap to master SQL, Excel, and Python with guided audio narration and 1,000+ interactive challenges. And the best part? You earn a verified certificate backed by your real, graded marks!";
+      var utter = new SpeechSynthesisUtterance(text);
+      utter.rate = 0.95;
+      utter.pitch = 1.0;
+      
+      utter.onstart = function() {
+        if (waveform) waveform.classList.add('playing');
+        if (icon) icon.textContent = '⏸';
+        if (label) label.textContent = 'Pause';
+      };
+      utter.onend = utter.onerror = function() {
+        if (waveform) waveform.classList.remove('playing');
+        if (icon) icon.textContent = '▶';
+        if (label) label.textContent = 'Replay';
+      };
+      synth.speak(utter);
+    }
   </script>
 
 </body>

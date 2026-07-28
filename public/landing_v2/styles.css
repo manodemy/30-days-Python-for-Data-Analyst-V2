@@ -8495,3 +8495,227 @@ p, .section-head p, .pricing-card-subtitle, .hero-sub {
 .btn-mobile-cta-primary:active {
   transform: scale(0.96) !important;
 }
+
+
+/* ══════════════ UI/UX NAV PLAY BUTTON & AUDIO MODAL ══════════════ */
+.nav-play-intro-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px 6px 8px;
+  background: rgba(5, 150, 105, 0.08);
+  border: 1px solid rgba(5, 150, 105, 0.25);
+  border-radius: 20px;
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--emerald);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+.nav-play-intro-btn:hover {
+  background: rgba(5, 150, 105, 0.16);
+  border-color: var(--emerald);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(5, 150, 105, 0.18);
+}
+
+.nav-play-intro-btn:active {
+  transform: translateY(0) scale(0.97);
+}
+
+.play-icon-circle {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--emerald);
+  color: #FFFFFF;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 10px rgba(5, 150, 105, 0.4);
+  transition: transform 0.2s ease;
+}
+
+.nav-play-intro-btn:hover .play-icon-circle {
+  transform: scale(1.1);
+}
+
+.play-btn-tag {
+  font-size: 10px;
+  font-weight: 800;
+  background: rgba(5, 150, 105, 0.2);
+  color: var(--emerald);
+  padding: 1px 5px;
+  border-radius: 10px;
+  margin-left: 2px;
+}
+
+/* Audio Intro Overlay Modal */
+.audio-intro-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.audio-intro-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.audio-intro-card {
+  background: var(--base);
+  border: 1px solid var(--border-strong);
+  border-radius: 24px;
+  width: 100%;
+  max-width: 480px;
+  padding: 32px 28px 28px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+  position: relative;
+  text-align: center;
+  transform: scale(0.95) translateY(10px);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.audio-intro-overlay.active .audio-intro-card {
+  transform: scale(1) translateY(0);
+}
+
+.audio-intro-close {
+  position: absolute;
+  top: 16px; right: 18px;
+  background: rgba(15, 23, 42, 0.05);
+  border: none;
+  font-size: 22px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.audio-intro-close:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #EF4444;
+}
+
+.audio-intro-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--emerald);
+  background: rgba(5, 150, 105, 0.1);
+  border: 1px solid rgba(5, 150, 105, 0.25);
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+}
+
+.audio-intro-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+/* Animated Waveform Bars */
+.audio-waveform-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 32px;
+  margin-bottom: 20px;
+}
+
+.audio-waveform-container .bar {
+  width: 4px;
+  height: 10px;
+  background: var(--emerald);
+  border-radius: 4px;
+  transition: height 0.2s ease;
+}
+
+.audio-waveform-container.playing .bar {
+  animation: wavePulse 1s ease-in-out infinite alternate;
+}
+
+.audio-waveform-container.playing .bar-1 { animation-delay: 0.1s; }
+.audio-waveform-container.playing .bar-2 { animation-delay: 0.3s; }
+.audio-waveform-container.playing .bar-3 { animation-delay: 0.5s; }
+.audio-waveform-container.playing .bar-4 { animation-delay: 0.2s; }
+.audio-waveform-container.playing .bar-5 { animation-delay: 0.4s; }
+.audio-waveform-container.playing .bar-6 { animation-delay: 0.6s; }
+.audio-waveform-container.playing .bar-7 { animation-delay: 0.15s; }
+.audio-waveform-container.playing .bar-8 { animation-delay: 0.35s; }
+
+@keyframes wavePulse {
+  0% { height: 6px; opacity: 0.5; }
+  100% { height: 28px; opacity: 1; }
+}
+
+.audio-intro-transcript {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 16px;
+  border-radius: 14px;
+  margin-bottom: 24px;
+  font-style: italic;
+}
+
+.audio-player-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.audio-play-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, #059669, #047857);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 30px;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(5, 150, 105, 0.3);
+  transition: all 0.2s ease;
+}
+
+.audio-play-trigger:hover {
+  transform: scale(1.04);
+  box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4);
+}
+
+.audio-duration-pill {
+  font-family: var(--font-data);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: rgba(15, 23, 42, 0.05);
+  padding: 6px 12px;
+  border-radius: 20px;
+}

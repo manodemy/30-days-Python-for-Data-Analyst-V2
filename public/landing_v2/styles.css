@@ -6660,8 +6660,8 @@ td.col-mano {
 }
 
 .footer .nav-brand-name span {
-  color: #38BDF8 !important;
-  text-shadow: 0 2px 14px rgba(56, 189, 248, 0.4) !important;
+  color: #10B981 !important;
+  text-shadow: 0 2px 14px rgba(16, 185, 129, 0.4) !important;
 }
 
 .footer .nav-brand-symbol {
@@ -9094,13 +9094,13 @@ footer .nav-brand-name {
 
 .footer .nav-brand-name span,
 footer .nav-brand-name span {
-  color: #38BDF8 !important; /* Vibrant Cyan Pop for Dark Background */
-  text-shadow: 0 2px 14px rgba(56, 189, 248, 0.4) !important;
+  color: #10B981 !important; /* Vibrant Mint Green matching Original Logo */
+  text-shadow: 0 2px 14px rgba(16, 185, 129, 0.4) !important;
 }
 
 .footer .nav-brand-symbol,
 footer .nav-brand-symbol {
-  filter: drop-shadow(0 4px 14px rgba(56, 189, 248, 0.4)) !important;
+  filter: drop-shadow(0 4px 14px rgba(16, 185, 129, 0.35)) !important;
   border-radius: 8px !important;
   background: transparent !important;
   border: none !important;

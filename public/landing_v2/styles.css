@@ -7148,7 +7148,7 @@ td.col-mano {
 
 .workspace-iframe {
   width: 100%;
-  height: 760px;
+  height: 480px !important;
   border: none;
   display: block;
   background: #0F172A;
@@ -7156,7 +7156,7 @@ td.col-mano {
 
 @media (max-width: 768px) {
   .workspace-iframe {
-    height: 540px;
+    height: 450px !important;
   }
 }
 
@@ -7167,7 +7167,7 @@ td.col-mano {
 
 /* ══════════════ COMPACT PLAY LESSON SECTION (SAVED VERTICAL HEIGHT) ══════════════ */
 .play-lesson-section {
-  padding: 24px 0 36px 0 !important;
+  padding: 10px 0 14px 0 !important;
   background: linear-gradient(180deg, #070B11 0%, #0B132B 50%, #070B11 100%) !important;
   position: relative;
 }
@@ -7176,15 +7176,15 @@ td.col-mano {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
-  margin-bottom: 14px;
+  gap: 12px;
+  margin-bottom: 8px !important;
   flex-wrap: wrap;
 }
 
 .header-compact-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
@@ -7194,9 +7194,9 @@ td.col-mano {
   gap: 6px;
   background: rgba(5, 150, 105, 0.12);
   color: #10B981;
-  padding: 4px 12px;
+  padding: 3px 10px;
   border-radius: 20px;
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 800;
   border: 1px solid rgba(5, 150, 105, 0.3);
   letter-spacing: 0.05em;
@@ -7213,7 +7213,7 @@ td.col-mano {
 
 .section-title-compact {
   font-family: var(--font-display);
-  font-size: 24px;
+  font-size: 19px;
   font-weight: 900;
   color: #FFFFFF;
   letter-spacing: -0.02em;
@@ -7222,20 +7222,20 @@ td.col-mano {
 }
 
 .section-sub-compact {
-  font-size: 13px;
+  font-size: 12.5px;
   color: #94A3B8;
   margin: 0;
-  max-width: 100% !important; text-align: justify !important; text-justify: inter-word !important;
-  line-height: 1.4;
+  max-width: 100% !important;
+  line-height: 1.35;
 }
 
 .demo-pills-row {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 8px !important;
   overflow-x: auto;
-  padding-bottom: 4px;
+  padding-bottom: 2px;
   scrollbar-width: none;
 }
 

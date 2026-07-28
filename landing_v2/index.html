@@ -135,35 +135,41 @@
               <span class="hamburger-bar"></span>
               <span class="hamburger-bar"></span>
             </button>
-
-            <!-- Floating Menu Dropdown Card (Matches Mockup) -->
+         
+            <!-- Floating Menu Dropdown Card — Premium Redesign -->
             <div class="nav-menu-dropdown-card" id="navMenuDropdownCard">
-              <div class="nav-card-menu-group">
-                <!-- Navigation Section -->
-                <span class="nav-card-section-title">NAVIGATION</span>
-                <a href="#curriculum" class="nav-card-link" onclick="closeNavMenuCard()">📖 Curriculum & Roadmap</a>
-                <a href="#testimonials" class="nav-card-link" onclick="closeNavMenuCard()">⭐ Student Reviews</a>
-                <a href="#faq" class="nav-card-link" onclick="closeNavMenuCard()">❓ Frequently Asked Questions</a>
-                
-                <div class="nav-card-divider"></div>
-                
-                <!-- Free Practice Section -->
-                <span class="nav-card-section-title">FREE PRACTICE DAYS</span>
-                <a href="/sql/day01.html" class="nav-card-link nav-card-free-sql" onclick="closeNavMenuCard()">⚡ Try SQL (Day 01 & 02 Free)</a>
-                <a href="/excel/day01.html" class="nav-card-link nav-card-free-excel" onclick="closeNavMenuCard()">📈 Try Excel (Day 01 & 02 Free)</a>
-                <a href="/day01.html" class="nav-card-link nav-card-free-python" onclick="closeNavMenuCard()">🐍 Try Python (Day 01 & 02 Free)</a>
 
-                <div class="nav-card-divider"></div>
-
-                <!-- Interactive Features -->
-                <a href="javascript:void(0)" class="nav-card-link" onclick="closeNavMenuCard(); openAudioIntroModal();">🎧 Listen to 10s Audio Overview</a>
-                <a href="javascript:void(0)" class="nav-card-link" onclick="closeNavMenuCard(); document.getElementById('authModal').classList.add('active');">👤 Sign In to Account</a>
+              <!-- Navigation Links -->
+              <div class="nav-card-links-group">
+                <a href="#curriculum" class="nav-card-item" onclick="closeNavMenuCard()">
+                  <span class="nav-card-icon">📖</span>
+                  <span class="nav-card-label">Curriculum &amp; Roadmap</span>
+                </a>
+                <a href="#testimonials" class="nav-card-item" onclick="closeNavMenuCard()">
+                  <span class="nav-card-icon">⭐</span>
+                  <span class="nav-card-label">Student Reviews</span>
+                </a>
+                <a href="#faq" class="nav-card-item" onclick="closeNavMenuCard()">
+                  <span class="nav-card-icon">❓</span>
+                  <span class="nav-card-label">FAQs</span>
+                </a>
+                <a href="/sql/day01.html" class="nav-card-item nav-card-item--sql" onclick="closeNavMenuCard()">
+                  <span class="nav-card-icon">⚡</span>
+                  <span class="nav-card-label">Try SQL Free</span>
+                  <span class="nav-card-badge">Free</span>
+                </a>
               </div>
 
-              <!-- Conversion Footer CTA -->
-              <div class="nav-card-footer">
-                <a href="#pricing" class="btn-nav-buy nav-card-buy-btn" id="navEnrollBtn" data-cta="buy" data-tier="selfpaced" onclick="closeNavMenuCard()">Enroll Full Course — <span class="dynamic-price-from">$49</span></a>
+              <!-- Bottom Actions -->
+              <div class="nav-card-actions">
+                <a href="javascript:void(0)" class="nav-card-signin" onclick="closeNavMenuCard(); document.getElementById('authModal').classList.add('active');">
+                  👤 Sign In
+                </a>
+                <a href="#pricing" class="btn-nav-buy nav-card-buy-btn" data-cta="buy" data-tier="selfpaced" onclick="closeNavMenuCard()">
+                  Enroll Full Course — <span class="dynamic-price-from">$49</span>
+                </a>
               </div>
+
             </div>
           </div>
         </div>

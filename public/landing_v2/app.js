@@ -663,9 +663,23 @@ document.addEventListener('DOMContentLoaded', () => {
     if (mPrice && activeCfg)    mPrice.textContent    = activeCfg.display;
     if (mPriceOld && activeCfg) mPriceOld.textContent = activeCfg.original;
 
-    // Update comparison table cost row
+    // Update comparison table cost row dynamically based on regional currency
     const compareCostMano = document.getElementById('compare-cost-mano');
-    if (compareCostMano) compareCostMano.textContent = `From ${sp.display} (One-Time)`;
+    const compareCostVideo = document.getElementById('compare-cost-video');
+    const compareCostSub = document.getElementById('compare-cost-sub');
+    const compareCostBootcamp = document.getElementById('compare-cost-bootcamp');
+
+    if (userCountry === 'IN') {
+      if (compareCostMano) compareCostMano.textContent = `✅ ${sp.display} (One-Time Lifetime Access)`;
+      if (compareCostVideo) compareCostVideo.textContent = `⚠️ ₹3,000 – ₹10,000+ (Separate courses add up)`;
+      if (compareCostSub) compareCostSub.textContent = `❌ ₹15,000 – ₹25,000 / year recurring`;
+      if (compareCostBootcamp) compareCostBootcamp.textContent = `❌ ₹50,000 – ₹2,50,000+ Upfront / ISAs`;
+    } else {
+      if (compareCostMano) compareCostMano.textContent = `✅ ${sp.display} (One-Time Lifetime Access)`;
+      if (compareCostVideo) compareCostVideo.textContent = `⚠️ $150+ (Adds up across courses)`;
+      if (compareCostSub) compareCostSub.textContent = `❌ $300 – $500 / year recurring`;
+      if (compareCostBootcamp) compareCostBootcamp.textContent = `❌ $5,000 – $15,000 Upfront`;
+    }
 
     // Set checkout to default tier
     updateCheckoutForTier('selfpaced');

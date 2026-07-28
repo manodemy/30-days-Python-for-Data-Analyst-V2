@@ -8975,3 +8975,192 @@ p, .section-head p, .pricing-card-subtitle, .hero-sub {
   0% { opacity: 0.4; }
   100% { opacity: 1; transform: scale(1.2); }
 }
+
+
+/* ══════════════ REDESIGNED STUNNING NAV BAR (MOCKUP MATCH) ══════════════ */
+.nav-inner {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  height: 100% !important;
+}
+
+/* Center Audio Intro Course Title Pill */
+.nav-center-audio-hook {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  padding: 8px 24px 8px 10px !important;
+  background: rgba(5, 150, 105, 0.06) !important;
+  border: 1px solid rgba(5, 150, 105, 0.22) !important;
+  border-radius: 40px !important;
+  cursor: pointer !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  box-shadow: 0 2px 10px rgba(5, 150, 105, 0.08) !important;
+}
+
+.nav-center-audio-hook:hover {
+  background: rgba(5, 150, 105, 0.12) !important;
+  border-color: #059669 !important;
+  transform: translateY(-1.5px) !important;
+  box-shadow: 0 6px 20px rgba(5, 150, 105, 0.18) !important;
+}
+
+.nav-center-play-circle {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, #059669, #047857) !important;
+  color: #FFFFFF !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.4) !important;
+  transition: transform 0.25s ease !important;
+}
+
+.nav-center-audio-hook:hover .nav-center-play-circle {
+  transform: scale(1.1) rotate(5deg) !important;
+}
+
+.nav-center-course-title {
+  font-family: var(--font-display) !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  color: #0F172A !important;
+  letter-spacing: -0.01em !important;
+}
+
+/* Menu Toggle Button (Hamburger ≡) */
+.nav-menu-toggle-btn {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50% !important;
+  background: rgba(15, 23, 42, 0.06) !important;
+  border: 1px solid rgba(15, 23, 42, 0.1) !important;
+  display: inline-flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.nav-menu-toggle-btn:hover,
+.nav-menu-toggle-btn.active {
+  background: rgba(15, 23, 42, 0.12) !important;
+  border-color: rgba(15, 23, 42, 0.25) !important;
+  transform: scale(1.05) !important;
+}
+
+.hamburger-bar {
+  width: 18px !important;
+  height: 2.2px !important;
+  background: #0F172A !important;
+  border-radius: 2px !important;
+  transition: all 0.25s ease !important;
+}
+
+/* Floating Menu Dropdown Card (Matches Mockup) */
+.nav-menu-dropdown-card {
+  position: absolute !important;
+  top: 54px !important;
+  right: 0 !important;
+  width: 280px !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(24px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+  border: 1px solid rgba(15, 23, 42, 0.12) !important;
+  border-radius: 24px !important;
+  padding: 20px !important;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.8) inset !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transform: translateY(-10px) scale(0.96) !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  z-index: 99999 !important;
+}
+
+.nav-menu-dropdown-card.active {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) scale(1) !important;
+}
+
+.nav-card-menu-group {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+}
+
+.nav-card-link {
+  display: block !important;
+  padding: 10px 16px !important;
+  font-family: var(--font-display) !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  color: #334155 !important;
+  border-radius: 12px !important;
+  transition: all 0.2s ease !important;
+}
+
+.nav-card-link:hover {
+  background: rgba(15, 23, 42, 0.05) !important;
+  color: #0F172A !important;
+  transform: translateX(3px) !important;
+}
+
+.nav-card-divider {
+  height: 1px !important;
+  background: rgba(15, 23, 42, 0.08) !important;
+  margin: 6px 0 !important;
+}
+
+.nav-card-free-section {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  padding: 6px 0 !important;
+}
+
+.nav-card-free-title {
+  font-family: var(--font-data) !important;
+  font-size: 9.5px !important;
+  font-weight: 800 !important;
+  color: #94A3B8 !important;
+  letter-spacing: 0.12em !important;
+  padding-left: 16px !important;
+}
+
+.nav-card-free-link {
+  display: block !important;
+  padding: 8px 16px !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  border-radius: 10px !important;
+  transition: background 0.2s ease !important;
+}
+
+.nav-card-free-link:hover {
+  background: rgba(15, 23, 42, 0.04) !important;
+}
+
+.nav-card-footer {
+  margin-top: 14px !important;
+  padding-top: 12px !important;
+  border-top: 1px solid rgba(15, 23, 42, 0.08) !important;
+}
+
+.nav-card-buy-btn {
+  width: 100% !important;
+  justify-content: center !important;
+  padding: 12px 18px !important;
+  font-size: 13.5px !important;
+}
+
+@media (max-width: 860px) {
+  .nav-center-audio-hook {
+    display: none !important;
+  }
+}

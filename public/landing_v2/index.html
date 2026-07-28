@@ -103,10 +103,10 @@
   <header>
     <nav class="nav" aria-label="Primary site navigation">
       <div class="container nav-inner">
+        <!-- 1. Left Brand Logo -->
         <a href="/landing_v2/index.html" class="nav-brand" aria-label="Manodemy Home">
           <div class="nav-brand-wrapper">
-            <!-- 3D Keyboard Keycap M Icon -->
-            <img class="nav-brand-symbol" src="/landing_v2/manodemy_3d_keycap.png" alt="Manodemy 3D Keycap Logo" width="38" height="38" style="object-fit:contain; filter: drop-shadow(0 4px 10px rgba(5, 150, 105, 0.25));" />
+            <img class="nav-brand-symbol" src="/landing_v2/manodemy_3d_keycap.png" alt="Manodemy 3D Keycap Logo" width="38" height="38" />
             <div class="nav-brand-text">
               <span class="nav-brand-name">Mano<span>demy</span></span>
               <span class="nav-brand-sub"><span class="brand-sub-dot">●</span> HANDS-ON EDTECH</span>
@@ -114,44 +114,48 @@
           </div>
         </a>
 
-        <div class="nav-links">
-          <div class="nav-pill dropdown" style="position:relative;">
-            <span style="display:inline-flex; align-items:center; gap:4px; font-weight:600;">Try Free ▾</span>
-            <div class="dropdown-menu" style="left:0; right:auto;">
-              <a href="/sql/day01.html" style="color: var(--emerald); font-weight:600;">⚡ Try SQL Free</a>
-              <a href="/excel/day01.html" style="color: var(--gold); font-weight:600;">📈 Try Excel Free</a>
-              <a href="/day01.html" style="color: var(--cyan); font-weight:600;">🐍 Try Python Free</a>
+        <!-- 2. Center Audio Intro Hook (Course Title Pill) -->
+        <div class="nav-center-audio-hook" id="navCenterAudioHook" onclick="openAudioIntroModal()" title="Listen to 10-second Audio Overview">
+          <span class="nav-center-play-circle">
+            <svg width="12" height="14" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 6L1.5 10.3301L1.5 1.66987L9 6Z" fill="currentColor"/>
+            </svg>
+          </span>
+          <span class="nav-center-course-title">60 Days Data Analytics Course</span>
+        </div>
+
+        <!-- 3. Right Action Bar: Sign In & Menu Toggle Button -->
+        <div class="nav-right">
+          <a href="javascript:void(0)" id="navSignin" class="btn-ghost nav-signin-btn" onclick="document.getElementById('authModal').classList.add('active');" aria-label="Sign in to your account">Sign In</a>
+          
+          <!-- Menu Toggle Button (Hamburger) -->
+          <div class="nav-menu-wrapper" style="position: relative;">
+            <button class="nav-menu-toggle-btn" id="navMenuToggleBtn" onclick="toggleNavMenuCard(event)" aria-label="Toggle Navigation Menu">
+              <span class="hamburger-bar"></span>
+              <span class="hamburger-bar"></span>
+              <span class="hamburger-bar"></span>
+            </button>
+
+            <!-- Floating Menu Dropdown Card (Matches Mockup) -->
+            <div class="nav-menu-dropdown-card" id="navMenuDropdownCard">
+              <div class="nav-card-menu-group">
+                <a href="#curriculum" class="nav-card-link" onclick="closeNavMenuCard()">Curriculum</a>
+                <a href="#testimonials" class="nav-card-link" onclick="closeNavMenuCard()">Reviews</a>
+                <a href="#faq" class="nav-card-link" onclick="closeNavMenuCard()">FAQ</a>
+                <div class="nav-card-divider"></div>
+                <div class="nav-card-free-section">
+                  <span class="nav-card-free-title">FREE TRIALS</span>
+                  <a href="/sql/day01.html" class="nav-card-free-link" style="color: var(--emerald);">⚡ Try SQL Free</a>
+                  <a href="/excel/day01.html" class="nav-card-free-link" style="color: var(--gold);">📈 Try Excel Free</a>
+                  <a href="/day01.html" class="nav-card-free-link" style="color: var(--cyan);">🐍 Try Python Free</a>
+                </div>
+              </div>
+              <div class="nav-card-footer">
+                <a href="javascript:void(0)" class="btn-nav-buy nav-card-buy-btn" id="navEnrollBtn" data-cta="buy" data-tier="selfpaced" onclick="closeNavMenuCard()">Enroll Full Course — <span class="dynamic-price-from">$49</span></a>
+              </div>
             </div>
           </div>
-          <a href="#curriculum" class="nav-pill">Curriculum</a>
-          <a href="#testimonials" class="nav-pill">Reviews</a>
-          <a href="#faq" class="nav-pill">FAQ</a>
         </div>
-
-        <div class="nav-right">
-          <!-- Logged out states -->
-          <button class="nav-play-intro-btn" id="navPlayIntroBtn" onclick="openAudioIntroModal()" title="Listen to 10-second Audio Overview">
-            <span class="play-icon-circle">
-              <svg width="9" height="11" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M9 6L1.5 10.3301L1.5 1.66987L9 6Z" fill="currentColor"/>
-              </svg>
-            </span>
-            <span class="play-btn-text">Hear Intro <span class="play-btn-tag">10s</span></span>
-          </button>
-          <a href="javascript:void(0)" id="navSignin" class="btn-ghost" onclick="document.getElementById('authModal').classList.add('active');" aria-label="Sign in to your account">Sign In</a>
-          <a href="javascript:void(0)" class="btn-nav-buy" id="navEnrollBtn" data-cta="buy" data-tier="selfpaced" aria-label="Enroll Full Course">Enroll Full Course — <span class="dynamic-price-from">$49</span></a>
-        </div>
-          </div>
-
-          <!-- Logged in states (hidden by default, managed by app.js) -->
-        </div>
-
-        <!-- Hamburger for Mobile -->
-        <button class="hamburger" id="hamburger" aria-expanded="false" aria-label="Toggle Navigation menu" aria-controls="mobileOverlay">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
       </div>
     </nav>
   </header>

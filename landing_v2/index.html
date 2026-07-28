@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build-cache-bust-13000 -->
+<!-- build-cache-bust-15000 -->
 <html lang="en">
 
 <head>
@@ -174,19 +174,9 @@
     body.narration-active.phase-5-active .hero-right {
       opacity: 1 !important;
       visibility: visible !important;
-      animation: heroRightSlideIn 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
-    }
-
-    @keyframes heroRightSlideIn {
-      from {
-        opacity: 0;
-        transform: translateX(35px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
+      transform: none !important;
+      animation: none !important;
+      transition: opacity 0.5s ease;
     }
 
     /* ── NARRATION SHOWCASE STAGE (BELOW NAV BAR) ────────────────── */
@@ -197,32 +187,36 @@
       right: 0;
       bottom: 0;
       z-index: 998;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
       pointer-events: none;
       opacity: 0;
-      transform: translateY(20px) scale(0.95);
-      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     body.narration-active .narration-showcase-stage.active {
       opacity: 1;
-      transform: translateY(0) scale(1);
     }
 
     .narration-showcase-card {
-      position: relative;
+      position: fixed;
+      top: calc(50% + 38px);
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90vw;
       max-width: 960px;
-      width: 100%;
       max-height: calc(100vh - 120px);
       aspect-ratio: 16 / 9;
       border-radius: 20px;
       overflow: hidden;
       box-shadow: 0 25px 70px rgba(0, 180, 216, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.15);
       background: #0f172a;
-      transition: box-shadow 0.8s ease;
+      transition: top 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+                  left 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+                  width 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+                  height 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+                  box-shadow 0.8s ease,
+                  opacity 0.6s ease;
+      will-change: top, left, width, height, transform, opacity;
     }
 
     .narration-showcase-card.img2-active {
@@ -273,23 +267,7 @@
       filter: blur(0px);
     }
 
-    /* Phase 5 card resizing & positioning over hero-left content (exact pixel top & height match to clock frame) */
-    .narration-showcase-stage.phase-5-card {
-      top: 0 !important;
-      left: 0 !important;
-      right: 0 !important;
-      bottom: 0 !important;
-      display: block !important;
-      padding: 0 !important;
-      transition: opacity 0.6s ease;
-    }
-
-    .narration-showcase-stage.phase-5-card .narration-showcase-card {
-      aspect-ratio: auto;
-      transform: none !important;
-      box-shadow: 0 25px 70px rgba(0, 180, 216, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.2);
-      transition: top 0.8s cubic-bezier(0.16, 1, 0.3, 1), left 0.8s cubic-bezier(0.16, 1, 0.3, 1), width 0.8s cubic-bezier(0.16, 1, 0.3, 1), height 0.8s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.8s ease;
-    }
+    /* Phase 5 card smooth styling */
 
     /* Badge overlay */
     .narration-badge-overlay {
@@ -2613,27 +2591,26 @@
         if (badgeText) badgeText.innerHTML = '🎯 PRACTICING ANALYST TECHNICAL INTERVIEWS';
       }, 8340);
 
-      // ── Phase 5 (12.54s - 15.4s): "this masterclass was built specifically for you" -> Exact 1:1 Bounding Box Match
-      _navP4Timer = setTimeout(function () {
+      // ── Phase 5 (12.54s - 15.4s): "this masterclass was built specifically for you" -> Ultra-Smooth Bounding Box Morph
+      _navP4Timer = setTimeout(function() {
         document.body.classList.add('phase-5-active');
-        if (stage) stage.classList.add('phase-5-card');
 
-        // Defer measurement until after layout reflow of .hero-right
-        requestAnimationFrame(function () {
-          requestAnimationFrame(function () {
+        // Defer measurement until layout reflow of .hero-right completes
+        requestAnimationFrame(function() {
+          requestAnimationFrame(function() {
             var clockEl = document.getElementById('roadmap-root') || document.querySelector('.hero-right');
             var heroLeft = document.querySelector('.hero-left');
 
-            if (clockEl && heroLeft && card && stage) {
+            if (clockEl && heroLeft && card) {
               var cRect = clockEl.getBoundingClientRect();
               var hRect = heroLeft.getBoundingClientRect();
 
               if (cRect.height > 200 && hRect.width > 200) {
-                card.style.position = 'fixed';
                 card.style.top = Math.round(cRect.top) + 'px';
                 card.style.left = Math.round(hRect.left) + 'px';
                 card.style.width = Math.round(hRect.width) + 'px';
                 card.style.height = Math.round(cRect.height) + 'px';
+                card.style.transform = 'none';
                 card.style.maxWidth = 'none';
                 card.style.maxHeight = 'none';
                 card.style.margin = '0';
@@ -2645,17 +2622,15 @@
         if (badgeText) badgeText.innerHTML = '✨ BUILT SPECIFICALLY FOR YOU';
       }, 12540);
 
-      // ── End (15.4s): Restore nav & full website content to normal
-      _navEndTimer = setTimeout(function () {
+      // ── End (15.4s): Smooth fade-out finish
+      _navEndTimer = setTimeout(function() {
+        if (stage) stage.classList.remove('active', 'transition-img2');
         nav.classList.remove('nav-anim-p1', 'nav-anim-p2');
-        if (stage) {
-          stage.classList.remove('active', 'transition-img2', 'phase-5-card');
-          stage.style.alignItems = '';
-          stage.style.justifyContent = '';
-          stage.style.padding = '';
-        }
-        if (card) card.style.cssText = '';
-        document.body.classList.remove('narration-active', 'phase-5-active');
+
+        setTimeout(function() {
+          if (card) card.style.cssText = '';
+          document.body.classList.remove('narration-active', 'phase-5-active');
+        }, 600);
       }, 15400);
     }
 

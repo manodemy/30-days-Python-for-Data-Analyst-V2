@@ -8775,17 +8775,13 @@ p, .section-head p, .pricing-card-subtitle, .hero-sub {
   color: #0F172A !important; /* Original Dark Navy */
   letter-spacing: -0.03em !important;
   line-height: 1.1 !important;
-  text-shadow: 
-    0.5px 0.5px 0px #090e1a,
-    1px 1.5px 3px rgba(15, 23, 42, 0.12) !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9), 0 1px 3px rgba(15, 23, 42, 0.08) !important;
   transition: transform 0.25s var(--ease) !important;
 }
 
 .nav-brand-name span {
-  color: #059669 !important; /* Improved Emerald Green */
-  text-shadow: 
-    0.5px 0.5px 0px #008ba8,
-    0 0 14px rgba(5, 150, 105, 0.35) !important;
+  color: #059669 !important; /* Crisp Emerald Green */
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9), 0 1px 3px rgba(5, 150, 105, 0.12) !important;
 }
 
 .nav-brand:hover .nav-brand-name {
@@ -8933,4 +8929,17 @@ p, .section-head p, .pricing-card-subtitle, .hero-sub {
 
 .footer-brand-wrapper {
   margin-bottom: 12px !important;
+}
+
+.brand-sub-dot {
+  color: #059669;
+  font-size: 7px;
+  vertical-align: middle;
+  margin-right: 3px;
+  animation: brandPulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes brandPulse {
+  0% { opacity: 0.4; }
+  100% { opacity: 1; transform: scale(1.2); }
 }

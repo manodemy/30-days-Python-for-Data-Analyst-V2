@@ -9202,24 +9202,48 @@ p, .section-head p, .pricing-card-subtitle, .hero-sub {
 }
 
 @media (max-width: 860px) {
+  .nav {
+    height: auto !important;
+    min-height: 88px !important;
+    padding: 6px 0 !important;
+    background: #FFFFFF !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.12) !important;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06) !important;
+  }
+
+  .nav-inner {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    row-gap: 6px !important;
+  }
+
+  .nav-brand {
+    order: 1 !important;
+  }
+
+  .nav-right {
+    order: 2 !important;
+  }
+
   .nav-center-audio-hook {
-    display: inline-flex !important;
-    position: fixed !important;
-    top: 56px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    z-index: 999 !important;
-    background: rgba(255, 255, 255, 0.96) !important;
-    backdrop-filter: blur(16px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
-    border: 1px solid rgba(5, 150, 105, 0.22) !important;
-    border-top: none !important;
-    border-radius: 0 0 16px 16px !important;
-    padding: 3px 14px 4px 4px !important;
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.1) !important;
-    margin: 0 !important;
-    white-space: nowrap !important;
-    max-width: 92vw !important;
+    order: 3 !important;
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    position: static !important;
+    transform: none !important;
+    margin: 2px 0 0 0 !important;
+    padding: 4px 14px 4px 5px !important;
+    background: rgba(5, 150, 105, 0.08) !important;
+    border: 1px solid rgba(5, 150, 105, 0.25) !important;
+    border-radius: 20px !important;
+    box-shadow: none !important;
+    max-width: 100% !important;
   }
 
   .nav-center-course-title {
@@ -9227,12 +9251,12 @@ p, .section-head p, .pricing-card-subtitle, .hero-sub {
   }
 
   .nav-center-play-circle {
-    width: 24px !important;
-    height: 24px !important;
+    width: 22px !important;
+    height: 22px !important;
   }
 
   .play-lesson-section {
-    padding-top: 36px !important;
+    padding-top: 16px !important;
   }
 }
 

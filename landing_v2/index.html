@@ -98,6 +98,50 @@
   }
   </script>
 
+  <style>
+    /* ── NAV INTRO ANIMATION ────────────────────────────────────── */
+
+    /* Phase 1: logo centered, everything else hidden */
+    .nav-anim-p1 .nav-right,
+    .nav-anim-p1 #navCenterAudioHook {
+      opacity: 0 !important;
+      pointer-events: none !important;
+      transition: opacity 0.2s ease;
+    }
+    .nav-anim-p1 .nav-inner {
+      justify-content: center;
+    }
+    .nav-anim-p1 #navBrand {
+      animation: navLogoZoomIn 1.3s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+
+    /* Phase 2: logo back left, pill zooms in */
+    .nav-anim-p2 .nav-right {
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+    .nav-anim-p2 .nav-inner {
+      justify-content: space-between;
+    }
+    .nav-anim-p2 #navBrand {
+      animation: none;
+    }
+    .nav-anim-p2 #navCenterAudioHook {
+      opacity: 1 !important;
+      pointer-events: auto !important;
+      animation: navPillZoomIn 0.55s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+
+    /* Keyframes */
+    @keyframes navLogoZoomIn {
+      from { transform: scale(0.05); opacity: 0; }
+      to   { transform: scale(1);    opacity: 1; }
+    }
+    @keyframes navPillZoomIn {
+      from { transform: scale(0.05); opacity: 0; }
+      to   { transform: scale(1);    opacity: 1; }
+    }
+  </style>
 </head>
 <body class="pricing-loading">
   <!-- Skip Navigation for Accessibility -->
@@ -108,7 +152,7 @@
     <nav class="nav" aria-label="Primary site navigation">
       <div class="container nav-inner">
         <!-- 1. Left Brand Logo -->
-        <a href="/landing_v2/index.html" class="nav-brand" aria-label="Manodemy Home">
+        <a href="/landing_v2/index.html" id="navBrand" class="nav-brand" aria-label="Manodemy Home">
           <div class="nav-brand-wrapper">
             <img class="nav-brand-symbol" src="/landing_v2/manodemy_3d_keycap.png" alt="Manodemy 3D Keycap Logo" width="38" height="38" />
             <div class="nav-brand-text">
@@ -1883,34 +1927,71 @@
   </div>
 
   <script>
+    // ── NAV INTRO ANIMATION ──────────────────────────────────────────────
+    var _navP1Timer = null, _navP2Timer = null, _navEndTimer = null;
+
+    function startNavIntroAnimation() {
+      clearTimeout(_navP1Timer); clearTimeout(_navP2Timer); clearTimeout(_navEndTimer);
+      var nav = document.querySelector('.nav');
+      if (!nav) return;
+
+      // Phase 1: logo centered only
+      nav.classList.remove('nav-anim-p2');
+      nav.classList.add('nav-anim-p1');
+
+      // Phase 2 at 1.58s: logo left + pill zooms in
+      _navP1Timer = setTimeout(function() {
+        nav.classList.remove('nav-anim-p1');
+        nav.classList.add('nav-anim-p2');
+      }, 1580);
+
+      // End at 4.5s: restore nav to normal
+      _navEndTimer = setTimeout(function() {
+        nav.classList.remove('nav-anim-p1', 'nav-anim-p2');
+      }, 4500);
+    }
+
+    function stopNavIntroAnimation() {
+      clearTimeout(_navP1Timer); clearTimeout(_navP2Timer); clearTimeout(_navEndTimer);
+      var nav = document.querySelector('.nav');
+      if (nav) nav.classList.remove('nav-anim-p1', 'nav-anim-p2');
+    }
+    // ──────────────────────────────────────────────────────────────────────────
+
     function playOrPauseIntroAudio() {
       var audio = document.getElementById('navIntroAudioElement');
       if (!audio) {
         audio = new Audio('/landing_v2/intro_narration.mp3');
       }
 
-      audio.onended = resetAllAudioState;
-      audio.onpause = resetAllAudioState;
+      audio.onended = function() { resetAllAudioState(); stopNavIntroAnimation(); };
+      audio.onpause = function() { resetAllAudioState(); stopNavIntroAnimation(); };
 
       if (!audio.paused && !audio.ended) {
         audio.pause();
         resetAllAudioState();
+        stopNavIntroAnimation();
       } else {
         audio.currentTime = 0;
         var p = audio.play();
         if (p && p.then) {
           p.then(function() {
             setAllPlayingState();
+            startNavIntroAnimation();
           }).catch(function(err) {
-            console.warn("Primary src failed, attempting /intro_narration.mp3 fallback:", err);
+            console.warn('Primary src failed, fallback:', err);
             audio.src = '/intro_narration.mp3';
-            audio.play().then(setAllPlayingState).catch(function(e) {
-              console.error("All audio sources failed:", e);
+            audio.play().then(function() {
+              setAllPlayingState();
+              startNavIntroAnimation();
+            }).catch(function(e) {
+              console.error('All audio sources failed:', e);
               resetAllAudioState();
             });
           });
         } else {
           setAllPlayingState();
+          startNavIntroAnimation();
         }
       }
     }

@@ -7173,60 +7173,43 @@ td.col-mano {
 }
 
 .section-header-compact {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 8px !important;
-  flex-wrap: wrap;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+  gap: 8px !important;
+  margin-bottom: 12px !important;
+  width: 100% !important;
 }
 
-.header-compact-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.section-badge-compact {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(5, 150, 105, 0.12);
-  color: #10B981;
-  padding: 3px 10px;
-  border-radius: 20px;
-  font-size: 10.5px;
-  font-weight: 800;
-  border: 1px solid rgba(5, 150, 105, 0.3);
-  letter-spacing: 0.05em;
-  white-space: nowrap;
-}
-
-.section-badge-compact .badge-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #10B981;
-  box-shadow: 0 0 8px #10B981;
+.platform-title-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: #060913 !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.14) !important;
+  border-radius: 30px !important;
+  padding: 6px 28px !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
 }
 
 .section-title-compact {
-  font-family: var(--font-display);
-  font-size: 19px;
-  font-weight: 900;
-  color: #FFFFFF;
-  letter-spacing: -0.02em;
-  margin: 0;
-  line-height: 1.2;
+  font-family: var(--font-display) !important;
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  color: #FFFFFF !important;
+  letter-spacing: -0.01em !important;
+  margin: 0 !important;
+  line-height: 1.2 !important;
 }
 
 .section-sub-compact {
-  font-size: 12.5px;
-  color: #94A3B8;
-  margin: 0;
-  max-width: 100% !important;
-  line-height: 1.35;
+  font-size: 13.5px !important;
+  color: #94A3B8 !important;
+  margin: 0 auto !important;
+  max-width: 880px !important;
+  text-align: center !important;
+  line-height: 1.45 !important;
 }
 
 .demo-pills-row {

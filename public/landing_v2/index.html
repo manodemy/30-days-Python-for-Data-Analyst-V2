@@ -1752,16 +1752,26 @@
   <script src="../supabase.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="reviews.js?v=7.0" defer></script>
-  <script src="app.js?v=7.0" defer></script>
+  <script src="app.js?v=2026.07.28.1900" defer></script>
   <script src="roadmap.js?v=11.0" defer></script>
 
-  <!-- PWA SW Registration -->
+  <!-- PWA SW Registration with Instant Auto-Update & Cache Purge -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js')
-          .then(reg => console.log('[Service Worker] Registered V5 PWA scope:', reg.scope))
-          .catch(err => console.error('[Service Worker] V5 PWA registration failed:', err));
+          .then(reg => {
+            console.log('[Service Worker] Registered:', reg.scope);
+            reg.update();
+            if (reg.waiting) {
+              reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+            }
+          })
+          .catch(err => console.error('[Service Worker] Registration failed:', err));
+
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          console.log('[Service Worker] Controller updated - refreshing page cache');
+        });
       });
     }
   </script>

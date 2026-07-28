@@ -8904,3 +8904,33 @@ p, .section-head p, .pricing-card-subtitle, .hero-sub {
 .btn-nav-buy:active {
   transform: translateY(0) scale(0.98) !important;
 }
+
+
+/* ══════════════ UNIQUE BRAND LOGOMARK & TYPOGRAPHY DESIGN ══════════════ */
+.nav-brand-wrapper {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  text-decoration: none !important;
+}
+
+.nav-brand-symbol {
+  flex-shrink: 0 !important;
+  box-shadow: 0 4px 16px rgba(5, 150, 105, 0.25), 0 2px 6px rgba(0, 180, 216, 0.2) !important;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease !important;
+}
+
+.nav-brand:hover .nav-brand-symbol {
+  transform: rotate(-3deg) scale(1.06) !important;
+  box-shadow: 0 6px 20px rgba(5, 150, 105, 0.35), 0 0 16px rgba(0, 180, 216, 0.35) !important;
+}
+
+.nav-brand-text {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+}
+
+.footer-brand-wrapper {
+  margin-bottom: 12px !important;
+}

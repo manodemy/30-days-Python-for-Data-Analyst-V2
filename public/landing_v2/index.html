@@ -142,6 +142,113 @@
       transition: opacity 0.4s ease, visibility 0.4s ease;
     }
 
+    /* ── NARRATION SHOWCASE STAGE (BELOW NAV BAR) ────────────────── */
+    .narration-showcase-stage {
+      position: fixed;
+      top: 76px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 998;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(20px) scale(0.95);
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    body.narration-active .narration-showcase-stage.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .narration-showcase-card {
+      position: relative;
+      max-width: 960px;
+      width: 100%;
+      max-height: calc(100vh - 120px);
+      aspect-ratio: 16 / 9;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 25px 70px rgba(0, 180, 216, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.15);
+      background: #0f172a;
+      transition: box-shadow 0.8s ease;
+    }
+
+    .narration-showcase-card.img2-active {
+      box-shadow: 0 25px 70px rgba(5, 150, 105, 0.4), 0 0 0 1px rgba(5, 150, 105, 0.35);
+    }
+
+    .narration-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 20px;
+      will-change: transform, opacity, filter;
+    }
+
+    /* Image 1 default state */
+    .narration-img-1 {
+      opacity: 0;
+      transform: scale(0.92);
+      filter: blur(10px);
+      transition: opacity 0.7s var(--ease), transform 0.7s var(--ease), filter 0.7s var(--ease);
+    }
+    .narration-showcase-stage.active .narration-img-1 {
+      opacity: 1;
+      transform: scale(1);
+      filter: blur(0px);
+    }
+    .narration-showcase-stage.active.transition-img2 .narration-img-1 {
+      opacity: 0;
+      transform: scale(1.08) rotate(-1deg);
+      filter: blur(12px);
+    }
+
+    /* Image 2 default state */
+    .narration-img-2 {
+      opacity: 0;
+      transform: scale(0.9) rotate(1deg);
+      filter: blur(12px);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .narration-showcase-stage.active.transition-img2 .narration-img-2 {
+      opacity: 1;
+      transform: scale(1) rotate(0deg);
+      filter: blur(0px);
+    }
+
+    /* Badge overlay */
+    .narration-badge-overlay {
+      position: absolute;
+      bottom: 24px;
+      left: 24px;
+      background: rgba(15, 23, 42, 0.82);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 10px 20px;
+      border-radius: 50px;
+      color: #fff;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.05em;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.5s ease;
+    }
+    .narration-showcase-stage.active .narration-badge-overlay {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     /* Keyframes */
     @keyframes navLogoZoomIn {
       from { transform: scale(0.05); opacity: 0; }
@@ -235,6 +342,17 @@
       </div>
     </nav>
   </header>
+
+  <!-- Narration Showcase Stage (Appears below Nav Bar) -->
+  <div id="narrationShowcaseStage" class="narration-showcase-stage">
+    <div class="narration-showcase-card">
+      <img id="narrationImg1" src="/landing_v2/Landing-image-1.webp" alt="Beginner Data Analytics Career" class="narration-img narration-img-1" />
+      <img id="narrationImg2" src="/landing_v2/Landing-image-2.webp" alt="Practicing Analyst Technical Interviews" class="narration-img narration-img-2" />
+      <div class="narration-badge-overlay" id="narrationBadge">
+        <span class="narration-badge-text" id="narrationBadgeText">🌱 COMPLETE BEGINNER BREAKING INTO DATA</span>
+      </div>
+    </div>
+  </div>
 
   <!-- Mobile Dropdown Menu -->
   <div class="mobile-overlay" id="mobileOverlay" role="dialog" aria-modal="true" aria-label="Mobile Navigation">
@@ -1937,37 +2055,74 @@
   </div>
 
   <script>
-    // ── NAV INTRO ANIMATION ──────────────────────────────────────────────
-    var _navP1Timer = null, _navP2Timer = null, _navEndTimer = null;
+    // ── NAV INTRO & IMAGE SHOWCASE ANIMATION ──────────────────────────────
+    var _navP1Timer = null, _navP2Timer = null, _navP3Timer = null, _navP4Timer = null, _navEndTimer = null;
 
     function startNavIntroAnimation() {
-      clearTimeout(_navP1Timer); clearTimeout(_navP2Timer); clearTimeout(_navEndTimer);
+      stopNavIntroAnimation();
+
       var nav = document.querySelector('.nav');
+      var stage = document.getElementById('narrationShowcaseStage');
+      var card = document.querySelector('.narration-showcase-card');
+      var badgeText = document.getElementById('narrationBadgeText');
+
       if (!nav) return;
 
       document.body.classList.add('narration-active');
 
-      // Phase 1: logo centered only
+      // ── Phase 1 (0s - 1.58s): "Welcome to Manodemy's" -> Logo centered in nav
       nav.classList.remove('nav-anim-p2');
       nav.classList.add('nav-anim-p1');
 
-      // Phase 2 at 1.58s: logo left + pill zooms in
+      // ── Phase 2 (1.58s - 4.8s): "60-Days Data Analytics Masterclass!" -> Logo left, audio pill centered
       _navP1Timer = setTimeout(function() {
         nav.classList.remove('nav-anim-p1');
         nav.classList.add('nav-anim-p2');
       }, 1580);
 
-      // End at 4.5s: restore nav & page content to normal
+      // ── Phase 3 (4.8s - 8.34s): "Whether you're a complete beginner..." -> Image 1 below nav bar
+      _navP2Timer = setTimeout(function() {
+        if (stage) {
+          stage.classList.remove('transition-img2');
+          stage.classList.add('active');
+        }
+        if (card) card.classList.remove('img2-active');
+        if (badgeText) badgeText.innerHTML = '🌱 COMPLETE BEGINNER BREAKING INTO DATA';
+      }, 4800);
+
+      // ── Phase 4 (8.34s - 12.54s): "or a practicing analyst..." -> Transition to Image 2
+      _navP3Timer = setTimeout(function() {
+        if (stage) stage.classList.add('transition-img2');
+        if (card) card.classList.add('img2-active');
+        if (badgeText) badgeText.innerHTML = '🎯 PRACTICING ANALYST TECHNICAL INTERVIEWS';
+      }, 8340);
+
+      // ── Phase 5 (12.54s - 15.4s): "this masterclass was built specifically for you" -> Fade out showcase stage
+      _navP4Timer = setTimeout(function() {
+        if (stage) stage.classList.remove('active', 'transition-img2');
+      }, 12540);
+
+      // ── End (15.4s): Restore nav & website content to normal
       _navEndTimer = setTimeout(function() {
         nav.classList.remove('nav-anim-p1', 'nav-anim-p2');
         document.body.classList.remove('narration-active');
-      }, 4500);
+      }, 15400);
     }
 
     function stopNavIntroAnimation() {
-      clearTimeout(_navP1Timer); clearTimeout(_navP2Timer); clearTimeout(_navEndTimer);
+      clearTimeout(_navP1Timer);
+      clearTimeout(_navP2Timer);
+      clearTimeout(_navP3Timer);
+      clearTimeout(_navP4Timer);
+      clearTimeout(_navEndTimer);
+
       var nav = document.querySelector('.nav');
+      var stage = document.getElementById('narrationShowcaseStage');
+      var card = document.querySelector('.narration-showcase-card');
+
       if (nav) nav.classList.remove('nav-anim-p1', 'nav-anim-p2');
+      if (stage) stage.classList.remove('active', 'transition-img2');
+      if (card) card.classList.remove('img2-active');
       document.body.classList.remove('narration-active');
     }
     // ──────────────────────────────────────────────────────────────────────────

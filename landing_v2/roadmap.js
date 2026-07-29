@@ -591,7 +591,14 @@ function applyFilter(phase){
   });
 }
 root.querySelectorAll('.rm-legendBtn').forEach(btn=>{
-  btn.addEventListener('click',()=>applyFilter(btn.getAttribute('data-phase')));
+  btn.addEventListener('click', () => {
+    const phase = btn.getAttribute('data-phase');
+    if (window.ManodemyRoadmap && window.ManodemyRoadmap.jumpToPhase) {
+      window.ManodemyRoadmap.jumpToPhase(phase);
+    } else {
+      applyFilter(phase);
+    }
+  });
 });
 
 function setMouseFromEvent(e){
@@ -740,4 +747,26 @@ updateVolumeUI();
 startAuto();
 animate();
 root.classList.add('loaded');
+
+// Global API for narration speech sync & manual browse mode
+window.ManodemyRoadmap = {
+  setDay: function(i, doBurst=true, isUserGesture=false) {
+    setDay(i, doBurst, isUserGesture);
+  },
+  jumpToPhase: function(phase) {
+    var dayIdx = 0;
+    if (phase === 'SQL') dayIdx = 0;
+    else if (phase === 'Excel') dayIdx = 18;
+    else if (phase === 'Python') dayIdx = 30;
+    
+    applyFilter(phase);
+    setDay(dayIdx, true, false);
+    if (!autoPlay) {
+      autoPlay = true;
+      var autoBtn = root.querySelector('#btnAuto');
+      if (autoBtn) autoBtn.innerHTML = '⏸ &nbsp;Auto-play';
+    }
+    startAuto();
+  }
+};
 })();

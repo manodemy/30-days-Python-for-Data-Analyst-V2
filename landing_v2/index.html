@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build-cache-bust-20000 -->
+<!-- build-cache-bust-21000 -->
 <html lang="en">
 
 <head>
@@ -2665,26 +2665,35 @@
         if (clockCard) clockCard.classList.add('narration-roadmap-glow');
       }, 15580);
 
-      // ── Phase 6.2 (19.22s - 22.28s): "In the first 18 days, you'll master SQL" -> Highlight SQL Pill
+      // ── Phase 6.2 (19.22s - 22.28s): "In the first 18 days, you'll master SQL" -> Jump Clock to Day 1 & Highlight SQL Pill
       _navP6Timer = setTimeout(function() {
         var sqlBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="SQL"]');
         if (sqlBtn) sqlBtn.classList.add('narration-pill-glow');
+        if (window.ManodemyRoadmap && window.ManodemyRoadmap.jumpToPhase) {
+          window.ManodemyRoadmap.jumpToPhase('SQL');
+        }
       }, 19220);
 
-      // ── Phase 6.3 (22.28s - 25.04s): "The next 12 days are dedicated to Excel" -> Highlight Excel Pill
+      // ── Phase 6.3 (22.28s - 25.04s): "The next 12 days are dedicated to Excel" -> Jump Clock to Day 19 & Highlight Excel Pill
       _navP7Timer = setTimeout(function() {
         var sqlBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="SQL"]');
         var xlBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="Excel"]');
         if (sqlBtn) sqlBtn.classList.remove('narration-pill-glow');
         if (xlBtn) xlBtn.classList.add('narration-pill-glow');
+        if (window.ManodemyRoadmap && window.ManodemyRoadmap.jumpToPhase) {
+          window.ManodemyRoadmap.jumpToPhase('Excel');
+        }
       }, 22280);
 
-      // ── Phase 6.4 (25.04s - 29.12s): "Finally, in the last 30 days, you'll learn Python for Data Analytics" -> Highlight Python Pill
+      // ── Phase 6.4 (25.04s - 29.12s): "Finally, in the last 30 days, you'll learn Python for Data Analytics" -> Jump Clock to Day 31 & Highlight Python Pill
       _navP8Timer = setTimeout(function() {
         var xlBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="Excel"]');
         var pyBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="Python"]');
         if (xlBtn) xlBtn.classList.remove('narration-pill-glow');
         if (pyBtn) pyBtn.classList.add('narration-pill-glow');
+        if (window.ManodemyRoadmap && window.ManodemyRoadmap.jumpToPhase) {
+          window.ManodemyRoadmap.jumpToPhase('Python');
+        }
       }, 25040);
 
       // ── Phase 6 End (29.12s): Fade out clock card glow

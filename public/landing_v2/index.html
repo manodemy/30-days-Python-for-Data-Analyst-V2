@@ -697,6 +697,75 @@
       letter-spacing: 0.02em;
     }
 
+    /* ── HR INTERVIEW QUESTION OVERLAY ───────────────────────────── */
+    .hr-interview-overlay {
+      position: fixed;
+      top: 76px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1001;
+      background: rgba(5, 8, 14, 0.94);
+      backdrop-filter: blur(20px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: scale(0.94) translateY(20px);
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                  visibility 0.5s ease;
+    }
+    .hr-interview-overlay.active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: scale(1) translateY(0);
+    }
+    .hr-interview-card {
+      position: relative;
+      width: 100%;
+      max-width: 980px;
+      height: calc(100vh - 76px - 40px);
+      max-height: 580px;
+      background: radial-gradient(circle at 50% 0%, #151d2c 0%, #090e18 100%);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 20px;
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.9), 0 0 60px rgba(56, 189, 248, 0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow: hidden;
+    }
+    .hr-exit-btn-top {
+      position: absolute;
+      top: 14px;
+      right: 20px;
+      z-index: 10;
+    }
+    .hr-interview-img-wrapper {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .hr-interview-img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
     /* ── INTERVIEW TEST PORTAL DEMO OVERLAY ────────────────────────────── */
     .test-portal-overlay {
       position: fixed;
@@ -3190,7 +3259,7 @@
   <script>
     var _navP1Timer = null, _navP2Timer = null, _navP3Timer = null, _navP4Timer = null;
     var _navP5Timer = null, _navP6Timer = null, _navP7Timer = null, _navP8Timer = null;
-    var _navP9Timer = null, _navP10Timer = null, _navCertStartTimer = null, _navEndTimer = null;
+    var _navP9Timer = null, _navP10Timer = null, _navCertStartTimer = null, _navHrStartTimer = null, _navCertCloseTimer = null, _navEndTimer = null;
 
     function startNavIntroAnimation() {
       stopNavIntroAnimation();
@@ -3298,10 +3367,21 @@
         if (testPortal) testPortal.classList.remove('active');
       }, 39950);
 
+      // Phase 9.1 (48.50s): HR Interview Question Overlay opens directly OVER Certificate Showcase
+      _navHrStartTimer = setTimeout(function() {
+        openHrInterviewOverlay();
+      }, 48500);
+
+      // Phase 9.2 (48.95s): Close Certificate Showcase overlay behind HR Interview Question Overlay
+      _navCertCloseTimer = setTimeout(function() {
+        stopCertShowcaseAnimation();
+      }, 48950);
+
       // End (55.44s): Full continuous audio narration finish
       _navEndTimer = setTimeout(function() {
         stopNavIntroAnimation();
         stopCertShowcaseAnimation();
+        closeHrInterviewOverlay();
         resetAllAudioState();
       }, 55440);
     }
@@ -3310,9 +3390,11 @@
       clearTimeout(_navP1Timer); clearTimeout(_navP2Timer); clearTimeout(_navP3Timer);
       clearTimeout(_navP4Timer); clearTimeout(_navP5Timer); clearTimeout(_navP6Timer);
       clearTimeout(_navP7Timer); clearTimeout(_navP8Timer); clearTimeout(_navP9Timer);
-      clearTimeout(_navP10Timer); clearTimeout(_navCertStartTimer); clearTimeout(_navEndTimer);
+      clearTimeout(_navP10Timer); clearTimeout(_navCertStartTimer); clearTimeout(_navHrStartTimer);
+      clearTimeout(_navCertCloseTimer); clearTimeout(_navEndTimer);
 
       stopCertShowcaseAnimation();
+      closeHrInterviewOverlay();
 
       var nav = document.querySelector('.nav');
       var stage = document.getElementById('narrationShowcaseStage');
@@ -3340,6 +3422,15 @@
       }
       if (testPortal) testPortal.classList.remove('active');
       document.body.classList.remove('narration-active', 'phase-5-active');
+    }
+
+    function openHrInterviewOverlay() {
+      var overlay = document.getElementById('hrInterviewOverlay');
+      if (overlay) overlay.classList.add('active');
+    }
+    function closeHrInterviewOverlay() {
+      var overlay = document.getElementById('hrInterviewOverlay');
+      if (overlay) overlay.classList.remove('active');
     }
 
     // ── CERTIFICATE SHOWCASE 3-PHASE ANIMATION CONTROLLER ────────────────
@@ -3510,7 +3601,7 @@
 
       var certOverlay = document.getElementById('certShowcaseOverlay');
       if (certOverlay) {
-        if (t >= 39.50 && t < 48.84) {
+        if (t >= 39.50 && t < 48.95) {
           certOverlay.classList.add('active');
           var certPaper = document.getElementById('certPaper');
           var hologram = document.getElementById('certGoldHologram');
@@ -3536,6 +3627,12 @@
         } else {
           certOverlay.classList.remove('active');
         }
+      }
+
+      var hrOverlay = document.getElementById('hrInterviewOverlay');
+      if (hrOverlay) {
+        if (t >= 48.50 && t < 55.44) hrOverlay.classList.add('active');
+        else hrOverlay.classList.remove('active');
       }
     };
 
@@ -4015,6 +4112,16 @@
 
       </div>
 
+    </div>
+  </div>
+
+  <!-- ── HR INTERVIEW QUESTION DEMO OVERLAY ──────────────────────── -->
+  <div class="hr-interview-overlay" id="hrInterviewOverlay">
+    <div class="hr-interview-card">
+      <button class="cert-exit-btn hr-exit-btn-top" onclick="closeHrInterviewOverlay()">✕ Exit</button>
+      <div class="hr-interview-img-wrapper">
+        <img src="/landing_v2/hr_interview_question.jpg" alt="HR Interview Question: How would you rate yourself in SQL, Excel, and Python?" class="hr-interview-img" />
+      </div>
     </div>
   </div>
 

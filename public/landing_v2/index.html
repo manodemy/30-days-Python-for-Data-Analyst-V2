@@ -106,6 +106,18 @@
   </script>
 
   <style>
+    /* ── ALWAYS VISIBLE NAV BAR ON TOP OF OVERLAYS ─────────────── */
+    header,
+    .nav {
+      z-index: 2500 !important;
+    }
+    body.narration-active .nav {
+      background: rgba(8, 12, 20, 0.88) !important;
+      backdrop-filter: blur(20px) !important;
+      -webkit-backdrop-filter: blur(20px) !important;
+      border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+    }
+
     /* ── NAV INTRO ANIMATION ────────────────────────────────────── */
 
     /* Phase 1: logo centered, everything else hidden */

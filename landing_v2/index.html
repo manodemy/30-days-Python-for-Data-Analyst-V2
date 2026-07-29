@@ -3748,10 +3748,12 @@
         if (clockCard) clockCard.classList.remove('narration-roadmap-glow');
         if (pyBtn) pyBtn.classList.remove('narration-pill-glow');
 
-        // Scroll the page to the real interactive lesson demo section
-        var demoSection = document.getElementById('play-lesson-demo');
-        if (demoSection) {
-          demoSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // Scroll so the iframe sits flush below the nav bar (skip section header & day pills)
+        var iframe = document.getElementById('liveLessonIframe');
+        if (iframe) {
+          var navH = (document.querySelector('.nav') || {}).offsetHeight || 76;
+          var iframeTop = iframe.getBoundingClientRect().top + window.scrollY;
+          window.scrollTo({ top: iframeTop - navH, behavior: 'smooth' });
         }
 
         // Reset cursor state
@@ -4047,11 +4049,15 @@
     }
 
     window._narrationSeekTo = function(t) {
-      // Phase 7: Scroll to demo section if in test range, scroll back for cert phase
+      // Phase 7: Scroll so iframe is flush below nav bar; scroll back for cert phase
       var cursor = document.getElementById('demoMouseCursor');
       if (t >= 29.52 && t < 39.92) {
-        var demoSection = document.getElementById('play-lesson-demo');
-        if (demoSection) demoSection.scrollIntoView({ behavior: 'instant', block: 'start' });
+        var iframeEl = document.getElementById('liveLessonIframe');
+        if (iframeEl) {
+          var navH2 = (document.querySelector('.nav') || {}).offsetHeight || 76;
+          var iTop = iframeEl.getBoundingClientRect().top + window.scrollY;
+          window.scrollTo({ top: iTop - navH2, behavior: 'instant' });
+        }
         if (cursor) cursor.style.opacity = (t >= 32.20 && t < 33.30) ? '1' : '0';
       } else {
         if (t >= 39.92) window.scrollTo({ top: 0, behavior: 'instant' });

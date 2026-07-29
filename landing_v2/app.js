@@ -622,7 +622,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (err) {}
 
     if (userCountry === 'IN') {
-      pricingConfigs.selfpaced = { amount: 299900, currency: 'INR', display: '₹2,999',  original: '₹9,999',   discount: '70% OFF', planName: '60-Day Self-Paced Masterclass' };
+      pricingConfigs.selfpaced = { amount: 149900, currency: 'INR', display: '₹1,499',  original: '₹4,999',   discount: '70% OFF', planName: '60-Day Self-Paced Masterclass' };
       pricingConfigs.live      = { amount: 999900, currency: 'INR', display: '₹9,999',  original: '₹39,999',  discount: '75% OFF', planName: '60-Day Live Class Masterclass' };
     } else {
       pricingConfigs.selfpaced = { amount: 4900,   currency: 'USD', display: '$49',     original: '$149',     discount: '67% OFF', planName: '60-Day Self-Paced Masterclass' };

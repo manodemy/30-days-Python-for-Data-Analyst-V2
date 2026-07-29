@@ -2809,7 +2809,8 @@
         }
       }, 25040);
 
-      // Phase 7 (29.12s - 39.88s): Open Test Portal Demo
+      // Phase 7 (29.18s - 39.38s): "Every day, you'll take a 25-question interview-based test..." -> Open Test Portal Demo
+      // Whisper word timestamps: "Every" starts 29.180s, "program." ends 39.380s
       _navP9Timer = setTimeout(function() {
         var clockCard = document.getElementById('roadmap-root');
         var pyBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="Python"]');
@@ -2817,13 +2818,14 @@
         if (pyBtn) pyBtn.classList.remove('narration-pill-glow');
         var testPortal = document.getElementById('testPortalOverlay');
         if (testPortal) testPortal.classList.add('active');
-      }, 29120);
+      }, 29180);
 
-      // Phase 8 (39.88s): Close Test Portal Demo
+      // Phase 8 (39.38s): "program." ends -> Close Test Portal, next narration begins ("Score 1,200 marks...")
+      // Whisper: "program." ends at 39.380s, "Score" starts at 39.860s
       _navP10Timer = setTimeout(function() {
         var testPortal = document.getElementById('testPortalOverlay');
         if (testPortal) testPortal.classList.remove('active');
-      }, 39880);
+      }, 39380);
 
       // End (55.44s): Full narration finish
       _navEndTimer = setTimeout(function() {

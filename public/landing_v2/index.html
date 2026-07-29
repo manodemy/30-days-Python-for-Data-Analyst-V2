@@ -3277,8 +3277,7 @@
         }
       }, 25040);
 
-      // Phase 7 (29.18s - 39.38s): "Every day, you'll take a 25-question interview-based test..." -> Open Test Portal Demo
-      // Whisper word timestamps: "Every" starts 29.180s, "program." ends 39.380s
+      // Phase 7 (29.18s - 39.86s): "Every day, you'll take a 25-question interview-based test..." -> Open Test Portal Demo
       _navP9Timer = setTimeout(function() {
         var clockCard = document.getElementById('roadmap-root');
         var pyBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="Python"]');
@@ -3288,19 +3287,16 @@
         if (testPortal) testPortal.classList.add('active');
       }, 29180);
 
-      // Phase 8 (39.38s): "program." ends -> Close Test Portal Demo
+      // Phase 8 (39.50s): Certificate Showcase begins opening directly OVER the Test Portal
+      _navCertStartTimer = setTimeout(function() {
+        startCertShowcaseAnimation();
+      }, 39500);
+
+      // Phase 8.1 (39.95s): Close Test Portal ONLY after Certificate Showcase overlay has fully covered the viewport
       _navP10Timer = setTimeout(function() {
         var testPortal = document.getElementById('testPortalOverlay');
         if (testPortal) testPortal.classList.remove('active');
-      }, 39380);
-
-      // Phase 9 (39.86s - 48.84s): Certificate & Marks Showcase (3-Phase Animation)
-      // 1. "Score 1,200 marks or above" (39.86s)
-      // 2. "to unlock your Job-Ready Certificate" (42.30s)
-      // 3. "featuring your overall, SQL, Excel, and Python scores" (44.86s)
-      _navCertStartTimer = setTimeout(function() {
-        startCertShowcaseAnimation();
-      }, 39860);
+      }, 39950);
 
       // End (55.44s): Full continuous audio narration finish
       _navEndTimer = setTimeout(function() {
@@ -3508,13 +3504,13 @@
     window._narrationSeekTo = function(t) {
       var testPortal = document.getElementById('testPortalOverlay');
       if (testPortal) {
-        if (t >= 29.18 && t < 39.38) testPortal.classList.add('active');
+        if (t >= 29.18 && t < 39.95) testPortal.classList.add('active');
         else testPortal.classList.remove('active');
       }
 
       var certOverlay = document.getElementById('certShowcaseOverlay');
       if (certOverlay) {
-        if (t >= 39.86 && t < 48.84) {
+        if (t >= 39.50 && t < 48.84) {
           certOverlay.classList.add('active');
           var certPaper = document.getElementById('certPaper');
           var hologram = document.getElementById('certGoldHologram');

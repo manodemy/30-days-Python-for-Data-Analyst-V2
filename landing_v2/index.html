@@ -111,6 +111,12 @@
     .nav {
       z-index: 2500 !important;
     }
+    body.narration-active .nav {
+      background: rgba(8, 12, 20, 0.88) !important;
+      backdrop-filter: blur(20px) !important;
+      -webkit-backdrop-filter: blur(20px) !important;
+      border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+    }
 
     /* ── NAV INTRO ANIMATION ────────────────────────────────────── */
 
@@ -328,24 +334,26 @@
     .nav-audio-timeline.dragging + .nav-audio-time-display {
       opacity: 1;
     }
-    /* ── CERTIFICATE & MARKS SHOWCASE OVERLAY (SMART FIT BELOW NAV BAR) ── */
+    /* ── CERTIFICATE & MARKS SHOWCASE OVERLAY (EDGE-TO-EDGE VIEWPORT COVER) ── */
     .cert-showcase-overlay {
       position: fixed;
-      top: var(--nav-h, 76px);
+      top: 0;
       left: 0;
       right: 0;
       bottom: 0;
       width: 100vw;
-      height: calc(100vh - var(--nav-h, 76px));
+      height: 100vh;
+      padding-top: var(--nav-h, 76px);
+      box-sizing: border-box;
       z-index: 1001;
-      background: rgba(6, 9, 17, 0.95);
-      backdrop-filter: blur(16px);
+      background: radial-gradient(circle at 50% 0%, #151d2c 0%, #090e18 100%);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 12px;
-      box-sizing: border-box;
-      overflow: hidden;
+      padding-left: 0;
+      padding-right: 0;
+      padding-bottom: 0;
+      margin: 0;
       opacity: 0;
       visibility: hidden;
       pointer-events: none;
@@ -361,18 +369,19 @@
       transform: scale(1) translateY(0);
     }
     .cert-showcase-card {
-      position: relative;
-      width: 100%;
-      max-width: 1060px;
+      position: absolute;
+      inset: 0;
+      width: 100vw;
       height: 100%;
-      max-height: calc(100vh - var(--nav-h, 76px) - 24px);
-      background: radial-gradient(circle at 50% 0%, #151d2c 0%, #090e18 100%);
-      border: 1px solid rgba(234, 179, 8, 0.4);
-      border-radius: 16px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(234, 179, 8, 0.15);
+      max-width: 100vw;
+      max-height: 100%;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
       display: flex;
       flex-direction: column;
-      overflow: hidden;
+      overflow-y: auto;
     }
     .cert-card-header {
       display: flex;
@@ -708,24 +717,26 @@
       letter-spacing: 0.02em;
     }
 
-    /* ── HR INTERVIEW QUESTION OVERLAY (SMART FIT BELOW NAV BAR) ── */
+    /* ── HR INTERVIEW QUESTION OVERLAY (EDGE-TO-EDGE VIEWPORT COVER) ── */
     .hr-interview-overlay {
       position: fixed;
-      top: var(--nav-h, 76px);
+      top: 0;
       left: 0;
       right: 0;
       bottom: 0;
       width: 100vw;
-      height: calc(100vh - var(--nav-h, 76px));
+      height: 100vh;
+      padding-top: var(--nav-h, 76px);
+      box-sizing: border-box;
       z-index: 1001;
-      background: rgba(6, 9, 17, 0.95);
-      backdrop-filter: blur(16px);
+      background: #090e18;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 12px;
-      box-sizing: border-box;
-      overflow: hidden;
+      padding-left: 0;
+      padding-right: 0;
+      padding-bottom: 0;
+      margin: 0;
       opacity: 0;
       visibility: hidden;
       pointer-events: none;
@@ -741,30 +752,31 @@
       transform: scale(1) translateY(0);
     }
     .hr-interview-card {
-      position: relative;
-      width: 100%;
-      max-width: 1000px;
+      position: absolute;
+      inset: 0;
+      width: 100vw;
       height: 100%;
-      max-height: calc(100vh - var(--nav-h, 76px) - 24px);
-      background: radial-gradient(circle at 50% 0%, #151d2c 0%, #090e18 100%);
-      border: 1px solid rgba(56, 189, 248, 0.4);
-      border-radius: 16px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+      max-width: 100vw;
+      max-height: 100%;
+      background: #090e18;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 12px;
+      padding: 0;
       overflow: hidden;
     }
     .hr-exit-btn-top {
       position: absolute;
-      top: 14px;
-      right: 20px;
+      top: 16px;
+      right: 24px;
       z-index: 10;
     }
     .hr-interview-img-wrapper {
-      width: 100%;
+      width: 100vw;
       height: 100%;
       display: flex;
       align-items: center;
@@ -776,27 +788,29 @@
       max-width: 100%;
       max-height: 100%;
       object-fit: contain;
-      border-radius: 12px;
+      border-radius: 0;
     }
 
-    /* ── INTERVIEW TEST PORTAL DEMO OVERLAY (SMART FIT BELOW NAV BAR) ── */
+    /* ── INTERVIEW TEST PORTAL DEMO OVERLAY (EDGE-TO-EDGE VIEWPORT COVER) ── */
     .test-portal-overlay {
       position: fixed;
-      top: var(--nav-h, 76px);
+      top: 0;
       left: 0;
       right: 0;
       bottom: 0;
       width: 100vw;
-      height: calc(100vh - var(--nav-h, 76px));
+      height: 100vh;
+      padding-top: var(--nav-h, 76px);
+      box-sizing: border-box;
       z-index: 1001;
-      background: rgba(6, 9, 17, 0.95);
-      backdrop-filter: blur(16px);
+      background: #0d131d;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 12px;
-      box-sizing: border-box;
-      overflow: hidden;
+      padding-left: 0;
+      padding-right: 0;
+      padding-bottom: 0;
+      margin: 0;
       opacity: 0;
       visibility: hidden;
       pointer-events: none;
@@ -814,15 +828,16 @@
     }
 
     .test-portal-card {
-      position: relative;
-      width: 100%;
-      max-width: 1140px;
+      position: absolute;
+      inset: 0;
+      width: 100vw;
       height: 100%;
-      max-height: calc(100vh - var(--nav-h, 76px) - 24px);
+      max-width: 100vw;
+      max-height: 100%;
       background: #0d131d;
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      border-radius: 14px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -1069,26 +1084,22 @@
       box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
     }
 
-    /* ── NARRATION SHOWCASE STAGE (SMART FIT BELOW NAV BAR) ── */
+    /* ── NARRATION SHOWCASE STAGE (ZERO GAP FLUSH FIT BELOW NAV BAR) ── */
     .narration-showcase-stage {
       position: fixed;
-      top: var(--nav-h, 76px);
+      top: 0;
       left: 0;
       right: 0;
       bottom: 0;
       width: 100vw;
-      height: calc(100vh - var(--nav-h, 76px));
-      z-index: 1001;
+      height: 100vh;
+      z-index: 998;
       pointer-events: none;
       opacity: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 12px;
-      box-sizing: border-box;
+      padding: 0;
+      margin: 0;
       overflow: hidden;
-      background: rgba(6, 9, 17, 0.95);
-      backdrop-filter: blur(16px);
+      background: #080c14;
       transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
@@ -1097,25 +1108,29 @@
     }
 
     .narration-showcase-card {
-      position: relative;
-      width: 100%;
-      max-width: 1080px;
+      position: absolute;
+      inset: 0;
+      width: 100vw;
       height: 100%;
-      max-height: calc(100vh - var(--nav-h, 76px) - 24px);
-      border-radius: 16px;
+      max-width: 100vw;
+      max-height: 100%;
+      border-radius: 0;
       overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 30px rgba(56, 189, 248, 0.15);
-      background: #0b111e;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      border: none;
+      box-shadow: none;
+      background: transparent;
     }
 
     .narration-img {
-      width: 100%;
-      height: 100%;
+      position: absolute;
+      top: var(--nav-h, 76px);
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100vw;
+      height: calc(100vh - var(--nav-h, 76px));
       object-fit: cover;
-      border-radius: 16px;
+      border-radius: 0;
       will-change: transform, opacity, filter;
     }
 

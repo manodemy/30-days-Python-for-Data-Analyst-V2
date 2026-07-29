@@ -3420,28 +3420,6 @@
     function closeCertDemoOverlay() {
       stopCertShowcaseAnimation();
     }
-      var stage = document.getElementById('narrationShowcaseStage');
-      var card = document.querySelector('.narration-showcase-card');
-      var clockCard = document.getElementById('roadmap-root');
-      var testPortal = document.getElementById('testPortalOverlay');
-
-      if (nav) nav.classList.remove('nav-anim-p1', 'nav-anim-p2');
-      if (stage) {
-        stage.classList.remove('active', 'transition-img2', 'phase-5-dissolve', 'phase-5-card');
-        stage.style.alignItems = ''; stage.style.justifyContent = ''; stage.style.padding = '';
-      }
-      if (card) {
-        card.classList.remove('img2-active');
-        card.style.cssText = '';
-      }
-      if (clockCard) {
-        clockCard.classList.remove('narration-roadmap-glow');
-        var btns = clockCard.querySelectorAll('.rm-legendBtn');
-        btns.forEach(function(b) { b.classList.remove('narration-pill-glow'); });
-      }
-      if (testPortal) testPortal.classList.remove('active');
-      document.body.classList.remove('narration-active', 'phase-5-active');
-    }
 
     function openTestDemoPortal() {
       var testPortal = document.getElementById('testPortalOverlay');

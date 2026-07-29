@@ -2722,6 +2722,155 @@
 
   <!-- PWA SW Registration with Instant Auto-Update & Cache Purge -->
   <script>
+    var _navP1Timer = null, _navP2Timer = null, _navP3Timer = null, _navP4Timer = null;
+    var _navP5Timer = null, _navP6Timer = null, _navP7Timer = null, _navP8Timer = null;
+    var _navP9Timer = null, _navP10Timer = null, _navEndTimer = null;
+
+    function startNavIntroAnimation() {
+      stopNavIntroAnimation();
+
+      var nav = document.querySelector('.nav');
+      var stage = document.getElementById('narrationShowcaseStage');
+      var card = document.querySelector('.narration-showcase-card');
+      var badgeText = document.getElementById('narrationBadgeText');
+
+      if (!nav) return;
+
+      document.body.classList.add('narration-active');
+
+      // Phase 1 (0s - 1.58s): Logo centered in nav
+      nav.classList.remove('nav-anim-p2');
+      nav.classList.add('nav-anim-p1');
+
+      // Phase 2 (1.58s - 4.8s): Logo left, audio pill centered
+      _navP1Timer = setTimeout(function () {
+        nav.classList.remove('nav-anim-p1');
+        nav.classList.add('nav-anim-p2');
+      }, 1580);
+
+      // Phase 3 (4.8s - 8.34s): Image 1 below nav bar
+      _navP2Timer = setTimeout(function () {
+        if (stage) {
+          stage.classList.remove('transition-img2');
+          stage.classList.add('active');
+        }
+        if (card) card.classList.remove('img2-active');
+        if (badgeText) badgeText.innerHTML = '🌱 COMPLETE BEGINNER BREAKING INTO DATA';
+      }, 4800);
+
+      // Phase 4 (8.34s - 12.54s): Transition to Image 2
+      _navP3Timer = setTimeout(function () {
+        if (stage) stage.classList.add('transition-img2');
+        if (card) card.classList.add('img2-active');
+        if (badgeText) badgeText.innerHTML = '🎯 PRACTICING ANALYST TECHNICAL INTERVIEWS';
+      }, 8340);
+
+      // Phase 5 (12.54s - 15.58s): Dual Slide & Center Zoom-Out
+      _navP4Timer = setTimeout(function() {
+        document.body.classList.add('phase-5-active');
+        if (stage) stage.classList.add('phase-5-dissolve');
+        if (badgeText) badgeText.innerHTML = '✨ BUILT SPECIFICALLY FOR YOU';
+      }, 12540);
+
+      // Phase 6.1 (15.58s - 19.22s): Highlight Clock Card
+      _navP5Timer = setTimeout(function() {
+        var clockCard = document.getElementById('roadmap-root');
+        if (clockCard) clockCard.classList.add('narration-roadmap-glow');
+      }, 15580);
+
+      // Phase 6.2 (19.22s - 22.28s): Jump Clock to Day 1 & Highlight SQL Pill
+      _navP6Timer = setTimeout(function() {
+        var sqlBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="SQL"]');
+        if (sqlBtn) sqlBtn.classList.add('narration-pill-glow');
+        if (window.ManodemyRoadmap && window.ManodemyRoadmap.jumpToPhase) {
+          window.ManodemyRoadmap.jumpToPhase('SQL');
+        }
+      }, 19220);
+
+      // Phase 6.3 (22.28s - 25.04s): Jump Clock to Day 19 & Highlight Excel Pill
+      _navP7Timer = setTimeout(function() {
+        var sqlBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="SQL"]');
+        var xlBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="Excel"]');
+        if (sqlBtn) sqlBtn.classList.remove('narration-pill-glow');
+        if (xlBtn) xlBtn.classList.add('narration-pill-glow');
+        if (window.ManodemyRoadmap && window.ManodemyRoadmap.jumpToPhase) {
+          window.ManodemyRoadmap.jumpToPhase('Excel');
+        }
+      }, 22280);
+
+      // Phase 6.4 (25.04s - 29.12s): Jump Clock to Day 31 & Highlight Python Pill
+      _navP8Timer = setTimeout(function() {
+        var xlBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="Excel"]');
+        var pyBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="Python"]');
+        if (xlBtn) xlBtn.classList.remove('narration-pill-glow');
+        if (pyBtn) pyBtn.classList.add('narration-pill-glow');
+        if (window.ManodemyRoadmap && window.ManodemyRoadmap.jumpToPhase) {
+          window.ManodemyRoadmap.jumpToPhase('Python');
+        }
+      }, 25040);
+
+      // Phase 7 (29.12s - 39.88s): Open Test Portal Demo
+      _navP9Timer = setTimeout(function() {
+        var clockCard = document.getElementById('roadmap-root');
+        var pyBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="Python"]');
+        if (clockCard) clockCard.classList.remove('narration-roadmap-glow');
+        if (pyBtn) pyBtn.classList.remove('narration-pill-glow');
+        var testPortal = document.getElementById('testPortalOverlay');
+        if (testPortal) testPortal.classList.add('active');
+      }, 29120);
+
+      // Phase 8 (39.88s): Close Test Portal Demo
+      _navP10Timer = setTimeout(function() {
+        var testPortal = document.getElementById('testPortalOverlay');
+        if (testPortal) testPortal.classList.remove('active');
+      }, 39880);
+
+      // End (55.44s): Full narration finish
+      _navEndTimer = setTimeout(function() {
+        stopNavIntroAnimation();
+        resetAllAudioState();
+      }, 55440);
+    }
+
+    function stopNavIntroAnimation() {
+      clearTimeout(_navP1Timer); clearTimeout(_navP2Timer); clearTimeout(_navP3Timer);
+      clearTimeout(_navP4Timer); clearTimeout(_navP5Timer); clearTimeout(_navP6Timer);
+      clearTimeout(_navP7Timer); clearTimeout(_navP8Timer); clearTimeout(_navP9Timer);
+      clearTimeout(_navP10Timer); clearTimeout(_navEndTimer);
+
+      var nav = document.querySelector('.nav');
+      var stage = document.getElementById('narrationShowcaseStage');
+      var card = document.querySelector('.narration-showcase-card');
+      var clockCard = document.getElementById('roadmap-root');
+      var testPortal = document.getElementById('testPortalOverlay');
+
+      if (nav) nav.classList.remove('nav-anim-p1', 'nav-anim-p2');
+      if (stage) {
+        stage.classList.remove('active', 'transition-img2', 'phase-5-dissolve', 'phase-5-card');
+        stage.style.alignItems = ''; stage.style.justifyContent = ''; stage.style.padding = '';
+      }
+      if (card) {
+        card.classList.remove('img2-active');
+        card.style.cssText = '';
+      }
+      if (clockCard) {
+        clockCard.classList.remove('narration-roadmap-glow');
+        var btns = clockCard.querySelectorAll('.rm-legendBtn');
+        btns.forEach(function(b) { b.classList.remove('narration-pill-glow'); });
+      }
+      if (testPortal) testPortal.classList.remove('active');
+      document.body.classList.remove('narration-active', 'phase-5-active');
+    }
+
+    function openTestDemoPortal() {
+      var testPortal = document.getElementById('testPortalOverlay');
+      if (testPortal) testPortal.classList.add('active');
+    }
+    function closeTestDemoPortal() {
+      var testPortal = document.getElementById('testPortalOverlay');
+      if (testPortal) testPortal.classList.remove('active');
+    }
+
     function playOrPauseIntroAudio() {
       var audio = document.getElementById('navIntroAudioElement');
       var circle = document.getElementById('navCenterPlayCircle');

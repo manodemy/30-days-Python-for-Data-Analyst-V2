@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build-cache-bust-21000 -->
+<!-- build-cache-bust-22000 -->
 <html lang="en">
 
 <head>
@@ -232,10 +232,13 @@
 
     /* Track Pills Highlight */
     #roadmap-root .rm-legendBtn.narration-pill-glow {
-      transform: scale(1.15) !important;
-      box-shadow: 0 0 25px currentColor, inset 0 0 12px currentColor !important;
+      position: relative;
+      z-index: 10 !important;
+      transform: translateY(-2px) !important;
+      box-shadow: 0 0 16px currentColor, inset 0 0 8px currentColor !important;
       border-color: currentColor !important;
-      transition: all 0.4s ease !important;
+      background: rgba(255, 255, 255, 0.08) !important;
+      transition: all 0.35s ease !important;
     }
 
     /* ── NARRATION SHOWCASE STAGE (BELOW NAV BAR) ────────────────── */
@@ -878,18 +881,18 @@
                 </div>
                 <!-- Bottom Row: legend buttons -->
                 <div
-                  style="display:flex; gap:8px; align-items:center; flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; width:100%; max-width:100%; box-sizing:border-box;">
-                  <button class="rm-legendBtn" data-phase="SQL">
+                  style="display:flex; gap:6px; align-items:center; justify-content:space-between; flex-wrap:nowrap; width:100%; max-width:100%; box-sizing:border-box; padding:4px 0; overflow:visible !important;">
+                  <button class="rm-legendBtn" data-phase="SQL" style="flex:1 1 0; justify-content:center; padding:6px 6px;">
                     <span
                       style="width:7px;height:7px;border-radius:50%;background:var(--sql);box-shadow:0 0 6px var(--sql);flex:none;"></span>SQL
                     <span style="color:var(--ink-faint); font-weight:400;">· Days 1–18</span>
                   </button>
-                  <button class="rm-legendBtn" data-phase="Excel">
+                  <button class="rm-legendBtn" data-phase="Excel" style="flex:1 1 0; justify-content:center; padding:6px 6px;">
                     <span
                       style="width:7px;height:7px;border-radius:50%;background:var(--excel);box-shadow:0 0 6px var(--excel);flex:none;"></span>Excel
                     <span style="color:var(--ink-faint); font-weight:400;">· Days 19–30</span>
                   </button>
-                  <button class="rm-legendBtn" data-phase="Python">
+                  <button class="rm-legendBtn" data-phase="Python" style="flex:1 1 0; justify-content:center; padding:6px 6px;">
                     <span
                       style="width:7px;height:7px;border-radius:50%;background:var(--py);box-shadow:0 0 6px var(--py);flex:none;"></span>Python
                     <span style="color:var(--ink-faint); font-weight:400;">· Days 31–60</span>

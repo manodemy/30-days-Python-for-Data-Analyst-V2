@@ -1067,49 +1067,28 @@
     }
 
     /* ── HR INTERVIEW QUESTION OVERLAY ───────────────────────────── */
+    /* ── HR INTERVIEW OVERLAY — full bleed, no card container ── */
     .hr-interview-overlay {
       position: fixed;
       top: 76px;
       left: 0;
       right: 0;
       bottom: 0;
-      z-index: 1001;
-      background: rgba(5, 8, 14, 0.94);
-      backdrop-filter: blur(20px);
+      z-index: 1002;
+      background: #060a12;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
+      align-items: stretch;
+      justify-content: stretch;
       opacity: 0;
       visibility: hidden;
       pointer-events: none;
-      transform: scale(0.94) translateY(20px);
-      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-                  transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-                  visibility 0.5s ease;
+      transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+                  visibility 0.55s ease;
     }
     .hr-interview-overlay.active {
       opacity: 1;
       visibility: visible;
       pointer-events: auto;
-      transform: scale(1) translateY(0);
-    }
-    .hr-interview-card {
-      position: relative;
-      width: 100%;
-      max-width: 980px;
-      height: calc(100vh - 76px - 40px);
-      max-height: 580px;
-      background: radial-gradient(circle at 50% 0%, #151d2c 0%, #090e18 100%);
-      border: 1px solid rgba(56, 189, 248, 0.4);
-      border-radius: 20px;
-      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.9), 0 0 60px rgba(56, 189, 248, 0.2);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      overflow: hidden;
     }
     .hr-exit-btn-top {
       position: absolute;
@@ -1117,22 +1096,12 @@
       right: 20px;
       z-index: 10;
     }
-    .hr-interview-img-wrapper {
+    .hr-interview-img {
       width: 100%;
       height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      border-radius: 12px;
-      overflow: hidden;
-    }
-    .hr-interview-img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      object-fit: cover;
+      object-position: center top;
+      display: block;
     }
 
     /* ── INTERVIEW TEST PORTAL DEMO OVERLAY (2-STAGE: LESSON → TEST) ── */
@@ -3801,10 +3770,9 @@
         }
       }, 33300);
 
-      // Phase 8 (39.92s): Scroll back to top for Certificate Showcase, then start cert animation
+      // Phase 8 (39.92s): Certificate Showcase fades in over current view — no scroll needed (position:fixed)
       _navCertStartTimer = setTimeout(function() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        setTimeout(function() { startCertShowcaseAnimation(); }, 500);
+        startCertShowcaseAnimation();
       }, 39920);
 
       // Phase 8.1 (40.30s): Reset iframe test portal back to lesson view (cleanup)
@@ -4506,14 +4474,10 @@
     </div>
   </div>
 
-  <!-- ── HR INTERVIEW QUESTION DEMO OVERLAY ──────────────────────── -->
+  <!-- ── HR INTERVIEW QUESTION DEMO OVERLAY — full bleed ──────────── -->
   <div class="hr-interview-overlay" id="hrInterviewOverlay">
-    <div class="hr-interview-card">
-      <button class="cert-exit-btn hr-exit-btn-top" onclick="closeHrInterviewOverlay()">✕ Exit</button>
-      <div class="hr-interview-img-wrapper">
-        <img src="/landing_v2/hr_interview_question.jpg" alt="HR Interview Question: How would you rate yourself in SQL, Excel, and Python?" class="hr-interview-img" />
-      </div>
-    </div>
+    <button class="cert-exit-btn hr-exit-btn-top" onclick="closeHrInterviewOverlay()">✕ Exit</button>
+    <img src="/landing_v2/hr_interview_question.jpg" alt="HR Interview Question: How would you rate yourself in SQL, Excel, and Python?" class="hr-interview-img" />
   </div>
 
 </body>

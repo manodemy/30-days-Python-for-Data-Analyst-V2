@@ -1140,8 +1140,7 @@
       box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
 
-    /* ── INTERVIEW TEST PORTAL DEMO OVERLAY (SMART FIT BELOW NAV BAR - PERFECT RIGHT PADDING) ── */
-    /* ── INTERVIEW TEST PORTAL DEMO OVERLAY (EXACT FIT BELOW NAV BAR - ZERO GAP) ── */
+    /* ── INTERVIEW TEST PORTAL DEMO OVERLAY (2-STAGE: LESSON → TEST) ── */
     .test-portal-overlay {
       position: fixed;
       top: 0;
@@ -1152,29 +1151,19 @@
       height: 100vh;
       padding-top: var(--nav-h, 76px);
       box-sizing: border-box;
-      z-index: 1001;
+      z-index: 9999;
       background: #0d131d;
-      display: flex;
+      display: none;
       flex-direction: column;
       padding-left: 0;
       padding-right: 0;
       padding-bottom: 0;
       margin: 0;
       overflow: hidden;
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-      transform: scale(0.98) translateY(8px);
-      transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
-                  transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
-                  visibility 0.45s ease;
     }
 
     .test-portal-overlay.active {
-      opacity: 1;
-      visibility: visible;
-      pointer-events: auto;
-      transform: scale(1) translateY(0);
+      display: flex;
     }
 
     .test-portal-card {
@@ -3669,6 +3658,7 @@
     var _navP1Timer = null, _navP2Timer = null, _navP3Timer = null, _navP4Timer = null;
     var _navP5Timer = null, _navP6Timer = null, _navP7Timer = null, _navP8Timer = null;
     var _navP9Timer = null, _navP10Timer = null, _navCertStartTimer = null, _navHrStartTimer = null, _navCertCloseTimer = null, _navEndTimer = null;
+    var _navCursorMoveTimer = null, _navCursorClickTimer = null, _navStageSwitchTimer = null;
 
     function startNavIntroAnimation() {
       stopNavIntroAnimation();
@@ -3859,6 +3849,12 @@
         }
       }
       if (testPortal) testPortal.classList.remove('active');
+      var s1 = document.getElementById('portalStage1');
+      var s2 = document.getElementById('portalStage2');
+      var cursor = document.getElementById('demoMouseCursor');
+      if (s1) s1.classList.remove('active');
+      if (s2) s2.classList.remove('active');
+      if (cursor) cursor.classList.remove('moving', 'clicking');
       document.body.classList.remove('narration-active', 'phase-5-active');
     }
 
@@ -4368,7 +4364,7 @@
   <div class="test-portal-overlay" id="testPortalOverlay">
     
     <!-- Stage 1: Main Lesson & Coding Workspace (Image 1) -->
-    <div class="portal-stage stage-1-lesson active" id="portalStage1">
+    <div class="portal-stage stage-1-lesson" id="portalStage1">
       <!-- Top Header -->
       <div class="ls-hdr">
         <div class="ls-hdr-left">

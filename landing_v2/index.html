@@ -3450,7 +3450,7 @@
           console.error("Audio playback failed:", e);
         });
       } else {
-        audio.pause();
+        if (audio && typeof audio.pause === 'function') audio.pause();
         audio.currentTime = 0;
         if (circle) circle.innerHTML = '<svg width="12" height="14" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 6L1.5 10.3301L1.5 1.66987L9 6Z" fill="currentColor"/></svg>';
         if (hook) hook.classList.remove('playing');
@@ -3463,7 +3463,7 @@
       var circle = document.getElementById('navCenterPlayCircle');
       var hook = document.getElementById('navCenterAudioHook');
 
-      if (audio) {
+      if (audio && typeof audio.pause === 'function') {
         audio.pause();
         audio.currentTime = 0;
       }

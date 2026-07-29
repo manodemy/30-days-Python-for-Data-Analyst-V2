@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build-cache-bust-22000 -->
+<!-- build-cache-bust-23000 -->
 <html lang="en">
 
 <head>
@@ -239,6 +239,290 @@
       border-color: currentColor !important;
       background: rgba(255, 255, 255, 0.08) !important;
       transition: all 0.35s ease !important;
+    }
+
+    /* ── INTERVIEW TEST PORTAL DEMO OVERLAY ────────────────────────────── */
+    .test-portal-overlay {
+      position: fixed;
+      top: 76px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 999;
+      background: rgba(7, 11, 17, 0.85);
+      backdrop-filter: blur(14px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: scale(0.94) translateY(15px);
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                  visibility 0.5s ease;
+    }
+
+    .test-portal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: scale(1) translateY(0);
+    }
+
+    .test-portal-card {
+      width: 100%;
+      max-width: 1080px;
+      height: min(640px, calc(100vh - 100px));
+      background: #0d131d;
+      border: 1px solid rgba(0, 212, 255, 0.25);
+      border-radius: 16px;
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.7), 0 0 40px rgba(0, 212, 255, 0.15);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .test-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      background: #070b11;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      gap: 12px;
+    }
+
+    .test-stats-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .test-stat-pill {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 4px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .test-stat-pill .label {
+      color: #94a3b8;
+      font-size: 9px;
+      letter-spacing: 0.05em;
+    }
+
+    .test-stat-pill .val {
+      color: #38bdf8;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .test-title-text {
+      font-size: 14px;
+      font-weight: 800;
+      color: #f8fafc;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .test-hdr-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .test-timer-pill {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .test-exit-btn {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #f87171;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .test-exit-btn:hover {
+      background: rgba(239, 68, 68, 0.25);
+    }
+
+    .test-portal-body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .test-sidebar {
+      width: 70px;
+      background: #070b11;
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 10px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      overflow-y: auto;
+    }
+
+    .q-btn {
+      width: 100%;
+      height: 32px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      color: #64748b;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .q-btn.active {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: #38bdf8;
+      color: #38bdf8;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+    }
+
+    .test-main-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #0b111a;
+      overflow: hidden;
+    }
+
+    .test-question-header {
+      padding: 16px 20px;
+      background: #ffffff;
+      color: #0f172a;
+      font-size: 14px;
+      font-weight: 700;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .test-question-header code {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      color: #334155;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+    }
+
+    .test-editor-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+      background: #111827;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .test-editor-toolbar .q-counter {
+      color: #64748b;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .btn-run-query {
+      background: #059669;
+      color: #ffffff;
+      border: none;
+      padding: 5px 14px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-clear-query {
+      background: rgba(255, 255, 255, 0.05);
+      color: #94a3b8;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .test-editor-pane {
+      flex: 1;
+      background: #1e293b;
+      padding: 16px;
+      color: #94a3b8;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .test-terminal-pane {
+      height: 100px;
+      background: #030712;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 12px 16px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .test-terminal-pane .term-lbl {
+      color: #475569;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+
+    .test-terminal-pane .term-msg {
+      color: #34d399;
+      font-size: 12px;
+    }
+
+    .test-bottom-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px;
+      background: #070b11;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .btn-submit-test {
+      background: #06b6d4;
+      color: #03141a;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
     }
 
     /* ── NARRATION SHOWCASE STAGE (BELOW NAV BAR) ────────────────── */
@@ -2699,13 +2983,22 @@
         }
       }, 25040);
 
-      // ── Phase 6 End (29.12s): Fade out clock card glow
+      // ── Phase 6 End & Phase 7 Start (29.12s - 39.88s): "Every day, you'll take a 25-question interview-based test..." -> Open Test Portal Demo
       _navP9Timer = setTimeout(function() {
         var clockCard = document.getElementById('roadmap-root');
         var pyBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="Python"]');
         if (clockCard) clockCard.classList.remove('narration-roadmap-glow');
         if (pyBtn) pyBtn.classList.remove('narration-pill-glow');
+
+        var testPortal = document.getElementById('testPortalOverlay');
+        if (testPortal) testPortal.classList.add('active');
       }, 29120);
+
+      // ── Phase 8 (39.88s): Close Test Portal Demo as next narration line begins
+      _navP10Timer = setTimeout(function() {
+        var testPortal = document.getElementById('testPortalOverlay');
+        if (testPortal) testPortal.classList.remove('active');
+      }, 39880);
 
       // ── End (55.44s): Full continuous audio narration finish
       _navEndTimer = setTimeout(function() {
@@ -2717,12 +3010,14 @@
       clearTimeout(_navP1Timer); clearTimeout(_navP2Timer); clearTimeout(_navP3Timer);
       clearTimeout(_navP4Timer); clearTimeout(_navP5Timer); clearTimeout(_navP6Timer);
       clearTimeout(_navP7Timer); clearTimeout(_navP8Timer); clearTimeout(_navP9Timer);
+      clearTimeout(_navP10Timer);
       clearTimeout(_navEndTimer);
 
       var nav = document.querySelector('.nav');
       var stage = document.getElementById('narrationShowcaseStage');
       var card = document.querySelector('.narration-showcase-card');
       var clockCard = document.getElementById('roadmap-root');
+      var testPortal = document.getElementById('testPortalOverlay');
 
       if (nav) nav.classList.remove('nav-anim-p1', 'nav-anim-p2');
       if (stage) {
@@ -2738,7 +3033,17 @@
         var btns = clockCard.querySelectorAll('.rm-legendBtn');
         btns.forEach(function(b) { b.classList.remove('narration-pill-glow'); });
       }
+      if (testPortal) testPortal.classList.remove('active');
       document.body.classList.remove('narration-active', 'phase-5-active');
+    }
+
+    function openTestDemoPortal() {
+      var testPortal = document.getElementById('testPortalOverlay');
+      if (testPortal) testPortal.classList.add('active');
+    }
+    function closeTestDemoPortal() {
+      var testPortal = document.getElementById('testPortalOverlay');
+      if (testPortal) testPortal.classList.remove('active');
     }
     // ──────────────────────────────────────────────────────────────────────────
 
@@ -2829,7 +3134,88 @@
       if (audio && !audio.paused) audio.pause();
       resetAllAudioState();
     }
-  </script>
+  <!-- ── INTERVIEW TEST PORTAL DEMO OVERLAY ────────────────────────── -->
+  <div class="test-portal-overlay" id="testPortalOverlay">
+    <div class="test-portal-card">
+      <!-- Top Bar -->
+      <div class="test-header">
+        <div class="test-stats-row">
+          <div class="test-stat-pill">
+            <span class="label">ATTEMPTED</span>
+            <span class="val">0 / 25</span>
+          </div>
+          <div class="test-stat-pill">
+            <span class="label">BEST SCORE</span>
+            <span class="val">0 / 25</span>
+          </div>
+        </div>
+
+        <div class="test-title-text">
+          📄 Day 01 — SQL Interview Test
+        </div>
+
+        <div class="test-hdr-right">
+          <button class="test-stat-pill" style="color:#e2e8f0; cursor:pointer;" onclick="openTestDemoPortal()">
+            <svg width="12" height="12" viewBox="0 0 14 14" fill="none" style="margin-right:4px;"><path d="M1.5 1.5H5.5V5.5H1.5V1.5Z" stroke="currentColor" stroke-width="1.5"/><path d="M8.5 1.5H12.5V5.5H8.5V1.5Z" stroke="currentColor" stroke-width="1.5"/><path d="M1.5 8.5H5.5V12.5H1.5V8.5Z" stroke="currentColor" stroke-width="1.5"/><path d="M8.5 8.5H12.5V12.5H8.5V8.5Z" stroke="currentColor" stroke-width="1.5"/></svg>
+            Score Card
+          </button>
+          <div class="test-timer-pill">
+            ⏳ 119:45
+          </div>
+          <button class="test-exit-btn" onclick="closeTestDemoPortal()">✕ Exit Test</button>
+        </div>
+      </div>
+
+      <!-- Test Body Split -->
+      <div class="test-portal-body">
+        <!-- Sidebar Q1-Q11 -->
+        <div class="test-sidebar">
+          <div class="q-btn active">Q1</div>
+          <div class="q-btn">Q2</div>
+          <div class="q-btn">Q3</div>
+          <div class="q-btn">Q4</div>
+          <div class="q-btn">Q5</div>
+          <div class="q-btn">Q6</div>
+          <div class="q-btn">Q7</div>
+          <div class="q-btn">Q8</div>
+          <div class="q-btn">Q9</div>
+          <div class="q-btn">Q10</div>
+          <div class="q-btn">Q11</div>
+        </div>
+
+        <!-- Main Test Area -->
+        <div class="test-main-area">
+          <div class="test-question-header">
+            Q1. Retrieve all columns and rows from <code>employees</code>.
+          </div>
+
+          <div class="test-editor-toolbar">
+            <span class="q-counter">Q1 / 25</span>
+            <div style="display:flex; gap:8px;">
+              <button class="btn-run-query">▶ Run</button>
+              <button class="btn-clear-query">✕ Clear</button>
+            </div>
+          </div>
+
+          <div class="test-editor-pane">
+            <span style="color:#64748b;">1 |</span> <span style="color:#38bdf8;">-- Write your answer here</span><br>
+            <span style="color:#64748b;">2 |</span> 
+          </div>
+
+          <div class="test-terminal-pane">
+            <div class="term-lbl">TERMINAL OUTPUT</div>
+            <div class="term-msg">⚡ Write your query and click 'Run' to verify your answer!</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="test-bottom-bar">
+        <span style="color:#64748b; font-size:12px; font-weight:700;">Attempted: 0 / 25</span>
+        <button class="btn-submit-test">Submit Test</button>
+      </div>
+    </div>
+  </div>
 
 </body>
 

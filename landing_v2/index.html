@@ -694,17 +694,17 @@
     /* ── CERTIFICATE & MARKS SHOWCASE OVERLAY (PREMIUM REDESIGN) ───────── */
     .cert-showcase-overlay {
       position: fixed;
-      top: var(--nav-h);
+      top: 0;
       left: 0;
       right: 0;
       bottom: 0;
       z-index: 1001;
-      background: rgba(5, 8, 14, 0.94);
+      background: rgba(5, 8, 14, 0.97);
       backdrop-filter: blur(20px);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: var(--nav-h) 20px 20px 20px;
       opacity: 0;
       visibility: hidden;
       pointer-events: none;
@@ -1070,7 +1070,7 @@
     /* ── HR INTERVIEW OVERLAY — full bleed, no card container ── */
     .hr-interview-overlay {
       position: fixed;
-      top: var(--nav-h);
+      top: 0;
       left: 0;
       right: 0;
       bottom: 0;
@@ -1079,6 +1079,7 @@
       display: flex;
       align-items: stretch;
       justify-content: stretch;
+      padding-top: var(--nav-h);
       opacity: 0;
       visibility: hidden;
       pointer-events: none;

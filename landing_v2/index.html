@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build-cache-bust-23000 -->
+<!-- build-cache-bust-24000 -->
 <html lang="en">
 
 <head>
@@ -2722,6 +2722,53 @@
 
   <!-- PWA SW Registration with Instant Auto-Update & Cache Purge -->
   <script>
+    function playOrPauseIntroAudio() {
+      var audio = document.getElementById('navIntroAudioElement');
+      var circle = document.getElementById('navCenterPlayCircle');
+      var hook = document.getElementById('navCenterAudioHook');
+
+      if (!audio) return;
+
+      if (audio.paused) {
+        audio.play().then(function() {
+          if (circle) circle.innerHTML = '<svg width="12" height="14" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="3" height="12" rx="1.5" fill="currentColor"/><rect x="6" width="3" height="12" rx="1.5" fill="currentColor"/></svg>';
+          if (hook) hook.classList.add('playing');
+          startNavIntroAnimation();
+        }).catch(function(e) {
+          console.error("Audio playback failed:", e);
+        });
+      } else {
+        audio.pause();
+        audio.currentTime = 0;
+        if (circle) circle.innerHTML = '<svg width="12" height="14" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 6L1.5 10.3301L1.5 1.66987L9 6Z" fill="currentColor"/></svg>';
+        if (hook) hook.classList.remove('playing');
+        stopNavIntroAnimation();
+      }
+    }
+
+    function resetAllAudioState() {
+      var audio = document.getElementById('navIntroAudioElement');
+      var circle = document.getElementById('navCenterPlayCircle');
+      var hook = document.getElementById('navCenterAudioHook');
+
+      if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+      }
+      if (circle) circle.innerHTML = '<svg width="12" height="14" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 6L1.5 10.3301L1.5 1.66987L9 6Z" fill="currentColor"/></svg>';
+      if (hook) hook.classList.remove('playing');
+      stopNavIntroAnimation();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var audio = document.getElementById('navIntroAudioElement');
+      if (audio) {
+        audio.onended = function() {
+          resetAllAudioState();
+        };
+      }
+    });
+
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.getRegistrations().then(regs => {
         for (let reg of regs) {

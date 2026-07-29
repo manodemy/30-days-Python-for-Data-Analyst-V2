@@ -291,36 +291,36 @@
     .nav-audio-timeline.dragging .nav-audio-thumb {
       transform: translate(-50%, -50%) scale(1);
     }
-    /* Time display — top-right dark glassmorphic badge */
+    /* Time display — clean text above right edge of timeline line (visible on hover/drag) */
     .nav-audio-time-display {
       position: absolute;
-      bottom: 8px;
-      right: 16px;
+      bottom: 5px;
+      right: 20px;
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
       font-family: 'SF Mono', 'Fira Code', 'Roboto Mono', monospace;
       font-size: 11px;
       font-weight: 700;
-      color: #38bdf8;
-      background: rgba(15, 23, 42, 0.85);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      padding: 3px 10px;
-      border-radius: 20px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2), 0 0 10px rgba(56, 189, 248, 0.15);
-      backdrop-filter: blur(8px);
-      letter-spacing: 0.05em;
+      color: #0284c7;
+      text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9);
+      letter-spacing: 0.04em;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.4s ease;
+      transition: opacity 0.25s ease;
       z-index: 10;
     }
     .nav-audio-time-sep {
-      color: rgba(255, 255, 255, 0.35);
+      color: #94a3b8;
       font-weight: 400;
     }
     #navAudioTotal {
-      color: #94a3b8;
+      color: #64748b;
+    }
+    /* Reveal time readout on hover or drag of the timeline bar */
+    .nav-audio-timeline:hover + .nav-audio-time-display,
+    .nav-audio-timeline.dragging + .nav-audio-time-display {
+      opacity: 1;
     }
     /* ── CERTIFICATE & MARKS SHOWCASE OVERLAY ────────────────────────── */
     .cert-showcase-overlay {
@@ -3778,247 +3778,6 @@
       </div>
     </div>
   </div>
-
-  <script>
-    // ── NAV INTRO & IMAGE SHOWCASE ANIMATION ──────────────────────────────
-    var _navP1Timer = null, _navP2Timer = null, _navP3Timer = null, _navP4Timer = null;
-    var _navP5Timer = null, _navP6Timer = null, _navP7Timer = null, _navP8Timer = null, _navP9Timer = null, _navEndTimer = null;
-
-    function startNavIntroAnimation() {
-      stopNavIntroAnimation();
-
-      var nav = document.querySelector('.nav');
-      var stage = document.getElementById('narrationShowcaseStage');
-      var card = document.querySelector('.narration-showcase-card');
-      var badgeText = document.getElementById('narrationBadgeText');
-
-      if (!nav) return;
-
-      document.body.classList.add('narration-active');
-
-      // ── Phase 1 (0s - 1.58s): "Welcome to Manodemy's" -> Logo centered in nav
-      nav.classList.remove('nav-anim-p2');
-      nav.classList.add('nav-anim-p1');
-
-      // ── Phase 2 (1.58s - 4.8s): "60-Days Data Analytics Masterclass!" -> Logo left, audio pill centered
-      _navP1Timer = setTimeout(function () {
-        nav.classList.remove('nav-anim-p1');
-        nav.classList.add('nav-anim-p2');
-      }, 1580);
-
-      // ── Phase 3 (4.8s - 8.34s): "Whether you're a complete beginner..." -> Image 1 below nav bar
-      _navP2Timer = setTimeout(function () {
-        if (stage) {
-          stage.classList.remove('transition-img2');
-          stage.classList.add('active');
-        }
-        if (card) card.classList.remove('img2-active');
-        if (badgeText) badgeText.innerHTML = '🌱 COMPLETE BEGINNER BREAKING INTO DATA';
-      }, 4800);
-
-      // ── Phase 4 (8.34s - 12.54s): "or a practicing analyst..." -> Transition to Image 2
-      _navP3Timer = setTimeout(function () {
-        if (stage) stage.classList.add('transition-img2');
-        if (card) card.classList.add('img2-active');
-        if (badgeText) badgeText.innerHTML = '🎯 PRACTICING ANALYST TECHNICAL INTERVIEWS';
-      }, 8340);
-
-      // ── Phase 5 (12.54s - 15.58s): "this masterclass was built specifically for you" -> Dual Slide & Center Zoom-Out
-      _navP4Timer = setTimeout(function() {
-        document.body.classList.add('phase-5-active');
-        if (stage) stage.classList.add('phase-5-dissolve');
-        if (badgeText) badgeText.innerHTML = '✨ BUILT SPECIFICALLY FOR YOU';
-      }, 12540);
-
-      // ── Phase 6.1 (15.58s - 19.22s): "This program is structured as a 60-day learning journey..." -> Highlight Clock Card
-      _navP5Timer = setTimeout(function() {
-        var clockCard = document.getElementById('roadmap-root');
-        if (clockCard) clockCard.classList.add('narration-roadmap-glow');
-      }, 15580);
-
-      // ── Phase 6.2 (19.22s - 22.28s): "In the first 18 days, you'll master SQL" -> Jump Clock to Day 1 & Highlight SQL Pill
-      _navP6Timer = setTimeout(function() {
-        var sqlBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="SQL"]');
-        if (sqlBtn) sqlBtn.classList.add('narration-pill-glow');
-        if (window.ManodemyRoadmap && window.ManodemyRoadmap.jumpToPhase) {
-          window.ManodemyRoadmap.jumpToPhase('SQL');
-        }
-      }, 19220);
-
-      // ── Phase 6.3 (22.28s - 25.04s): "The next 12 days are dedicated to Excel" -> Jump Clock to Day 19 & Highlight Excel Pill
-      _navP7Timer = setTimeout(function() {
-        var sqlBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="SQL"]');
-        var xlBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="Excel"]');
-        if (sqlBtn) sqlBtn.classList.remove('narration-pill-glow');
-        if (xlBtn) xlBtn.classList.add('narration-pill-glow');
-        if (window.ManodemyRoadmap && window.ManodemyRoadmap.jumpToPhase) {
-          window.ManodemyRoadmap.jumpToPhase('Excel');
-        }
-      }, 22280);
-
-      // ── Phase 6.4 (25.04s - 29.12s): "Finally, in the last 30 days, you'll learn Python for Data Analytics" -> Jump Clock to Day 31 & Highlight Python Pill
-      _navP8Timer = setTimeout(function() {
-        var xlBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="Excel"]');
-        var pyBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="Python"]');
-        if (xlBtn) xlBtn.classList.remove('narration-pill-glow');
-        if (pyBtn) pyBtn.classList.add('narration-pill-glow');
-        if (window.ManodemyRoadmap && window.ManodemyRoadmap.jumpToPhase) {
-          window.ManodemyRoadmap.jumpToPhase('Python');
-        }
-      }, 25040);
-
-      // ── Phase 6 End & Phase 7 Start (29.12s - 39.88s): "Every day, you'll take a 25-question interview-based test..." -> Open Test Portal Demo
-      _navP9Timer = setTimeout(function() {
-        var clockCard = document.getElementById('roadmap-root');
-        var pyBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="Python"]');
-        if (clockCard) clockCard.classList.remove('narration-roadmap-glow');
-        if (pyBtn) pyBtn.classList.remove('narration-pill-glow');
-
-        var testPortal = document.getElementById('testPortalOverlay');
-        if (testPortal) testPortal.classList.add('active');
-      }, 29120);
-
-      // ── Phase 8 (39.88s): Close Test Portal Demo as next narration line begins
-      _navP10Timer = setTimeout(function() {
-        var testPortal = document.getElementById('testPortalOverlay');
-        if (testPortal) testPortal.classList.remove('active');
-      }, 39880);
-
-      // ── End (55.44s): Full continuous audio narration finish
-      _navEndTimer = setTimeout(function() {
-        stopNavIntroAnimation();
-      }, 55440);
-    }
-
-    function stopNavIntroAnimation() {
-      clearTimeout(_navP1Timer); clearTimeout(_navP2Timer); clearTimeout(_navP3Timer);
-      clearTimeout(_navP4Timer); clearTimeout(_navP5Timer); clearTimeout(_navP6Timer);
-      clearTimeout(_navP7Timer); clearTimeout(_navP8Timer); clearTimeout(_navP9Timer);
-      clearTimeout(_navP10Timer);
-      clearTimeout(_navEndTimer);
-
-      var nav = document.querySelector('.nav');
-      var stage = document.getElementById('narrationShowcaseStage');
-      var card = document.querySelector('.narration-showcase-card');
-      var clockCard = document.getElementById('roadmap-root');
-      var testPortal = document.getElementById('testPortalOverlay');
-
-      if (nav) nav.classList.remove('nav-anim-p1', 'nav-anim-p2');
-      if (stage) {
-        stage.classList.remove('active', 'transition-img2', 'phase-5-dissolve', 'phase-5-card');
-        stage.style.alignItems = ''; stage.style.justifyContent = ''; stage.style.padding = '';
-      }
-      if (card) {
-        card.classList.remove('img2-active');
-        card.style.cssText = '';
-      }
-      if (clockCard) {
-        clockCard.classList.remove('narration-roadmap-glow');
-        var btns = clockCard.querySelectorAll('.rm-legendBtn');
-        btns.forEach(function(b) { b.classList.remove('narration-pill-glow'); });
-      }
-      if (testPortal) testPortal.classList.remove('active');
-      document.body.classList.remove('narration-active', 'phase-5-active');
-    }
-
-    function openTestDemoPortal() {
-      var testPortal = document.getElementById('testPortalOverlay');
-      if (testPortal) testPortal.classList.add('active');
-    }
-    function closeTestDemoPortal() {
-      var testPortal = document.getElementById('testPortalOverlay');
-      if (testPortal) testPortal.classList.remove('active');
-    }
-    // ──────────────────────────────────────────────────────────────────────────
-
-    function playOrPauseIntroAudio() {
-      var audio = document.getElementById('navIntroAudioElement');
-      if (!audio) {
-        audio = new Audio('/landing_v2/intro_narration.mp3');
-      }
-
-      audio.onended = function () { resetAllAudioState(); stopNavIntroAnimation(); };
-      audio.onpause = function () { resetAllAudioState(); stopNavIntroAnimation(); };
-
-      if (!audio.paused && !audio.ended) {
-        audio.pause();
-        resetAllAudioState();
-        stopNavIntroAnimation();
-      } else {
-        audio.currentTime = 0;
-        var p = audio.play();
-        if (p && p.then) {
-          p.then(function () {
-            setAllPlayingState();
-            startNavIntroAnimation();
-          }).catch(function (err) {
-            console.warn('Primary src failed, fallback:', err);
-            audio.src = '/intro_narration.mp3';
-            audio.play().then(function () {
-              setAllPlayingState();
-              startNavIntroAnimation();
-            }).catch(function (e) {
-              console.error('All audio sources failed:', e);
-              resetAllAudioState();
-            });
-          });
-        } else {
-          setAllPlayingState();
-          startNavIntroAnimation();
-        }
-      }
-    }
-
-    function setAllPlayingState() {
-      var hook = document.getElementById('navCenterAudioHook');
-      var circle = document.getElementById('navCenterPlayCircle');
-      var waveform = document.getElementById('audioWaveform');
-      var icon = document.getElementById('audioPlayIcon');
-      var label = document.getElementById('audioPlayLabel');
-
-      if (hook) hook.classList.add('playing');
-      if (circle) circle.innerHTML = '<svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="3.5" height="12" rx="1" fill="currentColor"/><rect x="6.5" width="3.5" height="12" rx="1" fill="currentColor"/></svg>';
-      if (waveform) waveform.classList.add('playing');
-      if (icon) icon.textContent = '⏸';
-      if (label) label.textContent = 'Pause';
-    }
-
-    function resetAllAudioState() {
-      var hook = document.getElementById('navCenterAudioHook');
-      var circle = document.getElementById('navCenterPlayCircle');
-      var waveform = document.getElementById('audioWaveform');
-      var icon = document.getElementById('audioPlayIcon');
-      var label = document.getElementById('audioPlayLabel');
-
-      if (hook) hook.classList.remove('playing');
-      if (circle) circle.innerHTML = '<svg width="12" height="14" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 6L1.5 10.3301L1.5 1.66987L9 6Z" fill="currentColor"/></svg>';
-      if (waveform) waveform.classList.remove('playing');
-      if (icon) icon.textContent = '▶';
-      if (label) label.textContent = 'Play Audio';
-    }
-
-    function toggleNavAudioIntro() {
-      playOrPauseIntroAudio();
-    }
-
-    function toggleIntroSpeech() {
-      playOrPauseIntroAudio();
-    }
-
-    function openAudioIntroModal() {
-      var modal = document.getElementById('audioIntroOverlay');
-      if (modal) modal.classList.add('active');
-    }
-
-    function closeAudioIntroModal(e) {
-      if (e && e.target && !e.target.classList.contains('audio-intro-overlay') && !e.target.classList.contains('audio-intro-close')) return;
-      var modal = document.getElementById('audioIntroOverlay');
-      if (modal) modal.classList.remove('active');
-      var audio = document.getElementById('navIntroAudioElement');
-      if (audio && !audio.paused) audio.pause();
-      resetAllAudioState();
-    }
-  </script>
 
   <!-- ── INTERVIEW TEST PORTAL DEMO OVERLAY ────────────────────────── -->
   <div class="test-portal-overlay" id="testPortalOverlay">

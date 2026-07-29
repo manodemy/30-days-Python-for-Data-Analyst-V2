@@ -766,7 +766,7 @@
       box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
 
-    /* ── INTERVIEW TEST PORTAL DEMO OVERLAY (FULL SCREEN FIT BELOW NAV BAR - NO CONTAINER) ── */
+    /* ── INTERVIEW TEST PORTAL DEMO OVERLAY (SMART FIT BELOW NAV BAR - PERFECT RIGHT PADDING) ── */
     .test-portal-overlay {
       position: fixed;
       top: 76px;
@@ -776,11 +776,12 @@
       width: 100vw;
       height: calc(100vh - 76px);
       z-index: 1001;
-      background: #0d131d;
+      background: rgba(6, 9, 17, 0.95);
+      backdrop-filter: blur(16px);
       display: flex;
-      flex-direction: column;
-      padding: 0;
-      margin: 0;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 16px;
       box-sizing: border-box;
       overflow: hidden;
       opacity: 0;
@@ -800,16 +801,15 @@
     }
 
     .test-portal-card {
-      position: absolute;
-      inset: 0;
-      width: 100vw;
-      height: 100%;
-      max-width: 100vw;
-      max-height: 100%;
+      position: relative;
+      width: calc(100vw - 32px);
+      max-width: 1240px;
+      height: calc(100vh - 76px - 20px);
+      max-height: calc(100vh - 76px - 20px);
       background: #0d131d;
-      border: none;
-      border-radius: 0;
-      box-shadow: none;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(56, 189, 248, 0.12);
       display: flex;
       flex-direction: column;
       overflow: hidden;

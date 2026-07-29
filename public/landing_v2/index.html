@@ -1050,7 +1050,7 @@
       box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
     }
 
-    /* ── NARRATION SHOWCASE STAGE (BELOW NAV BAR) ────────────────── */
+    /* ── NARRATION SHOWCASE STAGE (FULL HEIGHT FIT BELOW NAV BAR) ── */
     .narration-showcase-stage {
       position: fixed;
       top: 76px;
@@ -1060,6 +1060,11 @@
       z-index: 998;
       pointer-events: none;
       opacity: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 20px;
+      box-sizing: border-box;
       transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
@@ -1068,31 +1073,27 @@
     }
 
     .narration-showcase-card {
-      position: fixed;
-      top: calc(50% + 38px);
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 90vw;
-      max-width: 960px;
-      max-height: calc(100vh - 120px);
-      aspect-ratio: 16 / 9;
+      position: relative;
+      top: auto;
+      left: auto;
+      transform: none;
+      width: 100%;
+      max-width: 1240px;
+      height: calc(100vh - 76px - 20px);
+      max-height: calc(100vh - 76px - 20px);
       border-radius: 20px;
       overflow: hidden;
-      box-shadow: 0 25px 70px rgba(0, 180, 216, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.15);
+      box-shadow: 0 25px 70px rgba(0, 180, 216, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.15);
       background: #0f172a;
-      transition: top 0.9s cubic-bezier(0.16, 1, 0.3, 1),
-                  left 0.9s cubic-bezier(0.16, 1, 0.3, 1),
-                  width 0.9s cubic-bezier(0.16, 1, 0.3, 1),
-                  height 0.9s cubic-bezier(0.16, 1, 0.3, 1),
-                  transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
-                  border-radius 0.9s ease,
-                  box-shadow 0.9s ease,
-                  opacity 0.6s ease;
-      will-change: top, left, width, height, transform, opacity;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: box-shadow 0.9s ease, border-color 0.9s ease, opacity 0.6s ease;
+      will-change: transform, opacity;
     }
 
     .narration-showcase-card.img2-active {
-      box-shadow: 0 25px 70px rgba(5, 150, 105, 0.4), 0 0 0 1px rgba(5, 150, 105, 0.35);
+      box-shadow: 0 25px 70px rgba(5, 150, 105, 0.45), 0 0 0 1px rgba(5, 150, 105, 0.35);
     }
 
     .narration-img {

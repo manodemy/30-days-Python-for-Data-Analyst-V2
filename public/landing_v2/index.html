@@ -3157,7 +3157,7 @@
   <script>
     var _navP1Timer = null, _navP2Timer = null, _navP3Timer = null, _navP4Timer = null;
     var _navP5Timer = null, _navP6Timer = null, _navP7Timer = null, _navP8Timer = null;
-    var _navP9Timer = null, _navP10Timer = null, _navEndTimer = null;
+    var _navP9Timer = null, _navP10Timer = null, _navCertStartTimer = null, _navEndTimer = null;
 
     function startNavIntroAnimation() {
       stopNavIntroAnimation();
@@ -3294,16 +3294,20 @@
       if (nav) nav.classList.remove('nav-anim-p1', 'nav-anim-p2');
       if (stage) {
         stage.classList.remove('active', 'transition-img2', 'phase-5-dissolve', 'phase-5-card');
-        stage.style.alignItems = ''; stage.style.justifyContent = ''; stage.style.padding = '';
+        if (stage.style) { stage.style.alignItems = ''; stage.style.justifyContent = ''; stage.style.padding = ''; }
       }
       if (card) {
         card.classList.remove('img2-active');
-        card.style.cssText = '';
+        if (card.style) card.style.cssText = '';
       }
       if (clockCard) {
         clockCard.classList.remove('narration-roadmap-glow');
-        var btns = clockCard.querySelectorAll('.rm-legendBtn');
-        btns.forEach(function(b) { b.classList.remove('narration-pill-glow'); });
+        if (clockCard.querySelectorAll) {
+          var btns = clockCard.querySelectorAll('.rm-legendBtn');
+          if (btns && btns.forEach) {
+            btns.forEach(function(b) { b.classList.remove('narration-pill-glow'); });
+          }
+        }
       }
       if (testPortal) testPortal.classList.remove('active');
       document.body.classList.remove('narration-active', 'phase-5-active');

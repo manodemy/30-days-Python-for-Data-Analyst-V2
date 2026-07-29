@@ -440,25 +440,20 @@
     .p-btn-play-red { background: #EF4444; color: #FFF; font-weight: 700; border: none; padding: 6px 14px; border-radius: 16px; cursor: pointer; }
     .p-speed, .p-time { font-family: 'JetBrains Mono', monospace; font-size: 11px; }
 
-    /* Animated Mouse Cursor & Click Ripple */
+    /* Animated Mouse Cursor & Click Ripple — position driven via JS style.left/top */
     .demo-mouse-cursor {
-      position: absolute;
+      position: fixed;
       top: 0; left: 0;
       width: 24px; height: 24px;
       pointer-events: none;
-      z-index: 10000;
+      z-index: 99999;
       opacity: 0;
-      transform: translate(50vw, 60vh);
-      transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease;
-    }
-
-    .demo-mouse-cursor.moving {
-      opacity: 1;
-      transform: translate(calc(100vw - 190px), 14px);
+      filter: drop-shadow(0 0 6px #00E6F6);
+      /* transition set by JS */
     }
 
     .demo-mouse-cursor.clicking {
-      transform: translate(calc(100vw - 190px), 14px) scale(0.85);
+      transform: scale(0.85);
     }
 
     .demo-mouse-cursor .click-ripple {
@@ -472,12 +467,12 @@
     }
 
     .demo-mouse-cursor.clicking .click-ripple {
-      animation: rippleExpand 0.4s ease-out forwards;
+      animation: rippleExpand 0.45s ease-out forwards;
     }
 
     @keyframes rippleExpand {
       0% { opacity: 1; transform: scale(0.2); }
-      100% { opacity: 0; transform: scale(1.6); }
+      100% { opacity: 0; transform: scale(1.8); }
     }
 
     /* ── NAV INTRO ANIMATION ────────────────────────────────────── */
@@ -3745,53 +3740,77 @@
         }
       }, 25280);
 
-      // Phase 7.1 (29.52s): "Every day, you'll take a 25-question interview-based test..." -> Open Lesson Portal (Image 1) below nav bar
+      // Phase 7 (29.52s): "Every day, you'll take a 25-question interview-based test..."
+      // → Smooth scroll to the real #play-lesson-demo iframe section
       _navP9Timer = setTimeout(function() {
         var clockCard = document.getElementById('roadmap-root');
         var pyBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="Python"]');
         if (clockCard) clockCard.classList.remove('narration-roadmap-glow');
         if (pyBtn) pyBtn.classList.remove('narration-pill-glow');
-        var testPortal = document.getElementById('testPortalOverlay');
-        var s1 = document.getElementById('portalStage1');
-        var s2 = document.getElementById('portalStage2');
+
+        // Scroll the page to the real interactive lesson demo section
+        var demoSection = document.getElementById('play-lesson-demo');
+        if (demoSection) {
+          demoSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Reset cursor state
         var cursor = document.getElementById('demoMouseCursor');
-        if (testPortal) testPortal.classList.add('active');
-        if (s1) s1.classList.add('active');
-        if (s2) s2.classList.remove('active');
         if (cursor) cursor.classList.remove('moving', 'clicking');
       }, 29520);
 
-      // Phase 7.2 (32.20s): Mouse cursor moves towards "⚡ Take Test" button
+      // Phase 7.2 (32.20s): Animate cursor toward Take Test button in the iframe top-right
       _navCursorMoveTimer = setTimeout(function() {
         var cursor = document.getElementById('demoMouseCursor');
-        if (cursor) cursor.classList.add('moving');
+        var iframe = document.getElementById('liveLessonIframe');
+        if (!cursor || !iframe) return;
+
+        // Get iframe bounding rect, then target the top-right "Take Test" button area
+        var rect = iframe.getBoundingClientRect();
+        // Take Test button is at roughly right-side of header (right ~110px from iframe right edge, top ~16px)
+        var targetX = rect.right - 120;
+        var targetY = rect.top + 18;
+
+        cursor.style.transition = 'left 0.9s cubic-bezier(0.25, 1, 0.5, 1), top 0.9s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease';
+        cursor.style.left = targetX + 'px';
+        cursor.style.top = targetY + 'px';
+        cursor.style.opacity = '1';
+        cursor.style.transform = 'none';
       }, 32200);
 
-      // Phase 7.3 (33.00s): Click "⚡ Take Test" button (ripple effect)
+      // Phase 7.3 (33.00s): Trigger click ripple + call real openTestPortal() in iframe
       _navCursorClickTimer = setTimeout(function() {
         var cursor = document.getElementById('demoMouseCursor');
         if (cursor) cursor.classList.add('clicking');
+
+        // Actually trigger the real test portal inside the iframe
+        var iframe = document.getElementById('liveLessonIframe');
+        if (iframe && iframe.contentWindow && typeof iframe.contentWindow.openTestPortal === 'function') {
+          try { iframe.contentWindow.openTestPortal(); } catch(e) {}
+        }
       }, 33000);
 
-      // Phase 7.4 (33.30s): Switch from Lesson Portal (Image 1) to 25-Question Test Portal Demo (Image 2)
+      // Phase 7.4 (33.30s): Hide cursor after click
       _navStageSwitchTimer = setTimeout(function() {
-        var s1 = document.getElementById('portalStage1');
-        var s2 = document.getElementById('portalStage2');
         var cursor = document.getElementById('demoMouseCursor');
-        if (s1) s1.classList.remove('active');
-        if (s2) s2.classList.add('active');
-        if (cursor) cursor.classList.remove('moving', 'clicking');
+        if (cursor) {
+          cursor.classList.remove('clicking');
+          cursor.style.opacity = '0';
+        }
       }, 33300);
 
-      // Phase 8 (39.92s): Certificate Showcase begins opening directly OVER the Test Portal
+      // Phase 8 (39.92s): Scroll back to top for Certificate Showcase, then start cert animation
       _navCertStartTimer = setTimeout(function() {
-        startCertShowcaseAnimation();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setTimeout(function() { startCertShowcaseAnimation(); }, 500);
       }, 39920);
 
-      // Phase 8.1 (40.30s): Close Test Portal ONLY after Certificate Showcase overlay has fully covered the viewport
+      // Phase 8.1 (40.30s): Reset iframe test portal back to lesson view (cleanup)
       _navP10Timer = setTimeout(function() {
-        var testPortal = document.getElementById('testPortalOverlay');
-        if (testPortal) testPortal.classList.remove('active');
+        var iframe = document.getElementById('liveLessonIframe');
+        if (iframe && iframe.contentWindow && typeof iframe.contentWindow.closeTestPortal === 'function') {
+          try { iframe.contentWindow.closeTestPortal(); } catch(e) {}
+        }
       }, 40300);
 
       // Phase 9.1 (49.56s): HR Interview Question Overlay opens directly OVER Certificate Showcase
@@ -3848,13 +3867,14 @@
           }
         }
       }
-      if (testPortal) testPortal.classList.remove('active');
-      var s1 = document.getElementById('portalStage1');
-      var s2 = document.getElementById('portalStage2');
+      // Reset floating cursor overlay
       var cursor = document.getElementById('demoMouseCursor');
-      if (s1) s1.classList.remove('active');
-      if (s2) s2.classList.remove('active');
-      if (cursor) cursor.classList.remove('moving', 'clicking');
+      if (cursor) { cursor.classList.remove('moving', 'clicking'); cursor.style.opacity = '0'; }
+      // Close test portal in iframe if open
+      var iframe = document.getElementById('liveLessonIframe');
+      if (iframe && iframe.contentWindow && typeof iframe.contentWindow.closeTestPortal === 'function') {
+        try { iframe.contentWindow.closeTestPortal(); } catch(e) {}
+      }
       document.body.classList.remove('narration-active', 'phase-5-active');
     }
 
@@ -4027,27 +4047,15 @@
     }
 
     window._narrationSeekTo = function(t) {
-      var testPortal = document.getElementById('testPortalOverlay');
-      if (testPortal) {
-        if (t >= 29.52 && t < 40.30) {
-          testPortal.classList.add('active');
-          var s1 = document.getElementById('portalStage1');
-          var s2 = document.getElementById('portalStage2');
-          var cursor = document.getElementById('demoMouseCursor');
-          if (t < 33.30) {
-            if (s1) s1.classList.add('active');
-            if (s2) s2.classList.remove('active');
-            if (t >= 32.20 && t < 33.00 && cursor) { cursor.classList.add('moving'); cursor.classList.remove('clicking'); }
-            else if (t >= 33.00 && t < 33.30 && cursor) { cursor.classList.add('moving', 'clicking'); }
-            else if (cursor) { cursor.classList.remove('moving', 'clicking'); }
-          } else {
-            if (s1) s1.classList.remove('active');
-            if (s2) s2.classList.add('active');
-            if (cursor) { cursor.classList.remove('moving', 'clicking'); }
-          }
-        } else {
-          testPortal.classList.remove('active');
-        }
+      // Phase 7: Scroll to demo section if in test range, scroll back for cert phase
+      var cursor = document.getElementById('demoMouseCursor');
+      if (t >= 29.52 && t < 39.92) {
+        var demoSection = document.getElementById('play-lesson-demo');
+        if (demoSection) demoSection.scrollIntoView({ behavior: 'instant', block: 'start' });
+        if (cursor) cursor.style.opacity = (t >= 32.20 && t < 33.30) ? '1' : '0';
+      } else {
+        if (t >= 39.92) window.scrollTo({ top: 0, behavior: 'instant' });
+        if (cursor) cursor.style.opacity = '0';
       }
 
       var certOverlay = document.getElementById('certShowcaseOverlay');
@@ -4360,218 +4368,16 @@
     </div>
   </div>
 
-  <!-- ── INTERVIEW TEST PORTAL DEMO OVERLAY ────────────────────────── -->
-  <div class="test-portal-overlay" id="testPortalOverlay">
-    
-    <!-- Stage 1: Main Lesson & Coding Workspace (Image 1) -->
-    <div class="portal-stage stage-1-lesson" id="portalStage1">
-      <!-- Top Header -->
-      <div class="ls-hdr">
-        <div class="ls-hdr-left">
-          <button class="ls-back-btn">←</button>
-          <div class="ls-avatar">👤</div>
-          <div class="ls-pill">SOLVED <span class="num">0/2</span></div>
-          <div class="ls-pill purple">MARKS <span class="num">0.0/2.0</span></div>
-        </div>
-
-        <div class="ls-hdr-center">
-          <div class="ls-drop">Day 01 ▾</div>
-          <div class="ls-drop title-drop">
-            <span class="dot green"></span> Topic 01: Relational Databases &amp; SQL <span class="dur">7:14 ▾</span>
-          </div>
-        </div>
-
-        <div class="ls-hdr-right">
-          <button class="btn-take-test-glow" id="takeTestBtnDemo">
-            ⚡ Take Test
-          </button>
-          <button class="ls-scorecard-btn">
-            <svg width="12" height="12" viewBox="0 0 14 14" fill="none" style="margin-right:4px;"><path d="M1.5 1.5H5.5V5.5H1.5V1.5Z" stroke="currentColor" stroke-width="1.5"/><path d="M8.5 1.5H12.5V5.5H8.5V1.5Z" stroke="currentColor" stroke-width="1.5"/><path d="M1.5 8.5H5.5V12.5H1.5V8.5Z" stroke="currentColor" stroke-width="1.5"/><path d="M8.5 8.5H12.5V12.5H8.5V8.5Z" stroke="currentColor" stroke-width="1.5"/></svg>
-            Score Card
-          </button>
-        </div>
-      </div>
-
-      <!-- Main Split Body -->
-      <div class="ls-body">
-        <!-- Left Column: SQL Coding Area -->
-        <div class="ls-left-pane">
-          <div class="ls-q-box">
-            Q1. Write a query to retrieve all columns and all rows from the <code>employees</code> table.
-          </div>
-
-          <div class="ls-toolbar">
-            <div class="q-pill-gray">Question-01</div>
-            <button class="btn-icon-play">▶</button>
-            <button class="btn-tables-pill">📊 Tables</button>
-            <div class="ls-tb-right">
-              <button class="btn-run-green">▶ Run</button>
-              <button class="btn-clear-gray">✕ Clear</button>
-            </div>
-          </div>
-
-          <div class="ls-editor-pane">
-            <span style="color:#64748b;">1 |</span> <span style="color:#38bdf8;">-- Write your SQL query here</span><br>
-            <span style="color:#64748b;">2 |</span> 
-          </div>
-
-          <div class="ls-terminal-pane">
-            <div class="term-title">TERMINAL OUTPUT</div>
-            <div class="term-txt">⚡ Write your SQL query above and click 'Run' to execute it!</div>
-          </div>
-        </div>
-
-        <!-- Right Column: Reader & Table Preview -->
-        <div class="ls-right-pane">
-          <div class="ls-reader-hdr">
-            <span>📊 01. Relational Databases &amp; SQL</span>
-            <button class="btn-what-rdbms">What is RDBMS? &gt;</button>
-          </div>
-
-          <div class="ls-reader-card">
-            <div class="card-num-bar">
-              <span class="num-box">01</span>
-              <h3>What is RDBMS?</h3>
-              <button class="btn-play-dark">▶</button>
-            </div>
-            <p class="reader-desc">
-              A <strong>Relational Database Management System (RDBMS)</strong> is the software used to store, manage, query, and retrieve data stored in a relational database. It formats data into structured <strong>tables</strong> (also called <strong>relations</strong>) which are connected to one another through defined relationships.
-            </p>
-
-            <div class="table-card-preview">
-              <div class="tbl-name">📁 Table: Employees</div>
-              <table class="schema-tbl">
-                <thead>
-                  <tr>
-                    <th>🔑 ID (PK)<br><small>INT</small></th>
-                    <th>Name<br><small>VARCHAR</small></th>
-                    <th>Role<br><small>VARCHAR</small></th>
-                    <th>Salary<br><small>DECIMAL</small></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>1</td>
-                    <td>Alice Johnson</td>
-                    <td>Data Analyst</td>
-                    <td class="sal">$85,000</td>
-                  </tr>
-                  <tr>
-                    <td>2</td>
-                    <td>Bob Smith</td>
-                    <td>SQL Developer</td>
-                    <td class="sal">$92,000</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- Bottom Audio Player Controls -->
-          <div class="ls-bottom-player">
-            <button class="p-btn">◀◀</button>
-            <button class="p-btn-play-red">▶ Play Lesson</button>
-            <button class="p-btn">▶▶</button>
-            <button class="p-btn">🔊</button>
-            <div class="p-speed">⏱ 1.0x</div>
-            <div class="p-time">0:00 / 7:14</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Animated Mouse Cursor & Click Ripple -->
-      <div class="demo-mouse-cursor" id="demoMouseCursor">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M5.5 3.5L18.5 11.5L12 13.5L15.5 20.5L12.5 22L9 15L5.5 18V3.5Z" fill="#00E6F6" stroke="#0F172A" stroke-width="1.5"/>
-        </svg>
-        <div class="click-ripple"></div>
-      </div>
-    </div>
-
-    <!-- Stage 2: 25-Question Test Portal Demo (Image 2) -->
-    <div class="portal-stage stage-2-test" id="portalStage2">
-      <!-- Top Bar -->
-      <div class="test-header">
-        <div class="test-stats-row">
-          <div class="test-stat-pill">
-            <span class="label">ATTEMPTED</span>
-            <span class="val">0 / 25</span>
-          </div>
-          <div class="test-stat-pill purple">
-            <span class="label">BEST SCORE</span>
-            <span class="val">0 / 25</span>
-          </div>
-        </div>
-
-        <div class="test-title-text">
-          📝 Day 01 — SQL Interview Test
-        </div>
-
-        <div class="test-hdr-right">
-          <button class="test-stat-pill" style="color:#e2e8f0; cursor:pointer;">
-            <svg width="12" height="12" viewBox="0 0 14 14" fill="none" style="margin-right:4px;"><path d="M1.5 1.5H5.5V5.5H1.5V1.5Z" stroke="currentColor" stroke-width="1.5"/><path d="M8.5 1.5H12.5V5.5H8.5V1.5Z" stroke="currentColor" stroke-width="1.5"/><path d="M1.5 8.5H5.5V12.5H1.5V8.5Z" stroke="currentColor" stroke-width="1.5"/><path d="M8.5 8.5H12.5V12.5H8.5V8.5Z" stroke="currentColor" stroke-width="1.5"/></svg>
-            Score Card
-          </button>
-          <div class="test-timer-pill">
-            ⏳ 119:56
-          </div>
-          <button class="test-exit-btn">✕ Exit Test</button>
-        </div>
-      </div>
-
-      <!-- Test Body Split -->
-      <div class="test-portal-body">
-        <!-- Sidebar Q1-Q11 -->
-        <div class="test-sidebar">
-          <div class="q-btn active">Q1</div>
-          <div class="q-btn">Q2</div>
-          <div class="q-btn">Q3</div>
-          <div class="q-btn">Q4</div>
-          <div class="q-btn">Q5</div>
-          <div class="q-btn">Q6</div>
-          <div class="q-btn">Q7</div>
-          <div class="q-btn">Q8</div>
-          <div class="q-btn">Q9</div>
-          <div class="q-btn">Q10</div>
-          <div class="q-btn">Q11</div>
-        </div>
-
-        <!-- Main Test Area -->
-        <div class="test-main-area">
-          <div class="test-question-header">
-            Q1. Retrieve all columns and rows from <code>employees</code>.
-          </div>
-
-          <div class="test-editor-toolbar">
-            <span class="q-counter">Q1 / 25</span>
-            <div style="display:flex; gap:8px;">
-              <button class="btn-run-query">▶ Run</button>
-              <button class="btn-clear-query">✕ Clear</button>
-            </div>
-          </div>
-
-          <div class="test-editor-pane">
-            <span style="color:#64748b;">1 |</span> <span style="color:#38bdf8;">-- Write your answer here</span><br>
-            <span style="color:#64748b;">2 |</span> 
-          </div>
-
-          <div class="test-terminal-pane">
-            <div class="term-lbl">TERMINAL OUTPUT</div>
-            <div class="term-msg">⚡ Write your query and click 'Run' to verify your answer!</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Bottom Bar -->
-      <div class="test-bottom-bar">
-        <span style="color:#64748b; font-size:12px; font-weight:700;">Attempted: 0 / 25</span>
-        <button class="btn-submit-test">Submit Test</button>
-      </div>
-    </div>
-
+  <!-- ── DEMO MOUSE CURSOR (Floating overlay for narration click animation) ── -->
+  <div class="demo-mouse-cursor" id="demoMouseCursor">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <path d="M5.5 3.5L18.5 11.5L12 13.5L15.5 20.5L12.5 22L9 15L5.5 18V3.5Z" fill="#00E6F6" stroke="#0F172A" stroke-width="1.5"/>
+    </svg>
+    <div class="click-ripple"></div>
   </div>
 
   <!-- ── CERTIFICATE & MARKS SHOWCASE OVERLAY ────────────────────────── -->
+
   <div class="cert-showcase-overlay" id="certShowcaseOverlay">
     <div class="cert-showcase-card" id="certShowcaseCard">
 

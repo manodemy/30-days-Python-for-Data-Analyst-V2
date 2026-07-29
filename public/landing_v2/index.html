@@ -244,17 +244,18 @@
     /* ── INTERVIEW TEST PORTAL DEMO OVERLAY ────────────────────────────── */
     .test-portal-overlay {
       position: fixed;
-      top: 76px;
+      top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      z-index: 999;
-      background: rgba(7, 11, 17, 0.85);
-      backdrop-filter: blur(14px);
+      z-index: 1001;
+      background: rgba(7, 11, 17, 0.92);
+      backdrop-filter: blur(18px);
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 16px;
+      padding: 76px 16px 16px;
       opacity: 0;
       visibility: hidden;
       pointer-events: none;
@@ -2772,10 +2773,14 @@
         if (badgeText) badgeText.innerHTML = '✨ BUILT SPECIFICALLY FOR YOU';
       }, 12540);
 
-      // Phase 6.1 (15.58s - 19.22s): Highlight Clock Card
+      // Phase 6.1 (15.58s - 19.22s): Highlight Clock Card + scroll into view
       _navP5Timer = setTimeout(function() {
         var clockCard = document.getElementById('roadmap-root');
-        if (clockCard) clockCard.classList.add('narration-roadmap-glow');
+        if (clockCard) {
+          clockCard.classList.add('narration-roadmap-glow');
+          // Scroll the clock card into the center of the viewport
+          clockCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
       }, 15580);
 
       // Phase 6.2 (19.22s - 22.28s): Jump Clock to Day 1 & Highlight SQL Pill

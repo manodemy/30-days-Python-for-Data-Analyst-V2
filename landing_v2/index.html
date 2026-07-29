@@ -722,7 +722,7 @@
     .cert-showcase-card {
       width: 100%;
       max-width: 1060px;
-      height: calc(100vh - 76px - 40px);
+      height: calc(100vh - var(--nav-h) - 40px);
       max-height: 590px;
       background: radial-gradient(circle at 50% 0%, #151d2c 0%, #090e18 100%);
       border: 1px solid rgba(234, 179, 8, 0.4);
@@ -731,6 +731,14 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      opacity: 0;
+      transform: translateY(40px) scale(0.95);
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .cert-showcase-card.card-entered {
+      opacity: 1;
+      transform: translateY(0) scale(1);
     }
     .cert-card-header {
       display: flex;
@@ -903,10 +911,31 @@
       opacity: 0.7;
       transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
+    /* Gold shimmer sweep across cert paper on unlock */
+    .cert-paper::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(105deg,
+        transparent 20%, rgba(255,255,255,0) 35%,
+        rgba(255,255,255,0.18) 50%,
+        rgba(255,255,255,0) 65%, transparent 80%);
+      transform: translateX(-100%);
+      border-radius: 16px;
+      pointer-events: none;
+    }
+    .cert-paper.unlocked::after {
+      animation: goldShimmer 1.1s 0.2s ease-out forwards;
+    }
+    @keyframes goldShimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(200%); }
+    }
     .cert-paper.unlocked {
       transform: scale(1) rotateX(0deg);
       opacity: 1;
-      box-shadow: 0 25px 70px rgba(0,0,0,0.8), 0 0 45px rgba(234, 179, 8, 0.4), inset 0 0 50px rgba(234, 179, 8, 0.12);
+      box-shadow: 0 25px 70px rgba(0,0,0,0.8), 0 0 60px rgba(234, 179, 8, 0.5), inset 0 0 50px rgba(234, 179, 8, 0.12);
+      border-color: rgba(234, 179, 8, 0.85);
     }
     .cert-paper-border {
       position: absolute;
@@ -992,6 +1021,12 @@
     .score-badge-card.active-score {
       opacity: 1;
       transform: translateY(0);
+      animation: scorePop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+    @keyframes scorePop {
+      0% { transform: translateY(8px) scale(0.92); opacity: 0; }
+      60% { transform: translateY(-3px) scale(1.04); }
+      100% { transform: translateY(0) scale(1); opacity: 1; }
     }
     .score-overall.active-score {
       border-color: rgba(234, 179, 8, 0.7);
@@ -1054,7 +1089,12 @@
     .cert-gold-hologram.shine {
       transform: scale(1) rotate(360deg);
       opacity: 1;
-      box-shadow: 0 0 30px rgba(234, 179, 8, 0.9), 0 0 10px #ffffff;
+      box-shadow: 0 0 40px rgba(234, 179, 8, 0.95), 0 0 15px #ffffff, inset 0 0 10px rgba(255,255,255,0.3);
+      animation: hologramPulse 1.8s 0.6s ease-in-out infinite alternate;
+    }
+    @keyframes hologramPulse {
+      0% { box-shadow: 0 0 30px rgba(234,179,8,0.7), 0 0 8px #fff; }
+      100% { box-shadow: 0 0 55px rgba(234,179,8,1), 0 0 20px #fff, 0 0 80px rgba(234,179,8,0.4); }
     }
     .hologram-inner {
       display: flex;
@@ -1066,8 +1106,7 @@
       letter-spacing: 0.02em;
     }
 
-    /* ── HR INTERVIEW QUESTION OVERLAY ───────────────────────────── */
-    /* ── HR INTERVIEW OVERLAY — full bleed, no card container ── */
+    /* ── HR INTERVIEW OVERLAY — cinematic full bleed ── */
     .hr-interview-overlay {
       position: fixed;
       top: 0;
@@ -1085,11 +1124,89 @@
       pointer-events: none;
       transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
                   visibility 0.55s ease;
+      overflow: hidden;
     }
     .hr-interview-overlay.active {
       opacity: 1;
       visibility: visible;
       pointer-events: auto;
+    }
+    /* Cinematic white-flash element */
+    .hr-flash {
+      position: absolute;
+      inset: 0;
+      background: white;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 5;
+      animation: none;
+    }
+    .hr-interview-overlay.active .hr-flash {
+      animation: cinemaCut 0.5s ease-out forwards;
+    }
+    @keyframes cinemaCut {
+      0% { opacity: 0.85; }
+      100% { opacity: 0; }
+    }
+    /* Ken Burns zoom-settle on image */
+    .hr-interview-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+      transform-origin: center center;
+      animation: none;
+    }
+    .hr-interview-overlay.active .hr-interview-img {
+      animation: kenBurns 10s ease-out forwards;
+    }
+    @keyframes kenBurns {
+      0% { transform: scale(1.08); }
+      100% { transform: scale(1.0); }
+    }
+    /* Dark vignette edges */
+    .hr-vignette {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%);
+      pointer-events: none;
+      z-index: 2;
+    }
+    /* Caption bar slides up from bottom */
+    .hr-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 3;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%);
+      padding: 32px 36px 20px;
+      transform: translateY(100%);
+      opacity: 0;
+      transition: transform 0.7s 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                  opacity 0.7s 0.4s ease;
+    }
+    .hr-interview-overlay.active .hr-caption {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    .hr-caption-badge {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      color: #38bdf8;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .hr-caption-title {
+      font-size: 22px;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: -0.01em;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.8);
+      line-height: 1.3;
     }
     .hr-exit-btn-top {
       position: absolute;
@@ -3867,6 +3984,7 @@
       stopCertShowcaseAnimation();
 
       var overlay = document.getElementById('certShowcaseOverlay');
+      var card = document.getElementById('certShowcaseCard');
       var headerBadge = document.getElementById('certHeaderBadge');
       var headerMain = document.getElementById('certHeaderMain');
       var marksRing = document.getElementById('marksRingFill');
@@ -3884,6 +4002,10 @@
       if (!overlay) return;
 
       overlay.classList.add('active');
+      if (card) {
+        card.classList.remove('card-entered');
+        setTimeout(function() { card.classList.add('card-entered'); }, 40);
+      }
       if (certPaper) certPaper.classList.remove('unlocked');
       if (hologram) hologram.classList.remove('shine');
       if (lockIcon) { lockIcon.textContent = '🔒'; lockIcon.style.transform = 'scale(1)'; }
@@ -3963,6 +4085,8 @@
       clearTimeout(_navCertCloseTimer);
 
       var overlay = document.getElementById('certShowcaseOverlay');
+      var card = document.getElementById('certShowcaseCard');
+      if (card) card.classList.remove('card-entered');
       if (overlay) overlay.classList.remove('active');
     }
 
@@ -4034,9 +4158,11 @@
       }
 
       var certOverlay = document.getElementById('certShowcaseOverlay');
+      var certCard = document.getElementById('certShowcaseCard');
       if (certOverlay) {
         if (t >= 39.92 && t < 50.00) {
           certOverlay.classList.add('active');
+          if (certCard) certCard.classList.add('card-entered');
           var certPaper = document.getElementById('certPaper');
           var hologram = document.getElementById('certGoldHologram');
           var sOverall = document.getElementById('scoreBadgeOverall');
@@ -4060,6 +4186,7 @@
           if (t >= 48.22 && sPython) sPython.classList.add('active-score');
         } else {
           certOverlay.classList.remove('active');
+          if (certCard) certCard.classList.remove('card-entered');
         }
       }
 
@@ -4475,10 +4602,21 @@
     </div>
   </div>
 
-  <!-- ── HR INTERVIEW QUESTION DEMO OVERLAY — full bleed ──────────── -->
+  <!-- ── HR INTERVIEW QUESTION DEMO OVERLAY — cinematic full bleed ───── -->
   <div class="hr-interview-overlay" id="hrInterviewOverlay">
+    <!-- Cinematic white-flash on entry -->
+    <div class="hr-flash"></div>
+    <!-- Vignette dark edges to focus center -->
+    <div class="hr-vignette"></div>
+    <!-- Exit button -->
     <button class="cert-exit-btn hr-exit-btn-top" onclick="closeHrInterviewOverlay()">✕ Exit</button>
-    <img src="/landing_v2/hr_interview_question.jpg" alt="HR Interview Question: How would you rate yourself in SQL, Excel, and Python?" class="hr-interview-img" />
+    <!-- Full-bleed interview image with Ken Burns -->
+    <img src="/landing_v2/hr_interview_question.jpg" alt="HR Interview Question" class="hr-interview-img" />
+    <!-- Caption bar slides up from bottom -->
+    <div class="hr-caption">
+      <span class="hr-caption-badge">🎤 Real Interview Scenario</span>
+      <div class="hr-caption-title">How would you rate yourself in SQL, Excel &amp; Python?</div>
+    </div>
   </div>
 
 </body>

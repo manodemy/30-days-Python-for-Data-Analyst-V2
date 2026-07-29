@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build-cache-bust-19000 -->
+<!-- build-cache-bust-20000 -->
 <html lang="en">
 
 <head>
@@ -211,6 +211,31 @@
       filter: blur(14px) !important;
       pointer-events: none !important;
       transition: opacity 0.85s ease, transform 0.85s cubic-bezier(0.16, 1, 0.3, 1), filter 0.85s ease !important;
+    }
+
+    /* ── PHASE 6: ROADMAP CLOCK CARD GLOW HIGHLIGHT ────────────────────── */
+    #roadmap-root.narration-roadmap-glow {
+      box-shadow: 0 0 50px rgba(0, 212, 255, 0.8), 0 0 100px rgba(0, 180, 216, 0.5), 0 0 0 2px rgba(0, 212, 255, 0.9) !important;
+      border-color: rgba(0, 212, 255, 1) !important;
+      animation: roadmapCardGlowPulse 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate !important;
+      transition: box-shadow 0.6s ease, border-color 0.6s ease !important;
+    }
+
+    @keyframes roadmapCardGlowPulse {
+      from {
+        box-shadow: 0 0 35px rgba(0, 212, 255, 0.65), 0 0 70px rgba(0, 180, 216, 0.35), 0 0 0 2px rgba(0, 212, 255, 0.7);
+      }
+      to {
+        box-shadow: 0 0 65px rgba(0, 212, 255, 0.95), 0 0 130px rgba(0, 212, 255, 0.65), 0 0 0 3px rgba(0, 212, 255, 1);
+      }
+    }
+
+    /* Track Pills Highlight */
+    #roadmap-root .rm-legendBtn.narration-pill-glow {
+      transform: scale(1.15) !important;
+      box-shadow: 0 0 25px currentColor, inset 0 0 12px currentColor !important;
+      border-color: currentColor !important;
+      transition: all 0.4s ease !important;
     }
 
     /* ── NARRATION SHOWCASE STAGE (BELOW NAV BAR) ────────────────── */
@@ -2585,7 +2610,8 @@
 
   <script>
     // ── NAV INTRO & IMAGE SHOWCASE ANIMATION ──────────────────────────────
-    var _navP1Timer = null, _navP2Timer = null, _navP3Timer = null, _navP4Timer = null, _navEndTimer = null;
+    var _navP1Timer = null, _navP2Timer = null, _navP3Timer = null, _navP4Timer = null;
+    var _navP5Timer = null, _navP6Timer = null, _navP7Timer = null, _navP8Timer = null, _navP9Timer = null, _navEndTimer = null;
 
     function startNavIntroAnimation() {
       stopNavIntroAnimation();
@@ -2626,43 +2652,79 @@
         if (badgeText) badgeText.innerHTML = '🎯 PRACTICING ANALYST TECHNICAL INTERVIEWS';
       }, 8340);
 
-      // ── Phase 5 (12.54s - 15.4s): "this masterclass was built specifically for you" -> Cinematic Depth Dissolve
+      // ── Phase 5 (12.54s - 15.58s): "this masterclass was built specifically for you" -> Dual Slide & Center Zoom-Out
       _navP4Timer = setTimeout(function() {
         document.body.classList.add('phase-5-active');
         if (stage) stage.classList.add('phase-5-dissolve');
         if (badgeText) badgeText.innerHTML = '✨ BUILT SPECIFICALLY FOR YOU';
       }, 12540);
 
-      // ── End (55.4s): Full continuous audio narration finish
+      // ── Phase 6.1 (15.58s - 19.22s): "This program is structured as a 60-day learning journey..." -> Highlight Clock Card
+      _navP5Timer = setTimeout(function() {
+        var clockCard = document.getElementById('roadmap-root');
+        if (clockCard) clockCard.classList.add('narration-roadmap-glow');
+      }, 15580);
+
+      // ── Phase 6.2 (19.22s - 22.28s): "In the first 18 days, you'll master SQL" -> Highlight SQL Pill
+      _navP6Timer = setTimeout(function() {
+        var sqlBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="SQL"]');
+        if (sqlBtn) sqlBtn.classList.add('narration-pill-glow');
+      }, 19220);
+
+      // ── Phase 6.3 (22.28s - 25.04s): "The next 12 days are dedicated to Excel" -> Highlight Excel Pill
+      _navP7Timer = setTimeout(function() {
+        var sqlBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="SQL"]');
+        var xlBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="Excel"]');
+        if (sqlBtn) sqlBtn.classList.remove('narration-pill-glow');
+        if (xlBtn) xlBtn.classList.add('narration-pill-glow');
+      }, 22280);
+
+      // ── Phase 6.4 (25.04s - 29.12s): "Finally, in the last 30 days, you'll learn Python for Data Analytics" -> Highlight Python Pill
+      _navP8Timer = setTimeout(function() {
+        var xlBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="Excel"]');
+        var pyBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="Python"]');
+        if (xlBtn) xlBtn.classList.remove('narration-pill-glow');
+        if (pyBtn) pyBtn.classList.add('narration-pill-glow');
+      }, 25040);
+
+      // ── Phase 6 End (29.12s): Fade out clock card glow
+      _navP9Timer = setTimeout(function() {
+        var clockCard = document.getElementById('roadmap-root');
+        var pyBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="Python"]');
+        if (clockCard) clockCard.classList.remove('narration-roadmap-glow');
+        if (pyBtn) pyBtn.classList.remove('narration-pill-glow');
+      }, 29120);
+
+      // ── End (55.44s): Full continuous audio narration finish
       _navEndTimer = setTimeout(function() {
-        nav.classList.remove('nav-anim-p1', 'nav-anim-p2');
-        if (stage) stage.classList.remove('active', 'transition-img2', 'phase-5-dissolve');
-        if (card) card.style.cssText = '';
-        document.body.classList.remove('narration-active', 'phase-5-active');
+        stopNavIntroAnimation();
       }, 55440);
     }
 
     function stopNavIntroAnimation() {
-      clearTimeout(_navP1Timer);
-      clearTimeout(_navP2Timer);
-      clearTimeout(_navP3Timer);
-      clearTimeout(_navP4Timer);
+      clearTimeout(_navP1Timer); clearTimeout(_navP2Timer); clearTimeout(_navP3Timer);
+      clearTimeout(_navP4Timer); clearTimeout(_navP5Timer); clearTimeout(_navP6Timer);
+      clearTimeout(_navP7Timer); clearTimeout(_navP8Timer); clearTimeout(_navP9Timer);
       clearTimeout(_navEndTimer);
 
       var nav = document.querySelector('.nav');
       var stage = document.getElementById('narrationShowcaseStage');
       var card = document.querySelector('.narration-showcase-card');
+      var clockCard = document.getElementById('roadmap-root');
 
       if (nav) nav.classList.remove('nav-anim-p1', 'nav-anim-p2');
       if (stage) {
-        stage.classList.remove('active', 'transition-img2', 'phase-5-card');
-        stage.style.alignItems = '';
-        stage.style.justifyContent = '';
-        stage.style.padding = '';
+        stage.classList.remove('active', 'transition-img2', 'phase-5-dissolve', 'phase-5-card');
+        stage.style.alignItems = ''; stage.style.justifyContent = ''; stage.style.padding = '';
       }
       if (card) {
         card.classList.remove('img2-active');
         card.style.cssText = '';
+      }
+      if (clockCard) {
+        clockCard.classList.remove('narration-roadmap-glow');
+        var btns = clockCard.querySelectorAll('.rm-legendBtn');
+        btns.forEach(function(b) { b.classList.remove('narration-pill-glow'); });
       }
       document.body.classList.remove('narration-active', 'phase-5-active');
     }

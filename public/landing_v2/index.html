@@ -322,8 +322,346 @@
     #navAudioTotal {
       color: #94a3b8;
     }
-    .narration-active .nav-audio-time-display {
+    /* ── CERTIFICATE & MARKS SHOWCASE OVERLAY ────────────────────────── */
+    .cert-showcase-overlay {
+      position: fixed;
+      top: 76px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1001;
+      background: rgba(7, 11, 17, 0.92);
+      backdrop-filter: blur(16px);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 16px;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: scale(0.95) translateY(12px);
+      transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+                  visibility 0.45s ease;
+    }
+    .cert-showcase-overlay.active {
       opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: scale(1) translateY(0);
+    }
+    .cert-showcase-card {
+      width: 100%;
+      max-width: 1040px;
+      height: calc(100vh - 76px - 32px);
+      max-height: 600px;
+      background: #0b1019;
+      border: 1px solid rgba(234, 179, 8, 0.35);
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(234, 179, 8, 0.15);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .cert-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      background: #070b11;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .cert-header-badge {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: #eab308;
+      background: rgba(234, 179, 8, 0.12);
+      border: 1px solid rgba(234, 179, 8, 0.3);
+      padding: 3px 10px;
+      border-radius: 12px;
+      display: inline-block;
+      margin-bottom: 2px;
+      transition: all 0.3s ease;
+    }
+    .cert-header-main {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      margin: 0;
+    }
+    .cert-exit-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #94a3b8;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .cert-exit-btn:hover {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+      border-color: rgba(239, 68, 68, 0.4);
+    }
+    .cert-card-body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    /* Left Section: 1,200 Marks Circular Progress Ring */
+    .cert-marks-section {
+      width: 280px;
+      flex-shrink: 0;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .marks-ring-container {
+      position: relative;
+      width: 150px;
+      height: 150px;
+    }
+    .marks-ring-svg {
+      width: 150px;
+      height: 150px;
+      transform: rotate(-90deg);
+    }
+    .marks-ring-bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.08);
+      stroke-width: 10;
+    }
+    .marks-ring-fill {
+      fill: none;
+      stroke: url(#goldGradient);
+      stroke-dasharray: 440;
+      stroke-dashoffset: 440;
+      stroke-width: 10;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 0.1s linear;
+    }
+    .marks-counter-center {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .marks-lock-icon {
+      font-size: 20px;
+      margin-bottom: 2px;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .marks-val-num {
+      font-size: 30px;
+      font-weight: 900;
+      color: #38bdf8;
+      font-family: 'SF Mono', monospace;
+      line-height: 1;
+    }
+    .marks-sub-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: #64748b;
+      letter-spacing: 0.05em;
+      margin-top: 4px;
+    }
+    .marks-status-pill {
+      margin-top: 18px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #eab308;
+      background: rgba(234, 179, 8, 0.1);
+      border: 1px solid rgba(234, 179, 8, 0.25);
+      padding: 6px 14px;
+      border-radius: 20px;
+    }
+    .status-pulse-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #eab308;
+      box-shadow: 0 0 8px #eab308;
+    }
+
+    /* Right Section: Official Certificate Paper */
+    .cert-document-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      perspective: 1000px;
+    }
+    .cert-paper {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      border: 2px solid rgba(234, 179, 8, 0.4);
+      border-radius: 12px;
+      padding: 22px;
+      position: relative;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(234, 179, 8, 0.05);
+      transform: scale(0.96) rotateX(4deg);
+      opacity: 0.6;
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .cert-paper.unlocked {
+      transform: scale(1) rotateX(0deg);
+      opacity: 1;
+      border-color: #eab308;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 30px rgba(234, 179, 8, 0.25);
+    }
+    .cert-paper-border {
+      position: absolute;
+      top: 8px; left: 8px; right: 8px; bottom: 8px;
+      border: 1px stroke rgba(234, 179, 8, 0.25);
+      border-radius: 8px;
+      pointer-events: none;
+    }
+    .cert-doc-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .cert-logo-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .cert-brand-name {
+      font-size: 13px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: 0.05em;
+    }
+    .cert-brand-name span { color: #10b981; }
+    .cert-title-badge {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      color: #eab308;
+      background: rgba(234, 179, 8, 0.15);
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(234, 179, 8, 0.4);
+    }
+    .cert-doc-body {
+      text-align: center;
+      margin: 10px 0 14px;
+    }
+    .cert-subtitle {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: #64748b;
+    }
+    .cert-recipient-name {
+      font-size: 20px;
+      font-weight: 900;
+      color: #f8fafc;
+      font-family: 'Cinzel', 'Georgia', serif;
+      margin: 2px 0;
+      letter-spacing: 0.02em;
+    }
+    .cert-course-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: #38bdf8;
+    }
+
+    /* 4-Track Scores Grid */
+    .cert-scores-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .score-badge-card {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 8px 10px;
+      border-radius: 8px;
+      opacity: 0.35;
+      transform: translateY(6px);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .score-badge-card.active-score {
+      opacity: 1;
+      transform: translateY(0);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+    }
+    .score-overall.active-score { border-color: #eab308; background: rgba(234, 179, 8, 0.15); }
+    .score-sql.active-score { border-color: #38bdf8; background: rgba(56, 189, 248, 0.15); }
+    .score-excel.active-score { border-color: #10b981; background: rgba(16, 185, 129, 0.15); }
+    .score-python.active-score { border-color: #a855f7; background: rgba(168, 85, 247, 0.15); }
+
+    .score-icon { font-size: 15px; }
+    .score-label { font-size: 8px; font-weight: 800; color: #94a3b8; letter-spacing: 0.05em; }
+    .score-val { font-size: 12px; font-weight: 800; color: #fff; }
+    .score-sub { font-size: 9px; font-weight: 600; color: #64748b; }
+
+    /* Certificate Footer & Gold Hologram */
+    .cert-doc-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 12px;
+      padding-top: 8px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.1);
+    }
+    .cert-verify-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .verify-url { font-family: monospace; font-size: 9px; color: #38bdf8; }
+    .verify-seal-text { font-size: 8px; color: #64748b; }
+
+    .cert-gold-hologram {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fef08a 0%, #eab308 60%, #854d0e 100%);
+      border: 2px solid #fef08a;
+      box-shadow: 0 0 15px rgba(234, 179, 8, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      transform: scale(0.8);
+      opacity: 0.5;
+      transition: all 0.5s ease;
+    }
+    .cert-gold-hologram.shine {
+      transform: scale(1) rotate(360deg);
+      opacity: 1;
+      box-shadow: 0 0 25px rgba(234, 179, 8, 0.8);
+    }
+    .hologram-inner {
+      display: flex;
+      flex-direction: column;
+      font-size: 5.5px;
+      font-weight: 900;
+      color: #422006;
+      line-height: 1.1;
     }
 
     /* ── INTERVIEW TEST PORTAL DEMO OVERLAY ────────────────────────────── */
@@ -2917,16 +3255,24 @@
         if (testPortal) testPortal.classList.add('active');
       }, 29180);
 
-      // Phase 8 (39.38s): "program." ends -> Close Test Portal, next narration begins ("Score 1,200 marks...")
-      // Whisper: "program." ends at 39.380s, "Score" starts at 39.860s
+      // Phase 8 (39.38s): "program." ends -> Close Test Portal Demo
       _navP10Timer = setTimeout(function() {
         var testPortal = document.getElementById('testPortalOverlay');
         if (testPortal) testPortal.classList.remove('active');
       }, 39380);
 
-      // End (55.44s): Full narration finish
+      // Phase 9 (39.86s - 48.84s): Certificate & Marks Showcase (3-Phase Animation)
+      // 1. "Score 1,200 marks or above" (39.86s)
+      // 2. "to unlock your Job-Ready Certificate" (42.30s)
+      // 3. "featuring your overall, SQL, Excel, and Python scores" (44.86s)
+      _navCertStartTimer = setTimeout(function() {
+        startCertShowcaseAnimation();
+      }, 39860);
+
+      // End (55.44s): Full continuous audio narration finish
       _navEndTimer = setTimeout(function() {
         stopNavIntroAnimation();
+        stopCertShowcaseAnimation();
         resetAllAudioState();
       }, 55440);
     }
@@ -2935,9 +3281,145 @@
       clearTimeout(_navP1Timer); clearTimeout(_navP2Timer); clearTimeout(_navP3Timer);
       clearTimeout(_navP4Timer); clearTimeout(_navP5Timer); clearTimeout(_navP6Timer);
       clearTimeout(_navP7Timer); clearTimeout(_navP8Timer); clearTimeout(_navP9Timer);
-      clearTimeout(_navP10Timer); clearTimeout(_navEndTimer);
+      clearTimeout(_navP10Timer); clearTimeout(_navCertStartTimer); clearTimeout(_navEndTimer);
+
+      stopCertShowcaseAnimation();
 
       var nav = document.querySelector('.nav');
+      var stage = document.getElementById('narrationShowcaseStage');
+      var card = document.querySelector('.narration-showcase-card');
+      var clockCard = document.getElementById('roadmap-root');
+      var testPortal = document.getElementById('testPortalOverlay');
+
+      if (nav) nav.classList.remove('nav-anim-p1', 'nav-anim-p2');
+      if (stage) {
+        stage.classList.remove('active', 'transition-img2', 'phase-5-dissolve', 'phase-5-card');
+        stage.style.alignItems = ''; stage.style.justifyContent = ''; stage.style.padding = '';
+      }
+      if (card) {
+        card.classList.remove('img2-active');
+        card.style.cssText = '';
+      }
+      if (clockCard) {
+        clockCard.classList.remove('narration-roadmap-glow');
+        var btns = clockCard.querySelectorAll('.rm-legendBtn');
+        btns.forEach(function(b) { b.classList.remove('narration-pill-glow'); });
+      }
+      if (testPortal) testPortal.classList.remove('active');
+      document.body.classList.remove('narration-active', 'phase-5-active');
+    }
+
+    // ── CERTIFICATE SHOWCASE 3-PHASE ANIMATION CONTROLLER ────────────────
+    var _navCert1Timer = null, _navCert2Timer = null, _navCert3Timer = null;
+    var _navCert4Timer = null, _navCert5Timer = null, _navCert6Timer = null;
+    var _navCertCloseTimer = null, _certCounterInterval = null;
+
+    function startCertShowcaseAnimation() {
+      stopCertShowcaseAnimation();
+
+      var overlay = document.getElementById('certShowcaseOverlay');
+      var headerBadge = document.getElementById('certHeaderBadge');
+      var headerMain = document.getElementById('certHeaderMain');
+      var marksRing = document.getElementById('marksRingFill');
+      var lockIcon = document.getElementById('marksLockIcon');
+      var valNum = document.getElementById('marksValNum');
+      var statusText = document.getElementById('marksStatusText');
+      var certPaper = document.getElementById('certPaper');
+      var hologram = document.getElementById('certGoldHologram');
+
+      var sOverall = document.getElementById('scoreBadgeOverall');
+      var sSql = document.getElementById('scoreBadgeSql');
+      var sExcel = document.getElementById('scoreBadgeExcel');
+      var sPython = document.getElementById('scoreBadgePython');
+
+      if (!overlay) return;
+
+      overlay.classList.add('active');
+      if (certPaper) certPaper.classList.remove('unlocked');
+      if (hologram) hologram.classList.remove('shine');
+      if (lockIcon) { lockIcon.textContent = '🔒'; lockIcon.style.transform = 'scale(1)'; }
+      if (statusText) statusText.textContent = 'Evaluating Score...';
+      if (headerBadge) { headerBadge.textContent = '🏆 UNLOCK THRESHOLD EVALUATION'; headerBadge.style.color = '#eab308'; }
+      if (headerMain) headerMain.textContent = 'Score 1,200+ Marks To Unlock Certificate';
+      if (marksRing) marksRing.style.strokeDashoffset = '440';
+
+      [sOverall, sSql, sExcel, sPython].forEach(function(el) {
+        if (el) el.classList.remove('active-score');
+      });
+
+      // Step 1 (39.86s - 42.30s): "Score 1,200 marks or above" -> Ring & Counter Animation
+      var target = 1200;
+      var duration = 1800; // 1.8s
+      var startTime = Date.now();
+
+      _certCounterInterval = setInterval(function() {
+        var elapsed = Date.now() - startTime;
+        var progress = Math.min(1, elapsed / duration);
+        var curVal = Math.floor(progress * target);
+        if (valNum) valNum.textContent = curVal.toLocaleString();
+
+        var offset = 440 - (352 * progress);
+        if (marksRing) marksRing.style.strokeDashoffset = offset;
+
+        if (progress >= 1) {
+          clearInterval(_certCounterInterval);
+        }
+      }, 30);
+
+      // At 41.72s ("above"): Lock morphs to 🔓, status changes to PASSED
+      _navCert1Timer = setTimeout(function() {
+        if (lockIcon) { lockIcon.textContent = '🔓'; lockIcon.style.transform = 'scale(1.3) rotate(-10deg)'; }
+        if (statusText) statusText.textContent = '✅ 1,200 / 1,500 MARKS (PASSED)';
+      }, 1860);
+
+      // Step 2 (42.30s - 44.86s): "to unlock your Job-Ready Certificate" -> 3D Certificate & Gold Seal Reveal
+      _navCert2Timer = setTimeout(function() {
+        if (certPaper) certPaper.classList.add('unlocked');
+        if (hologram) hologram.classList.add('shine');
+        if (headerBadge) { headerBadge.textContent = '🎓 CERTIFICATE OF MASTERY UNLOCKED'; headerBadge.style.color = '#10b981'; }
+        if (headerMain) headerMain.textContent = 'Official Job-Ready Certificate Unlocked!';
+      }, 2440);
+
+      // Step 3 (44.86s - 48.52s): "featuring your overall, SQL, Excel, and Python scores"
+      // 45.26s ("overall"): Overall score badge lights up
+      _navCert3Timer = setTimeout(function() {
+        if (sOverall) sOverall.classList.add('active-score');
+      }, 5400);
+
+      // 45.76s ("SQL"): SQL track score lights up
+      _navCert4Timer = setTimeout(function() {
+        if (sSql) sSql.classList.add('active-score');
+      }, 5900);
+
+      // 46.92s ("Excel"): Excel track score lights up
+      _navCert5Timer = setTimeout(function() {
+        if (sExcel) sExcel.classList.add('active-score');
+      }, 7060);
+
+      // 47.78s ("Python"): Python track score lights up
+      _navCert6Timer = setTimeout(function() {
+        if (sPython) sPython.classList.add('active-score');
+      }, 7920);
+
+      // 48.84s: Close Certificate Showcase Overlay as HR interview narration begins
+      _navCertCloseTimer = setTimeout(function() {
+        stopCertShowcaseAnimation();
+      }, 8980);
+    }
+
+    function stopCertShowcaseAnimation() {
+      if (_certCounterInterval) clearInterval(_certCounterInterval);
+      clearTimeout(_navCert1Timer); clearTimeout(_navCert2Timer); clearTimeout(_navCert3Timer);
+      clearTimeout(_navCert4Timer); clearTimeout(_navCert5Timer); clearTimeout(_navCert6Timer);
+      clearTimeout(_navCertCloseTimer);
+
+      var overlay = document.getElementById('certShowcaseOverlay');
+      if (overlay) overlay.classList.remove('active');
+    }
+
+    function closeCertDemoOverlay() {
+      stopCertShowcaseAnimation();
+    }
       var stage = document.getElementById('narrationShowcaseStage');
       var card = document.querySelector('.narration-showcase-card');
       var clockCard = document.getElementById('roadmap-root');
@@ -3007,6 +3489,44 @@
       if (hook) hook.classList.remove('playing');
       stopNavIntroAnimation();
     }
+
+    window._narrationSeekTo = function(t) {
+      var testPortal = document.getElementById('testPortalOverlay');
+      if (testPortal) {
+        if (t >= 29.18 && t < 39.38) testPortal.classList.add('active');
+        else testPortal.classList.remove('active');
+      }
+
+      var certOverlay = document.getElementById('certShowcaseOverlay');
+      if (certOverlay) {
+        if (t >= 39.86 && t < 48.84) {
+          certOverlay.classList.add('active');
+          var certPaper = document.getElementById('certPaper');
+          var hologram = document.getElementById('certGoldHologram');
+          var sOverall = document.getElementById('scoreBadgeOverall');
+          var sSql = document.getElementById('scoreBadgeSql');
+          var sExcel = document.getElementById('scoreBadgeExcel');
+          var sPython = document.getElementById('scoreBadgePython');
+
+          if (t >= 41.72) {
+            var lockIcon = document.getElementById('marksLockIcon');
+            var statusText = document.getElementById('marksStatusText');
+            if (lockIcon) { lockIcon.textContent = '🔓'; lockIcon.style.transform = 'scale(1.3) rotate(-10deg)'; }
+            if (statusText) statusText.textContent = '✅ 1,200 / 1,500 MARKS (PASSED)';
+          }
+          if (t >= 42.30) {
+            if (certPaper) certPaper.classList.add('unlocked');
+            if (hologram) hologram.classList.add('shine');
+          }
+          if (t >= 45.26 && sOverall) sOverall.classList.add('active-score');
+          if (t >= 45.76 && sSql) sSql.classList.add('active-score');
+          if (t >= 46.92 && sExcel) sExcel.classList.add('active-score');
+          if (t >= 47.78 && sPython) sPython.classList.add('active-score');
+        } else {
+          certOverlay.classList.remove('active');
+        }
+      }
+    };
 
     document.addEventListener('DOMContentLoaded', function() {
       var audio    = document.getElementById('navIntroAudioElement');
@@ -3602,6 +4122,129 @@
         <span style="color:#64748b; font-size:12px; font-weight:700;">Attempted: 0 / 25</span>
         <button class="btn-submit-test">Submit Test</button>
       </div>
+    </div>
+  </div>
+
+  <!-- ── CERTIFICATE & MARKS SHOWCASE OVERLAY ────────────────────────── -->
+  <div class="cert-showcase-overlay" id="certShowcaseOverlay">
+    <div class="cert-showcase-card" id="certShowcaseCard">
+
+      <!-- Top Header Badge & Close Button -->
+      <div class="cert-card-header">
+        <div class="cert-card-title-group">
+          <span class="cert-header-badge" id="certHeaderBadge">🏆 UNLOCK THRESHOLD EVALUATION</span>
+          <h3 class="cert-header-main" id="certHeaderMain">Score 1,200+ Marks To Unlock</h3>
+        </div>
+        <button class="cert-exit-btn" onclick="closeCertDemoOverlay()">✕ Exit</button>
+      </div>
+
+      <!-- Main Body Container -->
+      <div class="cert-card-body">
+
+        <!-- Left Column: Dynamic 1,200 Marks Ring & Threshold Counter -->
+        <div class="cert-marks-section" id="certMarksSection">
+          <div class="marks-ring-container">
+            <svg class="marks-ring-svg" viewBox="0 0 160 160">
+              <defs>
+                <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#38bdf8" />
+                  <stop offset="50%" stop-color="#eab308" />
+                  <stop offset="100%" stop-color="#10b981" />
+                </linearGradient>
+              </defs>
+              <circle class="marks-ring-bg" cx="80" cy="80" r="70" />
+              <circle class="marks-ring-fill" id="marksRingFill" cx="80" cy="80" r="70" />
+            </svg>
+            <div class="marks-counter-center">
+              <div class="marks-lock-icon" id="marksLockIcon">🔒</div>
+              <div class="marks-val-num" id="marksValNum">0</div>
+              <div class="marks-sub-label">/ 1,500 MARKS</div>
+            </div>
+          </div>
+          <div class="marks-status-pill" id="marksStatusPill">
+            <span class="status-pulse-dot"></span>
+            <span id="marksStatusText">Evaluating Score...</span>
+          </div>
+        </div>
+
+        <!-- Right Column: Official Job-Ready Certificate Document -->
+        <div class="cert-document-section" id="certDocumentSection">
+          <div class="cert-paper" id="certPaper">
+            <!-- Decorative Border Frame -->
+            <div class="cert-paper-border"></div>
+
+            <!-- Certificate Header -->
+            <div class="cert-doc-header">
+              <div class="cert-logo-row">
+                <img src="/landing_v2/manodemy_3d_keycap.png" width="32" height="32" alt="Manodemy Logo" />
+                <span class="cert-brand-name">MANODEMY <span>HANDS-ON</span></span>
+              </div>
+              <div class="cert-title-badge">VERIFIED JOB-READY CERTIFICATE</div>
+            </div>
+
+            <!-- Certificate Recipient & Title -->
+            <div class="cert-doc-body">
+              <div class="cert-subtitle">PROUDLY PRESENTED TO DATA ANALYTICS GRADUATE</div>
+              <div class="cert-recipient-name">Data Analyst Candidate</div>
+              <div class="cert-course-name">60-Day Data Analytics Masterclass</div>
+            </div>
+
+            <!-- 4-Track Score Matrix (Synchronized with Audio) -->
+            <div class="cert-scores-grid" id="certScoresGrid">
+              <!-- Overall Score -->
+              <div class="score-badge-card score-overall" id="scoreBadgeOverall">
+                <div class="score-icon">🏆</div>
+                <div class="score-info">
+                  <div class="score-label">OVERALL SCORE</div>
+                  <div class="score-val">86% <span class="score-sub">(1,290 / 1,500)</span></div>
+                </div>
+              </div>
+              <!-- SQL Score -->
+              <div class="score-badge-card score-sql" id="scoreBadgeSql">
+                <div class="score-icon">⚡</div>
+                <div class="score-info">
+                  <div class="score-label">SQL TRACK (DAYS 1-18)</div>
+                  <div class="score-val">96% <span class="score-sub">(432 / 450)</span></div>
+                </div>
+              </div>
+              <!-- Excel Score -->
+              <div class="score-badge-card score-excel" id="scoreBadgeExcel">
+                <div class="score-icon">📊</div>
+                <div class="score-info">
+                  <div class="score-label">EXCEL TRACK (DAYS 19-30)</div>
+                  <div class="score-val">90% <span class="score-sub">(270 / 300)</span></div>
+                </div>
+              </div>
+              <!-- Python Score -->
+              <div class="score-badge-card score-python" id="scoreBadgePython">
+                <div class="score-icon">🐍</div>
+                <div class="score-info">
+                  <div class="score-label">PYTHON TRACK (DAYS 31-60)</div>
+                  <div class="score-val">82% <span class="score-sub">(588 / 750)</span></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Certificate Footer: Verification Code & Gold Hologram Stamp -->
+            <div class="cert-doc-footer">
+              <div class="cert-verify-info">
+                <span class="verify-url">manodemy.com/verify/MN-2026-8892</span>
+                <span class="verify-seal-text">🔒 Cryptographically Signed &amp; Verifiable</span>
+              </div>
+              <div class="cert-gold-hologram" id="certGoldHologram">
+                <div class="hologram-inner">
+                  <span>MANODEMY</span>
+                  <strong>GOLD SEAL</strong>
+                  <span>VERIFIED</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
     </div>
   </div>
 

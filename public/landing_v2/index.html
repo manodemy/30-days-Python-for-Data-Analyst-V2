@@ -241,6 +241,86 @@
       transition: all 0.35s ease !important;
     }
 
+    /* ── NAV AUDIO TIMELINE ────────────────────────────────────── */
+    .nav-audio-timeline {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: rgba(0,0,0,0.08);
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease, height 0.2s ease;
+      z-index: 10;
+    }
+    .nav-audio-timeline:hover {
+      height: 5px;
+    }
+    .narration-active .nav-audio-timeline {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .nav-audio-progress {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #22d3ee 0%, #06b6d4 60%, #7c3aed 100%);
+      border-radius: 0 2px 2px 0;
+      transition: width 0.25s linear;
+      pointer-events: none;
+    }
+    .nav-audio-thumb {
+      position: absolute;
+      top: 50%;
+      left: 0%;
+      transform: translate(-50%, -50%) scale(0);
+      width: 12px;
+      height: 12px;
+      background: #22d3ee;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 8px rgba(34,211,238,0.7);
+      pointer-events: none;
+      transition: transform 0.15s ease, left 0.25s linear;
+    }
+    .nav-audio-timeline:hover .nav-audio-thumb,
+    .nav-audio-timeline.dragging .nav-audio-thumb {
+      transform: translate(-50%, -50%) scale(1);
+    }
+    /* Time display — top-right, just above the timeline */
+    .nav-audio-time-display {
+      position: absolute;
+      bottom: 8px;
+      right: 16px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      color: #22d3ee;
+      letter-spacing: 0.04em;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+      z-index: 10;
+      text-shadow: 0 0 10px rgba(34,211,238,0.5);
+    }
+    .nav-audio-time-sep {
+      color: rgba(255,255,255,0.35);
+      font-weight: 400;
+    }
+    #navAudioTotal {
+      color: rgba(255,255,255,0.45);
+    }
+    .narration-active .nav-audio-time-display {
+      opacity: 1;
+    }
+
     /* ── INTERVIEW TEST PORTAL DEMO OVERLAY ────────────────────────────── */
     .test-portal-overlay {
       position: fixed;
@@ -757,6 +837,16 @@
             </div>
           </div>
         </div>
+      </div>
+      <!-- ── AUDIO TIMELINE (visible only during narration-active) ── -->
+      <div id="navAudioTimeline" class="nav-audio-timeline" title="Click or drag to seek">
+        <div id="navAudioProgress" class="nav-audio-progress"></div>
+        <div id="navAudioThumb" class="nav-audio-thumb"></div>
+      </div>
+      <div id="navAudioTimeDisplay" class="nav-audio-time-display">
+        <span id="navAudioCurrent">0:00</span>
+        <span class="nav-audio-time-sep">/</span>
+        <span id="navAudioTotal">0:55</span>
       </div>
     </nav>
   </header>
@@ -2914,11 +3004,102 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-      var audio = document.getElementById('navIntroAudioElement');
+      var audio    = document.getElementById('navIntroAudioElement');
+      var timeline = document.getElementById('navAudioTimeline');
+      var progress = document.getElementById('navAudioProgress');
+      var thumb    = document.getElementById('navAudioThumb');
+      var curEl    = document.getElementById('navAudioCurrent');
+      var totEl    = document.getElementById('navAudioTotal');
+
+      function fmt(s) {
+        var m = Math.floor(s / 60);
+        var sec = Math.floor(s % 60);
+        return m + ':' + (sec < 10 ? '0' : '') + sec;
+      }
+
+      function setTimelinePos(pct) {
+        var p = Math.max(0, Math.min(100, pct));
+        progress.style.width = p + '%';
+        thumb.style.left = p + '%';
+      }
+
+      function seekToPct(pct) {
+        if (!audio || !audio.duration) return;
+        var t = (pct / 100) * audio.duration;
+        audio.currentTime = t;
+        // Fire narration phase resync
+        if (window._narrationSeekTo) window._narrationSeekTo(t);
+      }
+
       if (audio) {
-        audio.onended = function() {
-          resetAllAudioState();
-        };
+        audio.onended = function() { resetAllAudioState(); };
+
+        audio.addEventListener('loadedmetadata', function() {
+          if (totEl) totEl.textContent = fmt(audio.duration);
+        });
+
+        audio.addEventListener('timeupdate', function() {
+          if (!audio.duration) return;
+          var pct = (audio.currentTime / audio.duration) * 100;
+          setTimelinePos(pct);
+          if (curEl) curEl.textContent = fmt(audio.currentTime);
+        });
+      }
+
+      if (timeline) {
+        var isDragging = false;
+
+        function pctFromEvent(e) {
+          var rect = timeline.getBoundingClientRect();
+          var x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+          return Math.max(0, Math.min(100, (x / rect.width) * 100));
+        }
+
+        timeline.addEventListener('mousedown', function(e) {
+          isDragging = true;
+          timeline.classList.add('dragging');
+          // Disable CSS transition during drag for instant response
+          progress.style.transition = 'none';
+          thumb.style.transition = 'none';
+          var pct = pctFromEvent(e);
+          setTimelinePos(pct);
+          seekToPct(pct);
+        });
+
+        timeline.addEventListener('touchstart', function(e) {
+          isDragging = true;
+          timeline.classList.add('dragging');
+          progress.style.transition = 'none';
+          thumb.style.transition = 'none';
+          var pct = pctFromEvent(e);
+          setTimelinePos(pct);
+          seekToPct(pct);
+        }, { passive: true });
+
+        document.addEventListener('mousemove', function(e) {
+          if (!isDragging) return;
+          var pct = pctFromEvent(e);
+          setTimelinePos(pct);
+          seekToPct(pct);
+        });
+
+        document.addEventListener('touchmove', function(e) {
+          if (!isDragging) return;
+          var pct = pctFromEvent(e);
+          setTimelinePos(pct);
+          seekToPct(pct);
+        }, { passive: true });
+
+        function stopDrag() {
+          if (!isDragging) return;
+          isDragging = false;
+          timeline.classList.remove('dragging');
+          // Restore smooth transition after drag ends
+          progress.style.transition = '';
+          thumb.style.transition = '';
+        }
+        document.addEventListener('mouseup', stopDrag);
+        document.addEventListener('touchend', stopDrag);
       }
     });
 

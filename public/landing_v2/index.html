@@ -3852,71 +3852,34 @@
         card.classList.remove('card-entered');
         setTimeout(function() { card.classList.add('card-entered'); }, 40);
       }
-      if (certPaper) certPaper.classList.remove('unlocked');
-      if (hologram) hologram.classList.remove('shine');
-      if (lockIcon) { lockIcon.textContent = '🔒'; lockIcon.style.transform = 'scale(1)'; }
-      if (statusText) statusText.textContent = 'Evaluating Score...';
-      if (headerBadge) { headerBadge.textContent = '🏆 UNLOCK THRESHOLD EVALUATION'; headerBadge.style.color = '#eab308'; }
-      if (headerMain) headerMain.textContent = 'Score 1,200+ Marks To Unlock Certificate';
-      if (marksRing) marksRing.style.strokeDashoffset = '440';
+    }
 
-      [sOverall, sSql, sExcel, sPython].forEach(function(el) {
-        if (el) el.classList.remove('active-score');
-      });
+    function stopCertShowcaseAnimation() {
+      if (_certCounterInterval) clearInterval(_certCounterInterval);
+      clearTimeout(_navCert1Timer); clearTimeout(_navCert2Timer); clearTimeout(_navCert3Timer);
+      clearTimeout(_navCert4Timer); clearTimeout(_navCert5Timer); clearTimeout(_navCert6Timer);
+      clearTimeout(_navCertCloseTimer);
 
-      // Step 1 (33.24s - 35.20s): "Score 1,200 plus marks..." -> Ring & Counter Animation
-      var target = 1200;
-      var duration = 1700; // 1.7s
-      var startTime = Date.now();
+      var overlay = document.getElementById('certShowcaseOverlay');
+      var card = document.getElementById('certShowcaseCard');
+      if (card) card.classList.remove('card-entered');
+      if (overlay) overlay.classList.remove('active');
+    }
 
-      _certCounterInterval = setInterval(function() {
-        var elapsed = Date.now() - startTime;
-        var progress = Math.min(1, elapsed / duration);
-        var curVal = Math.floor(progress * target);
-        if (valNum) valNum.textContent = curVal.toLocaleString();
+    function closeCertDemoOverlay() {
+      stopCertShowcaseAnimation();
+    }
 
-        var offset = 440 - (352 * progress);
-        if (marksRing) marksRing.style.strokeDashoffset = offset;
+    function openTestDemoPortal() {
+      var testPortal = document.getElementById('testPortalOverlay');
+      if (testPortal) testPortal.classList.add('active');
+    }
+    function closeTestDemoPortal() {
+      var testPortal = document.getElementById('testPortalOverlay');
+      if (testPortal) testPortal.classList.remove('active');
+    }
 
-        if (progress >= 1) {
-          clearInterval(_certCounterInterval);
-        }
-      }, 30);
-
-      // At 35.20s ("plus marks"): Lock morphs to 🔓, status changes to PASSED
-      _navCert1Timer = setTimeout(function() {
-        if (lockIcon) { lockIcon.textContent = '🔓'; lockIcon.style.transform = 'scale(1.3) rotate(-10deg)'; }
-        if (statusText) statusText.textContent = '✅ 1,200 / 1,500 MARKS (PASSED)';
-      }, 1960);
-
-      // Step 2 (36.00s): "...and unlock your official job-ready certificate" -> 3D Certificate & Gold Seal Reveal
-      _navCert2Timer = setTimeout(function() {
-        if (certPaper) certPaper.classList.add('unlocked');
-        if (hologram) hologram.classList.add('shine');
-        if (headerBadge) { headerBadge.textContent = '🎓 CERTIFICATE OF MASTERY UNLOCKED'; headerBadge.style.color = '#10b981'; }
-        if (headerMain) headerMain.textContent = 'Official Job-Ready Certificate Unlocked!';
-      }, 2760);
-
-      // Step 3 (38.14s - 42.18s): "...with complete, verified SQL, Excel, and Python scores"
-      // 38.14s ("complete"): Overall score badge lights up
-      _navCert3Timer = setTimeout(function() {
-        if (sOverall) sOverall.classList.add('active-score');
-      }, 4900);
-
-      // 39.14s ("SQL"): SQL track score lights up
-      _navCert4Timer = setTimeout(function() {
-        if (sSql) sSql.classList.add('active-score');
-      }, 5900);
-
-      // 40.16s ("Excel"): Excel track score lights up
-      _navCert5Timer = setTimeout(function() {
-        if (sExcel) sExcel.classList.add('active-score');
-      }, 6920);
-
-      // 40.88s ("Python"): Python track score lights up
-      _navCert6Timer = setTimeout(function() {
-        if (sPython) sPython.classList.add('active-score');
-      function playOrPauseIntroAudio() {
+    function playOrPauseIntroAudio() {
       var audio = document.getElementById('navIntroAudioElement');
       var circle = document.getElementById('navCenterPlayCircle');
       var hook = document.getElementById('navCenterAudioHook');
@@ -3937,6 +3900,29 @@
         if (hook) hook.classList.remove('playing');
         stopNavIntroAnimation();
       }
+    }
+
+    function startNavIntroAnimation() {
+      var audio = document.getElementById('navIntroAudioElement');
+      if (audio && window._narrationSeekTo) {
+        window._narrationSeekTo(audio.currentTime, true);
+      }
+    }
+
+    function stopNavIntroAnimation() {
+      document.body.classList.remove('narration-active', 'phase-5-active');
+      var nav = document.querySelector('.nav');
+      if (nav) nav.classList.remove('nav-anim-p1', 'nav-anim-p2');
+      var stage = document.getElementById('narrationShowcaseStage');
+      if (stage) stage.classList.remove('active', 'transition-img2', 'phase-5-dissolve');
+      var clockCard = document.getElementById('roadmap-root');
+      if (clockCard) clockCard.classList.remove('narration-roadmap-glow');
+      var certOverlay = document.getElementById('certShowcaseOverlay');
+      if (certOverlay) certOverlay.classList.remove('active');
+      var hrOverlay = document.getElementById('hrInterviewOverlay');
+      if (hrOverlay) hrOverlay.classList.remove('active');
+      _lastNarrationPhase = -1;
+      _lastSubState = '';
     }
 
     function resetAllAudioState() {

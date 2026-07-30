@@ -698,7 +698,7 @@
     .nav-audio-timeline.dragging + .nav-audio-time-display {
       opacity: 1;
     }
-    /* ── CERTIFICATE & MARKS SHOWCASE OVERLAY (PREMIUM REDESIGN) ───────── */
+    /* ── CERTIFICATE SHOWCASE OVERLAY — full uncropped display ─────────── */
     .cert-showcase-overlay {
       position: fixed;
       top: 0;
@@ -706,47 +706,40 @@
       right: 0;
       bottom: 0;
       z-index: 1001;
-      background: rgba(5, 8, 14, 0.97);
+      background: rgba(5, 8, 14, 0.96);
       backdrop-filter: blur(20px);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: var(--nav-h) 20px 20px 20px;
+      padding: calc(var(--nav-h) + 16px) 24px 24px 24px;
+      box-sizing: border-box;
       opacity: 0;
       visibility: hidden;
       pointer-events: none;
-      transform: scale(0.96) translateY(16px);
       transition: opacity 0.75s cubic-bezier(0.25, 1, 0.5, 1),
-                  transform 0.75s cubic-bezier(0.25, 1, 0.5, 1),
                   visibility 0.75s ease;
     }
     .cert-showcase-overlay.active {
       opacity: 1;
       visibility: visible;
       pointer-events: auto;
-      transform: scale(1) translateY(0);
     }
-    .cert-showcase-card {
-      position: relative;
-      width: 100%;
-      max-width: 1200px;
-      height: calc(100vh - var(--nav-h) - 24px);
-      max-height: 660px;
-      background: radial-gradient(circle at 50% 0%, #151d2c 0%, #090e18 100%);
-      border: 1px solid rgba(234, 179, 8, 0.4);
-      border-radius: 20px;
-      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.9), 0 0 50px rgba(234, 179, 8, 0.18);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      opacity: 0;
-      transform: translateY(40px) scale(0.95);
-      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-                  transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    .cert-showcase-img {
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      display: block;
+      border-radius: 14px;
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.95), 0 0 60px rgba(234, 179, 8, 0.4);
+      border: 1.5px solid rgba(234, 179, 8, 0.85);
+      transform: scale(0.96);
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s ease;
     }
-    .cert-showcase-card.card-entered {
-      opacity: 1;
-      transform: translateY(0) scale(1);
+    .cert-showcase-overlay.active .cert-showcase-img,
+    .cert-showcase-overlay.active #certPaper {
+      transform: scale(1);
     }
     .cert-exit-btn {
       background: rgba(255, 255, 255, 0.06);
@@ -4446,16 +4439,8 @@
   <!-- ── CERTIFICATE & MARKS SHOWCASE OVERLAY ────────────────────────── -->
 
   <div class="cert-showcase-overlay" id="certShowcaseOverlay">
-    <div class="cert-showcase-card" id="certShowcaseCard" style="max-width: 920px; width: 92%; height: auto; max-height: 88vh; background: transparent; border: none; box-shadow: none; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;">
-
-      <button class="cert-exit-btn" onclick="closeCertDemoOverlay()" style="position: absolute; top: -45px; right: 0; z-index: 10; background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.25); color: #fff; padding: 8px 20px; border-radius: 8px; font-weight: 700; cursor: pointer; backdrop-filter: blur(12px);">✕ Exit</button>
-
-      <!-- Pure Clean Certificate Display -->
-      <div class="cert-paper" id="certPaper" style="width: 100%; border-radius: 14px; overflow: hidden; box-shadow: 0 35px 100px rgba(0,0,0,0.95), 0 0 60px rgba(234,179,8,0.35); border: 2px solid rgba(234,179,8,0.85); background: #080d1a; line-height: 0;">
-        <img src="/sample-certificate.png" alt="Official Manodemy Certificate of Achievement" style="width: 100%; height: auto; display: block; border-radius: 12px;" />
-      </div>
-
-    </div>
+    <button class="cert-exit-btn hr-exit-btn-top" onclick="closeCertDemoOverlay()">✕ Exit</button>
+    <img id="certPaper" src="/sample-certificate.png" alt="Official Manodemy Certificate of Achievement" class="cert-showcase-img" />
   </div>
 
   <!-- ── HR INTERVIEW QUESTION DEMO OVERLAY — full uncropped image ────── -->

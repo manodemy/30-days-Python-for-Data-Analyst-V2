@@ -3978,58 +3978,59 @@
     }
 
     window._narrationSeekTo = function(t) {
-      // Phase 7: Scroll so iframe is flush below nav bar; scroll back for cert phase
-      var cursor = document.getElementById('demoMouseCursor');
-      if (t >= 24.36 && t < 33.24) {
-        var iframeEl = document.getElementById('liveLessonIframe');
-        if (iframeEl) {
-          var navH2 = (document.querySelector('.nav') || {}).offsetHeight || 76;
-          var iTop = iframeEl.getBoundingClientRect().top + window.scrollY;
-          window.scrollTo({ top: iTop - navH2, behavior: 'instant' });
+      var nav = document.querySelector('.nav');
+      var stage = document.getElementById('narrationShowcaseStage');
+      var card = document.querySelector('.narration-showcase-card');
+      var badgeText = document.getElementById('narrationBadgeText');
+
+      if (!nav) return;
+
+      document.body.classList.add('narration-active');
+
+      // 0.00s - 1.20s: Logo centered in nav
+      if (t >= 0 && t < 1.20) {
+        nav.classList.remove('nav-anim-p2');
+        nav.classList.add('nav-anim-p1');
+        if (stage) stage.classList.remove('active', 'transition-img2', 'phase-5-dissolve');
+      } 
+      // 1.20s - 4.56s: Logo slides left, audio pill centered in nav bar
+      else if (t >= 1.20 && t < 4.56) {
+        nav.classList.remove('nav-anim-p1');
+        nav.classList.add('nav-anim-p2');
+        if (stage) stage.classList.remove('active', 'transition-img2', 'phase-5-dissolve');
+      } 
+      // 4.56s - 8.30s: "Whether you're a complete beginner breaking into data for the first time..." -> Card 1
+      else if (t >= 4.56 && t < 8.30) {
+        nav.classList.remove('nav-anim-p1');
+        nav.classList.add('nav-anim-p2');
+        if (stage) {
+          stage.classList.remove('transition-img2', 'phase-5-dissolve');
+          stage.classList.add('active');
         }
-        if (cursor) cursor.style.opacity = (t >= 25.94 && t < 27.10) ? '1' : '0';
-      } else {
-        if (t >= 33.24) window.scrollTo({ top: 0, behavior: 'instant' });
-        if (cursor) cursor.style.opacity = '0';
-      }
-
-      var certOverlay = document.getElementById('certShowcaseOverlay');
-      var certCard = document.getElementById('certShowcaseCard');
-      if (certOverlay) {
-        if (t >= 33.24 && t < 42.98) {
-          certOverlay.classList.add('active');
-          if (certCard) certCard.classList.add('card-entered');
-          var certPaper = document.getElementById('certPaper');
-          var hologram = document.getElementById('certGoldHologram');
-          var sOverall = document.getElementById('scoreBadgeOverall');
-          var sSql = document.getElementById('scoreBadgeSql');
-          var sExcel = document.getElementById('scoreBadgeExcel');
-          var sPython = document.getElementById('scoreBadgePython');
-
-          if (t >= 35.20) {
-            var lockIcon = document.getElementById('marksLockIcon');
-            var statusText = document.getElementById('marksStatusText');
-            if (lockIcon) { lockIcon.textContent = '🔓'; lockIcon.style.transform = 'scale(1.3) rotate(-10deg)'; }
-            if (statusText) statusText.textContent = '✅ 1,200 / 1,500 MARKS (PASSED)';
-          }
-          if (t >= 36.00) {
-            if (certPaper) certPaper.classList.add('unlocked');
-            if (hologram) hologram.classList.add('shine');
-          }
-          if (t >= 38.14 && sOverall) sOverall.classList.add('active-score');
-          if (t >= 39.14 && sSql) sSql.classList.add('active-score');
-          if (t >= 40.16 && sExcel) sExcel.classList.add('active-score');
-          if (t >= 40.88 && sPython) sPython.classList.add('active-score');
-        } else {
-          certOverlay.classList.remove('active');
-          if (certCard) certCard.classList.remove('card-entered');
+        if (card) card.classList.remove('img2-active');
+        if (badgeText) badgeText.innerHTML = '🌱 COMPLETE BEGINNER ENTERING THE DATA WORLD';
+      } 
+      // 8.30s - 12.44s: "or a practicing analyst gearing up to conquer next technical interviews..." -> Card 2
+      else if (t >= 8.30 && t < 12.44) {
+        nav.classList.remove('nav-anim-p1');
+        nav.classList.add('nav-anim-p2');
+        if (stage) {
+          stage.classList.add('active', 'transition-img2');
+          stage.classList.remove('phase-5-dissolve');
         }
-      }
-
-      var hrOverlay = document.getElementById('hrInterviewOverlay');
-      if (hrOverlay) {
-        if (t >= 42.18 && t < 48.08) hrOverlay.classList.add('active');
-        else hrOverlay.classList.remove('active');
+        if (card) card.classList.add('img2-active');
+        if (badgeText) badgeText.innerHTML = '🎯 PRACTICING ANALYST LOOKING FOR A JOB SWITCH';
+      } 
+      // 12.44s - 15.08s: "this masterclass was built specifically for you." -> Dissolve & Final Badge
+      else if (t >= 12.44) {
+        nav.classList.remove('nav-anim-p1');
+        nav.classList.add('nav-anim-p2');
+        document.body.classList.add('phase-5-active');
+        if (stage) {
+          stage.classList.add('active', 'transition-img2', 'phase-5-dissolve');
+        }
+        if (card) card.classList.add('img2-active');
+        if (badgeText) badgeText.innerHTML = '✨ BUILT SPECIFICALLY FOR YOU';
       }
     };
 
@@ -4057,7 +4058,6 @@
         if (!audio || !audio.duration) return;
         var t = (pct / 100) * audio.duration;
         audio.currentTime = t;
-        // Fire narration phase resync
         if (window._narrationSeekTo) window._narrationSeekTo(t);
       }
 
@@ -4073,6 +4073,7 @@
           var pct = (audio.currentTime / audio.duration) * 100;
           setTimelinePos(pct);
           if (curEl) curEl.textContent = fmt(audio.currentTime);
+          if (window._narrationSeekTo) window._narrationSeekTo(audio.currentTime);
         });
       }
 

@@ -3669,58 +3669,58 @@
 
       document.body.classList.add('narration-active');
 
-      // Phase 1 (0s - 1.38s): Logo centered in nav
+      // Phase 1 (0s - 1.20s): Logo centered in nav
       nav.classList.remove('nav-anim-p2');
       nav.classList.add('nav-anim-p1');
 
-      // Phase 2 (1.38s - 4.40s): Logo left, audio pill centered
+      // Phase 2 (1.20s - 4.02s): Logo left, audio pill centered
       _navP1Timer = setTimeout(function () {
         nav.classList.remove('nav-anim-p1');
         nav.classList.add('nav-anim-p2');
-      }, 1380);
+      }, 1200);
 
-      // Phase 3 (4.40s - 8.60s): Image 1 below nav bar
+      // Phase 3 (4.02s - 7.42s): Beginner Card below nav bar
       _navP2Timer = setTimeout(function () {
         if (stage) {
           stage.classList.remove('transition-img2');
           stage.classList.add('active');
         }
         if (card) card.classList.remove('img2-active');
-        if (badgeText) badgeText.innerHTML = '🌱 COMPLETE BEGINNER BREAKING INTO DATA';
-      }, 4400);
+        if (badgeText) badgeText.innerHTML = '🌱 COMPLETE BEGINNER ENTERING THE DATA WORLD';
+      }, 4020);
 
-      // Phase 4 (8.60s - 13.34s): Transition to Image 2
+      // Phase 4 (7.42s - 9.78s): Transition to Practicing Analyst Card
       _navP3Timer = setTimeout(function () {
         if (stage) stage.classList.add('transition-img2');
         if (card) card.classList.add('img2-active');
-        if (badgeText) badgeText.innerHTML = '🎯 PRACTICING ANALYST TECHNICAL INTERVIEWS';
-      }, 8600);
+        if (badgeText) badgeText.innerHTML = '🎯 PRACTICING ANALYST LOOKING FOR A JOB SWITCH';
+      }, 7420);
 
-      // Phase 5 (13.34s - 16.64s): Dual Slide & Center Zoom-Out
+      // Phase 5 (9.78s - 12.64s): Dual Slide & Center Zoom-Out
       _navP4Timer = setTimeout(function() {
         document.body.classList.add('phase-5-active');
         if (stage) stage.classList.add('phase-5-dissolve');
         if (badgeText) badgeText.innerHTML = '✨ BUILT SPECIFICALLY FOR YOU';
-      }, 13340);
+      }, 9780);
 
-      // Phase 6.1 (16.64s - 19.28s): Highlight Clock Card
+      // Phase 6.1 (12.64s - 17.28s): Highlight Clock Card
       _navP5Timer = setTimeout(function() {
         var clockCard = document.getElementById('roadmap-root');
         if (clockCard) {
           clockCard.classList.add('narration-roadmap-glow');
         }
-      }, 16640);
+      }, 12640);
 
-      // Phase 6.2 (19.28s - 22.70s): Jump Clock to Day 1 & Highlight SQL Pill
+      // Phase 6.2 (17.28s - 20.14s): Jump Clock to Day 1 & Highlight SQL Pill
       _navP6Timer = setTimeout(function() {
         var sqlBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="SQL"]');
         if (sqlBtn) sqlBtn.classList.add('narration-pill-glow');
         if (window.ManodemyRoadmap && window.ManodemyRoadmap.jumpToPhase) {
           window.ManodemyRoadmap.jumpToPhase('SQL');
         }
-      }, 19280);
+      }, 17280);
 
-      // Phase 6.3 (22.70s - 25.28s): Jump Clock to Day 19 & Highlight Excel Pill
+      // Phase 6.3 (20.14s - 23.56s): Jump Clock to Day 19 & Highlight Excel Pill
       _navP7Timer = setTimeout(function() {
         var sqlBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="SQL"]');
         var xlBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="Excel"]');
@@ -3729,9 +3729,9 @@
         if (window.ManodemyRoadmap && window.ManodemyRoadmap.jumpToPhase) {
           window.ManodemyRoadmap.jumpToPhase('Excel');
         }
-      }, 22700);
+      }, 20140);
 
-      // Phase 6.4 (25.28s - 29.52s): Jump Clock to Day 31 & Highlight Python Pill
+      // Phase 6.4 (23.56s - 24.36s): Jump Clock to Day 31 & Highlight Python Pill
       _navP8Timer = setTimeout(function() {
         var xlBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="Excel"]');
         var pyBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="Python"]');
@@ -3740,9 +3740,9 @@
         if (window.ManodemyRoadmap && window.ManodemyRoadmap.jumpToPhase) {
           window.ManodemyRoadmap.jumpToPhase('Python');
         }
-      }, 25280);
+      }, 23560);
 
-      // Phase 7 (29.52s): "Every day, you'll take a 25-question interview-based test..."
+      // Phase 7 (24.36s): "Every single day, you'll face 25 interview-based questions..."
       // → Smooth scroll to the real #play-lesson-demo iframe section
       _navP9Timer = setTimeout(function() {
         var clockCard = document.getElementById('roadmap-root');
@@ -3750,7 +3750,7 @@
         if (clockCard) clockCard.classList.remove('narration-roadmap-glow');
         if (pyBtn) pyBtn.classList.remove('narration-pill-glow');
 
-        // Scroll so the iframe sits flush below the nav bar (skip section header & day pills)
+        // Scroll so the iframe sits flush below the nav bar
         var iframe = document.getElementById('liveLessonIframe');
         if (iframe) {
           var navH = (document.querySelector('.nav') || {}).offsetHeight || 76;
@@ -3761,78 +3761,75 @@
         // Reset cursor state
         var cursor = document.getElementById('demoMouseCursor');
         if (cursor) cursor.classList.remove('moving', 'clicking');
-      }, 29520);
+      }, 24360);
 
-      // Phase 7.2 (32.20s): Animate cursor toward Take Test button in the iframe top-right
+      // Phase 7.2 (25.94s): Animate cursor toward Take Test button in iframe top-right
       _navCursorMoveTimer = setTimeout(function() {
         var cursor = document.getElementById('demoMouseCursor');
         var iframe = document.getElementById('liveLessonIframe');
         if (!cursor || !iframe) return;
 
-        // Get iframe bounding rect, then target the top-right "Take Test" button area
         var rect = iframe.getBoundingClientRect();
-        // Take Test button is at roughly right-side of header (right ~110px from iframe right edge, top ~16px)
         var targetX = rect.right - 120;
         var targetY = rect.top + 18;
 
-        cursor.style.transition = 'left 0.9s cubic-bezier(0.25, 1, 0.5, 1), top 0.9s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease';
+        cursor.style.transition = 'left 0.8s cubic-bezier(0.25, 1, 0.5, 1), top 0.8s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease';
         cursor.style.left = targetX + 'px';
         cursor.style.top = targetY + 'px';
         cursor.style.opacity = '1';
         cursor.style.transform = 'none';
-      }, 32200);
+      }, 25940);
 
-      // Phase 7.3 (33.00s): Trigger click ripple + call real openTestPortal() in iframe
+      // Phase 7.3 (26.80s): Trigger click ripple + call real openTestPortal() in iframe
       _navCursorClickTimer = setTimeout(function() {
         var cursor = document.getElementById('demoMouseCursor');
         if (cursor) cursor.classList.add('clicking');
 
-        // Actually trigger the real test portal inside the iframe
         var iframe = document.getElementById('liveLessonIframe');
         if (iframe && iframe.contentWindow && typeof iframe.contentWindow.openTestPortal === 'function') {
           try { iframe.contentWindow.openTestPortal(); } catch(e) {}
         }
-      }, 33000);
+      }, 26800);
 
-      // Phase 7.4 (33.30s): Hide cursor after click
+      // Phase 7.4 (27.10s): Hide cursor after click
       _navStageSwitchTimer = setTimeout(function() {
         var cursor = document.getElementById('demoMouseCursor');
         if (cursor) {
           cursor.classList.remove('clicking');
           cursor.style.opacity = '0';
         }
-      }, 33300);
+      }, 27100);
 
-      // Phase 8 (39.92s): Certificate Showcase fades in over current view — no scroll needed (position:fixed)
+      // Phase 8 (33.24s): Certificate Showcase fades in over current view
       _navCertStartTimer = setTimeout(function() {
         startCertShowcaseAnimation();
-      }, 39920);
+      }, 33240);
 
-      // Phase 8.1 (40.30s): Reset iframe test portal back to lesson view (cleanup)
+      // Phase 8.1 (33.80s): Reset iframe test portal back to lesson view (cleanup)
       _navP10Timer = setTimeout(function() {
         var iframe = document.getElementById('liveLessonIframe');
         if (iframe && iframe.contentWindow && typeof iframe.contentWindow.closeTestPortal === 'function') {
           try { iframe.contentWindow.closeTestPortal(); } catch(e) {}
         }
-      }, 40300);
+      }, 33800);
 
-      // Phase 9.1 (49.56s): HR Interview Question Overlay cross-fades directly OVER Certificate Showcase
+      // Phase 9.1 (42.18s): HR Interview Question Overlay cross-fades directly OVER Certificate Showcase
       _navHrStartTimer = setTimeout(function() {
         openHrInterviewOverlay();
-      }, 49560);
+      }, 42180);
 
-      // Phase 9.2 (50.36s): Cleanly unmount Certificate Showcase overlay after HR Interview overlay has fully cross-faded in
+      // Phase 9.2 (42.98s): Cleanly unmount Certificate Showcase overlay after HR Interview overlay has fully cross-faded in
       _navCertCloseTimer = setTimeout(function() {
         stopCertShowcaseAnimation();
-      }, 50360);
+      }, 42980);
 
-      // End (55.86s): Full continuous audio narration finish
+      // End (48.08s): Full continuous audio narration finish
       _navEndTimer = setTimeout(function() {
         stopNavIntroAnimation();
         stopCertShowcaseAnimation();
         closeHrInterviewOverlay();
         resetAllAudioState();
-      }, 55860);
+      }, 48080);
     }
 
     function stopNavIntroAnimation() {
@@ -3933,9 +3930,9 @@
         if (el) el.classList.remove('active-score');
       });
 
-      // Step 1 (39.86s - 42.30s): "Score 1,200 marks or above" -> Ring & Counter Animation
+      // Step 1 (33.24s - 35.20s): "Score 1,200 plus marks..." -> Ring & Counter Animation
       var target = 1200;
-      var duration = 1800; // 1.8s
+      var duration = 1700; // 1.7s
       var startTime = Date.now();
 
       _certCounterInterval = setInterval(function() {
@@ -3952,45 +3949,45 @@
         }
       }, 30);
 
-      // At 41.72s ("above"): Lock morphs to 🔓, status changes to PASSED
+      // At 35.20s ("plus marks"): Lock morphs to 🔓, status changes to PASSED
       _navCert1Timer = setTimeout(function() {
         if (lockIcon) { lockIcon.textContent = '🔓'; lockIcon.style.transform = 'scale(1.3) rotate(-10deg)'; }
         if (statusText) statusText.textContent = '✅ 1,200 / 1,500 MARKS (PASSED)';
-      }, 1860);
+      }, 1960);
 
-      // Step 2 (42.30s - 44.86s): "to unlock your Job-Ready Certificate" -> 3D Certificate & Gold Seal Reveal
+      // Step 2 (36.00s): "...and unlock your official job-ready certificate" -> 3D Certificate & Gold Seal Reveal
       _navCert2Timer = setTimeout(function() {
         if (certPaper) certPaper.classList.add('unlocked');
         if (hologram) hologram.classList.add('shine');
         if (headerBadge) { headerBadge.textContent = '🎓 CERTIFICATE OF MASTERY UNLOCKED'; headerBadge.style.color = '#10b981'; }
         if (headerMain) headerMain.textContent = 'Official Job-Ready Certificate Unlocked!';
-      }, 2440);
+      }, 2760);
 
-      // Step 3 (44.86s - 48.52s): "featuring your overall, SQL, Excel, and Python scores"
-      // 45.26s ("overall"): Overall score badge lights up
+      // Step 3 (38.14s - 42.18s): "...with complete, verified SQL, Excel, and Python scores"
+      // 38.14s ("complete"): Overall score badge lights up
       _navCert3Timer = setTimeout(function() {
         if (sOverall) sOverall.classList.add('active-score');
-      }, 5400);
+      }, 4900);
 
-      // 45.76s ("SQL"): SQL track score lights up
+      // 39.14s ("SQL"): SQL track score lights up
       _navCert4Timer = setTimeout(function() {
         if (sSql) sSql.classList.add('active-score');
       }, 5900);
 
-      // 46.92s ("Excel"): Excel track score lights up
+      // 40.16s ("Excel"): Excel track score lights up
       _navCert5Timer = setTimeout(function() {
         if (sExcel) sExcel.classList.add('active-score');
-      }, 7060);
+      }, 6920);
 
-      // 47.78s ("Python"): Python track score lights up
+      // 40.88s ("Python"): Python track score lights up
       _navCert6Timer = setTimeout(function() {
         if (sPython) sPython.classList.add('active-score');
-      }, 7920);
+      }, 7640);
 
-      // 50.36s (10440ms after 39.92s): Close Certificate Showcase Overlay after HR interview crossfade completes
+      // 42.98s: Close Certificate Showcase Overlay after HR interview crossfade completes
       _navCertCloseTimer = setTimeout(function() {
         stopCertShowcaseAnimation();
-      }, 10440);
+      }, 9740);
     }
 
     function stopCertShowcaseAnimation() {
@@ -4059,23 +4056,23 @@
     window._narrationSeekTo = function(t) {
       // Phase 7: Scroll so iframe is flush below nav bar; scroll back for cert phase
       var cursor = document.getElementById('demoMouseCursor');
-      if (t >= 29.52 && t < 39.92) {
+      if (t >= 24.36 && t < 33.24) {
         var iframeEl = document.getElementById('liveLessonIframe');
         if (iframeEl) {
           var navH2 = (document.querySelector('.nav') || {}).offsetHeight || 76;
           var iTop = iframeEl.getBoundingClientRect().top + window.scrollY;
           window.scrollTo({ top: iTop - navH2, behavior: 'instant' });
         }
-        if (cursor) cursor.style.opacity = (t >= 32.20 && t < 33.30) ? '1' : '0';
+        if (cursor) cursor.style.opacity = (t >= 25.94 && t < 27.10) ? '1' : '0';
       } else {
-        if (t >= 39.92) window.scrollTo({ top: 0, behavior: 'instant' });
+        if (t >= 33.24) window.scrollTo({ top: 0, behavior: 'instant' });
         if (cursor) cursor.style.opacity = '0';
       }
 
       var certOverlay = document.getElementById('certShowcaseOverlay');
       var certCard = document.getElementById('certShowcaseCard');
       if (certOverlay) {
-        if (t >= 39.92 && t < 50.36) {
+        if (t >= 33.24 && t < 42.98) {
           certOverlay.classList.add('active');
           if (certCard) certCard.classList.add('card-entered');
           var certPaper = document.getElementById('certPaper');
@@ -4085,20 +4082,20 @@
           var sExcel = document.getElementById('scoreBadgeExcel');
           var sPython = document.getElementById('scoreBadgePython');
 
-          if (t >= 40.50) {
+          if (t >= 35.20) {
             var lockIcon = document.getElementById('marksLockIcon');
             var statusText = document.getElementById('marksStatusText');
             if (lockIcon) { lockIcon.textContent = '🔓'; lockIcon.style.transform = 'scale(1.3) rotate(-10deg)'; }
             if (statusText) statusText.textContent = '✅ 1,200 / 1,500 MARKS (PASSED)';
           }
-          if (t >= 42.74) {
+          if (t >= 36.00) {
             if (certPaper) certPaper.classList.add('unlocked');
             if (hologram) hologram.classList.add('shine');
           }
-          if (t >= 45.50 && sOverall) sOverall.classList.add('active-score');
-          if (t >= 46.48 && sSql) sSql.classList.add('active-score');
-          if (t >= 47.46 && sExcel) sExcel.classList.add('active-score');
-          if (t >= 48.22 && sPython) sPython.classList.add('active-score');
+          if (t >= 38.14 && sOverall) sOverall.classList.add('active-score');
+          if (t >= 39.14 && sSql) sSql.classList.add('active-score');
+          if (t >= 40.16 && sExcel) sExcel.classList.add('active-score');
+          if (t >= 40.88 && sPython) sPython.classList.add('active-score');
         } else {
           certOverlay.classList.remove('active');
           if (certCard) certCard.classList.remove('card-entered');
@@ -4107,7 +4104,7 @@
 
       var hrOverlay = document.getElementById('hrInterviewOverlay');
       if (hrOverlay) {
-        if (t >= 49.56 && t < 55.86) hrOverlay.classList.add('active');
+        if (t >= 42.18 && t < 48.08) hrOverlay.classList.add('active');
         else hrOverlay.classList.remove('active');
       }
     };

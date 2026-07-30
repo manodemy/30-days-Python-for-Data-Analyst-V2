@@ -477,7 +477,19 @@
 
     /* ── NAV INTRO ANIMATION ────────────────────────────────────── */
 
-    /* Phase 1 (0.00s - 3.54s): Logo centered in nav bar, right items hidden */
+    @keyframes navLogoZoomIn {
+      0% { opacity: 0; transform: scale(0.45) translateY(-10px); }
+      65% { opacity: 1; transform: scale(1.16) translateY(0); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    @keyframes navCardZoomIn {
+      0% { opacity: 0; transform: scale(0.84) translateY(32px); }
+      70% { opacity: 1; transform: scale(1.03) translateY(-4px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* Phase 1 (0.00s - 1.88s): "Welcome to Manodemy's" -> Logo centered with zoom-in */
     .nav-anim-p1 .nav-right,
     .nav-anim-p1 #navCenterAudioHook {
       opacity: 0 !important;
@@ -488,10 +500,10 @@
       justify-content: center;
     }
     .nav-anim-p1 #navBrand {
-      transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+      animation: navLogoZoomIn 0.85s cubic-bezier(0.34, 1.56, 0.64, 1) both;
     }
 
-    /* Phase 2+ (3.54s+): Logo slides back to left, audio pill centered */
+    /* Phase 2+ (1.88s+): "60 Days Data Analytics Masterclass..." -> Logo slides left, card zooms in */
     .nav-anim-p2 .nav-right {
       opacity: 0 !important;
       pointer-events: none !important;
@@ -504,6 +516,9 @@
       opacity: 1 !important;
       pointer-events: auto !important;
       transition: opacity 0.4s ease;
+    }
+    .narration-showcase-stage.active {
+      animation: navCardZoomIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
     }
 
     /* Hide all other website content during narration animation (Phases 1-4) */
@@ -3978,8 +3993,8 @@
 
       document.body.classList.add('narration-active');
 
-      // 0.00s - 3.54s: "Welcome to Manodemy's 60-day data analytics masterclass." (Nav logo centers)
-      if (t >= 0 && t < 3.54) {
+      // 0.00s - 1.88s: "Welcome to Manodemy's" (Nav logo centers & zooms in)
+      if (t >= 0 && t < 1.88) {
         nav.classList.remove('nav-anim-p2');
         nav.classList.add('nav-anim-p1');
         document.body.classList.remove('phase-5-active');
@@ -3988,8 +4003,23 @@
         if (certOverlay) certOverlay.classList.remove('active');
         if (hrOverlay) hrOverlay.classList.remove('active');
       }
-      // 3.54s - 6.92s: "Whether you're a complete beginner entering the data world..." (Card 1)
-      else if (t >= 3.54 && t < 6.92) {
+      // 1.88s - 4.56s: "60 Days Data Analytics Masterclass." (Logo slides left, 60-Day Masterclass Card zooms in)
+      else if (t >= 1.88 && t < 4.56) {
+        nav.classList.remove('nav-anim-p1');
+        nav.classList.add('nav-anim-p2');
+        document.body.classList.remove('phase-5-active');
+        if (stage) {
+          stage.classList.remove('transition-img2', 'phase-5-dissolve');
+          stage.classList.add('active');
+        }
+        if (card) card.classList.remove('img2-active');
+        if (badgeText) badgeText.innerHTML = '🎓 60-DAY DATA ANALYTICS MASTERCLASS';
+        if (clockCard) clockCard.classList.remove('narration-roadmap-glow');
+        if (certOverlay) certOverlay.classList.remove('active');
+        if (hrOverlay) hrOverlay.classList.remove('active');
+      }
+      // 4.56s - 6.92s: "Whether you're a complete beginner entering the data world..." (Card 1)
+      else if (t >= 4.56 && t < 6.92) {
         nav.classList.remove('nav-anim-p1');
         nav.classList.add('nav-anim-p2');
         document.body.classList.remove('phase-5-active');

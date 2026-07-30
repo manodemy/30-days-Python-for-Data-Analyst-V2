@@ -2056,9 +2056,35 @@
       text-transform: uppercase;
     }
 
+    
+    /* ── 3-Track Module Cards Row ── */
+    .cert-tracks-row {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6cqw;
+      width: 90%; margin: 0 auto 1cqw;
+    }
+    .cert-track-card {
+      background: rgba(11, 15, 25, 0.7); border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 4px; padding: 0.5cqw 0.8cqw; display: flex; align-items: center; gap: 0.6cqw;
+    }
+    .cert-track-card.sql-card { border-color: rgba(56, 189, 248, 0.45); background: rgba(56, 189, 248, 0.06); }
+    .cert-track-card.excel-card { border-color: rgba(16, 185, 129, 0.45); background: rgba(16, 185, 129, 0.06); }
+    .cert-track-card.python-card { border-color: rgba(168, 85, 247, 0.45); background: rgba(168, 85, 247, 0.06); }
+    .track-icon { font-size: 1.1cqw; }
+    .track-label { font-family: 'Raleway', sans-serif; font-size: 0.62cqw; letter-spacing: 0.14cqw; color: rgba(255,255,255,0.6); text-transform: uppercase; }
+    .track-score { font-family: 'Cinzel', serif; font-size: 1.05cqw; font-weight: 700; color: #fff; }
+    .track-sub { font-size: 0.68cqw; color: rgba(255,255,255,0.45); font-family: 'Raleway', sans-serif; }
+
+    /* Tile Track Colors for 60 Days */
+    .tile.sql { border-top-color: #38bdf8; }
+    .tile.sql .tile-day { color: rgba(56, 189, 248, 0.7); }
+    .tile.excel { border-top-color: #10b981; }
+    .tile.excel .tile-day { color: rgba(16, 185, 129, 0.7); }
+    .tile.python { border-top-color: #a855f7; }
+    .tile.python .tile-day { color: rgba(168, 85, 247, 0.7); }
+
     .cert-tiles-grid {
       display: grid;
-      grid-template-columns: repeat(15, minmax(0, 1fr));
+      grid-template-columns: repeat(20, minmax(0, 1fr));
       gap: 5px;
       width: 100%;
     }
@@ -5841,14 +5867,23 @@
         return x - Math.floor(x);
       }
 
-      for (let d = 1; d <= 30; d++) {
+      for (let d = 1; d <= 60; d++) {
         const padD = String(d).padStart(2, '0');
-        const isHigh = pseudoRandom() > 0.15;
-        const dayXp = parseFloat((isHigh ? (26 + pseudoRandom() * 7.3) : (18 + pseudoRandom() * 7)).toFixed(1));
+        let dayXp = 0;
+        let trackClass = '';
+        if (d <= 18) {
+          trackClass = 'sql';
+          dayXp = parseFloat((22 + pseudoRandom() * 3).toFixed(1));
+        } else if (d <= 30) {
+          trackClass = 'excel';
+          dayXp = parseFloat((21.5 + pseudoRandom() * 3.5).toFixed(1));
+        } else {
+          trackClass = 'python';
+          dayXp = parseFloat((19.5 + pseudoRandom() * 5.5).toFixed(1));
+        }
         accumulatedScore += dayXp;
-        const stateClass = dayXp >= 25 ? 'high' : (dayXp > 0 && dayXp < 15 ? 'low' : '');
         gridHtml += `
-          <div class="tile ${stateClass}">
+          <div class="tile ${trackClass}">
             <div class="tile-day">D${padD}</div>
             <div class="tile-score">${dayXp}</div>
           </div>
@@ -5856,7 +5891,7 @@
       }
 
       const totalScore = parseFloat(accumulatedScore.toFixed(2));
-      const level = totalScore >= 900 ? 'Data Guru' : 'Alchemist';
+      const level = totalScore >= 1200 ? 'MASTER ANALYST' : 'DATA ANALYST';
 
       // 4. Issued date (current month & year)
       const months = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
@@ -6174,10 +6209,7 @@
           <div class="cert-header">
             <div class="cert-logo-lockup">
               <div class="cert-logo-mark">
-                <svg viewBox="0 0 20 20" fill="none">
-                  <path d="M4 10 L8 5 L12 10 L16 5" stroke="#00E5FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M4 15 L8 10 L12 15 L16 10" stroke="#00E5FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
-                </svg>
+                <img src="/landing_v2/manodemy_3d_keycap.png" width="36" height="36" alt="Manodemy 3D Keycap Logo" style="vertical-align:middle;">
               </div>
               <div class="cert-logo-wordmark"><span class="mano">Mano</span><span class="demy">demy</span></div>
             </div>
@@ -6200,11 +6232,10 @@
             <div class="cert-recipient-underline"></div>
 
             <div class="cert-body-copy">
-              has demonstrated <span class="highlight">exceptional dedication and technical mastery</span> upon successful completion of the
-              <span class="cyan">Manodemy V2 Coding Mastery Program</span> — an intensive, industry-aligned curriculum spanning
-              <span class="highlight">30 days</span> of rigorous daily challenges, encompassing
-              <span class="highlight">1,668 coding problems</span> across Python programming,
-              data structures, algorithms, and computational thinking.
+              has demonstrated <span class="highlight">exceptional technical mastery and problem-solving excellence</span> upon successful completion of the
+              <span class="cyan">Manodemy 60-Day Data Analytics Masterclass</span> — an intensive, hands-on curriculum spanning
+              <span class="highlight">60 guided days</span>, encompassing
+              <span class="highlight">1,500 interview-based questions</span> (25 questions/day) across SQL (Days 1–18), Excel (Days 19–30), and Python for Data Analytics (Days 31–60).
             </div>
           </div>
 
@@ -6212,7 +6243,7 @@
             <div class="cert-score-card">
               <div class="cert-score-card-label">Total Score Achieved</div>
               <div class="cert-score-card-value"><span id="cert-score-number">850</span><span style="font-size:22px;opacity:0.6">.00</span></div>
-              <div class="cert-score-card-sub">out of 1000 Marks</div>
+              <div class="cert-score-card-sub">out of 1,500 Marks</div>
             </div>
             <div class="cert-divider-vert"></div>
             <div class="cert-level-card">
@@ -6224,10 +6255,35 @@
 
 
 
+                    <!-- 3-Track Module Score Matrix -->
+          <div class="cert-tracks-row">
+            <div class="cert-track-card sql-card">
+              <div class="track-icon">⚡</div>
+              <div>
+                <div class="track-label">SQL Track (Days 1–18)</div>
+                <div class="track-score">432 / 450 <span class="track-sub">(96%)</span></div>
+              </div>
+            </div>
+            <div class="cert-track-card excel-card">
+              <div class="track-icon">📊</div>
+              <div>
+                <div class="track-label">Excel Track (Days 19–30)</div>
+                <div class="track-score">270 / 300 <span class="track-sub">(90%)</span></div>
+              </div>
+            </div>
+            <div class="cert-track-card python-card">
+              <div class="track-icon">🐍</div>
+              <div>
+                <div class="track-label">Python Track (Days 31–60)</div>
+                <div class="track-score">588 / 750 <span class="track-sub">(82%)</span></div>
+              </div>
+            </div>
+          </div>
+
           <div class="cert-perf-section">
             <div class="cert-perf-header">
               <div class="cert-perf-header-line"></div>
-              <div class="cert-perf-header-text">Daily Performance Record — 30 Days</div>
+              <div class="cert-perf-header-text">Daily Performance Record — 60 Days</div>
               <div class="cert-perf-header-line"></div>
             </div>
             <div id="cert-section-grid" class="cert-tiles-grid"></div>

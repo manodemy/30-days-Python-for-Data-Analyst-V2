@@ -353,9 +353,35 @@
       color: rgba(255,255,255,0.3); letter-spacing: 0.09cqw;
     }
 
+    
+    /* ── 3-Track Module Cards Row ── */
+    .cert-tracks-row {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6cqw;
+      width: 90%; margin: 0 auto 1cqw;
+    }
+    .cert-track-card {
+      background: rgba(11, 15, 25, 0.7); border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 4px; padding: 0.5cqw 0.8cqw; display: flex; align-items: center; gap: 0.6cqw;
+    }
+    .cert-track-card.sql-card { border-color: rgba(56, 189, 248, 0.45); background: rgba(56, 189, 248, 0.06); }
+    .cert-track-card.excel-card { border-color: rgba(16, 185, 129, 0.45); background: rgba(16, 185, 129, 0.06); }
+    .cert-track-card.python-card { border-color: rgba(168, 85, 247, 0.45); background: rgba(168, 85, 247, 0.06); }
+    .track-icon { font-size: 1.1cqw; }
+    .track-label { font-family: 'Raleway', sans-serif; font-size: 0.62cqw; letter-spacing: 0.14cqw; color: rgba(255,255,255,0.6); text-transform: uppercase; }
+    .track-score { font-family: 'Cinzel', serif; font-size: 1.05cqw; font-weight: 700; color: #fff; }
+    .track-sub { font-size: 0.68cqw; color: rgba(255,255,255,0.45); font-family: 'Raleway', sans-serif; }
+
+    /* Tile Track Colors for 60 Days */
+    .tile.sql { border-top-color: #38bdf8; }
+    .tile.sql .tile-day { color: rgba(56, 189, 248, 0.7); }
+    .tile.excel { border-top-color: #10b981; }
+    .tile.excel .tile-day { color: rgba(16, 185, 129, 0.7); }
+    .tile.python { border-top-color: #a855f7; }
+    .tile.python .tile-day { color: rgba(168, 85, 247, 0.7); }
+
     /* ── Performance Grid ── */
     .cert-perf-section {
-      margin-bottom: 1.4cqw; width: 90%; margin-left: auto; margin-right: auto;
+      margin-bottom: 0.8cqw; width: 90%; margin-left: auto; margin-right: auto;
     }
     .cert-perf-header { display: flex; align-items: center; gap: 1cqw; margin-bottom: 1cqw; }
     .cert-perf-header-line { flex: 1; height: 1px; background: rgba(0,229,255,0.12); }
@@ -364,7 +390,7 @@
       letter-spacing: 0.45cqw; color: rgba(255,255,255,0.25); text-transform: uppercase;
     }
     .cert-tiles-grid {
-      display: grid; grid-template-columns: repeat(15, minmax(0, 1fr));
+      display: grid; grid-template-columns: repeat(20, minmax(0, 1fr));
       gap: 0.4cqw; width: 100%;
     }
     .tile {
@@ -538,10 +564,7 @@
             <div class="cert-header">
               <div class="cert-logo-lockup">
                 <div class="cert-logo-mark">
-                  <svg viewBox="0 0 20 20" fill="none">
-                    <path d="M4 10 L8 5 L12 10 L16 5" stroke="#00E5FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M4 15 L8 10 L12 15 L16 10" stroke="#00E5FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
-                  </svg>
+                  <img src="/landing_v2/manodemy_3d_keycap.png" width="36" height="36" alt="Manodemy 3D Keycap Logo" style="vertical-align:middle;">
                 </div>
                 <div class="cert-logo-wordmark"><span class="mano">Mano</span><span class="demy">demy</span></div>
               </div>
@@ -563,11 +586,10 @@
               <div class="cert-recipient-underline"></div>
 
               <div class="cert-body-copy">
-                has demonstrated <span class="highlight">exceptional dedication and technical mastery</span> upon successful completion of the
-                <span class="cyan">Manodemy V2 Coding Mastery Program</span> — an intensive, industry-aligned curriculum spanning
-                <span class="highlight">30 days</span> of rigorous daily challenges, encompassing
-                <span class="highlight">1,668 coding problems</span> across Python programming,
-                data structures, algorithms, and computational thinking.
+                has demonstrated <span class="highlight">exceptional technical mastery and problem-solving excellence</span> upon successful completion of the
+                <span class="cyan">Manodemy 60-Day Data Analytics Masterclass</span> — an intensive, hands-on curriculum spanning
+                <span class="highlight">60 guided days</span>, encompassing
+                <span class="highlight">1,500 interview-based questions</span> (25 questions/day) across SQL (Days 1–18), Excel (Days 19–30), and Python for Data Analytics (Days 31–60).
               </div>
             </div>
 
@@ -575,14 +597,39 @@
             <div class="cert-achievement-row">
               <div class="cert-score-card">
                 <div class="cert-score-card-label">Total Score Achieved</div>
-                <div class="cert-score-card-value"><span id="cert-score-number">862.60</span></div>
-                <div class="cert-score-card-sub">out of 1000 Marks</div>
+                <div class="cert-score-card-value"><span id="cert-score-number">1,290</span></div>
+                <div class="cert-score-card-sub">out of 1,500 Marks (86% Overall)</div>
               </div>
               <div class="cert-divider-vert"></div>
               <div class="cert-level-card">
                 <div class="cert-level-card-label">Proficiency Level</div>
-                <div id="cert-level-value" class="cert-level-badge">Alchemist</div>
-                <div class="cert-level-card-desc">Top 5% of graduates</div>
+                <div id="cert-level-value" class="cert-level-badge">MASTER ANALYST</div>
+                <div class="cert-level-card-desc">Passed 1,200+ Threshold · Top 5%</div>
+              </div>
+            </div>
+
+                        <!-- 3-Track Module Score Matrix -->
+            <div class="cert-tracks-row">
+              <div class="cert-track-card sql-card">
+                <div class="track-icon">⚡</div>
+                <div>
+                  <div class="track-label">SQL Track (Days 1–18)</div>
+                  <div class="track-score">432 / 450 <span class="track-sub">(96%)</span></div>
+                </div>
+              </div>
+              <div class="cert-track-card excel-card">
+                <div class="track-icon">📊</div>
+                <div>
+                  <div class="track-label">Excel Track (Days 19–30)</div>
+                  <div class="track-score">270 / 300 <span class="track-sub">(90%)</span></div>
+                </div>
+              </div>
+              <div class="cert-track-card python-card">
+                <div class="track-icon">🐍</div>
+                <div>
+                  <div class="track-label">Python Track (Days 31–60)</div>
+                  <div class="track-score">588 / 750 <span class="track-sub">(82%)</span></div>
+                </div>
               </div>
             </div>
 
@@ -590,42 +637,73 @@
             <div class="cert-perf-section">
               <div class="cert-perf-header">
                 <div class="cert-perf-header-line"></div>
-                <div class="cert-perf-header-text">Daily Performance Record — 30 Days</div>
+                <div class="cert-perf-header-text">Daily Performance Record — 60 Days</div>
                 <div class="cert-perf-header-line"></div>
               </div>
               <div id="cert-section-grid" class="cert-tiles-grid">
-                <div class="tile high"><div class="tile-day">D01</div><div class="tile-score">28.5</div></div>
-                <div class="tile high"><div class="tile-day">D02</div><div class="tile-score">30.2</div></div>
-                <div class="tile high"><div class="tile-day">D03</div><div class="tile-score">27.8</div></div>
-                <div class="tile high"><div class="tile-day">D04</div><div class="tile-score">29.1</div></div>
-                <div class="tile high"><div class="tile-day">D05</div><div class="tile-score">25.4</div></div>
-                <div class="tile high"><div class="tile-day">D06</div><div class="tile-score">31.0</div></div>
-                <div class="tile high"><div class="tile-day">D07</div><div class="tile-score">28.3</div></div>
-                <div class="tile high"><div class="tile-day">D08</div><div class="tile-score">26.9</div></div>
-                <div class="tile high"><div class="tile-day">D09</div><div class="tile-score">29.5</div></div>
-                <div class="tile high"><div class="tile-day">D10</div><div class="tile-score">24.2</div></div>
-                <div class="tile high"><div class="tile-day">D11</div><div class="tile-score">30.1</div></div>
-                <div class="tile high"><div class="tile-day">D12</div><div class="tile-score">28.4</div></div>
-                <div class="tile high"><div class="tile-day">D13</div><div class="tile-score">27.6</div></div>
-                <div class="tile high"><div class="tile-day">D14</div><div class="tile-score">29.3</div></div>
-                <div class="tile high"><div class="tile-day">D15</div><div class="tile-score">26.5</div></div>
-                <div class="tile high"><div class="tile-day">D16</div><div class="tile-score">28.0</div></div>
-                <div class="tile high"><div class="tile-day">D17</div><div class="tile-score">29.8</div></div>
-                <div class="tile high"><div class="tile-day">D18</div><div class="tile-score">27.2</div></div>
-                <div class="tile high"><div class="tile-day">D19</div><div class="tile-score">28.9</div></div>
-                <div class="tile high"><div class="tile-day">D20</div><div class="tile-score">25.8</div></div>
-                <div class="tile high"><div class="tile-day">D21</div><div class="tile-score">30.4</div></div>
-                <div class="tile high"><div class="tile-day">D22</div><div class="tile-score">29.2</div></div>
-                <div class="tile high"><div class="tile-day">D23</div><div class="tile-score">28.1</div></div>
-                <div class="tile high"><div class="tile-day">D24</div><div class="tile-score">27.7</div></div>
-                <div class="tile high"><div class="tile-day">D25</div><div class="tile-score">26.4</div></div>
-                <div class="tile high"><div class="tile-day">D26</div><div class="tile-score">31.2</div></div>
-                <div class="tile high"><div class="tile-day">D27</div><div class="tile-score">28.7</div></div>
-                <div class="tile high"><div class="tile-day">D28</div><div class="tile-score">29.9</div></div>
-                <div class="tile high"><div class="tile-day">D29</div><div class="tile-score">30.5</div></div>
-                <div class="tile high"><div class="tile-day">D30</div><div class="tile-score">32.1</div></div>
+                <div class="tile sql"><div class="tile-day">D01</div><div class="tile-score">23.1</div></div>
+                <div class="tile sql"><div class="tile-day">D02</div><div class="tile-score">24.2</div></div>
+                <div class="tile sql"><div class="tile-day">D03</div><div class="tile-score">24.4</div></div>
+                <div class="tile sql"><div class="tile-day">D04</div><div class="tile-score">22.3</div></div>
+                <div class="tile sql"><div class="tile-day">D05</div><div class="tile-score">23.4</div></div>
+                <div class="tile sql"><div class="tile-day">D06</div><div class="tile-score">23.6</div></div>
+                <div class="tile sql"><div class="tile-day">D07</div><div class="tile-score">24.7</div></div>
+                <div class="tile sql"><div class="tile-day">D08</div><div class="tile-score">22.6</div></div>
+                <div class="tile sql"><div class="tile-day">D09</div><div class="tile-score">22.8</div></div>
+                <div class="tile sql"><div class="tile-day">D10</div><div class="tile-score">23.9</div></div>
+                <div class="tile sql"><div class="tile-day">D11</div><div class="tile-score">25.0</div></div>
+                <div class="tile sql"><div class="tile-day">D12</div><div class="tile-score">22.0</div></div>
+                <div class="tile sql"><div class="tile-day">D13</div><div class="tile-score">23.1</div></div>
+                <div class="tile sql"><div class="tile-day">D14</div><div class="tile-score">24.2</div></div>
+                <div class="tile sql"><div class="tile-day">D15</div><div class="tile-score">24.4</div></div>
+                <div class="tile sql"><div class="tile-day">D16</div><div class="tile-score">22.3</div></div>
+                <div class="tile sql"><div class="tile-day">D17</div><div class="tile-score">23.4</div></div>
+                <div class="tile sql"><div class="tile-day">D18</div><div class="tile-score">23.6</div></div>
+                <div class="tile excel"><div class="tile-day">D19</div><div class="tile-score">22.8</div></div>
+                <div class="tile excel"><div class="tile-day">D20</div><div class="tile-score">23.3</div></div>
+                <div class="tile excel"><div class="tile-day">D21</div><div class="tile-score">21.9</div></div>
+                <div class="tile excel"><div class="tile-day">D22</div><div class="tile-score">22.4</div></div>
+                <div class="tile excel"><div class="tile-day">D23</div><div class="tile-score">23.7</div></div>
+                <div class="tile excel"><div class="tile-day">D24</div><div class="tile-score">21.5</div></div>
+                <div class="tile excel"><div class="tile-day">D25</div><div class="tile-score">22.8</div></div>
+                <div class="tile excel"><div class="tile-day">D26</div><div class="tile-score">23.3</div></div>
+                <div class="tile excel"><div class="tile-day">D27</div><div class="tile-score">21.9</div></div>
+                <div class="tile excel"><div class="tile-day">D28</div><div class="tile-score">22.4</div></div>
+                <div class="tile excel"><div class="tile-day">D29</div><div class="tile-score">23.7</div></div>
+                <div class="tile excel"><div class="tile-day">D30</div><div class="tile-score">21.5</div></div>
+                <div class="tile python"><div class="tile-day">D31</div><div class="tile-score">20.7</div></div>
+                <div class="tile python"><div class="tile-day">D32</div><div class="tile-score">21.8</div></div>
+                <div class="tile python"><div class="tile-day">D33</div><div class="tile-score">22.1</div></div>
+                <div class="tile python"><div class="tile-day">D34</div><div class="tile-score">23.2</div></div>
+                <div class="tile python"><div class="tile-day">D35</div><div class="tile-score">20.1</div></div>
+                <div class="tile python"><div class="tile-day">D36</div><div class="tile-score">20.4</div></div>
+                <div class="tile python"><div class="tile-day">D37</div><div class="tile-score">21.5</div></div>
+                <div class="tile python"><div class="tile-day">D38</div><div class="tile-score">22.7</div></div>
+                <div class="tile python"><div class="tile-day">D39</div><div class="tile-score">22.9</div></div>
+                <div class="tile python"><div class="tile-day">D40</div><div class="tile-score">19.8</div></div>
+                <div class="tile python"><div class="tile-day">D41</div><div class="tile-score">21.0</div></div>
+                <div class="tile python"><div class="tile-day">D42</div><div class="tile-score">21.2</div></div>
+                <div class="tile python"><div class="tile-day">D43</div><div class="tile-score">22.4</div></div>
+                <div class="tile python"><div class="tile-day">D44</div><div class="tile-score">23.5</div></div>
+                <div class="tile python"><div class="tile-day">D45</div><div class="tile-score">19.5</div></div>
+                <div class="tile python"><div class="tile-day">D46</div><div class="tile-score">20.7</div></div>
+                <div class="tile python"><div class="tile-day">D47</div><div class="tile-score">21.8</div></div>
+                <div class="tile python"><div class="tile-day">D48</div><div class="tile-score">22.1</div></div>
+                <div class="tile python"><div class="tile-day">D49</div><div class="tile-score">23.2</div></div>
+                <div class="tile python"><div class="tile-day">D50</div><div class="tile-score">20.1</div></div>
+                <div class="tile python"><div class="tile-day">D51</div><div class="tile-score">20.4</div></div>
+                <div class="tile python"><div class="tile-day">D52</div><div class="tile-score">21.5</div></div>
+                <div class="tile python"><div class="tile-day">D53</div><div class="tile-score">22.7</div></div>
+                <div class="tile python"><div class="tile-day">D54</div><div class="tile-score">22.9</div></div>
+                <div class="tile python"><div class="tile-day">D55</div><div class="tile-score">19.8</div></div>
+                <div class="tile python"><div class="tile-day">D56</div><div class="tile-score">21.0</div></div>
+                <div class="tile python"><div class="tile-day">D57</div><div class="tile-score">21.2</div></div>
+                <div class="tile python"><div class="tile-day">D58</div><div class="tile-score">22.4</div></div>
+                <div class="tile python"><div class="tile-day">D59</div><div class="tile-score">23.5</div></div>
+                <div class="tile python"><div class="tile-day">D60</div><div class="tile-score">19.5</div></div>
               </div>
             </div>
+                
 
             <!-- Footer / Signature System -->
             <div class="cert-footer">
@@ -648,7 +726,7 @@
                 </div>
               </div>
               <div class="cert-footer-right">
-                <div id="cert-verified-score" class="cert-verify-block-score">862.60 / 1000</div>
+                <div id="cert-verified-score" class="cert-verify-block-score">1,290 / 1,500 MARKS</div>
                 <div class="cert-verify-block-line"></div>
                 <div class="cert-verify-block-label">Verified Record &nbsp;·&nbsp; Authenticated</div>
               </div>

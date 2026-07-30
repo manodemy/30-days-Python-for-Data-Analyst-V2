@@ -43,7 +43,7 @@
       position: relative;
     }
 
-    /* Background Ambient Glows */
+    /* Ambient Background Glows */
     .bg-glow-gold {
       position: absolute; top: 15%; left: 10%; width: 45vw; height: 45vw; border-radius: 50%;
       background: radial-gradient(circle, rgba(229, 184, 66, 0.05) 0%, transparent 70%);
@@ -92,10 +92,10 @@
       width: 100%; height: 100%;
       container-type: inline-size;
       position: relative; overflow: hidden;
-      padding: 3.2cqw 4.8cqw 2.4cqw;
+      padding: 3.5cqw 4.5cqw 2.8cqw;
       box-sizing: border-box;
-      display: flex; flex-direction: column; justify-content: space-between;
-      background: radial-gradient(circle at center, #0c121e 0%, #060810 100%);
+      display: flex; flex-direction: column;
+      background: radial-gradient(circle at center, #0d1424 0%, #05070d 100%);
       border-radius: 10px;
     }
 
@@ -106,7 +106,7 @@
       pointer-events: none; z-index: 10;
     }
 
-    /* ART-DECO GEOMETRIC WIREFRAME GOLD BORDER FRAME */
+    /* ART-DECO GEOMETRIC GOLD FRAME & CORNERS */
     .cert-artdeco-frame {
       position: absolute; inset: 1.2cqw;
       border: 1.5px solid var(--gold-primary);
@@ -118,7 +118,6 @@
       border-radius: 2px; pointer-events: none; z-index: 3;
     }
 
-    /* GEOMETRIC CORNER ACCENTS (4 CORNERS) */
     .artdeco-corner {
       position: absolute; width: 4.5cqw; height: 4.5cqw;
       border-color: var(--gold-primary); border-style: solid; z-index: 4; pointer-events: none;
@@ -128,7 +127,6 @@
     .artdeco-corner.bl { bottom: 1.2cqw; left: 1.2cqw; border-width: 0 0 3px 3px; }
     .artdeco-corner.br { bottom: 1.2cqw; right: 1.2cqw; border-width: 0 3px 3px 0; }
 
-    /* CORNER GEOMETRIC WIRES */
     .artdeco-corner-wires {
       position: absolute; width: 3.2cqw; height: 3.2cqw;
       border: 1px solid rgba(229, 184, 66, 0.6); z-index: 4; pointer-events: none;
@@ -138,9 +136,9 @@
     .artdeco-corner-wires.bl { bottom: 1.8cqw; left: 1.8cqw; border-right: none; border-top: none; }
     .artdeco-corner-wires.br { bottom: 1.8cqw; right: 1.8cqw; border-left: none; border-top: none; }
 
-    /* 3D METALLIC GOLD SCALLOPED AWARD RIBBON MEDAL (Top-Right) */
+    /* 3D GOLD AWARD MEDAL (Top-Right) */
     .cert-award-medal {
-      position: absolute; top: 2.6cqw; right: 4.2cqw;
+      position: absolute; top: 2.8cqw; right: 4.2cqw;
       z-index: 15; display: flex; flex-direction: column; align-items: center;
       filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.75));
     }
@@ -149,7 +147,6 @@
       background: radial-gradient(circle, #fff5cc 0%, #e5b842 45%, #996300 100%);
       border: 2px solid #fff0aa; padding: 0.35cqw;
       box-shadow: inset 0 0 12px rgba(0,0,0,0.5), 0 0 25px rgba(229, 184, 66, 0.5);
-      position: relative;
     }
     .medal-inner-dark {
       width: 100%; height: 100%; border-radius: 50%;
@@ -158,14 +155,8 @@
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       text-align: center; color: var(--gold-primary); padding: 0.2cqw;
     }
-    .medal-text-main {
-      font-family: 'Cinzel', serif; font-size: 0.85cqw; font-weight: 700;
-      letter-spacing: 0.12cqw; color: #fff; line-height: 1.15;
-    }
-    .medal-text-sub {
-      font-family: 'Cinzel', serif; font-size: 0.72cqw; font-weight: 600;
-      letter-spacing: 0.1cqw; color: var(--gold-primary); margin-top: 0.1cqw;
-    }
+    .medal-text-main { font-family: 'Cinzel', serif; font-size: 0.85cqw; font-weight: 700; letter-spacing: 0.12cqw; color: #fff; line-height: 1.15; }
+    .medal-text-sub { font-family: 'Cinzel', serif; font-size: 0.72cqw; font-weight: 600; letter-spacing: 0.1cqw; color: var(--gold-primary); margin-top: 0.1cqw; }
 
     .medal-ribbon-tails { display: flex; gap: 0.5cqw; margin-top: -0.8cqw; }
     .medal-tail {
@@ -177,113 +168,120 @@
 
     .cert-watermark {
       position: absolute; top: 52%; left: 50%; transform: translate(-50%, -50%);
-      font-family: 'Cinzel', serif; font-size: 11cqw; font-weight: 700;
-      color: rgba(229, 184, 66, 0.02); letter-spacing: 1cqw; white-space: nowrap;
+      font-family: 'Cinzel', serif; font-size: 12cqw; font-weight: 700;
+      color: rgba(229, 184, 66, 0.025); letter-spacing: 1.2cqw; white-space: nowrap;
       pointer-events: none; z-index: 0; user-select: none;
     }
 
+    /* CERTIFICATE CONTENT — PERFECT EVEN VERTICAL SPACING & FILL */
     .cert-content {
       position: relative; z-index: 5;
-      display: flex; flex-direction: column; height: 100%; justify-content: space-between;
+      display: flex; flex-direction: column; height: 100%;
+      justify-content: space-between; align-items: stretch;
     }
 
-    /* HEADER SECTION */
+    /* HEADER & RECIPIENT SECTION */
     .cert-header { display: flex; flex-direction: column; align-items: center; text-align: center; }
-    .cert-logo-lockup { display: inline-flex; align-items: center; gap: 0.8cqw; margin-bottom: 0.4cqw; }
-    .cert-logo-wordmark { font-family: 'Raleway', sans-serif; font-size: 2.2cqw; font-weight: 800; letter-spacing: 0.08cqw; }
+    .cert-logo-lockup { display: inline-flex; align-items: center; gap: 0.8cqw; margin-bottom: 0.5cqw; }
+    .cert-logo-wordmark { font-family: 'Raleway', sans-serif; font-size: 2.4cqw; font-weight: 800; letter-spacing: 0.08cqw; }
     .cert-logo-wordmark .mano { color: #ffffff; }
     .cert-logo-wordmark .demy { color: var(--gold-primary); }
 
     .cert-title-main {
-      font-family: 'Cinzel', serif; font-size: 3.5cqw; font-weight: 700;
-      color: var(--gold-primary); letter-spacing: 0.5cqw; text-transform: uppercase;
-      line-height: 1.1; margin-top: 0.3cqw; margin-bottom: 0.8cqw;
-      text-shadow: 0 2px 14px rgba(229, 184, 66, 0.25);
+      font-family: 'Cinzel', serif; font-size: 3.8cqw; font-weight: 700;
+      color: var(--gold-primary); letter-spacing: 0.55cqw; text-transform: uppercase;
+      line-height: 1.1; margin-top: 0.2cqw; margin-bottom: 1.2cqw;
+      text-shadow: 0 2px 14px rgba(229, 184, 66, 0.3);
     }
 
     .cert-awarded-label {
-      font-family: 'Raleway', sans-serif; font-size: 0.82cqw;
-      letter-spacing: 0.35cqw; color: rgba(255,255,255,0.45);
-      text-transform: uppercase; margin-bottom: 0.3cqw;
+      font-family: 'Raleway', sans-serif; font-size: 0.9cqw;
+      letter-spacing: 0.4cqw; color: rgba(255,255,255,0.5);
+      text-transform: uppercase; margin-bottom: 0.4cqw;
     }
     .cert-recipient-name {
       font-family: 'Dancing Script', 'Playfair Display', cursive, serif;
-      font-size: 4.8cqw; font-weight: 600; color: #ffffff;
-      line-height: 1.05; text-shadow: 0 0 30px rgba(229, 184, 66, 0.3);
-      margin-bottom: 0.3cqw;
+      font-size: 5.6cqw; font-weight: 600; color: #ffffff;
+      line-height: 1.05; text-shadow: 0 0 35px rgba(229, 184, 66, 0.35);
+      margin-bottom: 0.4cqw;
     }
     .cert-recipient-underline {
-      width: 25cqw; height: 1.2px;
+      width: 28cqw; height: 1.5px;
       background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
-      margin: 0 auto 0.9cqw;
+      margin: 0 auto 1.2cqw;
     }
 
     .cert-body-copy {
-      font-family: 'Raleway', sans-serif; font-size: 1.02cqw; font-weight: 400;
-      color: rgba(255,255,255,0.65); line-height: 1.55; max-width: 62cqw;
-      margin: 0 auto 0.9cqw; text-align: center;
+      font-family: 'Raleway', sans-serif; font-size: 1.12cqw; font-weight: 400;
+      color: rgba(255,255,255,0.72); line-height: 1.65; max-width: 68cqw;
+      margin: 0 auto 0.6cqw; text-align: center;
     }
     .cert-body-copy .highlight { color: #ffffff; font-weight: 600; }
     .cert-body-copy .gold { color: var(--gold-primary); font-weight: 600; }
 
-    /* 4-TRACK SCORE BADGE MATRIX (SQL 96%, EXCEL 90%, PYTHON 82% & OVERALL 1,290/1,500) */
-    .cert-scores-matrix {
+    /* TRACK PILLS BAR */
+    .cert-track-pills-bar {
       display: flex; align-items: center; justify-content: center; gap: 1.2cqw;
-      width: 90%; margin: 0 auto 0.9cqw;
+      margin: 0.6cqw auto 1.4cqw; font-family: 'Outfit', sans-serif; font-size: 0.78cqw;
+      font-weight: 700; letter-spacing: 0.15cqw; color: rgba(255,255,255,0.6); text-transform: uppercase;
     }
-    .score-box {
-      background: rgba(8, 12, 20, 0.85);
-      border: 1.5px solid var(--gold-primary);
-      border-radius: 8px; padding: 0.6cqw 1.2cqw;
-      text-align: center; min-width: 7.5cqw;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.5), inset 0 0 10px rgba(229, 184, 66, 0.08);
-    }
-    .score-box-title {
-      font-family: 'Raleway', sans-serif; font-size: 0.72cqw; font-weight: 700;
-      letter-spacing: 0.1cqw; color: rgba(255,255,255,0.8); text-transform: uppercase;
-      margin-bottom: 0.2cqw;
-    }
-    .score-box-val {
-      font-family: 'Cinzel', serif; font-size: 1.6cqw; font-weight: 700;
-      color: var(--gold-primary); line-height: 1.1;
+    .track-pill {
+      background: rgba(229, 184, 66, 0.08); border: 1px solid rgba(229, 184, 66, 0.3);
+      padding: 0.35cqw 1cqw; border-radius: 20px; color: var(--gold-primary);
     }
 
-    .overall-score-card {
-      display: flex; flex-direction: column; justify-content: center;
-      margin-left: 0.8cqw; text-align: left;
+    /* 4-TRACK SCORE BADGE MATRIX */
+    .cert-scores-matrix {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2cqw;
+      width: 92%; margin: 0 auto 1.2cqw;
     }
-    .overall-label {
+    .score-box {
+      background: rgba(10, 16, 26, 0.85);
+      border: 1.5px solid rgba(229, 184, 66, 0.7);
+      border-radius: 8px; padding: 0.9cqw 1.2cqw;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6), inset 0 0 15px rgba(229, 184, 66, 0.1);
+    }
+    .score-box-title {
       font-family: 'Raleway', sans-serif; font-size: 0.78cqw; font-weight: 700;
-      letter-spacing: 0.12cqw; color: rgba(255,255,255,0.6); text-transform: uppercase;
-      margin-bottom: 0.2cqw;
+      letter-spacing: 0.12cqw; color: rgba(255,255,255,0.7); text-transform: uppercase;
+      margin-bottom: 0.3cqw;
     }
-    .overall-val {
-      font-family: 'Cinzel', serif; font-size: 1.7cqw; font-weight: 700;
-      color: var(--gold-primary); line-height: 1;
+    .score-box-val {
+      font-family: 'Cinzel', serif; font-size: 1.9cqw; font-weight: 700;
+      color: var(--gold-primary); line-height: 1.1;
     }
-    .overall-sub {
-      font-family: 'Raleway', sans-serif; font-size: 0.75cqw; font-weight: 500;
+    .score-box-sub {
+      font-family: 'Raleway', sans-serif; font-size: 0.72cqw; font-weight: 500;
       color: rgba(255,255,255,0.45); margin-top: 0.2cqw;
     }
 
+    .score-box.total-box {
+      border-color: var(--cyan-accent);
+      background: linear-gradient(135deg, rgba(0, 229, 255, 0.15), rgba(0, 229, 255, 0.03));
+      box-shadow: 0 4px 20px rgba(0, 229, 255, 0.2), inset 0 0 15px rgba(0, 229, 255, 0.1);
+    }
+    .score-box.total-box .score-box-title { color: rgba(0, 229, 255, 0.9); }
+    .score-box.total-box .score-box-val { color: var(--cyan-accent); }
+
     /* FOOTER & DUAL SIGNATURE SYSTEM */
     .cert-footer {
-      border-top: 1px solid rgba(229, 184, 66, 0.25); padding-top: 0.8cqw;
+      border-top: 1px solid rgba(229, 184, 66, 0.3); padding-top: 1cqw;
       display: grid; grid-template-columns: 1fr 1fr;
-      align-items: center; width: 90%; margin: 0 auto;
+      align-items: center; width: 92%; margin: 0 auto;
     }
     .cert-sig-left { text-align: left; }
     .cert-sig-right { text-align: right; }
 
     .sig-name-text {
-      font-family: 'Dancing Script', cursive; font-size: 2.2cqw;
-      color: rgba(255,255,255,0.9); margin-bottom: 0.2cqw;
+      font-family: 'Dancing Script', cursive; font-size: 2.4cqw;
+      color: rgba(255,255,255,0.92); margin-bottom: 0.2cqw;
     }
-    .sig-line { width: 14cqw; height: 1.2px; background: rgba(229, 184, 66, 0.5); margin-bottom: 0.3cqw; }
+    .sig-line { width: 16cqw; height: 1.2px; background: rgba(229, 184, 66, 0.5); margin-bottom: 0.3cqw; }
     .cert-sig-right .sig-line { margin-left: auto; }
     .sig-role-text {
-      font-family: 'Raleway', sans-serif; font-size: 0.78cqw;
-      letter-spacing: 0.22cqw; color: rgba(255,255,255,0.45); text-transform: uppercase;
+      font-family: 'Raleway', sans-serif; font-size: 0.82cqw;
+      letter-spacing: 0.24cqw; color: rgba(255,255,255,0.5); text-transform: uppercase;
     }
 
   </style>
@@ -329,7 +327,7 @@
   </div>
 
   <!-- Certificate Scroll Area (handles portrait rotation) -->
-      <div class="cert-scroll-area">
+        <div class="cert-scroll-area">
     <div class="cert-rotate-wrap" id="certRotateWrap">
       <div class="certificate-wrapper">
         <div id="certificate-render" class="certificate-body">
@@ -367,13 +365,8 @@
           <!-- MAIN CERTIFICATE CONTENT -->
           <div class="cert-content">
             
-            <!-- HEADER -->
+            <!-- HEADER & RECIPIENT -->
             <div class="cert-header">
-              <div class="cert-logo-lockup">
-                <img src="/landing_v2/manodemy_3d_keycap.png" width="36" height="36" alt="Manodemy Logo" style="vertical-align:middle;">
-                <div class="cert-logo-wordmark"><span class="mano">Mano</span><span class="demy">demy</span></div>
-              </div>
-
               <div class="cert-title-main">CERTIFICATE OF ACHIEVEMENT</div>
 
               <div class="cert-awarded-label">RECIPIENT TO</div>
@@ -381,7 +374,13 @@
               <div class="cert-recipient-underline"></div>
 
               <div class="cert-body-copy">
-                The <span class="gold">60-Day Data Analytics Masterclass</span> — an intensive, hands-on program for complete analytics challenges and authenticated verified scores across SQL, Excel, and Python for Data Analytics.
+                The <span class="gold">60-Day Data Analytics Masterclass</span> — an intensive, hands-on program demonstrating complete analytics mastery, problem-solving excellence, and authenticated scores across SQL, Excel, and Python for Data Analytics.
+              </div>
+
+              <div class="cert-track-pills-bar">
+                <span class="track-pill">⚡ SQL (DAYS 1–18)</span>
+                <span class="track-pill">📊 EXCEL (DAYS 19–30)</span>
+                <span class="track-pill">🐍 PYTHON (DAYS 31–60)</span>
               </div>
             </div>
 
@@ -389,24 +388,27 @@
             <div class="cert-scores-matrix">
               <!-- SQL Box -->
               <div class="score-box">
-                <div class="score-box-title">SQL</div>
+                <div class="score-box-title">SQL Track</div>
                 <div class="score-box-val">96%</div>
+                <div class="score-box-sub">432 / 450 Marks</div>
               </div>
               <!-- Excel Box -->
               <div class="score-box">
-                <div class="score-box-title">Excel</div>
+                <div class="score-box-title">Excel Track</div>
                 <div class="score-box-val">90%</div>
+                <div class="score-box-sub">270 / 300 Marks</div>
               </div>
               <!-- Python Box -->
               <div class="score-box">
-                <div class="score-box-title">Python</div>
+                <div class="score-box-title">Python Track</div>
                 <div class="score-box-val">82%</div>
+                <div class="score-box-sub">588 / 750 Marks</div>
               </div>
               <!-- Overall Score -->
-              <div class="overall-score-card">
-                <div class="overall-label">Overall Score</div>
-                <div class="overall-val"><span id="cert-score-number">1,290</span> / 1,500</div>
-                <div class="overall-sub">Marks Passed</div>
+              <div class="score-box total-box">
+                <div class="score-box-title">Overall Score</div>
+                <div class="score-box-val"><span id="cert-score-number">1,290</span> / 1,500</div>
+                <div class="score-box-sub">86% Marks Passed</div>
               </div>
             </div>
 
@@ -415,7 +417,7 @@
               <div class="cert-sig-left">
                 <div class="sig-name-text">Manojkumar</div>
                 <div class="sig-line"></div>
-                <div class="sig-role-text">SIGNATURE</div>
+                <div class="sig-role-text">PROGRAM DIRECTOR SIGNATURE</div>
               </div>
               <div class="cert-sig-right">
                 <div id="cert-verified-score" class="sig-name-text" style="font-family:'Cinzel',serif; font-size:1.3cqw; color:var(--gold-primary); font-weight:700;">CERT-ID: MND-2026-F41FC2</div>

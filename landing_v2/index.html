@@ -4446,126 +4446,13 @@
   <!-- ── CERTIFICATE & MARKS SHOWCASE OVERLAY ────────────────────────── -->
 
   <div class="cert-showcase-overlay" id="certShowcaseOverlay">
-    <div class="cert-showcase-card" id="certShowcaseCard">
+    <div class="cert-showcase-card" id="certShowcaseCard" style="max-width: 920px; width: 92%; height: auto; max-height: 88vh; background: transparent; border: none; box-shadow: none; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;">
 
-      <button class="cert-exit-btn cert-exit-btn-top" onclick="closeCertDemoOverlay()">✕ Exit</button>
+      <button class="cert-exit-btn" onclick="closeCertDemoOverlay()" style="position: absolute; top: -45px; right: 0; z-index: 10; background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.25); color: #fff; padding: 8px 20px; border-radius: 8px; font-weight: 700; cursor: pointer; backdrop-filter: blur(12px);">✕ Exit</button>
 
-      <!-- Main Body Container -->
-      <div class="cert-card-body">
-
-        <!-- Left Column: Dynamic 1,200 Marks Ring & Threshold Counter -->
-        <div class="cert-marks-section" id="certMarksSection">
-          <div class="marks-ring-container">
-            <svg class="marks-ring-svg" viewBox="0 0 160 160">
-              <defs>
-                <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="#38bdf8" />
-                  <stop offset="50%" stop-color="#eab308" />
-                  <stop offset="100%" stop-color="#10b981" />
-                </linearGradient>
-              </defs>
-              <circle class="marks-ring-bg" cx="80" cy="80" r="70" />
-              <circle class="marks-ring-fill" id="marksRingFill" cx="80" cy="80" r="70" />
-            </svg>
-            <div class="marks-counter-center">
-              <div class="marks-lock-icon" id="marksLockIcon">🔒</div>
-              <div class="marks-val-num" id="marksValNum">0</div>
-              <div class="marks-sub-label">/ 1,500 MARKS</div>
-            </div>
-          </div>
-          <div class="marks-status-pill" id="marksStatusPill">
-            <span class="status-pulse-dot"></span>
-            <span id="marksStatusText">Evaluating Score...</span>
-          </div>
-        </div>
-
-                <!-- Right Column: Official Job-Ready Certificate Document -->
-        <div class="cert-document-section" id="certDocumentSection">
-          <div class="cert-paper" id="certPaper" style="padding: 16px; background: radial-gradient(circle at 50% 20%, #172442 0%, #0d152a 70%, #080d1a 100%); border: 2px solid #eab308; border-radius: 16px; position: relative;">
-            <!-- Art-Deco Gold Geometric Frame -->
-            <div class="cert-paper-border"></div>
-
-            <!-- Embedded Official Sample Certificate Image Asset -->
-            <img src="/sample-certificate.png" alt="Official Manodemy Certificate of Achievement" class="cert-img-embed" style="width: 100%; height: auto; display: block; border-radius: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.85); margin-bottom: 12px;" />
-
-            <!-- 4-Track Score Matrix (Active Glow Overlay Cards) -->
-            <div class="cert-scores-grid" id="certScoresGrid">
-              <!-- SQL Score -->
-              <div class="score-badge-card score-sql" id="scoreBadgeSql">
-                <div class="score-info">
-                  <div class="score-label">SQL</div>
-                  <div class="score-val">96%</div>
-                </div>
-              </div>
-              <!-- Excel Score -->
-              <div class="score-badge-card score-excel" id="scoreBadgeExcel">
-                <div class="score-info">
-                  <div class="score-label">EXCEL</div>
-                  <div class="score-val">90%</div>
-                </div>
-              </div>
-              <!-- Python Score -->
-              <div class="score-badge-card score-python" id="scoreBadgePython">
-                <div class="score-info">
-                  <div class="score-label">PYTHON</div>
-                  <div class="score-val">82%</div>
-                </div>
-              </div>
-              <!-- Overall Score (Stacked Fraction Format) -->
-              <div class="score-badge-card score-overall" id="scoreBadgeOverall">
-                <div class="score-info" style="display:flex;flex-direction:column;align-items:center;width:100%;">
-                  <div class="score-label">OVERALL SCORE</div>
-                  <div class="score-val" style="display:flex;flex-direction:column;align-items:center;line-height:1;margin-top:2px;width:100%;">
-                    <span style="font-size:15px;font-weight:900;color:#fef08a;">1,290</span>
-                    <span style="width:100%;height:1.5px;background:linear-gradient(90deg,transparent,#eab308,transparent);margin:2px 0;"></span>
-                    <span class="score-sub" style="font-size:9px;color:#94a3b8;font-weight:700;">1,500 Marks</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Certificate Footer: Verification Code & Gold Hologram Stamp -->
-            <div class="cert-doc-footer" style="margin-top: 10px; padding-top: 8px;">
-              <div class="cert-verify-info">
-                <a href="/sample-certificate.html" target="_blank" class="verify-url" title="View Full Verifiable Certificate Page">🔗 manodemy.com/sample-certificate.html</a>
-                <span class="verify-seal-text">🔒 Cryptographically Authenticated</span>
-              </div>
-              <div class="cert-gold-hologram" id="certGoldHologram">
-                <div class="hologram-inner">
-                  <span>MASTER</span>
-                  <strong>ANALYST</strong>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-            <!-- Certificate Footer: Verification Code & Gold Hologram Stamp -->
-            <div class="cert-doc-footer">
-              <div class="cert-verify-info">
-                <a href="/sample-certificate.html" target="_blank" class="verify-url" title="View Full Verifiable Certificate Page">🔗 manodemy.com/sample-certificate.html</a>
-                <span class="verify-seal-text">🔒 CERT-ID: MND-2026-F41FC2 &nbsp;·&nbsp; Authenticated</span>
-              </div>
-              <div class="cert-sig-box">
-                <span class="sig-name">Manojkumar</span>
-                <span class="sig-role">Program Director</span>
-              </div>
-              <div class="cert-gold-hologram" id="certGoldHologram">
-                <div class="hologram-inner">
-                  <span>MANODEMY</span>
-                  <strong>GOLD SEAL</strong>
-                  <span>VERIFIED</span>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
+      <!-- Pure Clean Certificate Display -->
+      <div class="cert-paper" id="certPaper" style="width: 100%; border-radius: 14px; overflow: hidden; box-shadow: 0 35px 100px rgba(0,0,0,0.95), 0 0 60px rgba(234,179,8,0.35); border: 2px solid rgba(234,179,8,0.85); background: #080d1a; line-height: 0;">
+        <img src="/sample-certificate.png" alt="Official Manodemy Certificate of Achievement" style="width: 100%; height: auto; display: block; border-radius: 12px;" />
       </div>
 
     </div>

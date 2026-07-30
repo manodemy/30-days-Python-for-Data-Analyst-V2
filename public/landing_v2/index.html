@@ -4008,7 +4008,7 @@
       else if (t >= 33.32 && t < 42.06) currentPhase = 8;
       else if (t >= 42.06) currentPhase = 9;
 
-      // Phase 1 (0.00s - 1.88s): "Welcome to Manodemy's" (Nav logo centers & zooms in)
+      // Phase 1 (0.00s - 1.36s): "Welcome to Manodemy's" (Nav logo centers & zooms in)
       if (currentPhase === 1) {
         if (_lastNarrationPhase !== 1) {
           _lastNarrationPhase = 1;
@@ -4021,25 +4021,20 @@
           if (hrOverlay) hrOverlay.classList.remove('active');
         }
       }
-      // Phase 2 (1.88s - 4.56s): "60 Days Data Analytics Masterclass." (Logo slides left, 60-Day Card zooms in)
+      // Phase 2 (1.36s - 4.04s): "60 Days Data Analytics Masterclass." (Nav logo slides left, audio pill zooms in)
       else if (currentPhase === 2) {
         if (_lastNarrationPhase !== 2) {
           _lastNarrationPhase = 2;
           nav.classList.remove('nav-anim-p1');
           nav.classList.add('nav-anim-p2');
           document.body.classList.remove('phase-5-active');
-          if (stage) {
-            stage.classList.remove('transition-img2', 'phase-5-dissolve');
-            stage.classList.add('active');
-          }
-          if (card) card.classList.remove('img2-active');
-          if (badgeText) badgeText.innerHTML = '🎓 60-DAY DATA ANALYTICS MASTERCLASS';
+          if (stage) stage.classList.remove('active', 'transition-img2', 'phase-5-dissolve');
           if (clockCard) clockCard.classList.remove('narration-roadmap-glow');
           if (certOverlay) certOverlay.classList.remove('active');
           if (hrOverlay) hrOverlay.classList.remove('active');
         }
       }
-      // Phase 3 (4.56s - 6.92s): "Whether you're a complete beginner..."
+      // Phase 3 (4.04s - 6.54s): "Whether you're a complete beginner..." (Card Image 1 Pops Up!)
       else if (currentPhase === 3) {
         if (_lastNarrationPhase !== 3) {
           _lastNarrationPhase = 3;
@@ -4057,7 +4052,7 @@
           if (hrOverlay) hrOverlay.classList.remove('active');
         }
       }
-      // Phase 4 (6.92s - 9.86s): "or a practicing analyst..."
+      // Phase 4 (6.54s - 9.98s): "or a practicing analyst..." (Card Image 2 Cross-fades!)
       else if (currentPhase === 4) {
         if (_lastNarrationPhase !== 4) {
           _lastNarrationPhase = 4;
@@ -4075,7 +4070,7 @@
           if (hrOverlay) hrOverlay.classList.remove('active');
         }
       }
-      // Phase 5 (9.86s - 12.78s): "this masterclass was built specifically for you."
+      // Phase 5 (9.98s - 12.84s): "this masterclass was built specifically for you." (Dual Card Dissolve)
       else if (currentPhase === 5) {
         if (_lastNarrationPhase !== 5) {
           _lastNarrationPhase = 5;

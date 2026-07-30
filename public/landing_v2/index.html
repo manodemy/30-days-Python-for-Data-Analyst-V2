@@ -1106,7 +1106,7 @@
       letter-spacing: 0.02em;
     }
 
-    /* ── HR INTERVIEW OVERLAY — cinematic full bleed ── */
+    /* ── HR INTERVIEW OVERLAY — full uncropped display ── */
     .hr-interview-overlay {
       position: fixed;
       top: 0;
@@ -1114,102 +1114,55 @@
       right: 0;
       bottom: 0;
       z-index: 1002;
-      background: #060a12;
+      background: rgba(6, 10, 18, 0.96);
+      backdrop-filter: blur(16px);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: var(--nav-h) 20px 20px 20px;
+      padding: var(--nav-h) 24px 24px 24px;
       opacity: 0;
       visibility: hidden;
       pointer-events: none;
-      transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
-                  visibility 0.55s ease;
-      overflow: hidden;
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                  visibility 0.5s ease;
     }
     .hr-interview-overlay.active {
       opacity: 1;
       visibility: visible;
       pointer-events: auto;
     }
-    /* Cinematic white-flash element */
+    /* Cinematic subtle flash on entry */
     .hr-flash {
       position: absolute;
       inset: 0;
-      background: white;
+      background: #ffffff;
       opacity: 0;
       pointer-events: none;
       z-index: 5;
-      animation: none;
     }
     .hr-interview-overlay.active .hr-flash {
-      animation: cinemaCut 0.5s ease-out forwards;
+      animation: cinemaCut 0.4s ease-out forwards;
     }
     @keyframes cinemaCut {
-      0% { opacity: 0.85; }
+      0% { opacity: 0.6; }
       100% { opacity: 0; }
     }
-    /* Ken Burns zoom-settle on image */
+    /* Clean, completely uncropped contained image with smooth pop-in */
     .hr-interview-img {
       max-width: 100%;
-      max-height: 100%;
+      max-height: calc(100vh - var(--nav-h) - 48px);
       width: auto;
       height: auto;
       object-fit: contain;
       display: block;
-      border-radius: 12px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 40px rgba(56, 189, 248, 0.2);
-      transform-origin: center center;
-      animation: none;
+      border-radius: 16px;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.8), 0 0 50px rgba(56, 189, 248, 0.25);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      transform: scale(0.96);
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .hr-interview-overlay.active .hr-interview-img {
-      animation: kenBurns 10s ease-out forwards;
-    }
-    @keyframes kenBurns {
-      0% { transform: scale(1.08); }
-      100% { transform: scale(1.0); }
-    }
-    /* Dark vignette edges */
-    .hr-vignette {
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%);
-      pointer-events: none;
-      z-index: 2;
-    }
-    /* Caption bar slides up from bottom */
-    .hr-caption {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      z-index: 3;
-      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%);
-      padding: 32px 36px 20px;
-      transform: translateY(100%);
-      opacity: 0;
-      transition: transform 0.7s 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-                  opacity 0.7s 0.4s ease;
-    }
-    .hr-interview-overlay.active .hr-caption {
-      transform: translateY(0);
-      opacity: 1;
-    }
-    .hr-caption-badge {
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.12em;
-      color: #38bdf8;
-      text-transform: uppercase;
-      margin-bottom: 6px;
-      display: block;
-    }
-    .hr-caption-title {
-      font-size: 22px;
-      font-weight: 900;
-      color: #ffffff;
-      letter-spacing: -0.01em;
-      text-shadow: 0 2px 12px rgba(0,0,0,0.8);
-      line-height: 1.3;
+      transform: scale(1);
     }
     .hr-exit-btn-top {
       position: absolute;
@@ -4605,21 +4558,11 @@
     </div>
   </div>
 
-  <!-- ── HR INTERVIEW QUESTION DEMO OVERLAY — cinematic full bleed ───── -->
+  <!-- ── HR INTERVIEW QUESTION DEMO OVERLAY — full uncropped image ────── -->
   <div class="hr-interview-overlay" id="hrInterviewOverlay">
-    <!-- Cinematic white-flash on entry -->
     <div class="hr-flash"></div>
-    <!-- Vignette dark edges to focus center -->
-    <div class="hr-vignette"></div>
-    <!-- Exit button -->
     <button class="cert-exit-btn hr-exit-btn-top" onclick="closeHrInterviewOverlay()">✕ Exit</button>
-    <!-- Full-bleed interview image with Ken Burns -->
-    <img src="/landing_v2/hr_interview_question.jpg" alt="HR Interview Question" class="hr-interview-img" />
-    <!-- Caption bar slides up from bottom -->
-    <div class="hr-caption">
-      <span class="hr-caption-badge">🎤 Real Interview Scenario</span>
-      <div class="hr-caption-title">How would you rate yourself in SQL, Excel &amp; Python?</div>
-    </div>
+    <img src="/landing_v2/hr_interview_question.jpg" alt="HR Interview Question: How would you rate yourself in SQL, Excel, and Python?" class="hr-interview-img" />
   </div>
 
 </body>

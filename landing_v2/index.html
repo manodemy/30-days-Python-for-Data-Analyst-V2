@@ -709,9 +709,9 @@
       visibility: hidden;
       pointer-events: none;
       transform: scale(0.96) translateY(16px);
-      transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
-                  transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
-                  visibility 0.45s ease;
+      transition: opacity 0.75s cubic-bezier(0.25, 1, 0.5, 1),
+                  transform 0.75s cubic-bezier(0.25, 1, 0.5, 1),
+                  visibility 0.75s ease;
     }
     .cert-showcase-overlay.active {
       opacity: 1;
@@ -1083,7 +1083,11 @@
       letter-spacing: 0.02em;
     }
 
-    /* ── HR INTERVIEW OVERLAY — full uncropped display ── */
+    .nav {
+      z-index: 10010 !important;
+    }
+
+    /* ── HR INTERVIEW OVERLAY — full uncropped display with smooth crossfade ── */
     .hr-interview-overlay {
       position: fixed;
       top: 0;
@@ -1101,29 +1105,13 @@
       opacity: 0;
       visibility: hidden;
       pointer-events: none;
-      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-                  visibility 0.5s ease;
+      transition: opacity 0.75s cubic-bezier(0.25, 1, 0.5, 1),
+                  visibility 0.75s ease;
     }
     .hr-interview-overlay.active {
       opacity: 1;
       visibility: visible;
       pointer-events: auto;
-    }
-    /* Cinematic subtle flash on entry */
-    .hr-flash {
-      position: absolute;
-      inset: 0;
-      background: #ffffff;
-      opacity: 0;
-      pointer-events: none;
-      z-index: 5;
-    }
-    .hr-interview-overlay.active .hr-flash {
-      animation: cinemaCut 0.4s ease-out forwards;
-    }
-    @keyframes cinemaCut {
-      0% { opacity: 0.6; }
-      100% { opacity: 0; }
     }
     /* Clean, completely uncropped contained image with smooth pop-in */
     .hr-interview-img {
@@ -3828,15 +3816,15 @@
         }
       }, 40300);
 
-      // Phase 9.1 (49.56s): HR Interview Question Overlay opens directly OVER Certificate Showcase
+      // Phase 9.1 (49.56s): HR Interview Question Overlay cross-fades directly OVER Certificate Showcase
       _navHrStartTimer = setTimeout(function() {
         openHrInterviewOverlay();
       }, 49560);
 
-      // Phase 9.2 (50.00s): Close Certificate Showcase overlay behind HR Interview Question Overlay
+      // Phase 9.2 (50.36s): Cleanly unmount Certificate Showcase overlay after HR Interview overlay has fully cross-faded in
       _navCertCloseTimer = setTimeout(function() {
         stopCertShowcaseAnimation();
-      }, 50000);
+      }, 50360);
 
       // End (55.86s): Full continuous audio narration finish
       _navEndTimer = setTimeout(function() {
@@ -3999,10 +3987,10 @@
         if (sPython) sPython.classList.add('active-score');
       }, 7920);
 
-      // 48.84s: Close Certificate Showcase Overlay as HR interview narration begins
+      // 50.36s (10440ms after 39.92s): Close Certificate Showcase Overlay after HR interview crossfade completes
       _navCertCloseTimer = setTimeout(function() {
         stopCertShowcaseAnimation();
-      }, 8980);
+      }, 10440);
     }
 
     function stopCertShowcaseAnimation() {
@@ -4087,7 +4075,7 @@
       var certOverlay = document.getElementById('certShowcaseOverlay');
       var certCard = document.getElementById('certShowcaseCard');
       if (certOverlay) {
-        if (t >= 39.92 && t < 50.00) {
+        if (t >= 39.92 && t < 50.36) {
           certOverlay.classList.add('active');
           if (certCard) certCard.classList.add('card-entered');
           var certPaper = document.getElementById('certPaper');

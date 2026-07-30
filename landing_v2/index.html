@@ -477,40 +477,16 @@
 
     /* ── NAV INTRO ANIMATION ────────────────────────────────────── */
 
-    /* Phase 1: logo centered, everything else hidden */
-    .nav-anim-p1 .nav-right,
-    .nav-anim-p1 #navCenterAudioHook {
+    /* Hide right CTA items during active narration mode for clean focus */
+    body.narration-active .nav-right {
       opacity: 0 !important;
       pointer-events: none !important;
-      transition: opacity 0.2s ease;
+      transition: opacity 0.3s ease;
     }
 
-    .nav-anim-p1 .nav-inner {
-      justify-content: center;
-    }
-
-    .nav-anim-p1 #navBrand {
-      animation: navLogoZoomIn 1.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-    }
-
-    /* Phase 2: logo back left, pill zooms in */
-    .nav-anim-p2 .nav-right {
-      opacity: 0 !important;
-      pointer-events: none !important;
-    }
-
-    .nav-anim-p2 .nav-inner {
-      justify-content: space-between;
-    }
-
-    .nav-anim-p2 #navBrand {
-      animation: none;
-    }
-
-    .nav-anim-p2 #navCenterAudioHook {
+    body.narration-active #navCenterAudioHook {
       opacity: 1 !important;
       pointer-events: auto !important;
-      animation: navPillZoomIn 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
     }
 
     /* Hide all other website content during narration animation (Phases 1-4) */

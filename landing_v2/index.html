@@ -1047,13 +1047,59 @@
       padding-top: 10px;
       border-top: 1px dashed rgba(234, 179, 8, 0.25);
     }
+    .cert-watermark-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-25deg);
+      font-size: 54px;
+      font-weight: 900;
+      color: rgba(0, 229, 255, 0.04);
+      letter-spacing: 0.2em;
+      pointer-events: none;
+      user-select: none;
+      z-index: 1;
+    }
     .cert-verify-info {
       display: flex;
       flex-direction: column;
       gap: 3px;
     }
-    .verify-url { font-family: monospace; font-size: 10px; color: #38bdf8; font-weight: 700; }
+    .verify-url {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px;
+      color: #38bdf8;
+      font-weight: 700;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .verify-url:hover {
+      color: #7dd3fc;
+      text-decoration: underline;
+    }
     .verify-seal-text { font-size: 9px; color: #94a3b8; font-weight: 600; }
+
+    .cert-sig-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .cert-sig-box .sig-name {
+      font-family: 'Dancing Script', 'Playfair Display', cursive, serif;
+      font-size: 17px;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.1;
+    }
+    .cert-sig-box .sig-role {
+      font-size: 8.5px;
+      letter-spacing: 0.12em;
+      color: #94a3b8;
+      text-transform: uppercase;
+      margin-top: 2px;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      padding-top: 2px;
+    }
 
     .cert-gold-hologram {
       width: 52px;
@@ -4436,8 +4482,9 @@
         <!-- Right Column: Official Job-Ready Certificate Document -->
         <div class="cert-document-section" id="certDocumentSection">
           <div class="cert-paper" id="certPaper">
-            <!-- Decorative Border Frame -->
+            <!-- Decorative Border Frame & Watermark -->
             <div class="cert-paper-border"></div>
+            <div class="cert-watermark-text">VERIFIED</div>
 
             <!-- Certificate Header -->
             <div class="cert-doc-header">
@@ -4445,14 +4492,14 @@
                 <img src="/landing_v2/manodemy_3d_keycap.png" width="32" height="32" alt="Manodemy Logo" />
                 <span class="cert-brand-name">MANODEMY <span>HANDS-ON</span></span>
               </div>
-              <div class="cert-title-badge">VERIFIED JOB-READY CERTIFICATE</div>
+              <div class="cert-title-badge">VERIFIED CERTIFICATE OF MASTERY</div>
             </div>
 
             <!-- Certificate Recipient & Title -->
             <div class="cert-doc-body">
-              <div class="cert-subtitle">PROUDLY PRESENTED TO DATA ANALYTICS GRADUATE</div>
+              <div class="cert-subtitle">PROUDLY AWARDED TO DATA ANALYTICS GRADUATE</div>
               <div class="cert-recipient-name">Data Analyst Candidate</div>
-              <div class="cert-course-name">60-Day Data Analytics Masterclass</div>
+              <div class="cert-course-name">60-Day Data Analytics Masterclass & Completion</div>
             </div>
 
             <!-- 4-Track Score Matrix (Synchronized with Audio) -->
@@ -4494,8 +4541,12 @@
             <!-- Certificate Footer: Verification Code & Gold Hologram Stamp -->
             <div class="cert-doc-footer">
               <div class="cert-verify-info">
-                <span class="verify-url">manodemy.com/verify/MN-2026-8892</span>
-                <span class="verify-seal-text">🔒 Cryptographically Signed &amp; Verifiable</span>
+                <a href="/sample-certificate.html" target="_blank" class="verify-url" title="View Full Verifiable Certificate Page">🔗 manodemy.com/sample-certificate.html</a>
+                <span class="verify-seal-text">🔒 CERT-ID: MND-2026-F41FC2 &nbsp;·&nbsp; Authenticated</span>
+              </div>
+              <div class="cert-sig-box">
+                <span class="sig-name">Manojkumar</span>
+                <span class="sig-role">Program Director</span>
               </div>
               <div class="cert-gold-hologram" id="certGoldHologram">
                 <div class="hologram-inner">

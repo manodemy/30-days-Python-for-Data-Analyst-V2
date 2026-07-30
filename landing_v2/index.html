@@ -661,32 +661,39 @@
       transform: translate(-50%, -50%) scale(1);
     }
     /* Time display — clean text above right edge of timeline line (visible on hover/drag) */
+    /* Time display — clean glassmorphic readout badge above timeline line */
     .nav-audio-time-display {
       position: absolute;
-      bottom: 5px;
+      bottom: 8px;
       right: 20px;
       display: flex;
       align-items: center;
       gap: 4px;
-      font-family: 'SF Mono', 'Fira Code', 'Roboto Mono', monospace;
-      font-size: 11px;
-      font-weight: 700;
-      color: #0284c7;
-      text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9);
+      font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+      font-size: 10.5px;
+      font-weight: 800;
+      color: #38bdf8;
+      background: rgba(9, 14, 23, 0.88);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      padding: 2px 8px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 10px rgba(56, 189, 248, 0.15);
+      backdrop-filter: blur(8px);
       letter-spacing: 0.04em;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.25s ease;
-      z-index: 10;
+      transition: opacity 0.3s ease;
+      z-index: 10015;
     }
     .nav-audio-time-sep {
-      color: #94a3b8;
-      font-weight: 400;
+      color: #64748b;
+      font-weight: 500;
     }
     #navAudioTotal {
-      color: #64748b;
+      color: #94a3b8;
     }
-    /* Reveal time readout on hover or drag of the timeline bar */
+    /* Reveal time readout whenever narration is active OR timeline is hovered/dragged */
+    .narration-active .nav-audio-time-display,
     .nav-audio-timeline:hover + .nav-audio-time-display,
     .nav-audio-timeline.dragging + .nav-audio-time-display {
       opacity: 1;
@@ -1686,7 +1693,7 @@
       <div id="navAudioTimeDisplay" class="nav-audio-time-display">
         <span id="navAudioCurrent">0:00</span>
         <span class="nav-audio-time-sep">/</span>
-        <span id="navAudioTotal">0:55</span>
+        <span id="navAudioTotal">0:48</span>
       </div>
     </nav>
   </header>

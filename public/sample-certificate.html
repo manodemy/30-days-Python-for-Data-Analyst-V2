@@ -135,9 +135,9 @@
       position: relative; overflow: hidden;
       border-radius: 6px;
       background:
-        radial-gradient(ellipse at 20% 20%, rgba(201,168,76,0.04) 0%, transparent 60%),
-        radial-gradient(ellipse at 80% 80%, rgba(201,168,76,0.03) 0%, transparent 60%),
-        linear-gradient(160deg, #1a1a1a 0%, #111111 50%, #161616 100%);
+        radial-gradient(ellipse at 30% 0%, rgba(201,168,76,0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 100%, rgba(201,168,76,0.05) 0%, transparent 50%),
+        linear-gradient(160deg, #1e1c18 0%, #141210 45%, #1a1714 100%);
       display: flex; flex-direction: column;
       padding: 0;
     }
@@ -180,33 +180,32 @@
     .cert-corner.bl { bottom: 1.4cqw; left: 1.4cqw; border-width: 0 0 2.5px 2.5px; }
     .cert-corner.br { bottom: 1.4cqw; right: 1.4cqw; border-width: 0 2.5px 2.5px 0; }
 
-    /* ══════ 3D GOLD SCALLOPED MEDAL — TOP RIGHT ══════ */
+    /* ══════ 3D GOLD SCALLOPED MEDAL — TOP RIGHT (large, overlapping border) ══════ */
     .cert-medal {
       position: absolute;
-      top: 2.2cqw; right: 3.8cqw;
+      top: -0.5cqw; right: 1.8cqw;
       z-index: 20;
       display: flex; flex-direction: column; align-items: center;
-      filter: drop-shadow(0 8px 24px rgba(0,0,0,0.8)) drop-shadow(0 0 12px rgba(201,168,76,0.35));
+      filter: drop-shadow(0 10px 30px rgba(0,0,0,0.9)) drop-shadow(0 0 16px rgba(201,168,76,0.45));
     }
 
-    /* Scalloped outer ring made with radial gradient + box-shadow */
     .medal-outer {
-      width: 7.2cqw; height: 7.2cqw;
+      width: 9.5cqw; height: 9.5cqw;
       border-radius: 50%; position: relative;
       background: conic-gradient(
         from 0deg,
-        #7a5500, #D4A017, #F5D060, #D4A017, #8B6914,
-        #D4A017, #F5D060, #D4A017, #7a5500, #D4A017,
-        #F5D060, #D4A017, #7a5500, #D4A017, #F5D060,
-        #D4A017, #7a5500, #D4A017, #F5D060, #D4A017,
-        #7a5500
+        #6b4800, #C9900A, #F5D060, #E0A820, #7a5500,
+        #C9900A, #F5D060, #E0A820, #6b4800, #C9900A,
+        #F5D060, #E0A820, #6b4800, #C9900A, #F5D060,
+        #E0A820, #7a5500, #C9900A, #F5D060, #E0A820,
+        #6b4800, #C9900A, #F5D060, #E0A820, #7a5500
       );
       box-shadow:
-        0 0 0 0.25cqw rgba(201,168,76,0.5),
-        inset 0 0 0 0.35cqw rgba(0,0,0,0.4),
-        0 6px 20px rgba(0,0,0,0.7),
-        0 2px 8px rgba(201,168,76,0.4);
-      padding: 0.4cqw;
+        0 0 0 0.3cqw rgba(201,168,76,0.6),
+        inset 0 0 0 0.4cqw rgba(0,0,0,0.35),
+        0 8px 28px rgba(0,0,0,0.8),
+        0 3px 12px rgba(201,168,76,0.5);
+      padding: 0.5cqw;
     }
 
     .medal-inner {
@@ -220,28 +219,28 @@
     }
     .medal-label {
       font-family: 'Cinzel', serif;
-      font-size: 0.82cqw; font-weight: 700;
+      font-size: 1cqw; font-weight: 700;
       color: var(--gold-bright);
-      letter-spacing: 0.08cqw;
-      line-height: 1.2;
-      text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+      letter-spacing: 0.06cqw;
+      line-height: 1.25;
+      text-shadow: 0 1px 6px rgba(0,0,0,0.9);
     }
 
     /* Ribbon tails */
-    .medal-ribbons { display: flex; gap: 0.45cqw; margin-top: -0.9cqw; position: relative; z-index: -1; }
+    .medal-ribbons { display: flex; gap: 0.6cqw; margin-top: -1.2cqw; position: relative; z-index: -1; }
     .medal-ribbon {
-      width: 1.5cqw; height: 2.8cqw;
-      background: linear-gradient(180deg, #C9A84C 0%, #8B6914 60%, #7a5500 100%);
-      clip-path: polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+      width: 2cqw; height: 3.8cqw;
+      background: linear-gradient(180deg, #E0A820 0%, #C9A84C 30%, #8B6914 70%, #6b4800 100%);
+      clip-path: polygon(0 0, 100% 0, 100% 82%, 50% 100%, 0 82%);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.7);
     }
 
-    /* ══════ CERT WATERMARK ══════ */
+    /* ══════ CERT WATERMARK — nearly invisible ══════ */
     .cert-watermark {
       position: absolute; top: 50%; left: 50%;
       transform: translate(-50%, -50%);
       font-family: 'Cinzel', serif; font-size: 11cqw; font-weight: 700;
-      color: rgba(201,168,76,0.022);
+      color: rgba(201,168,76,0.012);
       letter-spacing: 0.8cqw; white-space: nowrap;
       pointer-events: none; z-index: 0; user-select: none;
     }
@@ -252,8 +251,9 @@
       width: 100%; height: 100%;
       display: flex; flex-direction: column;
       align-items: center;
-      padding: 3.8cqw 5cqw 2.8cqw;
-      justify-content: space-between;
+      padding: 3cqw 5cqw 2.2cqw;
+      gap: 0;
+      justify-content: flex-start;
     }
 
     /* ── HEADER SECTION ── */
@@ -267,23 +267,24 @@
     .cert-brand-row {
       display: flex; align-items: center;
       justify-content: center; gap: 0.8cqw;
-      margin-bottom: 1.4cqw;
+      margin-bottom: 0.8cqw;
     }
     /* Gold M circle icon */
     .cert-brand-icon {
-      width: 3.2cqw; height: 3.2cqw; border-radius: 50%;
-      background: radial-gradient(circle at 40% 35%, #E8C86A 0%, #C9A84C 45%, #8B6914 100%);
+      width: 3.8cqw; height: 3.8cqw; border-radius: 50%;
+      background: radial-gradient(circle at 38% 32%, #F0D878 0%, #D4A017 40%, #8B6914 100%);
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 3px 12px rgba(201,168,76,0.5), inset 0 1px 3px rgba(255,255,255,0.2);
+      box-shadow: 0 4px 16px rgba(201,168,76,0.6), inset 0 1px 4px rgba(255,255,255,0.25),
+                  0 0 0 0.2cqw rgba(201,168,76,0.4);
       flex-shrink: 0;
     }
     .cert-brand-icon svg {
-      width: 1.8cqw; height: 1.8cqw;
+      width: 2.1cqw; height: 2.1cqw;
     }
     .cert-brand-name-text {
       font-family: 'Cinzel', serif;
-      font-size: 2.5cqw; font-weight: 700;
-      letter-spacing: 0.45cqw;
+      font-size: 2.8cqw; font-weight: 700;
+      letter-spacing: 0.5cqw;
       background: var(--gold-foil);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -293,132 +294,136 @@
 
     /* Divider under brand */
     .cert-brand-divider {
-      width: 35cqw; height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(201,168,76,0.6), transparent);
-      margin-bottom: 1.4cqw;
+      width: 40cqw; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201,168,76,0.7), rgba(201,168,76,0.9), rgba(201,168,76,0.7), transparent);
+      margin-bottom: 0.9cqw;
     }
 
     /* CERTIFICATE OF ACHIEVEMENT */
     .cert-title {
       font-family: 'Cinzel', serif;
-      font-size: 3.3cqw; font-weight: 700;
-      letter-spacing: 0.3cqw; text-transform: uppercase;
+      font-size: 4cqw; font-weight: 700;
+      letter-spacing: 0.28cqw; text-transform: uppercase;
       background: var(--gold-foil);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      margin-bottom: 0.8cqw;
+      margin-bottom: 0.5cqw;
       line-height: 1.1;
+      text-shadow: none;
     }
 
     /* "The recipient to" italic label */
     .cert-recipient-label {
       font-family: 'Raleway', sans-serif;
       font-style: italic;
-      font-size: 1.1cqw; font-weight: 400;
+      font-size: 1.15cqw; font-weight: 400;
       color: rgba(245,245,245,0.6);
-      margin-bottom: 0.25cqw;
-      letter-spacing: 0.05cqw;
+      margin-bottom: 0.1cqw;
+      letter-spacing: 0.04cqw;
     }
 
     /* RECIPIENT NAME — Calligraphic Gold */
     .cert-recipient-name {
       font-family: 'Dancing Script', cursive;
-      font-size: 5.2cqw; font-weight: 700;
+      font-size: 6cqw; font-weight: 700;
       background: var(--gold-foil);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      line-height: 1.1;
-      margin-bottom: 0.2cqw;
-      filter: drop-shadow(0 2px 8px rgba(201,168,76,0.3));
+      line-height: 1.05;
+      margin-bottom: 0.15cqw;
+      filter: drop-shadow(0 3px 10px rgba(201,168,76,0.4));
     }
 
     /* Underline beneath name */
     .cert-name-underline {
-      width: 30cqw; height: 1.5px;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
-      margin-bottom: 1.1cqw;
+      width: 36cqw; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201,168,76,0.8), transparent);
+      margin-bottom: 0.7cqw;
     }
 
     /* Body description text */
     .cert-description {
       font-family: 'Raleway', sans-serif;
-      font-size: 1.05cqw; font-weight: 400;
-      color: rgba(245,245,245,0.72);
-      line-height: 1.65;
+      font-size: 1.08cqw; font-weight: 400;
+      color: rgba(245,245,245,0.75);
+      line-height: 1.6;
       text-align: center;
-      max-width: 68cqw;
-      letter-spacing: 0.01cqw;
+      max-width: 72cqw;
+      letter-spacing: 0.02cqw;
+      margin-bottom: 1.4cqw;
     }
     .cert-description strong {
       color: var(--text-white);
-      font-weight: 700;
+      font-weight: 800;
+      letter-spacing: 0.04cqw;
     }
 
     /* ── SCORES SECTION ── */
     .cert-scores-section {
       display: flex;
       align-items: center;
-      gap: 1.2cqw;
-      width: 92%;
+      gap: 1.5cqw;
+      width: 90%;
+      padding: 0;
     }
 
     /* Score box (SQL/Excel/Python) with icon */
     .score-card {
-      display: flex; align-items: center; gap: 0.8cqw;
-      background: rgba(10,10,10,0.7);
-      border: 1.5px solid rgba(201,168,76,0.7);
+      display: flex; align-items: center; gap: 1cqw;
+      background: rgba(8,7,5,0.75);
+      border: 1.5px solid rgba(201,168,76,0.75);
       border-radius: 8px;
-      padding: 0.7cqw 1.4cqw;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.5), inset 0 0 12px rgba(201,168,76,0.07);
-      min-width: 9cqw;
+      padding: 0.9cqw 1.6cqw;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6), inset 0 0 16px rgba(201,168,76,0.08);
+      min-width: 10.5cqw;
     }
     .score-card-icon {
-      font-size: 1.7cqw;
+      font-size: 2.2cqw;
       line-height: 1;
       flex-shrink: 0;
     }
     .score-card-info { display: flex; flex-direction: column; }
     .score-card-label {
       font-family: 'Raleway', sans-serif;
-      font-size: 0.72cqw; font-weight: 700;
-      letter-spacing: 0.1cqw;
-      color: rgba(245,245,245,0.75);
+      font-size: 0.8cqw; font-weight: 700;
+      letter-spacing: 0.08cqw;
+      color: rgba(245,245,245,0.8);
       text-transform: uppercase;
     }
     .score-card-val {
       font-family: 'Cinzel', serif;
-      font-size: 1.75cqw; font-weight: 700;
+      font-size: 2.2cqw; font-weight: 700;
       background: var(--gold-foil);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      line-height: 1.15;
+      line-height: 1.1;
     }
 
     /* Vertical separator line */
     .score-separator {
-      width: 1.5px; height: 4cqw;
-      background: linear-gradient(180deg, transparent, rgba(201,168,76,0.5), transparent);
+      width: 1.5px; height: 5cqw;
+      background: linear-gradient(180deg, transparent, rgba(201,168,76,0.6), rgba(201,168,76,0.6), transparent);
       flex-shrink: 0;
-      margin: 0 0.4cqw;
+      margin: 0 0.6cqw;
     }
 
     /* Overall score (text, no box) */
     .score-overall {
       display: flex; flex-direction: column;
-      gap: 0.25cqw;
+      gap: 0.2cqw;
     }
     .score-overall-label {
       font-family: 'Raleway', sans-serif;
-      font-size: 0.9cqw; font-weight: 600;
-      color: rgba(245,245,245,0.7);
+      font-size: 1cqw; font-weight: 600;
+      color: rgba(245,245,245,0.75);
       letter-spacing: 0.03cqw;
     }
     .score-overall-val {
       font-family: 'Cinzel', serif;
-      font-size: 2cqw; font-weight: 700;
+      font-size: 2.4cqw; font-weight: 700;
       background: var(--gold-foil);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -427,7 +432,7 @@
     }
     .score-overall-sub {
       font-family: 'Raleway', sans-serif;
-      font-size: 0.82cqw; font-weight: 500;
+      font-size: 0.85cqw; font-weight: 500;
       color: rgba(245,245,245,0.55);
     }
 
@@ -436,9 +441,10 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      width: 92%;
-      border-top: 1px solid rgba(201,168,76,0.3);
-      padding-top: 1cqw;
+      width: 90%;
+      border-top: 1px solid rgba(201,168,76,0.35);
+      padding-top: 0.9cqw;
+      margin-top: auto;
     }
 
     .cert-sig-block {
@@ -446,20 +452,20 @@
     }
     .sig-cursive {
       font-family: 'Dancing Script', cursive;
-      font-size: 2.4cqw; font-weight: 700;
-      color: rgba(245,245,245,0.9);
+      font-size: 2.8cqw; font-weight: 700;
+      color: rgba(245,245,245,0.92);
       line-height: 1;
-      margin-bottom: 0.15cqw;
+      margin-bottom: 0.1cqw;
     }
     .sig-name-bold {
       font-family: 'Raleway', sans-serif;
-      font-size: 0.9cqw; font-weight: 700;
+      font-size: 0.95cqw; font-weight: 700;
       color: var(--text-white);
       letter-spacing: 0.02cqw;
     }
     .sig-role {
       font-family: 'Raleway', sans-serif;
-      font-size: 0.8cqw; font-weight: 400;
+      font-size: 0.82cqw; font-weight: 400;
       color: rgba(245,245,245,0.55);
       letter-spacing: 0.02cqw;
     }

@@ -3715,167 +3715,45 @@
 
       document.body.classList.add('narration-active');
 
-      // Phase 1 (0s - 1.20s): Logo centered in nav
+      // 0.00s - 1.20s: Logo centered in nav
       nav.classList.remove('nav-anim-p2');
       nav.classList.add('nav-anim-p1');
 
-      // Phase 2 (1.20s - 4.02s): Logo left, audio pill centered
+      // 1.20s: Logo slides left, audio pill centers in nav bar
       _navP1Timer = setTimeout(function () {
         nav.classList.remove('nav-anim-p1');
         nav.classList.add('nav-anim-p2');
       }, 1200);
 
-      // Phase 3 (4.02s - 7.42s): Beginner Card below nav bar
+      // 4.56s: "Whether you're a complete beginner breaking into data..." -> Card 1 (Beginner)
       _navP2Timer = setTimeout(function () {
         if (stage) {
-          stage.classList.remove('transition-img2');
+          stage.classList.remove('transition-img2', 'phase-5-dissolve');
           stage.classList.add('active');
         }
         if (card) card.classList.remove('img2-active');
         if (badgeText) badgeText.innerHTML = '🌱 COMPLETE BEGINNER ENTERING THE DATA WORLD';
-      }, 4020);
+      }, 4560);
 
-      // Phase 4 (7.42s - 9.78s): Transition to Practicing Analyst Card
+      // 8.30s: "or a practicing analyst gearing up to conquer..." -> Card 2 (Practicing Analyst)
       _navP3Timer = setTimeout(function () {
         if (stage) stage.classList.add('transition-img2');
         if (card) card.classList.add('img2-active');
         if (badgeText) badgeText.innerHTML = '🎯 PRACTICING ANALYST LOOKING FOR A JOB SWITCH';
-      }, 7420);
+      }, 8300);
 
-      // Phase 5 (9.78s - 12.64s): Dual Slide & Center Zoom-Out
+      // 12.44s: "this masterclass was built specifically for you." -> Dissolve & Final Badge
       _navP4Timer = setTimeout(function() {
         document.body.classList.add('phase-5-active');
         if (stage) stage.classList.add('phase-5-dissolve');
         if (badgeText) badgeText.innerHTML = '✨ BUILT SPECIFICALLY FOR YOU';
-      }, 9780);
+      }, 12440);
 
-      // Phase 6.1 (12.64s - 17.28s): Highlight Clock Card
-      _navP5Timer = setTimeout(function() {
-        var clockCard = document.getElementById('roadmap-root');
-        if (clockCard) {
-          clockCard.classList.add('narration-roadmap-glow');
-        }
-      }, 12640);
-
-      // Phase 6.2 (17.28s - 20.14s): Jump Clock to Day 1 & Highlight SQL Pill
-      _navP6Timer = setTimeout(function() {
-        var sqlBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="SQL"]');
-        if (sqlBtn) sqlBtn.classList.add('narration-pill-glow');
-        if (window.ManodemyRoadmap && window.ManodemyRoadmap.jumpToPhase) {
-          window.ManodemyRoadmap.jumpToPhase('SQL');
-        }
-      }, 17280);
-
-      // Phase 6.3 (20.14s - 23.56s): Jump Clock to Day 19 & Highlight Excel Pill
-      _navP7Timer = setTimeout(function() {
-        var sqlBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="SQL"]');
-        var xlBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="Excel"]');
-        if (sqlBtn) sqlBtn.classList.remove('narration-pill-glow');
-        if (xlBtn) xlBtn.classList.add('narration-pill-glow');
-        if (window.ManodemyRoadmap && window.ManodemyRoadmap.jumpToPhase) {
-          window.ManodemyRoadmap.jumpToPhase('Excel');
-        }
-      }, 20140);
-
-      // Phase 6.4 (23.56s - 24.36s): Jump Clock to Day 31 & Highlight Python Pill
-      _navP8Timer = setTimeout(function() {
-        var xlBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="Excel"]');
-        var pyBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="Python"]');
-        if (xlBtn) xlBtn.classList.remove('narration-pill-glow');
-        if (pyBtn) pyBtn.classList.add('narration-pill-glow');
-        if (window.ManodemyRoadmap && window.ManodemyRoadmap.jumpToPhase) {
-          window.ManodemyRoadmap.jumpToPhase('Python');
-        }
-      }, 23560);
-
-      // Phase 7 (24.36s): "Every single day, you'll face 25 interview-based questions..."
-      // → Smooth scroll to the real #play-lesson-demo iframe section
-      _navP9Timer = setTimeout(function() {
-        var clockCard = document.getElementById('roadmap-root');
-        var pyBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="Python"]');
-        if (clockCard) clockCard.classList.remove('narration-roadmap-glow');
-        if (pyBtn) pyBtn.classList.remove('narration-pill-glow');
-
-        // Scroll so the iframe sits flush below the nav bar
-        var iframe = document.getElementById('liveLessonIframe');
-        if (iframe) {
-          var navH = (document.querySelector('.nav') || {}).offsetHeight || 76;
-          var iframeTop = iframe.getBoundingClientRect().top + window.scrollY;
-          window.scrollTo({ top: iframeTop - navH, behavior: 'smooth' });
-        }
-
-        // Reset cursor state
-        var cursor = document.getElementById('demoMouseCursor');
-        if (cursor) cursor.classList.remove('moving', 'clicking');
-      }, 24360);
-
-      // Phase 7.2 (25.94s): Animate cursor toward Take Test button in iframe top-right
-      _navCursorMoveTimer = setTimeout(function() {
-        var cursor = document.getElementById('demoMouseCursor');
-        var iframe = document.getElementById('liveLessonIframe');
-        if (!cursor || !iframe) return;
-
-        var rect = iframe.getBoundingClientRect();
-        var targetX = rect.right - 120;
-        var targetY = rect.top + 18;
-
-        cursor.style.transition = 'left 0.8s cubic-bezier(0.25, 1, 0.5, 1), top 0.8s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease';
-        cursor.style.left = targetX + 'px';
-        cursor.style.top = targetY + 'px';
-        cursor.style.opacity = '1';
-        cursor.style.transform = 'none';
-      }, 25940);
-
-      // Phase 7.3 (26.80s): Trigger click ripple + call real openTestPortal() in iframe
-      _navCursorClickTimer = setTimeout(function() {
-        var cursor = document.getElementById('demoMouseCursor');
-        if (cursor) cursor.classList.add('clicking');
-
-        var iframe = document.getElementById('liveLessonIframe');
-        if (iframe && iframe.contentWindow && typeof iframe.contentWindow.openTestPortal === 'function') {
-          try { iframe.contentWindow.openTestPortal(); } catch(e) {}
-        }
-      }, 26800);
-
-      // Phase 7.4 (27.10s): Hide cursor after click
-      _navStageSwitchTimer = setTimeout(function() {
-        var cursor = document.getElementById('demoMouseCursor');
-        if (cursor) {
-          cursor.classList.remove('clicking');
-          cursor.style.opacity = '0';
-        }
-      }, 27100);
-
-      // Phase 8 (33.24s): Certificate Showcase fades in over current view
-      _navCertStartTimer = setTimeout(function() {
-        startCertShowcaseAnimation();
-      }, 33240);
-
-      // Phase 8.1 (33.80s): Reset iframe test portal back to lesson view (cleanup)
-      _navP10Timer = setTimeout(function() {
-        var iframe = document.getElementById('liveLessonIframe');
-        if (iframe && iframe.contentWindow && typeof iframe.contentWindow.closeTestPortal === 'function') {
-          try { iframe.contentWindow.closeTestPortal(); } catch(e) {}
-        }
-      }, 33800);
-
-      // Phase 9.1 (42.18s): HR Interview Question Overlay cross-fades directly OVER Certificate Showcase
-      _navHrStartTimer = setTimeout(function() {
-        openHrInterviewOverlay();
-      }, 42180);
-
-      // Phase 9.2 (42.98s): Cleanly unmount Certificate Showcase overlay after HR Interview overlay has fully cross-faded in
-      _navCertCloseTimer = setTimeout(function() {
-        stopCertShowcaseAnimation();
-      }, 42980);
-
-      // End (48.08s): Full continuous audio narration finish
+      // 15.08s: Audio narration finish -> Reset cleanly
       _navEndTimer = setTimeout(function() {
         stopNavIntroAnimation();
-        stopCertShowcaseAnimation();
-        closeHrInterviewOverlay();
         resetAllAudioState();
-      }, 48080);
+      }, 15080);
     }
 
     function stopNavIntroAnimation() {

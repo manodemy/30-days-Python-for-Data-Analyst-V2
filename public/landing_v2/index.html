@@ -3769,6 +3769,8 @@
       stopCertShowcaseAnimation();
       closeHrInterviewOverlay();
 
+      document.body.classList.remove('narration-active', 'phase-5-active');
+
       var nav = document.querySelector('.nav');
       var stage = document.getElementById('narrationShowcaseStage');
       var card = document.querySelector('.narration-showcase-card');

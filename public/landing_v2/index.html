@@ -3748,12 +3748,6 @@
         if (stage) stage.classList.add('phase-5-dissolve');
         if (badgeText) badgeText.innerHTML = '✨ BUILT SPECIFICALLY FOR YOU';
       }, 12440);
-
-      // 15.08s: Audio narration finish -> Reset cleanly
-      _navEndTimer = setTimeout(function() {
-        stopNavIntroAnimation();
-        resetAllAudioState();
-      }, 15080);
     }
 
     function stopNavIntroAnimation() {

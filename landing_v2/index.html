@@ -477,16 +477,33 @@
 
     /* ── NAV INTRO ANIMATION ────────────────────────────────────── */
 
-    /* Hide right CTA items during active narration mode for clean focus */
-    body.narration-active .nav-right {
+    /* Phase 1 (0.00s - 3.54s): Logo centered in nav bar, right items hidden */
+    .nav-anim-p1 .nav-right,
+    .nav-anim-p1 #navCenterAudioHook {
       opacity: 0 !important;
       pointer-events: none !important;
       transition: opacity 0.3s ease;
     }
+    .nav-anim-p1 .nav-inner {
+      justify-content: center;
+    }
+    .nav-anim-p1 #navBrand {
+      transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
 
-    body.narration-active #navCenterAudioHook {
+    /* Phase 2+ (3.54s+): Logo slides back to left, audio pill centered */
+    .nav-anim-p2 .nav-right {
+      opacity: 0 !important;
+      pointer-events: none !important;
+      transition: opacity 0.3s ease;
+    }
+    .nav-anim-p2 .nav-inner {
+      justify-content: space-between;
+    }
+    .nav-anim-p2 #navCenterAudioHook {
       opacity: 1 !important;
       pointer-events: auto !important;
+      transition: opacity 0.4s ease;
     }
 
     /* Hide all other website content during narration animation (Phases 1-4) */
@@ -3961,10 +3978,11 @@
 
       document.body.classList.add('narration-active');
 
-      // 0.00s - 3.54s: "Welcome to Manodemy's 60-day data analytics masterclass." (Logo centered)
+      // 0.00s - 3.54s: "Welcome to Manodemy's 60-day data analytics masterclass." (Nav logo centers)
       if (t >= 0 && t < 3.54) {
         nav.classList.remove('nav-anim-p2');
         nav.classList.add('nav-anim-p1');
+        document.body.classList.remove('phase-5-active');
         if (stage) stage.classList.remove('active', 'transition-img2', 'phase-5-dissolve');
         if (clockCard) clockCard.classList.remove('narration-roadmap-glow');
         if (certOverlay) certOverlay.classList.remove('active');
@@ -3974,6 +3992,7 @@
       else if (t >= 3.54 && t < 6.92) {
         nav.classList.remove('nav-anim-p1');
         nav.classList.add('nav-anim-p2');
+        document.body.classList.remove('phase-5-active');
         if (stage) {
           stage.classList.remove('transition-img2', 'phase-5-dissolve');
           stage.classList.add('active');
@@ -3988,6 +4007,7 @@
       else if (t >= 6.92 && t < 9.86) {
         nav.classList.remove('nav-anim-p1');
         nav.classList.add('nav-anim-p2');
+        document.body.classList.remove('phase-5-active');
         if (stage) {
           stage.classList.add('active', 'transition-img2');
           stage.classList.remove('phase-5-dissolve');
@@ -4009,46 +4029,59 @@
         if (certOverlay) certOverlay.classList.remove('active');
         if (hrOverlay) hrOverlay.classList.remove('active');
       }
-      // 12.78s - 24.40s: "Structured over 60 guided days..." SQL (Day 1-18), Excel (19-30), Python (31-60)
+      // 12.78s - 24.40s: "Structured over 60 guided days..." (Roadmap Clock & Track Pills)
       else if (t >= 12.78 && t < 24.40) {
+        nav.classList.remove('nav-anim-p1');
+        nav.classList.add('nav-anim-p2');
+        document.body.classList.add('phase-5-active');
         if (stage) stage.classList.remove('active');
         if (certOverlay) certOverlay.classList.remove('active');
         if (hrOverlay) hrOverlay.classList.remove('active');
 
-        if (clockCard) clockCard.classList.add('narration-roadmap-glow');
+        // Scroll page to 60-Day Clock Roadmap Section
+        if (clockCard) {
+          clockCard.classList.add('narration-roadmap-glow');
+          var navH = (document.querySelector('.nav') || {}).offsetHeight || 76;
+          var cTop = clockCard.getBoundingClientRect().top + window.scrollY;
+          window.scrollTo({ top: cTop - navH - 20, behavior: 'smooth' });
+        }
 
-        // Highlight tracks based on narration
+        // Track highlights: SQL (Day 1-18), Excel (19-30), Python (31-60)
         var sqlBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="SQL"]');
         var xlBtn  = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="Excel"]');
         var pyBtn  = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="Python"]');
 
         if (t >= 15.14 && t < 18.26) {
-          // SQL segment (15.14s - 17.78s)
+          // SQL (15.14s - 18.26s)
           if (sqlBtn) sqlBtn.classList.add('narration-pill-glow');
           if (xlBtn) xlBtn.classList.remove('narration-pill-glow');
           if (pyBtn) pyBtn.classList.remove('narration-pill-glow');
           if (window.ManodemyRoadmap && window.ManodemyRoadmap.jumpToPhase) window.ManodemyRoadmap.jumpToPhase('SQL');
         } else if (t >= 18.26 && t < 20.94) {
-          // Excel segment (18.26s - 20.58s)
+          // Excel (18.26s - 20.94s)
           if (sqlBtn) sqlBtn.classList.remove('narration-pill-glow');
           if (xlBtn) xlBtn.classList.add('narration-pill-glow');
           if (pyBtn) pyBtn.classList.remove('narration-pill-glow');
           if (window.ManodemyRoadmap && window.ManodemyRoadmap.jumpToPhase) window.ManodemyRoadmap.jumpToPhase('Excel');
         } else if (t >= 20.94 && t < 24.40) {
-          // Python segment (20.94s - 23.90s)
+          // Python (20.94s - 24.40s)
           if (sqlBtn) sqlBtn.classList.remove('narration-pill-glow');
           if (xlBtn) xlBtn.classList.remove('narration-pill-glow');
           if (pyBtn) pyBtn.classList.add('narration-pill-glow');
           if (window.ManodemyRoadmap && window.ManodemyRoadmap.jumpToPhase) window.ManodemyRoadmap.jumpToPhase('Python');
         }
       }
-      // 24.40s - 33.30s: "Every single day you'll face 25 interview-based questions..." (Interactive compiler section)
+      // 24.40s - 33.30s: "Every single day, you'll face 25 interview-based questions..." (Interactive Compiler)
       else if (t >= 24.40 && t < 33.30) {
+        nav.classList.remove('nav-anim-p1');
+        nav.classList.add('nav-anim-p2');
+        document.body.classList.add('phase-5-active');
+        if (stage) stage.classList.remove('active');
         if (clockCard) clockCard.classList.remove('narration-roadmap-glow');
         if (certOverlay) certOverlay.classList.remove('active');
         if (hrOverlay) hrOverlay.classList.remove('active');
 
-        // Scroll smoothly to live iframe demo
+        // Scroll smoothly to live compiler iframe section
         var iframeEl = document.getElementById('liveLessonIframe');
         if (iframeEl) {
           var navH2 = (document.querySelector('.nav') || {}).offsetHeight || 76;
@@ -4058,7 +4091,7 @@
 
         // Animate cursor click at 29.86s
         if (cursor) {
-          if (t >= 28.00 && t < 32.00) {
+          if (t >= 28.00 && t < 32.50) {
             cursor.style.opacity = '1';
             if (t >= 29.86) cursor.classList.add('clicking');
           } else {

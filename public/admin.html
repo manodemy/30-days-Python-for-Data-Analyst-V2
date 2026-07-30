@@ -6195,63 +6195,129 @@
         <button class="dl-btn dl-close" type="button" onclick="closeModal('certificate-modal')">✕ Close</button>
       </div>
 
-            <div id="certificate-render" class="certificate-body">
-        
-        <div class="cert-border-outer"></div>
-        <div class="cert-border-middle"></div>
-        <div class="cert-corner tl"></div>
-        <div class="cert-corner tr"></div>
-        <div class="cert-corner bl"></div>
-        <div class="cert-corner br"></div>
-        <div class="cert-watermark">VERIFIED</div>
+                        <div id="certificate-render" class="certificate-body">
+          
+          <!-- TOP-LEFT & BOTTOM-RIGHT ORGANIC WAVIES -->
+          <svg class="cert-wave-tl" viewBox="0 0 400 240" preserveAspectRatio="none">
+            <path d="M0,0 L260,0 C200,80 120,110 0,160 Z" fill="rgba(0, 229, 255, 0.08)" />
+            <path d="M0,0 L240,0 C170,70 90,95 0,140 Z" fill="#0B1528" />
+            <path d="M0,0 L220,0 C150,60 70,85 0,120 Z" fill="url(#goldGradTL)" />
+            <defs>
+              <linearGradient id="goldGradTL" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#FFB020" />
+                <stop offset="50%" stop-color="#D4AF37" />
+                <stop offset="100%" stop-color="#854D0E" />
+              </linearGradient>
+            </defs>
+          </svg>
 
-        <div class="cert-content">
-          <div class="cert-header">
-            <div class="cert-logo-lockup">
-              <div class="cert-logo-mark">
-                <img src="/landing_v2/manodemy_3d_keycap.png" width="36" height="36" alt="Manodemy 3D Keycap Logo" style="vertical-align:middle;">
+          <svg class="cert-wave-br" viewBox="0 0 400 240" preserveAspectRatio="none">
+            <path d="M400,240 L140,240 C200,160 280,130 400,80 Z" fill="rgba(0, 229, 255, 0.08)" />
+            <path d="M400,240 L160,240 C230,170 310,145 400,100 Z" fill="#0B1528" />
+            <path d="M400,240 L180,240 C250,180 330,155 400,120 Z" fill="url(#goldGradBR)" />
+            <defs>
+              <linearGradient id="goldGradBR" x1="1" y1="1" x2="0" y2="0">
+                <stop offset="0%" stop-color="#FFB020" />
+                <stop offset="50%" stop-color="#D4AF37" />
+                <stop offset="100%" stop-color="#854D0E" />
+              </linearGradient>
+            </defs>
+          </svg>
+
+          <!-- TOP-RIGHT 3D METALLIC GOLD AWARD RIBBON SEAL -->
+          <div class="cert-award-seal">
+            <div class="seal-circle">
+              <div class="seal-inner">
+                <span class="seal-title">VERIFIED</span>
+                <div class="seal-stars">★★★</div>
+                <span class="seal-sub">MASTERY</span>
               </div>
-              <div class="cert-logo-wordmark"><span class="mano">Mano</span><span class="demy">demy</span></div>
             </div>
+            <div class="seal-ribbons">
+              <div class="ribbon-tail left"></div>
+              <div class="ribbon-tail right"></div>
+            </div>
+          </div>
+
+          <!-- INNER GOLD FRAME & CRYPTO ID BAR -->
+          <div class="cert-inner-frame"></div>
+          <div id="cert-id-strip" class="cert-id-bar">CERT-ID: MND-2026-F41FC2</div>
+          <div class="cert-watermark">VERIFIED</div>
+
+          <!-- MAIN CERTIFICATE CONTENT -->
+          <div class="cert-content">
             
+            <!-- HEADER -->
+            <div class="cert-header">
+              <div class="cert-logo-lockup">
+                <img src="/landing_v2/manodemy_3d_keycap.png" width="34" height="34" alt="Manodemy Logo" style="vertical-align:middle;">
+                <div class="cert-logo-wordmark"><span class="mano">Mano</span><span class="demy">demy</span></div>
+              </div>
 
-            <div class="cert-title-eyebrow">This is to proudly certify that</div>
-            <div class="cert-title-main">Certificate</div>
-            <div class="cert-title-sub">of Mastery &nbsp;&nbsp; &amp; &nbsp;&nbsp; Completion</div>
+              <div class="cert-title-main">CERTIFICATE</div>
+              <div class="cert-title-ribbon">OF MASTERY &amp; COMPLETION</div>
 
-            <div class="cert-divider">
-              <div class="divider-line"></div>
-              <div class="divider-diamond"></div>
-              <div class="divider-line"></div>
-              <div class="divider-diamond"></div>
-              <div class="divider-line"></div>
+              <div class="cert-awarded-label">THIS CERTIFICATE IS PROUDLY PRESENTED TO</div>
+              <div id="cert-name-display" class="cert-recipient-name">Aditya Sharma</div>
+              <div class="cert-recipient-underline"></div>
+
+              <div class="cert-body-copy">
+                has demonstrated <span class="highlight">exceptional technical mastery and problem-solving excellence</span> upon successful completion of the
+                <span class="cyan">Manodemy 60-Day Data Analytics Masterclass</span> — an intensive, hands-on curriculum spanning
+                <span class="highlight">60 guided days</span>, encompassing <span class="highlight">1,500 interview-based challenges</span> across SQL, Excel, and Python for Data Analytics.
+              </div>
             </div>
 
-            <div class="cert-awarded-label">Proudly awarded to</div>
-            <div id="cert-name-display" class="cert-recipient-name">Aditya Sharma</div>
-            <div class="cert-recipient-underline"></div>
+            <!-- 4-TRACK & TOTAL MARKS SCORE MATRIX -->
+            <div class="cert-scores-matrix">
+              <div class="score-matrix-card sql">
+                <div class="matrix-icon">⚡</div>
+                <div class="matrix-info">
+                  <div class="matrix-label">SQL Track (Days 1–18)</div>
+                  <div class="matrix-val">432 <span class="sub">/ 450 (96%)</span></div>
+                </div>
+              </div>
+              <div class="score-matrix-card excel">
+                <div class="matrix-icon">📊</div>
+                <div class="matrix-info">
+                  <div class="matrix-label">Excel Track (Days 19–30)</div>
+                  <div class="matrix-val">270 <span class="sub">/ 300 (90%)</span></div>
+                </div>
+              </div>
+              <div class="score-matrix-card python">
+                <div class="matrix-icon">🐍</div>
+                <div class="matrix-info">
+                  <div class="matrix-label">Python Track (Days 31–60)</div>
+                  <div class="matrix-val">588 <span class="sub">/ 750 (82%)</span></div>
+                </div>
+              </div>
+              <div class="score-matrix-card total">
+                <div class="matrix-icon">🏆</div>
+                <div class="matrix-info">
+                  <div class="matrix-label">Total Score Achieved</div>
+                  <div class="matrix-val"><span id="cert-score-number">1,290</span> <span class="sub">/ 1,500</span></div>
+                </div>
+              </div>
+            </div>
 
-            <div class="cert-body-copy">
-              has demonstrated <span class="highlight">exceptional technical mastery and problem-solving excellence</span> upon successful completion of the
-              <span class="cyan">Manodemy 60-Day Data Analytics Masterclass</span> — an intensive, hands-on curriculum spanning
-              <span class="highlight">60 guided days</span>, encompassing
-              <span class="highlight">1,500 interview-based questions</span> (25 questions/day) across SQL (Days 1–18), Excel (Days 19–30), and Python for Data Analytics (Days 31–60).
+            <!-- FOOTER & DUAL SIGNATURE SYSTEM -->
+            <div class="cert-footer">
+              <div class="cert-sig-left">
+                <div class="sig-name-text">Manojkumar</div>
+                <div class="sig-line"></div>
+                <div class="sig-role-text">PROGRAM DIRECTOR</div>
+              </div>
+              <div class="cert-sig-right">
+                <div id="cert-verified-score" class="sig-name-text" style="font-family:'Cinzel',serif; font-size:1.4cqw; color:var(--cyan); font-weight:700;">1,290 / 1,500 MARKS</div>
+                <div class="sig-line"></div>
+                <div class="sig-role-text">VERIFIED RECORD &nbsp;·&nbsp; AUTHENTICATED</div>
+              </div>
             </div>
-          </div>
 
-          <div class="cert-achievement-row">
-            <div class="cert-score-card">
-              <div class="cert-score-card-label">Total Score Achieved</div>
-              <div class="cert-score-card-value"><span id="cert-score-number">850</span><span style="font-size:22px;opacity:0.6">.00</span></div>
-              <div class="cert-score-card-sub">out of 1,500 Marks</div>
-            </div>
-            <div class="cert-divider-vert"></div>
-            <div class="cert-level-card">
-              <div class="cert-level-card-label">Proficiency Level</div>
-              <div id="cert-level-value" class="cert-level-badge">Alchemist</div>
-              <div class="cert-level-card-desc">Top 5% of graduates</div>
-            </div>
-          </div>
+          </div><!-- /cert-content -->
+        </div>
+      </div>
+    </div>
 
 
 

@@ -4,35 +4,38 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Verifiable Certificate of Mastery — Manodemy</title>
-  
+
   <!-- SEO Meta Tags -->
-  <meta name="description" content="View a sample of the verifiable, high-stakes Certificate of Mastery awarded by Manodemy for outstanding Python and Data Analysis proficiency.">
+  <meta name="description" content="View a sample of the verifiable, high-stakes Certificate of Mastery awarded by Manodemy for outstanding Data Analytics proficiency.">
   <meta name="robots" content="noindex, follow">
-  
+
   <!-- Premium Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600;700&family=Dancing+Script:wght@600&family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600;700&family=Dancing+Script:wght@600;700&family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
   <style>
     /* ══════════════════════════════════════════════════════════════════
-       OPTION 2: ROYAL OBSIDIAN & GOLD GEOMETRIC FILIGREE CERTIFICATE
+       MANODEMY — PROFESSIONAL CERTIFICATE DESIGN
+       Pixel-perfect replica of the reference design
        ══════════════════════════════════════════════════════════════════ */
     :root {
-      --void: #05070c;
-      --obsidian: #090d16;
-      --gold-primary: #e5b842;
-      --gold-light: #fff0aa;
-      --gold-dark: #a8791c;
-      --cyan-accent: #00e5ff;
+      --bg-dark: #111111;
+      --bg-card: #181818;
+      --gold: #C9A84C;
+      --gold-bright: #E8C86A;
+      --gold-dim: #8B6914;
+      --gold-foil: linear-gradient(135deg, #8B6914 0%, #C9A84C 30%, #F0D78C 50%, #C9A84C 70%, #8B6914 100%);
+      --text-white: #F5F5F5;
+      --text-dim: rgba(245,245,245,0.65);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background-color: var(--void);
-      background-image: radial-gradient(circle at center, #0e1422 0%, #05070c 100%);
-      color: #ffffff;
+      background: #0a0a0a;
+      background-image: radial-gradient(ellipse at center, #141414 0%, #080808 100%);
+      color: var(--text-white);
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
       display: flex;
@@ -40,266 +43,475 @@
       align-items: center;
       justify-content: center;
       overflow-x: hidden;
-      position: relative;
     }
 
-    /* Ambient Background Glows */
-    .bg-glow-gold {
-      position: absolute; top: 15%; left: 10%; width: 45vw; height: 45vw; border-radius: 50%;
-      background: radial-gradient(circle, rgba(229, 184, 66, 0.05) 0%, transparent 70%);
-      filter: blur(90px); pointer-events: none; z-index: 1;
-    }
-    .bg-glow-cyan {
-      position: absolute; bottom: 15%; right: 10%; width: 45vw; height: 45vw; border-radius: 50%;
-      background: radial-gradient(circle, rgba(0, 229, 255, 0.04) 0%, transparent 70%);
-      filter: blur(90px); pointer-events: none; z-index: 1;
-    }
-
-    /* Header Control Bar */
+    /* ══════ HEADER CONTROL BAR ══════ */
     .header-controls {
-      width: 100%; max-width: 1140px; padding: 0 20px; margin-bottom: 14px;
-      display: flex; justify-content: space-between; align-items: center; z-index: 10;
+      width: 100%;
+      max-width: 1200px;
+      padding: 0 24px;
+      margin-bottom: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
     }
-    .brand-title { font-family: 'Outfit', sans-serif; font-weight: 850; font-size: 20px; letter-spacing: -0.02em; }
-    .brand-title span { color: var(--gold-primary); text-shadow: 0 0 12px rgba(229, 184, 66, 0.4); }
-    .brand-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #94A3B8; letter-spacing: 0.1em; text-transform: uppercase; }
+
+    .brand-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: -0.02em;
+    }
+    .brand-title .m { color: var(--gold-bright); }
+    .brand-title .rest { color: #fff; }
+    .brand-title .demy { color: var(--gold-bright); }
+
+    .brand-subtitle {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: #666;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
 
     .btn-group { display: flex; gap: 10px; align-items: center; }
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-      padding: 8px 18px; border-radius: 8px; font-family: 'Outfit', sans-serif; font-weight: 600;
-      font-size: 13px; cursor: pointer; text-decoration: none; transition: all 220ms ease; border: none; white-space: nowrap;
-    }
-    .btn-back { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #94A3B8; }
-    .btn-back:hover { background: rgba(255, 255, 255, 0.09); color: #fff; }
-    .btn-print { background: linear-gradient(135deg, var(--gold-primary) 0%, var(--gold-dark) 100%); color: #000; font-weight: 700; box-shadow: 0 4px 14px rgba(229, 184, 66, 0.25); }
-    .btn-print:hover { box-shadow: 0 6px 20px rgba(229, 184, 66, 0.4); transform: translateY(-1px); }
 
-    .cert-scroll-area { width: 100%; display: flex; align-items: center; justify-content: center; z-index: 5; padding: 0 16px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 20px; border-radius: 8px;
+      font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 13px;
+      cursor: pointer; text-decoration: none;
+      transition: all 200ms ease; border: none; white-space: nowrap;
+    }
+    .btn-back {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #aaa;
+    }
+    .btn-back:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+    .btn-print {
+      background: var(--gold-foil);
+      color: #1a1200;
+      font-weight: 700;
+      box-shadow: 0 4px 16px rgba(201,168,76,0.3);
+    }
+    .btn-print:hover {
+      box-shadow: 0 6px 24px rgba(201,168,76,0.5);
+      transform: translateY(-1px);
+    }
+
+    /* ══════ CERTIFICATE SCROLL AREA ══════ */
+    .cert-scroll-area {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 5;
+      padding: 0 20px;
+    }
+
+    /* ══════ CERTIFICATE WRAPPER — A4 LANDSCAPE ══════ */
+    .cert-rotate-wrap { width: 100%; display: flex; justify-content: center; }
 
     .certificate-wrapper {
-      width: min(96vw, calc(88vh * 1.414), 1140px);
-      height: calc(min(96vw, calc(88vh * 1.414), 1140px) / 1.414);
+      width: min(96vw, calc(86vh * 1.414), 1120px);
+      height: calc(min(96vw, calc(86vh * 1.414), 1120px) / 1.414);
       position: relative;
-      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.95), 0 0 50px rgba(229, 184, 66, 0.12);
-      border-radius: 10px;
-      background: var(--obsidian);
-      border: 1.5px solid rgba(229, 184, 66, 0.3);
       flex-shrink: 0;
+      border-radius: 6px;
+      box-shadow:
+        0 40px 100px rgba(0,0,0,0.9),
+        0 0 0 1px rgba(201,168,76,0.25),
+        0 0 60px rgba(201,168,76,0.06);
     }
 
+    /* ══════ THE CERTIFICATE BODY ══════ */
     .certificate-body {
       width: 100%; height: 100%;
       container-type: inline-size;
       position: relative; overflow: hidden;
-      padding: 3.5cqw 4.5cqw 2.8cqw;
-      box-sizing: border-box;
+      border-radius: 6px;
+      background:
+        radial-gradient(ellipse at 20% 20%, rgba(201,168,76,0.04) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 80%, rgba(201,168,76,0.03) 0%, transparent 60%),
+        linear-gradient(160deg, #1a1a1a 0%, #111111 50%, #161616 100%);
       display: flex; flex-direction: column;
-      background: radial-gradient(circle at center, #0d1424 0%, #05070d 100%);
-      border-radius: 10px;
+      padding: 0;
     }
 
-    /* Glossy Refraction Layer */
-    .certificate-body::after {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(115deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.04) 38%, rgba(255,255,255,0.1) 40%, rgba(255,255,255,0) 50%);
-      pointer-events: none; z-index: 10;
+    /* Subtle noise texture overlay */
+    .certificate-body::before {
+      content: '';
+      position: absolute; inset: 0; z-index: 1;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      background-size: 150px;
+      pointer-events: none;
+      opacity: 0.4;
     }
 
-    /* ART-DECO GEOMETRIC GOLD FRAME & CORNERS */
-    .cert-artdeco-frame {
-      position: absolute; inset: 1.2cqw;
-      border: 1.5px solid var(--gold-primary);
-      border-radius: 4px; pointer-events: none; z-index: 3;
+    /* ══════ GOLD BORDER FRAME ══════ */
+    /* Outer border */
+    .cert-border-outer {
+      position: absolute; inset: 1.4cqw;
+      border: 2px solid var(--gold);
+      border-radius: 3px;
+      pointer-events: none; z-index: 4;
+      box-shadow: inset 0 0 30px rgba(201,168,76,0.06), 0 0 20px rgba(201,168,76,0.08);
     }
-    .cert-artdeco-inner {
-      position: absolute; inset: 1.8cqw;
-      border: 1px solid rgba(229, 184, 66, 0.35);
-      border-radius: 2px; pointer-events: none; z-index: 3;
+    /* Inner border */
+    .cert-border-inner {
+      position: absolute; inset: 2cqw;
+      border: 1px solid rgba(201,168,76,0.45);
+      border-radius: 2px;
+      pointer-events: none; z-index: 4;
     }
 
-    .artdeco-corner {
-      position: absolute; width: 4.5cqw; height: 4.5cqw;
-      border-color: var(--gold-primary); border-style: solid; z-index: 4; pointer-events: none;
+    /* Corner L-brackets */
+    .cert-corner {
+      position: absolute; z-index: 5; pointer-events: none;
+      width: 3.5cqw; height: 3.5cqw;
+      border-color: var(--gold-bright); border-style: solid;
     }
-    .artdeco-corner.tl { top: 1.2cqw; left: 1.2cqw; border-width: 3px 0 0 3px; }
-    .artdeco-corner.tr { top: 1.2cqw; right: 1.2cqw; border-width: 3px 3px 0 0; }
-    .artdeco-corner.bl { bottom: 1.2cqw; left: 1.2cqw; border-width: 0 0 3px 3px; }
-    .artdeco-corner.br { bottom: 1.2cqw; right: 1.2cqw; border-width: 0 3px 3px 0; }
+    .cert-corner.tl { top: 1.4cqw; left: 1.4cqw; border-width: 2.5px 0 0 2.5px; }
+    .cert-corner.tr { top: 1.4cqw; right: 1.4cqw; border-width: 2.5px 2.5px 0 0; }
+    .cert-corner.bl { bottom: 1.4cqw; left: 1.4cqw; border-width: 0 0 2.5px 2.5px; }
+    .cert-corner.br { bottom: 1.4cqw; right: 1.4cqw; border-width: 0 2.5px 2.5px 0; }
 
-    .artdeco-corner-wires {
-      position: absolute; width: 3.2cqw; height: 3.2cqw;
-      border: 1px solid rgba(229, 184, 66, 0.6); z-index: 4; pointer-events: none;
+    /* ══════ 3D GOLD SCALLOPED MEDAL — TOP RIGHT ══════ */
+    .cert-medal {
+      position: absolute;
+      top: 2.2cqw; right: 3.8cqw;
+      z-index: 20;
+      display: flex; flex-direction: column; align-items: center;
+      filter: drop-shadow(0 8px 24px rgba(0,0,0,0.8)) drop-shadow(0 0 12px rgba(201,168,76,0.35));
     }
-    .artdeco-corner-wires.tl { top: 1.8cqw; left: 1.8cqw; border-right: none; border-bottom: none; }
-    .artdeco-corner-wires.tr { top: 1.8cqw; right: 1.8cqw; border-left: none; border-bottom: none; }
-    .artdeco-corner-wires.bl { bottom: 1.8cqw; left: 1.8cqw; border-right: none; border-top: none; }
-    .artdeco-corner-wires.br { bottom: 1.8cqw; right: 1.8cqw; border-left: none; border-top: none; }
 
-    /* 3D GOLD AWARD MEDAL (Top-Right) */
-    .cert-award-medal {
-      position: absolute; top: 2.8cqw; right: 4.2cqw;
-      z-index: 15; display: flex; flex-direction: column; align-items: center;
-      filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.75));
+    /* Scalloped outer ring made with radial gradient + box-shadow */
+    .medal-outer {
+      width: 7.2cqw; height: 7.2cqw;
+      border-radius: 50%; position: relative;
+      background: conic-gradient(
+        from 0deg,
+        #7a5500, #D4A017, #F5D060, #D4A017, #8B6914,
+        #D4A017, #F5D060, #D4A017, #7a5500, #D4A017,
+        #F5D060, #D4A017, #7a5500, #D4A017, #F5D060,
+        #D4A017, #7a5500, #D4A017, #F5D060, #D4A017,
+        #7a5500
+      );
+      box-shadow:
+        0 0 0 0.25cqw rgba(201,168,76,0.5),
+        inset 0 0 0 0.35cqw rgba(0,0,0,0.4),
+        0 6px 20px rgba(0,0,0,0.7),
+        0 2px 8px rgba(201,168,76,0.4);
+      padding: 0.4cqw;
     }
-    .medal-scallop-circle {
-      width: 7.4cqw; height: 7.4cqw; border-radius: 50%;
-      background: radial-gradient(circle, #fff5cc 0%, #e5b842 45%, #996300 100%);
-      border: 2px solid #fff0aa; padding: 0.35cqw;
-      box-shadow: inset 0 0 12px rgba(0,0,0,0.5), 0 0 25px rgba(229, 184, 66, 0.5);
-    }
-    .medal-inner-dark {
+
+    .medal-inner {
       width: 100%; height: 100%; border-radius: 50%;
-      background: radial-gradient(circle, #0e1524 0%, #060912 100%);
-      border: 1px solid rgba(229, 184, 66, 0.7);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      text-align: center; color: var(--gold-primary); padding: 0.2cqw;
+      background: radial-gradient(circle at 35% 30%, #2a1f00 0%, #1a1300 60%, #0d0a00 100%);
+      border: 0.18cqw solid rgba(201,168,76,0.8);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; gap: 0;
+      box-shadow: inset 0 2px 8px rgba(201,168,76,0.2);
     }
-    .medal-text-main { font-family: 'Cinzel', serif; font-size: 0.85cqw; font-weight: 700; letter-spacing: 0.12cqw; color: #fff; line-height: 1.15; }
-    .medal-text-sub { font-family: 'Cinzel', serif; font-size: 0.72cqw; font-weight: 600; letter-spacing: 0.1cqw; color: var(--gold-primary); margin-top: 0.1cqw; }
+    .medal-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.82cqw; font-weight: 700;
+      color: var(--gold-bright);
+      letter-spacing: 0.08cqw;
+      line-height: 1.2;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+    }
 
-    .medal-ribbon-tails { display: flex; gap: 0.5cqw; margin-top: -0.8cqw; }
-    .medal-tail {
-      width: 1.5cqw; height: 2.6cqw;
-      background: linear-gradient(180deg, #e5b842 0%, #855304 100%);
-      clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
+    /* Ribbon tails */
+    .medal-ribbons { display: flex; gap: 0.45cqw; margin-top: -0.9cqw; position: relative; z-index: -1; }
+    .medal-ribbon {
+      width: 1.5cqw; height: 2.8cqw;
+      background: linear-gradient(180deg, #C9A84C 0%, #8B6914 60%, #7a5500 100%);
+      clip-path: polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%);
       box-shadow: 0 4px 10px rgba(0,0,0,0.6);
     }
 
+    /* ══════ CERT WATERMARK ══════ */
     .cert-watermark {
-      position: absolute; top: 52%; left: 50%; transform: translate(-50%, -50%);
-      font-family: 'Cinzel', serif; font-size: 12cqw; font-weight: 700;
-      color: rgba(229, 184, 66, 0.025); letter-spacing: 1.2cqw; white-space: nowrap;
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Cinzel', serif; font-size: 11cqw; font-weight: 700;
+      color: rgba(201,168,76,0.022);
+      letter-spacing: 0.8cqw; white-space: nowrap;
       pointer-events: none; z-index: 0; user-select: none;
     }
 
-    /* CERTIFICATE CONTENT — PERFECT EVEN VERTICAL SPACING & FILL */
+    /* ══════ MAIN CONTENT AREA ══════ */
     .cert-content {
-      position: relative; z-index: 5;
-      display: flex; flex-direction: column; height: 100%;
-      justify-content: space-between; align-items: stretch;
+      position: relative; z-index: 10;
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column;
+      align-items: center;
+      padding: 3.8cqw 5cqw 2.8cqw;
+      justify-content: space-between;
     }
 
-    /* HEADER & RECIPIENT SECTION */
-    .cert-header { display: flex; flex-direction: column; align-items: center; text-align: center; }
-    .cert-logo-lockup { display: inline-flex; align-items: center; gap: 0.8cqw; margin-bottom: 0.5cqw; }
-    .cert-logo-wordmark { font-family: 'Raleway', sans-serif; font-size: 2.4cqw; font-weight: 800; letter-spacing: 0.08cqw; }
-    .cert-logo-wordmark .mano { color: #ffffff; }
-    .cert-logo-wordmark .demy { color: var(--gold-primary); }
-
-    .cert-title-main {
-      font-family: 'Cinzel', serif; font-size: 3.8cqw; font-weight: 700;
-      color: var(--gold-primary); letter-spacing: 0.55cqw; text-transform: uppercase;
-      line-height: 1.1; margin-top: 0.2cqw; margin-bottom: 1.2cqw;
-      text-shadow: 0 2px 14px rgba(229, 184, 66, 0.3);
+    /* ── HEADER SECTION ── */
+    .cert-header {
+      display: flex; flex-direction: column;
+      align-items: center; text-align: center;
+      width: 100%;
     }
 
-    .cert-awarded-label {
-      font-family: 'Raleway', sans-serif; font-size: 0.9cqw;
-      letter-spacing: 0.4cqw; color: rgba(255,255,255,0.5);
-      text-transform: uppercase; margin-bottom: 0.4cqw;
+    /* MANODEMY Logo Row */
+    .cert-brand-row {
+      display: flex; align-items: center;
+      justify-content: center; gap: 0.8cqw;
+      margin-bottom: 1.4cqw;
     }
+    /* Gold M circle icon */
+    .cert-brand-icon {
+      width: 3.2cqw; height: 3.2cqw; border-radius: 50%;
+      background: radial-gradient(circle at 40% 35%, #E8C86A 0%, #C9A84C 45%, #8B6914 100%);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 3px 12px rgba(201,168,76,0.5), inset 0 1px 3px rgba(255,255,255,0.2);
+      flex-shrink: 0;
+    }
+    .cert-brand-icon svg {
+      width: 1.8cqw; height: 1.8cqw;
+    }
+    .cert-brand-name-text {
+      font-family: 'Cinzel', serif;
+      font-size: 2.5cqw; font-weight: 700;
+      letter-spacing: 0.45cqw;
+      background: var(--gold-foil);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: none;
+    }
+
+    /* Divider under brand */
+    .cert-brand-divider {
+      width: 35cqw; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201,168,76,0.6), transparent);
+      margin-bottom: 1.4cqw;
+    }
+
+    /* CERTIFICATE OF ACHIEVEMENT */
+    .cert-title {
+      font-family: 'Cinzel', serif;
+      font-size: 3.3cqw; font-weight: 700;
+      letter-spacing: 0.3cqw; text-transform: uppercase;
+      background: var(--gold-foil);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.8cqw;
+      line-height: 1.1;
+    }
+
+    /* "The recipient to" italic label */
+    .cert-recipient-label {
+      font-family: 'Raleway', sans-serif;
+      font-style: italic;
+      font-size: 1.1cqw; font-weight: 400;
+      color: rgba(245,245,245,0.6);
+      margin-bottom: 0.25cqw;
+      letter-spacing: 0.05cqw;
+    }
+
+    /* RECIPIENT NAME — Calligraphic Gold */
     .cert-recipient-name {
-      font-family: 'Dancing Script', 'Playfair Display', cursive, serif;
-      font-size: 5.6cqw; font-weight: 600; color: #ffffff;
-      line-height: 1.05; text-shadow: 0 0 35px rgba(229, 184, 66, 0.35);
-      margin-bottom: 0.4cqw;
-    }
-    .cert-recipient-underline {
-      width: 28cqw; height: 1.5px;
-      background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
-      margin: 0 auto 1.2cqw;
-    }
-
-    .cert-body-copy {
-      font-family: 'Raleway', sans-serif; font-size: 1.12cqw; font-weight: 400;
-      color: rgba(255,255,255,0.72); line-height: 1.65; max-width: 68cqw;
-      margin: 0 auto 0.6cqw; text-align: center;
-    }
-    .cert-body-copy .highlight { color: #ffffff; font-weight: 600; }
-    .cert-body-copy .gold { color: var(--gold-primary); font-weight: 600; }
-
-    /* TRACK PILLS BAR */
-    .cert-track-pills-bar {
-      display: flex; align-items: center; justify-content: center; gap: 1.2cqw;
-      margin: 0.6cqw auto 1.4cqw; font-family: 'Outfit', sans-serif; font-size: 0.78cqw;
-      font-weight: 700; letter-spacing: 0.15cqw; color: rgba(255,255,255,0.6); text-transform: uppercase;
-    }
-    .track-pill {
-      background: rgba(229, 184, 66, 0.08); border: 1px solid rgba(229, 184, 66, 0.3);
-      padding: 0.35cqw 1cqw; border-radius: 20px; color: var(--gold-primary);
+      font-family: 'Dancing Script', cursive;
+      font-size: 5.2cqw; font-weight: 700;
+      background: var(--gold-foil);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.1;
+      margin-bottom: 0.2cqw;
+      filter: drop-shadow(0 2px 8px rgba(201,168,76,0.3));
     }
 
-    /* 4-TRACK SCORE BADGE MATRIX */
-    .cert-scores-matrix {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2cqw;
-      width: 92%; margin: 0 auto 1.2cqw;
+    /* Underline beneath name */
+    .cert-name-underline {
+      width: 30cqw; height: 1.5px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin-bottom: 1.1cqw;
     }
-    .score-box {
-      background: rgba(10, 16, 26, 0.85);
-      border: 1.5px solid rgba(229, 184, 66, 0.7);
-      border-radius: 8px; padding: 0.9cqw 1.2cqw;
+
+    /* Body description text */
+    .cert-description {
+      font-family: 'Raleway', sans-serif;
+      font-size: 1.05cqw; font-weight: 400;
+      color: rgba(245,245,245,0.72);
+      line-height: 1.65;
       text-align: center;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.6), inset 0 0 15px rgba(229, 184, 66, 0.1);
+      max-width: 68cqw;
+      letter-spacing: 0.01cqw;
     }
-    .score-box-title {
-      font-family: 'Raleway', sans-serif; font-size: 0.78cqw; font-weight: 700;
-      letter-spacing: 0.12cqw; color: rgba(255,255,255,0.7); text-transform: uppercase;
-      margin-bottom: 0.3cqw;
-    }
-    .score-box-val {
-      font-family: 'Cinzel', serif; font-size: 1.9cqw; font-weight: 700;
-      color: var(--gold-primary); line-height: 1.1;
-    }
-    .score-box-sub {
-      font-family: 'Raleway', sans-serif; font-size: 0.72cqw; font-weight: 500;
-      color: rgba(255,255,255,0.45); margin-top: 0.2cqw;
+    .cert-description strong {
+      color: var(--text-white);
+      font-weight: 700;
     }
 
-    .score-box.total-box {
-      border-color: var(--cyan-accent);
-      background: linear-gradient(135deg, rgba(0, 229, 255, 0.15), rgba(0, 229, 255, 0.03));
-      box-shadow: 0 4px 20px rgba(0, 229, 255, 0.2), inset 0 0 15px rgba(0, 229, 255, 0.1);
+    /* ── SCORES SECTION ── */
+    .cert-scores-section {
+      display: flex;
+      align-items: center;
+      gap: 1.2cqw;
+      width: 92%;
     }
-    .score-box.total-box .score-box-title { color: rgba(0, 229, 255, 0.9); }
-    .score-box.total-box .score-box-val { color: var(--cyan-accent); }
 
-    /* FOOTER & DUAL SIGNATURE SYSTEM */
+    /* Score box (SQL/Excel/Python) with icon */
+    .score-card {
+      display: flex; align-items: center; gap: 0.8cqw;
+      background: rgba(10,10,10,0.7);
+      border: 1.5px solid rgba(201,168,76,0.7);
+      border-radius: 8px;
+      padding: 0.7cqw 1.4cqw;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5), inset 0 0 12px rgba(201,168,76,0.07);
+      min-width: 9cqw;
+    }
+    .score-card-icon {
+      font-size: 1.7cqw;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .score-card-info { display: flex; flex-direction: column; }
+    .score-card-label {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.72cqw; font-weight: 700;
+      letter-spacing: 0.1cqw;
+      color: rgba(245,245,245,0.75);
+      text-transform: uppercase;
+    }
+    .score-card-val {
+      font-family: 'Cinzel', serif;
+      font-size: 1.75cqw; font-weight: 700;
+      background: var(--gold-foil);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.15;
+    }
+
+    /* Vertical separator line */
+    .score-separator {
+      width: 1.5px; height: 4cqw;
+      background: linear-gradient(180deg, transparent, rgba(201,168,76,0.5), transparent);
+      flex-shrink: 0;
+      margin: 0 0.4cqw;
+    }
+
+    /* Overall score (text, no box) */
+    .score-overall {
+      display: flex; flex-direction: column;
+      gap: 0.25cqw;
+    }
+    .score-overall-label {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.9cqw; font-weight: 600;
+      color: rgba(245,245,245,0.7);
+      letter-spacing: 0.03cqw;
+    }
+    .score-overall-val {
+      font-family: 'Cinzel', serif;
+      font-size: 2cqw; font-weight: 700;
+      background: var(--gold-foil);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+    }
+    .score-overall-sub {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.82cqw; font-weight: 500;
+      color: rgba(245,245,245,0.55);
+    }
+
+    /* ── FOOTER SIGNATURE SECTION ── */
     .cert-footer {
-      border-top: 1px solid rgba(229, 184, 66, 0.3); padding-top: 1cqw;
-      display: grid; grid-template-columns: 1fr 1fr;
-      align-items: center; width: 92%; margin: 0 auto;
-    }
-    .cert-sig-left { text-align: left; }
-    .cert-sig-right { text-align: right; }
-
-    .sig-name-text {
-      font-family: 'Dancing Script', cursive; font-size: 2.4cqw;
-      color: rgba(255,255,255,0.92); margin-bottom: 0.2cqw;
-    }
-    .sig-line { width: 16cqw; height: 1.2px; background: rgba(229, 184, 66, 0.5); margin-bottom: 0.3cqw; }
-    .cert-sig-right .sig-line { margin-left: auto; }
-    .sig-role-text {
-      font-family: 'Raleway', sans-serif; font-size: 0.82cqw;
-      letter-spacing: 0.24cqw; color: rgba(255,255,255,0.5); text-transform: uppercase;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      width: 92%;
+      border-top: 1px solid rgba(201,168,76,0.3);
+      padding-top: 1cqw;
     }
 
+    .cert-sig-block {
+      display: flex; flex-direction: column; gap: 0.15cqw;
+    }
+    .sig-cursive {
+      font-family: 'Dancing Script', cursive;
+      font-size: 2.4cqw; font-weight: 700;
+      color: rgba(245,245,245,0.9);
+      line-height: 1;
+      margin-bottom: 0.15cqw;
+    }
+    .sig-name-bold {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.9cqw; font-weight: 700;
+      color: var(--text-white);
+      letter-spacing: 0.02cqw;
+    }
+    .sig-role {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.8cqw; font-weight: 400;
+      color: rgba(245,245,245,0.55);
+      letter-spacing: 0.02cqw;
+    }
+
+    .cert-auth-block {
+      display: flex; flex-direction: column;
+      align-items: flex-end; gap: 0.2cqw;
+    }
+    .cert-auth-text {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.82cqw; font-weight: 500;
+      color: rgba(245,245,245,0.55);
+      letter-spacing: 0.03cqw;
+      display: flex; align-items: center; gap: 0.4cqw;
+    }
+    .cert-auth-text .lock-icon { font-size: 1cqw; }
+    .cert-cert-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72cqw; font-weight: 500;
+      color: rgba(201,168,76,0.65);
+      letter-spacing: 0.05cqw;
+    }
+
+    /* ══════ PRINT STYLES ══════ */
+    @media print {
+      body { background: #111 !important; }
+      .header-controls { display: none !important; }
+      .cert-scroll-area { padding: 0; }
+      .certificate-wrapper {
+        width: 100vw !important;
+        height: calc(100vw / 1.414) !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+      }
+    }
+
+    /* ══════ ROTATE HINT (PORTRAIT MOBILE) ══════ */
+    @media screen and (max-width: 900px) and (orientation: portrait) {
+      .cert-scroll-area { overflow: hidden; }
+    }
   </style>
 </head>
 <body>
 
-  <!-- Background Ambient Glows -->
-  <div class="bg-glow-cyan"></div>
-  <div class="bg-glow-purple"></div>
-
   <!-- Header Controls Bar -->
   <div class="header-controls">
-    <div class="brand-group">
-      <div class="brand-title"><span>Mano</span>demy</div>
+    <div>
+      <div class="brand-title"><span class="m">Mano</span><span class="demy">demy</span></div>
       <div class="brand-subtitle">Sample Certificate Demonstration</div>
     </div>
     <div class="btn-group">
-      <a href="https://www.manodemy.com/landing_v2/index.html" class="btn btn-back">
+      <a href="/landing_v2/index.html" class="btn btn-back">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="19" y1="12" x2="5" y2="12"></line>
           <polyline points="12 19 5 12 12 5"></polyline>
@@ -317,112 +529,131 @@
     </div>
   </div>
 
-  <!-- Rotate hint (only visible in portrait mobile) -->
-  <div class="rotate-hint" id="rotateHint" style="display:none;">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <polyline points="1 4 1 10 7 10"></polyline>
-      <path d="M3.51 15a9 9 0 1 0 .49-3.11"></path>
-    </svg>
-    Rotate your device for the best view
-  </div>
-
-  <!-- Certificate Scroll Area (handles portrait rotation) -->
-        <div class="cert-scroll-area">
+  <!-- Certificate Scroll Area -->
+  <div class="cert-scroll-area">
     <div class="cert-rotate-wrap" id="certRotateWrap">
       <div class="certificate-wrapper">
         <div id="certificate-render" class="certificate-body">
-          
-          <!-- ART-DECO GEOMETRIC GOLD FRAME & CORNERS -->
-          <div class="cert-artdeco-frame"></div>
-          <div class="cert-artdeco-inner"></div>
 
-          <div class="artdeco-corner tl"></div>
-          <div class="artdeco-corner tr"></div>
-          <div class="artdeco-corner bl"></div>
-          <div class="artdeco-corner br"></div>
+          <!-- DOUBLE GOLD BORDER FRAME -->
+          <div class="cert-border-outer"></div>
+          <div class="cert-border-inner"></div>
 
-          <div class="artdeco-corner-wires tl"></div>
-          <div class="artdeco-corner-wires tr"></div>
-          <div class="artdeco-corner-wires bl"></div>
-          <div class="artdeco-corner-wires br"></div>
+          <!-- CORNER L-BRACKETS -->
+          <div class="cert-corner tl"></div>
+          <div class="cert-corner tr"></div>
+          <div class="cert-corner bl"></div>
+          <div class="cert-corner br"></div>
 
-          <!-- TOP-RIGHT 3D EMBOSSED GOLD AWARD MEDAL WITH RIBBON TAILS -->
-          <div class="cert-award-medal">
-            <div class="medal-scallop-circle">
-              <div class="medal-inner-dark">
-                <span class="medal-text-main">MASTER</span>
-                <span class="medal-text-sub">ANALYST</span>
+          <!-- TOP-RIGHT 3D SCALLOPED GOLD MEDAL -->
+          <div class="cert-medal">
+            <div class="medal-outer">
+              <div class="medal-inner">
+                <div class="medal-label">MASTER<br>ANALYST</div>
               </div>
             </div>
-            <div class="medal-ribbon-tails">
-              <div class="medal-tail"></div>
-              <div class="medal-tail"></div>
+            <div class="medal-ribbons">
+              <div class="medal-ribbon"></div>
+              <div class="medal-ribbon"></div>
             </div>
           </div>
 
+          <!-- WATERMARK -->
           <div class="cert-watermark">VERIFIED</div>
 
-          <!-- MAIN CERTIFICATE CONTENT -->
+          <!-- ══════ MAIN CONTENT ══════ -->
           <div class="cert-content">
-            
-            <!-- HEADER & RECIPIENT -->
+
+            <!-- HEADER -->
             <div class="cert-header">
-              <div class="cert-title-main">CERTIFICATE OF ACHIEVEMENT</div>
 
-              <div class="cert-awarded-label">RECIPIENT TO</div>
+              <!-- MANODEMY Brand Row -->
+              <div class="cert-brand-row">
+                <div class="cert-brand-icon">
+                  <!-- M Icon SVG (matches reference) -->
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 20V5L12 12L21 5V20" stroke="#1a1200" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M3 20V5L12 12L21 5V20" stroke="rgba(255,255,255,0.15)" stroke-width="0.5" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="cert-brand-name-text">MANODEMY</div>
+              </div>
+
+              <!-- Thin gold divider -->
+              <div class="cert-brand-divider"></div>
+
+              <!-- CERTIFICATE OF ACHIEVEMENT -->
+              <div class="cert-title">Certificate of Achievement</div>
+
+              <!-- Recipient label -->
+              <div class="cert-recipient-label">The recipient to</div>
+
+              <!-- RECIPIENT NAME -->
               <div id="cert-name-display" class="cert-recipient-name">Your Name</div>
-              <div class="cert-recipient-underline"></div>
+              <div class="cert-name-underline"></div>
 
-              <div class="cert-body-copy">
-                The <span class="gold">60-Day Data Analytics Masterclass</span> — an intensive, hands-on program demonstrating complete analytics mastery, problem-solving excellence, and authenticated scores across SQL, Excel, and Python for Data Analytics.
+              <!-- Description -->
+              <div class="cert-description">
+                For successful completion of the <strong>60-Day Data Analytics Masterclass,</strong><br>
+                demonstrating exceptional proficiency and dedication across all key program areas.
               </div>
 
-              <div class="cert-track-pills-bar">
-                <span class="track-pill">⚡ SQL (DAYS 1–18)</span>
-                <span class="track-pill">📊 EXCEL (DAYS 19–30)</span>
-                <span class="track-pill">🐍 PYTHON (DAYS 31–60)</span>
-              </div>
             </div>
 
-            <!-- 4-TRACK SCORE BADGES (SQL 96%, EXCEL 90%, PYTHON 82% & OVERALL 1,290 / 1,500) -->
-            <div class="cert-scores-matrix">
-              <!-- SQL Box -->
-              <div class="score-box">
-                <div class="score-box-title">SQL Track</div>
-                <div class="score-box-val">96%</div>
-                <div class="score-box-sub">432 / 450 Marks</div>
+            <!-- SCORES ROW -->
+            <div class="cert-scores-section">
+              <!-- SQL -->
+              <div class="score-card">
+                <div class="score-card-icon">🗄️</div>
+                <div class="score-card-info">
+                  <div class="score-card-label">SQL</div>
+                  <div id="cert-sql-pct" class="score-card-val">96%</div>
+                </div>
               </div>
-              <!-- Excel Box -->
-              <div class="score-box">
-                <div class="score-box-title">Excel Track</div>
-                <div class="score-box-val">90%</div>
-                <div class="score-box-sub">270 / 300 Marks</div>
+              <!-- Excel -->
+              <div class="score-card">
+                <div class="score-card-icon">📊</div>
+                <div class="score-card-info">
+                  <div class="score-card-label">Excel</div>
+                  <div id="cert-excel-pct" class="score-card-val">90%</div>
+                </div>
               </div>
-              <!-- Python Box -->
-              <div class="score-box">
-                <div class="score-box-title">Python Track</div>
-                <div class="score-box-val">82%</div>
-                <div class="score-box-sub">588 / 750 Marks</div>
+              <!-- Python -->
+              <div class="score-card">
+                <div class="score-card-icon">🐍</div>
+                <div class="score-card-info">
+                  <div class="score-card-label">Python</div>
+                  <div id="cert-python-pct" class="score-card-val">82%</div>
+                </div>
               </div>
+
+              <!-- Vertical Separator -->
+              <div class="score-separator"></div>
+
               <!-- Overall Score -->
-              <div class="score-box total-box">
-                <div class="score-box-title">Overall Score</div>
-                <div class="score-box-val"><span id="cert-score-number">1,290</span> / 1,500</div>
-                <div class="score-box-sub">86% Marks Passed</div>
+              <div class="score-overall">
+                <div class="score-overall-label">Overall Score:</div>
+                <div class="score-overall-val"><span id="cert-total-score">1,290</span> / 1,500 Marks</div>
               </div>
             </div>
 
-            <!-- FOOTER & DUAL SIGNATURE SYSTEM -->
+            <!-- FOOTER SIGNATURES -->
             <div class="cert-footer">
-              <div class="cert-sig-left">
-                <div class="sig-name-text">Manojkumar</div>
-                <div class="sig-line"></div>
-                <div class="sig-role-text">PROGRAM DIRECTOR SIGNATURE</div>
+              <!-- Left: Signature -->
+              <div class="cert-sig-block">
+                <div class="sig-cursive">Manojkumar</div>
+                <div class="sig-name-bold">Manojkumar</div>
+                <div class="sig-role">Founding Director, Manodemy</div>
               </div>
-              <div class="cert-sig-right">
-                <div id="cert-verified-score" class="sig-name-text" style="font-family:'Cinzel',serif; font-size:1.3cqw; color:var(--gold-primary); font-weight:700;">CERT-ID: MND-2026-F41FC2</div>
-                <div class="sig-line"></div>
-                <div class="sig-role-text">CRYPTOGRAPHICALLY AUTHENTICATED</div>
+
+              <!-- Right: Auth -->
+              <div class="cert-auth-block">
+                <div class="cert-auth-text">
+                  Cryptographically Authenticated
+                  <span class="lock-icon">🔒</span>
+                </div>
+                <div id="cert-cert-id" class="cert-cert-id">CERT-ID: MND-2026-F41FC2</div>
+                <div id="cert-issue-date" class="cert-cert-id" style="margin-top:2px;"></div>
               </div>
             </div>
 
@@ -436,99 +667,88 @@
     // ══════════════════════════════════════════════════════════════════
     // fitCertificate() — Precisely sizes & rotates the certificate in
     // portrait mobile so it fills the screen with ZERO cropping.
-    //
-    // Rotation math (rotate -90° around element's own top-left corner,
-    // i.e. transform-origin: 0 0):
-    //   Element CSS position: left = hOffset, top = certW
-    //   Point (ex, ey) in element → screen: (hOffset + ey, certW - ex)
-    //   Visual bounds: x ∈ [hOffset, hOffset+certH], y ∈ [0, certW]
-    //
-    // Constraints to avoid cropping:
-    //   certH (visual width after rotation) ≤ availW
-    //   certW (visual height after rotation) ≤ availH
-    //   certW / certH = 1.414  (A4 landscape ratio)
     // ══════════════════════════════════════════════════════════════════
     function fitCertificate() {
       const cert   = document.querySelector('.certificate-wrapper');
       const area   = document.querySelector('.cert-scroll-area');
       const wrap   = document.getElementById('certRotateWrap');
-      const hint   = document.getElementById('rotateHint');
       const header = document.querySelector('.header-controls');
 
       const isPortrait = window.innerWidth <= 900 && window.innerHeight > window.innerWidth;
 
-      if (hint) hint.style.display = 'none'; // we removed the hint
-
       if (!isPortrait) {
-        // Desktop / landscape — reset all inline JS styles
-        cert.removeAttribute('style');
-        area.removeAttribute('style');
-        wrap.removeAttribute('style');
+        // Desktop / landscape: reset any inline styles
+        [area, wrap, cert].forEach(el => { if (el) el.style.cssText = ''; });
         return;
       }
 
-      // ── Measure available space ──────────────────────────────────────
-      const vw      = window.innerWidth;
-      const vh      = window.innerHeight;
+      // Portrait mobile: rotate -90° so landscape cert fills screen
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
       const headerH = header ? header.getBoundingClientRect().height : 0;
-      const bodyPad = 24; // px above+below the cert area
-      const availW  = vw;                          // full screen width
-      const availH  = vh - headerH - bodyPad;      // remaining height
+      const bodyPad = 24;
+      const availW  = vw;
+      const availH  = vh - headerH - bodyPad;
 
-      // ── Compute certificate CSS dimensions ──────────────────────────
-      // After -90° rotation: visual_width = certH, visual_height = certW
-      // Pick the largest cert that fits both axes:
-      //   certH ≤ availW  and  certW = certH × 1.414 ≤ availH
-      //   → certH = min(availW, availH / 1.414)
       const RATIO  = 1.414;
       const certH  = Math.floor(Math.min(availW, availH / RATIO));
       const certW  = Math.floor(certH * RATIO);
-
-      // Horizontal centering: visual width may be less than availW
       const hOffset = Math.floor((availW - certH) / 2);
 
-      // ── Apply styles ─────────────────────────────────────────────────
-      // Scroll area: sized to exactly the visual footprint of rotated cert
       area.style.cssText = [
-        'position:relative',
-        'overflow:hidden',
-        `width:${availW}px`,
-        `height:${certW}px`,
-        'padding:0',
-        'display:block'
+        'position:relative', 'overflow:hidden',
+        `width:${availW}px`, `height:${certW}px`,
+        'padding:0', 'display:block'
       ].join(';');
 
-      // Rotate-wrap: same size as scroll area (just a positioning anchor)
       wrap.style.cssText = [
-        'position:absolute',
-        'top:0', 'left:0',
-        `width:${availW}px`,
-        `height:${certW}px`
+        'position:absolute', 'top:0', 'left:0',
+        `width:${availW}px`, `height:${certW}px`
       ].join(';');
 
-      // Certificate: pre-rotation CSS size is certW × certH
-      // Placed at (left=hOffset, top=certW) so that after rotate(-90deg)
-      // around its own top-left (transform-origin:0 0) the visual area is
-      // exactly x∈[hOffset, hOffset+certH], y∈[0, certW].
       cert.style.cssText = [
         'position:absolute',
-        `left:${hOffset}px`,
-        `top:${certW}px`,
-        `width:${certW}px`,
-        `height:${certH}px`,
-        'transform:rotate(-90deg)',
-        'transform-origin:0 0',
-        'border-radius:6px',
-        'box-shadow:0 20px 60px rgba(0,0,0,0.85)'
+        `left:${hOffset}px`, `top:${certW}px`,
+        `width:${certW}px`, `height:${certH}px`,
+        'transform:rotate(-90deg)', 'transform-origin:0 0',
+        'border-radius:4px',
+        'box-shadow:0 20px 60px rgba(0,0,0,0.9)'
       ].join(';');
     }
 
-    // Run on load and whenever screen dimensions change
     fitCertificate();
     window.addEventListener('resize', fitCertificate);
-    window.addEventListener('orientationchange', function() {
-      setTimeout(fitCertificate, 120); // slight delay for browser to update vw/vh
-    });
+    window.addEventListener('orientationchange', () => setTimeout(fitCertificate, 120));
+  </script>
+
+
+  <script>
+    // ══════════════════════════════════════════════════════════════════
+    // URL Parameter Reader — populates certificate from URL query params
+    // Usage: /sample-certificate.html?name=Jordan+Taylor&sql=96&excel=90&python=82&total=1290&id=MND-2026-F41FC2&date=July+2026
+    // ══════════════════════════════════════════════════════════════════
+    (function populateFromURL() {
+      const params = new URLSearchParams(location.search);
+      const setEl = (id, val) => {
+        const el = document.getElementById(id);
+        if (el && val) el.textContent = val;
+      };
+      const name    = params.get('name');
+      const sql     = params.get('sql');
+      const excel   = params.get('excel');
+      const python  = params.get('python');
+      const total   = params.get('total');
+      const certId  = params.get('id');
+      const date    = params.get('date');
+
+      if (name)   setEl('cert-name-display', decodeURIComponent(name));
+      if (sql)    setEl('cert-sql-pct',    sql + (sql.includes('%') ? '' : '%'));
+      if (excel)  setEl('cert-excel-pct',  excel + (excel.includes('%') ? '' : '%'));
+      if (python) setEl('cert-python-pct', python + (python.includes('%') ? '' : '%'));
+      if (total)  setEl('cert-total-score', Number(total).toLocaleString());
+      if (certId) setEl('cert-cert-id',   certId);
+      if (date)   setEl('cert-issue-date', decodeURIComponent(date));
+    })();
   </script>
 
 </body>

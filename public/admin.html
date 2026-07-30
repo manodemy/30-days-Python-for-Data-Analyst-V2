@@ -4683,8 +4683,8 @@
         <td class="cell-mono" style="text-align:center;">${u.purchase_count || 0}</td>
         <td class="cell-mono" style="color:var(--ink-muted);">${u.coupon_used || '—'}</td>
         <td style="text-align:center;">
-          <button class="btn-export" style="padding:0.25rem 0.5rem; font-size:0.68rem;" onclick="viewAdminCertificate('${(u.full_name || 'Student').replace(/'/g, "\\'")}', '${u.id || u.user_id || ''}')">
-            🎓 View
+          <button class="btn-export" style="padding:0.25rem 0.6rem; font-size:0.68rem; background:linear-gradient(135deg,#8B6914,#C9A84C,#F0D78C,#C9A84C,#8B6914); color:#1a1200; font-weight:700; border:none; border-radius:4px; cursor:pointer;" onclick="viewAdminCertificate('${(u.full_name || 'Student').replace(/'/g, "\\'")}', '${u.id || u.user_id || ''}', ${JSON.stringify(u.page_metrics || {}).replace(/'/g, "\\'")}  )">
+            🏆 Certificate
           </button>
         </td>
       </tr>`).join('');
@@ -5842,75 +5842,96 @@
       }
     }
 
-    function viewAdminCertificate(studentName, userId) {
+    function viewAdminCertificate(studentName, userId, pageMetrics) {
       // 0. Ensure download listeners are attached
       attachDownloadListeners();
-      // 1. Set Student Name
-      document.getElementById('cert-name-display').textContent = studentName || 'Student';
 
-      // 2. Generate simulated, high-achiever 30-day performance grid
-      let gridHtml = '';
-      let accumulatedScore = 0;
-      
-      // Let's use seed or deterministic generation based on userId to keep it stable
-      let seed = 0;
-      if (userId) {
-        for (let i = 0; i < userId.length; i++) {
-          seed += userId.charCodeAt(i);
-        }
-      } else {
-        seed = Math.floor(Math.random() * 1000);
-      }
-      
-      function pseudoRandom() {
-        const x = Math.sin(seed++) * 10000;
-        return x - Math.floor(x);
+      // ── SCORE COMPUTATION FROM REAL FIREBASE page_metrics ──────────────────
+      // Track layout:
+      //   Days 01–18 = SQL     (18 days × 25 marks = 450 max)
+      //   Days 19–30 = Excel   (12 days × 25 marks = 300 max)
+      //   Days 31–60 = Python  (30 days × 25 marks = 750 max)
+      const normKey = k => k ? k.replace(/^.*\//, '') : k;
+      const pm = {};
+      if (pageMetrics) {
+        Object.keys(pageMetrics).forEach(k => { pm[normKey(k)] = pageMetrics[k]; });
       }
 
+      let sqlRaw = 0, excelRaw = 0, pythonRaw = 0;
+      const SQL_MAX = 450, EXCEL_MAX = 300, PYTHON_MAX = 750;
+
+      // Compute from actual marks, fall back to seed-based simulation if no data
+      let hasRealData = false;
       for (let d = 1; d <= 60; d++) {
-        const padD = String(d).padStart(2, '0');
-        let dayXp = 0;
-        let trackClass = '';
-        if (d <= 18) {
-          trackClass = 'sql';
-          dayXp = parseFloat((22 + pseudoRandom() * 3).toFixed(1));
-        } else if (d <= 30) {
-          trackClass = 'excel';
-          dayXp = parseFloat((21.5 + pseudoRandom() * 3.5).toFixed(1));
-        } else {
-          trackClass = 'python';
-          dayXp = parseFloat((19.5 + pseudoRandom() * 5.5).toFixed(1));
-        }
-        accumulatedScore += dayXp;
-        gridHtml += `
-          <div class="tile ${trackClass}">
-            <div class="tile-day">D${padD}</div>
-            <div class="tile-score">${dayXp}</div>
-          </div>
-        `;
+        const key = `day${String(d).padStart(2,'0')}.html`;
+        const altKey = `day${String(d).padStart(2,'0')}`;
+        const dayData = pm[key] || pm[altKey] || {};
+        const marks = Number(dayData.current_marks || 0);
+        if (marks > 0) hasRealData = true;
+        if (d <= 18)       sqlRaw    += marks;
+        else if (d <= 30)  excelRaw  += marks;
+        else               pythonRaw += marks;
       }
 
-      const totalScore = parseFloat(accumulatedScore.toFixed(2));
-      const level = totalScore >= 1200 ? 'MASTER ANALYST' : 'DATA ANALYST';
+      // If no real Firebase data, simulate deterministically from userId seed
+      if (!hasRealData) {
+        let seed = 0;
+        if (userId) { for (let i = 0; i < userId.length; i++) seed += userId.charCodeAt(i); }
+        else { seed = Math.floor(Math.random() * 1000); }
+        const rng = () => { const x = Math.sin(seed++) * 10000; return x - Math.floor(x); };
+        sqlRaw = 0; excelRaw = 0; pythonRaw = 0;
+        for (let d = 1; d <= 60; d++) {
+          if (d <= 18)       sqlRaw    += 20 + rng() * 5;
+          else if (d <= 30)  excelRaw  += 19 + rng() * 6;
+          else               pythonRaw += 18 + rng() * 7;
+        }
+      }
 
-      // 4. Issued date (current month & year)
-      const months = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+      const sqlScore    = Math.round(sqlRaw);
+      const excelScore  = Math.round(excelRaw);
+      const pythonScore = Math.round(pythonRaw);
+      const totalScore  = sqlScore + excelScore + pythonScore;
+
+      const sqlPct    = Math.min(100, Math.round((sqlScore    / SQL_MAX)    * 100));
+      const excelPct  = Math.min(100, Math.round((excelScore  / EXCEL_MAX)  * 100));
+      const pythonPct = Math.min(100, Math.round((pythonScore / PYTHON_MAX) * 100));
+
+      // ── DATES & CERT-ID ─────────────────────────────────────────────────
+      const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
       const now = new Date();
-      const currentMonth = months[now.getMonth()];
-      const currentYear = now.getFullYear();
+      const issueDate = `${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
+      const uniqueHash = userId
+        ? userId.replace(/-/g, '').substring(0, 6).toUpperCase()
+        : Math.random().toString(36).substring(2, 8).toUpperCase();
+      const certId = `MND-${now.getFullYear()}-${uniqueHash}`;
 
-      // 3. Populate dynamic values
-      document.getElementById('cert-score-number').textContent = totalScore.toFixed(2);
-      document.getElementById('cert-level-value').textContent = level;
-      document.getElementById('cert-verified-score').textContent = `ISSUED · ${currentMonth} ${currentYear}`;
-      document.getElementById('cert-issued-date').textContent = `ISSUED · ${currentMonth} ${currentYear}`;
-      document.getElementById('cert-section-grid').innerHTML = gridHtml;
+      // ── POPULATE ALL VARIABLE FIELDS ────────────────────────────────────
+      const setEl = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+      };
 
-      // 5. Crypto Cert ID MND-YEAR-HASH
-      const uniqueHash = userId ? userId.replace(/-/g, '').substring(0, 6).toUpperCase() : Math.random().toString(36).substring(2, 8).toUpperCase();
-      document.getElementById('cert-id-strip').innerHTML = `CERT-ID: MND-${currentYear}-${uniqueHash}`;
+      setEl('cert-name-display',  studentName || 'Student');
+      setEl('cert-sql-pct',       sqlPct + '%');
+      setEl('cert-excel-pct',     excelPct + '%');
+      setEl('cert-python-pct',    pythonPct + '%');
+      setEl('cert-total-score',   totalScore.toLocaleString());
+      setEl('cert-cert-id',       certId);
+      setEl('cert-issue-date',    issueDate);
 
-      // 6. Open Modal
+      // Legacy IDs (for backward compat with old modal fragments)
+      setEl('cert-score-number',   totalScore.toLocaleString());
+      setEl('cert-verified-score', `ISSUED · ${issueDate.toUpperCase()}`);
+      setEl('cert-issued-date',    `ISSUED · ${issueDate.toUpperCase()}`);
+      const stripEl = document.getElementById('cert-id-strip');
+      if (stripEl) stripEl.innerHTML = `CERT-ID: ${certId}`;
+
+      // ── SHAREABLE URL ────────────────────────────────────────────────────
+      const shareUrl = `${location.origin}/certificate.html?id=${certId}&name=${encodeURIComponent(studentName||'')}&sql=${sqlPct}&excel=${excelPct}&python=${pythonPct}&total=${totalScore}&date=${encodeURIComponent(issueDate)}`;
+      const shareEl = document.getElementById('cert-share-url');
+      if (shareEl) { shareEl.value = shareUrl; shareEl.dataset.url = shareUrl; }
+
+      // Open Modal
       openModal('certificate-modal');
     }
 
@@ -6186,251 +6207,136 @@
       })();
     });
   </script>
-  <!-- ═══════════ ADMIN PREVIEW CERTIFICATE MODAL ═══════════ -->
+  <!-- ADMIN CERTIFICATE PREVIEW MODAL -->
   <div id="certificate-modal" class="modal-backdrop hidden cert-modal-backdrop">
     <div class="cert-modal-container">
-      <div class="cert-action-bar">
-        <button id="download-png-btn" class="dl-btn dl-png" type="button">⬇ Download as Image</button>
-        <button id="download-pdf-btn" class="dl-btn dl-pdf" type="button">⬇ Download as PDF</button>
-        <button class="dl-btn dl-close" type="button" onclick="closeModal('certificate-modal')">✕ Close</button>
-      </div>
 
-                                    <div id="certificate-render" class="certificate-body">
-          
-          <!-- ART-DECO GEOMETRIC GOLD FRAME & CORNERS -->
-          <div class="cert-artdeco-frame"></div>
-          <div class="cert-artdeco-inner"></div>
-
-          <div class="artdeco-corner tl"></div>
-          <div class="artdeco-corner tr"></div>
-          <div class="artdeco-corner bl"></div>
-          <div class="artdeco-corner br"></div>
-
-          <div class="artdeco-corner-wires tl"></div>
-          <div class="artdeco-corner-wires tr"></div>
-          <div class="artdeco-corner-wires bl"></div>
-          <div class="artdeco-corner-wires br"></div>
-
-          <!-- TOP-RIGHT 3D EMBOSSED GOLD AWARD MEDAL WITH RIBBON TAILS -->
-          <div class="cert-award-medal">
-            <div class="medal-scallop-circle">
-              <div class="medal-inner-dark">
-                <span class="medal-text-main">MASTER</span>
-                <span class="medal-text-sub">ANALYST</span>
-              </div>
-            </div>
-            <div class="medal-ribbon-tails">
-              <div class="medal-tail"></div>
-              <div class="medal-tail"></div>
-            </div>
-          </div>
-
-          <div class="cert-watermark">VERIFIED</div>
-
-          <!-- MAIN CERTIFICATE CONTENT -->
-          <div class="cert-content">
-            
-            <!-- HEADER -->
-            <div class="cert-header">
-              <div class="cert-title-main">CERTIFICATE OF ACHIEVEMENT</div>
-
-              <div class="cert-awarded-label">RECIPIENT TO</div>
-              <div id="cert-name-display" class="cert-recipient-name">Your Name</div>
-              <div class="cert-recipient-underline"></div>
-
-              <div class="cert-body-copy">
-                The <span class="gold">60-Day Data Analytics Masterclass</span> — an intensive, hands-on program for complete analytics challenges and authenticated verified scores across SQL, Excel, and Python for Data Analytics.
-              </div>
-            </div>
-
-            <!-- 4-TRACK SCORE BADGES (SQL 96%, EXCEL 90%, PYTHON 82% & OVERALL 1,290 / 1,500) -->
-            <div class="cert-scores-matrix">
-              <div class="score-box">
-                <div class="score-box-title">SQL</div>
-                <div class="score-box-val">96%</div>
-              </div>
-              <div class="score-box">
-                <div class="score-box-title">Excel</div>
-                <div class="score-box-val">90%</div>
-              </div>
-              <div class="score-box">
-                <div class="score-box-title">Python</div>
-                <div class="score-box-val">82%</div>
-              </div>
-              <div class="overall-score-card">
-                <div class="overall-label">Overall Score</div>
-                <div class="overall-val"><span id="cert-score-number">1,290</span> / 1,500</div>
-                <div class="overall-sub">Marks Passed</div>
-              </div>
-            </div>
-
-            <!-- FOOTER & DUAL SIGNATURE SYSTEM -->
-            <div class="cert-footer">
-              <div class="cert-sig-left">
-                <div class="sig-name-text">Manojkumar</div>
-                <div class="sig-line"></div>
-                <div class="sig-role-text">SIGNATURE</div>
-              </div>
-              <div class="cert-sig-right">
-                <div id="cert-verified-score" class="sig-name-text" style="font-family:'Cinzel',serif; font-size:1.3cqw; color:var(--gold-primary); font-weight:700;">CERT-ID: MND-2026-F41FC2</div>
-                <div class="sig-line"></div>
-                <div class="sig-role-text">CRYPTOGRAPHICALLY AUTHENTICATED</div>
-              </div>
-            </div>
-
-          </div><!-- /cert-content -->
+      <!-- Action bar: share URL + download buttons -->
+      <div style="display:flex;gap:10px;justify-content:space-between;padding:10px 12px 8px;flex-wrap:wrap;align-items:center;background:rgba(0,0,0,0.4);">
+        <input id="cert-share-url" type="text" readonly
+          style="flex:1;min-width:180px;max-width:420px;font-family:'JetBrains Mono',monospace;font-size:11px;background:#111;color:#C9A84C;border:1px solid rgba(201,168,76,0.3);border-radius:6px;padding:6px 10px;outline:none;cursor:pointer;"
+          placeholder="Shareable URL auto-fills when you open a student certificate..."
+          title="Click to copy URL"
+          onclick="this.select();try{navigator.clipboard.writeText(this.value);}catch(e){try{document.execCommand('copy');}catch(e2){}}this.style.borderColor='#00ff88';setTimeout(()=>this.style.borderColor='rgba(201,168,76,0.3)',2000);"
+        >
+        <div style="display:flex;gap:8px;flex-shrink:0;">
+          <button id="downloadPngBtn" class="dl-btn" type="button">PNG</button>
+          <button id="downloadPdfBtn" class="dl-btn dl-pdf" type="button">PDF</button>
+          <button class="dl-btn dl-close" type="button" onclick="closeModal('certificate-modal')">Close</button>
         </div>
       </div>
-    </div>
 
-          <!-- INNER GOLD FRAME & CRYPTO ID BAR -->
-          <div class="cert-inner-frame"></div>
-          <div id="cert-id-strip" class="cert-id-bar">CERT-ID: MND-2026-F41FC2</div>
-          <div class="cert-watermark">VERIFIED</div>
+      <!-- THE CERTIFICATE — pixel-perfect reference design -->
+      <div id="certificate-render" class="certificate-body" style="container-type:inline-size;position:relative;overflow:hidden;border-radius:0 0 8px 8px;background:radial-gradient(ellipse at 20% 20%,rgba(201,168,76,0.04) 0%,transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(201,168,76,0.03) 0%,transparent 60%),linear-gradient(160deg,#1a1a1a 0%,#111111 50%,#161616 100%);display:flex;flex-direction:column;">
+        <!-- Outer gold border -->
+        <div style="position:absolute;inset:1.4cqw;border:2px solid #C9A84C;border-radius:3px;pointer-events:none;z-index:4;box-shadow:inset 0 0 30px rgba(201,168,76,0.06);"></div>
+        <!-- Inner gold border -->
+        <div style="position:absolute;inset:2cqw;border:1px solid rgba(201,168,76,0.45);border-radius:2px;pointer-events:none;z-index:4;"></div>
+        <!-- Corner L-brackets TL -->
+        <div style="position:absolute;top:1.4cqw;left:1.4cqw;width:3.5cqw;height:3.5cqw;border-top:2.5px solid #E8C86A;border-left:2.5px solid #E8C86A;z-index:5;pointer-events:none;"></div>
+        <!-- TR -->
+        <div style="position:absolute;top:1.4cqw;right:1.4cqw;width:3.5cqw;height:3.5cqw;border-top:2.5px solid #E8C86A;border-right:2.5px solid #E8C86A;z-index:5;pointer-events:none;"></div>
+        <!-- BL -->
+        <div style="position:absolute;bottom:1.4cqw;left:1.4cqw;width:3.5cqw;height:3.5cqw;border-bottom:2.5px solid #E8C86A;border-left:2.5px solid #E8C86A;z-index:5;pointer-events:none;"></div>
+        <!-- BR -->
+        <div style="position:absolute;bottom:1.4cqw;right:1.4cqw;width:3.5cqw;height:3.5cqw;border-bottom:2.5px solid #E8C86A;border-right:2.5px solid #E8C86A;z-index:5;pointer-events:none;"></div>
 
-          <!-- MAIN CERTIFICATE CONTENT -->
-          <div class="cert-content">
-            
-            <!-- HEADER -->
-            <div class="cert-header">
-              <div class="cert-logo-lockup">
-                <img src="/landing_v2/manodemy_3d_keycap.png" width="34" height="34" alt="Manodemy Logo" style="vertical-align:middle;">
-                <div class="cert-logo-wordmark"><span class="mano">Mano</span><span class="demy">demy</span></div>
-              </div>
-
-              <div class="cert-title-main">CERTIFICATE</div>
-              <div class="cert-title-ribbon">OF MASTERY &amp; COMPLETION</div>
-
-              <div class="cert-awarded-label">THIS CERTIFICATE IS PROUDLY PRESENTED TO</div>
-              <div id="cert-name-display" class="cert-recipient-name">Aditya Sharma</div>
-              <div class="cert-recipient-underline"></div>
-
-              <div class="cert-body-copy">
-                has demonstrated <span class="highlight">exceptional technical mastery and problem-solving excellence</span> upon successful completion of the
-                <span class="cyan">Manodemy 60-Day Data Analytics Masterclass</span> — an intensive, hands-on curriculum spanning
-                <span class="highlight">60 guided days</span>, encompassing <span class="highlight">1,500 interview-based challenges</span> across SQL, Excel, and Python for Data Analytics.
-              </div>
-            </div>
-
-            <!-- 4-TRACK & TOTAL MARKS SCORE MATRIX -->
-            <div class="cert-scores-matrix">
-              <div class="score-matrix-card sql">
-                <div class="matrix-icon">⚡</div>
-                <div class="matrix-info">
-                  <div class="matrix-label">SQL Track (Days 1–18)</div>
-                  <div class="matrix-val">432 <span class="sub">/ 450 (96%)</span></div>
-                </div>
-              </div>
-              <div class="score-matrix-card excel">
-                <div class="matrix-icon">📊</div>
-                <div class="matrix-info">
-                  <div class="matrix-label">Excel Track (Days 19–30)</div>
-                  <div class="matrix-val">270 <span class="sub">/ 300 (90%)</span></div>
-                </div>
-              </div>
-              <div class="score-matrix-card python">
-                <div class="matrix-icon">🐍</div>
-                <div class="matrix-info">
-                  <div class="matrix-label">Python Track (Days 31–60)</div>
-                  <div class="matrix-val">588 <span class="sub">/ 750 (82%)</span></div>
-                </div>
-              </div>
-              <div class="score-matrix-card total">
-                <div class="matrix-icon">🏆</div>
-                <div class="matrix-info">
-                  <div class="matrix-label">Total Score Achieved</div>
-                  <div class="matrix-val"><span id="cert-score-number">1,290</span> <span class="sub">/ 1,500</span></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- FOOTER & DUAL SIGNATURE SYSTEM -->
-            <div class="cert-footer">
-              <div class="cert-sig-left">
-                <div class="sig-name-text">Manojkumar</div>
-                <div class="sig-line"></div>
-                <div class="sig-role-text">PROGRAM DIRECTOR</div>
-              </div>
-              <div class="cert-sig-right">
-                <div id="cert-verified-score" class="sig-name-text" style="font-family:'Cinzel',serif; font-size:1.4cqw; color:var(--cyan); font-weight:700;">1,290 / 1,500 MARKS</div>
-                <div class="sig-line"></div>
-                <div class="sig-role-text">VERIFIED RECORD &nbsp;·&nbsp; AUTHENTICATED</div>
-              </div>
-            </div>
-
-          </div><!-- /cert-content -->
-        </div>
-      </div>
-    </div>
-
-
-
-                    <!-- 3-Track Module Score Matrix -->
-          <div class="cert-tracks-row">
-            <div class="cert-track-card sql-card">
-              <div class="track-icon">⚡</div>
-              <div>
-                <div class="track-label">SQL Track (Days 1–18)</div>
-                <div class="track-score">432 / 450 <span class="track-sub">(96%)</span></div>
-              </div>
-            </div>
-            <div class="cert-track-card excel-card">
-              <div class="track-icon">📊</div>
-              <div>
-                <div class="track-label">Excel Track (Days 19–30)</div>
-                <div class="track-score">270 / 300 <span class="track-sub">(90%)</span></div>
-              </div>
-            </div>
-            <div class="cert-track-card python-card">
-              <div class="track-icon">🐍</div>
-              <div>
-                <div class="track-label">Python Track (Days 31–60)</div>
-                <div class="track-score">588 / 750 <span class="track-sub">(82%)</span></div>
-              </div>
+        <!-- 3D Scalloped Gold Medal Top Right -->
+        <div style="position:absolute;top:2.2cqw;right:3.8cqw;z-index:20;display:flex;flex-direction:column;align-items:center;filter:drop-shadow(0 8px 24px rgba(0,0,0,0.8)) drop-shadow(0 0 12px rgba(201,168,76,0.35));">
+          <div style="width:7.2cqw;height:7.2cqw;border-radius:50%;background:conic-gradient(from 0deg,#7a5500,#D4A017,#F5D060,#D4A017,#8B6914,#D4A017,#F5D060,#D4A017,#7a5500,#D4A017,#F5D060,#D4A017,#7a5500,#D4A017,#F5D060,#D4A017,#7a5500,#D4A017,#F5D060,#D4A017,#7a5500);box-shadow:0 0 0 0.25cqw rgba(201,168,76,0.5),inset 0 0 0 0.35cqw rgba(0,0,0,0.4),0 6px 20px rgba(0,0,0,0.7),0 2px 8px rgba(201,168,76,0.4);padding:0.4cqw;">
+            <div style="width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 35% 30%,#2a1f00 0%,#1a1300 60%,#0d0a00 100%);border:0.18cqw solid rgba(201,168,76,0.8);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;box-shadow:inset 0 2px 8px rgba(201,168,76,0.2);">
+              <div style="font-family:Cinzel,serif;font-size:0.82cqw;font-weight:700;color:#E8C86A;letter-spacing:0.08cqw;line-height:1.2;text-shadow:0 1px 4px rgba(0,0,0,0.8);">MASTER<br>ANALYST</div>
             </div>
           </div>
-
-          <div class="cert-perf-section">
-            <div class="cert-perf-header">
-              <div class="cert-perf-header-line"></div>
-              <div class="cert-perf-header-text">Daily Performance Record — 60 Days</div>
-              <div class="cert-perf-header-line"></div>
-            </div>
-            <div id="cert-section-grid" class="cert-tiles-grid"></div>
-          </div>
-
-          <div class="cert-footer">
-            <div class="cert-footer-left">
-              <div class="cert-sig-block-name">Manojkumar</div>
-              <div class="cert-sig-block-line"></div>
-              <div class="cert-sig-block-role">Program Director</div>
-            </div>
-            <div class="cert-footer-center">
-              <div class="cert-crest-emblem">
-                <svg viewBox="0 0 80 80" fill="none">
-                  <circle cx="40" cy="40" r="38" stroke="#d4af37" stroke-width="0.75" stroke-dasharray="2 2" opacity="0.6"/>
-                  <circle cx="40" cy="40" r="34" stroke="rgba(0, 229, 255, 0.4)" stroke-width="1"/>
-                  <circle cx="40" cy="40" r="31" stroke="#d4af37" stroke-width="1.5" opacity="0.8"/>
-                  <path d="M40 18 L53 23 L53 38 C53 48 45 57 40 60 C35 57 27 48 27 38 L27 23 L40 18 Z" fill="rgba(212, 175, 55, 0.08)" stroke="#d4af37" stroke-width="1.5"/>
-                  <path d="M40 27 L43 33 H50 L45 37 L47 43 L40 39 L33 43 L35 37 L30 33 H37 L40 27 Z" fill="rgba(0, 229, 255, 0.8)" stroke="#00E5FF" stroke-width="0.5"/>
-                  <path d="M22 40 H28 M52 40 H58 M40 12 V16 M40 64 V68" stroke="#d4af37" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
-                </svg>
-                <span id="cert-issued-date" style="display:none;"></span>
-              </div>
-            </div>
-            <div class="cert-footer-right">
-              <div id="cert-verified-score" class="cert-verify-block-score">ISSUED · JUNE 2026</div>
-              <div class="cert-verify-block-line"></div>
-              <div class="cert-verify-block-label">Verified Record &nbsp;·&nbsp; Authenticated</div>
-            </div>
-          </div>
-
-          <div id="cert-id-strip" class="cert-id-bar">
-            CERT-ID: MND-2026-F41FC2
+          <div style="display:flex;gap:0.45cqw;margin-top:-0.9cqw;position:relative;z-index:-1;">
+            <div style="width:1.5cqw;height:2.8cqw;background:linear-gradient(180deg,#C9A84C 0%,#8B6914 60%,#7a5500 100%);clip-path:polygon(0 0,100% 0,100% 85%,50% 100%,0 85%);box-shadow:0 4px 10px rgba(0,0,0,0.6);"></div>
+            <div style="width:1.5cqw;height:2.8cqw;background:linear-gradient(180deg,#C9A84C 0%,#8B6914 60%,#7a5500 100%);clip-path:polygon(0 0,100% 0,100% 85%,50% 100%,0 85%);box-shadow:0 4px 10px rgba(0,0,0,0.6);"></div>
           </div>
         </div>
-      </div>    </div>
-  <!-- PWA Service Worker Registration -->
+
+        <!-- Watermark -->
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:Cinzel,serif;font-size:11cqw;font-weight:700;color:rgba(201,168,76,0.022);letter-spacing:0.8cqw;white-space:nowrap;pointer-events:none;z-index:0;user-select:none;">VERIFIED</div>
+
+        <!-- MAIN CONTENT -->
+        <div style="position:relative;z-index:10;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;padding:3.8cqw 5cqw 2.8cqw;justify-content:space-between;">
+
+          <!-- HEADER -->
+          <div style="display:flex;flex-direction:column;align-items:center;text-align:center;width:100%;">
+            <!-- Brand Row -->
+            <div style="display:flex;align-items:center;justify-content:center;gap:0.8cqw;margin-bottom:1.4cqw;">
+              <div style="width:3.2cqw;height:3.2cqw;border-radius:50%;background:radial-gradient(circle at 40% 35%,#E8C86A 0%,#C9A84C 45%,#8B6914 100%);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 12px rgba(201,168,76,0.5),inset 0 1px 3px rgba(255,255,255,0.2);flex-shrink:0;">
+                <svg viewBox="0 0 24 24" fill="none" style="width:55%;height:55%;"><path d="M3 20V5L12 12L21 5V20" stroke="#1a1200" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div style="font-family:Cinzel,serif;font-size:2.5cqw;font-weight:700;letter-spacing:0.45cqw;background:linear-gradient(135deg,#8B6914 0%,#C9A84C 30%,#F0D78C 50%,#C9A84C 70%,#8B6914 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">MANODEMY</div>
+            </div>
+            <div style="width:35cqw;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.6),transparent);margin-bottom:1.4cqw;"></div>
+            <!-- Title -->
+            <div style="font-family:Cinzel,serif;font-size:3.3cqw;font-weight:700;letter-spacing:0.3cqw;background:linear-gradient(135deg,#8B6914 0%,#C9A84C 30%,#F0D78C 50%,#C9A84C 70%,#8B6914 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.8cqw;line-height:1.1;">Certificate of Achievement</div>
+            <!-- Recipient label -->
+            <div style="font-family:Raleway,sans-serif;font-style:italic;font-size:1.1cqw;font-weight:400;color:rgba(245,245,245,0.6);margin-bottom:0.25cqw;letter-spacing:0.05cqw;">The recipient to</div>
+            <!-- RECIPIENT NAME variable -->
+            <div id="cert-name-display" style="font-family:'Dancing Script',cursive;font-size:5.2cqw;font-weight:700;background:linear-gradient(135deg,#8B6914 0%,#C9A84C 30%,#F0D78C 50%,#C9A84C 70%,#8B6914 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;margin-bottom:0.2cqw;filter:drop-shadow(0 2px 8px rgba(201,168,76,0.3));">Your Name</div>
+            <div style="width:30cqw;height:1.5px;background:linear-gradient(90deg,transparent,#C9A84C,transparent);margin-bottom:1.1cqw;"></div>
+            <!-- Description -->
+            <div style="font-family:Raleway,sans-serif;font-size:1.05cqw;color:rgba(245,245,245,0.72);line-height:1.65;text-align:center;max-width:68cqw;">
+              For successful completion of the <strong style="color:#F5F5F5;">60-Day Data Analytics Masterclass,</strong><br>demonstrating exceptional proficiency and dedication across all key program areas.
+            </div>
+          </div>
+
+          <!-- SCORE CARDS ROW -->
+          <div style="display:flex;align-items:center;gap:1.2cqw;width:92%;">
+            <div style="display:flex;align-items:center;gap:0.8cqw;background:rgba(10,10,10,0.7);border:1.5px solid rgba(201,168,76,0.7);border-radius:8px;padding:0.7cqw 1.4cqw;box-shadow:0 4px 16px rgba(0,0,0,0.5);min-width:9cqw;">
+              <div style="font-size:1.7cqw;flex-shrink:0;">&#128451;</div>
+              <div>
+                <div style="font-family:Raleway,sans-serif;font-size:0.72cqw;font-weight:700;letter-spacing:0.1cqw;color:rgba(245,245,245,0.75);text-transform:uppercase;">SQL</div>
+                <div id="cert-sql-pct" style="font-family:Cinzel,serif;font-size:1.75cqw;font-weight:700;background:linear-gradient(135deg,#8B6914 0%,#C9A84C 30%,#F0D78C 50%,#C9A84C 70%,#8B6914 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.15;">96%</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.8cqw;background:rgba(10,10,10,0.7);border:1.5px solid rgba(201,168,76,0.7);border-radius:8px;padding:0.7cqw 1.4cqw;box-shadow:0 4px 16px rgba(0,0,0,0.5);min-width:9cqw;">
+              <div style="font-size:1.7cqw;flex-shrink:0;">&#128202;</div>
+              <div>
+                <div style="font-family:Raleway,sans-serif;font-size:0.72cqw;font-weight:700;letter-spacing:0.1cqw;color:rgba(245,245,245,0.75);text-transform:uppercase;">Excel</div>
+                <div id="cert-excel-pct" style="font-family:Cinzel,serif;font-size:1.75cqw;font-weight:700;background:linear-gradient(135deg,#8B6914 0%,#C9A84C 30%,#F0D78C 50%,#C9A84C 70%,#8B6914 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.15;">90%</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.8cqw;background:rgba(10,10,10,0.7);border:1.5px solid rgba(201,168,76,0.7);border-radius:8px;padding:0.7cqw 1.4cqw;box-shadow:0 4px 16px rgba(0,0,0,0.5);min-width:9cqw;">
+              <div style="font-size:1.7cqw;flex-shrink:0;">&#128013;</div>
+              <div>
+                <div style="font-family:Raleway,sans-serif;font-size:0.72cqw;font-weight:700;letter-spacing:0.1cqw;color:rgba(245,245,245,0.75);text-transform:uppercase;">Python</div>
+                <div id="cert-python-pct" style="font-family:Cinzel,serif;font-size:1.75cqw;font-weight:700;background:linear-gradient(135deg,#8B6914 0%,#C9A84C 30%,#F0D78C 50%,#C9A84C 70%,#8B6914 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.15;">82%</div>
+              </div>
+            </div>
+            <!-- Separator -->
+            <div style="width:1.5px;height:4cqw;background:linear-gradient(180deg,transparent,rgba(201,168,76,0.5),transparent);flex-shrink:0;margin:0 0.4cqw;"></div>
+            <!-- Overall -->
+            <div>
+              <div style="font-family:Raleway,sans-serif;font-size:0.9cqw;font-weight:600;color:rgba(245,245,245,0.7);">Overall Score:</div>
+              <div style="font-family:Cinzel,serif;font-size:2cqw;font-weight:700;background:linear-gradient(135deg,#8B6914 0%,#C9A84C 30%,#F0D78C 50%,#C9A84C 70%,#8B6914 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;">
+                <span id="cert-total-score">1,290</span> / 1,500 Marks
+              </div>
+            </div>
+          </div>
+
+          <!-- FOOTER -->
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;width:92%;border-top:1px solid rgba(201,168,76,0.3);padding-top:1cqw;">
+            <div>
+              <div style="font-family:'Dancing Script',cursive;font-size:2.4cqw;font-weight:700;color:rgba(245,245,245,0.9);line-height:1;margin-bottom:0.15cqw;">Manojkumar</div>
+              <div style="font-family:Raleway,sans-serif;font-size:0.9cqw;font-weight:700;color:#F5F5F5;">Manojkumar</div>
+              <div style="font-family:Raleway,sans-serif;font-size:0.8cqw;color:rgba(245,245,245,0.55);">Founding Director, Manodemy</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.2cqw;">
+              <div style="font-family:Raleway,sans-serif;font-size:0.82cqw;color:rgba(245,245,245,0.55);display:flex;align-items:center;gap:0.4cqw;">Cryptographically Authenticated &#128274;</div>
+              <div id="cert-cert-id" style="font-family:'JetBrains Mono',monospace;font-size:0.72cqw;color:rgba(201,168,76,0.65);letter-spacing:0.05cqw;">CERT-ID: MND-2026-F41FC2</div>
+              <div id="cert-issue-date" style="font-family:Raleway,sans-serif;font-size:0.72cqw;color:rgba(245,245,245,0.4);"></div>
+            </div>
+          </div>
+
+        </div><!-- /main content -->
+      </div><!-- /certificate-render -->
+    </div><!-- /cert-modal-container -->
+  </div><!-- /certificate-modal -->
+
+<!-- PWA Service Worker Registration -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify Certificate — Manodemy</title>
+  <meta name="description" content="Verify an official Manodemy Data Analytics Masterclass certificate. Cryptographically authenticated and publicly verifiable.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600;700&family=Dancing+Script:wght@600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+    import { getFirestore, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+    // ── Read URL params ─────────────────────────────────────────────────────
+    const params   = new URLSearchParams(location.search);
+    const certId   = params.get('id')   || '';
+    const pName    = params.get('name') || '';
+    const pSql     = params.get('sql')  || '';
+    const pExcel   = params.get('excel')|| '';
+    const pPython  = params.get('python')|| '';
+    const pTotal   = params.get('total')|| '';
+    const pDate    = params.get('date') || '';
+
+    // ── Firebase config (shared with main app) ──────────────────────────────
+    // NOTE: Replace with your actual Firebase config object
+    const firebaseConfig = __FIREBASE_CONFIG_PLACEHOLDER__;
+
+    // ── DOM helpers ──────────────────────────────────────────────────────────
+    const setEl = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    const showSection = id => { const el = document.getElementById(id); if (el) el.style.display = ''; };
+    const hideSection = id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; };
+
+    async function loadCertificate() {
+      if (!certId) {
+        showSection('error-section');
+        setEl('error-msg', 'No certificate ID provided in the URL.');
+        hideSection('loading-section');
+        return;
+      }
+
+      // Populate from URL params first (instant display, no wait)
+      if (pName)   setEl('cert-name-display', decodeURIComponent(pName));
+      if (pSql)    setEl('cert-sql-pct',    pSql + (pSql.includes('%') ? '' : '%'));
+      if (pExcel)  setEl('cert-excel-pct',  pExcel + (pExcel.includes('%') ? '' : '%'));
+      if (pPython) setEl('cert-python-pct', pPython + (pPython.includes('%') ? '' : '%'));
+      if (pTotal)  setEl('cert-total-score', Number(pTotal).toLocaleString());
+      if (pDate)   setEl('cert-issue-date', decodeURIComponent(pDate));
+      setEl('cert-cert-id', certId);
+      setEl('page-title', certId);
+
+      hideSection('loading-section');
+      showSection('cert-section');
+
+      // Try Firebase verification in the background
+      try {
+        const app = initializeApp(firebaseConfig);
+        const db  = getFirestore(app);
+        const q   = query(collection(db, 'certificates'), where('certId', '==', certId));
+        const snap = await getDocs(q);
+
+        if (!snap.empty) {
+          const data = snap.docs[0].data();
+          // Override URL params with authoritative Firebase data
+          setEl('cert-name-display', data.studentName || pName);
+          setEl('cert-sql-pct',    (data.sqlPct    || pSql)    + '%');
+          setEl('cert-excel-pct',  (data.excelPct  || pExcel)  + '%');
+          setEl('cert-python-pct', (data.pythonPct || pPython) + '%');
+          setEl('cert-total-score', (data.totalScore || pTotal).toLocaleString());
+          setEl('cert-issue-date', data.issueDate  || pDate);
+
+          // Show verified badge
+          const vBadge = document.getElementById('verified-badge');
+          if (vBadge) {
+            vBadge.textContent = '✅ Verified — On Record in Manodemy Database';
+            vBadge.style.color = '#00ff88';
+          }
+        } else {
+          // Cert ID not found in Firebase — mark as unverified
+          const vBadge = document.getElementById('verified-badge');
+          if (vBadge && !pName) {
+            vBadge.textContent = '⚠ Certificate ID not found in database.';
+            vBadge.style.color = '#ff6b6b';
+          } else if (vBadge) {
+            // Has URL params but not in DB — show warning
+            vBadge.textContent = '⚠ Could not verify — certificate may be a demo';
+            vBadge.style.color = '#ffaa44';
+          }
+        }
+      } catch (err) {
+        console.warn('[Certificate] Firebase verification failed:', err.message);
+        // Don't show error — URL params already populated the cert
+        const vBadge = document.getElementById('verified-badge');
+        if (vBadge) {
+          vBadge.textContent = '⚡ Offline mode — verification pending';
+          vBadge.style.color = '#aaa';
+        }
+      }
+    }
+
+    // Run on DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadCertificate);
+    } else {
+      loadCertificate();
+    }
+  </script>
+  <style>
+    :root {
+      --gold: #C9A84C;
+      --gold-bright: #E8C86A;
+      --gold-dim: #8B6914;
+      --gold-foil: linear-gradient(135deg,#8B6914 0%,#C9A84C 30%,#F0D78C 50%,#C9A84C 70%,#8B6914 100%);
+    }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body {
+      background:#0a0a0a;
+      color:#F5F5F5;
+      font-family:'Outfit',sans-serif;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:flex-start;
+      padding:24px 16px 48px;
+      gap:20px;
+    }
+
+    /* ── Header ── */
+    .page-header {
+      width:100%;
+      max-width:1120px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding-bottom:16px;
+      border-bottom:1px solid rgba(201,168,76,0.2);
+    }
+    .brand { font-family:'Outfit',sans-serif; font-weight:800; font-size:20px; }
+    .brand span { color:var(--gold-bright); }
+
+    /* ── Verify strip ── */
+    .verify-strip {
+      width:100%;
+      max-width:1120px;
+      background:rgba(201,168,76,0.07);
+      border:1px solid rgba(201,168,76,0.25);
+      border-radius:10px;
+      padding:12px 20px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .verify-id {
+      font-family:'JetBrains Mono',monospace;
+      font-size:13px;
+      color:var(--gold);
+      font-weight:500;
+    }
+    #verified-badge {
+      font-family:'Raleway',sans-serif;
+      font-size:13px;
+      font-weight:600;
+      color:#aaa;
+      transition:color 0.3s;
+    }
+
+    /* ── Loading / Error ── */
+    #loading-section, #error-section {
+      text-align:center; padding:60px 20px;
+      font-family:'Raleway',sans-serif;
+      color:rgba(245,245,245,0.6);
+      font-size:16px;
+    }
+    #error-section { color:#ff6b6b; }
+
+    /* ── Certificate Wrapper ── */
+    #cert-section { width:100%; max-width:1120px; display:none; }
+
+    .certificate-wrapper {
+      width:100%;
+      aspect-ratio:1.414;
+      position:relative;
+      border-radius:6px;
+      box-shadow:0 40px 100px rgba(0,0,0,0.9),0 0 0 1px rgba(201,168,76,0.25);
+    }
+
+    /* The certificate body uses inline styles (same as admin modal) for PDF portability */
+    .certificate-body {
+      width:100%; height:100%;
+      container-type:inline-size;
+      position:relative; overflow:hidden;
+      border-radius:6px;
+    }
+
+    /* ── Actions Row ── */
+    .cert-actions {
+      display:flex;
+      gap:10px;
+      justify-content:flex-end;
+      flex-wrap:wrap;
+      margin-top:14px;
+    }
+    .btn {
+      display:inline-flex; align-items:center; gap:7px;
+      padding:9px 20px; border-radius:8px;
+      font-family:'Outfit',sans-serif; font-weight:600; font-size:13px;
+      cursor:pointer; text-decoration:none;
+      transition:all 200ms ease; border:none;
+    }
+    .btn-gold {
+      background:var(--gold-foil);
+      color:#1a1200;
+      box-shadow:0 4px 16px rgba(201,168,76,0.3);
+    }
+    .btn-gold:hover { box-shadow:0 6px 24px rgba(201,168,76,0.5); transform:translateY(-1px); }
+    .btn-dim {
+      background:rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.12);
+      color:#aaa;
+    }
+    .btn-dim:hover { background:rgba(255,255,255,0.1); color:#fff; }
+  </style>
+</head>
+<body>
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="brand"><span>Mano</span>demy</div>
+    <div style="font-family:'Raleway',sans-serif;font-size:13px;color:rgba(245,245,245,0.5);">Certificate Verification Portal</div>
+    <a href="/landing_v2/index.html" class="btn btn-dim" style="padding:7px 14px;">← Back to Platform</a>
+  </div>
+
+  <!-- Verification Strip -->
+  <div class="verify-strip">
+    <div>
+      <div style="font-family:'Raleway',sans-serif;font-size:11px;color:rgba(245,245,245,0.45);margin-bottom:3px;">CERTIFICATE ID</div>
+      <div class="verify-id" id="page-title">—</div>
+    </div>
+    <div id="verified-badge">🔄 Verifying with Manodemy database...</div>
+  </div>
+
+  <!-- Loading state -->
+  <div id="loading-section">Loading certificate...</div>
+
+  <!-- Error state -->
+  <div id="error-section" style="display:none;">
+    <div style="font-size:40px;margin-bottom:12px;">⚠️</div>
+    <div style="font-size:18px;font-weight:700;margin-bottom:8px;">Certificate Not Found</div>
+    <div id="error-msg">This certificate ID could not be verified.</div>
+  </div>
+
+  <!-- Certificate -->
+  <div id="cert-section">
+    <div class="certificate-wrapper">
+      <div class="certificate-body" style="
+        background:radial-gradient(ellipse at 20% 20%, rgba(201,168,76,0.04) 0%, transparent 60%),
+                   radial-gradient(ellipse at 80% 80%, rgba(201,168,76,0.03) 0%, transparent 60%),
+                   linear-gradient(160deg, #1a1a1a 0%, #111111 50%, #161616 100%);
+        display:flex; flex-direction:column;
+      ">
+        <!-- Double Gold Border Frame -->
+        <div style="position:absolute;inset:1.4cqw;border:2px solid #C9A84C;border-radius:3px;pointer-events:none;z-index:4;"></div>
+        <div style="position:absolute;inset:2cqw;border:1px solid rgba(201,168,76,0.45);border-radius:2px;pointer-events:none;z-index:4;"></div>
+
+        <!-- Corner L-brackets -->
+        <div style="position:absolute;top:1.4cqw;left:1.4cqw;width:3.5cqw;height:3.5cqw;border-top:2.5px solid #E8C86A;border-left:2.5px solid #E8C86A;z-index:5;pointer-events:none;"></div>
+        <div style="position:absolute;top:1.4cqw;right:1.4cqw;width:3.5cqw;height:3.5cqw;border-top:2.5px solid #E8C86A;border-right:2.5px solid #E8C86A;z-index:5;pointer-events:none;"></div>
+        <div style="position:absolute;bottom:1.4cqw;left:1.4cqw;width:3.5cqw;height:3.5cqw;border-bottom:2.5px solid #E8C86A;border-left:2.5px solid #E8C86A;z-index:5;pointer-events:none;"></div>
+        <div style="position:absolute;bottom:1.4cqw;right:1.4cqw;width:3.5cqw;height:3.5cqw;border-bottom:2.5px solid #E8C86A;border-right:2.5px solid #E8C86A;z-index:5;pointer-events:none;"></div>
+
+        <!-- 3D Medal -->
+        <div style="position:absolute;top:2.2cqw;right:3.8cqw;z-index:20;display:flex;flex-direction:column;align-items:center;filter:drop-shadow(0 8px 24px rgba(0,0,0,0.8)) drop-shadow(0 0 12px rgba(201,168,76,0.35));">
+          <div style="width:7.2cqw;height:7.2cqw;border-radius:50%;background:conic-gradient(from 0deg,#7a5500,#D4A017,#F5D060,#D4A017,#8B6914,#D4A017,#F5D060,#D4A017,#7a5500,#D4A017,#F5D060,#D4A017,#7a5500,#D4A017,#F5D060,#D4A017,#7a5500,#D4A017,#F5D060,#D4A017,#7a5500);box-shadow:0 0 0 0.25cqw rgba(201,168,76,0.5),inset 0 0 0 0.35cqw rgba(0,0,0,0.4),0 6px 20px rgba(0,0,0,0.7);padding:0.4cqw;">
+            <div style="width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 35% 30%,#2a1f00 0%,#1a1300 60%,#0d0a00 100%);border:0.18cqw solid rgba(201,168,76,0.8);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;">
+              <div style="font-family:'Cinzel',serif;font-size:0.82cqw;font-weight:700;color:#E8C86A;letter-spacing:0.08cqw;line-height:1.2;">MASTER<br>ANALYST</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:0.45cqw;margin-top:-0.9cqw;position:relative;z-index:-1;">
+            <div style="width:1.5cqw;height:2.8cqw;background:linear-gradient(180deg,#C9A84C 0%,#8B6914 60%,#7a5500 100%);clip-path:polygon(0 0,100% 0,100% 85%,50% 100%,0 85%);"></div>
+            <div style="width:1.5cqw;height:2.8cqw;background:linear-gradient(180deg,#C9A84C 0%,#8B6914 60%,#7a5500 100%);clip-path:polygon(0 0,100% 0,100% 85%,50% 100%,0 85%);"></div>
+          </div>
+        </div>
+
+        <!-- Watermark -->
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Cinzel',serif;font-size:11cqw;font-weight:700;color:rgba(201,168,76,0.022);letter-spacing:0.8cqw;white-space:nowrap;pointer-events:none;z-index:0;">VERIFIED</div>
+
+        <!-- MAIN CONTENT -->
+        <div style="position:relative;z-index:10;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;padding:3.8cqw 5cqw 2.8cqw;justify-content:space-between;">
+
+          <div style="display:flex;flex-direction:column;align-items:center;text-align:center;width:100%;">
+            <!-- Brand Row -->
+            <div style="display:flex;align-items:center;justify-content:center;gap:0.8cqw;margin-bottom:1.4cqw;">
+              <div style="width:3.2cqw;height:3.2cqw;border-radius:50%;background:radial-gradient(circle at 40% 35%,#E8C86A 0%,#C9A84C 45%,#8B6914 100%);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 12px rgba(201,168,76,0.5);flex-shrink:0;">
+                <svg viewBox="0 0 24 24" fill="none" style="width:55%;height:55%;"><path d="M3 20V5L12 12L21 5V20" stroke="#1a1200" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div style="font-family:'Cinzel',serif;font-size:2.5cqw;font-weight:700;letter-spacing:0.45cqw;background:linear-gradient(135deg,#8B6914 0%,#C9A84C 30%,#F0D78C 50%,#C9A84C 70%,#8B6914 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">MANODEMY</div>
+            </div>
+            <div style="width:35cqw;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.6),transparent);margin-bottom:1.4cqw;"></div>
+            <div style="font-family:'Cinzel',serif;font-size:3.3cqw;font-weight:700;letter-spacing:0.3cqw;background:linear-gradient(135deg,#8B6914 0%,#C9A84C 30%,#F0D78C 50%,#C9A84C 70%,#8B6914 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.8cqw;">Certificate of Achievement</div>
+            <div style="font-family:'Raleway',sans-serif;font-style:italic;font-size:1.1cqw;color:rgba(245,245,245,0.6);margin-bottom:0.25cqw;">The recipient to</div>
+            <div id="cert-name-display" style="font-family:'Dancing Script',cursive;font-size:5.2cqw;font-weight:700;background:linear-gradient(135deg,#8B6914 0%,#C9A84C 30%,#F0D78C 50%,#C9A84C 70%,#8B6914 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;margin-bottom:0.2cqw;">—</div>
+            <div style="width:30cqw;height:1.5px;background:linear-gradient(90deg,transparent,#C9A84C,transparent);margin-bottom:1.1cqw;"></div>
+            <div style="font-family:'Raleway',sans-serif;font-size:1.05cqw;color:rgba(245,245,245,0.72);line-height:1.65;text-align:center;max-width:68cqw;">
+              For successful completion of the <strong style="color:#F5F5F5;">60-Day Data Analytics Masterclass,</strong><br>
+              demonstrating exceptional proficiency and dedication across all key program areas.
+            </div>
+          </div>
+
+          <!-- Scores -->
+          <div style="display:flex;align-items:center;gap:1.2cqw;width:92%;">
+            <div style="display:flex;align-items:center;gap:0.8cqw;background:rgba(10,10,10,0.7);border:1.5px solid rgba(201,168,76,0.7);border-radius:8px;padding:0.7cqw 1.4cqw;min-width:9cqw;">
+              <div style="font-size:1.7cqw;">🗄️</div>
+              <div>
+                <div style="font-family:'Raleway',sans-serif;font-size:0.72cqw;font-weight:700;letter-spacing:0.1cqw;color:rgba(245,245,245,0.75);text-transform:uppercase;">SQL</div>
+                <div id="cert-sql-pct" style="font-family:'Cinzel',serif;font-size:1.75cqw;font-weight:700;background:linear-gradient(135deg,#8B6914 0%,#C9A84C 30%,#F0D78C 50%,#C9A84C 70%,#8B6914 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">—</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.8cqw;background:rgba(10,10,10,0.7);border:1.5px solid rgba(201,168,76,0.7);border-radius:8px;padding:0.7cqw 1.4cqw;min-width:9cqw;">
+              <div style="font-size:1.7cqw;">📊</div>
+              <div>
+                <div style="font-family:'Raleway',sans-serif;font-size:0.72cqw;font-weight:700;letter-spacing:0.1cqw;color:rgba(245,245,245,0.75);text-transform:uppercase;">Excel</div>
+                <div id="cert-excel-pct" style="font-family:'Cinzel',serif;font-size:1.75cqw;font-weight:700;background:linear-gradient(135deg,#8B6914 0%,#C9A84C 30%,#F0D78C 50%,#C9A84C 70%,#8B6914 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">—</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.8cqw;background:rgba(10,10,10,0.7);border:1.5px solid rgba(201,168,76,0.7);border-radius:8px;padding:0.7cqw 1.4cqw;min-width:9cqw;">
+              <div style="font-size:1.7cqw;">🐍</div>
+              <div>
+                <div style="font-family:'Raleway',sans-serif;font-size:0.72cqw;font-weight:700;letter-spacing:0.1cqw;color:rgba(245,245,245,0.75);text-transform:uppercase;">Python</div>
+                <div id="cert-python-pct" style="font-family:'Cinzel',serif;font-size:1.75cqw;font-weight:700;background:linear-gradient(135deg,#8B6914 0%,#C9A84C 30%,#F0D78C 50%,#C9A84C 70%,#8B6914 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">—</div>
+              </div>
+            </div>
+            <div style="width:1.5px;height:4cqw;background:linear-gradient(180deg,transparent,rgba(201,168,76,0.5),transparent);margin:0 0.4cqw;"></div>
+            <div>
+              <div style="font-family:'Raleway',sans-serif;font-size:0.9cqw;font-weight:600;color:rgba(245,245,245,0.7);">Overall Score:</div>
+              <div style="font-family:'Cinzel',serif;font-size:2cqw;font-weight:700;background:linear-gradient(135deg,#8B6914 0%,#C9A84C 30%,#F0D78C 50%,#C9A84C 70%,#8B6914 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;"><span id="cert-total-score">—</span> / 1,500 Marks</div>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;width:92%;border-top:1px solid rgba(201,168,76,0.3);padding-top:1cqw;">
+            <div>
+              <div style="font-family:'Dancing Script',cursive;font-size:2.4cqw;font-weight:700;color:rgba(245,245,245,0.9);line-height:1;margin-bottom:0.15cqw;">Manojkumar</div>
+              <div style="font-family:'Raleway',sans-serif;font-size:0.9cqw;font-weight:700;color:#F5F5F5;">Manojkumar</div>
+              <div style="font-family:'Raleway',sans-serif;font-size:0.8cqw;color:rgba(245,245,245,0.55);">Founding Director, Manodemy</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.2cqw;">
+              <div style="font-family:'Raleway',sans-serif;font-size:0.82cqw;color:rgba(245,245,245,0.55);display:flex;align-items:center;gap:0.4cqw;">Cryptographically Authenticated <span style="font-size:1cqw;">🔒</span></div>
+              <div id="cert-cert-id" style="font-family:'JetBrains Mono',monospace;font-size:0.72cqw;color:rgba(201,168,76,0.65);">—</div>
+              <div id="cert-issue-date" style="font-family:'Raleway',sans-serif;font-size:0.72cqw;color:rgba(245,245,245,0.4);"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="cert-actions">
+      <a href="/landing_v2/index.html" class="btn btn-dim">← Manodemy Platform</a>
+      <button class="btn btn-gold" onclick="window.print()">🖨️ Print / Save PDF</button>
+    </div>
+  </div>
+
+  <script>
+    // Fallback: show cert-section if no Firebase module support
+    window.addEventListener('DOMContentLoaded', () => {
+      // If Firebase ESM failed to load, show cert anyway from URL params
+      setTimeout(() => {
+        const loading = document.getElementById('loading-section');
+        if (loading && loading.style.display !== 'none') {
+          loading.style.display = 'none';
+          document.getElementById('cert-section').style.display = '';
+          const params = new URLSearchParams(location.search);
+          const setEl = (id, val) => { const el = document.getElementById(id); if (el && val) el.textContent = val; };
+          setEl('cert-name-display', decodeURIComponent(params.get('name') || ''));
+          setEl('cert-sql-pct',     (params.get('sql') || '') + '%');
+          setEl('cert-excel-pct',   (params.get('excel') || '') + '%');
+          setEl('cert-python-pct',  (params.get('python') || '') + '%');
+          setEl('cert-total-score', Number(params.get('total')||0).toLocaleString());
+          setEl('cert-cert-id',     params.get('id') || '');
+          setEl('cert-issue-date',  decodeURIComponent(params.get('date') || ''));
+          setEl('page-title',       params.get('id') || '');
+        }
+      }, 2500);
+    });
+  </script>
+</body>
+</html>

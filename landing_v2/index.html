@@ -781,6 +781,12 @@
       cursor: pointer;
       transition: all 0.2s ease;
     }
+    .cert-exit-btn-top {
+      position: absolute;
+      top: 14px;
+      right: 20px;
+      z-index: 10;
+    }
     .cert-exit-btn:hover {
       background: rgba(239, 68, 68, 0.2);
       color: #f87171;
@@ -4433,14 +4439,7 @@
   <div class="cert-showcase-overlay" id="certShowcaseOverlay">
     <div class="cert-showcase-card" id="certShowcaseCard">
 
-      <!-- Top Header Badge & Close Button -->
-      <div class="cert-card-header">
-        <div class="cert-card-title-group">
-          <span class="cert-header-badge" id="certHeaderBadge">🏆 UNLOCK THRESHOLD EVALUATION</span>
-          <h3 class="cert-header-main" id="certHeaderMain">Score 1,200+ Marks To Unlock</h3>
-        </div>
-        <button class="cert-exit-btn" onclick="closeCertDemoOverlay()">✕ Exit</button>
-      </div>
+      <button class="cert-exit-btn cert-exit-btn-top" onclick="closeCertDemoOverlay()">✕ Exit</button>
 
       <!-- Main Body Container -->
       <div class="cert-card-body">

@@ -3982,25 +3982,26 @@
       var stage = document.getElementById('narrationShowcaseStage');
       var card = document.querySelector('.narration-showcase-card');
       var badgeText = document.getElementById('narrationBadgeText');
+      var clockCard = document.getElementById('roadmap-root');
+      var cursor = document.getElementById('demoMouseCursor');
+      var certOverlay = document.getElementById('certShowcaseOverlay');
+      var hrOverlay = document.getElementById('hrInterviewOverlay');
 
       if (!nav) return;
 
       document.body.classList.add('narration-active');
 
-      // 0.00s - 1.20s: Logo centered in nav
-      if (t >= 0 && t < 1.20) {
+      // 0.00s - 3.54s: "Welcome to Manodemy's 60-day data analytics masterclass." (Logo centered)
+      if (t >= 0 && t < 3.54) {
         nav.classList.remove('nav-anim-p2');
         nav.classList.add('nav-anim-p1');
         if (stage) stage.classList.remove('active', 'transition-img2', 'phase-5-dissolve');
-      } 
-      // 1.20s - 4.56s: Logo slides left, audio pill centered in nav bar
-      else if (t >= 1.20 && t < 4.56) {
-        nav.classList.remove('nav-anim-p1');
-        nav.classList.add('nav-anim-p2');
-        if (stage) stage.classList.remove('active', 'transition-img2', 'phase-5-dissolve');
-      } 
-      // 4.56s - 8.30s: "Whether you're a complete beginner breaking into data for the first time..." -> Card 1
-      else if (t >= 4.56 && t < 8.30) {
+        if (clockCard) clockCard.classList.remove('narration-roadmap-glow');
+        if (certOverlay) certOverlay.classList.remove('active');
+        if (hrOverlay) hrOverlay.classList.remove('active');
+      }
+      // 3.54s - 6.92s: "Whether you're a complete beginner entering the data world..." (Card 1)
+      else if (t >= 3.54 && t < 6.92) {
         nav.classList.remove('nav-anim-p1');
         nav.classList.add('nav-anim-p2');
         if (stage) {
@@ -4009,9 +4010,12 @@
         }
         if (card) card.classList.remove('img2-active');
         if (badgeText) badgeText.innerHTML = '🌱 COMPLETE BEGINNER ENTERING THE DATA WORLD';
-      } 
-      // 8.30s - 12.44s: "or a practicing analyst gearing up to conquer next technical interviews..." -> Card 2
-      else if (t >= 8.30 && t < 12.44) {
+        if (clockCard) clockCard.classList.remove('narration-roadmap-glow');
+        if (certOverlay) certOverlay.classList.remove('active');
+        if (hrOverlay) hrOverlay.classList.remove('active');
+      }
+      // 6.92s - 9.86s: "or a practicing analyst looking for a job switch..." (Card 2)
+      else if (t >= 6.92 && t < 9.86) {
         nav.classList.remove('nav-anim-p1');
         nav.classList.add('nav-anim-p2');
         if (stage) {
@@ -4020,17 +4024,94 @@
         }
         if (card) card.classList.add('img2-active');
         if (badgeText) badgeText.innerHTML = '🎯 PRACTICING ANALYST LOOKING FOR A JOB SWITCH';
-      } 
-      // 12.44s - 15.08s: "this masterclass was built specifically for you." -> Dissolve & Final Badge
-      else if (t >= 12.44) {
+        if (clockCard) clockCard.classList.remove('narration-roadmap-glow');
+        if (certOverlay) certOverlay.classList.remove('active');
+        if (hrOverlay) hrOverlay.classList.remove('active');
+      }
+      // 9.86s - 12.78s: "this masterclass was built specifically for you." (Dual dissolve)
+      else if (t >= 9.86 && t < 12.78) {
         nav.classList.remove('nav-anim-p1');
         nav.classList.add('nav-anim-p2');
         document.body.classList.add('phase-5-active');
-        if (stage) {
-          stage.classList.add('active', 'transition-img2', 'phase-5-dissolve');
-        }
-        if (card) card.classList.add('img2-active');
+        if (stage) stage.classList.add('active', 'transition-img2', 'phase-5-dissolve');
         if (badgeText) badgeText.innerHTML = '✨ BUILT SPECIFICALLY FOR YOU';
+        if (clockCard) clockCard.classList.remove('narration-roadmap-glow');
+        if (certOverlay) certOverlay.classList.remove('active');
+        if (hrOverlay) hrOverlay.classList.remove('active');
+      }
+      // 12.78s - 24.40s: "Structured over 60 guided days..." SQL (Day 1-18), Excel (19-30), Python (31-60)
+      else if (t >= 12.78 && t < 24.40) {
+        if (stage) stage.classList.remove('active');
+        if (certOverlay) certOverlay.classList.remove('active');
+        if (hrOverlay) hrOverlay.classList.remove('active');
+
+        if (clockCard) clockCard.classList.add('narration-roadmap-glow');
+
+        // Highlight tracks based on narration
+        var sqlBtn = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="SQL"]');
+        var xlBtn  = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="Excel"]');
+        var pyBtn  = document.querySelector('#roadmap-root .rm-legendBtn[data-phase="Python"]');
+
+        if (t >= 15.14 && t < 18.26) {
+          // SQL segment (15.14s - 17.78s)
+          if (sqlBtn) sqlBtn.classList.add('narration-pill-glow');
+          if (xlBtn) xlBtn.classList.remove('narration-pill-glow');
+          if (pyBtn) pyBtn.classList.remove('narration-pill-glow');
+          if (window.ManodemyRoadmap && window.ManodemyRoadmap.jumpToPhase) window.ManodemyRoadmap.jumpToPhase('SQL');
+        } else if (t >= 18.26 && t < 20.94) {
+          // Excel segment (18.26s - 20.58s)
+          if (sqlBtn) sqlBtn.classList.remove('narration-pill-glow');
+          if (xlBtn) xlBtn.classList.add('narration-pill-glow');
+          if (pyBtn) pyBtn.classList.remove('narration-pill-glow');
+          if (window.ManodemyRoadmap && window.ManodemyRoadmap.jumpToPhase) window.ManodemyRoadmap.jumpToPhase('Excel');
+        } else if (t >= 20.94 && t < 24.40) {
+          // Python segment (20.94s - 23.90s)
+          if (sqlBtn) sqlBtn.classList.remove('narration-pill-glow');
+          if (xlBtn) xlBtn.classList.remove('narration-pill-glow');
+          if (pyBtn) pyBtn.classList.add('narration-pill-glow');
+          if (window.ManodemyRoadmap && window.ManodemyRoadmap.jumpToPhase) window.ManodemyRoadmap.jumpToPhase('Python');
+        }
+      }
+      // 24.40s - 33.30s: "Every single day you'll face 25 interview-based questions..." (Interactive compiler section)
+      else if (t >= 24.40 && t < 33.30) {
+        if (clockCard) clockCard.classList.remove('narration-roadmap-glow');
+        if (certOverlay) certOverlay.classList.remove('active');
+        if (hrOverlay) hrOverlay.classList.remove('active');
+
+        // Scroll smoothly to live iframe demo
+        var iframeEl = document.getElementById('liveLessonIframe');
+        if (iframeEl) {
+          var navH2 = (document.querySelector('.nav') || {}).offsetHeight || 76;
+          var iTop = iframeEl.getBoundingClientRect().top + window.scrollY;
+          window.scrollTo({ top: iTop - navH2, behavior: 'instant' });
+        }
+
+        // Animate cursor click at 29.86s
+        if (cursor) {
+          if (t >= 28.00 && t < 32.00) {
+            cursor.style.opacity = '1';
+            if (t >= 29.86) cursor.classList.add('clicking');
+          } else {
+            cursor.style.opacity = '0';
+            cursor.classList.remove('clicking');
+          }
+        }
+      }
+      // 33.30s - 42.04s: "Score 1,200+ marks and unlock your official job-ready certificate..." (Certificate Reveal)
+      else if (t >= 33.30 && t < 42.04) {
+        window.scrollTo({ top: 0, behavior: 'instant' });
+        if (cursor) cursor.style.opacity = '0';
+        if (hrOverlay) hrOverlay.classList.remove('active');
+
+        if (certOverlay) certOverlay.classList.add('active');
+      }
+      // 42.04s - 48.30s: "So you can confidently answer the HR interview question..." (HR Interview Question)
+      else if (t >= 42.04) {
+        window.scrollTo({ top: 0, behavior: 'instant' });
+        if (cursor) cursor.style.opacity = '0';
+        if (certOverlay) certOverlay.classList.remove('active');
+
+        if (hrOverlay) hrOverlay.classList.add('active');
       }
     };
 

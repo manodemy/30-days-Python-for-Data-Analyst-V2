@@ -6195,49 +6195,98 @@
         <button class="dl-btn dl-close" type="button" onclick="closeModal('certificate-modal')">✕ Close</button>
       </div>
 
-                        <div id="certificate-render" class="certificate-body">
+                                    <div id="certificate-render" class="certificate-body">
           
-          <!-- TOP-LEFT & BOTTOM-RIGHT ORGANIC WAVIES -->
-          <svg class="cert-wave-tl" viewBox="0 0 400 240" preserveAspectRatio="none">
-            <path d="M0,0 L260,0 C200,80 120,110 0,160 Z" fill="rgba(0, 229, 255, 0.08)" />
-            <path d="M0,0 L240,0 C170,70 90,95 0,140 Z" fill="#0B1528" />
-            <path d="M0,0 L220,0 C150,60 70,85 0,120 Z" fill="url(#goldGradTL)" />
-            <defs>
-              <linearGradient id="goldGradTL" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#FFB020" />
-                <stop offset="50%" stop-color="#D4AF37" />
-                <stop offset="100%" stop-color="#854D0E" />
-              </linearGradient>
-            </defs>
-          </svg>
+          <!-- ART-DECO GEOMETRIC GOLD FRAME & CORNERS -->
+          <div class="cert-artdeco-frame"></div>
+          <div class="cert-artdeco-inner"></div>
 
-          <svg class="cert-wave-br" viewBox="0 0 400 240" preserveAspectRatio="none">
-            <path d="M400,240 L140,240 C200,160 280,130 400,80 Z" fill="rgba(0, 229, 255, 0.08)" />
-            <path d="M400,240 L160,240 C230,170 310,145 400,100 Z" fill="#0B1528" />
-            <path d="M400,240 L180,240 C250,180 330,155 400,120 Z" fill="url(#goldGradBR)" />
-            <defs>
-              <linearGradient id="goldGradBR" x1="1" y1="1" x2="0" y2="0">
-                <stop offset="0%" stop-color="#FFB020" />
-                <stop offset="50%" stop-color="#D4AF37" />
-                <stop offset="100%" stop-color="#854D0E" />
-              </linearGradient>
-            </defs>
-          </svg>
+          <div class="artdeco-corner tl"></div>
+          <div class="artdeco-corner tr"></div>
+          <div class="artdeco-corner bl"></div>
+          <div class="artdeco-corner br"></div>
 
-          <!-- TOP-RIGHT 3D METALLIC GOLD AWARD RIBBON SEAL -->
-          <div class="cert-award-seal">
-            <div class="seal-circle">
-              <div class="seal-inner">
-                <span class="seal-title">VERIFIED</span>
-                <div class="seal-stars">★★★</div>
-                <span class="seal-sub">MASTERY</span>
+          <div class="artdeco-corner-wires tl"></div>
+          <div class="artdeco-corner-wires tr"></div>
+          <div class="artdeco-corner-wires bl"></div>
+          <div class="artdeco-corner-wires br"></div>
+
+          <!-- TOP-RIGHT 3D EMBOSSED GOLD AWARD MEDAL WITH RIBBON TAILS -->
+          <div class="cert-award-medal">
+            <div class="medal-scallop-circle">
+              <div class="medal-inner-dark">
+                <span class="medal-text-main">MASTER</span>
+                <span class="medal-text-sub">ANALYST</span>
               </div>
             </div>
-            <div class="seal-ribbons">
-              <div class="ribbon-tail left"></div>
-              <div class="ribbon-tail right"></div>
+            <div class="medal-ribbon-tails">
+              <div class="medal-tail"></div>
+              <div class="medal-tail"></div>
             </div>
           </div>
+
+          <div class="cert-watermark">VERIFIED</div>
+
+          <!-- MAIN CERTIFICATE CONTENT -->
+          <div class="cert-content">
+            
+            <!-- HEADER -->
+            <div class="cert-header">
+              <div class="cert-logo-lockup">
+                <img src="/landing_v2/manodemy_3d_keycap.png" width="36" height="36" alt="Manodemy Logo" style="vertical-align:middle;">
+                <div class="cert-logo-wordmark"><span class="mano">Mano</span><span class="demy">demy</span></div>
+              </div>
+
+              <div class="cert-title-main">CERTIFICATE OF ACHIEVEMENT</div>
+
+              <div class="cert-awarded-label">RECIPIENT TO</div>
+              <div id="cert-name-display" class="cert-recipient-name">Jordan Taylor</div>
+              <div class="cert-recipient-underline"></div>
+
+              <div class="cert-body-copy">
+                The <span class="gold">60-Day Data Analytics Masterclass</span> — an intensive, hands-on program for complete analytics challenges and authenticated verified scores across SQL, Excel, and Python for Data Analytics.
+              </div>
+            </div>
+
+            <!-- 4-TRACK SCORE BADGES (SQL 96%, EXCEL 90%, PYTHON 82% & OVERALL 1,290 / 1,500) -->
+            <div class="cert-scores-matrix">
+              <div class="score-box">
+                <div class="score-box-title">SQL</div>
+                <div class="score-box-val">96%</div>
+              </div>
+              <div class="score-box">
+                <div class="score-box-title">Excel</div>
+                <div class="score-box-val">90%</div>
+              </div>
+              <div class="score-box">
+                <div class="score-box-title">Python</div>
+                <div class="score-box-val">82%</div>
+              </div>
+              <div class="overall-score-card">
+                <div class="overall-label">Overall Score</div>
+                <div class="overall-val"><span id="cert-score-number">1,290</span> / 1,500</div>
+                <div class="overall-sub">Marks Passed</div>
+              </div>
+            </div>
+
+            <!-- FOOTER & DUAL SIGNATURE SYSTEM -->
+            <div class="cert-footer">
+              <div class="cert-sig-left">
+                <div class="sig-name-text">Manojkumar</div>
+                <div class="sig-line"></div>
+                <div class="sig-role-text">SIGNATURE</div>
+              </div>
+              <div class="cert-sig-right">
+                <div id="cert-verified-score" class="sig-name-text" style="font-family:'Cinzel',serif; font-size:1.3cqw; color:var(--gold-primary); font-weight:700;">CERT-ID: MND-2026-F41FC2</div>
+                <div class="sig-line"></div>
+                <div class="sig-role-text">CRYPTOGRAPHICALLY AUTHENTICATED</div>
+              </div>
+            </div>
+
+          </div><!-- /cert-content -->
+        </div>
+      </div>
+    </div>
 
           <!-- INNER GOLD FRAME & CRYPTO ID BAR -->
           <div class="cert-inner-frame"></div>

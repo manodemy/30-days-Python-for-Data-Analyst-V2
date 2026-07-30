@@ -16,24 +16,22 @@
   
   <style>
     /* ══════════════════════════════════════════════════════════════════
-       MANODEMY CERTIFICATE — WAVY ELEGANT LANDSCAPE DESIGN
+       OPTION 2: ROYAL OBSIDIAN & GOLD GEOMETRIC FILIGREE CERTIFICATE
        ══════════════════════════════════════════════════════════════════ */
     :root {
-      --void: #060913;
-      --base: #0B0F19;
-      --surface: #0a0e17;
-      --cyan: #00E5FF;
-      --cyan-glow: rgba(0, 229, 255, 0.15);
-      --gold: #FFB020;
-      --gold-dark: #D4AF37;
-      --rim: rgba(255, 255, 255, 0.08);
+      --void: #05070c;
+      --obsidian: #090d16;
+      --gold-primary: #e5b842;
+      --gold-light: #fff0aa;
+      --gold-dark: #a8791c;
+      --cyan-accent: #00e5ff;
     }
-    
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    
+
     body {
       background-color: var(--void);
-      background-image: radial-gradient(circle at center, #0c111d 0%, #060913 100%);
+      background-image: radial-gradient(circle at center, #0e1422 0%, #05070c 100%);
       color: #ffffff;
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
@@ -45,29 +43,27 @@
       position: relative;
     }
 
-    /* Ambient Background Glows */
+    /* Background Ambient Glows */
+    .bg-glow-gold {
+      position: absolute; top: 15%; left: 10%; width: 45vw; height: 45vw; border-radius: 50%;
+      background: radial-gradient(circle, rgba(229, 184, 66, 0.05) 0%, transparent 70%);
+      filter: blur(90px); pointer-events: none; z-index: 1;
+    }
     .bg-glow-cyan {
-      position: absolute; top: 10%; left: 8%;
-      width: 45vw; height: 45vw; border-radius: 50%;
-      background: radial-gradient(circle, rgba(0, 229, 255, 0.06) 0%, transparent 70%);
+      position: absolute; bottom: 15%; right: 10%; width: 45vw; height: 45vw; border-radius: 50%;
+      background: radial-gradient(circle, rgba(0, 229, 255, 0.04) 0%, transparent 70%);
       filter: blur(90px); pointer-events: none; z-index: 1;
     }
-    .bg-glow-purple {
-      position: absolute; bottom: 10%; right: 8%;
-      width: 45vw; height: 45vw; border-radius: 50%;
-      background: radial-gradient(circle, rgba(255, 176, 32, 0.05) 0%, transparent 70%);
-      filter: blur(90px); pointer-events: none; z-index: 1;
-    }
-    
-    /* Header Controls */
+
+    /* Header Control Bar */
     .header-controls {
       width: 100%; max-width: 1140px; padding: 0 20px; margin-bottom: 14px;
       display: flex; justify-content: space-between; align-items: center; z-index: 10;
     }
     .brand-title { font-family: 'Outfit', sans-serif; font-weight: 850; font-size: 20px; letter-spacing: -0.02em; }
-    .brand-title span { color: var(--cyan); text-shadow: 0 0 12px rgba(0, 229, 255, 0.4); }
+    .brand-title span { color: var(--gold-primary); text-shadow: 0 0 12px rgba(229, 184, 66, 0.4); }
     .brand-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #94A3B8; letter-spacing: 0.1em; text-transform: uppercase; }
-    
+
     .btn-group { display: flex; gap: 10px; align-items: center; }
     .btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 6px;
@@ -76,8 +72,8 @@
     }
     .btn-back { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #94A3B8; }
     .btn-back:hover { background: rgba(255, 255, 255, 0.09); color: #fff; }
-    .btn-print { background: linear-gradient(135deg, var(--cyan) 0%, #0077f6 100%); color: #fff; box-shadow: 0 4px 14px rgba(0, 229, 255, 0.22); }
-    .btn-print:hover { box-shadow: 0 6px 20px rgba(0, 229, 255, 0.38); transform: translateY(-1px); }
+    .btn-print { background: linear-gradient(135deg, var(--gold-primary) 0%, var(--gold-dark) 100%); color: #000; font-weight: 700; box-shadow: 0 4px 14px rgba(229, 184, 66, 0.25); }
+    .btn-print:hover { box-shadow: 0 6px 20px rgba(229, 184, 66, 0.4); transform: translateY(-1px); }
 
     .cert-scroll-area { width: 100%; display: flex; align-items: center; justify-content: center; z-index: 5; padding: 0 16px; }
 
@@ -85,10 +81,10 @@
       width: min(96vw, calc(88vh * 1.414), 1140px);
       height: calc(min(96vw, calc(88vh * 1.414), 1140px) / 1.414);
       position: relative;
-      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9), 0 0 50px rgba(0, 229, 255, 0.1);
-      border-radius: 12px;
-      background: #090d16;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.95), 0 0 50px rgba(229, 184, 66, 0.12);
+      border-radius: 10px;
+      background: var(--obsidian);
+      border: 1.5px solid rgba(229, 184, 66, 0.3);
       flex-shrink: 0;
     }
 
@@ -96,77 +92,93 @@
       width: 100%; height: 100%;
       container-type: inline-size;
       position: relative; overflow: hidden;
-      padding: 3.5cqw 4.8cqw 2.5cqw;
+      padding: 3.2cqw 4.8cqw 2.4cqw;
       box-sizing: border-box;
       display: flex; flex-direction: column; justify-content: space-between;
-      background: linear-gradient(145deg, #0a0e18 0%, #060912 100%);
-      border-radius: 12px;
+      background: radial-gradient(circle at center, #0c121e 0%, #060810 100%);
+      border-radius: 10px;
     }
 
     /* Glossy Refraction Layer */
     .certificate-body::after {
       content: ''; position: absolute; inset: 0;
-      background: linear-gradient(115deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.06) 38%, rgba(255,255,255,0.12) 40%, rgba(255,255,255,0) 50%);
+      background: linear-gradient(115deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.04) 38%, rgba(255,255,255,0.1) 40%, rgba(255,255,255,0) 50%);
       pointer-events: none; z-index: 10;
     }
 
-    /* WAVY CORNER SVG ACCENTS */
-    .cert-wave-tl {
-      position: absolute; top: 0; left: 0; width: 28cqw; height: 18cqw;
-      pointer-events: none; z-index: 2;
+    /* ART-DECO GEOMETRIC WIREFRAME GOLD BORDER FRAME */
+    .cert-artdeco-frame {
+      position: absolute; inset: 1.2cqw;
+      border: 1.5px solid var(--gold-primary);
+      border-radius: 4px; pointer-events: none; z-index: 3;
     }
-    .cert-wave-br {
-      position: absolute; bottom: 0; right: 0; width: 28cqw; height: 18cqw;
-      pointer-events: none; z-index: 2;
+    .cert-artdeco-inner {
+      position: absolute; inset: 1.8cqw;
+      border: 1px solid rgba(229, 184, 66, 0.35);
+      border-radius: 2px; pointer-events: none; z-index: 3;
     }
 
-    /* 3D GOLD AWARD SEAL RIBBON (Top-Right) */
-    .cert-award-seal {
-      position: absolute; top: 2.8cqw; right: 4.2cqw;
+    /* GEOMETRIC CORNER ACCENTS (4 CORNERS) */
+    .artdeco-corner {
+      position: absolute; width: 4.5cqw; height: 4.5cqw;
+      border-color: var(--gold-primary); border-style: solid; z-index: 4; pointer-events: none;
+    }
+    .artdeco-corner.tl { top: 1.2cqw; left: 1.2cqw; border-width: 3px 0 0 3px; }
+    .artdeco-corner.tr { top: 1.2cqw; right: 1.2cqw; border-width: 3px 3px 0 0; }
+    .artdeco-corner.bl { bottom: 1.2cqw; left: 1.2cqw; border-width: 0 0 3px 3px; }
+    .artdeco-corner.br { bottom: 1.2cqw; right: 1.2cqw; border-width: 0 3px 3px 0; }
+
+    /* CORNER GEOMETRIC WIRES */
+    .artdeco-corner-wires {
+      position: absolute; width: 3.2cqw; height: 3.2cqw;
+      border: 1px solid rgba(229, 184, 66, 0.6); z-index: 4; pointer-events: none;
+    }
+    .artdeco-corner-wires.tl { top: 1.8cqw; left: 1.8cqw; border-right: none; border-bottom: none; }
+    .artdeco-corner-wires.tr { top: 1.8cqw; right: 1.8cqw; border-left: none; border-bottom: none; }
+    .artdeco-corner-wires.bl { bottom: 1.8cqw; left: 1.8cqw; border-right: none; border-top: none; }
+    .artdeco-corner-wires.br { bottom: 1.8cqw; right: 1.8cqw; border-left: none; border-top: none; }
+
+    /* 3D METALLIC GOLD SCALLOPED AWARD RIBBON MEDAL (Top-Right) */
+    .cert-award-medal {
+      position: absolute; top: 2.6cqw; right: 4.2cqw;
       z-index: 15; display: flex; flex-direction: column; align-items: center;
-      filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.6));
+      filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.75));
     }
-    .seal-circle {
-      width: 6.8cqw; height: 6.8cqw; border-radius: 50%;
-      background: radial-gradient(circle, #ffe699 0%, #ffb020 50%, #996300 100%);
-      border: 2px solid #fff5cc; padding: 0.35cqw;
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.4), 0 0 20px rgba(255, 176, 32, 0.4);
+    .medal-scallop-circle {
+      width: 7.4cqw; height: 7.4cqw; border-radius: 50%;
+      background: radial-gradient(circle, #fff5cc 0%, #e5b842 45%, #996300 100%);
+      border: 2px solid #fff0aa; padding: 0.35cqw;
+      box-shadow: inset 0 0 12px rgba(0,0,0,0.5), 0 0 25px rgba(229, 184, 66, 0.5);
+      position: relative;
     }
-    .seal-inner {
+    .medal-inner-dark {
       width: 100%; height: 100%; border-radius: 50%;
-      background: radial-gradient(circle, #0d1526 0%, #060912 100%);
-      border: 1px solid rgba(255, 176, 32, 0.6);
+      background: radial-gradient(circle, #0e1524 0%, #060912 100%);
+      border: 1px solid rgba(229, 184, 66, 0.7);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      text-align: center; color: #ffb020; padding: 0.2cqw;
+      text-align: center; color: var(--gold-primary); padding: 0.2cqw;
     }
-    .seal-title { font-family: 'Cinzel', serif; font-size: 0.75cqw; font-weight: 700; letter-spacing: 0.15cqw; }
-    .seal-stars { font-size: 0.75cqw; color: #ffb020; margin: 0.1cqw 0; text-shadow: 0 0 6px #ffb020; }
-    .seal-sub { font-family: 'Raleway', sans-serif; font-size: 0.58cqw; font-weight: 700; letter-spacing: 0.12cqw; color: #ffffff; }
+    .medal-text-main {
+      font-family: 'Cinzel', serif; font-size: 0.85cqw; font-weight: 700;
+      letter-spacing: 0.12cqw; color: #fff; line-height: 1.15;
+    }
+    .medal-text-sub {
+      font-family: 'Cinzel', serif; font-size: 0.72cqw; font-weight: 600;
+      letter-spacing: 0.1cqw; color: var(--gold-primary); margin-top: 0.1cqw;
+    }
 
-    .seal-ribbons { display: flex; gap: 0.4cqw; margin-top: -0.6cqw; }
-    .ribbon-tail {
-      width: 1.4cqw; height: 2.2cqw;
-      background: linear-gradient(180deg, #ffb020 0%, #996300 100%);
+    .medal-ribbon-tails { display: flex; gap: 0.5cqw; margin-top: -0.8cqw; }
+    .medal-tail {
+      width: 1.5cqw; height: 2.6cqw;
+      background: linear-gradient(180deg, #e5b842 0%, #855304 100%);
       clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-    }
-
-    /* Inner Thin Gold Frame */
-    .cert-inner-frame {
-      position: absolute; inset: 1.4cqw;
-      border: 1.2px solid rgba(255, 176, 32, 0.45); border-radius: 6px;
-      pointer-events: none; z-index: 3;
-    }
-    .cert-id-bar {
-      position: absolute; top: 2.4cqw; left: 4.8cqw;
-      font-family: 'JetBrains Mono', monospace; font-size: 0.82cqw; font-weight: 600;
-      letter-spacing: 0.1cqw; color: #ffb020; z-index: 12; opacity: 0.9;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.6);
     }
 
     .cert-watermark {
       position: absolute; top: 52%; left: 50%; transform: translate(-50%, -50%);
       font-family: 'Cinzel', serif; font-size: 11cqw; font-weight: 700;
-      color: rgba(0, 229, 255, 0.022); letter-spacing: 1cqw; white-space: nowrap;
+      color: rgba(229, 184, 66, 0.02); letter-spacing: 1cqw; white-space: nowrap;
       pointer-events: none; z-index: 0; user-select: none;
     }
 
@@ -175,80 +187,88 @@
       display: flex; flex-direction: column; height: 100%; justify-content: space-between;
     }
 
-    /* Header Section */
+    /* HEADER SECTION */
     .cert-header { display: flex; flex-direction: column; align-items: center; text-align: center; }
     .cert-logo-lockup { display: inline-flex; align-items: center; gap: 0.8cqw; margin-bottom: 0.4cqw; }
-    .cert-logo-wordmark { font-family: 'Raleway', sans-serif; font-size: 2.3cqw; font-weight: 800; letter-spacing: 0.08cqw; }
+    .cert-logo-wordmark { font-family: 'Raleway', sans-serif; font-size: 2.2cqw; font-weight: 800; letter-spacing: 0.08cqw; }
     .cert-logo-wordmark .mano { color: #ffffff; }
-    .cert-logo-wordmark .demy { color: var(--cyan); }
+    .cert-logo-wordmark .demy { color: var(--gold-primary); }
 
     .cert-title-main {
-      font-family: 'Cinzel', serif; font-size: 3.6cqw; font-weight: 700;
-      color: #ffffff; letter-spacing: 0.6cqw; text-transform: uppercase;
-      line-height: 1.1; margin-bottom: 0.4cqw; margin-top: 0.2cqw;
-    }
-
-    /* Gold Ribbon Badge for "OF MASTERY & COMPLETION" */
-    .cert-title-ribbon {
-      background: linear-gradient(135deg, #d4af37 0%, #ffb020 50%, #996300 100%);
-      color: #060912; font-family: 'Outfit', sans-serif; font-size: 0.9cqw;
-      font-weight: 800; letter-spacing: 0.35cqw; padding: 0.3cqw 2.2cqw;
-      border-radius: 3px; box-shadow: 0 3px 12px rgba(255, 176, 32, 0.3);
-      text-transform: uppercase; margin-bottom: 0.8cqw;
+      font-family: 'Cinzel', serif; font-size: 3.5cqw; font-weight: 700;
+      color: var(--gold-primary); letter-spacing: 0.5cqw; text-transform: uppercase;
+      line-height: 1.1; margin-top: 0.3cqw; margin-bottom: 0.8cqw;
+      text-shadow: 0 2px 14px rgba(229, 184, 66, 0.25);
     }
 
     .cert-awarded-label {
       font-family: 'Raleway', sans-serif; font-size: 0.82cqw;
       letter-spacing: 0.35cqw; color: rgba(255,255,255,0.45);
-      text-transform: uppercase; margin-bottom: 0.4cqw;
+      text-transform: uppercase; margin-bottom: 0.3cqw;
     }
     .cert-recipient-name {
       font-family: 'Dancing Script', 'Playfair Display', cursive, serif;
-      font-size: 4.6cqw; font-weight: 600; color: #ffffff;
-      line-height: 1.05; text-shadow: 0 0 30px rgba(0, 229, 255, 0.3);
+      font-size: 4.8cqw; font-weight: 600; color: #ffffff;
+      line-height: 1.05; text-shadow: 0 0 30px rgba(229, 184, 66, 0.3);
       margin-bottom: 0.3cqw;
     }
     .cert-recipient-underline {
-      width: 22cqw; height: 1.2px;
-      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
-      margin: 0 auto 0.8cqw;
+      width: 25cqw; height: 1.2px;
+      background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
+      margin: 0 auto 0.9cqw;
     }
 
     .cert-body-copy {
-      font-family: 'Raleway', sans-serif; font-size: 1.05cqw; font-weight: 400;
-      color: rgba(255,255,255,0.65); line-height: 1.6; max-width: 62cqw;
-      margin: 0 auto 0.8cqw; text-align: center;
+      font-family: 'Raleway', sans-serif; font-size: 1.02cqw; font-weight: 400;
+      color: rgba(255,255,255,0.65); line-height: 1.55; max-width: 62cqw;
+      margin: 0 auto 0.9cqw; text-align: center;
     }
     .cert-body-copy .highlight { color: #ffffff; font-weight: 600; }
-    .cert-body-copy .cyan { color: var(--cyan); font-weight: 600; }
+    .cert-body-copy .gold { color: var(--gold-primary); font-weight: 600; }
 
-    /* 3-TRACK & TOTAL SCORE MATRIX ROW */
+    /* 4-TRACK SCORE BADGE MATRIX (SQL 96%, EXCEL 90%, PYTHON 82% & OVERALL 1,290/1,500) */
     .cert-scores-matrix {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8cqw;
-      width: 90%; margin: 0 auto 0.8cqw;
+      display: flex; align-items: center; justify-content: center; gap: 1.2cqw;
+      width: 90%; margin: 0 auto 0.9cqw;
     }
-    .score-matrix-card {
-      background: rgba(11, 17, 28, 0.75);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 6px; padding: 0.7cqw 0.9cqw;
-      display: flex; align-items: center; gap: 0.8cqw;
-      box-shadow: inset 0 0 15px rgba(0,0,0,0.4);
+    .score-box {
+      background: rgba(8, 12, 20, 0.85);
+      border: 1.5px solid var(--gold-primary);
+      border-radius: 8px; padding: 0.6cqw 1.2cqw;
+      text-align: center; min-width: 7.5cqw;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5), inset 0 0 10px rgba(229, 184, 66, 0.08);
     }
-    .score-matrix-card.sql { border-color: rgba(56, 189, 248, 0.5); background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(56, 189, 248, 0.02)); }
-    .score-matrix-card.excel { border-color: rgba(16, 185, 129, 0.5); background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.02)); }
-    .score-matrix-card.python { border-color: rgba(168, 85, 247, 0.5); background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(168, 85, 247, 0.02)); }
-    .score-matrix-card.total { border-color: rgba(255, 176, 32, 0.7); background: linear-gradient(135deg, rgba(255, 176, 32, 0.18), rgba(255, 176, 32, 0.04)); }
+    .score-box-title {
+      font-family: 'Raleway', sans-serif; font-size: 0.72cqw; font-weight: 700;
+      letter-spacing: 0.1cqw; color: rgba(255,255,255,0.8); text-transform: uppercase;
+      margin-bottom: 0.2cqw;
+    }
+    .score-box-val {
+      font-family: 'Cinzel', serif; font-size: 1.6cqw; font-weight: 700;
+      color: var(--gold-primary); line-height: 1.1;
+    }
 
-    .matrix-icon { font-size: 1.4cqw; }
-    .matrix-info { display: flex; flex-direction: column; }
-    .matrix-label { font-family: 'Raleway', sans-serif; font-size: 0.65cqw; font-weight: 700; letter-spacing: 0.12cqw; color: rgba(255,255,255,0.65); text-transform: uppercase; }
-    .matrix-val { font-family: 'Cinzel', serif; font-size: 1.25cqw; font-weight: 700; color: #ffffff; line-height: 1.1; }
-    .matrix-val .sub { font-size: 0.75cqw; font-family: 'Raleway', sans-serif; color: rgba(255,255,255,0.5); }
-    .total .matrix-val { color: var(--gold); }
+    .overall-score-card {
+      display: flex; flex-direction: column; justify-content: center;
+      margin-left: 0.8cqw; text-align: left;
+    }
+    .overall-label {
+      font-family: 'Raleway', sans-serif; font-size: 0.78cqw; font-weight: 700;
+      letter-spacing: 0.12cqw; color: rgba(255,255,255,0.6); text-transform: uppercase;
+      margin-bottom: 0.2cqw;
+    }
+    .overall-val {
+      font-family: 'Cinzel', serif; font-size: 1.7cqw; font-weight: 700;
+      color: var(--gold-primary); line-height: 1;
+    }
+    .overall-sub {
+      font-family: 'Raleway', sans-serif; font-size: 0.75cqw; font-weight: 500;
+      color: rgba(255,255,255,0.45); margin-top: 0.2cqw;
+    }
 
     /* FOOTER & DUAL SIGNATURE SYSTEM */
     .cert-footer {
-      border-top: 1px solid rgba(255, 255, 255, 0.12); padding-top: 0.8cqw;
+      border-top: 1px solid rgba(229, 184, 66, 0.25); padding-top: 0.8cqw;
       display: grid; grid-template-columns: 1fr 1fr;
       align-items: center; width: 90%; margin: 0 auto;
     }
@@ -256,14 +276,14 @@
     .cert-sig-right { text-align: right; }
 
     .sig-name-text {
-      font-family: 'Dancing Script', cursive; font-size: 2.1cqw;
+      font-family: 'Dancing Script', cursive; font-size: 2.2cqw;
       color: rgba(255,255,255,0.9); margin-bottom: 0.2cqw;
     }
-    .sig-line { width: 14cqw; height: 1px; background: rgba(255,255,255,0.2); margin-bottom: 0.3cqw; }
+    .sig-line { width: 14cqw; height: 1.2px; background: rgba(229, 184, 66, 0.5); margin-bottom: 0.3cqw; }
     .cert-sig-right .sig-line { margin-left: auto; }
     .sig-role-text {
       font-family: 'Raleway', sans-serif; font-size: 0.78cqw;
-      letter-spacing: 0.22cqw; color: rgba(255,255,255,0.4); text-transform: uppercase;
+      letter-spacing: 0.22cqw; color: rgba(255,255,255,0.45); text-transform: uppercase;
     }
 
   </style>
@@ -309,56 +329,39 @@
   </div>
 
   <!-- Certificate Scroll Area (handles portrait rotation) -->
-    <div class="cert-scroll-area">
+      <div class="cert-scroll-area">
     <div class="cert-rotate-wrap" id="certRotateWrap">
       <div class="certificate-wrapper">
         <div id="certificate-render" class="certificate-body">
           
-          <!-- TOP-LEFT & BOTTOM-RIGHT ORGANIC WAVIES (Matching Reference Image) -->
-          <svg class="cert-wave-tl" viewBox="0 0 400 240" preserveAspectRatio="none">
-            <path d="M0,0 L260,0 C200,80 120,110 0,160 Z" fill="rgba(0, 229, 255, 0.08)" />
-            <path d="M0,0 L240,0 C170,70 90,95 0,140 Z" fill="#0B1528" />
-            <path d="M0,0 L220,0 C150,60 70,85 0,120 Z" fill="url(#goldGradTL)" />
-            <defs>
-              <linearGradient id="goldGradTL" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#FFB020" />
-                <stop offset="50%" stop-color="#D4AF37" />
-                <stop offset="100%" stop-color="#854D0E" />
-              </linearGradient>
-            </defs>
-          </svg>
+          <!-- ART-DECO GEOMETRIC GOLD FRAME & CORNERS -->
+          <div class="cert-artdeco-frame"></div>
+          <div class="cert-artdeco-inner"></div>
 
-          <svg class="cert-wave-br" viewBox="0 0 400 240" preserveAspectRatio="none">
-            <path d="M400,240 L140,240 C200,160 280,130 400,80 Z" fill="rgba(0, 229, 255, 0.08)" />
-            <path d="M400,240 L160,240 C230,170 310,145 400,100 Z" fill="#0B1528" />
-            <path d="M400,240 L180,240 C250,180 330,155 400,120 Z" fill="url(#goldGradBR)" />
-            <defs>
-              <linearGradient id="goldGradBR" x1="1" y1="1" x2="0" y2="0">
-                <stop offset="0%" stop-color="#FFB020" />
-                <stop offset="50%" stop-color="#D4AF37" />
-                <stop offset="100%" stop-color="#854D0E" />
-              </linearGradient>
-            </defs>
-          </svg>
+          <div class="artdeco-corner tl"></div>
+          <div class="artdeco-corner tr"></div>
+          <div class="artdeco-corner bl"></div>
+          <div class="artdeco-corner br"></div>
 
-          <!-- TOP-RIGHT 3D METALLIC GOLD AWARD RIBBON SEAL -->
-          <div class="cert-award-seal">
-            <div class="seal-circle">
-              <div class="seal-inner">
-                <span class="seal-title">VERIFIED</span>
-                <div class="seal-stars">★★★</div>
-                <span class="seal-sub">MASTERY</span>
+          <div class="artdeco-corner-wires tl"></div>
+          <div class="artdeco-corner-wires tr"></div>
+          <div class="artdeco-corner-wires bl"></div>
+          <div class="artdeco-corner-wires br"></div>
+
+          <!-- TOP-RIGHT 3D EMBOSSED GOLD AWARD MEDAL WITH RIBBON TAILS -->
+          <div class="cert-award-medal">
+            <div class="medal-scallop-circle">
+              <div class="medal-inner-dark">
+                <span class="medal-text-main">MASTER</span>
+                <span class="medal-text-sub">ANALYST</span>
               </div>
             </div>
-            <div class="seal-ribbons">
-              <div class="ribbon-tail left"></div>
-              <div class="ribbon-tail right"></div>
+            <div class="medal-ribbon-tails">
+              <div class="medal-tail"></div>
+              <div class="medal-tail"></div>
             </div>
           </div>
 
-          <!-- INNER GOLD FRAME & CRYPTO ID BAR -->
-          <div class="cert-inner-frame"></div>
-          <div id="cert-id-strip" class="cert-id-bar">CERT-ID: MND-2026-F41FC2</div>
           <div class="cert-watermark">VERIFIED</div>
 
           <!-- MAIN CERTIFICATE CONTENT -->
@@ -367,57 +370,43 @@
             <!-- HEADER -->
             <div class="cert-header">
               <div class="cert-logo-lockup">
-                <img src="/landing_v2/manodemy_3d_keycap.png" width="34" height="34" alt="Manodemy Logo" style="vertical-align:middle;">
+                <img src="/landing_v2/manodemy_3d_keycap.png" width="36" height="36" alt="Manodemy Logo" style="vertical-align:middle;">
                 <div class="cert-logo-wordmark"><span class="mano">Mano</span><span class="demy">demy</span></div>
               </div>
 
-              <div class="cert-title-main">CERTIFICATE</div>
-              <div class="cert-title-ribbon">OF MASTERY &amp; COMPLETION</div>
+              <div class="cert-title-main">CERTIFICATE OF ACHIEVEMENT</div>
 
-              <div class="cert-awarded-label">THIS CERTIFICATE IS PROUDLY PRESENTED TO</div>
-              <div id="cert-name-display" class="cert-recipient-name">Your Name</div>
+              <div class="cert-awarded-label">RECIPIENT TO</div>
+              <div id="cert-name-display" class="cert-recipient-name">Jordan Taylor</div>
               <div class="cert-recipient-underline"></div>
 
               <div class="cert-body-copy">
-                has demonstrated <span class="highlight">exceptional technical mastery and problem-solving excellence</span> upon successful completion of the
-                <span class="cyan">Manodemy 60-Day Data Analytics Masterclass</span> — an intensive, hands-on curriculum spanning
-                <span class="highlight">60 guided days</span>, encompassing <span class="highlight">1,500 interview-based challenges</span> across SQL, Excel, and Python for Data Analytics.
+                The <span class="gold">60-Day Data Analytics Masterclass</span> — an intensive, hands-on program for complete analytics challenges and authenticated verified scores across SQL, Excel, and Python for Data Analytics.
               </div>
             </div>
 
-            <!-- 4-TRACK & TOTAL MARKS SCORE MATRIX (SQL, EXCEL, PYTHON & OVERALL) -->
+            <!-- 4-TRACK SCORE BADGES (SQL 96%, EXCEL 90%, PYTHON 82% & OVERALL 1,290 / 1,500) -->
             <div class="cert-scores-matrix">
-              <!-- SQL Track -->
-              <div class="score-matrix-card sql">
-                <div class="matrix-icon">⚡</div>
-                <div class="matrix-info">
-                  <div class="matrix-label">SQL Track (Days 1–18)</div>
-                  <div class="matrix-val">432 <span class="sub">/ 450 (96%)</span></div>
-                </div>
+              <!-- SQL Box -->
+              <div class="score-box">
+                <div class="score-box-title">SQL</div>
+                <div class="score-box-val">96%</div>
               </div>
-              <!-- Excel Track -->
-              <div class="score-matrix-card excel">
-                <div class="matrix-icon">📊</div>
-                <div class="matrix-info">
-                  <div class="matrix-label">Excel Track (Days 19–30)</div>
-                  <div class="matrix-val">270 <span class="sub">/ 300 (90%)</span></div>
-                </div>
+              <!-- Excel Box -->
+              <div class="score-box">
+                <div class="score-box-title">Excel</div>
+                <div class="score-box-val">90%</div>
               </div>
-              <!-- Python Track -->
-              <div class="score-matrix-card python">
-                <div class="matrix-icon">🐍</div>
-                <div class="matrix-info">
-                  <div class="matrix-label">Python Track (Days 31–60)</div>
-                  <div class="matrix-val">588 <span class="sub">/ 750 (82%)</span></div>
-                </div>
+              <!-- Python Box -->
+              <div class="score-box">
+                <div class="score-box-title">Python</div>
+                <div class="score-box-val">82%</div>
               </div>
-              <!-- Total Marks -->
-              <div class="score-matrix-card total">
-                <div class="matrix-icon">🏆</div>
-                <div class="matrix-info">
-                  <div class="matrix-label">Total Score Achieved</div>
-                  <div class="matrix-val"><span id="cert-score-number">1,290</span> <span class="sub">/ 1,500</span></div>
-                </div>
+              <!-- Overall Score -->
+              <div class="overall-score-card">
+                <div class="overall-label">Overall Score</div>
+                <div class="overall-val"><span id="cert-score-number">1,290</span> / 1,500</div>
+                <div class="overall-sub">Marks Passed</div>
               </div>
             </div>
 
@@ -426,12 +415,12 @@
               <div class="cert-sig-left">
                 <div class="sig-name-text">Manojkumar</div>
                 <div class="sig-line"></div>
-                <div class="sig-role-text">PROGRAM DIRECTOR</div>
+                <div class="sig-role-text">SIGNATURE</div>
               </div>
               <div class="cert-sig-right">
-                <div id="cert-verified-score" class="sig-name-text" style="font-family:'Cinzel',serif; font-size:1.4cqw; color:var(--cyan); font-weight:700;">1,290 / 1,500 MARKS</div>
+                <div id="cert-verified-score" class="sig-name-text" style="font-family:'Cinzel',serif; font-size:1.3cqw; color:var(--gold-primary); font-weight:700;">CERT-ID: MND-2026-F41FC2</div>
                 <div class="sig-line"></div>
-                <div class="sig-role-text">VERIFIED RECORD &nbsp;·&nbsp; AUTHENTICATED</div>
+                <div class="sig-role-text">CRYPTOGRAPHICALLY AUTHENTICATED</div>
               </div>
             </div>
 

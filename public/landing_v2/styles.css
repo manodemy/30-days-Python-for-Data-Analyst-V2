@@ -4719,7 +4719,7 @@ html, body {
   .mobile-overlay { top: 64px; width: calc(100vw - 32px); right: 16px; }
 
   /* Hero section */
-  .hero { padding: 72px 0 48px; }
+  .hero { padding: 120px 0 48px; }
   .hero-title { font-size: clamp(28px, 7.5vw, 40px); }
   .hero-sub { font-size: 15px; max-width: 100%; }
   .hero-ctas { flex-direction: column; align-items: stretch; gap: 10px; }
@@ -5085,7 +5085,7 @@ html, body {
   .mobile-overlay { top: 56px; }
 
   /* Hero */
-  .hero { padding: 60px 0 36px; }
+  .hero { padding: 115px 0 36px; }
   .hero-title { font-size: clamp(24px, 7vw, 32px); margin-bottom: 1rem; }
   .hero-sub { font-size: 14px; margin-bottom: 1.5rem; }
   .hero-badge { font-size: 10px; padding: 5px 12px; margin-bottom: 1rem; }
@@ -9573,6 +9573,11 @@ footer .nav-brand-symbol {
     order: 2 !important;
   }
 
+  /* Ensure hero title is never cropped by 2-row navigation bar on mobile/tablet */
+  .hero {
+    padding-top: 120px !important;
+  }
+
   .nav-center-audio-hook {
     order: 3 !important;
     width: 100% !important;
@@ -9601,6 +9606,19 @@ footer .nav-brand-symbol {
 
   .play-lesson-section {
     padding-top: 16px !important;
+  }
+
+  /* Move timeline time readout ABOVE play button pill in mobile narration view */
+  .nav-audio-time-display {
+    bottom: calc(100% + 6px) !important;
+    right: 12px !important;
+    top: auto !important;
+    font-size: 10px !important;
+    padding: 3px 8px !important;
+    background: rgba(9, 14, 23, 0.95) !important;
+    border: 1px solid rgba(56, 189, 248, 0.4) !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6), 0 0 10px rgba(56, 189, 248, 0.25) !important;
+    z-index: 10020 !important;
   }
 }
 

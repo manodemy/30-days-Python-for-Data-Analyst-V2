@@ -1454,7 +1454,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const navSignin = document.getElementById('navSignin');
   if (navSignin) {
     navSignin.addEventListener('click', async (e) => {
-      const text = navSignin.textContent || '';
+      const text = (navSignin.textContent || '').trim();
       if (text.includes('Sign Out') || text.includes('Log Out')) {
         e.preventDefault();
         if (supabaseClient) {
@@ -1465,7 +1465,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         return;
       }
-      if (localStorage.getItem('manodemy_auth') === 'true' || text.includes('Dashboard') || text.includes('Score Card') || text.includes('Admin') || text.includes('Instructor') || text.includes('Panel')) return;
+
+      const href = navSignin.getAttribute('href');
+      if (href && href !== 'javascript:void(0)' && href !== '#') {
+        e.preventDefault();
+        window.location.href = href;
+        return;
+      }
+
+      if (text.toLowerCase().includes('score card') || text.toLowerCase().includes('dashboard') || text.includes('Admin')) {
+        e.preventDefault();
+        window.location.href = '/home.html';
+        return;
+      }
+
       e.preventDefault();
       openAuthModal('login');
     });
@@ -1505,6 +1518,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isAdmin) {
           signInBtn.textContent = '⚙️ Admin Panel';
           signInBtn.href = '/admin.html';
+          signInBtn.onclick = (e) => { e.preventDefault(); window.location.href = '/admin.html'; };
           return;
         }
       }
@@ -1515,11 +1529,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (user.email === 'manodamy25@gmail.com') {
       signInBtn.textContent = '⚙️ Admin Panel';
       signInBtn.href = '/admin.html';
+      signInBtn.onclick = (e) => { e.preventDefault(); window.location.href = '/admin.html'; };
       return;
     }
 
-    signInBtn.textContent = 'My Score Card';
+    signInBtn.textContent = 'Score Card';
     signInBtn.href = '/home.html';
+    signInBtn.onclick = (e) => { e.preventDefault(); window.location.href = '/home.html'; };
   }
 
   function unlockAllDays() {

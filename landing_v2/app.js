@@ -1505,21 +1505,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isAdmin) {
           signInBtn.textContent = '⚙️ Admin Panel';
           signInBtn.href = '/admin.html';
-
-          // Dynamically insert the Instructor Panel button next to it!
-          const instBtn = document.createElement('a');
-          instBtn.id = 'navInstructorExtra';
-          instBtn.className = 'btn-ghost';
-          instBtn.style.marginRight = '12px';
-          instBtn.textContent = '👨‍🏫 Instructor Panel';
-          instBtn.href = '/instructor-dashboard.html';
-          signInBtn.parentNode.insertBefore(instBtn, signInBtn);
-          return;
-        }
-
-        if (profile && profile.role === 'instructor') {
-          signInBtn.textContent = '👨‍🏫 Instructor Panel';
-          signInBtn.href = '/instructor-dashboard.html';
           return;
         }
       }

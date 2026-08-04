@@ -49,6 +49,9 @@ const NETWORK_FIRST_PATHS = [
   '/notebook.js',
   '/hints.js',
   '/landing_v2/styles.css',
+  '/landing_v2/app.js',
+  '/landing_v2/index.html',
+  '/home.html',
   '/voice.js',
   '/sw.js'
 ];

@@ -3995,29 +3995,11 @@ function onTopicSelectChange(val) {
 }
 
 function openScoreCard() {
-  if (window.ProgressManager) {
-    const dp = ProgressManager.getDayProgress(currentDay);
-    if (dp && dp.testAttempt && dp.testAttempt.submitted) {
-      renderScorecardFromAttempt(dp.testAttempt);
-      document.getElementById('scorecardOverlay').classList.add('open');
-      return;
-    }
-  }
-  const solved = getDaySolvedCount();
-  const total = COURSE_CONFIG.practiceQuestions ? COURSE_CONFIG.practiceQuestions.length : 0;
-  alert(`Practice Score Card:\n\nQuestions Solved: ${solved} / ${total}\nMarks Gained: ${solved}.0 / ${total}.0\n\nSubmit the test using "Take Test" to grade your formal score.`);
+  window.location.href = '/home.html';
 }
 
 function openTestScoreCard() {
-  if (window.ProgressManager) {
-    const dp = ProgressManager.getDayProgress(currentDay);
-    if (dp && dp.testAttempt && dp.testAttempt.submitted) {
-      renderScorecardFromAttempt(dp.testAttempt);
-      document.getElementById('scorecardOverlay').classList.add('open');
-      return;
-    }
-  }
-  alert('Please submit your test using the "Submit Test" button in the sidebar first to view your graded scorecard.');
+  window.location.href = '/home.html';
 }
 
 function getDaySolvedCount() {

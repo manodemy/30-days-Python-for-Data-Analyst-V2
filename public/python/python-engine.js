@@ -718,29 +718,11 @@ function submitTest() {
 // ── Score Card ────────────────────────────────────────────────
 
 function openScoreCard() {
-  if (!currentDayData) return;
-  const qs = currentDayData.testQuestions || [];
-  const passed = Object.values(testAnswers).filter(a => a.passed).length;
-
-  document.getElementById('scoreBig').textContent = `${passed} / ${qs.length}`;
-
-  const tbody = document.getElementById('scorecardBody');
-  tbody.innerHTML = qs.map((q, i) => {
-    const ans = testAnswers[q.id];
-    const status = ans ? (ans.passed ? '✅' : '❌') : '—';
-    const codePreview = ans && ans.code ? escHtml(ans.code.slice(0, 80)) + (ans.code.length > 80 ? '…' : '') : '—';
-    return `<tr>
-      <td>${i + 1}</td>
-      <td>${status}</td>
-      <td><code style="font-size:0.72rem;">${codePreview}</code></td>
-    </tr>`;
-  }).join('');
-
-  document.getElementById('scorecardOverlay').style.display = 'flex';
+  window.location.href = '/home.html';
 }
 
 function openTestScoreCard() {
-  openScoreCard();
+  window.location.href = '/home.html';
 }
 
 function closeScorecard() {

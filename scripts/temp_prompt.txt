@@ -1,0 +1,1 @@
+Task: Monthly PayRetrieve first_name, salary, and a computed monthly_salary column (salary divided by 12) for all employees.

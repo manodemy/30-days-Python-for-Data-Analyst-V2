@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Manodemy — Day 01: Introduction to SQL & Databases</title>
-  <meta name="description" content="Interactive SQL learning sandbox with Manodemy Audio-Visual recording, presentation slides, and a timed test portal.">
+  <meta name="description" content="Interactive SQL learning sandbox with Scrimba-style recording, presentation slides, and a timed test portal.">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,6 +19,9 @@
   <!-- App CSS -->
   <link rel="stylesheet" href="/Version-3/styles.css?v=17.0">
 
+  <!-- SQLite WASM Engine -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+
   <!-- CodeMirror JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/sql/sql.min.js"></script>
@@ -27,8 +30,28 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/sql-hint.min.js"></script>
 
-  <!-- SQL.js WASM -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+  <style>
+    @keyframes playBtnRadarPulse {
+      0% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.9), 0 0 20px rgba(16, 185, 129, 0.6);
+      }
+      50% {
+        transform: scale(1.12);
+        box-shadow: 0 0 0 12px rgba(16, 185, 129, 0), 0 0 45px rgba(16, 185, 129, 1);
+      }
+      100% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0), 0 0 20px rgba(16, 185, 129, 0.6);
+      }
+    }
+    .p11-play-radar-pulse {
+      animation: playBtnRadarPulse 1.4s infinite cubic-bezier(0.4, 0, 0.2, 1) !important;
+      border: 1px solid rgba(52, 211, 153, 1) !important;
+      background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
+      color: #ffffff !important;
+    }
+  </style>
 </head>
 <body>
 
@@ -93,7 +116,7 @@
           </span>
         </div>
 
-        <button class="hdr-btn hdr-btn--autoplay" id="navPlayBtn" onclick="toggleCombinedPlayback()" title="Play lecture narration" style="display: inline-flex; opacity: 0.6;">
+        <button class="hdr-btn hdr-btn--autoplay" id="navPlayBtn" onclick="toggleCombinedPlayback()" title="Play lecture narration" style="display: inline-flex;">
           <span class="btn-icon">▶</span> <span class="btn-text">Play Lesson</span>
         </button>
       </div>
@@ -109,11 +132,11 @@
   </header>
 
   <div class="mobile-tabs-nav" id="mobileTabsNav">
-    <button class="mobile-tab-btn active" id="tabBtnTheory" onclick="setMobileTab('theory')">
-      <span class="tab-emoji">📖</span> Lesson
-    </button>
     <button class="mobile-tab-btn" id="tabBtnPractice" onclick="setMobileTab('practice')">
       <span class="tab-emoji">💻</span> Practice
+    </button>
+    <button class="mobile-tab-btn active" id="tabBtnTheory" onclick="setMobileTab('theory')">
+      <span class="tab-emoji">📖</span> Lesson
     </button>
   </div>
 
@@ -148,6 +171,7 @@
             <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
           </button>
           <button class="tb-btn tb-btn--tables" id="peekTrigger" onclick="togglePeekPopover(event)">📊 Tables</button>
+          <button class="tb-btn tb-btn--reset" onclick="confirmResetDatabase()" style="margin-left: 6px;" title="Reset Database to original state">🔄 Reset DB</button>
           <div class="spacer"></div>
           <button class="tb-btn tb-btn--run" id="runBtn" onclick="runCurrentQuery()">▶ Run</button>
           <button class="tb-btn tb-btn--clear" onclick="clearEditor()">✕ Clear</button>
@@ -159,7 +183,7 @@
         <!-- Output Terminal -->
         <div class="output-section" id="mainOutput">
           <div class="output-label">Terminal Output</div>
-          <span class="output-success">⚡ Write your SQL query above and click 'Run' to execute it!</span>
+          <span class="output-success">Ready...</span>
         </div>
       </div>
     </div>
@@ -216,7 +240,7 @@
           </div>
         </div>
 
-        <!-- Playback Controls (Market Standard Manodemy Audio Player Layout) -->
+        <!-- Playback Controls (Market Standard Scrimba Video Player Layout) -->
         <div class="playback-bar" id="playbackBar">
           <!-- TOP ROW: 100% Full-Width Progress Slider -->
           <div class="playback-timeline-row" id="playbackTimelineRow">
@@ -343,12 +367,12 @@
           <div class="stats-row">
             <div class="stats-item">
               <span class="stats-label">ATTEMPTED</span>
-              <span class="stats-value stats-value--fraction"><span class="stats-num" id="testAttemptedCount">0</span><span class="stats-den">25</span></span>
+              <span class="stats-value"><span id="testAttemptedCount">0</span><span class="stats-total"> / 25</span></span>
             </div>
             <div class="stats-divider"></div>
             <div class="stats-item">
               <span class="stats-label">BEST SCORE</span>
-              <span class="stats-value stats-value--fraction"><span class="stats-num" id="testBestScoreCount">0</span><span class="stats-den">25</span></span>
+              <span class="stats-value"><span id="testBestScoreCount">0</span><span class="stats-total"> / 25</span></span>
             </div>
           </div>
           <div class="stats-progress-bar">
@@ -429,7 +453,8 @@
           </tbody>
         </table>
       </div>
-      <div class="scorecard-footer">
+      <div class="scorecard-footer" style="display: flex; justify-content: space-between; align-items: center;">
+        <a href="/home.html" class="scorecard-dashboard-btn" style="background: linear-gradient(135deg, #00e6f6, #a855f7); color: #060913; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; margin-right: auto;">📊 View Overall Scorecard</a>
         <button class="scorecard-close-btn" onclick="closeScorecard()">Close</button>
       </div>
     </div>

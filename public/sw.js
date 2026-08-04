@@ -57,6 +57,11 @@ const NETWORK_FIRST_PATHS = [
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
+  // 0. LOCALHOST BYPASS: Never cache on local development so changes reflect instantly
+  if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') {
+    return;
+  }
+
   // 1. STRICT BYPASS: Do not cache transactions, auth requests, or dynamic API endpoints
   if (
     url.origin.includes('supabase.co') ||

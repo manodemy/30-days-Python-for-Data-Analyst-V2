@@ -94,7 +94,7 @@
         </div>
 
         <button class="hdr-btn hdr-btn--autoplay" id="navPlayBtn" onclick="toggleCombinedPlayback()"
-          title="Play lecture narration" style="display: none;"
+          title="Play lecture narration" style="display: inline-flex;"
           aria-label="Play Lesson" aria-pressed="false" role="button">
           <span class="btn-icon" aria-hidden="true">▶</span> <span class="btn-text">Play Lesson</span>
         </button>
@@ -111,13 +111,13 @@
   </header>
 
   <div class="mobile-tabs-nav" id="mobileTabsNav" role="tablist" aria-label="View Tabs">
-    <button class="mobile-tab-btn active" id="tabBtnTheory" onclick="setMobileTab('theory')"
-      role="tab" aria-selected="true" aria-controls="panelRight">
-      <span class="tab-emoji" aria-hidden="true">📖</span> Lesson
-    </button>
     <button class="mobile-tab-btn" id="tabBtnPractice" onclick="setMobileTab('practice')"
       role="tab" aria-selected="false" aria-controls="panelLeft">
       <span class="tab-emoji" aria-hidden="true">💻</span> Practice
+    </button>
+    <button class="mobile-tab-btn active" id="tabBtnTheory" onclick="setMobileTab('theory')"
+      role="tab" aria-selected="true" aria-controls="panelRight">
+      <span class="tab-emoji" aria-hidden="true">📖</span> Lesson
     </button>
   </div>
 
@@ -449,7 +449,8 @@
           </tbody>
         </table>
       </div>
-      <div class="scorecard-footer">
+      <div class="scorecard-footer" style="display: flex; justify-content: space-between; align-items: center;">
+        <a href="/home.html" class="scorecard-dashboard-btn" style="background: linear-gradient(135deg, #00e6f6, #a855f7); color: #060913; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; margin-right: auto;">📊 View Overall Scorecard</a>
         <button class="scorecard-close-btn" onclick="closeScorecard()">Close</button>
       </div>
     </div>
@@ -465,7 +466,53 @@
   <script src="/Version-3/db-seeds/retail-seed.js?v=19.0"></script>
   <script src="/Version-3/grading-engine.js?v=19.0"></script>
   <script src="/Version-3/persistence.js?v=19.0"></script>
-  <!-- App JS -->
+  <!-- App JS Engine -->
   <script src="/Version-3/mano-engine.js?v=19.0"></script>
+
+  <!-- 🎧 Narration Sync PostMessage Listener Bridge -->
+  <script>
+    window.addEventListener('message', function(event) {
+      var data = event.data || {};
+      if (data.type !== 'MANODEMY_NARRATION_EVENT') return;
+
+      var pLeft = document.getElementById('panelLeft') || document.querySelector('.panel-left');
+      var pRight = document.getElementById('panelRight') || document.querySelector('.panel-right');
+      var playBtn = document.getElementById('playPauseBtn') || document.querySelector('.play-btn-red-pill');
+
+      if (data.action === 'PHASE_11_DIM') {
+        if (pLeft) { pLeft.style.opacity = '0.25'; pLeft.style.filter = 'brightness(0.7)'; pLeft.style.transition = 'all 0.4s ease'; }
+        if (pRight) { pRight.style.opacity = '1'; pRight.style.filter = 'brightness(1.1)'; pRight.style.transition = 'all 0.4s ease'; }
+        if (playBtn) { playBtn.style.transform = ''; playBtn.style.boxShadow = ''; }
+      } 
+      else if (data.action === 'PHASE_11_HOVER') {
+        if (pLeft) { pLeft.style.opacity = '0.25'; pLeft.style.filter = 'brightness(0.7)'; }
+        if (pRight) { pRight.style.opacity = '1'; pRight.style.filter = 'brightness(1.1)'; }
+        if (playBtn) {
+          playBtn.style.transform = 'scale(1.12)';
+          playBtn.style.boxShadow = '0 0 25px rgba(239, 68, 68, 0.95), 0 0 50px rgba(239, 68, 68, 0.6)';
+          playBtn.style.transition = 'all 0.35s cubic-bezier(0.16, 1, 0.3, 1)';
+        }
+      } 
+      else if (data.action === 'PHASE_11_SCROLL') {
+        if (pLeft) { pLeft.style.opacity = '0.25'; pLeft.style.filter = 'brightness(0.7)'; }
+        if (pRight) { pRight.style.opacity = '1'; pRight.style.filter = 'brightness(1.1)'; }
+        if (playBtn) {
+          playBtn.style.transform = 'scale(1.05)';
+          playBtn.style.boxShadow = '0 0 15px rgba(239, 68, 68, 0.7)';
+        }
+        if (pRight) {
+          var maxScroll = pRight.scrollHeight - pRight.clientHeight;
+          if (maxScroll > 0) {
+            pRight.scrollTo({ top: maxScroll, behavior: 'smooth' });
+          }
+        }
+      } 
+      else if (data.action === 'RESET') {
+        if (pLeft) { pLeft.style.opacity = '1'; pLeft.style.filter = ''; }
+        if (pRight) { pRight.style.opacity = '1'; pRight.style.filter = ''; }
+        if (playBtn) { playBtn.style.transform = ''; playBtn.style.boxShadow = ''; }
+      }
+    });
+  </script>
 </body>
 </html>

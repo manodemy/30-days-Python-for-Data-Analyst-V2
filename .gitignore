@@ -37,6 +37,7 @@ demo.txt
 !public/landing_v2/*.mp3
 *.wfp
 video_pipeline/
+Instagram Ads/
 scratch/
 
 # Node / Next.js
@@ -47,5 +48,3 @@ node_modules/
 .env
 .env.*
 .env.local
-
-.env*

@@ -1,0 +1,849 @@
+{
+  "audioDuration": 60.7,
+  "markers": [
+    {
+      "phase": 1,
+      "id": "P1_LOGO",
+      "keys": [
+        "welcome"
+      ],
+      "startAt": 0.0,
+      "label": "\ud83c\udf93 Nav Logo Center Zoom"
+    },
+    {
+      "phase": 2,
+      "id": "P2_MASTERCLASS",
+      "keys": [
+        "beginner"
+      ],
+      "startAt": 5.58,
+      "label": "\ud83c\udf31 Complete Beginner Card"
+    },
+    {
+      "phase": 3,
+      "id": "P3_ANALYST",
+      "keys": [
+        "practicing"
+      ],
+      "startAt": 9.24,
+      "label": "\ud83c\udfaf Practicing Analyst Card"
+    },
+    {
+      "phase": 4,
+      "id": "P4_BUILT",
+      "keys": [
+        "built"
+      ],
+      "startAt": 14.68,
+      "label": "\u2728 Built Specifically For You"
+    },
+    {
+      "phase": 5,
+      "id": "P5_ROADMAP",
+      "keys": [
+        "structured"
+      ],
+      "startAt": 16.88,
+      "label": "\ud83d\udcc5 60-Day Roadmap Start"
+    },
+    {
+      "phase": 6,
+      "id": "P6_SQL",
+      "keys": [
+        "sequel",
+        "sql"
+      ],
+      "startAt": 21.82,
+      "label": "\ud83d\uddc4\ufe0f SQL Track Highlight"
+    },
+    {
+      "phase": 7,
+      "id": "P7_EXCEL",
+      "keys": [
+        "excel"
+      ],
+      "startAt": 24.68,
+      "label": "\ud83d\udcca Excel Track Highlight"
+    },
+    {
+      "phase": 8,
+      "id": "P8_PYTHON",
+      "keys": [
+        "python"
+      ],
+      "startAt": 27.78,
+      "label": "\ud83d\udc0d Python Track Highlight"
+    },
+    {
+      "phase": 9,
+      "id": "P9_CERTIFICATE",
+      "keys": [
+        "certificate"
+      ],
+      "startAt": 44.72,
+      "label": "\ud83d\udcdc Certificate Reveal Overlay"
+    },
+    {
+      "phase": 10,
+      "id": "P10_HR",
+      "keys": [
+        "confidently",
+        "rate"
+      ],
+      "startAt": 50.22,
+      "label": "\ud83d\udc54 HR Interview Overlay"
+    },
+    {
+      "phase": 11,
+      "id": "P11_WORKSPACE",
+      "keys": [
+        "explore",
+        "workspace"
+      ],
+      "startAt": 57.94,
+      "label": "\ud83d\udcbb Split-Screen Workspace"
+    }
+  ],
+  "words": [
+    {
+      "word": "Welcome",
+      "start": 0.0,
+      "end": 0.44
+    },
+    {
+      "word": "to",
+      "start": 0.44,
+      "end": 0.8
+    },
+    {
+      "word": "Mano",
+      "start": 0.8,
+      "end": 1.12
+    },
+    {
+      "word": "Dimmies",
+      "start": 1.12,
+      "end": 1.54
+    },
+    {
+      "word": "60",
+      "start": 1.54,
+      "end": 2.0
+    },
+    {
+      "word": "Day",
+      "start": 2.0,
+      "end": 2.36
+    },
+    {
+      "word": "Data",
+      "start": 2.36,
+      "end": 2.78
+    },
+    {
+      "word": "Analytics",
+      "start": 2.78,
+      "end": 3.24
+    },
+    {
+      "word": "Masterclass.",
+      "start": 3.24,
+      "end": 4.24
+    },
+    {
+      "word": "Whether",
+      "start": 4.66,
+      "end": 4.8
+    },
+    {
+      "word": "you're",
+      "start": 4.8,
+      "end": 5.22
+    },
+    {
+      "word": "a",
+      "start": 5.22,
+      "end": 5.32
+    },
+    {
+      "word": "complete",
+      "start": 5.32,
+      "end": 5.58
+    },
+    {
+      "word": "beginner,",
+      "start": 5.58,
+      "end": 6.12
+    },
+    {
+      "word": "breaking",
+      "start": 6.34,
+      "end": 6.68
+    },
+    {
+      "word": "into",
+      "start": 6.68,
+      "end": 6.96
+    },
+    {
+      "word": "data",
+      "start": 6.96,
+      "end": 7.18
+    },
+    {
+      "word": "for",
+      "start": 7.18,
+      "end": 7.42
+    },
+    {
+      "word": "the",
+      "start": 7.42,
+      "end": 7.54
+    },
+    {
+      "word": "very",
+      "start": 7.54,
+      "end": 7.78
+    },
+    {
+      "word": "first",
+      "start": 7.78,
+      "end": 8.04
+    },
+    {
+      "word": "time,",
+      "start": 8.04,
+      "end": 8.52
+    },
+    {
+      "word": "or",
+      "start": 8.8,
+      "end": 8.96
+    },
+    {
+      "word": "a",
+      "start": 8.96,
+      "end": 9.24
+    },
+    {
+      "word": "practicing",
+      "start": 9.24,
+      "end": 9.54
+    },
+    {
+      "word": "analyst,",
+      "start": 9.54,
+      "end": 10.22
+    },
+    {
+      "word": "gearing",
+      "start": 10.58,
+      "end": 10.76
+    },
+    {
+      "word": "up",
+      "start": 10.76,
+      "end": 11.02
+    },
+    {
+      "word": "to",
+      "start": 11.02,
+      "end": 11.22
+    },
+    {
+      "word": "conquer",
+      "start": 11.22,
+      "end": 11.44
+    },
+    {
+      "word": "your",
+      "start": 11.44,
+      "end": 11.7
+    },
+    {
+      "word": "next",
+      "start": 11.7,
+      "end": 12.08
+    },
+    {
+      "word": "technical",
+      "start": 12.08,
+      "end": 12.52
+    },
+    {
+      "word": "interview.",
+      "start": 12.52,
+      "end": 13.0
+    },
+    {
+      "word": "This",
+      "start": 13.64,
+      "end": 13.74
+    },
+    {
+      "word": "masterclass",
+      "start": 13.74,
+      "end": 14.42
+    },
+    {
+      "word": "was",
+      "start": 14.42,
+      "end": 14.68
+    },
+    {
+      "word": "built,",
+      "start": 14.68,
+      "end": 15.16
+    },
+    {
+      "word": "specifically",
+      "start": 15.36,
+      "end": 15.88
+    },
+    {
+      "word": "for",
+      "start": 15.88,
+      "end": 16.26
+    },
+    {
+      "word": "you.",
+      "start": 16.26,
+      "end": 16.62
+    },
+    {
+      "word": "Structured",
+      "start": 16.88,
+      "end": 17.38
+    },
+    {
+      "word": "over",
+      "start": 17.38,
+      "end": 17.74
+    },
+    {
+      "word": "60",
+      "start": 17.74,
+      "end": 18.36
+    },
+    {
+      "word": "guided",
+      "start": 18.36,
+      "end": 18.72
+    },
+    {
+      "word": "days,",
+      "start": 18.72,
+      "end": 19.18
+    },
+    {
+      "word": "in",
+      "start": 19.5,
+      "end": 19.58
+    },
+    {
+      "word": "the",
+      "start": 19.58,
+      "end": 19.78
+    },
+    {
+      "word": "first",
+      "start": 19.78,
+      "end": 20.16
+    },
+    {
+      "word": "18",
+      "start": 20.16,
+      "end": 20.56
+    },
+    {
+      "word": "days,",
+      "start": 20.56,
+      "end": 21.08
+    },
+    {
+      "word": "you'll",
+      "start": 21.3,
+      "end": 21.56
+    },
+    {
+      "word": "master",
+      "start": 21.56,
+      "end": 21.82
+    },
+    {
+      "word": "sequel.",
+      "start": 21.82,
+      "end": 22.26
+    },
+    {
+      "word": "The",
+      "start": 22.74,
+      "end": 22.88
+    },
+    {
+      "word": "next",
+      "start": 22.88,
+      "end": 23.1
+    },
+    {
+      "word": "12",
+      "start": 23.1,
+      "end": 23.38
+    },
+    {
+      "word": "days",
+      "start": 23.38,
+      "end": 23.7
+    },
+    {
+      "word": "are",
+      "start": 23.7,
+      "end": 23.96
+    },
+    {
+      "word": "dedicated",
+      "start": 23.96,
+      "end": 24.32
+    },
+    {
+      "word": "to",
+      "start": 24.32,
+      "end": 24.68
+    },
+    {
+      "word": "Excel,",
+      "start": 24.68,
+      "end": 25.06
+    },
+    {
+      "word": "and",
+      "start": 25.4,
+      "end": 25.56
+    },
+    {
+      "word": "in",
+      "start": 25.56,
+      "end": 25.66
+    },
+    {
+      "word": "the",
+      "start": 25.66,
+      "end": 25.88
+    },
+    {
+      "word": "final",
+      "start": 25.88,
+      "end": 26.08
+    },
+    {
+      "word": "30",
+      "start": 26.08,
+      "end": 26.48
+    },
+    {
+      "word": "days,",
+      "start": 26.48,
+      "end": 26.98
+    },
+    {
+      "word": "you'll",
+      "start": 27.16,
+      "end": 27.56
+    },
+    {
+      "word": "master",
+      "start": 27.56,
+      "end": 27.78
+    },
+    {
+      "word": "Python",
+      "start": 27.78,
+      "end": 28.18
+    },
+    {
+      "word": "for",
+      "start": 28.18,
+      "end": 28.52
+    },
+    {
+      "word": "data",
+      "start": 28.52,
+      "end": 28.82
+    },
+    {
+      "word": "analytics.",
+      "start": 28.82,
+      "end": 29.3
+    },
+    {
+      "word": "Every",
+      "start": 29.82,
+      "end": 30.14
+    },
+    {
+      "word": "single",
+      "start": 30.14,
+      "end": 30.46
+    },
+    {
+      "word": "day,",
+      "start": 30.46,
+      "end": 30.94
+    },
+    {
+      "word": "you'll",
+      "start": 31.02,
+      "end": 31.26
+    },
+    {
+      "word": "tackle",
+      "start": 31.26,
+      "end": 31.56
+    },
+    {
+      "word": "a",
+      "start": 31.56,
+      "end": 31.88
+    },
+    {
+      "word": "25",
+      "start": 31.88,
+      "end": 32.38
+    },
+    {
+      "word": "-question",
+      "start": 32.38,
+      "end": 33.06
+    },
+    {
+      "word": "interview",
+      "start": 33.06,
+      "end": 33.6
+    },
+    {
+      "word": "-based",
+      "start": 33.6,
+      "end": 33.98
+    },
+    {
+      "word": "test,",
+      "start": 33.98,
+      "end": 34.48
+    },
+    {
+      "word": "earning",
+      "start": 34.96,
+      "end": 34.96
+    },
+    {
+      "word": "one",
+      "start": 34.96,
+      "end": 35.36
+    },
+    {
+      "word": "mark",
+      "start": 35.36,
+      "end": 35.56
+    },
+    {
+      "word": "per",
+      "start": 35.56,
+      "end": 35.8
+    },
+    {
+      "word": "question,",
+      "start": 35.8,
+      "end": 36.22
+    },
+    {
+      "word": "for",
+      "start": 36.64,
+      "end": 36.78
+    },
+    {
+      "word": "1",
+      "start": 36.78,
+      "end": 37.1
+    },
+    {
+      "word": ",500",
+      "start": 37.1,
+      "end": 38.0
+    },
+    {
+      "word": "total",
+      "start": 38.0,
+      "end": 38.34
+    },
+    {
+      "word": "marks",
+      "start": 38.34,
+      "end": 38.64
+    },
+    {
+      "word": "across",
+      "start": 38.64,
+      "end": 39.02
+    },
+    {
+      "word": "the",
+      "start": 39.02,
+      "end": 39.2
+    },
+    {
+      "word": "program.",
+      "start": 39.2,
+      "end": 39.58
+    },
+    {
+      "word": "Score",
+      "start": 40.08,
+      "end": 40.34
+    },
+    {
+      "word": "1",
+      "start": 40.34,
+      "end": 40.74
+    },
+    {
+      "word": ",200",
+      "start": 40.74,
+      "end": 41.48
+    },
+    {
+      "word": "marks,",
+      "start": 41.48,
+      "end": 41.96
+    },
+    {
+      "word": "or",
+      "start": 42.18,
+      "end": 42.3
+    },
+    {
+      "word": "above,",
+      "start": 42.3,
+      "end": 42.68
+    },
+    {
+      "word": "to",
+      "start": 42.9,
+      "end": 43.1
+    },
+    {
+      "word": "unlock",
+      "start": 43.1,
+      "end": 43.44
+    },
+    {
+      "word": "your",
+      "start": 43.44,
+      "end": 43.86
+    },
+    {
+      "word": "official",
+      "start": 43.86,
+      "end": 44.26
+    },
+    {
+      "word": "job",
+      "start": 44.26,
+      "end": 44.54
+    },
+    {
+      "word": "-ready",
+      "start": 44.54,
+      "end": 44.72
+    },
+    {
+      "word": "certificate.",
+      "start": 44.72,
+      "end": 45.3
+    },
+    {
+      "word": "Complete",
+      "start": 45.74,
+      "end": 45.88
+    },
+    {
+      "word": "with",
+      "start": 45.88,
+      "end": 46.16
+    },
+    {
+      "word": "your",
+      "start": 46.16,
+      "end": 46.5
+    },
+    {
+      "word": "verified",
+      "start": 46.5,
+      "end": 46.74
+    },
+    {
+      "word": "sequel,",
+      "start": 46.74,
+      "end": 47.46
+    },
+    {
+      "word": "Excel,",
+      "start": 47.68,
+      "end": 48.06
+    },
+    {
+      "word": "and",
+      "start": 48.22,
+      "end": 48.52
+    },
+    {
+      "word": "Python",
+      "start": 48.52,
+      "end": 48.76
+    },
+    {
+      "word": "scores,",
+      "start": 48.76,
+      "end": 49.28
+    },
+    {
+      "word": "so",
+      "start": 49.56,
+      "end": 49.78
+    },
+    {
+      "word": "you",
+      "start": 49.78,
+      "end": 49.88
+    },
+    {
+      "word": "can",
+      "start": 49.88,
+      "end": 50.22
+    },
+    {
+      "word": "confidently",
+      "start": 50.22,
+      "end": 50.46
+    },
+    {
+      "word": "answer",
+      "start": 50.46,
+      "end": 50.86
+    },
+    {
+      "word": "the",
+      "start": 50.86,
+      "end": 51.22
+    },
+    {
+      "word": "HR",
+      "start": 51.22,
+      "end": 51.5
+    },
+    {
+      "word": "interview",
+      "start": 51.5,
+      "end": 51.84
+    },
+    {
+      "word": "question.",
+      "start": 51.84,
+      "end": 52.36
+    },
+    {
+      "word": "How",
+      "start": 52.74,
+      "end": 52.9
+    },
+    {
+      "word": "would",
+      "start": 52.9,
+      "end": 53.06
+    },
+    {
+      "word": "you",
+      "start": 53.06,
+      "end": 53.18
+    },
+    {
+      "word": "rate",
+      "start": 53.18,
+      "end": 53.36
+    },
+    {
+      "word": "yourself",
+      "start": 53.36,
+      "end": 53.84
+    },
+    {
+      "word": "in",
+      "start": 53.84,
+      "end": 54.12
+    },
+    {
+      "word": "SQL,",
+      "start": 54.12,
+      "end": 54.7
+    },
+    {
+      "word": "Excel,",
+      "start": 55.08,
+      "end": 55.48
+    },
+    {
+      "word": "and",
+      "start": 55.54,
+      "end": 55.9
+    },
+    {
+      "word": "Python?",
+      "start": 55.9,
+      "end": 56.2
+    },
+    {
+      "word": "Now,",
+      "start": 56.2,
+      "end": 57.22
+    },
+    {
+      "word": "let's",
+      "start": 57.6,
+      "end": 57.94
+    },
+    {
+      "word": "explore",
+      "start": 57.94,
+      "end": 58.32
+    },
+    {
+      "word": "Mano",
+      "start": 58.32,
+      "end": 58.74
+    },
+    {
+      "word": "Dimmies",
+      "start": 58.74,
+      "end": 59.12
+    },
+    {
+      "word": "interactive",
+      "start": 59.12,
+      "end": 59.66
+    },
+    {
+      "word": "split",
+      "start": 59.66,
+      "end": 60.04
+    },
+    {
+      "word": "screen",
+      "start": 60.04,
+      "end": 60.34
+    },
+    {
+      "word": "workspace.",
+      "start": 60.34,
+      "end": 60.7
+    }
+  ]
+}

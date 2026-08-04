@@ -109,11 +109,11 @@
   </header>
 
   <div class="mobile-tabs-nav" id="mobileTabsNav">
-    <button class="mobile-tab-btn active" id="tabBtnTheory" onclick="setMobileTab('theory')">
-      <span class="tab-emoji">📖</span> Lesson
-    </button>
     <button class="mobile-tab-btn" id="tabBtnPractice" onclick="setMobileTab('practice')">
       <span class="tab-emoji">💻</span> Practice
+    </button>
+    <button class="mobile-tab-btn active" id="tabBtnTheory" onclick="setMobileTab('theory')">
+      <span class="tab-emoji">📖</span> Lesson
     </button>
   </div>
 
@@ -429,7 +429,8 @@
           </tbody>
         </table>
       </div>
-      <div class="scorecard-footer">
+      <div class="scorecard-footer" style="display: flex; justify-content: space-between; align-items: center;">
+        <a href="/home.html" class="scorecard-dashboard-btn" style="background: linear-gradient(135deg, #00e6f6, #a855f7); color: #060913; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; margin-right: auto;">📊 View Overall Scorecard</a>
         <button class="scorecard-close-btn" onclick="closeScorecard()">Close</button>
       </div>
     </div>

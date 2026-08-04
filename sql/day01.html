@@ -19,6 +19,9 @@
   <!-- App CSS -->
   <link rel="stylesheet" href="/Version-3/styles.css?v=17.0">
 
+  <!-- SQLite WASM Engine -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+
   <!-- CodeMirror JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/sql/sql.min.js"></script>
@@ -27,8 +30,28 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/sql-hint.min.js"></script>
 
-  <!-- SQL.js WASM -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+  <style>
+    @keyframes playBtnRadarPulse {
+      0% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.9), 0 0 20px rgba(16, 185, 129, 0.6);
+      }
+      50% {
+        transform: scale(1.12);
+        box-shadow: 0 0 0 12px rgba(16, 185, 129, 0), 0 0 45px rgba(16, 185, 129, 1);
+      }
+      100% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0), 0 0 20px rgba(16, 185, 129, 0.6);
+      }
+    }
+    .p11-play-radar-pulse {
+      animation: playBtnRadarPulse 1.4s infinite cubic-bezier(0.4, 0, 0.2, 1) !important;
+      border: 1px solid rgba(52, 211, 153, 1) !important;
+      background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
+      color: #ffffff !important;
+    }
+  </style>
 </head>
 <body>
 
@@ -93,7 +116,7 @@
           </span>
         </div>
 
-        <button class="hdr-btn hdr-btn--autoplay" id="navPlayBtn" onclick="toggleCombinedPlayback()" title="Play lecture narration" style="display: none;">
+        <button class="hdr-btn hdr-btn--autoplay" id="navPlayBtn" onclick="toggleCombinedPlayback()" title="Play lecture narration" style="display: inline-flex;">
           <span class="btn-icon">▶</span> <span class="btn-text">Play Lesson</span>
         </button>
       </div>
@@ -109,11 +132,11 @@
   </header>
 
   <div class="mobile-tabs-nav" id="mobileTabsNav">
-    <button class="mobile-tab-btn active" id="tabBtnTheory" onclick="setMobileTab('theory')">
-      <span class="tab-emoji">📖</span> Lesson
-    </button>
     <button class="mobile-tab-btn" id="tabBtnPractice" onclick="setMobileTab('practice')">
       <span class="tab-emoji">💻</span> Practice
+    </button>
+    <button class="mobile-tab-btn active" id="tabBtnTheory" onclick="setMobileTab('theory')">
+      <span class="tab-emoji">📖</span> Lesson
     </button>
   </div>
 

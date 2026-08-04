@@ -2940,14 +2940,16 @@ pre span {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
   }
 
-  #tabBtnTheory {
-    border-left: none !important; /* Align flush to left edge */
-    border-radius: 0 8px 8px 0 !important; /* Curve on inner side only */
+  #tabBtnPractice {
+    border-left: none !important; /* Code button flush to left edge */
+    border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 0 8px 8px 0 !important; /* Curve on inner right side */
   }
 
-  #tabBtnPractice {
-    border-right: none !important; /* Align flush to right edge */
-    border-radius: 8px 0 0 8px !important; /* Curve on inner side only */
+  #tabBtnTheory {
+    border-right: none !important; /* Theory button flush to right edge */
+    border-left: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 8px 0 0 8px !important; /* Curve on inner left side */
   }
   
   .mobile-tab-btn:hover {
@@ -6990,5 +6992,31 @@ select:focus:not(:focus-visible) {
     height: 24px !important;
     padding: 0 6px !important;
     font-size: 0.7rem !important;
+  }
+}
+
+/* Mobile Tab Switcher Rules for Practice vs Lesson (Theory) */
+@media (max-width: 900px) {
+  .workspace.mobile-show-practice #panelLeft {
+    display: flex !important;
+    flex: 1 1 100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    visibility: visible !important;
+  }
+  .workspace.mobile-show-practice #panelRight {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  .workspace.mobile-show-theory #panelLeft {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  .workspace.mobile-show-theory #panelRight {
+    display: flex !important;
+    flex: 1 1 100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    visibility: visible !important;
   }
 }

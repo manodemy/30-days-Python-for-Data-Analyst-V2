@@ -486,8 +486,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let supabaseClient = null;
   let userCountry = 'US';
   let pricingConfigs = {
-    selfpaced: { amount: 4900,  currency: 'USD', display: '$49',   original: '$149',    discount: '67% OFF', planName: '60-Day Self-Paced Masterclass' },
-    live:      { amount: 14900, currency: 'USD', display: '$149',  original: '$499',    discount: '70% OFF', planName: '60-Day Live Class Masterclass' }
+    selfpaced: { amount: 4900,  currency: 'USD', display: '$49',   original: '$149',    discount: '67% OFF', planName: '60-Day Self-Paced Masterclass' }
   };
   let activeTier = 'selfpaced';
   
@@ -623,14 +622,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (userCountry === 'IN') {
       pricingConfigs.selfpaced = { amount: 149900, currency: 'INR', display: '₹1,499',  original: '₹4,999',   discount: '70% OFF', planName: '60-Day Self-Paced Masterclass' };
-      pricingConfigs.live      = { amount: 999900, currency: 'INR', display: '₹9,999',  original: '₹39,999',  discount: '75% OFF', planName: '60-Day Live Class Masterclass' };
     } else {
       pricingConfigs.selfpaced = { amount: 4900,   currency: 'USD', display: '$49',     original: '$149',     discount: '67% OFF', planName: '60-Day Self-Paced Masterclass' };
-      pricingConfigs.live      = { amount: 14900,  currency: 'USD', display: '$149',    original: '$499',     discount: '70% OFF', planName: '60-Day Live Class Masterclass' };
     }
 
     const sp = pricingConfigs.selfpaced;
-    const lv = pricingConfigs.live;
 
     // Update self-paced pricing card
     const priceSelfNow      = document.getElementById('priceSelfNow');
@@ -640,31 +636,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (priceSelfOld)      priceSelfOld.textContent      = sp.original;
     if (priceSelfDiscount) priceSelfDiscount.textContent = sp.discount;
 
-    // Update live pricing card
-    const priceLiveNow      = document.getElementById('priceLiveNow');
-    const priceLiveOld      = document.getElementById('priceLiveOld');
-    const priceLiveDiscount = document.getElementById('priceLiveDiscount');
-    if (priceLiveNow)      priceLiveNow.textContent      = lv.display;
-    if (priceLiveOld)      priceLiveOld.textContent      = lv.original;
-    if (priceLiveDiscount) priceLiveDiscount.textContent = lv.discount;
-
     // Update all percentage off badges & ticker text elements across the landing page
     document.querySelectorAll('.dynamic-discount').forEach(el => el.textContent = sp.discount);
 
     // Update nav / mobile menu "from" price (self-paced is the entry price)
     document.querySelectorAll('.dynamic-price-from').forEach(el => el.textContent = sp.display);
 
-    // Update live price in final CTA
-    document.querySelectorAll('.dynamic-price-live').forEach(el => el.textContent = lv.display);
-
-    // Update sticky mobile CTA based on active tab
+    // Update sticky mobile CTA
     const mPrice    = document.querySelector('.m-price');
     const mPriceOld = document.querySelector('.m-price-old');
-    const activeTab = document.querySelector('#stickyMobileCta .cta-tab-btn.active');
-    const activeTier = activeTab ? activeTab.dataset.tabTier : 'selfpaced';
-    const activeCfg = pricingConfigs[activeTier];
-    if (mPrice && activeCfg)    mPrice.textContent    = activeCfg.display;
-    if (mPriceOld && activeCfg) mPriceOld.textContent = activeCfg.original;
+    if (mPrice && sp)    mPrice.textContent    = sp.display;
+    if (mPriceOld && sp) mPriceOld.textContent = sp.original;
 
     // Update comparison table cost row dynamically based on regional currency
     const compareCostMano = document.getElementById('compare-cost-mano');
@@ -909,8 +891,7 @@ document.addEventListener('DOMContentLoaded', () => {
           currency: currentPricing.currency,
           coupon_code: appliedCouponCode || coupon || undefined,
           final_amount: appliedCouponAmount || undefined,
-          referral_code: localStorage.getItem('manodemy_ref') || undefined,
-          batch_id: activeTier === 'live' ? (window.selectedBatchId || 'batch-1') : undefined
+          referral_code: localStorage.getItem('manodemy_ref') || undefined
         })
       });
 

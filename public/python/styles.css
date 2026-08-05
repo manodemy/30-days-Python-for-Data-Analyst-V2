@@ -935,7 +935,7 @@ a { color: var(--cyan); text-decoration: none; }
 /* Slide Viewer */
 .slide-viewer {
   flex: 1;
-  padding: 0 12px 12px 12px;
+  padding: 8px 0.85rem 0.85rem 0.85rem !important;
   overflow: hidden;
   display: flex;
   flex-direction: column;

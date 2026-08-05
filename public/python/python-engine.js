@@ -1255,6 +1255,8 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
       }
     });
 
+    container.scrollTop = 0;
+
     const h2 = container.querySelector('h2');
     if (h2) h2.classList.remove('section-hidden', 'vis-target-hidden');
 

@@ -1011,7 +1011,7 @@ a { color: var(--cyan); text-decoration: none; }
 /* Slide Content */
 .slide-content {
   flex: 1;
-  padding: 0 20px 60px 20px;
+  padding: 16px 20px 120px 20px !important;
   overflow-y: auto;
   min-height: 0;
 }

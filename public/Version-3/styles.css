@@ -1042,7 +1042,7 @@ a { color: var(--cyan); text-decoration: none; }
 /* Slide Content */
 .slide-content {
   flex: 1;
-  padding: 0 20px 60px 20px;
+  padding: 16px 20px 120px 20px !important;
   overflow-y: auto;
   min-height: 0;
 }
@@ -6105,7 +6105,7 @@ span.sql-identifier {
 
 @media (max-width: 768px) {
   .slide-content {
-    padding: 0 16px 24px 16px !important; /* Premium mobile spacing, top gap reset */
+    padding: 12px 16px 120px 16px !important; /* Premium mobile spacing with audio bar clearance */
   }
 
   .slide-content h2 {

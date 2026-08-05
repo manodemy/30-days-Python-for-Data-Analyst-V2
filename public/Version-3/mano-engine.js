@@ -3518,6 +3518,10 @@ function resetSplitScreen(e) {
 
   updateDividerArrows();
 
+  // Reset theory scroll position to top
+  const sc = document.getElementById('slideContent');
+  if (sc) sc.scrollTop = 0;
+
   // Smooth layout resize loop for CodeMirror editor as the screen slides
   const start = Date.now();
   const interval = setInterval(() => {
@@ -8103,6 +8107,9 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
         section.classList.remove('section-hidden');
       }
     });
+
+    // Reset container scroll position to top so content is never offset under header
+    container.scrollTop = 0;
 
     // Keep the main heading (H2) at the top of the slide always visible
     const h2 = container.querySelector('h2');

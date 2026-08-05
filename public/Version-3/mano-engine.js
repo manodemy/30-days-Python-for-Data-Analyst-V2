@@ -8108,12 +8108,20 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
     const h2 = container.querySelector('h2');
     if (h2) h2.classList.remove('section-hidden', 'vis-target-hidden');
 
-    // ── Build active track content set (activeBlock + its immediate paragraph, table, code block) ──
+    // ── Build active track content set (activeBlock + its immediate paragraph, table, code block + parent H3/H4 heading) ──
     const activeTrackElements = new Set();
     activeTrackElements.add(activeBlock);
     activeBlock.querySelectorAll('*').forEach(c => activeTrackElements.add(c));
 
+    // Also preserve section heading (H3/H4) so topic title remains visible at top
+    const sectionHead = activeSection.querySelector('h3, h4');
+    if (sectionHead) {
+      activeTrackElements.add(sectionHead);
+      sectionHead.querySelectorAll('*').forEach(c => activeTrackElements.add(c));
+    }
+
     let sibling = activeBlock.nextElementSibling;
+
     while (sibling) {
       // Stop if sibling is another heading, audio block, or warn/info box belonging to a different track
       if (sibling.classList.contains('heading-with-audio') ||

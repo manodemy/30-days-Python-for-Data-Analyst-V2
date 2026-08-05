@@ -1364,8 +1364,8 @@ pre span {
 }
 .slide-content .vs-block {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
   margin: 16px 0;
   align-items: stretch;
 }

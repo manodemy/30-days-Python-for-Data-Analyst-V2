@@ -1262,6 +1262,12 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
     activeTrackElements.add(activeBlock);
     activeBlock.querySelectorAll('*').forEach(c => activeTrackElements.add(c));
 
+    const sectionHead = activeSection.querySelector('h3, h4');
+    if (sectionHead) {
+      activeTrackElements.add(sectionHead);
+      sectionHead.querySelectorAll('*').forEach(c => activeTrackElements.add(c));
+    }
+
     let sibling = activeBlock.nextElementSibling;
     while (sibling) {
       if (sibling.classList.contains('heading-with-audio') ||

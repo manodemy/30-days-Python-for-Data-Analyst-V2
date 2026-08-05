@@ -3511,10 +3511,10 @@ function resetSplitScreen(e) {
 
   // Clear layout variables and restore default 55/45 split ratios
   savedLeftWidth = '55%';
-  panelL.style.flexBasis = '55%';
+  panelL.style.flex = '0 0 55%';
   panelL.style.minWidth = '';
   panelL.style.borderRightWidth = '';
-  panelR.style.flexBasis = '';
+  panelR.style.flex = '1 1 auto';
 
   updateDividerArrows();
 
@@ -3535,6 +3535,7 @@ function resetSplitScreen(e) {
 (function initDivider() {
   const divider = document.getElementById('divider');
   const left = document.getElementById('panelLeft');
+  const right = document.getElementById('panelRight');
   let dragging = false;
 
   divider.addEventListener('mousedown', (e) => {
@@ -3546,6 +3547,8 @@ function resetSplitScreen(e) {
 
     dragging = true;
     divider.classList.add('dragging');
+    const ws = document.querySelector('.workspace');
+    if (ws) ws.classList.add('workspace-dragging');
     e.preventDefault();
   });
 
@@ -3557,9 +3560,10 @@ function resetSplitScreen(e) {
     if (window.innerWidth > 768) {
       // Horizontal split (desktop)
       const pct = ((e.clientX - rect.left) / rect.width) * 100;
-      const clamped = Math.max(30, Math.min(75, pct));
+      const clamped = Math.max(25, Math.min(75, pct));
       savedLeftWidth = clamped + '%';
-      left.style.flexBasis = savedLeftWidth;
+      left.style.flex = `0 0 ${clamped}%`;
+      if (right) right.style.flex = `1 1 auto`;
     } else {
       // Vertical split (mobile)
       // Notes is at the top (order: 1), and left panel (code) is at the bottom (order: 3)
@@ -3567,9 +3571,10 @@ function resetSplitScreen(e) {
       const pct = (heightPx / rect.height) * 100;
       const clamped = Math.max(25, Math.min(70, pct));
       savedLeftWidth = clamped + '%';
-      left.style.flexBasis = savedLeftWidth;
+      left.style.flex = `0 0 ${clamped}%`;
+      if (right) right.style.flex = `1 1 auto`;
     }
-    mainEditor.refresh();
+    if (mainEditor) mainEditor.refresh();
     resizeWsCanvas();
   });
 
@@ -3577,6 +3582,9 @@ function resetSplitScreen(e) {
     if (dragging) {
       dragging = false;
       divider.classList.remove('dragging');
+      const ws = document.querySelector('.workspace');
+      if (ws) ws.classList.remove('workspace-dragging');
+      if (mainEditor) mainEditor.refresh();
       resizeWsCanvas();
     }
   });

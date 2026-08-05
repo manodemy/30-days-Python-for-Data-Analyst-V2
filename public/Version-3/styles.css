@@ -679,6 +679,11 @@ a { color: var(--cyan); text-decoration: none; }
   border-color: var(--cyan);
 }
 
+.workspace.workspace-dragging .panel-left,
+.workspace.workspace-dragging .panel-right {
+  transition: none !important;
+}
+
 /* Wrapper for toggles centered vertically on the divider line */
 .divider-toggles {
   position: absolute;
@@ -720,7 +725,7 @@ a { color: var(--cyan); text-decoration: none; }
 
 /* Right Panel */
 .panel-right {
-  flex: 0 0 50%;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   overflow: hidden;

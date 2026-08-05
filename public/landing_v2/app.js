@@ -481,7 +481,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const SUPABASE_URL = window.MANODEMY_CONFIG?.SUPA_URL || 'https://erqoyvbuhmkyvcqgwcbz.supabase.co';
   const SUPABASE_ANON_KEY = window.MANODEMY_CONFIG?.SUPA_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVycW95dmJ1aG1reXZjcWd3Y2J6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzODk1MTIsImV4cCI6MjA5NDk2NTUxMn0.9UnIfq8xMrKANPPTtoOADKH-NJ_it9HDp7xrJL4FXtw';
   const RAZORPAY_KEY_ID = 'rzp_live_SnbHZn5Q7rYNAP';
-  const PAYPAL_CLIENT_ID = '';
+  const PAYPAL_CLIENT_ID = 'AUPgj63sEEbLWYePzfnuu5prjv15UCPmaUmUY2XwWRRt4H4eI05bmGZpPGguOqhWO23Gg2nzfAMo94vs';
   
   let supabaseClient = null;
   let userCountry = 'US';

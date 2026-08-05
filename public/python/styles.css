@@ -488,14 +488,18 @@ a { color: var(--cyan); text-decoration: none; }
 
 /* Header Buttons */
 /* Chronological Visibility Filtering Rules for Narration Playback */
-.vis-target-hidden,
-.section-hidden {
+.vis-target-hidden {
   display: none !important;
   opacity: 0 !important;
   height: 0 !important;
   overflow: hidden !important;
   margin: 0 !important;
   padding: 0 !important;
+}
+
+.section-hidden {
+  opacity: 0.45 !important;
+  transition: opacity 0.3s ease !important;
 }
 
 .hdr-btn {

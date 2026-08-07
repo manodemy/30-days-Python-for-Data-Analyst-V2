@@ -142,6 +142,9 @@ function initCustomDropdowns() {
     select.style.display = 'none';
     const wrapper = select.parentElement;
     
+    // Remove legacy dot and chevron elements to prevent duplicate icons
+    wrapper.querySelectorAll('.day-picker-dot, .day-picker-chevron').forEach(el => el.remove());
+
     let trigger = wrapper.querySelector('.custom-select-trigger');
     let optionsMenu = wrapper.querySelector('.custom-select-options');
     
@@ -164,15 +167,6 @@ function initCustomDropdowns() {
             const activeDay = allDays.find(d => d.id === option.value) || { track: 'python', globalDay: 31 };
             const svgIcons = window.SVG_TRACK_ICONS || {};
             const iconHtml = svgIcons[activeDay.track] || svgIcons.python || '🐍';
-
-            const parentDot = document.querySelector('.day-picker-dot');
-            if (parentDot) {
-              parentDot.innerHTML = iconHtml;
-              parentDot.style.background = 'transparent';
-              parentDot.style.boxShadow = 'none';
-              parentDot.style.width = 'auto';
-              parentDot.style.height = 'auto';
-            }
 
             textSpan.innerHTML = `
               <span style="display:inline-flex;align-items:center;gap:6px;">

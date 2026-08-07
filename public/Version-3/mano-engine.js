@@ -4134,8 +4134,10 @@ function initCustomDropdowns() {
     let trigger = wrapper.querySelector('.custom-select-trigger');
     let optionsMenu = wrapper.querySelector('.custom-select-options');
 
+    // Remove legacy dot and chevron elements to prevent duplicate icons
+    wrapper.querySelectorAll('.day-picker-dot, .day-picker-chevron').forEach(el => el.remove());
+
     if (!trigger) {
-      wrapper.querySelector('.day-picker-chevron')?.remove();
       trigger = document.createElement('div');
       trigger.className = 'custom-select-trigger';
       wrapper.appendChild(trigger);
@@ -4168,16 +4170,6 @@ function initCustomDropdowns() {
             const activeDay = allDays.find(d => d.id === option.value) || { track: 'sql' };
             const svgIcons = window.SVG_TRACK_ICONS || {};
             const iconHtml = svgIcons[activeDay.track] || svgIcons.sql || '🗄️';
-
-            // Also update the dot in parent header if present
-            const parentDot = document.querySelector('.day-picker-dot');
-            if (parentDot) {
-              parentDot.innerHTML = iconHtml;
-              parentDot.style.background = 'transparent';
-              parentDot.style.boxShadow = 'none';
-              parentDot.style.width = 'auto';
-              parentDot.style.height = 'auto';
-            }
 
             textSpan.innerHTML = `
               <span style="display:inline-flex;align-items:center;gap:6px;">

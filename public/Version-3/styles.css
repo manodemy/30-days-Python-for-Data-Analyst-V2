@@ -2443,6 +2443,121 @@ pre span {
   justify-content: flex-end;
 }
 
+/* ── Test Header Stats Badges ────────────────────────────────── */
+.test-header .stats-card {
+  display: flex !important;
+  align-items: center !important;
+  background: rgba(15, 23, 42, 0.75) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 8px !important;
+  padding: 3px 10px !important;
+  height: 28px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+}
+
+.test-header .stats-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  height: auto !important;
+}
+
+.test-header .stats-divider {
+  display: block !important;
+  width: 1px !important;
+  height: 14px !important;
+  background: rgba(255, 255, 255, 0.15) !important;
+  margin: 0 2px !important;
+}
+
+.test-header .stats-progress-bar {
+  display: none !important;
+}
+
+.test-header .stats-item {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 6px !important;
+  height: auto !important;
+  filter: none !important;
+}
+
+.test-header .stats-label {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 5px !important;
+  padding: 2px 7px !important;
+  font-size: 0.58rem !important;
+  font-weight: 800 !important;
+  color: #cbd5e1 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+}
+
+.test-header .stats-value {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 2px !important;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  color: #38bdf8 !important;
+  line-height: 1 !important;
+}
+
+.test-header .stats-total,
+.test-header .stats-den {
+  font-size: 0.65rem !important;
+  color: #64748b !important;
+  font-weight: 500 !important;
+}
+
+.test-header .stats-value--fraction {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  min-width: auto !important;
+  box-shadow: none !important;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  color: #38bdf8 !important;
+}
+
+.test-header .stats-value--fraction .stats-num {
+  display: inline !important;
+  width: auto !important;
+  border-bottom: none !important;
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+  font-size: 0.72rem !important;
+  color: #38bdf8 !important;
+}
+
+.test-header .stats-value--fraction .stats-den {
+  display: inline !important;
+  width: auto !important;
+  font-size: 0.65rem !important;
+  color: #64748b !important;
+}
+
+.test-header .stats-value--fraction .stats-den::before {
+  content: " / " !important;
+}
+
 .test-title {
   font-size: 0.85rem;
   font-weight: 700;

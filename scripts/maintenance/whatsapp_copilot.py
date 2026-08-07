@@ -73,38 +73,32 @@ SCHEDULE = [
 # ─────────────────────────────────────────────────────────────────────────────
 POST_TEMPLATES = {
     "r/SideProject": {
-        "title": "I work with SQL every day. Whenever I try helping beginners get into data, the #1 thing that stops them isn't the SQL — it's the Day 1 setup wall. So I built an in-browser sandbox with synced audio.",
+        "title": "I kept watching people quit SQL before they ever wrote a query — so I built the thing I wish existed",
         "body": """Hey r/SideProject,
 
-I work with data daily, and over the past couple of years I've helped several friends and junior colleagues try to learn SQL. Across almost every single person, I noticed the exact same issue:
+I've spent the last few years working with data, and on the side I've mentored a bunch of people trying to break into the field. Different backgrounds, different goals, but almost everyone hit the same wall in the same order:
 
-They don’t quit because queries are confusing. They quit before they ever get to write one.
+Day 1 is installation, not SQL. Postgres or MySQL, PATH variables, port 5432 already in use, some permissions error nobody explains well. I've watched genuinely motivated people close the laptop before writing a single SELECT.
 
-Here is what usually happens:
+Tutorials feel like progress but aren't. Watching someone else write a JOIN makes total sense in the moment. Then you open a blank editor yourself and just... stare at it. Watching isn't the same muscle as writing.
 
-Instead of exploring data, their first afternoon is spent fighting local setup — installing PostgreSQL or MySQL, troubleshooting port 5432 conflicts, configuring PATH variables, and dealing with permission errors. By the time their terminal finally connects, their energy is gone and they close the laptop.
+Interview prep turns into schema-hunting. Instead of practicing CTEs and window functions (the stuff that actually gets asked), people burn an hour building fake tables just to have something to query against.
 
-When they try video tutorials to avoid setup, another problem hits: watching someone else write JOINs feels easy while watching, but the second they open a blank editor on their own, they have no idea where to start. Watching someone code doesn't build muscle memory.
+None of these are "SQL is hard" problems. They're friction problems. So I built something to remove them:
 
-And when preparing for actual technical interviews, they waste more time hunting down realistic schemas and mocking up tables than practicing the actual logic that gets tested (like CTEs and window functions).
+👉 https://www.manodemy.com/sql/day01.html
 
-I wanted an environment where someone can just sit down and immediately write queries with zero friction:
-https://www.manodemy.com/sql/day01.html
+No install, no signup. A real retail business dataset is already loaded in the browser. There's audio narration explaining the concept while the query types itself out live, then you take over — edit it, run it, watch the rows actually change.
 
-How it works:
-- Zero installation, zero signup.
-- A real retail business database is already loaded directly in your browser.
-- Audio narration explains the concept while the query writes itself in sync with live typewriter animations.
-- You can immediately edit the query, run it, and see the live data rows filter on your screen.
+First two days are free, no account needed.
 
-Days 1 and 2 are 100% free with no login or card needed.
+Genuinely want feedback from people who've been through this grind, not just "nice idea" comments:
 
-I'd genuinely love feedback from the community:
-1. Does removing local database setup make daily practice easier to stick with?
-2. Does the audio narration synced with live code typing help query logic click faster?
-3. What specific real-world schemas or interview scenarios would make this most useful for you?
+1. Does killing the local setup step actually change whether someone sticks with it day 3, 4, 5 — or does the friction just relocate somewhere else?
+2. Does the synced audio + typewriter effect help logic click, or does it wear off fast and become noise?
+3. If you're prepping for interviews, what schema/scenario would make you actually come back and use this over LeetCode SQL or a Postgres Docker container?
 
-I'll be around in the comments all day — really appreciate any thoughts or feedback!"""
+I'll be in the comments all day — happy to answer questions or take it apart."""
     },
     "r/SQL": {
         "title": "Built an in-browser SQLite practice sandbox with real retail schemas (no installation) — feedback from SQL practitioners wanted",

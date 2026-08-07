@@ -73,36 +73,36 @@ SCHEDULE = [
 # ─────────────────────────────────────────────────────────────────────────────
 POST_TEMPLATES = {
     "r/SideProject": {
-        "title": "Most coding courses spend the first three hours on installation instead of data. So I spent the last few months building a zero-setup browser sandbox where you start writing queries immediately.",
+        "title": "I've spent years working in data and mentoring beginners. The #1 reason people quit isn't because SQL is hard — it's the Day 1 setup wall. So I built an in-browser sandbox with synced audio.",
         "body": """Hey r/SideProject,
 
-Having spent years working with data and mentoring beginners, I’ve noticed the exact same pattern repeat itself over and over again.
+I've spent over 3 years working with data, and during that time I've also mentored people trying to break into the field. Across dozens of sessions, I kept watching the exact same pattern repeat itself: people didn't quit because SQL was hard. They quit before they ever got to the actual learning part.
 
-People don’t quit learning SQL because the concepts are hard. They quit because the barrier to entry is completely backward:
+Three things kept killing momentum every time:
 
-1. The Day 1 Setup Wall: Instead of exploring data, learners spend hours dealing with terminal errors, installing local database servers, configuring environment variables, and debugging port issues before writing their very first query.
+1. The Day 1 setup wall. Before writing a single query, learners spend hours installing local database servers, configuring environment variables, and fighting port conflicts. I've watched eager students give up entirely at this stage having never written real SQL yet.
 
-2. The Tutorial Trap: Watching someone write queries on YouTube feels productive in the moment, but the second you stare at a blank editor on your own, the knowledge evaporates. Real intuition only comes from hands-on execution.
+2. The tutorial trap. Watching someone write queries on YouTube feels productive in the moment, but the second you open a blank editor on your own, none of it transfers. Watching simply isn't the same skill as writing.
 
-3. The Interview Prep Scramble: When prepping for real interviews, people waste more time hunting for realistic schemas and setting up mock tables than actually practicing the queries that matter (like CTEs and window functions).
+3. The interview prep scramble. When people prepare for real interviews, they burn more time hunting for realistic schemas and setting up mock tables than actually practicing the queries that get asked — like CTEs and window functions.
 
-I wanted to remove every single piece of friction and build an environment focused 100% on active practice:
+I got tired of watching people hit the same wall in session after session, so I spent the last few months building the environment I kept wishing existed:
 https://www.manodemy.com/sql/day01.html
 
-There is zero installation and no signup required. When you open the page:
-- The database and business schema are already loaded in your browser.
-- Audio narration explains the core concept while the query writes itself in sync with live typewriter animations.
-- You can immediately modify the query, hit run, and see the data rows filter and update in real time.
+No installation, no signup. When you open it:
+- The database and a real retail business schema are already loaded in your browser.
+- Audio narration explains the concept while the query types itself in sync, live.
+- You can immediately edit the query, run it, and watch the result rows update in real time.
 
-Days 1 and 2 are 100% free with no login or credit card.
+Days 1 and 2 are fully free, no login or card needed.
 
-I’d love to hear your honest thoughts from anyone who has been through the learning journey:
+I'd genuinely love feedback from people who've been through this journey:
 
-1. Does jumping straight into queries without local setup make daily practice easier to stick with?
-2. Does the audio and code typing together help complex query logic click faster?
-3. What specific real-world schemas or interview scenarios would make this even more valuable for you?
+1. Does skipping local setup actually change whether someone sticks with daily practice, or does friction just show up somewhere else?
+2. Does the synced audio + typewriter help complex logic click faster, or does it feel like a gimmick once the novelty wears off?
+3. What real interview scenarios or schema types would make this genuinely useful to practice against?
 
-Really appreciate your time and feedback — I'll be around in the comments all day to answer questions and make improvements!"""
+I'll be in the comments all day — happy to answer questions and take constructive feedback!"""
     },
     "r/SQL": {
         "title": "Built an in-browser SQLite practice sandbox with real retail schemas (no installation) — feedback from SQL practitioners wanted",

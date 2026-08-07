@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-whatsapp_copilot.py — Manodemy Reddit Launch WhatsApp Co-Pilot
+reddit_copilot.py — Manodemy Reddit Launch Telegram Co-Pilot
 
 WHAT THIS DOES:
   1. Sends you a 15-minute advance warning before every scheduled Reddit action.
@@ -10,23 +10,16 @@ WHAT THIS DOES:
 
 POSITIONING STRATEGY (IMPORTANT):
   All posts are framed as "Product Beta Testing & Open Feedback" — NOT as self-promotion.
-  This is the authentic, developer-community-approved way to get genuine engagement on Reddit.
-
-HOW TO SET UP WhatsApp ALERTS (CallMeBot — Free, No Credit Card):
-  Step 1: Open WhatsApp and send this message to +34 644 55 15 75:
-          "I allow callmebot to send me messages"
-  Step 2: You will receive your API_KEY in reply.
-  Step 3: Paste your API_KEY below where it says CALLMEBOT_API_KEY = "YOUR_KEY_HERE"
 
 USAGE:
+  # Test that Telegram alerts are working:
+  python whatsapp_copilot.py --mode test
+
   # Run the full 7-day scheduled copilot:
-  python whatsapp_copilot.py --mode schedule
+  python whatsapp_copilot.py --mode schedule --launch-date 2026-08-09
 
   # Monitor a live Reddit post for new comments:
   python whatsapp_copilot.py --mode monitor --post "https://www.reddit.com/r/SideProject/comments/abc123/..."
-
-  # Test that WhatsApp alerts are working:
-  python whatsapp_copilot.py --mode test
 """
 
 import argparse
@@ -38,10 +31,10 @@ import urllib.request
 import sys
 
 # ─────────────────────────────────────────────────────────────────────────────
-# CONFIG — Set your details here
+# CONFIG — Telegram Bot credentials
 # ─────────────────────────────────────────────────────────────────────────────
-WHATSAPP_PHONE = "+918438783021"       # Your WhatsApp number (with country code)
-CALLMEBOT_API_KEY = "YOUR_KEY_HERE"   # Get this free from CallMeBot (see setup above)
+TELEGRAM_BOT_TOKEN = "8788402165:AAGA0-rjfsFjY48mHAB-WMfk0mSvoUNsiNQ"
+TELEGRAM_CHAT_ID   = "8289100906"
 
 REDDIT_POLL_INTERVAL = 25             # Seconds between Reddit checks (keep >= 25)
 USER_AGENT = "ManodemyCopilot/1.0 (read-only; personal launch tool)"
@@ -153,22 +146,21 @@ REPLY_TEMPLATES = {
 # ─────────────────────────────────────────────────────────────────────────────
 # WHATSAPP SENDER (CallMeBot — Free API)
 # ─────────────────────────────────────────────────────────────────────────────
-def send_whatsapp(message: str) -> bool:
-    """Send a WhatsApp message via CallMeBot free API."""
-    if CALLMEBOT_API_KEY == "YOUR_KEY_HERE":
-        print("\n[WHATSAPP SIMULATION — API key not configured yet]")
-        print("─" * 60)
-        print(message)
-        print("─" * 60)
-        return True
-
-    encoded = urllib.parse.quote(message)
-    url = f"https://api.callmebot.com/whatsapp.php?phone={WHATSAPP_PHONE}&text={encoded}&apikey={CALLMEBOT_API_KEY}"
+def send_telegram(message: str) -> bool:
+    """Send a Telegram message via Bot API — instant & free."""
+    import json as _json
+    data = _json.dumps({'chat_id': TELEGRAM_CHAT_ID, 'text': message}).encode()
+    req = urllib.request.Request(
+        f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
+        data=data,
+        headers={'Content-Type': 'application/json'}
+    )
     try:
-        with urllib.request.urlopen(url, timeout=10) as resp:
-            return resp.status == 200
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            result = _json.loads(resp.read())
+            return result.get('ok', False)
     except Exception as e:
-        print(f"[WhatsApp error] {e}")
+        print(f"[Telegram error] {e}")
         return False
 
 
@@ -298,7 +290,7 @@ def monitor_post(post_url: str):
     seen_ids = {c["id"] for c in existing}
     print(f"Baselined {len(seen_ids)} existing comments. Watching for new ones...\n")
 
-    send_whatsapp(f"📡 COMMENT MONITOR ACTIVE!\n\nI am now watching your Reddit post every {REDDIT_POLL_INTERVAL} seconds.\nYou will get an instant WhatsApp the moment someone comments!\n\nPost: {post_url}")
+    send_telegram(f"📡 COMMENT MONITOR ACTIVE!\n\nI am now watching your Reddit post every {REDDIT_POLL_INTERVAL} seconds.\nYou will get an instant WhatsApp the moment someone comments!\n\nPost: {post_url}")
 
     try:
         while True:
@@ -310,7 +302,7 @@ def monitor_post(post_url: str):
                     category = classify_comment(c["body"])
                     msg = build_comment_alert(c["author"], c["body"], c["permalink"], category)
                     print(f"\n🔔 NEW COMMENT from u/{c['author']} [{category}]")
-                    send_whatsapp(msg)
+                    send_telegram(msg)
     except KeyboardInterrupt:
         print("\nMonitoring stopped.")
 
@@ -353,7 +345,7 @@ def run_schedule(launch_date: datetime.date):
                     continue
 
                 print(f"\n[{now.strftime('%H:%M IST')}] Firing event: {etype} for {subreddit}")
-                send_whatsapp(msg)
+                send_telegram(msg)
 
         time.sleep(30)
 
@@ -362,7 +354,7 @@ def run_schedule(launch_date: datetime.date):
 # ENTRY POINT
 # ─────────────────────────────────────────────────────────────────────────────
 def main():
-    parser = argparse.ArgumentParser(description="Manodemy WhatsApp Launch Co-Pilot")
+    parser = argparse.ArgumentParser(description="Manodemy Telegram Launch Co-Pilot")
     parser.add_argument("--mode", choices=["schedule", "monitor", "test"], required=True,
                         help="schedule=run 7-day plan | monitor=watch a live post | test=send test alert")
     parser.add_argument("--post", help="Reddit post URL for monitor mode")
@@ -370,9 +362,9 @@ def main():
     args = parser.parse_args()
 
     if args.mode == "test":
-        print("Sending test WhatsApp message...")
-        send_whatsapp("✅ MANODEMY CO-PILOT CONNECTED!\n\nYour WhatsApp launch assistant is active and ready.\nYou will receive:\n- 15-min advance launch warnings\n- Step-by-step post instructions\n- Instant comment alerts with 1-tap replies\n\nReady for launch! 🚀")
-        print("Test complete!")
+        print("Sending test Telegram message...")
+        ok = send_telegram("MANODEMY CO-PILOT CONNECTED!\n\nYour Telegram Reddit Launch Assistant is active and ready.\nYou will receive:\n- 15-min advance launch warnings\n- Step-by-step post instructions\n- Instant comment alerts with 1-tap replies\n\nReady for launch! Let's make some money!")
+        print("Test complete! Message sent:", ok)
 
     elif args.mode == "monitor":
         if not args.post:

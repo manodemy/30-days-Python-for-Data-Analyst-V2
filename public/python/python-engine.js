@@ -160,9 +160,26 @@ function initCustomDropdowns() {
           `;
         } else if (option) {
           if (select.id === 'daySelect') {
-            const dayMeta = window.COURSE_MANIFEST.find(d => d.id === option.value);
-            const dayNum = dayMeta ? String(dayMeta.day).padStart(2, '0') : '01';
-            textSpan.textContent = `Day ${dayNum}`;
+            const allDays = window.COURSE_MANIFEST_60 || [];
+            const activeDay = allDays.find(d => d.id === option.value) || { track: 'python', globalDay: 31 };
+            const svgIcons = window.SVG_TRACK_ICONS || {};
+            const iconHtml = svgIcons[activeDay.track] || svgIcons.python || '🐍';
+
+            const parentDot = document.querySelector('.day-picker-dot');
+            if (parentDot) {
+              parentDot.innerHTML = iconHtml;
+              parentDot.style.background = 'transparent';
+              parentDot.style.boxShadow = 'none';
+              parentDot.style.width = 'auto';
+              parentDot.style.height = 'auto';
+            }
+
+            textSpan.innerHTML = `
+              <span style="display:inline-flex;align-items:center;gap:6px;">
+                ${iconHtml}
+                <strong>Day ${String(activeDay.globalDay || 31).padStart(2, '0')}</strong>
+              </span>
+            `;
           } else {
             textSpan.textContent = option.text;
           }
@@ -175,57 +192,84 @@ function initCustomDropdowns() {
     function populateOptions() {
       optionsMenu.innerHTML = '';
       const isPaid = isPaidUser();
+      const allDays = window.COURSE_MANIFEST_60 || [];
+      const svgIcons = window.SVG_TRACK_ICONS || {};
 
-      Array.from(select.options).forEach((opt, idx) => {
-        const optionItem = document.createElement('div');
-        optionItem.className = `custom-select-option${opt.selected ? ' selected' : ''}`;
-        
-        if (select.id === 'topicSelect') {
-          const slideIdx = parseInt(opt.value);
-          const duration = getSlideDurationString(slideIdx);
-          const slide = currentDayData && currentDayData.slides && currentDayData.slides[slideIdx];
-          const cleanedTitle = slide ? slide.title.replace(/^\d+\.\s*/, '') : opt.text;
-          optionItem.innerHTML = `
-            <span class="option-title">Topic 0${slideIdx + 1}: ${cleanedTitle}</span>
-            <span class="option-duration">${duration}</span>
-          `;
-        } else if (select.id === 'daySelect') {
-          const isLocked = (idx >= 1 && !isPaid); // Python Day 01 is free (idx 0), Days 02+ locked
-          if (isLocked) {
-            optionItem.classList.add('is-locked');
-          }
-          optionItem.innerHTML = `
-            <span class="option-day-tag">
-              <span>${opt.text}</span>
-            </span>
-            ${isLocked ? '<span class="day-lock-badge" title="Pro subscription required">🔒</span>' : (idx === 0 ? '<span class="day-free-badge">FREE</span>' : '')}
-          `;
-        } else {
-          optionItem.textContent = opt.text;
-        }
-        
-        optionItem.dataset.value = opt.value;
-        optionItem.addEventListener('click', (e) => {
-          e.stopPropagation();
+      if (select.id === 'daySelect' && allDays.length > 0) {
+        const tracks = [
+          { key: 'sql', label: '🗄️ SQL Mastery (Days 01–18)', days: allDays.filter(d => d.track === 'sql') },
+          { key: 'excel', label: '📊 Advanced Excel & BI (Days 19–30)', days: allDays.filter(d => d.track === 'excel') },
+          { key: 'python', label: '🐍 Python for Data Analysis (Days 31–60)', days: allDays.filter(d => d.track === 'python') }
+        ];
 
-          if (select.id === 'daySelect') {
-            const isLocked = (idx >= 1 && !isPaidUser());
-            if (isLocked) {
-              window.location.href = '../index.html#pricing?locked=true';
-              return;
-            }
-          }
+        tracks.forEach(trackGroup => {
+          const header = document.createElement('div');
+          header.className = 'dropdown-section-header';
+          header.innerHTML = `<span>${trackGroup.label}</span>`;
+          optionsMenu.appendChild(header);
 
-          select.value = opt.value;
-          select.dispatchEvent(new Event('change'));
-          optionsMenu.classList.remove('open');
-          wrapper.classList.remove('open');
-          trigger.classList.remove('open');
+          trackGroup.days.forEach(d => {
+            const isLocked = (!d.free && !isPaid);
+            const isSelected = (select.value === d.id || (select.value === 'pyDay01' && d.id === 'pyDay01'));
+            const optionItem = document.createElement('div');
+            optionItem.className = `custom-select-option${isSelected ? ' selected' : ''}${isLocked ? ' is-locked' : ''}`;
+            
+            const iconSvg = svgIcons[d.track] || '';
+            const dayNumStr = String(d.globalDay).padStart(2, '0');
+
+            optionItem.innerHTML = `
+              <span class="option-day-tag">
+                <span class="track-icon-wrap">${iconSvg}</span>
+                <span style="display:flex;flex-direction:column;gap:1px;overflow:hidden;">
+                  <strong>Day ${dayNumStr}</strong>
+                  <span class="option-day-title">${d.title}</span>
+                </span>
+              </span>
+              ${isLocked ? '<span class="day-lock-badge" title="Pro subscription required">🔒</span>' : '<span class="day-free-badge">FREE</span>'}
+            `;
+
+            optionItem.dataset.value = d.id;
+            optionItem.addEventListener('click', (e) => {
+              e.stopPropagation();
+              if (isLocked) {
+                window.location.href = '../index.html#pricing?locked=true';
+                return;
+              }
+              window.location.href = d.url;
+            });
+            optionsMenu.appendChild(optionItem);
+          });
         });
-        optionsMenu.appendChild(optionItem);
-      });
-        optionsMenu.appendChild(optionItem);
-      });
+      } else {
+        Array.from(select.options).forEach((opt) => {
+          const optionItem = document.createElement('div');
+          optionItem.className = `custom-select-option${opt.selected ? ' selected' : ''}`;
+          
+          if (select.id === 'topicSelect') {
+            const slideIdx = parseInt(opt.value);
+            const duration = getSlideDurationString(slideIdx);
+            const slide = currentDayData && currentDayData.slides && currentDayData.slides[slideIdx];
+            const cleanedTitle = slide ? slide.title.replace(/^\d+\.\s*/, '') : opt.text;
+            optionItem.innerHTML = `
+              <span class="option-title">Topic 0${slideIdx + 1}: ${cleanedTitle}</span>
+              <span class="option-duration">${duration}</span>
+            `;
+          } else {
+            optionItem.textContent = opt.text;
+          }
+          
+          optionItem.dataset.value = opt.value;
+          optionItem.addEventListener('click', (e) => {
+            e.stopPropagation();
+            select.value = opt.value;
+            select.dispatchEvent(new Event('change'));
+            optionsMenu.classList.remove('open');
+            wrapper.classList.remove('open');
+            trigger.classList.remove('open');
+          });
+          optionsMenu.appendChild(optionItem);
+        });
+      }
       updateTriggerText();
     }
     

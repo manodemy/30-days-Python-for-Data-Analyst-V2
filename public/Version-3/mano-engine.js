@@ -4164,7 +4164,27 @@ function initCustomDropdowns() {
         } else if (option) {
           if (select.id === 'daySelect') {
             const dayNum = option.value.replace('day', '');
-            textSpan.textContent = `Day ${dayNum}`;
+            const allDays = window.COURSE_MANIFEST_60 || [];
+            const activeDay = allDays.find(d => d.id === option.value) || { track: 'sql' };
+            const svgIcons = window.SVG_TRACK_ICONS || {};
+            const iconHtml = svgIcons[activeDay.track] || svgIcons.sql || '🗄️';
+
+            // Also update the dot in parent header if present
+            const parentDot = document.querySelector('.day-picker-dot');
+            if (parentDot) {
+              parentDot.innerHTML = iconHtml;
+              parentDot.style.background = 'transparent';
+              parentDot.style.boxShadow = 'none';
+              parentDot.style.width = 'auto';
+              parentDot.style.height = 'auto';
+            }
+
+            textSpan.innerHTML = `
+              <span style="display:inline-flex;align-items:center;gap:6px;">
+                ${iconHtml}
+                <strong>Day ${String(dayNum).padStart(2, '0')}</strong>
+              </span>
+            `;
           } else {
             textSpan.textContent = option.text;
           }
@@ -4176,72 +4196,88 @@ function initCustomDropdowns() {
 
     function populateOptions() {
       optionsMenu.innerHTML = '';
-      Array.from(select.options).forEach((opt) => {
-        const optionItem = document.createElement('div');
-        optionItem.className = `custom-select-option${opt.selected ? ' selected' : ''}`;
+      const isPaid = (typeof isPaidUser === 'function') ? isPaidUser() : false;
+      const allDays = window.COURSE_MANIFEST_60 || [];
+      const svgIcons = window.SVG_TRACK_ICONS || {};
 
-        if (select.id === 'topicSelect') {
-          const slideIdx = parseInt(opt.value, 10);
-          const duration = getSlideDurationString(slideIdx);
-          const slide = COURSE_CONFIG.slides ? COURSE_CONFIG.slides[slideIdx] : null;
-          const cleanedTitle = slide ? slide.title.replace(/^(Topic\s+\d+:\s*|\d+\.\s*)/i, '') : opt.text;
-          const multiTopic4 = COURSE_CONFIG.slides && COURSE_CONFIG.slides.length > 1;
-          optionItem.innerHTML = `
-            <span class="option-title">${multiTopic4 ? `Topic 0${slideIdx + 1}: ` : ''}${cleanedTitle}</span>
-            <span class="option-duration">${duration}</span>
-          `;
-        } else if (select.id === 'daySelect') {
-          const match = opt.text.match(/^(\S+)\s+(Day\s+\d+):\s*(.*)$/);
-          const dayNum = parseInt(opt.value.replace('day', ''), 10);
-          const isPaid = (typeof isPaidUser === 'function') ? isPaidUser() : false;
-          const isLocked = (dayNum >= 3 && !isPaid);
+      if (select.id === 'daySelect' && allDays.length > 0) {
+        // Group all 60 days into 3 categorized sections
+        const tracks = [
+          { key: 'sql', label: '🗄️ SQL Mastery (Days 01–18)', days: allDays.filter(d => d.track === 'sql') },
+          { key: 'excel', label: '📊 Advanced Excel & BI (Days 19–30)', days: allDays.filter(d => d.track === 'excel') },
+          { key: 'python', label: '🐍 Python for Data Analysis (Days 31–60)', days: allDays.filter(d => d.track === 'python') }
+        ];
 
-          if (isLocked) {
-            optionItem.classList.add('is-locked');
-          }
+        tracks.forEach(trackGroup => {
+          const header = document.createElement('div');
+          header.className = 'dropdown-section-header';
+          header.innerHTML = `<span>${trackGroup.label}</span>`;
+          optionsMenu.appendChild(header);
 
-          if (match) {
+          trackGroup.days.forEach(d => {
+            const isLocked = (!d.free && !isPaid);
+            const isSelected = (select.value === d.id || (select.value === 'day01' && d.id === 'day01'));
+            const optionItem = document.createElement('div');
+            optionItem.className = `custom-select-option${isSelected ? ' selected' : ''}${isLocked ? ' is-locked' : ''}`;
+            
+            const iconSvg = svgIcons[d.track] || '';
+            const dayNumStr = String(d.globalDay).padStart(2, '0');
+
             optionItem.innerHTML = `
               <span class="option-day-tag">
-                <span class="option-emoji">${match[1]}</span>
+                <span class="track-icon-wrap">${iconSvg}</span>
                 <span style="display:flex;flex-direction:column;gap:1px;overflow:hidden;">
-                  <strong>${match[2]}</strong>
-                  <span class="option-day-title">${match[3]}</span>
+                  <strong>Day ${dayNumStr}</strong>
+                  <span class="option-day-title">${d.title}</span>
                 </span>
               </span>
-              ${isLocked ? '<span class="day-lock-badge" title="Pro subscription required">🔒</span>' : (dayNum <= 2 ? '<span class="day-free-badge">FREE</span>' : '')}
+              ${isLocked ? '<span class="day-lock-badge" title="Pro subscription required">🔒</span>' : '<span class="day-free-badge">FREE</span>'}
+            `;
+
+            optionItem.dataset.value = d.id;
+            optionItem.addEventListener('click', (e) => {
+              e.stopPropagation();
+              if (isLocked) {
+                window.location.href = '../index.html#pricing?locked=true';
+                return;
+              }
+              window.location.href = d.url;
+            });
+            optionsMenu.appendChild(optionItem);
+          });
+        });
+      } else {
+        // Topic select rendering
+        Array.from(select.options).forEach((opt) => {
+          const optionItem = document.createElement('div');
+          optionItem.className = `custom-select-option${opt.selected ? ' selected' : ''}`;
+
+          if (select.id === 'topicSelect') {
+            const slideIdx = parseInt(opt.value, 10);
+            const duration = getSlideDurationString(slideIdx);
+            const slide = COURSE_CONFIG.slides ? COURSE_CONFIG.slides[slideIdx] : null;
+            const cleanedTitle = slide ? slide.title.replace(/^(Topic\s+\d+:\s*|\d+\.\s*)/i, '') : opt.text;
+            const multiTopic4 = COURSE_CONFIG.slides && COURSE_CONFIG.slides.length > 1;
+            optionItem.innerHTML = `
+              <span class="option-title">${multiTopic4 ? `Topic 0${slideIdx + 1}: ` : ''}${cleanedTitle}</span>
+              <span class="option-duration">${duration}</span>
             `;
           } else {
-            optionItem.innerHTML = `
-              <span>${opt.text}</span>
-              ${isLocked ? '<span class="day-lock-badge" title="Pro subscription required">🔒</span>' : (dayNum <= 2 ? '<span class="day-free-badge">FREE</span>' : '')}
-            `;
-          }
-        } else {
-          optionItem.textContent = opt.text;
-        }
-
-        optionItem.dataset.value = opt.value;
-        optionItem.addEventListener('click', (e) => {
-          e.stopPropagation();
-
-          if (select.id === 'daySelect') {
-            const dayNum = parseInt(opt.value.replace('day', ''), 10);
-            const isPaid = (typeof isPaidUser === 'function') ? isPaidUser() : false;
-            if (dayNum >= 3 && !isPaid) {
-              window.location.href = '../index.html#pricing?locked=true';
-              return;
-            }
+            optionItem.textContent = opt.text;
           }
 
-          select.value = opt.value;
-          select.dispatchEvent(new Event('change'));
-          optionsMenu.classList.remove('open');
-          wrapper.classList.remove('open');
-          trigger.classList.remove('open');
+          optionItem.dataset.value = opt.value;
+          optionItem.addEventListener('click', (e) => {
+            e.stopPropagation();
+            select.value = opt.value;
+            select.dispatchEvent(new Event('change'));
+            optionsMenu.classList.remove('open');
+            wrapper.classList.remove('open');
+            trigger.classList.remove('open');
+          });
+          optionsMenu.appendChild(optionItem);
         });
-        optionsMenu.appendChild(optionItem);
-      });
+      }
 
       const isSingleTopic = (select.id === 'topicSelect' && (!COURSE_CONFIG.slides || COURSE_CONFIG.slides.length <= 1));
 

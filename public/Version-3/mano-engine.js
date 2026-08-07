@@ -2166,6 +2166,7 @@ function startTestTimer() {
     if (testSecondsRemaining <= 0) {
       clearInterval(testTimerInterval);
       clearInterval(testAutosaveIntervalId);
+      window._testAutoSubmit = true;
       submitTest();
     }
   }, 1000);
@@ -2176,223 +2177,197 @@ function startTestTimer() {
   }, 15000);
 }
 
-function updateTestTimerDisplay() {
-  const m = Math.floor(testSecondsRemaining / 60);
-  const s = testSecondsRemaining % 60;
-  const display = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-  const el = document.getElementById('testTimer');
-  el.textContent = display;
-  if (testSecondsRemaining <= 300) el.classList.add('warning');
-  else el.classList.remove('warning');
-}
-
-function switchTestQuestion(idx) {
-  // Save current answer
-  saveCurrentTestAnswer();
-
-  testCurrentQ = idx;
-  renderTestQuestion(idx);
-
-  // Update sidebar
-  document.querySelectorAll('.test-q-btn').forEach((btn, i) => {
-    btn.classList.remove('current');
-    if (i === idx) btn.classList.add('current');
-  });
-}
-
-function saveCurrentTestAnswer() {
-  if (!testEditor) return;
-  const val = testEditor.getValue().trim();
-  testAnswers[testCurrentQ].answer = val;
-  if (val && val !== '-- Write your answer here') {
-    testAnswers[testCurrentQ].attempted = true;
-    document.getElementById(`tqBtn${testCurrentQ}`).classList.add('attempted');
-  }
-  updateTestProgress();
-}
-
-function renderTestQuestion(idx) {
-  const q = COURSE_CONFIG.testQuestions[idx];
-  document.getElementById('testQuestionPrompt').innerHTML = `<strong>Q${q.id}.</strong> ${q.prompt}`;
-  document.getElementById('testQCounter').textContent = `Q${idx + 1} / 25`;
-
-  // Load saved answer or default
-  const saved = testAnswers[idx].answer;
-  testEditor.setValue(saved || '-- Write your answer here\n');
-  testEditor.focus();
-
-  // Clear output
-  document.getElementById('testOutput').innerHTML = '<div class="output-label">Terminal Output</div><span class="output-success">⚡ Write your query and click \'Run\' to verify your answer!</span>';
-}
-
-function runTestQuery() {
-  if (!testEditor) return;
-  const query = testEditor.getValue().trim();
-  saveCurrentTestAnswer();
-  try {
-    const result = runSQL(query);
-    renderResultTable(result, 'testOutput');
-  } catch (err) {
-    const hint = analyzeQueryError(query, err);
-    renderError(err.message, hint, 'testOutput');
-  }
-}
-
-function clearTestEditor() {
-  if (testEditor) testEditor.setValue('');
-}
-
-function updateTestProgress() {
-  const attempted = testAnswers.filter(a => a.attempted).length;
-  const attemptedCountEl = document.getElementById('testAttemptedCount');
-  if (attemptedCountEl) attemptedCountEl.textContent = attempted;
-
-  const pct = (attempted / 25) * 100;
-  const fillEl = document.getElementById('testProgressFill');
-  if (fillEl) fillEl.style.width = `${pct}%`;
-
-  const testProgressEl = document.getElementById('testProgress');
-  if (testProgressEl) testProgressEl.textContent = `Attempted: ${attempted} / 25`;
-}
-
 function submitTest() {
-  saveCurrentTestAnswer();
-  clearInterval(testTimerInterval);
-  clearInterval(testAutosaveIntervalId);
-  testAutosaveIntervalId = null;
-  testSubmitted = true;
+  const day = (typeof currentDay !== 'undefined' && currentDay) ? currentDay : 'day01';
+  const submitBtn = document.getElementById('submitTestBtn');
 
-  // Disable further editing
-  document.getElementById('submitTestBtn').disabled = true;
+  // 1. Unattempted Questions Warning (Bypassed if timer auto-submitted)
+  const unattempted = (testAnswers || []).filter(a => !a || !a.attempted).length;
+  if (unattempted > 0 && !window._testAutoSubmit) {
+    const msg = `You have ${unattempted} unanswered question${unattempted > 1 ? 's' : ''} remaining out of 25.\n\nAre you sure you want to submit your test now?`;
+    if (!confirm(msg)) return;
+  }
+  window._testAutoSubmit = false;
 
-  // Grade each question
-  let totalCorrect = 0;
-  const results = [];
+  // 2. Immediate Visual Loading Feedback & Disable Double Submit
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.textContent = '⏳ Grading 25 Questions...';
+  }
 
-  COURSE_CONFIG.testQuestions.forEach((q, i) => {
-    const studentQuery = testAnswers[i].answer;
-    let correct = false;
-    let gradingResult = null;
+  // 3. Asynchronous Yield for UI Repaint before heavy WASM grading
+  setTimeout(() => {
+    try {
+      saveCurrentTestAnswer();
+      if (typeof testTimerInterval !== 'undefined') clearInterval(testTimerInterval);
+      if (typeof testAutosaveIntervalId !== 'undefined' && testAutosaveIntervalId) {
+        clearInterval(testAutosaveIntervalId);
+        testAutosaveIntervalId = null;
+      }
+      testSubmitted = true;
 
-    if (studentQuery && studentQuery.trim() !== '' && studentQuery !== '-- Write your answer here') {
-      try {
-        gradingResult = window.gradeSubmission(studentQuery, q, db);
-        correct = gradingResult.passed;
-      } catch (e) {
-        correct = false;
+      // 4. Engine Health Check
+      if (typeof db === 'undefined' || !db) {
+        throw new Error('Database engine is initializing. Please wait a few seconds and retry.');
+      }
+
+      let totalCorrect = 0;
+      const results = [];
+      const questions = (COURSE_CONFIG && COURSE_CONFIG.testQuestions) ? COURSE_CONFIG.testQuestions : [];
+
+      // 5. Batch Grade with Try/Catch per question
+      questions.forEach((q, i) => {
+        const ansObj = (testAnswers && testAnswers[i]) ? testAnswers[i] : { answer: '', attempted: false };
+        const studentQuery = (ansObj.answer || '').trim();
+        let correct = false;
+        let gradingResult = null;
+
+        if (studentQuery !== '' && studentQuery !== '-- Write your answer here' && studentQuery !== '-- Write your query here\n') {
+          try {
+            if (window.gradeSubmission) {
+              gradingResult = window.gradeSubmission(studentQuery, q, db);
+              correct = !!(gradingResult && gradingResult.passed);
+            }
+          } catch (qErr) {
+            console.warn(`[Manodemy] Question ${i + 1} grading error:`, qErr);
+            correct = false;
+          }
+        }
+
+        if (correct) totalCorrect++;
+        results.push({
+          qId: q.id || (i + 1),
+          correct,
+          studentQuery,
+          attempted: !!ansObj.attempted,
+          referenceSql: q.ref || q.referenceSql || '',
+          prompt: q.prompt || '',
+          angle: (typeof getInterviewersAngle === 'function') ? getInterviewersAngle(day, q.id || (i + 1), q.prompt || '') : 'Evaluates core analytical syntax.'
+        });
+
+        // Update test sidebar indicator
+        const btn = document.getElementById(`tqBtn${i}`);
+        if (btn) {
+          btn.classList.remove('current', 'attempted');
+          btn.classList.add(correct ? 'correct' : (ansObj.attempted ? 'incorrect' : ''));
+        }
+      });
+
+      // 6. Build Scorecard Metrics & Review Cards
+      const elapsed = Math.floor((Date.now() - (testStartTime || Date.now())) / 1000);
+      const elapsedStr = `${Math.floor(elapsed / 60)}m ${elapsed % 60}s`;
+
+      const scoreBig = document.getElementById('scoreBig');
+      if (scoreBig) {
+        scoreBig.textContent = `${totalCorrect} / 25`;
+        scoreBig.className = `score-big ${totalCorrect >= 13 ? 'pass' : 'fail'}`;
+      }
+      const scoreMeta = document.getElementById('scoreMeta');
+      if (scoreMeta) {
+        scoreMeta.textContent = `Time spent: ${elapsedStr} • ${totalCorrect >= 13 ? '✅ PASSED' : '❌ NEEDS REVIEW'}`;
+      }
+
+      let reviewCardsHtml = '';
+      results.forEach(r => {
+        const statusText = r.correct ? 'Correct' : (r.attempted ? 'Incorrect' : 'Skipped');
+        const badgeColor = r.correct ? 'var(--green)' : (r.attempted ? 'var(--red)' : 'var(--text-muted)');
+        const cardClass = r.correct ? 'review-card--correct' : 'review-card--incorrect';
+
+        reviewCardsHtml += `
+          <div class="review-card ${cardClass}">
+            <div class="review-header">
+              <span style="font-weight: 800; color: #a5b4fc;">Question ${String(r.qId).padStart(2, '0')}</span>
+              <span class="status-badge" style="color: ${badgeColor}; font-weight: 800; text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.05em; background: rgba(255,255,255,0.03); padding: 2px 8px; border-radius: 4px;">${statusText}</span>
+            </div>
+            <div class="review-prompt" style="margin-top: 6px; color: #e2e8f0; font-size: 0.8rem; line-height: 1.45;">${r.prompt}</div>
+            <div class="review-queries" style="margin-top: 10px; display: grid; grid-template-columns: 1fr; gap: 8px;">
+              <div>
+                <div style="font-size: 0.65rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;">YOUR ANSWER:</div>
+                <pre style="margin: 4px 0 0 0; padding: 10px; background: #04060c; border: 1px solid rgba(255,255,255,0.05); border-radius: 6px; font-family: var(--mono); font-size: 0.72rem; color: #cbd5e1; white-space: pre-wrap; word-break: break-all;"><code>${escHtml(r.studentQuery || '—')}</code></pre>
+              </div>
+              <div>
+                <div style="font-size: 0.65rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; margin-top: 6px;">REFERENCE SOLUTION:</div>
+                <pre style="margin: 4px 0 0 0; padding: 10px; background: #04060c; border: 1px solid rgba(255,255,255,0.05); border-radius: 6px; font-family: var(--mono); font-size: 0.72rem; color: var(--green); white-space: pre-wrap; word-break: break-all;"><code>${escHtml(r.referenceSql || '—')}</code></pre>
+              </div>
+            </div>
+            <div class="review-angle" style="margin-top: 10px; padding: 8px 12px; background: rgba(124, 58, 237, 0.06); border: 1px solid rgba(124, 58, 237, 0.15); border-radius: 6px; font-size: 0.76rem; line-height: 1.45; color: #c084fc;">
+              💡 <strong>Interviewer's Angle:</strong> ${r.angle}
+            </div>
+          </div>
+        `;
+      });
+
+      const scorecardBody = document.getElementById('scorecardBody');
+      if (scorecardBody) {
+        const table = document.getElementById('scorecardTable');
+        if (table) table.style.display = 'none';
+
+        let cardContainer = document.getElementById('scorecardCards');
+        if (!cardContainer) {
+          cardContainer = document.createElement('div');
+          cardContainer.id = 'scorecardCards';
+          cardContainer.style.maxHeight = '420px';
+          cardContainer.style.overflowY = 'auto';
+          cardContainer.style.paddingRight = '4px';
+          scorecardBody.parentElement.appendChild(cardContainer);
+        }
+        cardContainer.innerHTML = reviewCardsHtml;
+        cardContainer.scrollTop = 0;
+      }
+
+      // 7. Persist to Unified ProgressManager
+      if (window.ProgressManager) {
+        ProgressManager.saveTestAttempt(day, {
+          startedAt: testStartTime,
+          timeRemaining: 0,
+          answers: testAnswers,
+          results: results,
+          submitted: true,
+          score: totalCorrect
+        });
+
+        const dayProgress = ProgressManager.getDayProgress(day);
+        const best = (dayProgress && dayProgress.bestScore !== undefined) ? dayProgress.bestScore : totalCorrect;
+        const bestEl = document.getElementById('testBestScoreCount');
+        if (bestEl) bestEl.textContent = best;
+
+        if (typeof updatePracticeStats === 'function') updatePracticeStats();
+      }
+
+      if (typeof deactivateTakeTestBlink === 'function') deactivateTakeTestBlink();
+
+      const fillEl = document.getElementById('testProgressFill');
+      if (fillEl) {
+        fillEl.style.width = '100%';
+        fillEl.style.background = 'var(--green)';
+      }
+
+      // 8. Open Scorecard Modal
+      const overlay = document.getElementById('scorecardOverlay');
+      if (overlay) overlay.classList.add('open');
+
+    } catch (err) {
+      console.error('[Manodemy] Fatal submitTest error:', err);
+      alert(`⚠️ An error occurred while submitting your test: ${err.message}\n\nPlease try again.`);
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Test';
       }
     }
-
-    if (correct) totalCorrect++;
-    results.push({
-      qId: q.id,
-      correct,
-      studentQuery,
-      attempted: testAnswers[i].attempted,
-      referenceSql: q.ref || q.referenceSql,
-      prompt: q.prompt,
-      angle: getInterviewersAngle(currentDay, q.id, q.prompt)
-    });
-
-    // Update sidebar button
-    const btn = document.getElementById(`tqBtn${i}`);
-    if (btn) {
-      btn.classList.remove('current', 'attempted');
-      btn.classList.add(correct ? 'correct' : (testAnswers[i].attempted ? 'incorrect' : ''));
-    }
-  });
-
-  // Render scorecard
-  const elapsed = Math.floor((Date.now() - testStartTime) / 1000);
-  const elapsedStr = `${Math.floor(elapsed / 60)}m ${elapsed % 60}s`;
-
-  document.getElementById('scoreBig').textContent = `${totalCorrect} / 25`;
-  document.getElementById('scoreBig').className = `score-big ${totalCorrect >= 13 ? 'pass' : 'fail'}`;
-  document.getElementById('scoreMeta').textContent = `Time spent: ${elapsedStr} • ${totalCorrect >= 13 ? '✅ PASSED' : '❌ NEEDS REVIEW'}`;
-
-  // Build review cards HTML
-  let reviewCardsHtml = '';
-  results.forEach(r => {
-    const statusText = r.correct ? 'Correct' : (r.attempted ? 'Incorrect' : 'Skipped');
-    const badgeColor = r.correct ? 'var(--green)' : (r.attempted ? 'var(--red)' : 'var(--text-muted)');
-    const cardClass = r.correct ? 'review-card--correct' : 'review-card--incorrect';
-
-    reviewCardsHtml += `
-      <div class="review-card ${cardClass}">
-        <div class="review-header">
-          <span style="font-weight: 800; color: #a5b4fc;">Question ${String(r.qId).padStart(2, '0')}</span>
-          <span class="status-badge" style="color: ${badgeColor}; font-weight: 800; text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.05em; background: rgba(255,255,255,0.03); padding: 2px 8px; border-radius: 4px;">${statusText}</span>
-        </div>
-        <div class="review-prompt" style="margin-top: 6px; color: #e2e8f0; font-size: 0.8rem; line-height: 1.45;">${r.prompt}</div>
-        <div class="review-queries" style="margin-top: 10px; display: grid; grid-template-columns: 1fr; gap: 8px;">
-          <div>
-            <div style="font-size: 0.65rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;">YOUR ANSWER:</div>
-            <pre style="margin: 4px 0 0 0; padding: 10px; background: #04060c; border: 1px solid rgba(255,255,255,0.05); border-radius: 6px; font-family: var(--mono); font-size: 0.72rem; color: #cbd5e1; white-space: pre-wrap; word-break: break-all;"><code>${escHtml(r.studentQuery || '—')}</code></pre>
-          </div>
-          <div>
-            <div style="font-size: 0.65rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; margin-top: 6px;">REFERENCE SOLUTION:</div>
-            <pre style="margin: 4px 0 0 0; padding: 10px; background: #04060c; border: 1px solid rgba(255,255,255,0.05); border-radius: 6px; font-family: var(--mono); font-size: 0.72rem; color: var(--green); white-space: pre-wrap; word-break: break-all;"><code>${escHtml(r.referenceSql || '—')}</code></pre>
-          </div>
-        </div>
-        <div class="review-angle" style="margin-top: 10px; padding: 8px 12px; background: rgba(124, 58, 237, 0.06); border: 1px solid rgba(124, 58, 237, 0.15); border-radius: 6px; font-size: 0.76rem; line-height: 1.45; color: #c084fc;">
-          💡 <strong>Interviewer's Angle:</strong> ${r.angle}
-        </div>
-      </div>
-    `;
-  });
-
-  // Replaces the table inside scorecard-body with our review cards container
-  const scorecardBody = document.getElementById('scorecardBody');
-  if (scorecardBody) {
-    const table = document.getElementById('scorecardTable');
-    if (table) {
-      table.style.display = 'none'; // Hide the raw table
-    }
-
-    let cardContainer = document.getElementById('scorecardCards');
-    if (!cardContainer) {
-      cardContainer = document.createElement('div');
-      cardContainer.id = 'scorecardCards';
-      cardContainer.style.maxHeight = '420px';
-      cardContainer.style.overflowY = 'auto';
-      cardContainer.style.paddingRight = '4px';
-      scorecardBody.parentElement.appendChild(cardContainer);
-    }
-    cardContainer.innerHTML = reviewCardsHtml;
-  }
-
-  // Save the result to ProgressManager
-  const attempt = {
-    startedAt: testStartTime,
-    timeRemaining: 0,
-    answers: testAnswers,
-    submitted: true,
-    score: totalCorrect
-  };
-  if (window.ProgressManager) {
-    ProgressManager.saveTestAttempt(currentDay, attempt);
-  }
-
-  // Stop the urgent Take Test blink — user has now completed the test
-  deactivateTakeTestBlink();
-
-  // Update best score bestEl
-  const best = ProgressManager.getDayProgress(currentDay).bestScore || totalCorrect;
-  const bestEl = document.getElementById('testBestScoreCount');
-  if (bestEl) bestEl.textContent = best;
-
-  // Make progress bar show 100% completed green
-  const fillEl = document.getElementById('testProgressFill');
-  if (fillEl) {
-    fillEl.style.width = '100%';
-    fillEl.style.background = 'var(--green)';
-  }
-
-  document.getElementById('scorecardOverlay').classList.add('open');
+  }, 30);
 }
 
 function closeScorecard() {
-  document.getElementById('scorecardOverlay').classList.remove('open');
+  const scorecardOverlay = document.getElementById('scorecardOverlay');
+  if (scorecardOverlay) scorecardOverlay.classList.remove('open');
+
+  if (typeof closeTestPortal === 'function') {
+    closeTestPortal();
+  }
+
+  if (typeof updatePracticeStats === 'function') {
+    updatePracticeStats();
+  }
 }
 
 function autosaveTestProgress() {

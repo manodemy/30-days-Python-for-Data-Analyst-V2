@@ -710,23 +710,148 @@ function updateTestProgress() {
   document.getElementById('testProgressFill').style.width = `${(attempted / total) * 100}%`;
 }
 
-function submitTest() {
-  closeTestPortal();
-  openScoreCard();
-}
+async function submitTest() {
+  const day = (typeof currentDay !== 'undefined' && currentDay) ? currentDay : 'py-day-01';
+  const submitBtn = document.getElementById('submitTestBtn');
+  const questions = (currentDayData && currentDayData.testQuestions) ? currentDayData.testQuestions : [];
+  const total = questions.length || 25;
 
-// ── Score Card ────────────────────────────────────────────────
+  // 1. Unattempted confirmation
+  const attemptedCount = Object.keys(testAnswers || {}).length;
+  const unattempted = total - attemptedCount;
+  if (unattempted > 0 && !window._testAutoSubmit) {
+    const msg = `You have ${unattempted} unanswered question${unattempted > 1 ? 's' : ''} remaining out of ${total}.\n\nAre you sure you want to submit your Python test now?`;
+    if (!confirm(msg)) return;
+  }
+  window._testAutoSubmit = false;
 
-function openScoreCard() {
-  window.location.href = '/home.html';
-}
+  // 2. Visual loading feedback
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.textContent = '⏳ Grading Python Tests...';
+  }
 
-function openTestScoreCard() {
-  window.location.href = '/home.html';
+  // 3. Yield to UI thread before Pyodide batch evaluation
+  setTimeout(async () => {
+    try {
+      clearInterval(testTimerInterval);
+      testSubmitted = true;
+
+      let totalPassed = 0;
+      let reviewCardsHtml = '';
+
+      for (let i = 0; i < questions.length; i++) {
+        const q = questions[i];
+        const ansObj = testAnswers[q.id] || { code: '', passed: false };
+        const studentCode = (ansObj.code || '').trim();
+        let passed = !!ansObj.passed;
+        let message = ansObj.message || '';
+
+        // Evaluate if not already evaluated
+        if (!ansObj.passed && studentCode !== '' && studentCode !== '# Write your answer here' && typeof window.gradeSubmission === 'function' && pyodide) {
+          try {
+            const grading = await window.gradeSubmission(studentCode, q, pyodide);
+            passed = !!grading.passed;
+            message = grading.message || '';
+          } catch (e) {
+            passed = false;
+            message = e.message;
+          }
+        }
+
+        if (passed) totalPassed++;
+
+        const statusText = passed ? 'Passed' : (studentCode ? 'Failed' : 'Skipped');
+        const badgeColor = passed ? 'var(--green)' : (studentCode ? 'var(--red)' : 'var(--text-muted)');
+        const cardClass = passed ? 'review-card--correct' : 'review-card--incorrect';
+
+        reviewCardsHtml += `
+          <div class="review-card ${cardClass}" style="background: rgba(15,23,42,0.6); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 14px; margin-bottom: 12px;">
+            <div class="review-header" style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-weight: 800; color: #38bdf8;">Question ${String(q.id || i + 1).padStart(2, '0')}</span>
+              <span class="status-badge" style="color: ${badgeColor}; font-weight: 800; text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.05em; background: rgba(255,255,255,0.04); padding: 2px 8px; border-radius: 4px;">${statusText}</span>
+            </div>
+            <div class="review-prompt" style="margin-top: 6px; color: #e2e8f0; font-size: 0.82rem; line-height: 1.45;">${q.prompt || ''}</div>
+            <div class="review-queries" style="margin-top: 10px; display: grid; grid-template-columns: 1fr; gap: 8px;">
+              <div>
+                <div style="font-size: 0.65rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;">YOUR CODE:</div>
+                <pre style="margin: 4px 0 0 0; padding: 10px; background: #04060c; border: 1px solid rgba(255,255,255,0.05); border-radius: 6px; font-family: var(--mono); font-size: 0.72rem; color: #cbd5e1; white-space: pre-wrap; word-break: break-all;"><code>${studentCode ? escHtml(studentCode) : '—'}</code></pre>
+              </div>
+              <div>
+                <div style="font-size: 0.65rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; margin-top: 6px;">REFERENCE SOLUTION:</div>
+                <pre style="margin: 4px 0 0 0; padding: 10px; background: #04060c; border: 1px solid rgba(255,255,255,0.05); border-radius: 6px; font-family: var(--mono); font-size: 0.72rem; color: var(--green); white-space: pre-wrap; word-break: break-all;"><code>${escHtml(q.ref || q.referenceCode || '# Solution')}</code></pre>
+              </div>
+            </div>
+            ${message ? `<div style="margin-top: 8px; font-size: 0.75rem; color: ${passed ? '#86efac' : '#fca5a5'};">${message}</div>` : ''}
+          </div>
+        `;
+      }
+
+      // Update Scorecard Header Metrics
+      const scoreBig = document.getElementById('scoreBig');
+      if (scoreBig) {
+        scoreBig.textContent = `${totalPassed} / ${total}`;
+        scoreBig.className = `score-big ${totalPassed >= Math.ceil(total * 0.5) ? 'pass' : 'fail'}`;
+      }
+      const scoreMeta = document.getElementById('scoreMeta');
+      if (scoreMeta) {
+        scoreMeta.textContent = `${totalPassed >= Math.ceil(total * 0.5) ? '✅ PASSED' : '❌ NEEDS REVIEW'}`;
+      }
+
+      const scorecardBody = document.getElementById('scorecardBody');
+      if (scorecardBody) {
+        const table = document.getElementById('scorecardTable');
+        if (table) table.style.display = 'none';
+
+        let cardContainer = document.getElementById('scorecardCards');
+        if (!cardContainer) {
+          cardContainer = document.createElement('div');
+          cardContainer.id = 'scorecardCards';
+          cardContainer.style.maxHeight = '420px';
+          cardContainer.style.overflowY = 'auto';
+          cardContainer.style.paddingRight = '4px';
+          scorecardBody.parentElement.appendChild(cardContainer);
+        }
+        cardContainer.innerHTML = reviewCardsHtml;
+        cardContainer.scrollTop = 0;
+      }
+
+      // Persist attempt
+      if (window.ProgressManager) {
+        ProgressManager.saveTestAttempt(day, {
+          startedAt: Date.now(),
+          timeRemaining: 0,
+          answers: testAnswers,
+          submitted: true,
+          score: totalPassed
+        });
+      }
+
+      // Open Scorecard Overlay
+      const overlay = document.getElementById('scorecardOverlay');
+      if (overlay) {
+        overlay.style.display = 'flex';
+        overlay.classList.add('open');
+      }
+
+    } catch (err) {
+      console.error('[Manodemy] Python submitTest error:', err);
+      alert(`⚠️ An error occurred while submitting your test: ${err.message}`);
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Test';
+      }
+    }
+  }, 30);
 }
 
 function closeScorecard() {
-  document.getElementById('scorecardOverlay').style.display = 'none';
+  const scorecardOverlay = document.getElementById('scorecardOverlay');
+  if (scorecardOverlay) {
+    scorecardOverlay.style.display = 'none';
+    scorecardOverlay.classList.remove('open');
+  }
+  closeTestPortal();
 }
 
 // ── Timer ─────────────────────────────────────────────────────

@@ -157,6 +157,48 @@
         totalXP,
         currentDay: this._data.currentDay
       };
+    },
+
+    // ── 60-Day Unified Score & Certification Eligibility ────────────
+    getCertificationReport() {
+      if (!this._data) this.load();
+
+      let totalScore = 0;
+      let completedDays = 0;
+      let passedDays = 0;
+      const trackScores = {
+        sql: { score: 0, total: 500, days: 20 },
+        python: { score: 0, total: 500, days: 20 },
+        excel: { score: 0, total: 500, days: 20 }
+      };
+
+      for (let d = 1; d <= 60; d++) {
+        const dayKey = d < 10 ? `day0${d}` : `day${d}`;
+        const dp = this._data.days[dayKey];
+        const score = (dp && dp.bestScore) ? dp.bestScore : 0;
+
+        totalScore += score;
+        if (score > 0) completedDays++;
+        if (score >= 13) passedDays++;
+
+        if (d <= 20) trackScores.sql.score += score;
+        else if (d <= 40) trackScores.python.score += score;
+        else trackScores.excel.score += score;
+      }
+
+      const percentage = ((totalScore / 1500) * 100).toFixed(1);
+      const isCertified = totalScore >= 900 && passedDays >= 45;
+
+      return {
+        totalScore,
+        maxScore: 1500,
+        percentage: parseFloat(percentage),
+        completedDays,
+        passedDays,
+        isCertified,
+        grade: percentage >= 90 ? 'Distinction' : (percentage >= 75 ? 'First Class' : (percentage >= 60 ? 'Pass' : 'Incomplete')),
+        tracks: trackScores
+      };
     }
   };
 

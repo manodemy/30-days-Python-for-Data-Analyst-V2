@@ -2439,7 +2439,7 @@ a { color: var(--cyan); text-decoration: none; }
   display: none;
   position: fixed;
   inset: 0;
-  z-index: 9500;
+  z-index: 10000 !important;
   background: rgba(6,9,19,0.95);
   backdrop-filter: blur(12px);
   justify-content: center;

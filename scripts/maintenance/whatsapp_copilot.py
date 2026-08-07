@@ -98,7 +98,7 @@ Genuinely want feedback from people who've been through this grind, not just "ni
 2. Does the synced audio + typewriter effect help logic click, or does it wear off fast and become noise?
 3. If you're prepping for interviews, what schema/scenario would make you actually come back and use this over LeetCode SQL or a Postgres Docker container?
 
-I'll be in the comments all day — happy to answer questions or take it apart."""
+I’ll be in the comments all day reading every piece of feedback. If you try it and have any ideas for improvement — or if you enjoyed the experience and want to drop a quick review on the site — I’d genuinely appreciate it!"""
     },
     "r/SQL": {
         "title": "Built an in-browser SQLite practice sandbox with real retail schemas (no installation) — feedback from SQL practitioners wanted",

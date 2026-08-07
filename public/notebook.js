@@ -2208,11 +2208,52 @@ window.refreshTocTracking();
 
 // ── DROPDOWN TOGGLE ──
 
+function isPaidUser() {
+  if (localStorage.getItem('manodemy_enrolled') === 'true') return true;
+  try {
+    const supaData = localStorage.getItem('sb-erqoyvbuhmkyvcqgwcbz-auth-token');
+    if (supaData) {
+      const parsed = JSON.parse(supaData);
+      if (parsed?.user?.user_metadata?.plan === 'pro') return true;
+    }
+  } catch (e) {}
+  return false;
+}
+
 function initializeDropdownToggle() {
   const btn = document.getElementById('dayDropdownBtn');
   const menu = document.getElementById('dayDropdownMenu');
 
   if (btn && menu) {
+    const isPaid = isPaidUser();
+    const items = menu.querySelectorAll('.dropdown-item');
+
+    items.forEach((item) => {
+      const href = item.getAttribute('href') || '';
+      const match = href.match(/day(\d+)\.html/);
+      if (match) {
+        const dayNum = parseInt(match[1], 10);
+        const isLocked = (dayNum >= 2 && !isPaid);
+
+        if (isLocked) {
+          item.classList.add('is-locked');
+          if (!item.querySelector('.dropdown-lock-badge')) {
+            const badge = document.createElement('span');
+            badge.className = 'dropdown-lock-badge';
+            badge.title = 'Pro subscription required';
+            badge.textContent = '🔒';
+            item.appendChild(badge);
+          }
+
+          item.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            window.location.href = '../index.html#pricing?locked=true';
+          });
+        }
+      }
+    });
+
     const newBtn = btn.cloneNode(true);
     btn.parentNode.replaceChild(newBtn, btn);
 

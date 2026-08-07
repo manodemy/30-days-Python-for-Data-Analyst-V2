@@ -27,8 +27,17 @@ let COURSE_CONFIG = {
 };
 
 // ═══════════════════════════════════════════════════════════════
-// MODULE 2: SQL ENGINE
-// ═══════════════════════════════════════════════════════════════
+function isPaidUser() {
+  if (localStorage.getItem('manodemy_enrolled') === 'true') return true;
+  try {
+    const supaData = localStorage.getItem('sb-erqoyvbuhmkyvcqgwcbz-auth-token');
+    if (supaData) {
+      const parsed = JSON.parse(supaData);
+      if (parsed?.user?.user_metadata?.plan === 'pro') return true;
+    }
+  } catch (e) {}
+  return false;
+}
 
 let db = null;
 let SQL_INSTANCE = null;  // Cached SQL.js constructor
@@ -4183,6 +4192,14 @@ function initCustomDropdowns() {
           `;
         } else if (select.id === 'daySelect') {
           const match = opt.text.match(/^(\S+)\s+(Day\s+\d+):\s*(.*)$/);
+          const dayNum = parseInt(opt.value.replace('day', ''), 10);
+          const isPaid = (typeof isPaidUser === 'function') ? isPaidUser() : false;
+          const isLocked = (dayNum >= 3 && !isPaid);
+
+          if (isLocked) {
+            optionItem.classList.add('is-locked');
+          }
+
           if (match) {
             optionItem.innerHTML = `
               <span class="option-day-tag">
@@ -4192,9 +4209,13 @@ function initCustomDropdowns() {
                   <span class="option-day-title">${match[3]}</span>
                 </span>
               </span>
+              ${isLocked ? '<span class="day-lock-badge" title="Pro subscription required">🔒</span>' : (dayNum <= 2 ? '<span class="day-free-badge">FREE</span>' : '')}
             `;
           } else {
-            optionItem.textContent = opt.text;
+            optionItem.innerHTML = `
+              <span>${opt.text}</span>
+              ${isLocked ? '<span class="day-lock-badge" title="Pro subscription required">🔒</span>' : (dayNum <= 2 ? '<span class="day-free-badge">FREE</span>' : '')}
+            `;
           }
         } else {
           optionItem.textContent = opt.text;
@@ -4203,6 +4224,16 @@ function initCustomDropdowns() {
         optionItem.dataset.value = opt.value;
         optionItem.addEventListener('click', (e) => {
           e.stopPropagation();
+
+          if (select.id === 'daySelect') {
+            const dayNum = parseInt(opt.value.replace('day', ''), 10);
+            const isPaid = (typeof isPaidUser === 'function') ? isPaidUser() : false;
+            if (dayNum >= 3 && !isPaid) {
+              window.location.href = '../index.html#pricing?locked=true';
+              return;
+            }
+          }
+
           select.value = opt.value;
           select.dispatchEvent(new Event('change'));
           optionsMenu.classList.remove('open');

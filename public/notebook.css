@@ -39,6 +39,36 @@
   --course-text-accent:   #059669;
 }
 
+/* ── Dropdown Lock Badges (Web & Mobile) ── */
+.dropdown-item.is-locked {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  opacity: 0.8;
+}
+
+.dropdown-item.is-locked:hover {
+  opacity: 1;
+  background: rgba(245, 158, 11, 0.08) !important;
+}
+
+.dropdown-lock-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 0.75rem !important;
+  color: #f59e0b !important;
+  background: rgba(245, 158, 11, 0.12) !important;
+  border: 1px solid rgba(245, 158, 11, 0.28) !important;
+  border-radius: 6px !important;
+  padding: 2px 7px !important;
+  margin-left: auto !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  flex-shrink: 0 !important;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.15) !important;
+}
+
 /* Python Course Theme Override */
 [data-course="python"] {
   --course-accent:        #0891B2;

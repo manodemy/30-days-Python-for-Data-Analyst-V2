@@ -112,6 +112,18 @@ function updateLoadingProgress(pct) {
   if (bar) bar.style.width = pct + '%';
 }
 
+function isPaidUser() {
+  if (localStorage.getItem('manodemy_enrolled') === 'true') return true;
+  try {
+    const supaData = localStorage.getItem('sb-erqoyvbuhmkyvcqgwcbz-auth-token');
+    if (supaData) {
+      const parsed = JSON.parse(supaData);
+      if (parsed?.user?.user_metadata?.plan === 'pro') return true;
+    }
+  } catch (e) {}
+  return false;
+}
+
 // ── Day Selector ──────────────────────────────────────────────
 
 function buildDaySelector() {
@@ -162,7 +174,9 @@ function initCustomDropdowns() {
 
     function populateOptions() {
       optionsMenu.innerHTML = '';
-      Array.from(select.options).forEach((opt) => {
+      const isPaid = isPaidUser();
+
+      Array.from(select.options).forEach((opt, idx) => {
         const optionItem = document.createElement('div');
         optionItem.className = `custom-select-option${opt.selected ? ' selected' : ''}`;
         
@@ -175,6 +189,17 @@ function initCustomDropdowns() {
             <span class="option-title">Topic 0${slideIdx + 1}: ${cleanedTitle}</span>
             <span class="option-duration">${duration}</span>
           `;
+        } else if (select.id === 'daySelect') {
+          const isLocked = (idx >= 1 && !isPaid); // Python Day 01 is free (idx 0), Days 02+ locked
+          if (isLocked) {
+            optionItem.classList.add('is-locked');
+          }
+          optionItem.innerHTML = `
+            <span class="option-day-tag">
+              <span>${opt.text}</span>
+            </span>
+            ${isLocked ? '<span class="day-lock-badge" title="Pro subscription required">🔒</span>' : (idx === 0 ? '<span class="day-free-badge">FREE</span>' : '')}
+          `;
         } else {
           optionItem.textContent = opt.text;
         }
@@ -182,12 +207,23 @@ function initCustomDropdowns() {
         optionItem.dataset.value = opt.value;
         optionItem.addEventListener('click', (e) => {
           e.stopPropagation();
+
+          if (select.id === 'daySelect') {
+            const isLocked = (idx >= 1 && !isPaidUser());
+            if (isLocked) {
+              window.location.href = '../index.html#pricing?locked=true';
+              return;
+            }
+          }
+
           select.value = opt.value;
           select.dispatchEvent(new Event('change'));
           optionsMenu.classList.remove('open');
           wrapper.classList.remove('open');
           trigger.classList.remove('open');
         });
+        optionsMenu.appendChild(optionItem);
+      });
         optionsMenu.appendChild(optionItem);
       });
       updateTriggerText();

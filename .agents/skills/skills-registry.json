@@ -1,0 +1,34 @@
+{
+  "project": "Manodemy",
+  "version": "30.0",
+  "skills": [
+    {
+      "id": "project-file-organizer",
+      "name": "Project File Organizer",
+      "status": "active",
+      "path": ".agents/skills/project-file-organizer/SKILL.md",
+      "description": "Standard operating procedure and automated script for keeping the Manodemy workspace clean, organized, and structurally sound without deleting files."
+    },
+    {
+      "id": "practice-question-audio-sync",
+      "name": "Practice Question Audio Sync",
+      "status": "active",
+      "path": ".agents/skills/practice-question-audio-sync/SKILL.md",
+      "description": "Extracts Whisper ASR word timestamps, syncs code typewriter animations, handles timeline continuation and SQL layout formatting."
+    },
+    {
+      "id": "reddit-growth-copilot",
+      "name": "Reddit Growth Co-Pilot",
+      "status": "active",
+      "path": ".agents/skills/reddit-growth-copilot/SKILL.md",
+      "description": "7-Day Reddit launch execution, anti-ban developer-first copy, live comment response generator, and pre-flight link validator."
+    },
+    {
+      "id": "day-curriculum-builder",
+      "name": "Day Curriculum Builder",
+      "status": "ready",
+      "path": ".agents/skills/day-curriculum-builder/SKILL.md",
+      "description": "Step-by-step creation of Days 05 to 60 with SQLite sandbox, multi-table exercises, and solution rubrics."
+    }
+  ]
+}

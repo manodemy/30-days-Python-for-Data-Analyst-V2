@@ -49,131 +49,31 @@ window.COURSE_CONTENT['day01'] = {
     }
   ],
   "testQuestions": [
-    {
-      "id": 1,
-      "prompt": "Retrieve all columns and rows from <code>employees</code>.",
-      "ref": "SELECT * FROM employees;"
-    },
-    {
-      "id": 2,
-      "prompt": "Retrieve only <code>name</code> and <code>salary</code> from <code>employees</code>.",
-      "ref": "SELECT name, salary FROM employees;"
-    },
-    {
-      "id": 3,
-      "prompt": "Retrieve <code>name</code> and <code>department</code>, aliasing <code>name</code> as <code>employee_name</code>.",
-      "ref": "SELECT name AS employee_name, department FROM employees;"
-    },
-    {
-      "id": 4,
-      "prompt": "Retrieve <code>id</code> and <code>salary</code>, displaying <code>salary</code> under alias <code>annual_pay</code>.",
-      "ref": "SELECT id, salary AS annual_pay FROM employees;"
-    },
-    {
-      "id": 5,
-      "prompt": "Project <code>department</code> and <code>name</code> in that order (reversed from schema order).",
-      "ref": "SELECT department, name FROM employees;"
-    },
-    {
-      "id": 6,
-      "prompt": "Calculate a 10% bonus (<code>salary * 0.10</code>) for all employees, aliased as <code>bonus</code>.",
-      "ref": "SELECT name, salary * 0.10 AS bonus FROM employees;"
-    },
-    {
-      "id": 7,
-      "prompt": "Display names and yearly salary (<code>salary * 12</code>) as <code>yearly_salary</code>.",
-      "ref": "SELECT name, salary * 12 AS yearly_salary FROM employees;"
-    },
-    {
-      "id": 8,
-      "prompt": "Retrieve name and salary after a flat tax deduction of 5000, aliased as <code>net_salary</code>.",
-      "ref": "SELECT name, salary - 5000 AS net_salary FROM employees;"
-    },
-    {
-      "id": 9,
-      "prompt": "Retrieve the SQLite engine version using <code>sqlite_version()</code>.",
-      "ref": "SELECT sqlite_version();"
-    },
-    {
-      "id": 10,
-      "prompt": "Concatenate <code>name || ' - ' || department</code> as <code>employee_details</code>.",
-      "ref": "SELECT name || ' - ' || department AS employee_details FROM employees;"
-    },
-    {
-      "id": 11,
-      "prompt": "Compute <code>salary / 12.0</code> as <code>monthly_pay</code>.",
-      "ref": "SELECT name, salary / 12.0 AS monthly_pay FROM employees;"
-    },
-    {
-      "id": 12,
-      "prompt": "Alias <code>salary</code> as <code>monthly_pay</code> <strong>without</strong> using the <code>AS</code> keyword.",
-      "ref": "SELECT name, salary monthly_pay FROM employees;"
-    },
-    {
-      "id": 13,
-      "prompt": "Return a static text column <code>'Consultant'</code> as <code>role</code> alongside <code>name</code>.",
-      "ref": "SELECT name, 'Consultant' AS role FROM employees;"
-    },
-    {
-      "id": 14,
-      "prompt": "Query <code>sqlite_master</code> to retrieve table schema details.",
-      "ref": "SELECT * FROM sqlite_master;"
-    },
-    {
-      "id": 15,
-      "prompt": "Compute <code>(salary * 12) + 3000</code> as <code>total_yearly_compensation</code>.",
-      "ref": "SELECT name, (salary * 12) + 3000 AS total_yearly_compensation FROM employees;"
-    },
-    {
-      "id": 16,
-      "prompt": "Alias a column using bracket notation: <code>AS [Employee Salary]</code>.",
-      "ref": "SELECT name, salary AS [Employee Salary] FROM employees;"
-    },
-    {
-      "id": 17,
-      "prompt": "Alias a column using double quotes: <code>AS \"Employee Department\"</code>.",
-      "ref": "SELECT name, department AS \"Employee Department\" FROM employees;"
-    },
-    {
-      "id": 18,
-      "prompt": "Use table-prefixed column syntax: <code>employees.name</code>.",
-      "ref": "SELECT employees.name FROM employees;"
-    },
-    {
-      "id": 19,
-      "prompt": "Evaluate <code>SELECT 100 * 5</code> aliased as <code>math_test</code>.",
-      "ref": "SELECT 100 * 5 AS math_test;"
-    },
-    {
-      "id": 20,
-      "prompt": "Compute <code>salary * 1.15</code> as <code>new_salary</code>.",
-      "ref": "SELECT name, salary * 1.15 AS new_salary FROM employees;"
-    },
-    {
-      "id": 21,
-      "prompt": "Compute <code>salary / 52.0</code> as <code>weekly_rate</code>.",
-      "ref": "SELECT name, salary / 52.0 AS weekly_rate FROM employees;"
-    },
-    {
-      "id": 22,
-      "prompt": "Alias <code>id</code> as the reserved word <code>\"SELECT\"</code> (use double quotes).",
-      "ref": "SELECT id AS \"SELECT\" FROM employees;"
-    },
-    {
-      "id": 23,
-      "prompt": "Compute <code>salary * 2</code> as <code>double_salary</code>.",
-      "ref": "SELECT name, salary * 2 AS double_salary FROM employees;"
-    },
-    {
-      "id": 24,
-      "prompt": "Retrieve <code>name</code>, <code>department</code>, <code>salary</code> in that column order.",
-      "ref": "SELECT name, department, salary FROM employees;"
-    },
-    {
-      "id": 25,
-      "prompt": "Compute <code>(salary * 12 * 1.12) - 2000</code> as <code>complex_evaluation</code>.",
-      "ref": "SELECT name, (salary * 12 * 1.12) - 2000 AS complex_evaluation FROM employees;"
-    }
+    { "id": 1, "prompt": "Write a query to pull every column and every row from the <code>employees</code> table.", "ref": "SELECT * FROM employees;" },
+    { "id": 2, "prompt": "A report needs only the <code>name</code> and <code>salary</code> fields from <code>employees</code>. Write the query.", "ref": "SELECT name, salary FROM employees;" },
+    { "id": 3, "prompt": "Your manager wants a list from <code>employees</code> showing each person's name under the label <code>employee_name</code>, along with their <code>department</code>.", "ref": "SELECT name AS employee_name, department FROM employees;" },
+    { "id": 4, "prompt": "Finance needs <code>id</code> and <code>salary</code> from <code>employees</code>, but wants the salary column labelled as <code>annual_pay</code> in the output.", "ref": "SELECT id, salary AS annual_pay FROM employees;" },
+    { "id": 5, "prompt": "Reorder the output columns: show <code>department</code> first, then <code>name</code> from the <code>employees</code> table.", "ref": "SELECT department, name FROM employees;" },
+    { "id": 6, "prompt": "HR wants to see each employee's <code>name</code> alongside their 10% performance bonus. Compute it from <code>salary</code> in the <code>employees</code> table and label it <code>bonus</code>.", "ref": "SELECT name, salary * 0.10 AS bonus FROM employees;" },
+    { "id": 7, "prompt": "An interviewer asks: &quot;Write a query that shows each employee's <code>name</code> and their annualised salary (monthly salary × 12) as <code>yearly_salary</code> from the <code>employees</code> table.&quot;", "ref": "SELECT name, salary * 12 AS yearly_salary FROM employees;" },
+    { "id": 8, "prompt": "After a flat ₹5000 tax deduction, what does each employee take home? Show <code>name</code> and the adjusted figure as <code>net_salary</code> from <code>employees</code>.", "ref": "SELECT name, salary - 5000 AS net_salary FROM employees;" },
+    { "id": 9, "prompt": "Without referencing any table, write a query that returns the current SQLite engine version using <code>sqlite_version()</code>.", "ref": "SELECT sqlite_version();" },
+    { "id": 10, "prompt": "A dashboard needs a single label per employee. From <code>employees</code>, concatenate <code>name</code>, the string <code>' - '</code>, and <code>department</code> into one column called <code>employee_details</code>.", "ref": "SELECT name || ' - ' || department AS employee_details FROM employees;" },
+    { "id": 11, "prompt": "Payroll is switching to monthly figures. Show each employee's <code>name</code> and their daily equivalent — <code>salary / 12.0</code> — aliased as <code>monthly_pay</code> from <code>employees</code>.", "ref": "SELECT name, salary / 12.0 AS monthly_pay FROM employees;" },
+    { "id": 12, "prompt": "Can you alias a column <strong>without</strong> the <code>AS</code> keyword? Show <code>name</code> and <code>salary</code> labelled <code>monthly_pay</code> from <code>employees</code>.", "ref": "SELECT name, salary monthly_pay FROM employees;" },
+    { "id": 13, "prompt": "A report template requires a fixed role label. Return <code>name</code> from <code>employees</code> alongside a literal string <code>'Consultant'</code> aliased as <code>role</code>.", "ref": "SELECT name, 'Consultant' AS role FROM employees;" },
+    { "id": 14, "prompt": "You need to inspect the current database structure. Write a query against <code>sqlite_master</code> that returns all metadata columns.", "ref": "SELECT * FROM sqlite_master;" },
+    { "id": 15, "prompt": "Calculate total annual compensation (salary × 12 plus a ₹3000 allowance) for everyone in <code>employees</code>. Show <code>name</code> and the result as <code>total_yearly_compensation</code>.", "ref": "SELECT name, (salary * 12) + 3000 AS total_yearly_compensation FROM employees;" },
+    { "id": 16, "prompt": "Some tools require bracket-style column aliases. From <code>employees</code>, return <code>name</code> and <code>salary</code> aliased as <code>[Employee Salary]</code>.", "ref": "SELECT name, salary AS [Employee Salary] FROM employees;" },
+    { "id": 17, "prompt": "In SQLite, double quotes allow spaces in aliases. Show <code>name</code> and <code>department</code> from <code>employees</code>, aliasing department as <code>\"Employee Department\"</code>.", "ref": "SELECT name, department AS \"Employee Department\" FROM employees;" },
+    { "id": 18, "prompt": "Write a query that fetches <code>name</code> from <code>employees</code> using full table-prefix notation (<code>employees.name</code>) to avoid ambiguity.", "ref": "SELECT employees.name FROM employees;" },
+    { "id": 19, "prompt": "Quick arithmetic check — without any table, write a query that evaluates <code>100 * 5</code> and labels the result <code>math_test</code>.", "ref": "SELECT 100 * 5 AS math_test;" },
+    { "id": 20, "prompt": "Following an appraisal, every employee gets a 15% raise. Show <code>name</code> and the revised figure (<code>salary * 1.15</code>) as <code>new_salary</code> from <code>employees</code>.", "ref": "SELECT name, salary * 1.15 AS new_salary FROM employees;" },
+    { "id": 21, "prompt": "A contractor billing system needs weekly rates. From <code>employees</code>, display <code>name</code> and <code>salary / 52.0</code> aliased as <code>weekly_rate</code>.", "ref": "SELECT name, salary / 52.0 AS weekly_rate FROM employees;" },
+    { "id": 22, "prompt": "Demonstrate aliasing a column with a reserved SQL keyword. From <code>employees</code>, show <code>id</code> aliased as <code>\"SELECT\"</code> (wrap in double quotes).", "ref": "SELECT id AS \"SELECT\" FROM employees;" },
+    { "id": 23, "prompt": "An analyst needs a doubled-salary column for a projection model. Show <code>name</code> and <code>salary * 2</code> as <code>double_salary</code> from <code>employees</code>.", "ref": "SELECT name, salary * 2 AS double_salary FROM employees;" },
+    { "id": 24, "prompt": "Return <code>name</code>, <code>department</code>, and <code>salary</code> — in exactly that column order — from the <code>employees</code> table.", "ref": "SELECT name, department, salary FROM employees;" },
+    { "id": 25, "prompt": "Write a query against <code>employees</code> that computes <code>(salary * 12 * 1.12) - 2000</code> (annual CTC after 12% hike minus deduction) and labels it <code>complex_evaluation</code>. Show <code>name</code> alongside.", "ref": "SELECT name, (salary * 12 * 1.12) - 2000 AS complex_evaluation FROM employees;" }
   ],
   "topics": [
     {

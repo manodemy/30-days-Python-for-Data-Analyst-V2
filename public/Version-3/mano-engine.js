@@ -1096,42 +1096,128 @@ function renderSchemaCards() {
   container.innerHTML = html;
 }
 
+// ─── Core tables to show for the retail DB (Days 02-04) ─────────────────────
+const PEEK_PRIORITY_TABLES = ['employees','departments','products','orders','customers','order_items'];
+
+function buildPeekTabs(tables) {
+  // For retail DB, filter to priority tables; for day01_db, show all
+  const isPriority = tables.some(t => PEEK_PRIORITY_TABLES.includes(t.name));
+  const display = isPriority
+    ? tables.filter(t => PEEK_PRIORITY_TABLES.includes(t.name))
+    : tables;
+  return display;
+}
+
 function openPeekPopover(e, tableName) {
-  e.stopPropagation();
-  try {
-    const result = runSQL(`SELECT * FROM ${tableName} LIMIT 3;`);
-    let html = '<table class="result-table">';
-    html += '<thead><tr>';
-    result.columns.forEach(c => { html += `<th>${escHtml(c)}</th>`; });
-    html += '</tr></thead><tbody>';
-    result.values.forEach(row => {
-      html += '<tr>';
-      row.forEach(v => { html += `<td>${v !== null ? escHtml(String(v)) : 'NULL'}</td>`; });
-      html += '</tr>';
-    });
-    html += '</tbody></table>';
-    document.getElementById('peekContent').innerHTML = html;
-    document.getElementById('peekTableName').textContent = tableName;
-  } catch (err) {
-    document.getElementById('peekContent').innerHTML = `<span class="output-error">${escHtml(err.message)}</span>`;
-  }
+  if (e && e.stopPropagation) e.stopPropagation();
+  const tables = COURSE_CONFIG.schema.tables;
+  const displayTables = buildPeekTabs(tables);
+  const firstTable = tableName || displayTables[0].name;
 
   const pop = document.getElementById('peekPopover');
-  // Position near click
-  pop.style.top = Math.min(e.clientY, window.innerHeight - 260) + 'px';
-  pop.style.left = Math.min(e.clientX, window.innerWidth - 360) + 'px';
+
+  // Build tabs HTML
+  let tabsHtml = '<div class="peek-tabs" id="peekTabs">';
+  displayTables.forEach(t => {
+    tabsHtml += `<button class="peek-tab${t.name === firstTable ? ' active' : ''}" onclick="switchPeekTab(event, '${t.name}')">${t.name}</button>`;
+  });
+  tabsHtml += '</div>';
+
+  // Build schema + sample for first table
+  const content = buildPeekContent(firstTable);
+
+  document.getElementById('peekContent').innerHTML = tabsHtml + content;
+  document.getElementById('peekTableName').textContent = firstTable;
+
+  // Position near click / button
+  if (e && e.clientX !== undefined) {
+    const top = Math.min(e.clientY + 8, window.innerHeight - 400);
+    const left = Math.min(e.clientX, window.innerWidth - 520);
+    pop.style.top = Math.max(8, top) + 'px';
+    pop.style.left = Math.max(8, left) + 'px';
+    pop.style.bottom = '';
+    pop.style.width = '';
+  }
+
   pop.classList.add('open');
+}
+
+function buildPeekContent(tableName) {
+  const tables = COURSE_CONFIG.schema.tables;
+  const tableSchema = tables.find(t => t.name === tableName);
+
+  // Column schema section
+  let schemaHtml = '<div class="peek-schema-section">';
+  schemaHtml += '<div class="peek-section-label">📋 Column Schema</div>';
+  schemaHtml += '<div class="peek-schema-list">';
+  if (tableSchema && tableSchema.columns) {
+    tableSchema.columns.forEach(c => {
+      const typeClass = `peek-type-${(c.type || 'TEXT').toUpperCase().replace(/[^A-Z]/g,'').substring(0,7)}`;
+      schemaHtml += `<div class="peek-schema-row">
+        <span class="peek-col-name">${c.pk ? '🔑 ' : ''}${escHtml(c.name)}</span>
+        <span class="peek-type-badge ${typeClass}">${escHtml(c.type || 'TEXT')}</span>
+        ${c.pk ? '<span class="peek-pk-badge">PK</span>' : ''}
+      </div>`;
+    });
+  } else {
+    schemaHtml += '<span style="opacity:0.5;font-size:0.75rem;">No schema info available.</span>';
+  }
+  schemaHtml += '</div></div>';
+
+  // Sample data section
+  let sampleHtml = '<div class="peek-sample-section">';
+  sampleHtml += '<div class="peek-section-label">👀 Sample Data (5 rows)</div>';
+  try {
+    const result = runSQL(`SELECT * FROM ${tableName} LIMIT 5;`);
+    sampleHtml += '<div class="peek-sample-scroll"><table class="result-table">';
+    sampleHtml += '<thead><tr>';
+    result.columns.forEach(c => { sampleHtml += `<th>${escHtml(c)}</th>`; });
+    sampleHtml += '</tr></thead><tbody>';
+    result.values.forEach(row => {
+      sampleHtml += '<tr>';
+      row.forEach(v => { sampleHtml += `<td>${v !== null ? escHtml(String(v)) : '<span style="opacity:0.4">NULL</span>'}</td>`; });
+      sampleHtml += '</tr>';
+    });
+    sampleHtml += '</tbody></table></div>';
+  } catch (err) {
+    sampleHtml += `<span class="output-error">${escHtml(err.message)}</span>`;
+  }
+  sampleHtml += '</div>';
+
+  return schemaHtml + sampleHtml;
+}
+
+function switchPeekTab(e, tableName) {
+  e.stopPropagation();
+  // Update active tab
+  document.querySelectorAll('.peek-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent === tableName);
+  });
+  document.getElementById('peekTableName').textContent = tableName;
+
+  // Rebuild only the content below the tabs
+  const tabsEl = document.getElementById('peekTabs');
+  const container = document.getElementById('peekContent');
+  const newContent = buildPeekContent(tableName);
+  // Remove old content nodes (everything after tabs div)
+  while (container.lastChild && container.lastChild !== tabsEl) {
+    container.removeChild(container.lastChild);
+  }
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = newContent;
+  while (wrapper.firstChild) container.appendChild(wrapper.firstChild);
 }
 
 function togglePeekPopover(e) {
   const pop = document.getElementById('peekPopover');
   if (pop.classList.contains('open')) { closePeekPopover(); return; }
-  openPeekPopover(e, COURSE_CONFIG.schema.tables[0].name);
+  openPeekPopover(e);
 }
 
 function closePeekPopover() {
   document.getElementById('peekPopover').classList.remove('open');
 }
+
 
 // Close popover on outside click
 document.addEventListener('click', function (e) {

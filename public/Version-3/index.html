@@ -151,9 +151,9 @@
           <button class="audio-play-btn" id="solutionAudioBtn" onclick="playSolutionAudioFromBtn(this)" title="Play solution narration" style="margin-left: 6px;">
             <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
           </button>
-          <button class="tb-btn tb-btn--tables" id="peekTrigger" onclick="togglePeekPopover(event)">📊 Tables</button>
           <div class="spacer"></div>
           <button class="tb-btn tb-btn--run" id="runBtn" onclick="runCurrentQuery()">▶ Run</button>
+          <button class="tb-btn tb-btn--tables" id="peekTrigger" onclick="togglePeekPopover(event)">📊 Tables</button>
           <button class="tb-btn tb-btn--clear" onclick="clearEditor()">✕ Clear</button>
         </div>
 
@@ -413,6 +413,7 @@
           <span class="q-counter" id="testQCounter">Q1 / 25</span>
           <div class="spacer" style="flex:1"></div>
           <button class="tb-btn tb-btn--run" onclick="runTestQuery()">▶ Run</button>
+          <button class="tb-btn tb-btn--tables" onclick="togglePeekPopover(event)">📊 Tables</button>
           <button class="tb-btn tb-btn--clear" onclick="clearTestEditor()">✕ Clear</button>
         </div>
 

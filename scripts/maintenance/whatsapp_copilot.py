@@ -73,22 +73,38 @@ SCHEDULE = [
 # ─────────────────────────────────────────────────────────────────────────────
 POST_TEMPLATES = {
     "r/SideProject": {
-        "title": "I built a zero-setup in-browser SQL + Python sandbox with Whisper ASR word-synced typewriter audio — looking for brutal technical feedback from developers!",
+        "title": "I quit learning SQL three times before I ever wrote a real query. So I spent the last few months building the zero-setup playground I desperately needed back then.",
         "body": """Hey r/SideProject,
 
-I've been working on an interesting technical challenge: building a fully in-browser SQL and Python execution engine with word-level Whisper ASR audio synchronized to a typewriter code animation.
+Every time I decided to take data analytics seriously, my journey followed the exact same painful script.
 
-The goal was to eliminate the #1 reason beginners quit coding courses — painful local environment setup. No PostgreSQL server, no Anaconda, no terminal errors on Day 1.
+I’d queue up hours of YouTube tutorials, full of motivation. But Day 1 was never actually about data. It was three hours of wrestling with terminal commands, installing PostgreSQL, configuring environment PATH variables, and debugging port conflicts. By the time I finally saw a blank query window, I was mentally exhausted and closed my laptop.
 
-I'd love to get stress-tested by this community:
-https://www.manodemy.com/sql/day01.html (100% free, zero login required)
+When I tried powering through long video playlists, a different problem showed up: the "illusion of competence." I’d watch a YouTuber type complex JOINs for twenty minutes and nod along thinking I understood it. But the second I opened a blank editor, my mind went completely blank. Watching someone else code is like watching someone go to the gym—it feels productive, but you don't build any muscle.
 
-Specific things I'd love feedback on:
-1. How does the SQLite query execution latency feel on your browser & OS?
-2. Does the Whisper ASR audio-typewriter sync feel natural or distracting?
-3. Any mobile/Firefox/Safari rendering edge cases I should fix?
+The breaking point was preparing for technical interviews. Whenever I wanted to practice a specific topic like CTEs or window functions, I’d spend half an hour hunting for sample questions, and another half hour creating mock tables locally just to test a single query. By then, the urge to practice was completely gone.
 
-Tear it apart — I ship fixes live within minutes based on feedback!"""
+I kept thinking: Why does learning to code feel like filing taxes when it should feel like playing a game?
+
+I wanted an environment where:
+- You don’t install a single thing.
+- You don’t stare at a blank screen wondering what to type.
+- Every query you run gives instant feedback, helping you build real confidence step-by-step.
+
+So after failing as a student, I decided to build what I wished had existed:
+https://www.manodemy.com/sql/day01.html
+
+It’s an interactive in-browser playground running real SQLite directly inside your browser. The moment you open the page, the retail business schema is already loaded. As the narrator explains the concept, the code types itself out in sync word-by-word with live typewriter animations. You can tweak the query, hit run, and immediately see the data rows filter in real time.
+
+Days 1 and 2 are 100% free with zero signup, no login, and no credit card.
+
+I’m sharing this here because I’m still iterating and want raw, unfiltered feedback from people who know what learning should feel like:
+
+1. Does skipping the local setup friction make you actually want to sit down and practice?
+2. Does the audio-synchronized typewriter help concepts click faster, or does it feel unnecessary?
+3. If you were prepping for a real data interview, what specific feature or dataset would make this an absolute must-have tool for you?
+
+Tear it apart—I'll be at my desk all day replying to comments and shipping fixes live!"""
     },
     "r/SQL": {
         "title": "Built an in-browser SQLite practice sandbox with real retail schemas (no installation) — feedback from SQL practitioners wanted",

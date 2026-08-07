@@ -4270,6 +4270,23 @@ pre span {
   margin-top: 0 !important;
 }
 
+.day-coming-soon-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 0.65rem !important;
+  font-weight: 700 !important;
+  color: #38bdf8 !important;
+  background: rgba(56, 189, 248, 0.12) !important;
+  border: 1px solid rgba(56, 189, 248, 0.3) !important;
+  border-radius: 4px !important;
+  padding: 2px 6px !important;
+  margin-left: auto !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+  flex-shrink: 0 !important;
+}
+
 .day-picker-chevron svg {
   transition: transform 0.25s ease !important;
 }

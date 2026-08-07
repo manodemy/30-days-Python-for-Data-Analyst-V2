@@ -2260,14 +2260,24 @@ function initializeDropdownToggle() {
         scrollContainer.appendChild(header);
 
         trackGroup.days.forEach(d => {
-          const isLocked = (!d.free && !isPaid);
+          const isUnpaidLocked = (!d.free && !isPaid);
+          const isComingSoon = (!d.prepared);
           const isCurrent = (currentPath.includes(d.url.replace('/excel/', '')) || currentPath.includes(d.id));
           const a = document.createElement('a');
-          a.className = `dropdown-item${isCurrent ? ' active' : ''}${isLocked ? ' is-locked' : ''}`;
-          a.href = isLocked ? '../index.html#pricing?locked=true' : d.url;
+          a.className = `dropdown-item${isCurrent ? ' active' : ''}${isUnpaidLocked ? ' is-locked' : ''}`;
+          a.href = isUnpaidLocked ? '../index.html#pricing?locked=true' : (isComingSoon ? '#' : d.url);
 
           const iconSvg = svgIcons[d.track] || '';
           const dayNumStr = String(d.globalDay).padStart(2, '0');
+
+          let badgeHtml = '';
+          if (isUnpaidLocked) {
+            badgeHtml = '<span class="dropdown-lock-badge" title="Pro subscription required">🔒</span>';
+          } else if (isComingSoon) {
+            badgeHtml = '<span class="day-coming-soon-badge" title="Under active development">Coming Soon</span>';
+          } else if (d.free) {
+            badgeHtml = '<span class="day-free-badge">FREE</span>';
+          }
 
           a.innerHTML = `
             <span class="option-day-tag" style="display:inline-flex;align-items:center;gap:8px;overflow:hidden;flex:1;">
@@ -2277,13 +2287,20 @@ function initializeDropdownToggle() {
                 <span class="option-day-title" style="color:#94a3b8;font-size:0.74rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${d.title}</span>
               </span>
             </span>
-            ${isLocked ? '<span class="dropdown-lock-badge" title="Pro subscription required">🔒</span>' : '<span class="day-free-badge">FREE</span>'}
+            ${badgeHtml}
           `;
 
           a.addEventListener('click', (e) => {
-            if (isLocked) {
+            if (isUnpaidLocked) {
               e.preventDefault();
               window.location.href = '../index.html#pricing?locked=true';
+            } else if (isComingSoon) {
+              e.preventDefault();
+              if (window.showComingSoonToast) {
+                window.showComingSoonToast(d.title, d.globalDay);
+              } else {
+                alert(`Day ${dayNumStr} is currently in active development and coming soon!`);
+              }
             }
           });
 

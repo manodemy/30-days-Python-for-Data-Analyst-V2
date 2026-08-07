@@ -203,13 +203,23 @@ function initCustomDropdowns() {
           optionsMenu.appendChild(header);
 
           trackGroup.days.forEach(d => {
-            const isLocked = (!d.free && !isPaid);
+            const isUnpaidLocked = (!d.free && !isPaid);
+            const isComingSoon = (!d.prepared);
             const isSelected = (select.value === d.id || (select.value === 'pyDay01' && d.id === 'pyDay01'));
             const optionItem = document.createElement('div');
-            optionItem.className = `custom-select-option${isSelected ? ' selected' : ''}${isLocked ? ' is-locked' : ''}`;
+            optionItem.className = `custom-select-option${isSelected ? ' selected' : ''}${isUnpaidLocked ? ' is-locked' : ''}`;
             
             const iconSvg = svgIcons[d.track] || '';
             const dayNumStr = String(d.globalDay).padStart(2, '0');
+
+            let badgeHtml = '';
+            if (isUnpaidLocked) {
+              badgeHtml = '<span class="day-lock-badge" title="Pro subscription required">🔒</span>';
+            } else if (isComingSoon) {
+              badgeHtml = '<span class="day-coming-soon-badge" title="Under active development">Coming Soon</span>';
+            } else if (d.free) {
+              badgeHtml = '<span class="day-free-badge">FREE</span>';
+            }
 
             optionItem.innerHTML = `
               <span class="option-day-tag">
@@ -219,14 +229,22 @@ function initCustomDropdowns() {
                   <span class="option-day-title">${d.title}</span>
                 </span>
               </span>
-              ${isLocked ? '<span class="day-lock-badge" title="Pro subscription required">🔒</span>' : '<span class="day-free-badge">FREE</span>'}
+              ${badgeHtml}
             `;
 
             optionItem.dataset.value = d.id;
             optionItem.addEventListener('click', (e) => {
               e.stopPropagation();
-              if (isLocked) {
+              if (isUnpaidLocked) {
                 window.location.href = '../index.html#pricing?locked=true';
+                return;
+              }
+              if (isComingSoon) {
+                if (window.showComingSoonToast) {
+                  window.showComingSoonToast(d.title, d.globalDay);
+                } else {
+                  alert(`Day ${dayNumStr} is currently in active development and coming soon!`);
+                }
                 return;
               }
               window.location.href = d.url;

@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.css">
 
   <!-- App CSS -->
-  <link rel="stylesheet" href="/Version-3/styles.css?v=22.0">
+  <link rel="stylesheet" href="/Version-3/styles.css?v=25.0">
 
   <!-- CodeMirror JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
@@ -194,9 +194,9 @@
           <button class="audio-play-btn" id="solutionAudioBtn" onclick="playSolutionAudioFromBtn(this)" title="Play solution narration" style="margin-left: 6px;">
             <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
           </button>
-          <button class="tb-btn tb-btn--tables" id="peekTrigger" onclick="togglePeekPopover(event)">📊 Tables</button>
           <div class="spacer"></div>
           <button class="tb-btn tb-btn--run" id="runBtn" onclick="runCurrentQuery()">▶ Run</button>
+          <button class="tb-btn tb-btn--tables" id="peekTrigger" onclick="togglePeekPopover(event)">📊 Tables</button>
           <button class="tb-btn tb-btn--clear" onclick="clearEditor()">✕ Clear</button>
         </div>
 
@@ -440,6 +440,7 @@
           <span class="q-counter" id="testQCounter">Q1 / 25</span>
           <div class="spacer" style="flex:1"></div>
           <button class="tb-btn tb-btn--run" onclick="runTestQuery()">▶ Run</button>
+          <button class="tb-btn tb-btn--tables" onclick="togglePeekPopover(event)">📊 Tables</button>
           <button class="tb-btn tb-btn--clear" onclick="clearTestEditor()">✕ Clear</button>
         </div>
 
@@ -489,12 +490,12 @@
   <!-- Supabase SDK -->
   <script src="/supabase.js" defer></script>
   <!-- Content & Grading modules -->
-  <script src="/Version-3/content/manifest.js?v=19.0"></script>
-  <script src="/Version-3/content/day-04.js?v=19.0"></script>
-  <script src="/Version-3/db-seeds/retail-seed.js?v=19.0"></script>
-  <script src="/Version-3/grading-engine.js?v=19.0"></script>
-  <script src="/Version-3/persistence.js?v=19.0"></script>
+  <script src="/Version-3/content/manifest.js?v=25.0"></script>
+  <script src="/Version-3/content/day-04.js?v=25.0"></script>
+  <script src="/Version-3/db-seeds/retail-seed.js?v=25.0"></script>
+  <script src="/Version-3/grading-engine.js?v=25.0"></script>
+  <script src="/Version-3/persistence.js?v=25.0"></script>
   <!-- App JS -->
-  <script src="/Version-3/mano-engine.js?v=20.0"></script>
+  <script src="/Version-3/mano-engine.js?v=25.0"></script>
 </body>
 </html>

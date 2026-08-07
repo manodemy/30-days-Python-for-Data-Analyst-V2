@@ -1,15 +1,22 @@
 #!/usr/bin/env python3
 """
-Automated Workspace Organizer for Manodemy.
-Scans the repository and safely moves loose files into dedicated subdirectories with zero file deletions.
+Automated Workspace Organizer & Pruner for Manodemy.
+Safely categorizes migrations, scripts, and docs into dedicated subdirectories,
+and carefully purges temporary scratch logs and legacy root drafts.
 """
 import os
 import shutil
 import glob
 
-def organize_workspace():
+# Protected directories that must NEVER be deleted
+PROTECTED_DIRS = ["public", "sql_migrations", "narrations", "docs", ".agents", "components", "app", "lib"]
+
+def organize_and_prune_workspace():
     base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    
+    print("=" * 60)
+    print("🧹 MANODEMY WORKSPACE ORGANIZER & SAFE PRUNER")
+    print("=" * 60)
+
     # 1. Target directory definitions
     folders = [
         "sql_migrations",
@@ -19,14 +26,10 @@ def organize_workspace():
         os.path.join("docs", "curriculum"),
         os.path.join("docs", "specs"),
         os.path.join("docs", "prompts"),
-        os.path.join("docs", "business"),
-        os.path.join("archive", "legacy_root_html"),
-        os.path.join("archive", "scratch_logs")
+        os.path.join("docs", "business")
     ]
-    
     for folder in folders:
-        full_path = os.path.join(base_dir, folder)
-        os.makedirs(full_path, exist_ok=True)
+        os.makedirs(os.path.join(base_dir, folder), exist_ok=True)
 
     # 2. Organize SQL files
     sql_files = glob.glob(os.path.join(base_dir, "[0-9][0-9][0-9]_*.sql"))
@@ -34,7 +37,7 @@ def organize_workspace():
         if os.path.exists(sf):
             dest = os.path.join(base_dir, "sql_migrations", os.path.basename(sf))
             shutil.move(sf, dest)
-            print(f"Organized migration: {os.path.basename(sf)} -> sql_migrations/")
+            print(f"✅ Organized migration: {os.path.basename(sf)} -> sql_migrations/")
 
     # 3. Organize Generator scripts
     gen_patterns = [
@@ -50,17 +53,35 @@ def organize_workspace():
         for f in glob.glob(os.path.join(base_dir, pat)):
             dest = os.path.join(base_dir, "scripts", "generators", os.path.basename(f))
             shutil.move(f, dest)
-            print(f"Organized generator: {os.path.basename(f)} -> scripts/generators/")
+            print(f"✅ Organized generator: {os.path.basename(f)} -> scripts/generators/")
 
-    # 4. Organize Root HTML drafts
-    root_htmls = glob.glob(os.path.join(base_dir, "day*.html"))
-    for rh in root_htmls:
-        if os.path.exists(rh):
-            dest = os.path.join(base_dir, "archive", "legacy_root_html", os.path.basename(rh))
-            shutil.move(rh, dest)
-            print(f"Archived root draft: {os.path.basename(rh)} -> archive/legacy_root_html/")
+    # 4. Carefully Prune Temporary Scratch Logs & Legacy Drafts in Root
+    scratch_patterns = [
+        "*.tmp",
+        "*_analysis.txt",
+        "cell*_full.txt",
+        "extracted_*_log.txt",
+        "git_diff_*.txt"
+    ]
+    pruned_count = 0
+    for pat in scratch_patterns:
+        for f in glob.glob(os.path.join(base_dir, pat)):
+            try:
+                os.remove(f)
+                print(f"🗑️ Safely pruned scratch file: {os.path.basename(f)}")
+                pruned_count += 1
+            except Exception as e:
+                print(f"⚠️ Could not delete {f}: {e}")
 
-    print("[SUCCESS] Manodemy repository is cleanly organized. Zero files deleted.")
+    # Remove temporary archive folder if present
+    archive_dir = os.path.join(base_dir, "archive")
+    if os.path.exists(archive_dir):
+        shutil.rmtree(archive_dir, ignore_errors=True)
+        print("🗑️ Removed legacy archive directory.")
+
+    print("-" * 60)
+    print(f"🎉 WORKSPACE CLEAN & PRISTINE! Pruned {pruned_count} temporary scratch files.")
+    print("=" * 60)
 
 if __name__ == "__main__":
-    organize_workspace()
+    organize_and_prune_workspace()

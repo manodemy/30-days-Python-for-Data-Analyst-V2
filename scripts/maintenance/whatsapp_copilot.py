@@ -73,38 +73,36 @@ SCHEDULE = [
 # ─────────────────────────────────────────────────────────────────────────────
 POST_TEMPLATES = {
     "r/SideProject": {
-        "title": "I quit learning SQL three times before I ever wrote a real query. So I spent the last few months building the zero-setup playground I desperately needed back then.",
+        "title": "Most coding courses spend the first three hours on installation instead of data. So I spent the last few months building a zero-setup browser sandbox where you start writing queries immediately.",
         "body": """Hey r/SideProject,
 
-Every time I decided to take data analytics seriously, my journey followed the exact same painful script.
+Having spent years working with data and mentoring beginners, I’ve noticed the exact same pattern repeat itself over and over again.
 
-I’d queue up hours of YouTube tutorials, full of motivation. But Day 1 was never actually about data. It was three hours of wrestling with terminal commands, installing PostgreSQL, configuring environment PATH variables, and debugging port conflicts. By the time I finally saw a blank query window, I was mentally exhausted and closed my laptop.
+People don’t quit learning SQL because the concepts are hard. They quit because the barrier to entry is completely backward:
 
-When I tried powering through long video playlists, a different problem showed up: the "illusion of competence." I’d watch a YouTuber type complex JOINs for twenty minutes and nod along thinking I understood it. But the second I opened a blank editor, my mind went completely blank. Watching someone else code is like watching someone go to the gym—it feels productive, but you don't build any muscle.
+1. The Day 1 Setup Wall: Instead of exploring data, learners spend hours dealing with terminal errors, installing local database servers, configuring environment variables, and debugging port issues before writing their very first query.
 
-The breaking point was preparing for technical interviews. Whenever I wanted to practice a specific topic like CTEs or window functions, I’d spend half an hour hunting for sample questions, and another half hour creating mock tables locally just to test a single query. By then, the urge to practice was completely gone.
+2. The Tutorial Trap: Watching someone write queries on YouTube feels productive in the moment, but the second you stare at a blank editor on your own, the knowledge evaporates. Real intuition only comes from hands-on execution.
 
-I kept thinking: Why does learning to code feel like filing taxes when it should feel like playing a game?
+3. The Interview Prep Scramble: When prepping for real interviews, people waste more time hunting for realistic schemas and setting up mock tables than actually practicing the queries that matter (like CTEs and window functions).
 
-I wanted an environment where:
-- You don’t install a single thing.
-- You don’t stare at a blank screen wondering what to type.
-- Every query you run gives instant feedback, helping you build real confidence step-by-step.
-
-So after failing as a student, I decided to build what I wished had existed:
+I wanted to remove every single piece of friction and build an environment focused 100% on active practice:
 https://www.manodemy.com/sql/day01.html
 
-It’s an interactive in-browser playground running real SQLite directly inside your browser. The moment you open the page, the retail business schema is already loaded. As the narrator explains the concept, the code types itself out in sync word-by-word with live typewriter animations. You can tweak the query, hit run, and immediately see the data rows filter in real time.
+There is zero installation and no signup required. When you open the page:
+- The database and business schema are already loaded in your browser.
+- Audio narration explains the core concept while the query writes itself in sync with live typewriter animations.
+- You can immediately modify the query, hit run, and see the data rows filter and update in real time.
 
-Days 1 and 2 are 100% free with zero signup, no login, and no credit card.
+Days 1 and 2 are 100% free with no login or credit card.
 
-I’m sharing this here because I’m still iterating and want raw, unfiltered feedback from people who know what learning should feel like:
+I’d love to hear your honest thoughts from anyone who has been through the learning journey:
 
-1. Does skipping the local setup friction make you actually want to sit down and practice?
-2. Does the audio-synchronized typewriter help concepts click faster, or does it feel unnecessary?
-3. If you were prepping for a real data interview, what specific feature or dataset would make this an absolute must-have tool for you?
+1. Does jumping straight into queries without local setup make daily practice easier to stick with?
+2. Does the audio and code typing together help complex query logic click faster?
+3. What specific real-world schemas or interview scenarios would make this even more valuable for you?
 
-Tear it apart—I'll be at my desk all day replying to comments and shipping fixes live!"""
+Really appreciate your time and feedback — I'll be around in the comments all day to answer questions and make improvements!"""
     },
     "r/SQL": {
         "title": "Built an in-browser SQLite practice sandbox with real retail schemas (no installation) — feedback from SQL practitioners wanted",

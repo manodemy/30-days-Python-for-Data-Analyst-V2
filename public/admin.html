@@ -6090,6 +6090,13 @@
           filterBar.style.display = (tabId === 'tab-engagement' || tabId === 'tab-reviews' || tabId === 'tab-batches') ? 'none' : 'block';
         }
 
+        if (tabId === 'tab-pricing') {
+          loadPricingData();
+          if (typeof window.switchPricingRegion === 'function') {
+            window.switchPricingRegion(_activePricingRegion || 'inr');
+          }
+        }
+
         if (tabId === 'tab-reviews') {
           fetchAdminReviews();
         }

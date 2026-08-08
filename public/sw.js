@@ -1,11 +1,5 @@
-const CACHE_NAME = 'manodemy-static-cache-v72';
-const DYNAMIC_CACHE_NAME = 'manodemy-dynamic-cache-v72';
-
-
-
-
-
-
+const CACHE_NAME = 'manodemy-static-cache-v73';
+const DYNAMIC_CACHE_NAME = 'manodemy-dynamic-cache-v73';
 
 // Static assets to precache immediately (only truly stable assets)
 const PRECACHE_ASSETS = [
@@ -45,6 +39,7 @@ self.addEventListener('activate', event => {
 
 // Core app files that should ALWAYS be fetched fresh from network
 const NETWORK_FIRST_PATHS = [
+  '/admin.html',
   '/notebook.css',
   '/notebook.js',
   '/hints.js',

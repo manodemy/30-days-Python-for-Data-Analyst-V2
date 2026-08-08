@@ -620,10 +620,57 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } catch (err) {}
 
+    // Default fallbacks
+    let inrConfig = { amount: 149900, currency: 'INR', display: '₹1,499', original: '₹4,999', discount: '70% OFF', planName: '60-Day Self-Paced Masterclass' };
+    let usdConfig = { amount: 4900, currency: 'USD', display: '$49', original: '$149', discount: '67% OFF', planName: '60-Day Self-Paced Masterclass' };
+
+    // Fetch live prices from Supabase settings table
+    if (supabaseClient) {
+      try {
+        const { data: pricingSetting } = await supabaseClient
+          .from('settings')
+          .select('value')
+          .eq('key', 'pricing')
+          .single();
+
+        if (pricingSetting && pricingSetting.value) {
+          const v = pricingSetting.value;
+          if (v.inr && v.original_inr) {
+            const inrSale = Number(v.inr) / 100;
+            const inrOrig = Number(v.original_inr) / 100;
+            const inrPct = v.discount_label || (inrOrig > inrSale ? Math.round(((inrOrig - inrSale) / inrOrig) * 100) + '% OFF' : '70% OFF');
+            inrConfig = {
+              amount: Number(v.inr),
+              currency: 'INR',
+              display: '₹' + inrSale.toLocaleString('en-IN'),
+              original: '₹' + inrOrig.toLocaleString('en-IN'),
+              discount: inrPct,
+              planName: '60-Day Self-Paced Masterclass'
+            };
+          }
+          if (v.usd && v.original_usd) {
+            const usdSale = Number(v.usd) / 100;
+            const usdOrig = Number(v.original_usd) / 100;
+            const usdPct = v.discount_label_usd || (usdOrig > usdSale ? Math.round(((usdOrig - usdSale) / usdOrig) * 100) + '% OFF' : '67% OFF');
+            usdConfig = {
+              amount: Number(v.usd),
+              currency: 'USD',
+              display: '$' + usdSale,
+              original: '$' + usdOrig,
+              discount: usdPct,
+              planName: '60-Day Self-Paced Masterclass'
+            };
+          }
+        }
+      } catch (err) {
+        console.warn('[Pricing] Using default fallback pricing:', err);
+      }
+    }
+
     if (userCountry === 'IN') {
-      pricingConfigs.selfpaced = { amount: 149900, currency: 'INR', display: '₹1,499',  original: '₹4,999',   discount: '70% OFF', planName: '60-Day Self-Paced Masterclass' };
+      pricingConfigs.selfpaced = inrConfig;
     } else {
-      pricingConfigs.selfpaced = { amount: 4900,   currency: 'USD', display: '$49',     original: '$149',     discount: '67% OFF', planName: '60-Day Self-Paced Masterclass' };
+      pricingConfigs.selfpaced = usdConfig;
     }
 
     const sp = pricingConfigs.selfpaced;
@@ -1233,6 +1280,47 @@ document.addEventListener('DOMContentLoaded', () => {
         couponApplyBtn.disabled = false;
       }
     });
+  }
+
+  // 1-Click URL Promo Auto-Apply (e.g. ?coupon=SUMMER50 or #coupon=SUMMER50)
+  function checkUrlForCoupon() {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      let couponParam = urlParams.get('coupon') || urlParams.get('promo') || urlParams.get('discount');
+      
+      if (!couponParam && window.location.hash) {
+        const hashStr = window.location.hash.replace(/^#/, '');
+        const hashParams = new URLSearchParams(hashStr.includes('?') ? hashStr.split('?')[1] : hashStr);
+        couponParam = hashParams.get('coupon') || hashParams.get('promo');
+        
+        // If hash is #checkout or contains checkout, open the modal
+        if (hashStr.includes('checkout') && checkoutOverlay) {
+          setTimeout(() => {
+            checkoutOverlay.classList.add('active');
+            renderPaymentGateways();
+          }, 400);
+        }
+      }
+
+      if (couponParam) {
+        const couponInput = document.getElementById('couponInput');
+        if (couponInput) {
+          couponInput.value = couponParam.toUpperCase();
+          setTimeout(() => {
+            if (couponApplyBtn) couponApplyBtn.click();
+          }, 300);
+        }
+      }
+    } catch (e) {
+      console.warn('[Coupon Auto-Apply] URL check failed:', e);
+    }
+  }
+
+  // Auto-check for promo in URL on load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', checkUrlForCoupon);
+  } else {
+    checkUrlForCoupon();
   }
 
   // ═══════ AUTH REGISTRATION & EVENT LISTENERS ═══════

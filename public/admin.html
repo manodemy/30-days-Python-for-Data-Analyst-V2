@@ -3127,83 +3127,349 @@
                   <span class="metric-tooltip" style="color:var(--ink-dim);">Average active studying time spent per user across all course pages.</span>
                 </span>
               </span>
-              <span id="eng-sum-time" style="font-family:var(--font-data);font-size:1.4rem;color:var(--emerald);font-weight:300;">—</span>
+              <span         <!-- ══ TAB 4: COUPONS & PRICING (MODERNIZED ENTERPRISE ENGINE) ══ -->
+        <div class="tab-pane" id="tab-pricing">
+          <div class="tab-header" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <h2 class="tab-title">Coupons &amp; <em>Pricing</em></h2>
+              <span class="tab-period-label">Cloud Pricing Gateway &amp; Promo Campaign Command Center</span>
             </div>
-            <div class="kpi-card" style="padding:1rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.25rem;">
-              <span style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-muted);display:inline-flex;align-items:center;gap:0.25rem;">
-                ✅ Avg Questions/User
-                <span class="info-icon">i
-                  <span class="metric-tooltip" style="color:var(--ink-dim);">Average number of challenge questions solved per user.</span>
-                </span>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <span id="cloudPricingStatusBadge" style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 9999px; font-size: 0.7rem; font-family: var(--font-data); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; background: rgba(45, 212, 191, 0.12); color: var(--emerald); border: 1px solid rgba(45, 212, 191, 0.35);">
+                <span style="width: 7px; height: 7px; border-radius: 50%; background: var(--emerald); box-shadow: 0 0 8px var(--emerald); display: inline-block;"></span>
+                Cloud Synced
               </span>
-              <span id="eng-sum-questions" style="font-family:var(--font-data);font-size:1.4rem;color:var(--gold);font-weight:300;">—</span>
+              <button class="btn-ghost" id="refreshPricingTabBtn" style="display: inline-flex; align-items: center; gap: 4px;" title="Reload latest cloud pricing & coupons from Supabase">
+                ⟳ Refresh
+              </button>
             </div>
           </div>
 
-          <!-- Scrollable Table (both X and Y) -->
-          <div style="overflow:auto;max-height:70vh;border-radius:var(--radius-lg);border:1px solid var(--rim);background:var(--surface);">
-            <table id="engagementTable" style="border-collapse:collapse;min-width:max-content;width:100%;">
-              <thead id="engagementTableHead" style="position:sticky;top:0;z-index:4;background:var(--elevated);">
-                <tr>
-                  <!-- Only Name and Email are frozen horizontally -->
-                  <th rowspan="2" style="position:sticky;top:0;z-index:4;background:var(--elevated);min-width:36px;vertical-align:bottom;padding-bottom:12px;">#</th>
-                  <th rowspan="2" style="position:sticky;left:0;top:0;z-index:5;background:var(--elevated);min-width:140px;vertical-align:bottom;padding-bottom:12px;">NAME</th>
-                  <th rowspan="2" style="position:sticky;left:140px;top:0;z-index:5;background:var(--elevated);min-width:190px;vertical-align:bottom;padding-bottom:12px;">EMAIL ID</th>
-                  <th rowspan="2" style="position:sticky;top:0;z-index:4;background:var(--elevated);min-width:90px;vertical-align:bottom;padding-bottom:12px;">COUNTRY</th>
-                  <th rowspan="2" style="position:sticky;top:0;z-index:4;background:var(--elevated);min-width:70px;vertical-align:bottom;padding-bottom:12px;">PLAN</th>
-                  <th rowspan="2" style="position:sticky;top:0;z-index:4;background:var(--elevated);min-width:110px;vertical-align:bottom;padding-bottom:12px;">SIGNED UP</th>
-                  <th rowspan="2" style="position:sticky;top:0;z-index:4;background:var(--elevated);min-width:110px;vertical-align:bottom;padding-bottom:12px;">LAST SEEN</th>
-                  <!-- Home page group -->
-                  <th colspan="3" style="position:sticky;top:0;z-index:4;text-align:center;border-left:2px solid var(--rim-strong);background:linear-gradient(rgba(96,165,250,0.06), rgba(96,165,250,0.06)), var(--elevated);color:var(--sapphire);min-width:240px;">HOME PAGE</th>
-                  <!-- Day columns injected by JS -->
-                </tr>
-                <tr id="engagementSubHead">
-                  <!-- Home sub-headers -->
-                  <th style="position:sticky;top:auto;z-index:4;text-align:center;border-left:2px solid var(--rim-strong);background:linear-gradient(rgba(96,165,250,0.04), rgba(96,165,250,0.04)), var(--elevated);font-size:0.6rem;color:var(--sapphire);opacity:0.8;">
-                    VISITS
-                    <span class="info-icon" style="vertical-align: middle; margin-left: 2px;">i
-                      <span class="metric-tooltip">Unique page visits</span>
-                    </span>
-                  </th>
-                  <th style="position:sticky;top:auto;z-index:4;text-align:center;background:linear-gradient(rgba(96,165,250,0.04), rgba(96,165,250,0.04)), var(--elevated);font-size:0.6rem;color:var(--sapphire);opacity:0.8;">
-                    TIME SPENT
-                    <span class="info-icon" style="vertical-align: middle; margin-left: 2px;">i
-                      <span class="metric-tooltip">Active study minutes</span>
-                    </span>
-                  </th>
-                  <th style="position:sticky;top:auto;z-index:4;text-align:center;background:linear-gradient(rgba(96,165,250,0.04), rgba(96,165,250,0.04)), var(--elevated);font-size:0.6rem;color:var(--sapphire);opacity:0.8;">
-                    Q.SOLVED
-                    <span class="info-icon" style="vertical-align: middle; margin-left: 2px;">i
-                      <span class="metric-tooltip">Coding questions solved</span>
-                    </span>
-                  </th>
-                  <!-- Day sub-headers injected by JS -->
-                </tr>
-              </thead>
-              <tbody id="engagementTableBody">
-                <tr><td colspan="9" style="text-align:center;color:var(--ink-muted);padding:3rem;">Loading engagement data…</td></tr>
-              </tbody>
-            </table>
+          <!-- Top Summary Metrics for Coupons & Pricing -->
+          <div class="kpi-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 1.5rem;">
+            <div class="kpi-wrapper">
+              <div class="kpi-label">Active Promos <span class="info-icon">i<span class="metric-tooltip">Currently live and redeemable coupon codes</span></span></div>
+              <div class="kpi-card">
+                <div class="kpi-value" id="kpi-active-coupons" style="color: var(--emerald);">0</div>
+                <div class="kpi-meta" id="meta-active-coupons">Live in Cloud</div>
+              </div>
+            </div>
+            <div class="kpi-wrapper">
+              <div class="kpi-label">Total Redemptions <span class="info-icon">i<span class="metric-tooltip">Total times any coupon has been applied in completed purchases</span></span></div>
+              <div class="kpi-card">
+                <div class="kpi-value" id="kpi-coupon-uses" style="color: var(--gold);">0</div>
+                <div class="kpi-meta" id="meta-coupon-uses">Orders with discount</div>
+              </div>
+            </div>
+            <div class="kpi-wrapper">
+              <div class="kpi-label">Promo Revenue <span class="info-icon">i<span class="metric-tooltip">Gross revenue generated through coupon-attributed purchases</span></span></div>
+              <div class="kpi-card">
+                <div class="kpi-value" id="kpi-coupon-rev" style="color: var(--sapphire);">₹0</div>
+                <div class="kpi-meta" id="meta-coupon-rev">Attributed sales</div>
+              </div>
+            </div>
+            <div class="kpi-wrapper">
+              <div class="kpi-label">Discounts Conceded <span class="info-icon">i<span class="metric-tooltip">Total monetary value discounted from regular price to students</span></span></div>
+              <div class="kpi-card">
+                <div class="kpi-value" id="kpi-coupon-discount-total" style="color: var(--amber);">₹0</div>
+                <div class="kpi-meta" id="meta-coupon-discount-total">Total savings given</div>
+              </div>
+            </div>
           </div>
-        </div>
-        <!-- ══ TAB 4: COUPONS & PRICING ══ -->
-        <div class="tab-pane" id="tab-pricing">
-          <div class="tab-header">
-            <h2 class="tab-title">Coupons &amp; <em>Pricing</em></h2>
-            <span class="tab-period-label">Marketing Operations</span>
-          </div>
-          <!-- Course Pricing -->
-          <div class="form-panel">
-            <div class="form-panel-title">Course Pricing</div>
-            <form id="pricingForm">
-              <div class="form-grid-3">
-                <div class="field">
-                  <label>INR Sale Price ₹</label>
-                  <input id="inr_price" placeholder="0" required="" type="number" />
+
+          <!-- SECTION 1: DUAL-CURRENCY COURSE PRICING & LIVE PREVIEW -->
+          <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 1.25rem; margin-bottom: 1.5rem;">
+            <!-- Price Config Panel -->
+            <div class="form-panel" style="margin-bottom: 0;">
+              <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--rim); padding-bottom: 0.85rem; margin-bottom: 1.25rem;">
+                <div class="form-panel-title" style="margin-bottom: 0; padding-bottom: 0; border-bottom: none;">
+                  🌐 Live Cloud Pricing Engine
                 </div>
-                <div class="field">
-                  <label>INR Original ₹</label>
-                  <input id="inr_original" placeholder="0" required="" type="number" />
+                <!-- Quick Campaign Presets -->
+                <div style="display: flex; align-items: center; gap: 0.4rem;">
+                  <button type="button" class="btn-ghost" style="font-size: 0.65rem; padding: 2px 8px;" onclick="applyPricingPreset(1499, 4999, 49, 149)">⚡ 70% Sale (Default)</button>
+                  <button type="button" class="btn-ghost" style="font-size: 0.65rem; padding: 2px 8px;" onclick="applyPricingPreset(999, 4999, 29, 149)">🔥 ₹999 Super Deal</button>
+                  <button type="button" class="btn-ghost" style="font-size: 0.65rem; padding: 2px 8px;" onclick="applyPricingPreset(2499, 7999, 79, 249)">💎 Standard ₹2,499</button>
+                </div>
+              </div>
+
+              <form id="pricingForm">
+                <!-- India Domestic (INR ₹) -->
+                <div style="background: rgba(201, 168, 76, 0.04); border: 1px solid rgba(201, 168, 76, 0.18); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1rem;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                    <span style="font-size: 0.75rem; font-weight: 700; color: var(--gold); letter-spacing: 0.08em; text-transform: uppercase;">
+                      🇮🇳 India Domestic Pricing (INR ₹)
+                    </span>
+                    <span style="font-size: 0.68rem; color: var(--ink-muted); font-family: var(--font-data);">Razorpay &amp; UPI Gateway</span>
+                  </div>
+                  <div class="form-grid-3">
+                    <div class="field">
+                      <label>Sale Price (₹)</label>
+                      <input id="inr_price" placeholder="1499" required="" type="number" step="1" />
+                    </div>
+                    <div class="field">
+                      <label>Cross-out Original (₹)</label>
+                      <input id="inr_original" placeholder="4999" required="" type="number" step="1" />
+                    </div>
+                    <div class="field">
+                      <label>Discount Badge</label>
+                      <input id="inr_discount" placeholder="70" type="number" min="0" max="100" style="color: var(--gold); font-weight: 700;" />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Global International (USD $) -->
+                <div style="background: rgba(45, 212, 191, 0.04); border: 1px solid rgba(45, 212, 191, 0.18); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.25rem;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                    <span style="font-size: 0.75rem; font-weight: 700; color: var(--emerald); letter-spacing: 0.08em; text-transform: uppercase;">
+                      🌍 Global International Pricing (USD $)
+                    </span>
+                    <span style="font-size: 0.68rem; color: var(--ink-muted); font-family: var(--font-data);">PayPal &amp; Stripe Gateway</span>
+                  </div>
+                  <div class="form-grid-3">
+                    <div class="field">
+                      <label>Sale Price ($)</label>
+                      <input id="usd_price" placeholder="49" required="" type="number" step="1" />
+                    </div>
+                    <div class="field">
+                      <label>Cross-out Original ($)</label>
+                      <input id="usd_original" placeholder="149" required="" type="number" step="1" />
+                    </div>
+                    <div class="field">
+                      <label>Discount Badge</label>
+                      <input id="usd_discount" placeholder="67" type="number" min="0" max="100" style="color: var(--emerald); font-weight: 700;" />
+                    </div>
+                  </div>
+                </div>
+
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+                  <span style="font-size: 0.72rem; color: var(--ink-muted);">
+                    ⚡ Changes propagate instantaneously across all landing page visitors &amp; checkout sessions.
+                  </span>
+                  <button class="btn-gold" id="savePricing" type="submit" style="padding: 0.65rem 1.75rem;">
+                    ↑ Sync Prices to Cloud
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Real-time Student Preview Simulator -->
+            <div class="form-panel" style="margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div class="form-panel-title" style="display: flex; align-items: center; justify-content: space-between;">
+                  <span>👁️ Student View Simulator</span>
+                  <div style="display: inline-flex; border: 1px solid var(--rim); border-radius: var(--radius-sm); overflow: hidden;">
+                    <button type="button" class="btn-ghost active" id="simInrTab" style="border: none; padding: 2px 10px; font-size: 0.65rem;" onclick="setPreviewCurrency('INR')">INR (₹)</button>
+                    <button type="button" class="btn-ghost" id="simUsdTab" style="border: none; padding: 2px 10px; font-size: 0.65rem;" onclick="setPreviewCurrency('USD')">USD ($)</button>
+                  </div>
+                </div>
+
+                <!-- Simulated Pricing Card -->
+                <div id="simulatedPricingCard" style="background: var(--base); border: 1px solid rgba(0, 230, 246, 0.4); border-radius: var(--radius-lg); padding: 1.5rem; box-shadow: 0 0 25px rgba(0, 230, 246, 0.08); position: relative; overflow: hidden;">
+                  <div style="position: absolute; top: 0; right: 0; background: linear-gradient(135deg, #00E6F6, #00B8C4); color: #080810; font-size: 0.65rem; font-weight: 800; padding: 3px 12px; border-bottom-left-radius: 8px; letter-spacing: 0.05em;" id="simDiscountBadge">
+                    70% OFF
+                  </div>
+                  <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--gold); font-weight: 700; margin-bottom: 0.5rem;">
+                    Full Lifetime Pass
+                  </div>
+                  <div style="display: flex; align-items: baseline; gap: 0.6rem; margin-bottom: 0.75rem;">
+                    <span id="simPriceNow" style="font-size: 2.2rem; font-weight: 800; color: #FFFFFF; font-family: var(--font-data);">₹1,499</span>
+                    <span id="simPriceOld" style="font-size: 1.1rem; color: var(--ink-muted); text-decoration: line-through; font-family: var(--font-data);">₹4,999</span>
+                  </div>
+                  <div style="display: inline-block; padding: 3px 8px; background: rgba(45, 212, 191, 0.12); color: var(--emerald); border-radius: 4px; font-size: 0.7rem; font-weight: 600; margin-bottom: 1rem;" id="simSavingsText">
+                    🎉 You Save ₹3,500 (One-Time)
+                  </div>
+                  <div style="border-top: 1px solid var(--rim); padding-top: 0.75rem; font-size: 0.75rem; color: var(--ink-dim); display: flex; flex-direction: column; gap: 4px;">
+                    <div>✓ 60-Day Guided Masterclass (SQL + Excel + Python)</div>
+                    <div>✓ 100+ Real Hands-on Sandbox Exercises</div>
+                    <div>✓ Verified Certificate of Completion</div>
+                  </div>
+                </div>
+              </div>
+
+              <div style="margin-top: 1rem; padding: 0.75rem; background: var(--elevated); border-radius: var(--radius-sm); border: 1px solid var(--rim); font-size: 0.72rem; color: var(--ink-muted); display: flex; align-items: center; gap: 0.5rem;">
+                <span>💡</span>
+                <span>Values update live as you type in the pricing form.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 2: CREATE COUPON & CAMPAIGN HUB -->
+          <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 1.25rem; margin-bottom: 1.5rem;">
+            <!-- Coupon Creator -->
+            <div class="form-panel" style="margin-bottom: 0;">
+              <div class="form-panel-title" style="display: flex; align-items: center; justify-content: space-between;">
+                <span>🎟️ Create New Promo Code</span>
+                <span style="font-size: 0.65rem; color: var(--gold); font-family: var(--font-data);">Direct Checkout Redemption</span>
+              </div>
+
+              <form id="couponForm">
+                <!-- Row 1: Code & Type & Value -->
+                <div class="form-grid-3">
+                  <div class="field">
+                    <label>
+                      Promo Code 
+                      <span class="auto-gen-tag" onclick="generateAutoCouponCode()" style="cursor: pointer; color: var(--gold); text-decoration: underline; margin-left: 4px;">Auto ⚡</span>
+                    </label>
+                    <input id="coupon_code" placeholder="e.g. DATA50" required="" style="text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700; color: var(--gold);" type="text" />
+                  </div>
+
+                  <div class="field">
+                    <label>Discount Mode</label>
+                    <div class="type-toggle" style="display: flex; gap: 4px;">
+                      <button class="type-btn active" id="typePctBtn" type="button" style="flex: 1;">% Percent</button>
+                      <button class="type-btn" id="typeFixInrBtn" type="button" style="flex: 1;">₹ Fixed</button>
+                      <button class="type-btn" id="typeFixUsdBtn" type="button" style="flex: 1;">$ Fixed</button>
+                    </div>
+                    <input id="coupon_type" type="hidden" value="percentage" />
+                  </div>
+
+                  <div class="field">
+                    <label id="couponValueLabel">Discount Value (%)</label>
+                    <input id="coupon_value" min="1" placeholder="50" required="" type="number" step="any" />
+                  </div>
+                </div>
+
+                <!-- Row 2: Applies To, Expiry & Max Uses -->
+                <div class="form-grid-3 mb-2">
+                  <div class="field">
+                    <label>Applies To Currency</label>
+                    <select id="coupon_applies" style="color: var(--ink);">
+                      <option value="both">Both (INR ₹ &amp; USD $)</option>
+                      <option value="INR">INR ₹ Domestic Only</option>
+                      <option value="USD">USD $ International Only</option>
+                    </select>
+                  </div>
+
+                  <div class="field">
+                    <label>Expiry Date (Optional)</label>
+                    <input id="coupon_expires" type="date" />
+                  </div>
+
+                  <div class="field">
+                    <label>Max Redemptions (Blank = ∞)</label>
+                    <input id="coupon_max" placeholder="∞ Unlimited" type="number" min="1" />
+                  </div>
+                </div>
+
+                <!-- Row 3: Advanced Options & Campaign Note -->
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 1rem; margin-bottom: 1.25rem; align-items: center;">
+                  <div class="field">
+                    <label>Campaign Tag / Channel (Optional)</label>
+                    <input id="coupon_campaign_tag" placeholder="e.g. YouTube Ad, Influencer Deepak, Flash Sale" type="text" />
+                  </div>
+                  <div style="display: flex; flex-direction: column; gap: 0.4rem; padding-top: 0.8rem;">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.72rem; color: var(--ink-dim);">
+                      <input id="coupon_single_use" type="checkbox" style="width: 14px; height: 14px; accent-color: var(--gold);" />
+                      <span>Single-use per student email</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+                  <span style="font-size: 0.72rem; color: var(--ink-muted);" id="couponSummaryPreviewText">
+                    Preview: 50% discount on INR &amp; USD checkouts.
+                  </span>
+                  <button class="btn-gold" id="saveCoupon" type="submit">
+                    + Deploy Promo Code
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Sandbox & Live Simulator -->
+            <div class="form-panel" style="margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div class="form-panel-title">
+                  🧪 Promo Test Sandbox
+                </div>
+                <div style="margin-bottom: 1rem;">
+                  <div class="field" style="margin-bottom: 0.75rem;">
+                    <label>Test any promo code on live prices:</label>
+                    <div style="display: flex; gap: 6px;">
+                      <input id="sandboxCouponInput" placeholder="Enter code (e.g. SUMMER50)" style="text-transform: uppercase; font-family: var(--font-data); font-weight: 700; color: var(--gold);" />
+                      <button class="btn-outline-gold" type="button" onclick="runCouponSandbox()" style="padding: 0.5rem 1rem;">Test</button>
+                    </div>
+                  </div>
+
+                  <!-- Sandbox Output Result Box -->
+                  <div id="sandboxResultBox" style="background: var(--elevated); border: 1px solid var(--rim); border-radius: var(--radius-md); padding: 1rem; min-height: 120px; display: flex; flex-direction: column; justify-content: center;">
+                    <div style="color: var(--ink-muted); font-size: 0.75rem; text-align: center;">
+                      Type a code and click <strong>Test</strong> to simulate checkout calculation.
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="shareableLinkContainer" style="display: none; background: rgba(0, 230, 246, 0.05); border: 1px dashed rgba(0, 230, 246, 0.3); border-radius: var(--radius-sm); padding: 0.75rem;">
+                <div style="font-size: 0.65rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; margin-bottom: 4px;">
+                  🔗 1-Click Auto-Apply Link:
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px;">
+                  <span id="shareableLinkUrl" style="font-family: var(--font-data); font-size: 0.72rem; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></span>
+                  <button type="button" class="btn-ghost" style="padding: 2px 8px; font-size: 0.65rem;" onclick="copySandboxShareLink()">Copy</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 3: ACTIVE COUPONS & ROI PERFORMANCE TABLE -->
+          <div class="table-panel mb-3">
+            <div class="table-panel-header" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+              <div>
+                <span class="table-panel-title">Active Coupons &amp; Campaign ROI Ledger</span>
+                <span style="font-size: 0.7rem; color: var(--ink-muted); margin-left: 0.75rem;" id="couponsTableCount">0 codes</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <input id="couponSearchInput" type="text" placeholder="Filter codes…" style="background: var(--elevated); border: 1px solid var(--rim); border-radius: var(--radius-sm); padding: 0.3rem 0.65rem; color: var(--ink); font-size: 0.72rem; font-family: var(--font-data); outline: none;" oninput="filterCouponsTable(this.value)" />
+                <button class="btn-export" id="exportCouponsCsvBtn" onclick="exportCouponsCSV()">↓ Export CSV</button>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table id="couponsTable">
+                <thead>
+                  <tr>
+                    <th>Code &amp; Share Link</th>
+                    <th>Discount</th>
+                    <th>Currency</th>
+                    <th>Redemptions / Cap</th>
+                    <th>Revenue Generated</th>
+                    <th>Discount Given</th>
+                    <th>Expires</th>
+                    <th>Status</th>
+                    <th style="text-align: right;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="couponsTableBody">
+                  <tr><td colspan="9" style="text-align: center; color: var(--ink-muted); padding: 2.5rem;">Loading live coupons from cloud…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- SECTION 4: AUDIT LOG -->
+          <div class="table-panel">
+            <div class="table-panel-header">
+              <span class="table-panel-title">Pricing &amp; Promo Change Audit Trail</span>
+            </div>
+            <div class="table-wrap">
+              <table id="auditTable">
+                <thead>
+                  <tr>
+                    <th>Admin</th>
+                    <th>Action</th>
+                    <th>Old Value</th>
+                    <th>New Value</th>
+                    <th>Timestamp</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td colspan="5" style="text-align: center; color: var(--ink-muted); padding: 2rem;">Loading audit logs…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>ginal" placeholder="0" required="" type="number" />
                 </div>
                 <div class="field">
                   <label>INR Discount %</label>
@@ -5049,49 +5315,579 @@
       showToast('Engagement CSV exported ✓', 'success');
     });
 
-    // ── COUPONS TABLE ────────────────────────────────
-    function renderCouponsTable(coupons) {
-      const tbody = document.querySelector('#couponsTable tbody');
-      if (!coupons || !coupons.length) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--ink-muted);padding:2rem;">No coupons created yet</td></tr>';
+    // ── COUPONS & PRICING ENTERPRISE ENGINE ──────────────────
+    let _pricingState = {
+      inr: 149900,
+      original_inr: 499900,
+      usd: 4900,
+      original_usd: 14900,
+      discount_label: '70% OFF',
+      discount_label_usd: '67% OFF'
+    };
+    let _previewCurrency = 'INR';
+    let _allCouponsList = [];
+
+    window.setPreviewCurrency = function(curr) {
+      _previewCurrency = curr;
+      const inrTab = document.getElementById('simInrTab');
+      const usdTab = document.getElementById('simUsdTab');
+      if (inrTab && usdTab) {
+        if (curr === 'INR') {
+          inrTab.classList.add('active');
+          usdTab.classList.remove('active');
+        } else {
+          usdTab.classList.add('active');
+          inrTab.classList.remove('active');
+        }
+      }
+      updatePreviewSimulator();
+    };
+
+    window.applyPricingPreset = function(inrSale, inrOrig, usdSale, usdOrig) {
+      document.getElementById('inr_price').value = inrSale;
+      document.getElementById('inr_original').value = inrOrig;
+      document.getElementById('usd_price').value = usdSale;
+      document.getElementById('usd_original').value = usdOrig;
+      updateDiscountLabels();
+      showToast(`Preset applied: ₹${inrSale} / $${usdSale}. Click "Sync Prices" to publish.`, 'info');
+    };
+
+    window.generateAutoCouponCode = function() {
+      const prefixes = ['DATA', 'PYTHON', 'SQL', 'ANALYST', 'CAREER', 'FLASH', 'SUMMER', 'MASTER'];
+      const randomPrefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+      const discount = document.getElementById('coupon_value')?.value || '50';
+      const codeInput = document.getElementById('coupon_code');
+      if (codeInput) {
+        codeInput.value = `${randomPrefix}${Math.round(discount)}`;
+        updateCouponSummary();
+      }
+    };
+
+    function updatePreviewSimulator() {
+      const badgeEl = document.getElementById('simDiscountBadge');
+      const priceNowEl = document.getElementById('simPriceNow');
+      const priceOldEl = document.getElementById('simPriceOld');
+      const savingsEl = document.getElementById('simSavingsText');
+      if (!priceNowEl || !priceOldEl) return;
+
+      const inrSale = Number(document.getElementById('inr_price')?.value) || 1499;
+      const inrOrig = Number(document.getElementById('inr_original')?.value) || 4999;
+      const inrPct = document.getElementById('inr_discount')?.value ? document.getElementById('inr_discount').value + '% OFF' : '70% OFF';
+
+      const usdSale = Number(document.getElementById('usd_price')?.value) || 49;
+      const usdOrig = Number(document.getElementById('usd_original')?.value) || 149;
+      const usdPct = document.getElementById('usd_discount')?.value ? document.getElementById('usd_discount').value + '% OFF' : '67% OFF';
+
+      if (_previewCurrency === 'INR') {
+        if (badgeEl) badgeEl.textContent = inrPct;
+        priceNowEl.textContent = '₹' + inrSale.toLocaleString('en-IN');
+        priceOldEl.textContent = '₹' + inrOrig.toLocaleString('en-IN');
+        const diff = inrOrig - inrSale;
+        if (savingsEl) savingsEl.textContent = `🎉 You Save ₹${diff > 0 ? diff.toLocaleString('en-IN') : 0} (One-Time)`;
+      } else {
+        if (badgeEl) badgeEl.textContent = usdPct;
+        priceNowEl.textContent = '$' + usdSale;
+        priceOldEl.textContent = '$' + usdOrig;
+        const diff = usdOrig - usdSale;
+        if (savingsEl) savingsEl.textContent = `🎉 You Save $${diff > 0 ? diff : 0} (One-Time)`;
+      }
+    }
+
+    function updateDiscountLabels() {
+      const inrSale = Number(document.getElementById('inr_price')?.value) || 0;
+      const inrOrig = Number(document.getElementById('inr_original')?.value) || 0;
+      if (inrOrig > 0 && inrOrig > inrSale) {
+        document.getElementById('inr_discount').value = Math.round(((inrOrig - inrSale) / inrOrig) * 100);
+      } else {
+        document.getElementById('inr_discount').value = '';
+      }
+
+      const usdSale = Number(document.getElementById('usd_price')?.value) || 0;
+      const usdOrig = Number(document.getElementById('usd_original')?.value) || 0;
+      if (usdOrig > 0 && usdOrig > usdSale) {
+        document.getElementById('usd_discount').value = Math.round(((usdOrig - usdSale) / usdOrig) * 100);
+      } else {
+        document.getElementById('usd_discount').value = '';
+      }
+
+      updatePreviewSimulator();
+    }
+
+    async function loadPricingData() {
+      try {
+        const { data, error } = await sb.from('settings').select('value').eq('key', 'pricing').single();
+        if (data && data.value) {
+          window._oldPricingPayload = data.value;
+          _pricingState = data.value;
+
+          const inrInput = document.getElementById('inr_price');
+          const inrOrigInput = document.getElementById('inr_original');
+          const usdInput = document.getElementById('usd_price');
+          const usdOrigInput = document.getElementById('usd_original');
+
+          if (inrInput && data.value.inr) inrInput.value = data.value.inr / 100;
+          if (inrOrigInput && data.value.original_inr) inrOrigInput.value = data.value.original_inr / 100;
+          if (usdInput && data.value.usd) usdInput.value = data.value.usd / 100;
+          if (usdOrigInput && data.value.original_usd) usdOrigInput.value = data.value.original_usd / 100;
+
+          updateDiscountLabels();
+        }
+      } catch (err) {
+        console.warn('[Pricing] Error loading pricing settings:', err);
+      }
+    }
+
+    // Two-way bindings for INR
+    document.getElementById('inr_price')?.addEventListener('input', updateDiscountLabels);
+    document.getElementById('inr_original')?.addEventListener('input', updateDiscountLabels);
+    document.getElementById('inr_discount')?.addEventListener('input', () => {
+      const discount = Number(document.getElementById('inr_discount').value) || 0;
+      const original = Number(document.getElementById('inr_original').value) || 0;
+      if (original > 0) {
+        const sale = Math.round(original - (original * (discount / 100)));
+        document.getElementById('inr_price').value = Math.max(0, sale);
+        updatePreviewSimulator();
+      }
+    });
+
+    // Two-way bindings for USD
+    document.getElementById('usd_price')?.addEventListener('input', updateDiscountLabels);
+    document.getElementById('usd_original')?.addEventListener('input', updateDiscountLabels);
+    document.getElementById('usd_discount')?.addEventListener('input', () => {
+      const discount = Number(document.getElementById('usd_discount').value) || 0;
+      const original = Number(document.getElementById('usd_original').value) || 0;
+      if (original > 0) {
+        const sale = original - (original * (discount / 100));
+        document.getElementById('usd_price').value = Math.max(0, Number(sale.toFixed(2)));
+        updatePreviewSimulator();
+      }
+    });
+
+    // Pricing form submit
+    document.getElementById('pricingForm')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('savePricing');
+      if (btn) { btn.textContent = 'Syncing to Cloud…'; btn.disabled = true; }
+
+      const inr_pct = document.getElementById('inr_discount')?.value ? document.getElementById('inr_discount').value + '% OFF' : '70% OFF';
+      const usd_pct = document.getElementById('usd_discount')?.value ? document.getElementById('usd_discount').value + '% OFF' : '67% OFF';
+
+      const payload = {
+        inr: parseInt(document.getElementById('inr_price').value, 10) * 100,
+        original_inr: parseInt(document.getElementById('inr_original').value, 10) * 100,
+        usd: Math.round(parseFloat(document.getElementById('usd_price').value) * 100),
+        original_usd: Math.round(parseFloat(document.getElementById('usd_original').value) * 100),
+        discount_label: inr_pct,
+        discount_label_usd: usd_pct,
+        updated_at: new Date().toISOString()
+      };
+
+      const { error } = await sb.from('settings').upsert({ key: 'pricing', value: payload, updated_at: new Date().toISOString() });
+      if (error) {
+        showToast('Sync failed: ' + error.message, 'error');
+      } else {
+        showToast('✅ Cloud prices synchronized live across all systems!', 'success');
+        _pricingState = payload;
+        window._oldPricingPayload = payload;
+
+        try {
+          const { data: { user } } = await sb.auth.getUser();
+          if (user) {
+            await sb.from('admin_audit_log').insert([{
+              admin_id: user.id,
+              action: 'UPDATE_PRICING',
+              table_name: 'settings',
+              changed_data: { old: { value: window._oldPricingPayload || {} }, new: { value: payload } }
+            }]);
+          }
+        } catch (auditErr) {
+          console.warn('[Admin] Audit log failed:', auditErr);
+        }
+        renderDashboard();
+      }
+      if (btn) { btn.textContent = '↑ Sync Prices to Cloud'; btn.disabled = false; }
+    });
+
+    // ── COUPON FORM & MODE TOGGLES ───────────────────
+    function updateCouponSummary() {
+      const code = (document.getElementById('coupon_code')?.value || 'PROMO').toUpperCase();
+      const type = document.getElementById('coupon_type')?.value || 'percentage';
+      const val = document.getElementById('coupon_value')?.value || '0';
+      const applies = document.getElementById('coupon_applies')?.value || 'both';
+      const summaryEl = document.getElementById('couponSummaryPreviewText');
+      if (!summaryEl) return;
+
+      let discountText = type === 'percentage' ? `${val}% discount` : (type === 'fixed_inr' ? `₹${val} flat discount` : `$${val} flat discount`);
+      let regionText = applies === 'both' ? 'INR & USD checkouts' : (applies === 'INR' ? 'INR domestic checkouts only' : 'USD international checkouts only');
+      summaryEl.textContent = `Preview: ${code} grants ${discountText} on ${regionText}.`;
+    }
+
+    const typePctBtn = document.getElementById('typePctBtn');
+    const typeFixInrBtn = document.getElementById('typeFixInrBtn');
+    const typeFixUsdBtn = document.getElementById('typeFixUsdBtn');
+
+    function setCouponDiscountMode(mode) {
+      [typePctBtn, typeFixInrBtn, typeFixUsdBtn].forEach(b => b?.classList.remove('active'));
+      const typeInput = document.getElementById('coupon_type');
+      const valLabel = document.getElementById('couponValueLabel');
+      const valInput = document.getElementById('coupon_value');
+
+      if (mode === 'percentage') {
+        typePctBtn?.classList.add('active');
+        if (typeInput) typeInput.value = 'percentage';
+        if (valLabel) valLabel.textContent = 'Discount Value (%)';
+        if (valInput) { valInput.placeholder = '50'; valInput.max = '100'; }
+      } else if (mode === 'fixed_inr') {
+        typeFixInrBtn?.classList.add('active');
+        if (typeInput) typeInput.value = 'fixed';
+        if (valLabel) valLabel.textContent = 'Flat Discount (₹ INR)';
+        if (valInput) { valInput.placeholder = '500'; valInput.removeAttribute('max'); }
+        const appliesSelect = document.getElementById('coupon_applies');
+        if (appliesSelect) appliesSelect.value = 'INR';
+      } else if (mode === 'fixed_usd') {
+        typeFixUsdBtn?.classList.add('active');
+        if (typeInput) typeInput.value = 'fixed';
+        if (valLabel) valLabel.textContent = 'Flat Discount ($ USD)';
+        if (valInput) { valInput.placeholder = '20'; valInput.removeAttribute('max'); }
+        const appliesSelect = document.getElementById('coupon_applies');
+        if (appliesSelect) appliesSelect.value = 'USD';
+      }
+      updateCouponSummary();
+    }
+
+    typePctBtn?.addEventListener('click', () => setCouponDiscountMode('percentage'));
+    typeFixInrBtn?.addEventListener('click', () => setCouponDiscountMode('fixed_inr'));
+    typeFixUsdBtn?.addEventListener('click', () => setCouponDiscountMode('fixed_usd'));
+    document.getElementById('coupon_code')?.addEventListener('input', updateCouponSummary);
+    document.getElementById('coupon_value')?.addEventListener('input', updateCouponSummary);
+    document.getElementById('coupon_applies')?.addEventListener('change', updateCouponSummary);
+
+    // Coupon creation submit
+    document.getElementById('couponForm')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('saveCoupon');
+      if (btn) { btn.textContent = 'Deploying…'; btn.disabled = true; }
+
+      const code = (document.getElementById('coupon_code')?.value || '').trim().toUpperCase();
+      const discountType = document.getElementById('coupon_type')?.value || 'percentage';
+      const discountValue = Number(document.getElementById('coupon_value')?.value) || 0;
+      const appliesTo = document.getElementById('coupon_applies')?.value || 'both';
+      const expiresAt = document.getElementById('coupon_expires')?.value ? new Date(document.getElementById('coupon_expires').value + 'T23:59:59Z').toISOString() : null;
+      const maxUses = document.getElementById('coupon_max')?.value ? parseInt(document.getElementById('coupon_max').value, 10) : null;
+      const campaignTag = (document.getElementById('coupon_campaign_tag')?.value || '').trim() || null;
+      const singleUse = document.getElementById('coupon_single_use')?.checked || false;
+
+      const payload = {
+        code,
+        discount_type: discountType,
+        discount_value: discountValue,
+        applies_to: appliesTo,
+        expires_at: expiresAt,
+        max_uses: maxUses,
+        is_active: true,
+        campaign_tag: campaignTag,
+        single_use_per_user: singleUse,
+        created_at: new Date().toISOString()
+      };
+
+      const { error } = await sb.from('coupons').insert([payload]);
+      if (error) {
+        showToast('❌ Error creating coupon: ' + error.message, 'error');
+      } else {
+        showToast(`🎉 Coupon ${code} created and live in cloud!`, 'success');
+        document.getElementById('couponForm')?.reset();
+        setCouponDiscountMode('percentage');
+        
+        // Log audit
+        try {
+          const { data: { user } } = await sb.auth.getUser();
+          if (user) {
+            await sb.from('admin_audit_log').insert([{
+              admin_id: user.id,
+              action: 'CREATE_COUPON',
+              table_name: 'coupons',
+              changed_data: { new: payload }
+            }]);
+          }
+        } catch (e) {}
+
+        renderDashboard();
+      }
+      if (btn) { btn.textContent = '+ Deploy Promo Code'; btn.disabled = false; }
+    });
+
+    // ── PROMO SANDBOX & SIMULATOR ────────────────────
+    window.runCouponSandbox = function(customCode = null) {
+      const codeInput = document.getElementById('sandboxCouponInput');
+      const code = (customCode || codeInput?.value || '').trim().toUpperCase();
+      if (!code) {
+        showToast('Please enter a coupon code to test', 'info');
         return;
       }
-      tbody.innerHTML = coupons.map(c => {
+      if (codeInput) codeInput.value = code;
+
+      const coupon = _allCouponsList.find(c => (c.code || '').toUpperCase() === code);
+      const resultBox = document.getElementById('sandboxResultBox');
+      const shareContainer = document.getElementById('shareableLinkContainer');
+      const shareUrlEl = document.getElementById('shareableLinkUrl');
+
+      if (!coupon) {
+        if (resultBox) {
+          resultBox.innerHTML = `
+            <div style="color: var(--rose); font-size: 0.82rem; font-weight: 600; margin-bottom: 4px;">❌ Invalid Promo Code: "${code}"</div>
+            <div style="color: var(--ink-muted); font-size: 0.72rem;">No matching code found in active database.</div>
+          `;
+        }
+        if (shareContainer) shareContainer.style.display = 'none';
+        return;
+      }
+
+      const isExpired = coupon.expires_at && new Date(coupon.expires_at) < new Date();
+      const isCapReached = coupon.max_uses && (coupon.uses_in_period || coupon.used_count || 0) >= coupon.max_uses;
+      const isActive = coupon.is_active !== false;
+
+      let statusHtml = '<span class="badge badge-ok">✅ VALID & ACTIVE</span>';
+      if (!isActive) statusHtml = '<span class="badge badge-warn">⏸ PAUSED</span>';
+      else if (isExpired) statusHtml = '<span class="badge badge-err">❌ EXPIRED</span>';
+      else if (isCapReached) statusHtml = '<span class="badge badge-err">⛔ CAP REACHED</span>';
+
+      const inrSale = Number(document.getElementById('inr_price')?.value) || 1499;
+      const usdSale = Number(document.getElementById('usd_price')?.value) || 49;
+
+      let finalInr = inrSale;
+      let finalUsd = usdSale;
+      let inrSaved = 0;
+      let usdSaved = 0;
+
+      if (coupon.discount_type === 'percentage') {
+        inrSaved = Math.round(inrSale * (coupon.discount_value / 100));
+        finalInr = Math.max(0, inrSale - inrSaved);
+        usdSaved = Math.round(usdSale * (coupon.discount_value / 100));
+        finalUsd = Math.max(0, usdSale - usdSaved);
+      } else {
+        if (coupon.applies_to === 'INR' || coupon.applies_to === 'both') {
+          inrSaved = Math.min(inrSale, coupon.discount_value);
+          finalInr = Math.max(0, inrSale - inrSaved);
+        }
+        if (coupon.applies_to === 'USD' || coupon.applies_to === 'both') {
+          usdSaved = Math.min(usdSale, coupon.discount_value);
+          finalUsd = Math.max(0, usdSale - usdSaved);
+        }
+      }
+
+      if (resultBox) {
+        resultBox.innerHTML = `
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.65rem;">
+            <span style="font-family: var(--font-data); font-weight: 700; color: var(--gold); font-size: 0.95rem;">${coupon.code}</span>
+            ${statusHtml}
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; font-family: var(--font-data); font-size: 0.76rem;">
+            <div style="background: rgba(0,0,0,0.25); padding: 0.5rem; border-radius: 4px; border-left: 2px solid var(--gold);">
+              <div style="color: var(--ink-muted); font-size: 0.65rem;">INR CHECKOUT:</div>
+              <div style="font-size: 0.95rem; font-weight: 700; color: #FFFFFF;">₹${finalInr.toLocaleString('en-IN')} <span style="font-size: 0.7rem; color: var(--emerald); font-weight: normal;">(Save ₹${inrSaved.toLocaleString('en-IN')})</span></div>
+            </div>
+            <div style="background: rgba(0,0,0,0.25); padding: 0.5rem; border-radius: 4px; border-left: 2px solid var(--emerald);">
+              <div style="color: var(--ink-muted); font-size: 0.65rem;">USD CHECKOUT:</div>
+              <div style="font-size: 0.95rem; font-weight: 700; color: #FFFFFF;">$${finalUsd} <span style="font-size: 0.7rem; color: var(--emerald); font-weight: normal;">(Save $${usdSaved})</span></div>
+            </div>
+          </div>
+        `;
+      }
+
+      const shareLink = `https://www.manodemy.com/?coupon=${coupon.code}`;
+      if (shareUrlEl) shareUrlEl.textContent = shareLink;
+      if (shareContainer) shareContainer.style.display = 'block';
+    };
+
+    window.copySandboxShareLink = function() {
+      const url = document.getElementById('shareableLinkUrl')?.textContent;
+      if (url) {
+        navigator.clipboard.writeText(url).then(() => {
+          showToast('🔗 Direct Auto-Apply Promo Link copied to clipboard!', 'success');
+        });
+      }
+    };
+
+    window.copyCouponShareLink = function(code) {
+      const url = `https://www.manodemy.com/?coupon=${code}`;
+      navigator.clipboard.writeText(url).then(() => {
+        showToast(`🔗 Auto-apply link for ${code} copied!`, 'success');
+      });
+    };
+
+    // ── COUPONS TABLE RENDER ─────────────────────────
+    function renderCouponsTable(coupons) {
+      const tbody = document.getElementById('couponsTableBody');
+      const countEl = document.getElementById('couponsTableCount');
+      if (!tbody) return;
+
+      _allCouponsList = coupons || [];
+      if (countEl) countEl.textContent = `${_allCouponsList.length} total codes`;
+
+      // Update KPI summary cards
+      const activeCount = _allCouponsList.filter(c => c.is_active !== false).length;
+      let totalUses = 0;
+      let totalRevenue = 0;
+      let totalDiscountGiven = 0;
+
+      _allCouponsList.forEach(c => {
+        const uses = c.uses_in_period || c.used_count || 0;
+        const rev = c.revenue_generated || 0;
+        totalUses += uses;
+        totalRevenue += rev;
+        if (c.discount_type === 'percentage') {
+          totalDiscountGiven += (rev > 0 && c.discount_value > 0) ? Math.round(rev * (c.discount_value / (100 - c.discount_value))) : 0;
+        } else {
+          totalDiscountGiven += uses * (c.discount_value * 100);
+        }
+      });
+
+      const kpiActiveEl = document.getElementById('kpi-active-coupons');
+      const kpiUsesEl = document.getElementById('kpi-coupon-uses');
+      const kpiRevEl = document.getElementById('kpi-coupon-rev');
+      const kpiDiscEl = document.getElementById('kpi-coupon-discount-total');
+
+      if (kpiActiveEl) kpiActiveEl.textContent = activeCount;
+      if (kpiUsesEl) kpiUsesEl.textContent = totalUses.toLocaleString('en-IN');
+      if (kpiRevEl) kpiRevEl.textContent = formatINR(totalRevenue);
+      if (kpiDiscEl) kpiDiscEl.textContent = formatINR(totalDiscountGiven);
+
+      if (!_allCouponsList.length) {
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--ink-muted);padding:3rem;">No promo coupons found in cloud database. Create your first campaign code above!</td></tr>';
+        return;
+      }
+
+      renderCouponsRows(_allCouponsList);
+    }
+
+    function renderCouponsRows(list) {
+      const tbody = document.getElementById('couponsTableBody');
+      if (!tbody) return;
+
+      tbody.innerHTML = list.map(c => {
+        const uses = c.uses_in_period || c.used_count || 0;
+        const max = c.max_uses || null;
+        const pctCap = max ? Math.min(100, Math.round((uses / max) * 100)) : null;
+        const isExpired = c.expires_at && new Date(c.expires_at) < new Date();
+        const isCapReached = max && uses >= max;
+        const isActive = c.is_active !== false;
+
+        let statusBadge = '<span class="badge badge-ok">Active</span>';
+        if (!isActive) statusBadge = '<span class="badge badge-warn">Paused</span>';
+        else if (isExpired) statusBadge = '<span class="badge badge-err">Expired</span>';
+        else if (isCapReached) statusBadge = '<span class="badge badge-err">Depleted</span>';
+
+        const discountDisplay = c.discount_type === 'percentage' 
+          ? `<span style="font-weight:700;color:var(--gold);">${c.discount_value}% OFF</span>` 
+          : `<span style="font-weight:700;color:var(--emerald);">₹${c.discount_value} OFF</span>`;
+
         return `<tr>
-        <td><span class="coupon-code">${c.code}</span></td>
-        <td style="color:var(--ink-muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;">${c.discount_type}</td>
-        <td class="cell-mono">${c.discount_type === 'percentage' ? c.discount_value + '%' : '₹' + c.discount_value}</td>
-        <td class="cell-mono">${c.uses_in_period} / ${c.max_uses || '∞'}</td>
-        <td class="cell-mono" style="color:var(--gold);">${formatINR(c.revenue_generated)}</td>
-        <td class="cell-mono">${formatINR(c.aov_with_coupon)}</td>
-        <td class="cell-mono" style="color:var(--ink-muted);">${c.expires_at ? new Date(c.expires_at).toLocaleDateString('en-IN') : 'Never'}</td>
-        <td>
-          <label class="switch">
-            <input type="checkbox" ${c.is_active ? 'checked' : ''} onchange="toggleCoupon('${c.code}',this.checked)">
-            <span class="slider"></span>
-          </label>
-        </td>
-      </tr>`;
+          <td>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span class="coupon-code" style="font-size: 0.85rem; letter-spacing: 0.08em;">${c.code}</span>
+              <button class="btn-ghost" style="padding: 2px 6px; font-size: 0.62rem;" title="Copy Auto-Apply Promo Link" onclick="copyCouponShareLink('${c.code}')">🔗 Link</button>
+            </div>
+            ${c.campaign_tag ? `<div style="font-size: 0.65rem; color: var(--ink-muted); margin-top: 2px;">📌 ${c.campaign_tag}</div>` : ''}
+          </td>
+          <td>${discountDisplay}</td>
+          <td><span class="badge badge-neutral">${c.applies_to || 'Both'}</span></td>
+          <td class="cell-mono">
+            <div>${uses} / ${max || '∞'}</div>
+            ${max ? `<div style="width: 70px; height: 3px; background: var(--rim); border-radius: 2px; margin-top: 3px; overflow: hidden;"><div style="width: ${pctCap}%; height: 100%; background: ${pctCap > 90 ? 'var(--rose)' : 'var(--emerald)'};"></div></div>` : ''}
+          </td>
+          <td class="cell-mono" style="color: var(--sapphire); font-weight: 500;">${formatINR(c.revenue_generated || 0)}</td>
+          <td class="cell-mono" style="color: var(--ink-dim);">${formatINR(c.discount_given || 0)}</td>
+          <td class="cell-mono" style="color: var(--ink-muted); font-size: 0.72rem;">${c.expires_at ? new Date(c.expires_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Never'}</td>
+          <td>${statusBadge}</td>
+          <td style="text-align: right;">
+            <div style="display: inline-flex; align-items: center; gap: 6px;">
+              <label class="switch" title="Toggle Active / Pause">
+                <input type="checkbox" ${isActive ? 'checked' : ''} onchange="toggleCoupon('${c.code}', this.checked)">
+                <span class="slider"></span>
+              </label>
+              <button class="btn-ghost" style="padding: 2px 8px; font-size: 0.65rem;" onclick="runCouponSandbox('${c.code}')" title="Test in Simulator">🧪 Test</button>
+              <button class="btn-ghost" style="padding: 2px 8px; font-size: 0.65rem; color: var(--rose);" onclick="deleteCoupon('${c.code}')" title="Delete Promo Code">🗑</button>
+            </div>
+          </td>
+        </tr>`;
       }).join('');
     }
 
-    async function toggleCoupon(code, isActive) {
+    window.filterCouponsTable = function(query) {
+      const q = (query || '').toLowerCase().trim();
+      if (!q) {
+        renderCouponsRows(_allCouponsList);
+        return;
+      }
+      const filtered = _allCouponsList.filter(c => 
+        (c.code || '').toLowerCase().includes(q) || 
+        (c.campaign_tag || '').toLowerCase().includes(q) ||
+        (c.applies_to || '').toLowerCase().includes(q)
+      );
+      renderCouponsRows(filtered);
+    };
+
+    window.toggleCoupon = async function(code, isActive) {
       const { error } = await sb.from('coupons')
         .update({ is_active: isActive })
         .eq('code', code);
 
       if (error) {
-        console.error('[Admin] Failed to update coupon:', error);
         showToast(`❌ Failed to update coupon: ${error.message}`, 'error');
-        // Re-render to show actual DB state (revert the visual toggle)
         renderDashboard();
         return;
       }
 
-      showToast(`Coupon ${isActive ? 'activated ✅' : 'deactivated 🔴'}`, isActive ? 'success' : 'info');
-      // Re-fetch from DB to confirm actual saved state
+      showToast(`Coupon ${code} ${isActive ? 'activated ✅' : 'paused ⏸'}`, isActive ? 'success' : 'info');
       renderDashboard();
-    }
+    };
+
+    window.deleteCoupon = async function(code) {
+      if (!confirm(`Are you sure you want to delete promo code "${code}"?`)) return;
+      const { error } = await sb.from('coupons').delete().eq('code', code);
+      if (error) {
+        showToast(`❌ Error deleting coupon: ${error.message}`, 'error');
+      } else {
+        showToast(`🗑 Coupon ${code} deleted from cloud`, 'success');
+        renderDashboard();
+      }
+    };
+
+    window.exportCouponsCSV = function() {
+      if (!_allCouponsList.length) {
+        showToast('No coupons to export', 'info');
+        return;
+      }
+      const headers = ['Code', 'Type', 'Value', 'Applies To', 'Redemptions', 'Max Uses', 'Revenue (INR)', 'Expires At', 'Is Active', 'Campaign Tag', 'Created At'];
+      const rows = _allCouponsList.map(c => [
+        `"${c.code}"`,
+        c.discount_type,
+        c.discount_value,
+        c.applies_to || 'both',
+        c.uses_in_period || c.used_count || 0,
+        c.max_uses || 'Unlimited',
+        c.revenue_generated || 0,
+        c.expires_at || 'Never',
+        c.is_active !== false,
+        `"${c.campaign_tag || ''}"`,
+        c.created_at || ''
+      ].join(','));
+
+      const csv = [headers.join(','), ...rows].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url;
+      a.download = `manodemy_coupons_${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Coupons CSV exported ✓', 'success');
+    };
+
+    document.getElementById('refreshPricingTabBtn')?.addEventListener('click', () => {
+      loadPricingData();
+      renderDashboard();
+      showToast('Cloud pricing & coupons refreshed ⟳', 'info');
+    });
 
     // ── AUDIT TABLE ──────────────────────────────────
     function formatAuditValue(val) {
@@ -5104,15 +5900,16 @@
 
     function renderAuditTable(audits) {
       const tbody = document.querySelector('#auditTable tbody');
-      if (!audits.length) {
+      if (!tbody) return;
+      if (!audits || !audits.length) {
         tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--ink-muted);padding:2rem;">No changes in this period</td></tr>';
         return;
       }
       tbody.innerHTML = audits.slice(0, 10).map(a => `<tr>
       <td class="cell-mono" style="color:var(--ink-muted);">${a.profiles?.email || (a.admin_id ? a.admin_id.substring(0, 8) + '…' : 'System')}</td>
       <td><span class="badge badge-info">${a.action}</span></td>
-      <td class="cell-mono" style="color:var(--ink-muted);">${formatAuditValue(a.changed_data?.old?.value)}</td>
-      <td class="cell-mono" style="color:var(--ink); font-weight: 500;">${formatAuditValue(a.changed_data?.new?.value)}</td>
+      <td class="cell-mono" style="color:var(--ink-muted);">${formatAuditValue(a.changed_data?.old?.value || a.changed_data?.old)}</td>
+      <td class="cell-mono" style="color:var(--ink); font-weight: 500;">${formatAuditValue(a.changed_data?.new?.value || a.changed_data?.new)}</td>
       <td class="cell-mono" style="color:var(--ink-muted);">${new Date(a.created_at).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</td>
     </tr>`).join('');
     }

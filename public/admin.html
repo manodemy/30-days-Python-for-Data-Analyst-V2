@@ -3177,25 +3177,38 @@
             </div>
           </div>
 
+          <!-- Regional Selector Nav -->
+          <div style="display: flex; gap: 0.5rem; margin-bottom: 1.25rem; border-bottom: 1px solid var(--rim); padding-bottom: 0.75rem; flex-wrap: wrap;">
+            <button type="button" class="btn-ghost active" id="btnRegionIndia" style="padding: 0.5rem 1.1rem; font-size: 0.78rem; font-weight: 600; color: var(--gold); border-color: var(--gold-dim); background: var(--gold-subtle);" onclick="switchPricingRegion('inr')">
+              🇮🇳 India Domestic (INR ₹)
+            </button>
+            <button type="button" class="btn-ghost" id="btnRegionGlobal" style="padding: 0.5rem 1.1rem; font-size: 0.78rem; font-weight: 600;" onclick="switchPricingRegion('usd')">
+              🌍 Outside India / Global (USD $)
+            </button>
+            <button type="button" class="btn-ghost" id="btnRegionBoth" style="padding: 0.5rem 1.1rem; font-size: 0.78rem; font-weight: 600;" onclick="switchPricingRegion('both')">
+              🌐 Unified Split View (Both)
+            </button>
+          </div>
+
           <!-- SECTION 1: DUAL-CURRENCY COURSE PRICING & LIVE PREVIEW -->
-          <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 1.25rem; margin-bottom: 1.5rem;">
+          <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 1.25rem; margin-bottom: 1.5rem;" id="pricingGridContainer">
             <!-- Price Config Panel -->
             <div class="form-panel" style="margin-bottom: 0;">
               <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--rim); padding-bottom: 0.85rem; margin-bottom: 1.25rem;">
-                <div class="form-panel-title" style="margin-bottom: 0; padding-bottom: 0; border-bottom: none;">
-                  🌐 Live Cloud Pricing Engine
+                <div class="form-panel-title" id="pricingPanelTitle" style="margin-bottom: 0; padding-bottom: 0; border-bottom: none;">
+                  🇮🇳 India Cloud Pricing Engine
                 </div>
                 <!-- Quick Campaign Presets -->
                 <div style="display: flex; align-items: center; gap: 0.4rem;">
-                  <button type="button" class="btn-ghost" style="font-size: 0.65rem; padding: 2px 8px;" onclick="applyPricingPreset(1499, 4999, 49, 149)">⚡ 70% Sale (Default)</button>
-                  <button type="button" class="btn-ghost" style="font-size: 0.65rem; padding: 2px 8px;" onclick="applyPricingPreset(999, 4999, 29, 149)">🔥 ₹999 Super Deal</button>
-                  <button type="button" class="btn-ghost" style="font-size: 0.65rem; padding: 2px 8px;" onclick="applyPricingPreset(2499, 7999, 79, 249)">💎 Standard ₹2,499</button>
+                  <button type="button" class="btn-ghost" style="font-size: 0.65rem; padding: 2px 8px;" onclick="applyPricingPreset(1499, 4999, 49, 149)">⚡ 70% Sale</button>
+                  <button type="button" class="btn-ghost" style="font-size: 0.65rem; padding: 2px 8px;" onclick="applyPricingPreset(999, 4999, 29, 149)">🔥 ₹999 / $29</button>
+                  <button type="button" class="btn-ghost" style="font-size: 0.65rem; padding: 2px 8px;" onclick="applyPricingPreset(2499, 7999, 79, 249)">💎 ₹2,499 / $79</button>
                 </div>
               </div>
 
               <form id="pricingForm">
                 <!-- India Domestic (INR ₹) -->
-                <div style="background: rgba(201, 168, 76, 0.04); border: 1px solid rgba(201, 168, 76, 0.18); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1rem;">
+                <div id="sectionPricingIndia" style="background: rgba(201, 168, 76, 0.04); border: 1px solid rgba(201, 168, 76, 0.18); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1rem;">
                   <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
                     <span style="font-size: 0.75rem; font-weight: 700; color: var(--gold); letter-spacing: 0.08em; text-transform: uppercase;">
                       🇮🇳 India Domestic Pricing (INR ₹)
@@ -3219,10 +3232,10 @@
                 </div>
 
                 <!-- Global International (USD $) -->
-                <div style="background: rgba(45, 212, 191, 0.04); border: 1px solid rgba(45, 212, 191, 0.18); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.25rem;">
+                <div id="sectionPricingGlobal" style="display: none; background: rgba(45, 212, 191, 0.04); border: 1px solid rgba(45, 212, 191, 0.18); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.25rem;">
                   <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
                     <span style="font-size: 0.75rem; font-weight: 700; color: var(--emerald); letter-spacing: 0.08em; text-transform: uppercase;">
-                      🌍 Global International Pricing (USD $)
+                      🌍 Outside India / Global Pricing (USD $)
                     </span>
                     <span style="font-size: 0.68rem; color: var(--ink-muted); font-family: var(--font-data);">PayPal &amp; Stripe Gateway</span>
                   </div>
@@ -5325,7 +5338,81 @@
       discount_label_usd: '67% OFF'
     };
     let _previewCurrency = 'INR';
+    let _activePricingRegion = 'inr';
     let _allCouponsList = [];
+
+    window.switchPricingRegion = function(region) {
+      _activePricingRegion = region;
+      const btnIndia = document.getElementById('btnRegionIndia');
+      const btnGlobal = document.getElementById('btnRegionGlobal');
+      const btnBoth = document.getElementById('btnRegionBoth');
+      const sectionIndia = document.getElementById('sectionPricingIndia');
+      const sectionGlobal = document.getElementById('sectionPricingGlobal');
+      const titleEl = document.getElementById('pricingPanelTitle');
+      const appliesSelect = document.getElementById('coupon_applies');
+
+      [btnIndia, btnGlobal, btnBoth].forEach(b => {
+        if (b) {
+          b.classList.remove('active');
+          b.style.color = 'var(--ink-muted)';
+          b.style.borderColor = 'var(--rim)';
+          b.style.background = 'transparent';
+        }
+      });
+
+      if (region === 'inr') {
+        if (btnIndia) {
+          btnIndia.classList.add('active');
+          btnIndia.style.color = 'var(--gold)';
+          btnIndia.style.borderColor = 'var(--gold-dim)';
+          btnIndia.style.background = 'var(--gold-subtle)';
+        }
+        if (sectionIndia) sectionIndia.style.display = 'block';
+        if (sectionGlobal) sectionGlobal.style.display = 'none';
+        if (titleEl) titleEl.textContent = '🇮🇳 India Domestic Pricing Engine';
+        if (appliesSelect) appliesSelect.value = 'INR';
+        setCouponDiscountMode('fixed_inr');
+        window.setPreviewCurrency('INR');
+      } else if (region === 'usd') {
+        if (btnGlobal) {
+          btnGlobal.classList.add('active');
+          btnGlobal.style.color = 'var(--emerald)';
+          btnGlobal.style.borderColor = 'rgba(45, 212, 191, 0.4)';
+          btnGlobal.style.background = 'rgba(45, 212, 191, 0.1)';
+        }
+        if (sectionIndia) sectionIndia.style.display = 'none';
+        if (sectionGlobal) sectionGlobal.style.display = 'block';
+        if (titleEl) titleEl.textContent = '🌍 Outside India / Global Pricing Engine';
+        if (appliesSelect) appliesSelect.value = 'USD';
+        setCouponDiscountMode('fixed_usd');
+        window.setPreviewCurrency('USD');
+      } else {
+        if (btnBoth) {
+          btnBoth.classList.add('active');
+          btnBoth.style.color = 'var(--sapphire)';
+          btnBoth.style.borderColor = 'rgba(96, 165, 250, 0.4)';
+          btnBoth.style.background = 'rgba(96, 165, 250, 0.1)';
+        }
+        if (sectionIndia) sectionIndia.style.display = 'block';
+        if (sectionGlobal) sectionGlobal.style.display = 'block';
+        if (titleEl) titleEl.textContent = '🌐 Unified Pricing Engine (INR & USD)';
+        if (appliesSelect) appliesSelect.value = 'both';
+        setCouponDiscountMode('percentage');
+      }
+
+      filterCouponsByRegion(region);
+    };
+
+    function filterCouponsByRegion(region) {
+      if (!_allCouponsList.length) return;
+      if (region === 'all' || region === 'both') {
+        renderCouponsRows(_allCouponsList);
+      } else if (region === 'inr') {
+        renderCouponsRows(_allCouponsList.filter(c => c.applies_to === 'INR' || c.applies_to === 'both' || !c.applies_to));
+      } else if (region === 'usd') {
+        renderCouponsRows(_allCouponsList.filter(c => c.applies_to === 'USD' || c.applies_to === 'both' || !c.applies_to));
+      }
+    }
 
     window.setPreviewCurrency = function(curr) {
       _previewCurrency = curr;

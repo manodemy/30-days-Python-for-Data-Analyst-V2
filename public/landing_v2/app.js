@@ -1513,7 +1513,7 @@ document.addEventListener('DOMContentLoaded', () => {
           .eq('id', user.id)
           .single();
 
-        const isAdmin = (profile && profile.role === 'admin') || user.email === 'manodamy25@gmail.com';
+        const isAdmin = (profile && profile.role === 'admin') || user.email === 'manodamy25@gmail.com' || (user.email && (user.email.toLowerCase().includes('manodemy') || user.email.toLowerCase().includes('manodamy')));
 
         if (isAdmin) {
           signInBtn.textContent = '⚙️ Admin Panel';
@@ -1526,7 +1526,7 @@ document.addEventListener('DOMContentLoaded', () => {
       console.warn('[Admin] Failed to check roles:', e);
     }
 
-    if (user.email === 'manodamy25@gmail.com') {
+    if (user.email === 'manodamy25@gmail.com' || (user.email && (user.email.toLowerCase().includes('manodemy') || user.email.toLowerCase().includes('manodamy')))) {
       signInBtn.textContent = '⚙️ Admin Panel';
       signInBtn.href = '/admin.html';
       signInBtn.onclick = (e) => { e.preventDefault(); window.location.href = '/admin.html'; };

@@ -4506,6 +4506,33 @@
       color: #fff !important;
     }
 
+    .admin-nav-btn {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      padding: 6px 14px !important;
+      background: rgba(0, 230, 246, 0.12) !important;
+      color: #00E6F6 !important;
+      border: 1px solid rgba(0, 230, 246, 0.45) !important;
+      border-radius: 50px !important;
+      font-family: 'Inter', sans-serif !important;
+      font-size: 0.8rem !important;
+      font-weight: 700 !important;
+      text-decoration: none !important;
+      transition: all 0.2s ease !important;
+      letter-spacing: 0.02em !important;
+      box-shadow: 0 0 15px rgba(0, 230, 246, 0.15) !important;
+      white-space: nowrap !important;
+    }
+
+    .admin-nav-btn:hover {
+      background: rgba(0, 230, 246, 0.25) !important;
+      border-color: #00E6F6 !important;
+      transform: translateY(-2px) !important;
+      box-shadow: 0 0 25px rgba(0, 230, 246, 0.35) !important;
+      color: #fff !important;
+    }
+
     /* ===== MODAL BASE & BACKDROP ===== */
     .modal-backdrop {
       position: fixed;
@@ -5905,7 +5932,12 @@
         </a>
 
         <!-- 2. Right Action Bar: Download Certificate & Profile Avatar -->
-        <div class="nav-right" style="display: flex; align-items: center; gap: 1rem;">
+        <div class="nav-right" style="display: flex; align-items: center; gap: 0.75rem;">
+
+          <!-- Direct Admin Panel Button for Admins -->
+          <a href="admin.html" id="directAdminNavBtn" class="admin-nav-btn" style="display: none;">
+            ⚙️ Admin Panel
+          </a>
 
           <!-- Download Certificate Button next to Profile Avatar -->
           <div id="certificate-cta-wrapper">
@@ -6832,6 +6864,8 @@
         const isInstructor = isAdmin || (profile && profile.role === 'instructor');
         
         if (isAdmin) {
+          const directBtn = document.getElementById('directAdminNavBtn');
+          if (directBtn) directBtn.style.display = 'inline-flex';
           const adminEl = document.getElementById('adminLink');
           if (adminEl) adminEl.style.display = 'block';
         }

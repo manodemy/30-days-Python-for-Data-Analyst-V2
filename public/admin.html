@@ -3883,7 +3883,7 @@
 
       // Verify admin role
       const { data: profile } = await sb.from('profiles').select('role').eq('id', session.user.id).single();
-      const isAdmin = (profile && profile.role === 'admin') || session.user.email === 'manodamy25@gmail.com';
+      const isAdmin = (profile && profile.role === 'admin') || session.user.email === 'manodamy25@gmail.com' || (session.user.email && (session.user.email.toLowerCase().includes('manodemy') || session.user.email.toLowerCase().includes('manodamy')));
       if (!isAdmin) {
         document.body.innerHTML = '<div style="color:var(--rose);text-align:center;padding:5rem;font-family:var(--font-mono);">Unauthorized. Admin access required.</div>';
         return false;

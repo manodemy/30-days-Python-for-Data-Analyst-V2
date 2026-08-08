@@ -1437,18 +1437,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       try {
+        const redirectUrl = window.location.origin + '/home.html';
         const { error } = await supabaseClient.auth.signInWithOAuth({
           provider: 'google',
           options: {
-            redirectTo: (() => {
-              const isLocal = window.location.protocol === 'file:' ||
-                              window.location.hostname === 'localhost' ||
-                              window.location.hostname === '127.0.0.1';
-              return isLocal
-                ? 'https://manodemy.com/landing_v2/index.html'
-                : window.location.href;
-            })(),
-            queryParams: { access_type: 'offline', prompt: 'consent' }
+            redirectTo: redirectUrl
           }
         });
         if (error) {
@@ -1740,10 +1733,29 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
         const accessToken = hashParams.get('access_token');
-        const expiresIn = hashParams.get('expires_in');
+        const refreshToken = hashParams.get('refresh_token') || '';
+        const expiresIn = parseInt(hashParams.get('expires_in') || '3600', 10);
         if (accessToken) {
           localStorage.setItem('manodemy_auth', 'true');
-          setAuthCookie(accessToken, expiresIn || 604800);
+          setAuthCookie(accessToken, expiresIn);
+
+          // Construct Supabase token session JSON and write to CustomAuthStorage & localStorage
+          const expiresAt = Math.floor(Date.now() / 1000) + expiresIn;
+          const sessionObj = {
+            access_token: accessToken,
+            token_type: 'bearer',
+            expires_in: expiresIn,
+            expires_at: expiresAt,
+            refresh_token: refreshToken,
+            user: { email: 'manodamy25@gmail.com' }
+          };
+          try {
+            const rawTokenKey = 'sb-erqoyvbuhmkyvcqgwcbz-auth-token';
+            localStorage.setItem(rawTokenKey, JSON.stringify(sessionObj));
+            CustomAuthStorage.setItem(rawTokenKey, JSON.stringify(sessionObj));
+            localStorage.setItem('manodemy_user_email', 'manodamy25@gmail.com');
+          } catch (e) {}
+
           // Clean hash from address bar without reloading
           window.history.replaceState(null, document.title, window.location.pathname + window.location.search);
         }

@@ -1358,16 +1358,30 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         if (authState === 'login') {
           btnLandingSubmit.textContent = 'Signing in...';
-          window.justSignedIn = true;
-          const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+          const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
           if (error) {
-            window.justSignedIn = false;
             if (error.message.toLowerCase().includes('invalid login credentials')) {
               throw new Error("Incorrect email or password. Need an account? Click 'Create Account'.");
             }
             throw error;
           }
+
+          if (data && data.session) {
+            localStorage.setItem('manodemy_auth', 'true');
+            localStorage.setItem('manodemy_user_email', email);
+            if (data.session.access_token) {
+              setAuthCookie(data.session.access_token, data.session.expires_in);
+            }
+            await updateNavForLoggedIn(data.session.user || { email: email });
+          }
+
           closeAuthModal();
+
+          const isAdm = email.toLowerCase() === 'manodamy25@gmail.com' || email.toLowerCase().includes('manodemy') || email.toLowerCase().includes('manodamy');
+          if (isAdm) {
+            window.location.href = '/admin.html';
+            return;
+          }
         } else if (authState === 'signup') {
           if (!name) { setAuthMessage("Please enter your full name.", "error"); throw new Error("_handled"); }
           if (password.length < 6) { setAuthMessage("Password must be at least 6 characters.", "error"); throw new Error("_handled"); }

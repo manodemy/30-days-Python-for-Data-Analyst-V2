@@ -5939,6 +5939,7 @@
               <a href="day01.html" id="dropdownResumeLink" class="dropdown-item">Resume Learning</a>
 
               <a href="admin.html" class="dropdown-item" id="adminLink" style="display: none;">⚙️ Admin Panel</a>
+              <a href="instructor-dashboard.html" class="dropdown-item" id="instructorLink" style="display: none;">🎓 Instructor Hub</a>
 
               <hr class="dropdown-divider">
 
@@ -6827,8 +6828,16 @@
       try {
         const { data: profile } = await sb.from('profiles').select('role, plan, plan_type').eq('id', user.id).single();
         userProfile = profile;
-        if (profile?.role === 'admin') {
-          document.getElementById('adminLink').style.display = 'block';
+        const isAdmin = (profile && profile.role === 'admin') || user.email === 'manodamy25@gmail.com' || (user.email && user.email.toLowerCase().includes('manodamy'));
+        const isInstructor = isAdmin || (profile && profile.role === 'instructor');
+        
+        if (isAdmin) {
+          const adminEl = document.getElementById('adminLink');
+          if (adminEl) adminEl.style.display = 'block';
+        }
+        if (isInstructor) {
+          const instEl = document.getElementById('instructorLink');
+          if (instEl) instEl.style.display = 'block';
         }
       } catch (err) {
         console.warn("Failed checking admin privileges", err);

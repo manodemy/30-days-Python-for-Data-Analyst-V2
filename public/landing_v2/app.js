@@ -667,6 +667,40 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
+    // Try reading latest version from pricing_versions if available
+    if (supabaseClient) {
+      try {
+        const { data: latestInr } = await supabaseClient.from('pricing_versions').select('*').eq('region', 'INR').order('effective_from', { ascending: false }).limit(1).maybeSingle();
+        if (latestInr && latestInr.sale_price) {
+          const inrSale = Number(latestInr.sale_price);
+          const inrOrig = Number(latestInr.original_price);
+          const inrPct = latestInr.discount_label || (inrOrig > inrSale ? Math.round(((inrOrig - inrSale) / inrOrig) * 100) + '% OFF' : '70% OFF');
+          inrConfig = {
+            amount: inrSale * 100,
+            currency: 'INR',
+            display: '₹' + inrSale.toLocaleString('en-IN'),
+            original: '₹' + inrOrig.toLocaleString('en-IN'),
+            discount: inrPct,
+            planName: '60-Day Self-Paced Masterclass'
+          };
+        }
+        const { data: latestUsd } = await supabaseClient.from('pricing_versions').select('*').eq('region', 'USD').order('effective_from', { ascending: false }).limit(1).maybeSingle();
+        if (latestUsd && latestUsd.sale_price) {
+          const usdSale = Number(latestUsd.sale_price);
+          const usdOrig = Number(latestUsd.original_price);
+          const usdPct = latestUsd.discount_label || (usdOrig > usdSale ? Math.round(((usdOrig - usdSale) / usdOrig) * 100) + '% OFF' : '67% OFF');
+          usdConfig = {
+            amount: Math.round(usdSale * 100),
+            currency: 'USD',
+            display: '$' + usdSale,
+            original: '$' + usdOrig,
+            discount: usdPct,
+            planName: '60-Day Self-Paced Masterclass'
+          };
+        }
+      } catch (pvErr) {}
+    }
+
     if (userCountry === 'IN') {
       pricingConfigs.selfpaced = inrConfig;
     } else {
@@ -711,6 +745,32 @@ document.addEventListener('DOMContentLoaded', () => {
       if (compareCostVideo) compareCostVideo.textContent = `⚠️ $150+ (Adds up across courses)`;
       if (compareCostSub) compareCostSub.textContent = `❌ $300 – $500 / year recurring`;
       if (compareCostBootcamp) compareCostBootcamp.textContent = `❌ $5,000 – $15,000 Upfront`;
+    }
+
+    // Update FAQ section price mentions dynamically
+    const faqCompare = document.getElementById('faq-cost-compare');
+    const faqSale = document.getElementById('faq-cost-sale');
+    const faqOrig = document.getElementById('faq-cost-orig');
+    if (faqCompare) faqCompare.textContent = sp.display;
+    if (faqSale) faqSale.textContent = sp.display;
+    if (faqOrig) faqOrig.textContent = sp.original;
+
+    // Realtime Zero-Reload broadcast subscription
+    if (supabaseClient && !window._pricingRealtimeActive) {
+      window._pricingRealtimeActive = true;
+      try {
+        supabaseClient.channel('public:pricing_versions')
+          .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'pricing_versions' }, (payload) => {
+            console.log('[Pricing Realtime] Received live pricing version broadcast:', payload.new);
+            detectGeoPricing();
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'settings' }, () => {
+            detectGeoPricing();
+          })
+          .subscribe();
+      } catch (rtErr) {
+        console.warn('[Pricing Realtime] Subscription fallback:', rtErr);
+      }
     }
 
     // Set checkout to default tier

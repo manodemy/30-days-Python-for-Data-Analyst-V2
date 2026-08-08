@@ -1540,7 +1540,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function updateNavForLoggedIn(user) {
     const signInBtn = document.getElementById('navSignin');
-    const directAdminBtn = document.getElementById('directLandingAdminNavBtn');
     const navCardAdminItem = document.getElementById('navCardAdminItem');
     const mobOverlayAdminItem = document.getElementById('mobOverlayAdminItem');
     const navCardSignin = document.getElementById('navCardSignin');
@@ -1556,7 +1555,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (existingExtra) existingExtra.remove();
     
     if (!user) {
-      if (directAdminBtn) directAdminBtn.style.display = 'none';
       if (navCardAdminItem) navCardAdminItem.style.display = 'none';
       if (mobOverlayAdminItem) mobOverlayAdminItem.style.display = 'none';
       if (signInBtn) {
@@ -1600,8 +1598,7 @@ document.addEventListener('DOMContentLoaded', () => {
       console.warn('[Admin] Failed to check roles:', e);
     }
 
-    // Toggle dedicated admin buttons
-    if (directAdminBtn) directAdminBtn.style.display = isAdmin ? 'inline-flex' : 'none';
+    // Toggle menu items for admin
     if (navCardAdminItem) navCardAdminItem.style.display = isAdmin ? 'flex' : 'none';
     if (mobOverlayAdminItem) mobOverlayAdminItem.style.display = isAdmin ? 'block' : 'none';
 

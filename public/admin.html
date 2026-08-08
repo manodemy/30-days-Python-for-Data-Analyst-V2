@@ -5652,17 +5652,10 @@
         
         document.getElementById(tabId).classList.add('active');
         
-        // Hide global filter bar on Engagement, Reviews, and Batches pages since they handle self-filtered / all-time data
+        // Hide global filter bar on Pricing, Engagement, Reviews, Referral, and Batches pages
         const filterBar = document.querySelector('.top-filter-bar');
         if (filterBar) {
-          filterBar.style.display = (tabId === 'tab-engagement' || tabId === 'tab-reviews' || tabId === 'tab-batches') ? 'none' : 'block';
-        }
-
-        if (tabId === 'tab-pricing') {
-          loadPricingData();
-          if (typeof window.switchPricingRegion === 'function') {
-            window.switchPricingRegion(_activePricingRegion || 'inr');
-          }
+          filterBar.style.display = (tabId === 'tab-pricing' || tabId === 'tab-engagement' || tabId === 'tab-reviews' || tabId === 'tab-batches' || tabId === 'tab-referral') ? 'none' : 'block';
         }
 
         if (tabId === 'tab-reviews') {
@@ -5695,142 +5688,6 @@
     document.getElementById('compareToggle').addEventListener('change', applyFilters);
     document.getElementById('funnelVisitedInput').addEventListener('change', renderDashboard);
     document.getElementById('hamburgerBtn').addEventListener('click', () => document.getElementById('sidebar').classList.toggle('open'));
-
-    // ── PRICING ──────────────────────────────────────
-    async function loadPricingData() {
-      const { data } = await sb.from('settings').select('value').eq('key', 'pricing').single();
-      if (data) {
-        window._oldPricingPayload = data.value; // Save for audit logs comparison
-        document.getElementById('inr_price').value = data.value.inr / 100;
-        document.getElementById('inr_original').value = data.value.original_inr / 100;
-        document.getElementById('usd_price').value = data.value.usd / 100;
-        document.getElementById('usd_original').value = data.value.original_usd / 100;
-        updateDiscountLabels();
-      }
-    }
-
-    function updateDiscountLabels() {
-      const inrSale = Number(document.getElementById('inr_price').value) || 0;
-      const inrOrig = Number(document.getElementById('inr_original').value) || 0;
-      if (inrOrig > 0 && inrOrig > inrSale) {
-        document.getElementById('inr_discount').value = Math.round(((inrOrig - inrSale) / inrOrig) * 100);
-      } else {
-        document.getElementById('inr_discount').value = '';
-      }
-
-      const usdSale = Number(document.getElementById('usd_price').value) || 0;
-      const usdOrig = Number(document.getElementById('usd_original').value) || 0;
-      if (usdOrig > 0 && usdOrig > usdSale) {
-        document.getElementById('usd_discount').value = Math.round(((usdOrig - usdSale) / usdOrig) * 100);
-      } else {
-        document.getElementById('usd_discount').value = '';
-      }
-    }
-
-    // Two-way bindings for INR
-    document.getElementById('inr_price').addEventListener('input', updateDiscountLabels);
-    document.getElementById('inr_original').addEventListener('input', updateDiscountLabels);
-    document.getElementById('inr_discount').addEventListener('input', () => {
-      const discount = Number(document.getElementById('inr_discount').value) || 0;
-      const original = Number(document.getElementById('inr_original').value) || 0;
-      if (original > 0) {
-        const sale = Math.round(original - (original * (discount / 100)));
-        document.getElementById('inr_price').value = Math.max(0, sale);
-      }
-    });
-
-    // Two-way bindings for USD
-    document.getElementById('usd_price').addEventListener('input', updateDiscountLabels);
-    document.getElementById('usd_original').addEventListener('input', updateDiscountLabels);
-    document.getElementById('usd_discount').addEventListener('input', () => {
-      const discount = Number(document.getElementById('usd_discount').value) || 0;
-      const original = Number(document.getElementById('usd_original').value) || 0;
-      if (original > 0) {
-        const sale = original - (original * (discount / 100));
-        document.getElementById('usd_price').value = Math.max(0, Number(sale.toFixed(2)));
-      }
-    });
-
-    document.getElementById('pricingForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const btn = document.getElementById('savePricing'); btn.textContent = 'Syncing…'; btn.disabled = true;
-      const inr_pct = document.getElementById('inr_discount').value ? document.getElementById('inr_discount').value + '% OFF' : '';
-      const usd_pct = document.getElementById('usd_discount').value ? document.getElementById('usd_discount').value + '% OFF' : '';
-      const payload = {
-        inr: parseInt(document.getElementById('inr_price').value) * 100,
-        original_inr: parseInt(document.getElementById('inr_original').value) * 100,
-        usd: Math.round(parseFloat(document.getElementById('usd_price').value) * 100),
-        original_usd: Math.round(parseFloat(document.getElementById('usd_original').value) * 100),
-        discount_label: inr_pct,
-        discount_label_usd: usd_pct
-      };
-      
-      // Update platform settings
-      const { error } = await sb.from('settings').upsert({ key: 'pricing', value: payload, updated_at: new Date().toISOString() });
-      if (error) {
-        showToast('Sync failed: ' + error.message, 'error');
-      } else {
-        showToast('Prices synced to cloud', 'success');
-        
-        // Log update action in admin_audit_log table (V2 schema compatible)
-        try {
-          const { data: { user } } = await sb.auth.getUser();
-          if (user) {
-            await sb.from('admin_audit_log').insert([{
-              admin_id: user.id,
-              action: 'UPDATE_PRICING',
-              table_name: 'settings',
-              changed_data: {
-                old: { value: window._oldPricingPayload || {} },
-                new: { value: payload }
-              }
-            }]);
-            
-            // Update local memory for subsequent audit tracking
-            window._oldPricingPayload = payload;
-          }
-        } catch (auditErr) {
-          console.warn('[Admin] Failed to write audit log:', auditErr);
-        }
-        
-        // Refresh the whole dashboard view (which loads the pricing change log)
-        renderDashboard();
-      }
-      btn.textContent = '↑ Sync Prices to Cloud'; btn.disabled = false;
-    });
-
-    // ── COUPON FORM ──────────────────────────────────
-    document.getElementById('typePctBtn').addEventListener('click', () => {
-      document.getElementById('typePctBtn').classList.add('active');
-      document.getElementById('typeFixBtn').classList.remove('active');
-      document.getElementById('coupon_type').value = 'percentage';
-      document.getElementById('couponValueLabel').textContent = 'Value (%)';
-    });
-    document.getElementById('typeFixBtn').addEventListener('click', () => {
-      document.getElementById('typeFixBtn').classList.add('active');
-      document.getElementById('typePctBtn').classList.remove('active');
-      document.getElementById('coupon_type').value = 'fixed';
-      document.getElementById('couponValueLabel').textContent = 'Value (₹/$)';
-    });
-
-    document.getElementById('couponForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const btn = document.getElementById('saveCoupon'); btn.textContent = 'Creating…'; btn.disabled = true;
-      const code = document.getElementById('coupon_code').value.toUpperCase();
-      const payload = {
-        code,
-        discount_type: document.getElementById('coupon_type').value,
-        discount_value: Number(document.getElementById('coupon_value').value),
-        applies_to: document.getElementById('coupon_applies').value,
-        max_uses: document.getElementById('coupon_max').value ? Number(document.getElementById('coupon_max').value) : null,
-        expires_at: document.getElementById('coupon_expires').value ? new Date(document.getElementById('coupon_expires').value).toISOString() : null,
-        is_active: true
-      };
-      const { error } = await sb.from('coupons').insert([payload]);
-      if (error) showToast('Error: ' + error.message, 'error');
-      else { showToast(`Coupon ${code} created`, 'success'); document.getElementById('couponForm').reset(); renderDashboard(); }
-      btn.textContent = '+ Create Coupon'; btn.disabled = false;
-    });
 
     // ── SETTINGS ─────────────────────────────────────
     document.getElementById('saveRateBtn').addEventListener('click', () => {

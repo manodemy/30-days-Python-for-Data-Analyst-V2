@@ -1496,9 +1496,45 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function getStoredUser() {
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && (k.startsWith('sb-') && k.endsWith('-auth-token'))) {
+          const raw = localStorage.getItem(k);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (parsed && (parsed.user || parsed.access_token)) {
+              return parsed.user || { email: parsed.user?.email || localStorage.getItem('manodemy_user_email') };
+            }
+          }
+        }
+      }
+    } catch (e) {}
+
+    try {
+      const raw = CustomAuthStorage.getItem('sb-erqoyvbuhmkyvcqgwcbz-auth-token');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && (parsed.user || parsed.access_token)) {
+          return parsed.user || { email: parsed.user?.email || localStorage.getItem('manodemy_user_email') };
+        }
+      }
+    } catch (e) {}
+
+    const isAuthLocal = localStorage.getItem('manodemy_auth') === 'true';
+    const cachedEmail = localStorage.getItem('manodemy_user_email') || '';
+    if (isAuthLocal && cachedEmail) {
+      return { email: cachedEmail };
+    }
+
+    return null;
+  }
+
   async function updateNavForLoggedIn(user) {
     const signInBtn = document.getElementById('navSignin');
     const navCardSignin = document.getElementById('navCardSignin');
+    const mobOverlaySignin = document.getElementById('mobOverlaySignin');
     const coursesDropdown = document.getElementById('navMyCoursesDropdown');
     
     if (coursesDropdown) {
@@ -1513,21 +1549,30 @@ document.addEventListener('DOMContentLoaded', () => {
       if (signInBtn) {
         signInBtn.textContent = 'Sign In';
         signInBtn.href = 'javascript:void(0)';
+        signInBtn.setAttribute('onclick', "document.getElementById('authModal').classList.add('active');");
       }
       if (navCardSignin) {
         navCardSignin.textContent = '👤 Sign In';
         navCardSignin.href = 'javascript:void(0)';
+        navCardSignin.setAttribute('onclick', "closeNavMenuCard(); document.getElementById('authModal').classList.add('active');");
+      }
+      if (mobOverlaySignin) {
+        mobOverlaySignin.textContent = '👤 Sign In';
+        mobOverlaySignin.href = 'javascript:void(0)';
+        mobOverlaySignin.setAttribute('onclick', "document.getElementById('mobileOverlay').classList.remove('active'); document.getElementById('authModal').classList.add('active');");
       }
       return;
     }
 
     if (signInBtn) signInBtn.removeAttribute('onclick');
     if (navCardSignin) navCardSignin.removeAttribute('onclick');
+    if (mobOverlaySignin) mobOverlaySignin.removeAttribute('onclick');
 
-    let isAdmin = (user.email && (user.email === 'manodamy25@gmail.com' || user.email.toLowerCase().includes('manodemy') || user.email.toLowerCase().includes('manodamy')));
+    const email = (user.email || '').toLowerCase();
+    let isAdmin = email === 'manodamy25@gmail.com' || email.includes('manodemy') || email.includes('manodamy');
 
     try {
-      if (supabaseClient) {
+      if (supabaseClient && user.id) {
         const { data: profile } = await supabaseClient
           .from('profiles')
           .select('role')
@@ -1545,107 +1590,68 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnText = isAdmin ? '⚙️ Admin Panel' : 'Score Card';
     const targetUrl = isAdmin ? '/admin.html' : '/home.html';
 
-    if (signInBtn) {
-      signInBtn.textContent = btnText;
-      signInBtn.href = targetUrl;
-      signInBtn.onclick = (e) => { e.preventDefault(); window.location.href = targetUrl; };
-    }
-    if (navCardSignin) {
-      navCardSignin.textContent = btnText;
-      navCardSignin.href = targetUrl;
-      navCardSignin.onclick = (e) => { e.preventDefault(); window.location.href = targetUrl; };
-    }
+    const setupBtn = (el, text, url) => {
+      if (!el) return;
+      el.textContent = text;
+      el.href = url;
+      el.onclick = (e) => {
+        e.preventDefault();
+        window.location.href = url;
+      };
+    };
+
+    setupBtn(signInBtn, btnText, targetUrl);
+    setupBtn(navCardSignin, btnText, targetUrl);
+    setupBtn(mobOverlaySignin, btnText, targetUrl);
   }
 
   function unlockAllDays() {
     document.querySelectorAll('.day-card.locked, .day-card.coming-soon').forEach(card => {
       card.classList.remove('locked');
       card.classList.remove('coming-soon');
-      const lock = card.querySelector('.badge-lock');
-      if (lock) lock.remove();
+      const badge = card.querySelector('.badge');
+      if (badge) {
+        badge.textContent = 'AVAILABLE';
+        badge.classList.remove('badge-locked');
+      }
+      card.style.opacity = '1';
+      card.style.pointerEvents = 'auto';
     });
-    window._userHasPurchased = true;
   }
 
-  function updateCTAsForPaidUser() {
-    const navEnrollBtn = document.getElementById('navEnrollBtn');
-    if (navEnrollBtn) navEnrollBtn.style.display = 'none';
-    const mobEnrollBtn = document.getElementById('mobEnrollBtn');
-    if (mobEnrollBtn) mobEnrollBtn.style.display = 'none';
-    
-    document.querySelectorAll('[data-cta="buy"]').forEach(btn => {
-      btn.textContent = 'Continue Learning →';
-      btn.href = '/home.html';
-      btn.onclick = null;
-    });
-
-    unlockAllDays();
-  }
-
-  async function checkPurchaseStatus(sb, userId) {
+  const checkPurchaseStatus = async (sb, userId) => {
+    if (!sb || !userId) return;
     try {
-      const { data: enrolledSql } = await sb.rpc('check_enrollment', { p_course_id: 'sql-20day' });
-      const { data: enrolledExcel } = await sb.rpc('check_enrollment', { p_course_id: 'excel-12day' });
-      const { data: profile } = await sb.from('profiles').select('plan, plan_type, role').eq('id', userId).single();
+      const { data, error } = await sb
+        .from('profiles')
+        .select('plan, plan_type')
+        .eq('id', userId)
+        .single();
+        
+      if (error) {
+        console.warn("Could not check user plan:", error.message);
+        return;
+      }
       
-      const hasPurchased = (
-        enrolledSql === true ||
-        enrolledExcel === true ||
-        profile?.plan === 'pro' ||
-        profile?.plan_type === 'premium' ||
-        profile?.plan_type === 'pro' ||
-        profile?.role === 'admin'
-      );
-      
-      if (hasPurchased) {
+      if (data && (data.plan === 'enrolled' || data.plan_type === 'selfpaced' || data.plan_type === 'full' || data.plan === 'purchased')) {
         localStorage.setItem('manodemy_enrolled', 'true');
         unlockAllDays();
-        updateCTAsForPaidUser();
-        const pricingSection = document.getElementById('pricing');
-        if (pricingSection) pricingSection.style.display = 'none';
-        closeCheckout();
-      } else {
-        localStorage.setItem('manodemy_enrolled', 'false');
-        const pricingSection = document.getElementById('pricing');
-        if (pricingSection) pricingSection.style.display = 'block';
+        
+        // Hide all Buy / Enroll CTA buttons across the landing page for enrolled users
+        document.querySelectorAll('.btn-buy, .btn-nav-buy, .btn-hero-buy, .nav-card-buy-btn, .mob-menu-buy').forEach(btn => {
+          btn.style.display = 'none';
+        });
       }
     } catch (e) {
-      console.warn("Purchase status check skipped:", e.message);
+      console.warn("Failed checking profile purchase status:", e);
     }
-  }
+  };
 
-  async function saveCountryToProfile(fallbackCountry) {
+  async function saveCountryToProfile(countryCode) {
     if (!supabaseClient) return;
     try {
       const { data: { session } } = await supabaseClient.auth.getSession();
-      if (!session) return;
-
-      const { data: profile } = await supabaseClient
-        .from('profiles')
-        .select('country')
-        .eq('id', session.user.id)
-        .single();
-
-      if (profile?.country && profile.country !== 'US' && profile.country !== 'Unknown') {
-        return;
-      }
-
-      let countryCode = fallbackCountry || null;
-      const geoApis = [
-        'https://get.geojs.io/v1/ip/country.json',
-        'https://ipapi.co/json/'
-      ];
-      for (const api of geoApis) {
-        try {
-          const res = await fetch(api, { signal: AbortSignal.timeout(4000) });
-          const json = await res.json();
-          const code = json.country || json.country_code;
-          if (code && code.length === 2) {
-            countryCode = code.toUpperCase();
-            break;
-          }
-        } catch (_) {}
-      }
+      if (!session || !session.user) return;
 
       if (!countryCode) {
         const locale = navigator.language || navigator.languages?.[0] || '';
@@ -1660,7 +1666,6 @@ document.addEventListener('DOMContentLoaded', () => {
           .from('profiles')
           .update({ country: countryCode })
           .eq('id', session.user.id);
-        console.log('[Manodemy] Country saved to profile:', countryCode);
       }
     } catch (e) {
       console.warn('[Manodemy] Country capture failed:', e.message);
@@ -1686,23 +1691,29 @@ document.addEventListener('DOMContentLoaded', () => {
         setAuthCookie(session.access_token, session.expires_in);
       }
       updateNavForLoggedIn(session.user);
-      await checkPurchaseStatus(supabaseClient, session.user.id);
+      if (session.user.id) {
+        await checkPurchaseStatus(supabaseClient, session.user.id);
+      }
       await saveCountryToProfile(userCountry);
     } else {
-      localStorage.removeItem('manodemy_auth');
-      localStorage.removeItem('manodemy_enrolled');
-      localStorage.removeItem('manodemy_user_email');
-      clearAuthCookie();
-      updateNavForLoggedIn(null);
+      const stored = getStoredUser();
+      if (stored) {
+        updateNavForLoggedIn(stored);
+      } else {
+        localStorage.removeItem('manodemy_auth');
+        localStorage.removeItem('manodemy_enrolled');
+        localStorage.removeItem('manodemy_user_email');
+        clearAuthCookie();
+        updateNavForLoggedIn(null);
+      }
     }
   };
 
   (async () => {
-    // 1. Instant preliminary UI check from cache so navbar updates instantly
-    const isAuthLocal = localStorage.getItem('manodemy_auth') === 'true';
-    const cachedEmail = localStorage.getItem('manodemy_user_email') || '';
-    if (isAuthLocal) {
-      updateNavForLoggedIn({ email: cachedEmail });
+    // 1. Instant preliminary UI check from cache/cookie so navbar updates IMMEDIATELY on page render
+    const initialUser = getStoredUser();
+    if (initialUser) {
+      updateNavForLoggedIn(initialUser);
     }
 
     const oauthInProgress = localStorage.getItem('manodemy_oauth_in_progress') === 'true';
@@ -1721,10 +1732,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!supabaseClient) return;
     try {
       const { data: { session } } = await supabaseClient.auth.getSession();
-      await handleUserSession(session);
+      if (session) {
+        await handleUserSession(session);
+      } else {
+        const fallbackUser = getStoredUser();
+        if (fallbackUser) {
+          updateNavForLoggedIn(fallbackUser);
+        }
+      }
       
       supabaseClient.auth.onAuthStateChange(async (event, session) => {
-        if (event === 'SIGNED_IN' && session) {
+        if ((event === 'INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') && session) {
           await handleUserSession(session);
           
           const stored = localStorage.getItem('manodemy_pending_checkout');
@@ -1739,7 +1757,6 @@ document.addEventListener('DOMContentLoaded', () => {
             openCheckout(currentPending.tier);
             initiatePayment(currentPending.gateway);
           } else if (window.pendingWriteReview) {
-            // User clicked "Write Review" → stay on page; reviews.js will open the form
             window.justSignedIn = false;
           } else if (window.justSignedIn || oauthInProgress) {
             window.justSignedIn = false;
@@ -1752,7 +1769,9 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (event === 'SIGNED_OUT') {
           localStorage.removeItem('manodemy_auth');
           localStorage.removeItem('manodemy_enrolled');
+          localStorage.removeItem('manodemy_user_email');
           clearAuthCookie();
+          updateNavForLoggedIn(null);
           window.location.reload();
         }
       });

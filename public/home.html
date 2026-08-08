@@ -6834,6 +6834,10 @@
       if (!session) return;
 
       const user = session.user;
+      localStorage.setItem('manodemy_auth', 'true');
+      if (user.email) {
+        localStorage.setItem('manodemy_user_email', user.email);
+      }
       const profileName = user.user_metadata?.full_name || user.email.split('@')[0];
       const firstName = profileName.split(' ')[0];
 

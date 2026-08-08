@@ -1498,6 +1498,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function updateNavForLoggedIn(user) {
     const signInBtn = document.getElementById('navSignin');
+    const navCardSignin = document.getElementById('navCardSignin');
     const coursesDropdown = document.getElementById('navMyCoursesDropdown');
     
     if (coursesDropdown) {
@@ -1508,14 +1509,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const existingExtra = document.getElementById('navInstructorExtra');
     if (existingExtra) existingExtra.remove();
     
-    if (!signInBtn) return;
     if (!user) {
-      signInBtn.textContent = 'Sign In';
-      signInBtn.href = 'javascript:void(0)';
+      if (signInBtn) {
+        signInBtn.textContent = 'Sign In';
+        signInBtn.href = 'javascript:void(0)';
+      }
+      if (navCardSignin) {
+        navCardSignin.textContent = '👤 Sign In';
+        navCardSignin.href = 'javascript:void(0)';
+      }
       return;
     }
 
-    signInBtn.removeAttribute('onclick');
+    if (signInBtn) signInBtn.removeAttribute('onclick');
+    if (navCardSignin) navCardSignin.removeAttribute('onclick');
+
+    let isAdmin = (user.email && (user.email === 'manodamy25@gmail.com' || user.email.toLowerCase().includes('manodemy') || user.email.toLowerCase().includes('manodamy')));
 
     try {
       if (supabaseClient) {
@@ -1525,29 +1534,27 @@ document.addEventListener('DOMContentLoaded', () => {
           .eq('id', user.id)
           .single();
 
-        const isAdmin = (profile && profile.role === 'admin') || user.email === 'manodamy25@gmail.com' || (user.email && (user.email.toLowerCase().includes('manodemy') || user.email.toLowerCase().includes('manodamy')));
-
-        if (isAdmin) {
-          signInBtn.textContent = '⚙️ Admin Panel';
-          signInBtn.href = '/admin.html';
-          signInBtn.onclick = (e) => { e.preventDefault(); window.location.href = '/admin.html'; };
-          return;
+        if (profile && (profile.role === 'admin' || profile.role === 'instructor')) {
+          isAdmin = true;
         }
       }
     } catch (e) {
       console.warn('[Admin] Failed to check roles:', e);
     }
 
-    if (user.email === 'manodamy25@gmail.com' || (user.email && (user.email.toLowerCase().includes('manodemy') || user.email.toLowerCase().includes('manodamy')))) {
-      signInBtn.textContent = '⚙️ Admin Panel';
-      signInBtn.href = '/admin.html';
-      signInBtn.onclick = (e) => { e.preventDefault(); window.location.href = '/admin.html'; };
-      return;
-    }
+    const btnText = isAdmin ? '⚙️ Admin Panel' : 'Score Card';
+    const targetUrl = isAdmin ? '/admin.html' : '/home.html';
 
-    signInBtn.textContent = 'Score Card';
-    signInBtn.href = '/home.html';
-    signInBtn.onclick = (e) => { e.preventDefault(); window.location.href = '/home.html'; };
+    if (signInBtn) {
+      signInBtn.textContent = btnText;
+      signInBtn.href = targetUrl;
+      signInBtn.onclick = (e) => { e.preventDefault(); window.location.href = targetUrl; };
+    }
+    if (navCardSignin) {
+      navCardSignin.textContent = btnText;
+      navCardSignin.href = targetUrl;
+      navCardSignin.onclick = (e) => { e.preventDefault(); window.location.href = targetUrl; };
+    }
   }
 
   function unlockAllDays() {
@@ -1670,8 +1677,11 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const handleUserSession = async (session) => {
-    if (session) {
+    if (session && session.user) {
       localStorage.setItem('manodemy_auth', 'true');
+      if (session.user.email) {
+        localStorage.setItem('manodemy_user_email', session.user.email);
+      }
       if (session.access_token) {
         setAuthCookie(session.access_token, session.expires_in);
       }
@@ -1681,12 +1691,20 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       localStorage.removeItem('manodemy_auth');
       localStorage.removeItem('manodemy_enrolled');
+      localStorage.removeItem('manodemy_user_email');
       clearAuthCookie();
       updateNavForLoggedIn(null);
     }
   };
 
   (async () => {
+    // 1. Instant preliminary UI check from cache so navbar updates instantly
+    const isAuthLocal = localStorage.getItem('manodemy_auth') === 'true';
+    const cachedEmail = localStorage.getItem('manodemy_user_email') || '';
+    if (isAuthLocal) {
+      updateNavForLoggedIn({ email: cachedEmail });
+    }
+
     const oauthInProgress = localStorage.getItem('manodemy_oauth_in_progress') === 'true';
     localStorage.removeItem('manodemy_oauth_in_progress');
 
@@ -1698,7 +1716,7 @@ document.addEventListener('DOMContentLoaded', () => {
       localStorage.removeItem('manodemy_pending_checkout');
     }
 
-    await detectGeoPricing();
+    detectGeoPricing();
 
     if (!supabaseClient) return;
     try {

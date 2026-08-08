@@ -645,9 +645,27 @@
       font-size: 12px;
     }
 
-    .schema-tbl td.sal {
+    .landing-admin-nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      font-size: 13px;
       font-weight: 700;
-      color: #059669;
+      color: #00E6F6 !important;
+      background: rgba(0, 230, 246, 0.12);
+      border: 1px solid rgba(0, 230, 246, 0.4);
+      border-radius: 9999px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      box-shadow: 0 0 16px rgba(0, 230, 246, 0.2);
+    }
+    .landing-admin-nav-btn:hover {
+      background: rgba(0, 230, 246, 0.25);
+      border-color: #00E6F6;
+      box-shadow: 0 0 24px rgba(0, 230, 246, 0.4);
+      transform: translateY(-1px);
     }
 
     .ls-bottom-player {
@@ -2221,8 +2239,14 @@
         <audio id="navIntroAudioElement" preload="auto" style="display:none;"></audio>
         <audio id="navIntroAudioElementB" preload="auto" style="display:none;"></audio>
 
-        <!-- 3. Right Action Bar: Sign In & Menu Toggle Button -->
-        <div class="nav-right">
+        <!-- 3. Right Action Bar: Direct Admin Link, Sign In & Menu Toggle Button -->
+        <div class="nav-right" style="display: flex; align-items: center; gap: 8px;">
+          <!-- Direct Admin Panel Button (shown for admins) -->
+          <a href="/admin.html" id="directLandingAdminNavBtn" class="landing-admin-nav-btn" style="display: none;"
+            title="Open Admin Intelligence Suite">
+            ⚙️ Admin Panel
+          </a>
+
           <a href="javascript:void(0)" id="navSignin" class="btn-ghost nav-signin-btn"
             onclick="document.getElementById('authModal').classList.add('active');"
             aria-label="Sign in to your account">Sign In</a>
@@ -2241,6 +2265,11 @@
 
               <!-- Navigation Links -->
               <div class="nav-card-links-group">
+                <a href="/admin.html" class="nav-card-item nav-card-item--admin" id="navCardAdminItem" style="display: none; color: #00E6F6; font-weight: 700;" onclick="closeNavMenuCard()">
+                  <span class="nav-card-icon">⚙️</span>
+                  <span class="nav-card-label">Admin Intelligence Suite</span>
+                  <span class="nav-card-badge" style="background: rgba(0,230,246,0.15); border-color: rgba(0,230,246,0.4); color: #00E6F6;">Admin</span>
+                </a>
                 <a href="#curriculum" class="nav-card-item" onclick="closeNavMenuCard()">
                   <span class="nav-card-icon">📖</span>
                   <span class="nav-card-label">Curriculum &amp; Roadmap</span>
@@ -2317,6 +2346,7 @@
 
   <!-- Mobile Dropdown Menu -->
   <div class="mobile-overlay" id="mobileOverlay" role="dialog" aria-modal="true" aria-label="Mobile Navigation">
+    <a href="/admin.html" id="mobOverlayAdminItem" style="display: none; color: #00E6F6; font-size: 14px; font-weight: 700;">⚙️ Admin Panel</a>
     <a href="javascript:void(0)" id="mobOverlaySignin"
       onclick="document.getElementById('mobileOverlay').classList.remove('active'); document.getElementById('authModal').classList.add('active');"
       style="color: var(--text-secondary); font-size: 14px; font-weight: 600;">👤 Sign In</a>
@@ -4367,11 +4397,11 @@
     window.MANODEMY_CONFIG.SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVycW95dmJ1aG1reXZjcWd3Y2J6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzODk1MTIsImV4cCI6MjA5NDk2NTUxMn0.9UnIfq8xMrKANPPTtoOADKH-NJ_it9HDp7xrJL4FXtw';
   </script>
 
-  <script src="../supabase.js?v=2026.08.08.1940" defer></script>
+  <script src="../supabase.js?v=2026.08.08.1945" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="reviews.js?v=2026.08.08.1940" defer></script>
-  <script src="app.js?v=2026.08.08.1940" defer></script>
-  <script src="roadmap.js?v=2026.08.08.1940" defer></script>
+  <script src="reviews.js?v=2026.08.08.1945" defer></script>
+  <script src="app.js?v=2026.08.08.1945" defer></script>
+  <script src="roadmap.js?v=2026.08.08.1945" defer></script>
 
   <!-- PWA SW Registration with Instant Auto-Update & Cache Purge -->
   <script>

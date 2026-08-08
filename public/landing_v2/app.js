@@ -1735,6 +1735,21 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   (async () => {
+    // 0. Detect and clean OAuth hash token if user just returned from Google OAuth
+    if (window.location.hash && window.location.hash.includes('access_token=')) {
+      try {
+        const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+        const accessToken = hashParams.get('access_token');
+        const expiresIn = hashParams.get('expires_in');
+        if (accessToken) {
+          localStorage.setItem('manodemy_auth', 'true');
+          setAuthCookie(accessToken, expiresIn || 604800);
+          // Clean hash from address bar without reloading
+          window.history.replaceState(null, document.title, window.location.pathname + window.location.search);
+        }
+      } catch (e) {}
+    }
+
     // 1. Instant preliminary UI check from cache/cookie so navbar updates IMMEDIATELY on page render
     const initialUser = getStoredUser();
     if (initialUser) {

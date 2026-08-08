@@ -1473,7 +1473,19 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      if (text.toLowerCase().includes('score card') || text.toLowerCase().includes('dashboard') || text.includes('Admin')) {
+      if (text.includes('Admin')) {
+        e.preventDefault();
+        window.location.href = '/admin.html';
+        return;
+      }
+
+      if (text.includes('Instructor')) {
+        e.preventDefault();
+        window.location.href = '/instructor-dashboard.html';
+        return;
+      }
+
+      if (text.toLowerCase().includes('score card') || text.toLowerCase().includes('dashboard')) {
         e.preventDefault();
         window.location.href = '/home.html';
         return;

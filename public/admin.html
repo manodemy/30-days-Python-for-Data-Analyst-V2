@@ -5498,10 +5498,14 @@
         if (gatewayLabel) gatewayLabel.textContent = 'Razorpay & UPI (Auto-Detected)';
         symbols.forEach(s => s.textContent = '₹');
 
-        document.getElementById('cfg_sale_price').value = _inrPricingState.sale_price;
-        document.getElementById('cfg_original_price').value = _inrPricingState.original_price;
-        document.getElementById('cfg_discount_badge').value = _inrPricingState.discount_label || '70% OFF';
-        document.getElementById('cfg_preset_label').value = _inrPricingState.preset_label || 'Early Access Offer';
+        const elSale = document.getElementById('cfg_sale_price');
+        const elOrig = document.getElementById('cfg_original_price');
+        const elBadge = document.getElementById('cfg_discount_badge');
+        const elLabel = document.getElementById('cfg_preset_label');
+        if (elSale) elSale.value = _inrPricingState.sale_price;
+        if (elOrig) elOrig.value = _inrPricingState.original_price;
+        if (elBadge) elBadge.value = _inrPricingState.discount_label || '70% OFF';
+        if (elLabel) elLabel.value = _inrPricingState.preset_label || 'Early Access Offer';
 
         if (presetContainer) {
           presetContainer.innerHTML = `
@@ -5530,10 +5534,14 @@
         if (gatewayLabel) gatewayLabel.textContent = 'PayPal & Stripe (Global Credit Cards)';
         symbols.forEach(s => s.textContent = '$');
 
-        document.getElementById('cfg_sale_price').value = _usdPricingState.sale_price;
-        document.getElementById('cfg_original_price').value = _usdPricingState.original_price;
-        document.getElementById('cfg_discount_badge').value = _usdPricingState.discount_label || '67% OFF';
-        document.getElementById('cfg_preset_label').value = _usdPricingState.preset_label || 'Global Early Pass';
+        const elSale = document.getElementById('cfg_sale_price');
+        const elOrig = document.getElementById('cfg_original_price');
+        const elBadge = document.getElementById('cfg_discount_badge');
+        const elLabel = document.getElementById('cfg_preset_label');
+        if (elSale) elSale.value = _usdPricingState.sale_price;
+        if (elOrig) elOrig.value = _usdPricingState.original_price;
+        if (elBadge) elBadge.value = _usdPricingState.discount_label || '67% OFF';
+        if (elLabel) elLabel.value = _usdPricingState.preset_label || 'Global Early Pass';
 
         if (presetContainer) {
           presetContainer.innerHTML = `
@@ -5558,10 +5566,14 @@
 
     // Apply preset values to form
     window.applyPresetPrice = function(sale, orig, badge, label) {
-      document.getElementById('cfg_sale_price').value = sale;
-      document.getElementById('cfg_original_price').value = orig;
-      document.getElementById('cfg_discount_badge').value = badge;
-      document.getElementById('cfg_preset_label').value = label;
+      const elSale = document.getElementById('cfg_sale_price');
+      const elOrig = document.getElementById('cfg_original_price');
+      const elBadge = document.getElementById('cfg_discount_badge');
+      const elLabel = document.getElementById('cfg_preset_label');
+      if (elSale) elSale.value = sale;
+      if (elOrig) elOrig.value = orig;
+      if (elBadge) elBadge.value = badge;
+      if (elLabel) elLabel.value = label;
       updatePreviewSimulator();
       showToast(`Preset "${label}" applied to form. Click "Confirm & Publish" to push live.`, 'info');
     };
@@ -5608,17 +5620,23 @@
     window.openPublishConfirmModal = function() {
       const modal = document.getElementById('pricingConfirmModal');
       const isINR = _activePricingRegion === 'INR';
-      const sale = Number(document.getElementById('cfg_sale_price').value) || 0;
-      const orig = Number(document.getElementById('cfg_original_price').value) || 0;
-      const badge = document.getElementById('cfg_discount_badge').value || 'SPECIAL OFFER';
-      const tag = document.getElementById('cfg_preset_label').value || 'Standard Update';
+      const sale = Number(document.getElementById('cfg_sale_price')?.value) || 0;
+      const orig = Number(document.getElementById('cfg_original_price')?.value) || 0;
+      const badge = document.getElementById('cfg_discount_badge')?.value || 'SPECIAL OFFER';
+      const tag = document.getElementById('cfg_preset_label')?.value || 'Standard Update';
       const sym = isINR ? '₹' : '$';
 
-      document.getElementById('modalSummaryRegion').textContent = isINR ? '🇮🇳 India Domestic (INR ₹)' : '🌍 Outside India (USD $)';
-      document.getElementById('modalSummarySale').textContent = `${sym}${isINR ? sale.toLocaleString('en-IN') : sale}.00`;
-      document.getElementById('modalSummaryOrig').textContent = `${sym}${isINR ? orig.toLocaleString('en-IN') : orig}.00`;
-      document.getElementById('modalSummaryBadge').textContent = badge;
-      document.getElementById('modalSummaryTag').textContent = tag;
+      const elRegion = document.getElementById('modalSummaryRegion');
+      const elSale = document.getElementById('modalSummarySale');
+      const elOrig = document.getElementById('modalSummaryOrig');
+      const elBadge = document.getElementById('modalSummaryBadge');
+      const elTag = document.getElementById('modalSummaryTag');
+
+      if (elRegion) elRegion.textContent = isINR ? '🇮🇳 India Domestic (INR ₹)' : '🌍 Outside India (USD $)';
+      if (elSale) elSale.textContent = `${sym}${isINR ? sale.toLocaleString('en-IN') : sale}.00`;
+      if (elOrig) elOrig.textContent = `${sym}${isINR ? orig.toLocaleString('en-IN') : orig}.00`;
+      if (elBadge) elBadge.textContent = badge;
+      if (elTag) elTag.textContent = tag;
 
       if (modal) {
         modal.style.display = 'flex';
@@ -5636,10 +5654,10 @@
       if (btn) { btn.textContent = 'Pushing to Cloud…'; btn.disabled = true; }
 
       const isINR = _activePricingRegion === 'INR';
-      const sale = Number(document.getElementById('cfg_sale_price').value) || 0;
-      const orig = Number(document.getElementById('cfg_original_price').value) || 0;
-      const badge = document.getElementById('cfg_discount_badge').value || (isINR ? '70% OFF' : '67% OFF');
-      const tag = document.getElementById('cfg_preset_label').value || 'Manual Admin Update';
+      const sale = Number(document.getElementById('cfg_sale_price')?.value) || 0;
+      const orig = Number(document.getElementById('cfg_original_price')?.value) || 0;
+      const badge = document.getElementById('cfg_discount_badge')?.value || (isINR ? '70% OFF' : '67% OFF');
+      const tag = document.getElementById('cfg_preset_label')?.value || 'Manual Admin Update';
 
       if (isINR) {
         _inrPricingState = { sale_price: sale, original_price: orig, discount_label: badge, preset_label: tag };
@@ -5717,10 +5735,10 @@
     // Load Pricing data from Supabase
     async function loadPricingData() {
       try {
-        // Try reading latest from pricing_versions
+        // 1. Try reading latest from pricing_versions
         try {
           const { data: inrRow } = await sb.from('pricing_versions').select('*').eq('region', 'INR').order('effective_from', { ascending: false }).limit(1).maybeSingle();
-          if (inrRow) {
+          if (inrRow && inrRow.sale_price) {
             _inrPricingState = {
               sale_price: Number(inrRow.sale_price),
               original_price: Number(inrRow.original_price),
@@ -5729,7 +5747,7 @@
             };
           }
           const { data: usdRow } = await sb.from('pricing_versions').select('*').eq('region', 'USD').order('effective_from', { ascending: false }).limit(1).maybeSingle();
-          if (usdRow) {
+          if (usdRow && usdRow.sale_price) {
             _usdPricingState = {
               sale_price: Number(usdRow.sale_price),
               original_price: Number(usdRow.original_price),
@@ -5739,15 +5757,19 @@
           }
         } catch (pvErr) {}
 
-        // Fallback to settings table
-        const { data: settingsData } = await sb.from('settings').select('value').eq('key', 'pricing').single();
-        if (settingsData && settingsData.value) {
-          const v = settingsData.value;
-          if (v.inr && !_inrPricingState.sale_price) _inrPricingState.sale_price = Number(v.inr) / 100;
-          if (v.original_inr && !_inrPricingState.original_price) _inrPricingState.original_price = Number(v.original_inr) / 100;
-          if (v.usd && !_usdPricingState.sale_price) _usdPricingState.sale_price = Number(v.usd) / 100;
-          if (v.original_usd && !_usdPricingState.original_price) _usdPricingState.original_price = Number(v.original_usd) / 100;
-        }
+        // 2. Fallback to settings table
+        try {
+          const { data: settingsData } = await sb.from('settings').select('value').eq('key', 'pricing').single();
+          if (settingsData && settingsData.value) {
+            const v = settingsData.value;
+            if (v.inr) _inrPricingState.sale_price = Number(v.inr) / 100;
+            if (v.original_inr) _inrPricingState.original_price = Number(v.original_inr) / 100;
+            if (v.discount_label) _inrPricingState.discount_label = v.discount_label;
+            if (v.usd) _usdPricingState.sale_price = Number(v.usd) / 100;
+            if (v.original_usd) _usdPricingState.original_price = Number(v.original_usd) / 100;
+            if (v.discount_label_usd) _usdPricingState.discount_label = v.discount_label_usd;
+          }
+        } catch (sErr) {}
 
         switchPricingRegion(_activePricingRegion);
         updateMatrixOverview();
@@ -6264,6 +6286,10 @@
         const filterBar = document.querySelector('.top-filter-bar');
         if (filterBar) {
           filterBar.style.display = (tabId === 'tab-pricing' || tabId === 'tab-engagement' || tabId === 'tab-reviews' || tabId === 'tab-batches' || tabId === 'tab-referral') ? 'none' : 'block';
+        }
+
+        if (tabId === 'tab-pricing') {
+          loadPricingData();
         }
 
         if (tabId === 'tab-reviews') {

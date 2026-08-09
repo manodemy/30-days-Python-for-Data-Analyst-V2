@@ -17,7 +17,7 @@
   <link rel="dns-prefetch" href="https://erqoyvbuhmkyvcqgwcbz.supabase.co">
   
   <link
-    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@300;400;500&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap"
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;family=Sora:wght@300;400;600;700;800&amp;family=JetBrains+Mono:wght@300;400;500&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap"
     rel="stylesheet" media="print" onload="this.media='all'" />
   <style>
     /* ─────────────────────────────────────────────
@@ -46,7 +46,8 @@
       --ink-dim: #A8A090;
       --ink-muted: #60584E;
 
-      --font-display: 'Outfit', system-ui, sans-serif;
+      --font-display: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+      --font-price: 'Sora', 'Plus Jakarta Sans', system-ui, sans-serif;
       --font-data: 'JetBrains Mono', 'Courier New', monospace;
       --font-body: 'Inter', system-ui, sans-serif;
 
@@ -2380,7 +2381,7 @@
         </div>
         <div class="nav-section-label">Operations</div>
         <div class="nav-item" data-tab="tab-pricing">
-          <span class="nav-icon">⬡</span> Coupons &amp; Pricing
+          <span class="nav-icon">⬡</span> Pricing &amp; Coupons
         </div>
         <div class="nav-item" data-tab="tab-reviews">
           <span class="nav-icon">★</span> Reviews Moderation
@@ -3206,7 +3207,7 @@
                       <span style="font-size: 0.65rem; color: var(--gold); font-family: var(--font-data);">STUDENT PAYS</span>
                     </label>
                     <input id="cfg_sale_price" type="number" step="any" min="1" placeholder="1499" required
-                      style="font-family: var(--font-data); font-size: 1.1rem; font-weight: 700; color: var(--emerald); background: var(--base); border: 1px solid var(--rim); padding: 0.65rem 0.85rem; border-radius: var(--radius-sm); width: 100%;" />
+                      style="font-family: var(--font-price); font-size: 1.1rem; font-weight: 700; color: var(--emerald); background: var(--base); border: 1px solid var(--rim); padding: 0.65rem 0.85rem; border-radius: var(--radius-sm); width: 100%;" />
                   </div>
 
                   <div class="field">
@@ -3215,7 +3216,7 @@
                       <span style="font-size: 0.65rem; color: var(--ink-muted); font-family: var(--font-data);">CROSS-OUT</span>
                     </label>
                     <input id="cfg_original_price" type="number" step="any" min="1" placeholder="4999" required
-                      style="font-family: var(--font-data); font-size: 1.1rem; font-weight: 500; color: var(--ink-dim); text-decoration: line-through; background: var(--base); border: 1px solid var(--rim); padding: 0.65rem 0.85rem; border-radius: var(--radius-sm); width: 100%;" />
+                      style="font-family: var(--font-price); font-size: 1.1rem; font-weight: 500; color: var(--ink-dim); text-decoration: line-through; background: var(--base); border: 1px solid var(--rim); padding: 0.65rem 0.85rem; border-radius: var(--radius-sm); width: 100%;" />
                   </div>
                 </div>
 
@@ -3299,10 +3300,10 @@
                     60-DAY SELF-PACED MASTERCLASS
                   </div>
                   <div style="display: flex; align-items: baseline; gap: 0.6rem; margin-bottom: 0.6rem;">
-                    <span id="simSalePrice" style="font-family: var(--font-data); font-size: 2.2rem; font-weight: 800; color: var(--ink);">
+                    <span id="simSalePrice" style="font-family: var(--font-price); font-size: 2.2rem; font-weight: 800; color: var(--ink); letter-spacing: -0.02em;">
                       ₹1,499
                     </span>
-                    <span id="simOriginalPrice" style="font-family: var(--font-data); font-size: 1.15rem; color: var(--ink-dim); text-decoration: line-through;">
+                    <span id="simOriginalPrice" style="font-family: var(--font-price); font-size: 1.15rem; color: var(--ink-dim); text-decoration: line-through;">
                       ₹4,999
                     </span>
                     <span style="font-size: 0.75rem; color: var(--ink-dim);">one-time payment</span>

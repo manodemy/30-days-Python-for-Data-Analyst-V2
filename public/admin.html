@@ -3163,6 +3163,47 @@
         <!-- ══ TAB 4: COUPONS & PRICING COMMAND CENTER ══ -->
         <div class="tab-pane" id="tab-pricing">
 
+          <!-- MASTER MATRIX OVERVIEW VIEW (Positioned at Top) -->
+          <div id="moduleMasterMatrix" style="background: var(--elevated); border: 1px solid var(--rim); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.5rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
+              <div>
+                <h3 style="font-family: var(--font-display); font-size: 1.15rem; color: var(--ink);">
+                  🌐 Master Dual-Currency Matrix Overview
+                </h3>
+                <span style="font-size: 0.75rem; color: var(--ink-dim);">Comparative view of domestic India vs International global student offerings</span>
+              </div>
+              <span class="badge badge-sapphire" style="font-size: 0.7rem; padding: 3px 10px; border-radius: 9999px;">
+                Side-by-Side Read-Only Comparison
+              </span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+              <div style="background: var(--base); border: 1px solid var(--rim); border-radius: var(--radius-md); padding: 1.25rem;">
+                <div style="font-size: 0.85rem; font-weight: 700; color: var(--gold); margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between;">
+                  <span>🇮🇳 India Domestic (INR)</span>
+                  <span class="badge badge-emerald" style="font-size: 0.65rem;">Razorpay / UPI</span>
+                </div>
+                <div style="font-size: 1.6rem; font-weight: 800; color: var(--ink); font-family: var(--font-data);" id="matrixInrPrice">
+                  ₹1,499 <span style="font-size: 0.9rem; color: var(--ink-dim); text-decoration: line-through;" id="matrixInrOrig">₹4,999</span>
+                </div>
+                <div style="font-size: 0.78rem; color: var(--emerald); font-weight: 600; margin: 0.4rem 0;" id="matrixInrBadge">70% OFF (You save ₹3,500)</div>
+                <div style="font-size: 0.72rem; color: var(--ink-muted);">Target: Students &amp; professionals in India. Includes instant UPI QR &amp; NetBanking.</div>
+              </div>
+
+              <div style="background: var(--base); border: 1px solid var(--rim); border-radius: var(--radius-md); padding: 1.25rem;">
+                <div style="font-size: 0.85rem; font-weight: 700; color: var(--sapphire); margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between;">
+                  <span>🌍 Outside India (USD)</span>
+                  <span class="badge badge-sapphire" style="font-size: 0.65rem;">PayPal / Stripe</span>
+                </div>
+                <div style="font-size: 1.6rem; font-weight: 800; color: var(--ink); font-family: var(--font-data);" id="matrixUsdPrice">
+                  $49 <span style="font-size: 0.9rem; color: var(--ink-dim); text-decoration: line-through;" id="matrixUsdOrig">$149</span>
+                </div>
+                <div style="font-size: 0.78rem; color: var(--emerald); font-weight: 600; margin: 0.4rem 0;" id="matrixUsdBadge">67% OFF (You save $100)</div>
+                <div style="font-size: 0.72rem; color: var(--ink-muted);">Target: International students. Handled via PayPal &amp; global credit cards.</div>
+              </div>
+            </div>
+          </div>
+
 
           <!-- Region Switcher Navigation Tabs -->
           <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; background: var(--elevated); padding: 0.4rem; border-radius: var(--radius-md); border: 1px solid var(--rim);">
@@ -3173,9 +3214,7 @@
               <button class="region-tab-btn" id="btnRegionUsd" type="button" onclick="switchPricingRegion('USD')" style="padding: 0.55rem 1.25rem; font-size: 0.85rem; font-weight: 600; border-radius: var(--radius-sm); border: 1px solid var(--rim); cursor: pointer; transition: all var(--transition); background: transparent; color: var(--ink-dim);">
                 🌍 Outside India (USD $)
               </button>
-              <button class="region-tab-btn" id="btnRegionMatrix" type="button" onclick="switchPricingRegion('MATRIX')" style="padding: 0.55rem 1.25rem; font-size: 0.85rem; font-weight: 600; border-radius: var(--radius-sm); border: 1px solid var(--rim); cursor: pointer; transition: all var(--transition); background: transparent; color: var(--ink-dim);">
-                🌐 Master Matrix Overview
-              </button>
+
             </div>
             <div style="font-size: 0.75rem; color: var(--ink-muted); font-family: var(--font-data); padding-right: 0.5rem;">
               Active Gateway: <strong id="pricingActiveGatewayLabel" style="color: var(--sapphire);">Razorpay &amp; UPI (Auto-Detected)</strong>
@@ -3334,46 +3373,7 @@
             </div>
           </div>
 
-          <!-- MASTER MATRIX OVERVIEW VIEW (Only shown when MATRIX tab is clicked) -->
-          <div id="moduleMasterMatrix" style="display: none; background: var(--elevated); border: 1px solid var(--rim); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 2rem;">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
-              <div>
-                <h3 style="font-family: var(--font-display); font-size: 1.15rem; color: var(--ink);">
-                  🌐 Master Dual-Currency Matrix Overview
-                </h3>
-                <span style="font-size: 0.75rem; color: var(--ink-dim);">Comparative view of domestic India vs International global student offerings</span>
-              </div>
-              <span class="badge badge-sapphire" style="font-size: 0.7rem; padding: 3px 10px; border-radius: 9999px;">
-                Side-by-Side Read-Only Comparison
-              </span>
-            </div>
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
-              <div style="background: var(--base); border: 1px solid var(--rim); border-radius: var(--radius-md); padding: 1.25rem;">
-                <div style="font-size: 0.85rem; font-weight: 700; color: var(--gold); margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between;">
-                  <span>🇮🇳 India Domestic (INR)</span>
-                  <span class="badge badge-emerald" style="font-size: 0.65rem;">Razorpay / UPI</span>
-                </div>
-                <div style="font-size: 1.6rem; font-weight: 800; color: var(--ink); font-family: var(--font-data);" id="matrixInrPrice">
-                  ₹1,499 <span style="font-size: 0.9rem; color: var(--ink-dim); text-decoration: line-through;" id="matrixInrOrig">₹4,999</span>
-                </div>
-                <div style="font-size: 0.78rem; color: var(--emerald); font-weight: 600; margin: 0.4rem 0;" id="matrixInrBadge">70% OFF (You save ₹3,500)</div>
-                <div style="font-size: 0.72rem; color: var(--ink-muted);">Target: Students &amp; professionals in India. Includes instant UPI QR &amp; NetBanking.</div>
-              </div>
-
-              <div style="background: var(--base); border: 1px solid var(--rim); border-radius: var(--radius-md); padding: 1.25rem;">
-                <div style="font-size: 0.85rem; font-weight: 700; color: var(--sapphire); margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between;">
-                  <span>🌍 Outside India (USD)</span>
-                  <span class="badge badge-sapphire" style="font-size: 0.65rem;">PayPal / Stripe</span>
-                </div>
-                <div style="font-size: 1.6rem; font-weight: 800; color: var(--ink); font-family: var(--font-data);" id="matrixUsdPrice">
-                  $49 <span style="font-size: 0.9rem; color: var(--ink-dim); text-decoration: line-through;" id="matrixUsdOrig">$149</span>
-                </div>
-                <div style="font-size: 0.78rem; color: var(--emerald); font-weight: 600; margin: 0.4rem 0;" id="matrixUsdBadge">67% OFF (You save $100)</div>
-                <div style="font-size: 0.72rem; color: var(--ink-muted);">Target: International students. Handled via PayPal &amp; global credit cards.</div>
-              </div>
-            </div>
-          </div>
 
           <!-- MODULE 2: COUPON CREATOR & 1-CLICK PROMO SANDBOX (Collapsible Accordion) -->
           <div class="accordion-card" style="background: var(--elevated); border: 1px solid var(--rim); border-radius: var(--radius-lg); margin-bottom: 1.5rem; overflow: hidden;">
@@ -5093,12 +5093,10 @@
       _activePricingRegion = region;
       const btnInr = document.getElementById('btnRegionInr');
       const btnUsd = document.getElementById('btnRegionUsd');
-      const btnMatrix = document.getElementById('btnRegionMatrix');
       const modPricing = document.getElementById('moduleMasterPricing');
-      const modMatrix = document.getElementById('moduleMasterMatrix');
       const gatewayLabel = document.getElementById('pricingActiveGatewayLabel');
 
-      [btnInr, btnUsd, btnMatrix].forEach(b => {
+      [btnInr, btnUsd].forEach(b => {
         if (b) {
           b.style.background = 'transparent';
           b.style.color = 'var(--ink-dim)';
@@ -5106,21 +5104,7 @@
         }
       });
 
-      if (region === 'MATRIX') {
-        if (btnMatrix) {
-          btnMatrix.style.background = 'var(--gold)';
-          btnMatrix.style.color = 'var(--void)';
-          btnMatrix.style.border = '1px solid transparent';
-        }
-        if (modPricing) modPricing.style.display = 'none';
-        if (modMatrix) modMatrix.style.display = 'block';
-        if (gatewayLabel) gatewayLabel.textContent = 'Dual Matrix (Razorpay + PayPal / Stripe)';
-        updateMatrixOverview();
-        return;
-      }
-
       if (modPricing) modPricing.style.display = 'grid';
-      if (modMatrix) modMatrix.style.display = 'none';
 
       const flag = document.getElementById('cfgRegionFlag');
       const title = document.getElementById('cfgRegionTitle');

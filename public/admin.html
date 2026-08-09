@@ -3162,28 +3162,6 @@
         <!-- ══ TAB 4: COUPONS & PRICING COMMAND CENTER ══ -->
         <div class="tab-pane" id="tab-pricing">
 
-          <!-- Top Header & Live Sync Status -->
-          <div class="tab-header" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; border-bottom: 1px solid var(--rim); padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
-            <div>
-              <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.25rem;">
-                <h2 class="tab-title" style="margin: 0; font-family: var(--font-display); font-size: 1.6rem; color: var(--ink);">
-                  Pricing &amp; <em>Coupons</em>
-                </h2>
-                <span class="badge badge-emerald" id="pricingCloudSyncStatus" style="font-size: 0.72rem; padding: 3px 10px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 0.35rem;">
-                  <span style="display:inline-block; width:6px; height:6px; background:var(--emerald); border-radius:50%; box-shadow:0 0 8px var(--emerald);"></span>
-                  <span>Cloud Synced</span>
-                </span>
-              </div>
-              <span class="tab-period-label" style="font-size: 0.78rem; color: var(--ink-dim); font-family: var(--font-data);">
-                Master pricing single-source-of-truth — Live dynamic link to Landing Hero, Comparison Table, Checkout, and Sticky CTAs
-              </span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 0.75rem;">
-              <button class="btn-outline-gold" id="btnRefreshPricingData" type="button" style="font-size: 0.78rem; padding: 0.45rem 1rem; display: inline-flex; align-items: center; gap: 0.4rem;">
-                <span>⟳</span> Refresh Live Data
-              </button>
-            </div>
-          </div>
 
           <!-- Region Switcher Navigation Tabs -->
           <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; background: var(--elevated); padding: 0.4rem; border-radius: var(--radius-md); border: 1px solid var(--rim);">
@@ -5829,11 +5807,8 @@
       }
     }
 
-    // Refresh live pricing data button
-    document.getElementById('btnRefreshPricingData')?.addEventListener('click', () => {
-      loadPricingData();
-      showToast('Live pricing, audit log & coupons refreshed ⟳', 'info');
-    });
+
+
 
     // ── AUDIT TABLE ──────────────────────────────────
     function formatAuditValue(val) {

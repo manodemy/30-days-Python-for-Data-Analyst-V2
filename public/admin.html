@@ -3123,9 +3123,45 @@
               </span>
               <span id="eng-sum-time" style="font-family:var(--font-data);font-size:1.4rem;color:var(--gold);font-weight:300;">—</span>
             </div>
+            <div class="kpi-card" style="padding:1rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.25rem;">
+              <span style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-muted);display:inline-flex;align-items:center;gap:0.25rem;">
+                ✅ Avg Q.Solved/User
+                <span class="info-icon">i
+                  <span class="metric-tooltip" style="color:var(--ink-dim);">Average number of practice questions solved per user across all day pages.</span>
+                </span>
+              </span>
+              <span id="eng-sum-questions" style="font-family:var(--font-data);font-size:1.4rem;color:var(--emerald);font-weight:300;">—</span>
+            </div>
           </div>
+
+          <!-- Engagement Data Table -->
+          <div class="table-panel">
+            <div class="table-wrap" style="overflow-x:auto; max-height:600px; overflow-y:auto;">
+              <table id="engagementTable" style="min-width:900px;">
+                <thead>
+                  <tr>
+                    <th style="min-width:36px;">#</th>
+                    <th style="position:sticky;left:0;z-index:2;background:var(--surface);min-width:140px;">Name</th>
+                    <th style="position:sticky;left:140px;z-index:2;background:var(--surface);min-width:190px;">Email</th>
+                    <th>Country</th>
+                    <th>Plan</th>
+                    <th>Signed Up</th>
+                    <th>Last Seen</th>
+                    <th style="border-left:2px solid var(--rim-strong);">Home Visits</th>
+                    <th>Home Time</th>
+                    <th>Home Q.Solved</th>
+                  </tr>
+                </thead>
+                <tbody id="engagementTableBody">
+                  <tr><td colspan="157" style="text-align:center;color:var(--ink-muted);padding:3rem;">Loading engagement data…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
         <!-- ══ TAB 4: COUPONS & PRICING COMMAND CENTER ══ -->
         <div class="tab-pane" id="tab-pricing">
+
           <!-- Top Header & Live Sync Status -->
           <div class="tab-header" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; border-bottom: 1px solid var(--rim); padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
             <div>

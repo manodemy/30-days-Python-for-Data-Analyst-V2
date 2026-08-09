@@ -2382,14 +2382,8 @@
         <div class="nav-item" data-tab="tab-pricing">
           <span class="nav-icon">⬡</span> Coupons &amp; Pricing
         </div>
-        <div class="nav-item" data-tab="tab-referral">
-          <span class="nav-icon" style="color:var(--emerald);">⇄</span> Referral Program
-        </div>
         <div class="nav-item" data-tab="tab-reviews">
           <span class="nav-icon">★</span> Reviews Moderation
-        </div>
-        <div class="nav-item" data-tab="tab-batches">
-          <span class="nav-icon" style="color:var(--amber);">⚡</span> Cohorts &amp; Batches
         </div>
         <div class="nav-item" data-tab="tab-settings">
           <span class="nav-icon">◎</span> Settings
@@ -3698,106 +3692,11 @@
           </div>
         </div>
 
-        <!-- ══ TAB 6: REFERRAL PROGRAM ══ -->
-        <div class="tab-pane" id="tab-referral">
-          <div class="tab-header">
-            <h2 class="tab-title">Referral <em>Program</em></h2>
-            <span class="tab-period-label">Earn upto ₹10,000 — Analytics</span>
-          </div>
-
-          <!-- KPIs -->
-          <div class="kpi-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 2rem;">
-            <div class="kpi-wrapper">
-              <div class="kpi-label">Total Referrers</div>
-              <div class="kpi-card">
-                <div class="kpi-value" id="ref-kpi-total-referrers">—</div>
-                <div class="kpi-meta" id="ref-meta-total-referrers"></div>
-              </div>
-            </div>
-            <div class="kpi-wrapper">
-              <div class="kpi-label">Successful Referrals</div>
-              <div class="kpi-card">
-                <div class="kpi-value" id="ref-kpi-total-referrals" style="color:var(--emerald);">—</div>
-                <div class="kpi-meta" id="ref-meta-total-referrals"></div>
-              </div>
-            </div>
-            <div class="kpi-wrapper">
-              <div class="kpi-label">Total Earnings Issued</div>
-              <div class="kpi-card">
-                <div class="kpi-value" id="ref-kpi-total-earnings" style="color:var(--gold);">—</div>
-                <div class="kpi-meta" id="ref-meta-total-earnings"></div>
-              </div>
-            </div>
-            <div class="kpi-wrapper">
-              <div class="kpi-label">Pending Withdrawals</div>
-              <div class="kpi-card">
-                <div class="kpi-value" id="ref-kpi-pending-withdraw" style="color:var(--amber);">—</div>
-                <div class="kpi-meta" id="ref-meta-pending-withdraw"></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Referral Tracking Table -->
-          <div class="table-panel mb-3">
-            <div class="table-panel-header">
-              <span class="table-panel-title">Referral Tracking — All Referrers</span>
-              <button class="btn-export" id="exportReferralBtn">↓ Export CSV</button>
-            </div>
-            <div class="table-wrap">
-              <table id="referralTrackingTable">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Referrer Name</th>
-                    <th>Referrer Email</th>
-                    <th>Referral Code</th>
-                    <th>Referred User</th>
-                    <th>Referred Email</th>
-                    <th>Referred At</th>
-                    <th>Earnings (₹)</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody id="referralTrackingBody">
-                  <tr><td colspan="9" style="text-align:center;color:var(--ink-muted);padding:2rem;">Loading referral data…</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- Earnings & Withdrawals Table -->
-          <div class="table-panel">
-            <div class="table-panel-header">
-              <span class="table-panel-title">Earnings Ledger &amp; Withdrawal Requests</span>
-            </div>
-            <div class="table-wrap">
-              <table id="referralEarningsTable">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>User Name</th>
-                    <th>Email</th>
-                    <th>Referral Code</th>
-                    <th>Total Earned (₹)</th>
-                    <th>Available (₹)</th>
-                    <th>Withdrawn (₹)</th>
-                    <th>Withdrawal Status</th>
-                    <th>Requested At</th>
-                  </tr>
-                </thead>
-                <tbody id="referralEarningsBody">
-                  <tr><td colspan="9" style="text-align:center;color:var(--ink-muted);padding:2rem;">Loading earnings data…</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
         <!-- ══ TAB 5: SETTINGS ══ -->
         <div class="tab-pane" id="tab-settings">
           <div class="tab-header">
             <h2 class="tab-title">Set<em>tings</em></h2>
-            <span class="tab-period-label">Configuration</span>
+            <span class="tab-period-label">Configuration &amp; Access Control</span>
           </div>
           <div class="form-panel mb-3">
             <div class="form-panel-title">Currency Configuration</div>
@@ -3807,6 +3706,26 @@
                 <input id="inrUsdRate" step="0.01" type="number" value="83.5" />
               </div>
               <button class="btn-outline-gold" id="saveRateBtn">Save Rate</button>
+            </div>
+          </div>
+          <div class="table-panel mb-3">
+            <div class="table-panel-header">
+              <div class="table-panel-title">👥 Instructor &amp; User Role Management</div>
+            </div>
+            <div style="padding: 1.5rem; display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+              <div class="field" style="flex: 1; min-width: 240px; max-width: 400px; margin-bottom: 0;">
+                <label>User Email Address</label>
+                <input id="promoteEmailInput" type="email" placeholder="e.g. instructor@manodemy.com" style="margin-bottom:0;" />
+              </div>
+              <div class="field" style="width: 200px; margin-bottom: 0;">
+                <label>Assign Role</label>
+                <select id="promoteRoleSelect" style="background:var(--elevated);color:var(--ink);border:1px solid var(--rim);padding:10px;border-radius:6px;width:100%;">
+                  <option value="instructor">Instructor</option>
+                  <option value="admin">Admin</option>
+                  <option value="student">Student</option>
+                </select>
+              </div>
+              <button class="btn-gold" id="btnPromoteUser" style="padding: 11px 24px; border-radius: 6px;">Update Role</button>
             </div>
           </div>
           <div class="form-panel mb-3">
@@ -4151,58 +4070,6 @@
                   <tr>
                     <td colspan="8" style="text-align:center; padding:3rem; color:var(--ink-muted); font-family:var(--font-mono); font-size:0.8rem;">
                       Loading reviews database...
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-        <!-- ══ TAB 9: COHORTS & BATCHES ══ -->
-        <div class="tab-pane" id="tab-batches">
-          <div class="table-panel mb-3">
-            <div class="table-panel-header">
-              <div class="table-panel-title">👥 Instructor Promotion</div>
-            </div>
-            <div style="padding: 1.5rem; display: flex; gap: 1rem; align-items: flex-end;">
-              <div class="field" style="flex: 1; max-width: 400px; margin-bottom: 0;">
-                <label>User Email Address</label>
-                <input id="promoteEmailInput" type="email" placeholder="e.g. instructor@manodemy.com" style="margin-bottom:0;" />
-              </div>
-              <div class="field" style="width: 200px; margin-bottom: 0;">
-                <label>Assign Role</label>
-                <select id="promoteRoleSelect" style="background:var(--elevated);color:var(--ink);border:1px solid var(--rim);padding:10px;border-radius:6px;width:100%;">
-                  <option value="instructor">Instructor</option>
-                  <option value="admin">Admin</option>
-                  <option value="student">Student</option>
-                </select>
-              </div>
-              <button class="btn-gold" id="btnPromoteUser" style="padding: 11px 24px; border-radius: 6px;">Update Role</button>
-            </div>
-          </div>
-
-          <div class="table-panel">
-            <div class="table-panel-header">
-              <div class="table-panel-title">⚡ Live Cohorts &amp; Batches Overview</div>
-            </div>
-            <div class="table-wrap">
-              <table style="width:100%; border-collapse:collapse;">
-                <thead>
-                  <tr>
-                    <th style="width:200px;">Batch Name</th>
-                    <th style="width:150px;">Instructor</th>
-                    <th style="width:100px; text-align:center;">Type</th>
-                    <th style="width:120px;">Schedule</th>
-                    <th style="width:120px;">Timing</th>
-                    <th style="width:100px; text-align:center;">Students</th>
-                    <th style="width:100px; text-align:center;">Status</th>
-                    <th style="width:120px;">Actions</th>
-                  </tr>
-                </thead>
-                <tbody id="batchesAdminBody">
-                  <tr>
-                    <td colspan="8" style="text-align:center; padding:3rem; color:var(--ink-muted); font-family:var(--font-mono); font-size:0.8rem;">
-                      Loading cohort batches...
                     </td>
                   </tr>
                 </tbody>
@@ -4780,249 +4647,7 @@
       renderAuditTable(audits || []);
     }
 
-    // ── REFERRAL DATA FETCH & RENDER ─────────────────────
-    async function fetchAndRenderReferralData() {
-      try {
-        // Fetch referral_tracking — direct FK to referrer profile via referrer_user_id
-        // and referred profile via referred_user_id
-        const { data: trackingData, error: trackingErr } = await sb
-          .from('referral_tracking')
-          .select(`
-            id,
-            referrer_user_id,
-            referral_code,
-            referred_user_id,
-            referred_email,
-            event_type,
-            created_at,
-            referrer:profiles!referral_tracking_referrer_user_id_fkey(full_name, email),
-            referred:profiles!referral_tracking_referred_user_id_fkey(full_name, email)
-          `)
-          .order('created_at', { ascending: false })
-          .limit(200);
 
-        if (trackingErr) console.error('[Referral Tracking] Error:', JSON.stringify(trackingErr));
-
-        // Fetch referral_earnings — referrer_user_id FK, credited_amount for payout
-        const { data: earningsData, error: earningsErr } = await sb
-          .from('referral_earnings')
-          .select(`
-            id,
-            referrer_user_id,
-            referred_user_id,
-            credited_amount,
-            credited_currency,
-            original_amount,
-            original_currency,
-            status,
-            cooling_ends_at,
-            confirmed_at,
-            created_at,
-            referrer:profiles!referral_earnings_referrer_user_id_fkey(full_name, email)
-          `)
-          .order('created_at', { ascending: false })
-          .limit(200);
-
-        if (earningsErr) console.error('[Referral Earnings] Error:', JSON.stringify(earningsErr));
-
-        // Fetch withdrawal requests from withdrawal_requests table
-        const { data: withdrawalData, error: withdrawalErr } = await sb
-          .from('withdrawal_requests')
-          .select(`
-            id,
-            user_id,
-            amount,
-            currency,
-            payment_method,
-            status,
-            admin_notes,
-            created_at,
-            processed_at,
-            referrer:profiles!withdrawal_requests_user_id_fkey(full_name, email)
-          `)
-          .order('created_at', { ascending: false })
-          .limit(200);
-
-        if (withdrawalErr) console.error('[Referral Withdrawals] Error:', JSON.stringify(withdrawalErr));
-
-        // Compute KPIs from actual schema columns
-        // Unique referrers: distinct referrer_user_id from tracking
-        const totalReferrers = new Set((trackingData || []).map(t => t.referrer_user_id)).size;
-        // Successful referrals = purchase events
-        const successfulReferrals = (trackingData || []).filter(t => t.event_type === 'purchase').length;
-        // Total earnings in INR: credited_amount is stored in paise (divide by 100)
-        const totalEarnings = (earningsData || []).reduce((sum, e) => {
-          const amt = Number(e.credited_amount) || 0;
-          // credited_currency: INR amounts are in paise, USD in cents
-          return sum + (e.credited_currency === 'INR' ? amt / 100 : amt / 100 * 83.5);
-        }, 0);
-        const pendingWithdrawals = (withdrawalData || []).filter(w => w.status === 'pending').length;
-
-        // Render KPIs
-        const setKPI = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-        setKPI('ref-kpi-total-referrers', totalReferrers.toLocaleString('en-IN'));
-        setKPI('ref-kpi-total-referrals', successfulReferrals.toLocaleString('en-IN'));
-        setKPI('ref-kpi-total-earnings', '₹' + totalEarnings.toLocaleString('en-IN', { maximumFractionDigits: 0 }));
-        setKPI('ref-kpi-pending-withdraw', pendingWithdrawals.toLocaleString('en-IN'));
-
-        // Render Referral Tracking table
-        renderReferralTrackingTable(trackingData || []);
-
-        // Render Earnings table (merge withdrawals in)
-        renderReferralEarningsTable(earningsData || [], withdrawalData || []);
-
-        // Cache for CSV export
-        window._referralTrackingData = trackingData || [];
-        window._referralEarningsData = earningsData || [];
-        window._referralWithdrawalData = withdrawalData || [];
-
-      } catch (e) {
-        console.error('[Referral] Fatal error:', e);
-      }
-    }
-
-    function renderReferralTrackingTable(rows) {
-      const tbody = document.getElementById('referralTrackingBody');
-      if (!tbody) return;
-      // Only show purchase + signup events (skip raw clicks to keep table clean)
-      const meaningful = rows.filter(t => t.event_type === 'purchase' || t.event_type === 'signup');
-      if (!meaningful.length) {
-        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--ink-muted);padding:2rem;">No referral signups or purchases found yet. Once users sign up via referral links, they appear here.</td></tr>';
-        return;
-      }
-      const fmt = ts => ts ? new Date(ts).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—';
-      const eventBadge = s => {
-        if (s === 'purchase') return 'badge-ok';
-        if (s === 'signup') return 'badge-warn';
-        return 'badge-neutral';
-      };
-      tbody.innerHTML = meaningful.map((t, i) => {
-        const code = t.referral_code || '—';
-        const referrerName = t.referrer?.full_name || '—';
-        const referrerEmail = t.referrer?.email || '—';
-        const referredName = t.referred?.full_name || t.referred_email || '—';
-        const referredEmail = t.referred?.email || t.referred_email || '—';
-        // Earnings: ₹200 per purchase (20000 paise from schema reward_inr)
-        const earned = t.event_type === 'purchase' ? '₹200' : '—';
-        return `<tr>
-          <td class="cell-mono" style="color:var(--ink-muted);">${i + 1}</td>
-          <td style="color:var(--ink);font-weight:500;">${referrerName}</td>
-          <td class="cell-mono" style="color:var(--ink-dim);font-size:0.75rem;">${referrerEmail}</td>
-          <td><span class="coupon-code" style="color:var(--emerald);border-color:rgba(45,212,191,0.3);">${code}</span></td>
-          <td style="color:var(--ink);">${referredName}</td>
-          <td class="cell-mono" style="color:var(--ink-dim);font-size:0.75rem;">${referredEmail}</td>
-          <td class="cell-mono" style="color:var(--ink-muted);">${fmt(t.created_at)}</td>
-          <td class="cell-mono" style="color:var(--gold);">${earned}</td>
-          <td><span class="badge ${eventBadge(t.event_type)}">${t.event_type}</span></td>
-        </tr>`;
-      }).join('');
-    }
-
-    function renderReferralEarningsTable(earnings, withdrawals) {
-      const tbody = document.getElementById('referralEarningsBody');
-      if (!tbody) return;
-
-      // Group earnings by referrer_user_id (actual schema column name)
-      const byUser = {};
-      earnings.forEach(e => {
-        const uid = e.referrer_user_id;
-        if (!byUser[uid]) {
-          byUser[uid] = {
-            user_id: uid,
-            full_name: e.referrer?.full_name || '—',
-            email: e.referrer?.email || '—',
-            code: '—', // referral_code not joined in earnings query
-            total_earned: 0,  // in INR (converted from paise)
-            available: 0,
-            withdrawn: 0,
-            withdrawal_status: '—',
-            withdrawal_at: null
-          };
-        }
-        // credited_amount is in paise (INR) or cents (USD)
-        const inrAmt = e.credited_currency === 'INR'
-          ? (Number(e.credited_amount) || 0) / 100
-          : ((Number(e.credited_amount) || 0) / 100) * 83.5;
-        byUser[uid].total_earned += inrAmt;
-        // 'confirmed' = cooling done, withdrawable; 'earned' = still in cooling
-        if (e.status === 'confirmed') byUser[uid].available += inrAmt;
-      });
-
-      // Overlay withdrawal data — withdrawal_requests table, amount in paise
-      withdrawals.forEach(w => {
-        const uid = w.user_id;
-        if (!byUser[uid]) {
-          byUser[uid] = {
-            user_id: uid,
-            full_name: w.referrer?.full_name || '—',
-            email: w.referrer?.email || '—',
-            code: '—',
-            total_earned: 0,
-            available: 0,
-            withdrawn: 0,
-            withdrawal_status: '—',
-            withdrawal_at: null
-          };
-        }
-        if (w.status === 'completed') {
-          // amount in paise (INR)
-          byUser[uid].withdrawn += (Number(w.amount) || 0) / 100;
-        }
-        byUser[uid].withdrawal_status = w.status;
-        byUser[uid].withdrawal_at = w.processed_at || w.created_at;
-      });
-
-      const rows = Object.values(byUser);
-      if (!rows.length) {
-        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--ink-muted);padding:2rem;">No earnings data yet. Referral earnings will appear here once users start referring.</td></tr>';
-        return;
-      }
-
-      const fmt = ts => ts ? new Date(ts).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—';
-      const wBadge = s => {
-        if (s === 'completed') return 'badge-ok';
-        if (s === 'pending') return 'badge-warn';
-        if (s === 'rejected') return 'badge-err';
-        return 'badge-neutral';
-      };
-
-      tbody.innerHTML = rows.map((u, i) => `<tr>
-        <td class="cell-mono" style="color:var(--ink-muted);">${i + 1}</td>
-        <td style="color:var(--ink);font-weight:500;">${u.full_name}</td>
-        <td class="cell-mono" style="color:var(--ink-dim);font-size:0.75rem;">${u.email}</td>
-        <td><span class="coupon-code" style="color:var(--emerald);border-color:rgba(45,212,191,0.3);">${u.code}</span></td>
-        <td class="cell-mono" style="color:var(--gold);">₹${u.total_earned.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td>
-        <td class="cell-mono" style="color:var(--emerald);">₹${u.available.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td>
-        <td class="cell-mono" style="color:var(--ink-muted);">₹${u.withdrawn.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td>
-        <td><span class="badge ${wBadge(u.withdrawal_status)}">${u.withdrawal_status !== '—' ? u.withdrawal_status : 'No request'}</span></td>
-        <td class="cell-mono" style="color:var(--ink-muted);">${fmt(u.withdrawal_at)}</td>
-      </tr>`).join('');
-    }
-
-    // Referral CSV Export
-    document.getElementById('exportReferralBtn')?.addEventListener('click', () => {
-      const rows = window._referralTrackingData || [];
-      const meaningful = rows.filter(t => t.event_type === 'purchase' || t.event_type === 'signup');
-      if (!meaningful.length) { showToast('No referral data to export', 'info'); return; }
-      const headers = ['#','Referrer Name','Referrer Email','Referral Code','Referred User','Referred Email','Referred At','Event Type','Earnings (INR)'];
-      const fmt = ts => ts ? new Date(ts).toISOString().slice(0,16).replace('T',' ') : '';
-      const csv = [headers.join(','), ...meaningful.map((t, i) => [
-        i+1,
-        `"${(t.referrer?.full_name||'').replace(/"/g,'""')}"`,
-        `"${(t.referrer?.email||'').replace(/"/g,'""')}"`,
-        t.referral_code || '',
-        `"${(t.referred?.full_name||t.referred_email||'').replace(/"/g,'""')}"`,
-        `"${(t.referred?.email||t.referred_email||'').replace(/"/g,'""')}"`,
-        fmt(t.created_at),
-        t.event_type || '',
-        t.event_type === 'purchase' ? 200 : 0
-      ].join(','))].join('\n');
-      const blob = new Blob([csv], { type: 'text/csv' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href = url;
-      a.download = `referrals_${new Date().toISOString().slice(0,10)}.csv`;
-      a.click(); URL.revokeObjectURL(url);
-    });
 
     // ── TRANSACTION TABLE ────────────────────────────
     function renderTxTable(txs) {
@@ -6282,10 +5907,10 @@
         
         document.getElementById(tabId).classList.add('active');
         
-        // Hide global filter bar on Pricing, Engagement, Reviews, Referral, and Batches pages
+        // Hide global filter bar on Pricing, Engagement, and Reviews pages
         const filterBar = document.querySelector('.top-filter-bar');
         if (filterBar) {
-          filterBar.style.display = (tabId === 'tab-pricing' || tabId === 'tab-engagement' || tabId === 'tab-reviews' || tabId === 'tab-batches' || tabId === 'tab-referral') ? 'none' : 'block';
+          filterBar.style.display = (tabId === 'tab-pricing' || tabId === 'tab-engagement' || tabId === 'tab-reviews') ? 'none' : 'block';
         }
 
         if (tabId === 'tab-pricing') {
@@ -6294,10 +5919,6 @@
 
         if (tabId === 'tab-reviews') {
           fetchAdminReviews();
-        }
-
-        if (tabId === 'tab-batches') {
-          fetchAdminBatches();
         }
 
         if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
@@ -7073,95 +6694,7 @@
         if (!(await guardAdmin())) return;
         setPresetDates('all_time');
         applyFilters();
-        // ── COHORTS & BATCHES OPERATIONS ─────────────────
-        async function fetchAdminBatches() {
-          const tbody = document.getElementById('batchesAdminBody');
-          if (!tbody) return;
 
-          tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:3rem; color:var(--ink-muted); font-family:var(--font-mono); font-size:0.8rem;">Loading cohorts and batches...</td></tr>`;
-
-          try {
-            const { data: batchesList, error } = await sb
-              .from('batches')
-              .select('*, instructor:instructor_profiles(display_name)')
-              .order('status', { ascending: true })
-              .order('start_time', { ascending: true });
-
-            if (error) {
-              tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:3rem; color:var(--rose); font-family:var(--font-mono); font-size:0.85rem;">Error loading batches: ${error.message}</td></tr>`;
-              return;
-            }
-
-            if (!batchesList || batchesList.length === 0) {
-              tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:3rem; color:var(--ink-muted); font-family:var(--font-mono); font-size:0.8rem;">No batches found.</td></tr>`;
-              return;
-            }
-
-            const formatScheduleDays = days => {
-              const names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-              if (!days || days.length === 7) return 'Daily';
-              if (JSON.stringify(days.sort()) === JSON.stringify([1,2,3,4,5])) return 'Weekdays';
-              if (JSON.stringify(days.sort()) === JSON.stringify([0,6])) return 'Weekends';
-              return days.map(d => names[d]).join(', ');
-            };
-
-            const formatTime = timeStr => {
-              if (!timeStr) return '';
-              const [h, m] = timeStr.split(':').map(Number);
-              const period = h >= 12 ? 'PM' : 'AM';
-              return `${h > 12 ? h - 12 : h === 0 ? 12 : h}:${String(m).padStart(2, '0')} ${period}`;
-            };
-
-            tbody.innerHTML = batchesList.map(batch => {
-              const isDemo = batch.batch_type === 'free_demo';
-              const statusClass = batch.status === 'active' ? 'badge-ok' : batch.status === 'upcoming' ? 'badge-neutral' : 'badge-warn';
-              return `<tr>
-                <td style="color:var(--ink); font-weight:500;">${batch.batch_name}</td>
-                <td style="color:var(--ink-dim);">${batch.instructor?.display_name || 'Unknown'}</td>
-                <td style="text-align:center;"><span class="badge ${isDemo ? 'badge-neutral' : 'badge-ok'}">${isDemo ? 'Free Demo' : 'Paid'}</span></td>
-                <td style="color:var(--ink-muted);">${formatScheduleDays(batch.schedule_days)}</td>
-                <td style="color:var(--ink-muted); font-family:var(--font-mono);">${formatTime(batch.start_time)} - ${formatTime(batch.end_time)} IST</td>
-                <td style="text-align:center; font-family:var(--font-mono); color:var(--cyan);">${batch.current_students || 0}${batch.max_students ? '/' + batch.max_students : ''}</td>
-                <td style="text-align:center;"><span class="badge ${statusClass}">${batch.status}</span></td>
-                <td>
-                  ${batch.status !== 'archived' ? `
-                    <button class="btn-rev-admin reject" style="padding:0.25rem 0.5rem; font-size:0.68rem;" onclick="adminArchiveBatch('${batch.id}')">
-                      📦 Archive
-                    </button>
-                  ` : `
-                    <button class="btn-rev-admin approve" style="padding:0.25rem 0.5rem; font-size:0.68rem;" onclick="adminActivateBatch('${batch.id}')">
-                      🟢 Activate
-                    </button>
-                  `}
-                </td>
-              </tr>`;
-            }).join('');
-
-          } catch (err) {
-            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:3rem; color:var(--rose); font-family:var(--font-mono); font-size:0.85rem;">Error loading batches: ${err.message}</td></tr>`;
-          }
-        }
-
-        window.adminArchiveBatch = async function(batchId) {
-          if (!confirm('Archive this batch? Instructors will still see it but it will not appear on the landing page.')) return;
-          const { error } = await sb.from('batches').update({ status: 'archived', updated_at: new Date().toISOString() }).eq('id', batchId);
-          if (error) {
-            showToast('Failed to archive batch: ' + error.message, 'error');
-          } else {
-            showToast('Batch archived successfully!', 'success');
-            fetchAdminBatches();
-          }
-        };
-
-        window.adminActivateBatch = async function(batchId) {
-          const { error } = await sb.from('batches').update({ status: 'active', updated_at: new Date().toISOString() }).eq('id', batchId);
-          if (error) {
-            showToast('Failed to activate batch: ' + error.message, 'error');
-          } else {
-            showToast('Batch activated successfully!', 'success');
-            fetchAdminBatches();
-          }
-        };
 
         async function updateRoleForUser() {
           const email = document.getElementById('promoteEmailInput').value.trim();

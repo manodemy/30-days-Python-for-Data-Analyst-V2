@@ -3207,13 +3207,13 @@
                 </h3>
               </div>
 
-              <!-- Presets placed directly below Header Title in a Single Line -->
-              <div style="margin-bottom: 1.1rem; background: var(--base); padding: 0.6rem 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--rim-subtle);">
+              <!-- Presets placed directly below Header Title in a clean responsive grid -->
+              <div style="margin-bottom: 1.1rem; background: var(--base); padding: 0.65rem 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--rim-subtle);">
                 <div style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-muted); margin-bottom: 0.45rem; font-weight: 600;">
                   ⚡ Quick Strategy Presets
                 </div>
-                <div id="cfgPresetButtons" style="display: flex; align-items: center; gap: 0.4rem; justify-content: space-between;">
-                  <!-- Rendered via renderPresetButtons() in single line, ASC by price, no % -->
+                <div id="cfgPresetButtons" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: 0.45rem;">
+                  <!-- Rendered via renderPresetButtons() without text truncation -->
                 </div>
               </div>
 
@@ -5091,7 +5091,7 @@
       updatePreviewSimulator();
     };
 
-    // Dynamic preset button renderer (single line, ASC order, linked to cloud price, no %)
+    // Dynamic preset button renderer (responsive grid, ASC order, active state highlight, no text truncation)
     window.renderPresetButtons = function(region) {
       const container = document.getElementById('cfgPresetButtons');
       if (!container) return;
@@ -5099,51 +5099,46 @@
       const isINR = (region || _activePricingRegion) === 'INR';
       const sym = isINR ? '₹' : '$';
 
-      const cloudSale = isINR ? (Number(_inrPricingState.sale_price) || 1499) : (Number(_usdPricingState.sale_price) || 49);
-      const cloudOrig = isINR ? (Number(_inrPricingState.original_price) || 4999) : (Number(_usdPricingState.original_price) || 149);
-      const cloudTag = isINR ? (_inrPricingState.preset_label || 'Early Access Offer') : (_usdPricingState.preset_label || 'Global Early Pass');
+      const currentSale = Number(document.getElementById('cfg_sale_price')?.value) || (isINR ? (Number(_inrPricingState.sale_price) || 1499) : (Number(_usdPricingState.sale_price) || 49));
+      const currentOrig = Number(document.getElementById('cfg_original_price')?.value) || (isINR ? (Number(_inrPricingState.original_price) || 4999) : (Number(_usdPricingState.original_price) || 149));
 
       let rawPresets = isINR ? [
-        { sale: 499, orig: 4999, tag: 'Launch Special', label: '🚀 Launch', color: 'var(--sapphire)' },
-        { sale: 999, orig: 4999, tag: 'Flash Sale Deal', label: '🔥 Super Deal', color: 'var(--emerald)' },
-        { sale: 2499, orig: 4999, tag: 'Standard Admission', label: '💎 Regular', color: 'var(--ink)' },
+        { sale: 499, orig: 4999, tag: 'Launch Special', label: '🚀 Launch' },
+        { sale: 999, orig: 4999, tag: 'Flash Sale Deal', label: '🔥 Super Deal' },
+        { sale: 1499, orig: 4999, tag: 'Early Access Offer', label: '⚡ Active Tier' },
+        { sale: 2499, orig: 4999, tag: 'Standard Admission', label: '💎 Regular' },
       ] : [
-        { sale: 19, orig: 149, tag: 'Launch Special', label: '🚀 Launch', color: 'var(--sapphire)' },
-        { sale: 29, orig: 149, tag: 'Global Flash Deal', label: '🔥 Super Deal', color: 'var(--emerald)' },
-        { sale: 79, orig: 149, tag: 'Standard Admission', label: '💎 Regular', color: 'var(--ink)' },
+        { sale: 19, orig: 149, tag: 'Launch Special', label: '🚀 Launch' },
+        { sale: 29, orig: 149, tag: 'Global Flash Deal', label: '🔥 Super Deal' },
+        { sale: 49, orig: 149, tag: 'Global Early Pass', label: '⚡ Active Tier' },
+        { sale: 79, orig: 149, tag: 'Standard Admission', label: '💎 Regular' },
       ];
 
-      let existing = rawPresets.find(p => p.sale === cloudSale);
-      if (existing) {
-        existing.isActiveCloud = true;
-        existing.label = `⚡ Active (${sym}${isINR ? cloudSale.toLocaleString('en-IN') : cloudSale})`;
-        existing.color = 'var(--gold)';
-      } else {
+      // If currentSale is a custom value not in presets, add it as Custom Tier
+      let match = rawPresets.find(p => p.sale === currentSale);
+      if (!match && currentSale > 0) {
         rawPresets.push({
-          sale: cloudSale,
-          orig: cloudOrig,
-          tag: cloudTag,
-          label: `⚡ Active (${sym}${isINR ? cloudSale.toLocaleString('en-IN') : cloudSale})`,
-          color: 'var(--gold)',
-          isActiveCloud: true
+          sale: currentSale,
+          orig: currentOrig,
+          tag: 'Custom Pricing',
+          label: '⚡ Custom Tier'
         });
       }
-
-      rawPresets.forEach(p => {
-        if (!p.isActiveCloud) {
-          p.label = `${p.label} (${sym}${isINR ? p.sale.toLocaleString('en-IN') : p.sale})`;
-        }
-      });
 
       rawPresets.sort((a, b) => a.sale - b.sale);
 
       container.innerHTML = rawPresets.map(p => {
-        const isGold = p.isActiveCloud;
-        const bg = isGold ? 'rgba(245,158,11,0.12)' : 'rgba(255,255,255,0.03)';
-        const border = isGold ? '1px solid rgba(245,158,11,0.4)' : '1px solid var(--rim)';
-        const weight = isGold ? '700' : '600';
-        return `<button type="button" class="btn-preset" onclick="applyPresetPrice(${p.sale}, ${p.orig}, '', '${p.tag}')" style="flex: 1; min-width: 0; white-space: nowrap; font-size: 0.72rem; font-weight: ${weight}; padding: 0.45rem 0.4rem; border-radius: 6px; background: ${bg}; border: ${border}; color: ${p.color}; cursor: pointer; text-align: center; transition: all 0.2s; text-overflow: ellipsis; overflow: hidden;">
-          ${p.label}
+        const isSelected = p.sale === currentSale;
+        const formattedPrice = `${sym}${isINR ? p.sale.toLocaleString('en-IN') : p.sale}`;
+        const bg = isSelected ? 'rgba(245, 158, 11, 0.15)' : 'rgba(255, 255, 255, 0.03)';
+        const border = isSelected ? '1.5px solid var(--gold)' : '1px solid var(--rim)';
+        const color = isSelected ? 'var(--gold)' : (p.sale < (isINR ? 1499 : 49) ? 'var(--emerald)' : 'var(--ink)');
+        const weight = isSelected ? '700' : '600';
+        const shadow = isSelected ? 'box-shadow: 0 0 12px rgba(245, 158, 11, 0.25);' : '';
+
+        return `<button type="button" class="btn-preset" onclick="applyPresetPrice(${p.sale}, ${p.orig}, '', '${p.tag}')" style="padding: 0.45rem 0.6rem; border-radius: 6px; background: ${bg}; border: ${border}; color: ${color}; font-size: 0.73rem; font-weight: ${weight}; cursor: pointer; text-align: center; transition: all 0.2s ease; ${shadow} display: flex; align-items: center; justify-content: center; gap: 0.35rem; white-space: nowrap; width: 100%;">
+          <span>${p.label}</span>
+          <strong style="font-family: var(--font-data); font-size: 0.75rem;">(${formattedPrice})</strong>
         </button>`;
       }).join('');
     };
@@ -5155,17 +5150,32 @@
       const elOrig = document.getElementById('cfg_original_price');
       const elBadge = document.getElementById('cfg_discount_badge');
       const elLabel = document.getElementById('cfg_preset_label');
+
       if (elSale) elSale.value = sale;
       if (elOrig) elOrig.value = orig;
-      
+      if (elLabel) elLabel.value = label;
+
+      const isINR = _activePricingRegion === 'INR';
       const calcBadge = (orig > 0 && orig > sale) ? (Math.round(((orig - sale) / orig) * 100) + '% OFF') : (badge || 'SPECIAL OFFER');
       if (elBadge) elBadge.value = calcBadge;
-      if (elLabel) elLabel.value = label;
+
+      if (isINR) {
+        _inrPricingState.sale_price = sale;
+        _inrPricingState.original_price = orig;
+        _inrPricingState.discount_label = calcBadge;
+        _inrPricingState.preset_label = label;
+      } else {
+        _usdPricingState.sale_price = sale;
+        _usdPricingState.original_price = orig;
+        _usdPricingState.discount_label = calcBadge;
+        _usdPricingState.preset_label = label;
+      }
+
       updatePreviewSimulator();
-      showToast(`Preset "${label}" applied to form. Click "Confirm & Publish" to push live.`, 'info');
+      showToast(`Preset "${label}" (${isINR ? '₹' : '$'}${sale}) applied to form & simulator.`, 'info');
     };
 
-    // Keystroke reactive live student simulator
+    // Keystroke reactive live student simulator & multi-card syncer
     window.updatePreviewSimulator = function(options = {}) {
       const saleInput = Number(document.getElementById('cfg_sale_price')?.value) || 0;
       const origInput = Number(document.getElementById('cfg_original_price')?.value) || 0;
@@ -5193,14 +5203,31 @@
         }
       }
 
-      if (simSale) simSale.textContent = `${sym}${isINR ? saleInput.toLocaleString('en-IN') : saleInput}`;
-      if (simOrig) simOrig.textContent = `${sym}${isINR ? origInput.toLocaleString('en-IN') : origInput}`;
-      if (simBadge) simBadge.textContent = badgeInput || 'SPECIAL OFFER';
-      if (simCta) simCta.textContent = `${sym}${isINR ? saleInput.toLocaleString('en-IN') : saleInput}`;
-
+      const formattedSale = `${sym}${isINR ? saleInput.toLocaleString('en-IN') : saleInput}`;
+      const formattedOrig = `${sym}${isINR ? origInput.toLocaleString('en-IN') : origInput}`;
       const savings = Math.max(0, origInput - saleInput);
+      const formattedSavings = `${sym}${isINR ? savings.toLocaleString('en-IN') : savings}`;
+
+      // 1. Update Student View Simulator
+      if (simSale) simSale.textContent = formattedSale;
+      if (simOrig) simOrig.textContent = formattedOrig;
+      if (simBadge) simBadge.textContent = badgeInput || 'SPECIAL OFFER';
+      if (simCta) simCta.textContent = `Enroll in Masterclass ${formattedSale}`;
       if (simSavings) {
-        simSavings.textContent = `You save ${sym}${isINR ? savings.toLocaleString('en-IN') : savings} with this lifetime pass`;
+        simSavings.textContent = `You save ${formattedSavings} with this lifetime pass`;
+      }
+
+      // 2. Synchronize Top Master Pricing Matrix Overview Card
+      if (isINR) {
+        const matrixP = document.getElementById('matrixInrPrice');
+        const matrixB = document.getElementById('matrixInrBadge');
+        if (matrixP) matrixP.innerHTML = `${formattedSale} <span style="font-size: 0.85rem; color: var(--ink-dim); text-decoration: line-through;" id="matrixInrOrig">${formattedOrig}</span>`;
+        if (matrixB) matrixB.textContent = `${badgeInput} (You save ${formattedSavings})`;
+      } else {
+        const matrixP = document.getElementById('matrixUsdPrice');
+        const matrixB = document.getElementById('matrixUsdBadge');
+        if (matrixP) matrixP.innerHTML = `${formattedSale} <span style="font-size: 0.85rem; color: var(--ink-dim); text-decoration: line-through;" id="matrixUsdOrig">${formattedOrig}</span>`;
+        if (matrixB) matrixB.textContent = `${badgeInput} (You save ${formattedSavings})`;
       }
     };
 

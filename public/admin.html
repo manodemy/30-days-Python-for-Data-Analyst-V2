@@ -5283,6 +5283,34 @@
       }
     };
 
+    // Normalize Coupon Object from DB Schema Variations
+    function normalizeCoupon(c) {
+      if (!c) return {};
+      const rawMode = (c.mode || c.discount_type || 'PERCENT').toUpperCase();
+      let mode = rawMode;
+      if (rawMode === 'PERCENTAGE') mode = 'PERCENT';
+      if (rawMode === 'FLAT_INR') mode = 'FIXED_INR';
+      if (rawMode === 'FLAT_USD') mode = 'FIXED_USD';
+
+      const valNum = Number(c.value !== undefined && c.value !== null ? c.value : c.discount_value);
+      const value = isNaN(valNum) ? 0 : valNum;
+
+      const rawScope = (c.currency_scope || (c.applies_to ? c.applies_to.toUpperCase() : 'BOTH')).toUpperCase();
+      const currency_scope = rawScope;
+
+      const uses = Number(c.uses_count !== undefined && c.uses_count !== null ? c.uses_count : (c.current_uses !== undefined && c.current_uses !== null ? c.current_uses : c.used_count)) || 0;
+
+      return {
+        ...c,
+        code: (c.code || '').toUpperCase(),
+        mode,
+        value,
+        currency_scope,
+        uses_count: uses,
+        is_active: c.is_active !== false && c.active !== false
+      };
+    }
+
     window.handleCreateCoupon = async function() {
       const btn = document.getElementById('btnSaveCoupon');
       if (btn) { btn.textContent = 'Activating…'; btn.disabled = true; }
@@ -5299,12 +5327,19 @@
       const tag = document.getElementById('new_coupon_tag').value || null;
       const singleEmail = document.getElementById('new_coupon_single_email').checked;
 
-      const payload = {
+      const discountType = mode === 'PERCENT' ? 'percentage' : (mode === 'FIXED_INR' ? 'flat_inr' : 'flat_usd');
+
+      // Attempt 1: Full payload including extra schema columns
+      const fullPayload = {
         code,
-        mode,
-        value,
+        discount_type: discountType,
+        mode: mode,
+        discount_value: value,
+        value: value,
+        applies_to: scope.toLowerCase(),
         currency_scope: scope,
         max_uses: maxUses,
+        current_uses: 0,
         uses_count: 0,
         single_use_per_email: singleEmail,
         starts_at: starts,
@@ -5314,9 +5349,27 @@
         created_at: new Date().toISOString()
       };
 
+      // Fallback 2: Strictly standard columns supported by core table
+      const standardPayload = {
+        code,
+        discount_type: discountType,
+        discount_value: value,
+        applies_to: scope.toLowerCase(),
+        max_uses: maxUses,
+        current_uses: 0,
+        starts_at: starts,
+        expires_at: expires,
+        is_active: true,
+        created_at: new Date().toISOString()
+      };
+
       try {
-        const { error } = await sb.from('coupons').insert([payload]);
-        if (error) throw error;
+        let res = await sb.from('coupons').insert([fullPayload]);
+        if (res.error) {
+          // Retry with standard columns if DB table lacks custom columns
+          res = await sb.from('coupons').insert([standardPayload]);
+        }
+        if (res.error) throw res.error;
 
         // Log audit
         try {
@@ -5326,15 +5379,15 @@
             actor_email: user ? user.email : 'manodamy25@gmail.com',
             action: 'CREATE_COUPON',
             entity_table: 'coupons',
-            new_value: payload,
+            new_value: standardPayload,
             occurred_at: new Date().toISOString()
           }]);
         } catch (e) {}
 
         showToast(`🎉 Promo code ${code} activated and live in cloud!`, 'success');
         document.getElementById('couponCreatorForm').reset();
-        loadCouponsList();
-        runSandboxTest(code);
+        await loadCouponsList();
+        if (typeof runSandboxTest === 'function') runSandboxTest(code);
       } catch (err) {
         showToast('❌ Error creating coupon: ' + err.message, 'error');
       } finally {
@@ -5356,7 +5409,9 @@
       const basePrice = isINR ? _inrPricingState.sale_price : _usdPricingState.sale_price;
       const sym = isINR ? '₹' : '$';
 
-      const coupon = _allCouponsList.find(c => (c.code || '').toUpperCase() === code);
+      const rawCoupon = _allCouponsList.find(c => (c.code || '').toUpperCase() === code);
+      const coupon = normalizeCoupon(rawCoupon);
+
       const statusBadge = document.getElementById('sbxStatusBadge');
       const baseEl = document.getElementById('sbxBasePrice');
       const discEl = document.getElementById('sbxDiscountAmount');
@@ -5366,7 +5421,7 @@
       if (baseEl) baseEl.textContent = `${sym}${isINR ? basePrice.toLocaleString('en-IN') : basePrice}`;
       if (shareUrlInput) shareUrlInput.value = `https://www.manodemy.com/?coupon=${code}`;
 
-      if (!coupon) {
+      if (!rawCoupon) {
         if (statusBadge) { statusBadge.textContent = 'INVALID CODE'; statusBadge.className = 'badge badge-err'; }
         if (discEl) discEl.textContent = `-${sym}0`;
         if (finalEl) finalEl.textContent = `${sym}${isINR ? basePrice.toLocaleString('en-IN') : basePrice}`;
@@ -5433,7 +5488,10 @@
         _allCouponsList = data || [];
 
         const badge = document.getElementById('activeCouponsCountBadge');
-        const activeCount = _allCouponsList.filter(c => c.is_active !== false).length;
+        const activeCount = _allCouponsList.filter(rawC => {
+          const c = normalizeCoupon(rawC);
+          return c.is_active !== false;
+        }).length;
         if (badge) badge.textContent = `${activeCount} Active`;
 
         const tbody = document.getElementById('activeCouponsTbody');
@@ -5444,7 +5502,8 @@
           return;
         }
 
-        tbody.innerHTML = _allCouponsList.map(c => {
+        tbody.innerHTML = _allCouponsList.map(rawC => {
+          const c = normalizeCoupon(rawC);
           const uses = c.uses_count || 0;
           const max = c.max_uses || null;
           const pct = max ? Math.min(100, Math.round((uses / max) * 100)) : null;

@@ -5636,10 +5636,22 @@
       renderCouponsTable(_allCouponsList);
     };
 
+    let _isCouponsLoading = false;
+
     async function loadCouponsList() {
+      if (_isCouponsLoading) return;
+      _isCouponsLoading = true;
+
       const tbody = document.getElementById('activeCouponsTbody');
-      if (tbody) tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:2rem;"><div class="skeleton sk-val" style="height:18px;border-radius:4px;max-width:300px;margin:0 auto;"></div></td></tr>';
+      if (tbody && !_allCouponsList.length) {
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:2rem;"><div class="skeleton sk-val" style="height:18px;border-radius:4px;max-width:300px;margin:0 auto;"></div></td></tr>';
+      }
+
       try {
+        if (!sb) {
+          console.warn('[Coupons] Supabase client not initialized yet.');
+          return;
+        }
         const { data, error } = await sb.from('coupons').select('*').order('created_at', { ascending: false });
         if (error) throw error;
         _allCouponsList = data || [];
@@ -5656,8 +5668,11 @@
         renderCouponsTable(_allCouponsList);
       } catch (err) {
         console.warn('[Coupons] Load error:', err);
-        const tbody = document.getElementById('activeCouponsTbody');
-        if (tbody) tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:2rem;color:var(--rose);">⚠️ Failed to load coupons: ${escapeHtml(err.message || String(err))}</td></tr>`;
+        if (tbody) {
+          tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:2rem;color:var(--rose);">⚠️ Failed to load coupons: ${escapeHtml(err.message || String(err))}</td></tr>`;
+        }
+      } finally {
+        _isCouponsLoading = false;
       }
     }
 
@@ -7250,7 +7265,6 @@
         document.getElementById('btnPromoteUser')?.addEventListener('click', updateRoleForUser);
 
         loadPricingData();
-        loadCouponsList();
       })();
     });
   </script>

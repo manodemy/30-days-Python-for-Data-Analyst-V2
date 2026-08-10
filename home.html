@@ -40,66 +40,58 @@
         const CustomAuthStorage = {
           getItem: (key) => {
             let val = null;
-            const match = document.cookie.match(new RegExp('(^| )' + key + '=([^;]+)'));
+            const match = document.cookie.match(new RegExp('(?:^|; )' + key.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)'));
             if (match) {
-              try { val = decodeURIComponent(match[2]); } catch (e) {}
+              try { val = decodeURIComponent(match[1]); } catch (e) {}
             }
             if (!val) {
               let chunks = [];
-              for (let i = 0; ; i++) {
-                const chunkMatch = document.cookie.match(new RegExp('(^| )' + key + '\.' + i + '=([^;]+)'));
+              for (let i = 0; i < 10; i++) {
+                const chunkMatch = document.cookie.match(new RegExp('(?:^|; )' + key.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + '\\.' + i + '=([^;]*)'));
                 if (chunkMatch) {
-                  try { chunks.push(decodeURIComponent(chunkMatch[2])); } catch (e) { break; }
+                  try { chunks.push(decodeURIComponent(chunkMatch[1])); } catch (e) { break; }
                 } else {
                   break;
                 }
               }
-              if (chunks.length > 0) {
-                val = chunks.join('');
-              }
+              if (chunks.length > 0) val = chunks.join('');
             }
             if (!val) {
               try { val = localStorage.getItem(key); } catch (e) {}
-            }
-            if (val) {
-              try { localStorage.setItem(key, val); } catch (e) {}
-              if (!document.cookie.includes(key)) {
-                CustomAuthStorage.setItem(key, val);
-              }
             }
             return val;
           },
           setItem: (key, value) => {
             try { localStorage.setItem(key, value); } catch (e) {}
-            document.cookie = `${key}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=lax`;
-            for (let i = 0; i < 10; i++) {
-              document.cookie = `${key}.${i}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=lax`;
-            }
-            const encodedValue = encodeURIComponent(value);
-            const MAX_CHUNK_SIZE = 3000;
-            if (encodedValue.length <= MAX_CHUNK_SIZE) {
-              try {
-                document.cookie = `${key}=${encodedValue}; path=/; max-age=604800; secure; samesite=lax`;
-              } catch (e) {}
-            } else {
-              let offset = 0;
-              let chunkIndex = 0;
-              while (offset < encodedValue.length) {
-                const chunk = encodedValue.slice(offset, offset + MAX_CHUNK_SIZE);
-                try {
-                  document.cookie = `${key}.${chunkIndex}=${chunk}; path=/; max-age=604800; secure; samesite=lax`;
-                } catch (e) {}
-                offset += MAX_CHUNK_SIZE;
-                chunkIndex++;
+            try {
+              document.cookie = `${key}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=lax`;
+              for (let i = 0; i < 10; i++) {
+                document.cookie = `${key}.${i}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=lax`;
               }
-            }
+              const encodedValue = encodeURIComponent(value);
+              const MAX_CHUNK_SIZE = 3000;
+              if (encodedValue.length <= MAX_CHUNK_SIZE) {
+                document.cookie = `${key}=${encodedValue}; path=/; max-age=604800; secure; samesite=lax`;
+              } else {
+                let offset = 0;
+                let chunkIndex = 0;
+                while (offset < encodedValue.length) {
+                  const chunk = encodedValue.substring(offset, offset + MAX_CHUNK_SIZE);
+                  document.cookie = `${key}.${chunkIndex}=${chunk}; path=/; max-age=604800; secure; samesite=lax`;
+                  offset += MAX_CHUNK_SIZE;
+                  chunkIndex++;
+                }
+              }
+            } catch (e) {}
           },
           removeItem: (key) => {
             try { localStorage.removeItem(key); } catch (e) {}
-            document.cookie = `${key}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=lax`;
-            for (let i = 0; i < 10; i++) {
-              document.cookie = `${key}.${i}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=lax`;
-            }
+            try {
+              document.cookie = `${key}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=lax`;
+              for (let i = 0; i < 10; i++) {
+                document.cookie = `${key}.${i}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=lax`;
+              }
+            } catch (e) {}
           }
         };
 
@@ -227,6 +219,235 @@
     .score-main-value, .score-denom { color: #1e293b !important; }
     .score-fraction-top, .score-fraction-total { color: #1e293b !important; }
     .score-hero-total-label { color: #64748b !important; }
+
+    /* ===== WORLD-CLASS TOP HERO DASHBOARD REDESIGN (IMAGE 1) ===== */
+    .top-hero-layout-grid {
+      display: grid;
+      grid-template-columns: minmax(260px, 1.15fr) repeat(3, minmax(0, 1fr));
+      gap: 1.1rem;
+      margin-bottom: 1.75rem;
+      align-items: stretch;
+    }
+
+    @media (max-width: 1200px) {
+      .top-hero-layout-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .top-hero-layout-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Cyber-Glass Obsidian Hero Card (Left Panel of Image 1) */
+    .hero-performance-box {
+      background: linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 20px;
+      padding: 1.1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.25), 0 0 25px rgba(99, 102, 241, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Ambient background glow line inside hero card */
+    .hero-performance-box::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      left: -40%;
+      width: 180%;
+      height: 180%;
+      background: radial-gradient(circle, rgba(0, 230, 246, 0.1) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-trophy-fraction-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      z-index: 1;
+    }
+
+    /* Neon Trophy Icon Box */
+    .trophy-icon-box {
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      background: rgba(0, 230, 246, 0.1);
+      border: 1px solid rgba(0, 230, 246, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #00E6F6;
+      box-shadow: 0 0 20px rgba(0, 230, 246, 0.3), inset 0 0 10px rgba(0, 230, 246, 0.15);
+      flex-shrink: 0;
+    }
+
+    .trophy-svg-icon {
+      width: 26px;
+      height: 26px;
+      filter: drop-shadow(0 0 8px rgba(0, 230, 246, 0.9));
+    }
+
+    /* Mathematical Fraction for Hero Score */
+    .hero-score-math-fraction {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .hero-score-math-fraction .frac-num {
+      font-size: 2.1rem;
+      font-weight: 800;
+      line-height: 0.95;
+      color: #FFFFFF;
+      letter-spacing: -0.03em;
+      text-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+    }
+
+    .hero-score-math-fraction .frac-bar {
+      width: 100%;
+      min-width: 50px;
+      height: 2.5px;
+      background: linear-gradient(90deg, #00E6F6, #6366F1);
+      border-radius: 2px;
+      margin: 3px 0;
+      box-shadow: 0 0 10px rgba(0, 230, 246, 0.6);
+    }
+
+    .hero-score-math-fraction .frac-den {
+      font-size: 1.45rem;
+      font-weight: 800;
+      line-height: 0.95;
+      color: #CBD5E1;
+      letter-spacing: -0.02em;
+    }
+
+    /* Holographic Donut Gauge Wrapper */
+    .hero-donut-gauge-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+    }
+
+    .hero-donut-gauge-wrapper .hologram-progress-circle {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      padding: 3.5px;
+      background: conic-gradient(from 180deg, #00E6F6 0%, #6366F1 50%, #A855F7 100%);
+      box-shadow: 0 0 22px rgba(0, 230, 246, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s ease;
+    }
+
+    .hero-donut-gauge-wrapper .hologram-progress-circle:hover {
+      transform: scale(1.05);
+    }
+
+    .hero-donut-gauge-wrapper .progress-circle-inner {
+      width: 100%;
+      height: 100%;
+      background: #0B1120;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-donut-gauge-wrapper .progress-percentage-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: #00E6F6;
+      text-shadow: 0 0 10px rgba(0, 230, 246, 0.7);
+    }
+
+    /* Universal Math Fraction Styling (Scaled for Master UI/UX Precision) */
+    .math-fraction {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      vertical-align: middle;
+      line-height: 1;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .math-fraction .frac-num {
+      font-size: 0.76rem;
+      font-weight: 800;
+      color: #0F172A;
+      line-height: 1;
+    }
+
+    .math-fraction .frac-bar {
+      width: 100%;
+      min-width: 12px;
+      height: 1.5px;
+      background: #0F172A;
+      border-radius: 1px;
+      margin: 1px 0;
+    }
+
+    .math-fraction .frac-den {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #475569;
+      line-height: 1;
+    }
+
+    .course-progress-label {
+      font-size: 0.33rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #64748B;
+      flex-shrink: 0;
+    }
+
+    .course-select-progress-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+      margin-bottom: 0.4rem;
+      width: 100%;
+    }
+
+    .course-select-fraction-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(241, 245, 249, 0.95);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      padding: 2.5px 6px;
+      border-radius: 7px;
+      flex-shrink: 0;
+    }
+
+    .frac-pct-badge {
+      font-size: 0.65rem;
+      font-weight: 800;
+      color: #3B82F6;
+      background: rgba(59, 130, 246, 0.1);
+      padding: 1px 4px;
+      border-radius: 4px;
+      line-height: 1.2;
+    }
 
     /* Milestone timeline */
     .milestone-label { color: #64748b !important; }
@@ -375,8 +596,9 @@
     .courses-selector-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-      margin-bottom: 2rem;
+      gap: 1.1rem;
+      margin-bottom: 0;
+      grid-column: span 3;
     }
     @media (max-width: 900px) {
       .dashboard-left-content {
@@ -393,18 +615,19 @@
       }
     }
     .course-select-card {
-      background: rgba(255, 255, 255, 0.92);
-      border: 1px solid rgba(99, 102, 241, 0.15);
-      border-radius: 16px;
-      padding: 1.25rem;
+      background: #FFFFFF;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: 18px;
+      padding: 1.1rem 0.9rem;
       display: flex;
       flex-direction: column;
+      justify-content: space-between;
       gap: 0.75rem;
       cursor: pointer;
       position: relative;
       overflow: hidden;
-      transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
-      box-shadow: 0 2px 12px rgba(99, 102, 241, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04), inset 0 1px 0 #FFFFFF;
       user-select: none;
       backdrop-filter: blur(12px);
     }
@@ -413,14 +636,14 @@
       content: '';
       position: absolute;
       top: 0; left: 0; right: 0;
-      height: 3px;
-      border-radius: 16px 16px 0 0;
+      height: 3.5px;
+      border-radius: 18px 18px 0 0;
       background: transparent;
       transition: all 0.35s ease;
     }
-    .course--excel::before { background: linear-gradient(90deg, #F5A623, #FF8C00) !important; }
+    .course--excel::before { background: linear-gradient(90deg, #107C41, #1F9A55) !important; }
     .course--sql::before { background: linear-gradient(90deg, #3B82F6, #6366F1) !important; }
-    .course--python::before { background: linear-gradient(90deg, #06B6D4, #10B981) !important; }
+    .course--python::before { background: linear-gradient(90deg, #306998, #FFE873) !important; }
 
     .course-select-card:hover {
       transform: translateY(-4px);
@@ -4106,6 +4329,73 @@
       color: #0f172a !important; /* Even darker black on hover */
     }
 
+    /* Clickable day title link */
+    .day-title-link {
+      color: inherit !important;
+      text-decoration: none !important;
+      display: inline !important;
+      transition: all 0.2s ease !important;
+    }
+    .day-card:hover .day-title-link {
+      text-decoration: underline !important;
+      text-underline-offset: 3px !important;
+      color: #2563eb !important;
+    }
+
+    /* Interview Questions & Marks badge pill */
+    .day-test-badge {
+      font-family: 'JetBrains Mono', monospace !important;
+      font-size: 9.5px !important;
+      font-weight: 700 !important;
+      color: #0d9488 !important;
+      background: rgba(13, 148, 136, 0.08) !important;
+      border: 1px solid rgba(13, 148, 136, 0.2) !important;
+      border-radius: 6px !important;
+      padding: 3px 8px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 5px !important;
+      margin-top: 4px !important;
+      margin-bottom: 4px !important;
+      transition: all 0.25s ease !important;
+    }
+    .day-test-badge.locked {
+      color: #94a3b8 !important;
+      background: rgba(148, 163, 184, 0.08) !important;
+      border-color: rgba(148, 163, 184, 0.2) !important;
+    }
+    .day-card:hover .day-test-badge:not(.locked) {
+      background: rgba(13, 148, 136, 0.14) !important;
+      border-color: rgba(13, 148, 136, 0.35) !important;
+      box-shadow: 0 2px 8px rgba(13, 148, 136, 0.12) !important;
+    }
+    .test-badge-fraction {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 1px !important;
+    }
+    .test-frac-num {
+      font-weight: 800 !important;
+      font-size: 11px !important;
+    }
+    .test-frac-sep {
+      font-weight: 700 !important;
+      opacity: 0.6 !important;
+      margin: 0 1px !important;
+    }
+    .test-frac-den {
+      font-size: 9.5px !important;
+      opacity: 0.8 !important;
+    }
+    .test-badge-label {
+      font-family: 'Outfit', sans-serif !important;
+      font-size: 8.5px !important;
+      font-weight: 800 !important;
+      letter-spacing: 0.05em !important;
+      text-transform: uppercase !important;
+      opacity: 0.85 !important;
+    }
+
     .day-xp-badge {
       font-family: 'JetBrains Mono', monospace !important;
       font-size: 9px !important;
@@ -4201,6 +4491,33 @@
       width: 16px !important;
       height: 16px !important;
       flex-shrink: 0 !important;
+      color: #fff !important;
+    }
+
+    .admin-nav-btn {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      padding: 6px 14px !important;
+      background: rgba(0, 230, 246, 0.12) !important;
+      color: #00E6F6 !important;
+      border: 1px solid rgba(0, 230, 246, 0.45) !important;
+      border-radius: 50px !important;
+      font-family: 'Inter', sans-serif !important;
+      font-size: 0.8rem !important;
+      font-weight: 700 !important;
+      text-decoration: none !important;
+      transition: all 0.2s ease !important;
+      letter-spacing: 0.02em !important;
+      box-shadow: 0 0 15px rgba(0, 230, 246, 0.15) !important;
+      white-space: nowrap !important;
+    }
+
+    .admin-nav-btn:hover {
+      background: rgba(0, 230, 246, 0.25) !important;
+      border-color: #00E6F6 !important;
+      transform: translateY(-2px) !important;
+      box-shadow: 0 0 25px rgba(0, 230, 246, 0.35) !important;
       color: #fff !important;
     }
 
@@ -4999,6 +5316,21 @@
         min-height: auto !important;
         padding: 10px 6px !important;
       }
+    @media (max-width: 768px) {
+      .roadmap-day-card {
+        min-width: 105px !important;
+        max-width: 140px !important;
+        padding: 4px 6px !important;
+      }
+      .roadmap-day-card .card-title-text {
+        font-size: 10.5px !important;
+        line-height: 1.2 !important;
+      }
+      .roadmap-day-card .card-pill {
+        font-size: 8px !important;
+        padding: 1px 4px !important;
+      }
+    }
       .day-card .day-emoji {
         font-size: 20px !important;
         margin-bottom: 4px !important;
@@ -5208,57 +5540,106 @@
     
     .roadmap-day-card {
       width: auto !important;
-      height: auto !important; /* Override external stylesheet fixed 110px height on desktop */
-      min-width: 175px !important;
-      max-width: 215px !important;
-      border-radius: 12px !important; /* Scaled down rounded corners */
-      padding: 6px 12px 6px 12px !important; /* Reduced top/bottom padding to make card shorter */
+      min-width: 170px !important;
+      max-width: 235px !important;
+      height: auto !important;
+      border-radius: 14px !important;
+      padding: 8px 14px 8px 14px !important;
       cursor: pointer;
-      box-sizing: border-box;
+      box-sizing: border-box !important;
       display: flex;
       flex-direction: column;
-      gap: 5px !important; /* Scaled down gaps */
-      transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      gap: 6px !important;
+      transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
       position: relative;
       z-index: 2;
-      border: 1px solid rgba(148, 163, 184, 0.15) !important;
-      box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.04), 0 6px 12px -5px rgba(0, 0, 0, 0.02) !important;
+      border: 1px solid rgba(226, 232, 240, 0.8) !important;
+      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 4px 10px -3px rgba(15, 23, 42, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+      backdrop-filter: blur(12px) !important;
+      -webkit-backdrop-filter: blur(12px) !important;
       -webkit-font-smoothing: antialiased !important;
       -moz-osx-font-smoothing: grayscale !important;
       text-rendering: optimizeLegibility !important;
-      background: #ffffff !important;
+      background: rgba(255, 255, 255, 0.94) !important;
     }
 
-    /* Phase specific light theme card backgrounds */
-    .roadmap-day-card.excel { background: #fffdf5 !important; border-color: rgba(245, 158, 11, 0.2) !important; }
-    .roadmap-day-card.sql { background: #ecfeff !important; border-color: rgba(6, 182, 212, 0.2) !important; }
-    .roadmap-day-card.python { background: #ecfdf5 !important; border-color: rgba(16, 185, 129, 0.2) !important; }
-    .roadmap-day-card.locked { background: #f8fafc !important; border-color: rgba(148, 163, 184, 0.2) !important; opacity: 0.7; }
+    @media (max-width: 768px) {
+      .roadmap-day-card {
+        min-width: 155px !important;
+        max-width: 200px !important;
+      }
+    }
+
+    /* Phase specific light theme card backgrounds with left color accent bar */
+    .roadmap-day-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 10px;
+      bottom: 10px;
+      width: 4px;
+      border-radius: 0 4px 4px 0;
+      transition: background 0.3s ease;
+    }
+    .roadmap-day-card.sql::before { background: #06b6d4; box-shadow: 0 0 8px rgba(6, 182, 212, 0.4); }
+    .roadmap-day-card.excel::before { background: #f59e0b; box-shadow: 0 0 8px rgba(245, 158, 11, 0.4); }
+    .roadmap-day-card.python::before { background: #10b981; box-shadow: 0 0 8px rgba(16, 185, 129, 0.4); }
+    .roadmap-day-card.locked::before { background: #94a3b8; box-shadow: none; }
+
+    .roadmap-day-card.excel { background: rgba(255, 253, 245, 0.95) !important; border-color: rgba(245, 158, 11, 0.25) !important; }
+    .roadmap-day-card.sql { background: rgba(236, 254, 255, 0.95) !important; border-color: rgba(6, 182, 212, 0.25) !important; }
+    .roadmap-day-card.python { background: rgba(236, 253, 245, 0.95) !important; border-color: rgba(16, 185, 129, 0.25) !important; }
+    .roadmap-day-card.locked { background: rgba(248, 250, 252, 0.9) !important; border-color: rgba(148, 163, 184, 0.25) !important; opacity: 0.72; }
 
     /* Dark theme overrides for roadmap cards */
     body.dark-theme .roadmap-day-card,
     body.dark .roadmap-day-card {
-      box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.3), 0 6px 12px -5px rgba(0, 0, 0, 0.2) !important;
-      border: 1px solid rgba(255, 255, 255, 0.04) !important;
+      box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.45), 0 6px 14px -4px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      background: rgba(15, 23, 42, 0.92) !important;
     }
-    body.dark-theme .roadmap-day-card.excel, body.dark .roadmap-day-card.excel { background: #1c1917 !important; border-color: rgba(245, 158, 11, 0.25) !important; }
-    body.dark-theme .roadmap-day-card.sql, body.dark .roadmap-day-card.sql { background: #0f172a !important; border-color: rgba(6, 182, 212, 0.25) !important; }
-    body.dark-theme .roadmap-day-card.python, body.dark .roadmap-day-card.python { background: #062f22 !important; border-color: rgba(16, 185, 129, 0.25) !important; }
-    body.dark-theme .roadmap-day-card.locked, body.dark .roadmap-day-card.locked { background: #1e293b !important; border-color: rgba(71, 85, 105, 0.3) !important; opacity: 0.6; }
+    body.dark-theme .roadmap-day-card.excel, body.dark .roadmap-day-card.excel { background: rgba(28, 25, 23, 0.94) !important; border-color: rgba(245, 158, 11, 0.3) !important; }
+    body.dark-theme .roadmap-day-card.sql, body.dark .roadmap-day-card.sql { background: rgba(15, 23, 42, 0.94) !important; border-color: rgba(6, 182, 212, 0.3) !important; }
+    body.dark-theme .roadmap-day-card.python, body.dark .roadmap-day-card.python { background: rgba(6, 47, 34, 0.94) !important; border-color: rgba(16, 185, 129, 0.3) !important; }
+    body.dark-theme .roadmap-day-card.locked, body.dark .roadmap-day-card.locked { background: rgba(30, 41, 59, 0.9) !important; border-color: rgba(71, 85, 105, 0.35) !important; opacity: 0.65; }
 
     /* Hover effect */
     .roadmap-day-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 24px -4px rgba(0, 0, 0, 0.08), 0 8px 16px -5px rgba(0, 0, 0, 0.04) !important;
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 16px 32px -6px rgba(15, 23, 42, 0.14), 0 10px 20px -5px rgba(15, 23, 42, 0.08) !important;
     }
     body.dark-theme .roadmap-day-card:hover, body.dark .roadmap-day-card:hover {
-      box-shadow: 0 10px 24px -4px rgba(0, 0, 0, 0.45), 0 8px 16px -5px rgba(0, 0, 0, 0.3) !important;
+      box-shadow: 0 16px 32px -6px rgba(0, 0, 0, 0.6), 0 10px 20px -5px rgba(0, 0, 0, 0.4) !important;
     }
 
     /* Active current card border glow matches phase */
+    @keyframes currentCardPulse {
+      0% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.4), 0 10px 25px -5px rgba(15, 23, 42, 0.1); }
+      50% { box-shadow: 0 0 0 6px rgba(6, 182, 212, 0), 0 12px 28px -5px rgba(15, 23, 42, 0.15); }
+      100% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0), 0 10px 25px -5px rgba(15, 23, 42, 0.1); }
+    }
     .roadmap-day-card.current {
       outline: 2px solid var(--dashboard-accent) !important;
-      outline-offset: 1px;
+      outline-offset: 2px;
+      animation: currentCardPulse 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .roadmap-day-card.excel.current { outline-color: #f59e0b !important; }
+    .roadmap-day-card.sql.current { outline-color: #06b6d4 !important; }
+    .roadmap-day-card.python.current { outline-color: #10b981 !important; }
+    body.dark-theme .roadmap-day-card:hover, body.dark .roadmap-day-card:hover {
+      box-shadow: 0 16px 32px -6px rgba(0, 0, 0, 0.6), 0 10px 20px -5px rgba(0, 0, 0, 0.4) !important;
+    }
+
+    /* Active current card border glow matches phase */
+    @keyframes currentCardPulse {
+      0% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.4), 0 10px 25px -5px rgba(15, 23, 42, 0.1); }
+      50% { box-shadow: 0 0 0 6px rgba(6, 182, 212, 0), 0 12px 28px -5px rgba(15, 23, 42, 0.15); }
+      100% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0), 0 10px 25px -5px rgba(15, 23, 42, 0.1); }
+    }
+    .roadmap-day-card.current {
+      outline: 2px solid var(--dashboard-accent) !important;
+      outline-offset: 2px;
+      animation: currentCardPulse 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
     }
     .roadmap-day-card.excel.current { outline-color: #f59e0b !important; }
     .roadmap-day-card.sql.current { outline-color: #06b6d4 !important; }
@@ -5368,23 +5749,7 @@
       box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.04), 0 6px 12px -5px rgba(0, 0, 0, 0.02) !important;
     }
     
-    /* Mobile responsive roadmap formatting */
-    @media (max-width: 768px) {
-      #roadmapNodesContainer .roadmap-day-node {
-        left: 76px !important;
-        transform: translateY(-50%) !important;
-        width: calc(100% - 92px) !important;
-        max-width: none !important;
-      }
-      .roadmap-day-card {
-        width: 100% !important;
-        max-width: none !important;
-        text-align: left !important;
-      }
-      .roadmap-day-node .card-status-row {
-        justify-content: flex-start !important;
-      }
-    }
+
 
     /* ═══════════════════════════════════════════
        REALISTIC 3D STEEL SIGNPOSTS
@@ -5529,46 +5894,52 @@
       0% { box-shadow: 0 4px 20px rgba(16, 185, 129, 0.1); }
       100% { box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3); }
     }
-</style>
+  </style>
 
 </head>
 
-
-
 <body>
-
-
 
   <!-- ═══════════ TOP NAV BAR ═══════════ -->
 
   <header>
 
-    <nav class="nav" aria-label="Primary site navigation">
+    <nav class="nav" aria-label="Primary site navigation" style="background: #FFFFFF !important; backdrop-filter: blur(20px) !important; -webkit-backdrop-filter: blur(20px) !important; border-bottom: 1px solid #E2E8F0 !important; box-shadow: 0 1px 12px rgba(0, 0, 0, 0.05) !important;">
 
-      <div class="container">
+      <div class="container" style="display: flex; align-items: center; justify-content: space-between; height: 100%;">
 
-        <a href="/landing_v2/index.html" class="nav-brand" aria-label="Manodemy Home">
-
-          <span class="nav-brand-name">Mano<span>demy</span></span>
-
-          <span class="nav-brand-sub">Hands-on EdTech</span>
-
+        <!-- 1. Left Brand Logo (Matching Landing Page White Theme) -->
+        <a href="/home.html" id="navBrand" class="nav-brand" aria-label="Manodemy Home">
+          <div class="nav-brand-wrapper" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+            <img class="nav-brand-symbol" src="/landing_v2/manodemy_3d_keycap.png" alt="Manodemy 3D Keycap Logo" width="36" height="36" style="width: 36px; height: 36px; object-fit: contain;" />
+            <div class="nav-brand-text" style="display: flex; flex-direction: column; justify-content: center;">
+              <span class="nav-brand-name" style="font-size: 20px; font-weight: 800; color: #0F172A !important; line-height: 1.1;">Mano<span style="color: #059669 !important;">demy</span></span>
+              <span class="nav-brand-sub" style="font-size: 8px; font-weight: 700; color: #64748B !important; letter-spacing: 0.08em;"><span class="brand-sub-dot" style="color: #059669;">●</span> HANDS-ON EDTECH</span>
+            </div>
+          </div>
         </a>
 
+        <!-- 2. Right Action Bar: Download Certificate & Profile Avatar -->
+        <div class="nav-right" style="display: flex; align-items: center; gap: 0.75rem;">
 
+          <!-- Direct Admin Panel Button for Admins -->
+          <a href="admin.html" id="directAdminNavBtn" class="admin-nav-btn" style="display: none;">
+            ⚙️ Admin Panel
+          </a>
 
-        <div class="header-custom-message" id="headerCustomMessage">Loading your dashboard...</div>
-
-
-
-        <div class="nav-right" style="display: flex; align-items: center; gap: 1rem;">
-
-
+          <!-- Download Certificate Button next to Profile Avatar -->
+          <div id="certificate-cta-wrapper">
+            <button id="download-certificate-btn" class="cert-cta-btn" type="button">
+              <svg class="cert-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/>
+              </svg>
+              Download Certificate
+            </button>
+          </div>
 
           <!-- Profile Avatar with settings dropdown -->
-
           <div class="avatar-wrapper" id="profileAvatar">
-
             <div class="avatar-circle" id="avatarCircle">U</div>
 
             <div class="avatar-dropdown" id="avatarDropdown">
@@ -5588,8 +5959,7 @@
               <a href="day01.html" id="dropdownResumeLink" class="dropdown-item">Resume Learning</a>
 
               <a href="admin.html" class="dropdown-item" id="adminLink" style="display: none;">⚙️ Admin Panel</a>
-
-
+              <a href="instructor-dashboard.html" class="dropdown-item" id="instructorLink" style="display: none;">🎓 Instructor Hub</a>
 
               <hr class="dropdown-divider">
 
@@ -5625,227 +5995,67 @@
 
       <div class="dashboard-left-col">
 
-        <!-- Course Selection Grid -->
-        <div class="courses-selector-grid" id="coursesSelectorGrid"></div>
+        <!-- Top Hero Performance & Course Selector Layout (Image 1 Redesign) -->
+        <div class="top-hero-layout-grid">
+          
+          <!-- Total Performance Dark Hero Box (Left Panel of Image 1) -->
+          <div class="hero-performance-box">
+            
+            <div class="hero-trophy-fraction-wrapper">
+              <div class="trophy-icon-box">
+                <svg class="trophy-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+                  <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+                  <path d="M4 22h16"/>
+                  <path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34"/>
+                  <path d="M12 2a6 6 0 0 1 6 6v3.58a6 6 0 0 1-6 6 6 6 0 0 1-6-6V8a6 6 0 0 1 6-6z"/>
+                </svg>
+              </div>
+
+              <!-- Mathematical Fraction for Total Score -->
+              <div class="hero-score-math-fraction">
+                <span id="heroTotalMarks" class="frac-num">0</span>
+                <div class="frac-bar"></div>
+                <span class="frac-den">1500</span>
+              </div>
+            </div>
+
+            <!-- Donut Gauge Section -->
+            <div class="hero-donut-gauge-wrapper">
+              <div id="percentageCircle" class="hologram-progress-circle">
+                <div class="progress-circle-inner">
+                  <span id="heroScorePercentage" class="progress-percentage-val">0.0%</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- 3 Course Cards Selector Grid (Right Panel of Image 1: SQL, Excel, Python) -->
+          <div class="courses-selector-grid" id="coursesSelectorGrid"></div>
+
+        </div>
 
         <!-- Dynamic Transition Wrapper for Content -->
         <div class="dashboard-left-content">
 
-
-
-        <!-- Premium Score Card and Segmented Milestone Timeline Dashboard -->
-
-                                                        <!-- Combined Premium Score Card & Timeline Dashboard -->
-        <div class="glass-card header-score-card">
-          <!-- Ambient glowing orb in the card background -->
-          <div class="score-card-bg-glow"></div>
-
-          <!-- Top Row: Overall Marks Hero + 4 Section Breakdown Columns -->
-          <div class="score-hero-row">
-
-            <!-- Left Panel: Large Bold Overall Score + Holographic Donut Gauge (Vertically Aligned Badge and Circle) -->
-            <div class="score-hero-display">
-              
-              <!-- Left Column: Title and Trophy Score Stack -->
-              <div class="score-hero-left">
-                <div class="score-badge-pill">
-                  <span class="pulse-dot"></span>
-                  <span class="badge-label">TOTAL PERFORMANCE</span>
-                </div>
-                
-                <div class="marks-hero-container">
-                  <div class="trophy-icon-wrapper">
-                    <svg class="trophy-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                      <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
-                      <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
-                      <path d="M4 22h16"/>
-                      <path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34"/>
-                      <path d="M12 2a6 6 0 0 1 6 6v3.58a6 6 0 0 1-6 6 6 6 0 0 1-6-6V8a6 6 0 0 1 6-6z"/>
-                    </svg>
-                  </div>
-                  <div class="marks-fraction-stack">
-                    <div class="marks-number-row-fraction">
-                      <span id="heroTotalMarks" class="hero-marks-val">0.0</span>
-                      <div class="fraction-line"></div>
-                      <span class="hero-marks-denom">1000</span>
-                    </div>
-                    <div class="hero-score-subtitle">ACCUMULATED SCORE</div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Right Column: Rank level badge + Circle Gauge (Perfect Center Vertical Alignment) -->
-              <div class="score-hero-right">
-                <div id="headerRankLevelText" class="rank-level-badge">Level 1 (Novice) 🌱</div>
-                <!-- Circular Progress Ring (Holographic Circle) -->
-                <div id="percentageCircle" class="hologram-progress-circle">
-                  <div class="progress-circle-inner">
-                    <span id="heroScorePercentage" class="progress-percentage-val">0.0%</span>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-            <!-- Right Panel: 4 Section Breakdown Grid -->
-            <div class="sections-breakdown-grid">
-
-              <!-- Basics Section Card -->
-              <div class="section-score-box box-basics">
-                <div class="section-card-header">
-                  <span class="section-card-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                      <polyline points="16 18 22 12 16 6"/>
-                      <polyline points="8 6 2 12 8 18"/>
-                    </svg>
-                  </span>
-                  <span class="section-card-title">Basics</span>
-                </div>
-                <div class="section-card-score-row">
-                  <span id="sectionBasicsScore" class="section-card-score-val">0.0</span>
-                  <span class="section-card-score-divider">/</span>
-                  <span class="section-card-score-max">383.1</span>
-                </div>
-                <div class="section-card-progress-track">
-                  <div id="sectionBasicsBar" class="section-card-progress-fill"></div>
-                </div>
-              </div>
-
-              <!-- Structures Section Card -->
-              <div class="section-score-box box-structures">
-                <div class="section-card-header">
-                  <span class="section-card-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                    </svg>
-                  </span>
-                  <span class="section-card-title">Structures</span>
-                </div>
-                <div class="section-card-score-row">
-                  <span id="sectionStructuresScore" class="section-card-score-val">0.0</span>
-                  <span class="section-card-score-divider">/</span>
-                  <span class="section-card-score-max">295.5</span>
-                </div>
-                <div class="section-card-progress-track">
-                  <div id="sectionStructuresBar" class="section-card-progress-fill"></div>
-                </div>
-              </div>
-
-              <!-- Analysis Section Card -->
-              <div class="section-score-box box-analysis">
-                <div class="section-card-header">
-                  <span class="section-card-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                      <line x1="18" y1="20" x2="18" y2="10"/>
-                      <line x1="12" y1="20" x2="12" y2="4"/>
-                      <line x1="6" y1="20" x2="6" y2="14"/>
-                    </svg>
-                  </span>
-                  <span class="section-card-title">Analysis</span>
-                </div>
-                <div class="section-card-score-row">
-                  <span id="sectionAnalysisScore" class="section-card-score-val">0.0</span>
-                  <span class="section-card-score-divider">/</span>
-                  <span class="section-card-score-max">263.0</span>
-                </div>
-                <div class="section-card-progress-track">
-                  <div id="sectionAnalysisBar" class="section-card-progress-fill"></div>
-                </div>
-              </div>
-
-              <!-- Advanced Section Card -->
-              <div class="section-score-box box-advanced">
-                <div class="section-card-header">
-                  <span class="section-card-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                    </svg>
-                  </span>
-                  <span class="section-card-title">Advanced</span>
-                </div>
-                <div class="section-card-score-row">
-                  <span id="sectionAdvancedScore" class="section-card-score-val">0.0</span>
-                  <span class="section-card-score-divider">/</span>
-                  <span class="section-card-score-max">58.4</span>
-                </div>
-                <div class="section-card-progress-track">
-                  <div id="sectionAdvancedBar" class="section-card-progress-fill"></div>
-                </div>
-              </div>
-
-            </div>
-
+          <!-- Category Filter Tabs -->
+          <div class="filter-tabs-container">
+            <button class="filter-tab active" data-filter="all">All Modules</button>
+            <button class="filter-tab" data-filter="basics">Basics</button>
+            <button class="filter-tab" data-filter="structures">Structures</button>
+            <button class="filter-tab" data-filter="analysis">Analysis</button>
+            <button class="filter-tab" data-filter="advanced">Advanced</button>
           </div>
 
-          <!-- Bottom Row: 30-Day Segmented Milestone Timeline Bar -->
-          <div class="timeline-wrapper">
-            <div class="timeline-header-row">
-              <div class="timeline-title-group">
-                <span class="timeline-title-dot"></span>
-                <span class="timeline-title-text">Milestone Timeline</span>
-              </div>
-              <div id="certificate-cta-wrapper">
-                <button id="download-certificate-btn" class="cert-cta-btn" type="button">
-                  <svg class="cert-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-                    <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/>
-                  </svg>
-                  Download Certificate
-                </button>
-              </div>
-            </div>
-
-            <!-- The Segmented Timeline Track -->
-            <div class="timeline-segmented-track" id="timelineSegmentedTrack">
-              <!-- 30 segments will be rendered dynamically by JavaScript here -->
-            </div>
-
-            <!-- Dynamic Labels Row for Timeline Splits -->
-            <div class="timeline-labels-row" id="timelineLabelsRow">
-              <!-- 30 labels will be rendered dynamically by JavaScript here -->
-            </div>
-
-            <!-- Gorgeous Hover Tooltip -->
-            <div id="timelineTooltip">
-              <div id="tooltipDayTitle">Day 01</div>
-              <div id="tooltipDayTopic">Data Types and Memory</div>
-              <div id="tooltipDaySolved">Solved: 0 / 90 (0%)</div>
-              <div id="tooltipDayMarks">0.0 / 30.0 Marks</div>
-            </div>
+          <!-- 30-Day Grid curriculum -->
+          <div class="curriculum-grid" id="curriculumGrid">
+            <!-- Rendered dynamically by javascript -->
           </div>
-        </div>
-
-
-
-        <!-- Category Filter Tabs -->
-
-        <div class="filter-tabs-container">
-
-          <button class="filter-tab active" data-filter="all">All Modules</button>
-
-          <button class="filter-tab" data-filter="basics">Basics</button>
-
-          <button class="filter-tab" data-filter="structures">Structures</button>
-
-          <button class="filter-tab" data-filter="analysis">Analysis</button>
-
-          <button class="filter-tab" data-filter="advanced">Advanced</button>
-
-        </div>
-
-
-
-        <!-- 30-Day Grid curriculum -->
-
-        <div class="curriculum-grid" id="curriculumGrid">
-
-          <!-- Rendered dynamically by javascript -->
-
-        </div>
 
         </div> <!-- End .dashboard-left-content -->
 
-      </div>
+      </div> <!-- End .dashboard-left-col -->
 
 
 
@@ -6337,72 +6547,72 @@
   <script>
 
     const PYTHON_METADATA = [
-      { day: "01", title: "Data Types and Memory", emoji: "🔢", totalCells: 80, category: "basics" },
-      { day: "02", title: "Operators and Expressions", emoji: "➕", totalCells: 80, category: "basics" },
-      { day: "03", title: "Strings", emoji: "📝", totalCells: 70, category: "structures" },
-      { day: "04", title: "Lists", emoji: "📋", totalCells: 70, category: "structures" },
-      { day: "05", title: "Tuples", emoji: "📦", totalCells: 60, category: "structures" },
-      { day: "06", title: "Sets", emoji: "⭕", totalCells: 60, category: "structures" },
-      { day: "07", title: "Dictionaries", emoji: "🗂️", totalCells: 65, category: "structures" },
-      { day: "08", title: "Conditionals", emoji: "🔀", totalCells: 55, category: "basics" },
-      { day: "09", title: "Loops", emoji: "🔄", totalCells: 65, category: "basics" },
-      { day: "10", title: "Functions", emoji: "⚙️", totalCells: 45, category: "basics" },
-      { day: "11", title: "Modules", emoji: "📦", totalCells: 45, category: "basics" },
-      { day: "12", title: "Comprehensions", emoji: "🧮", totalCells: 40, category: "structures" },
-      { day: "13", title: "Lambda Functions", emoji: "λ", totalCells: 40, category: "basics" },
-      { day: "14", title: "Exceptions", emoji: "⚠️", totalCells: 45, category: "basics" },
-      { day: "15", title: "File Handling", emoji: "📂", totalCells: 45, category: "basics" },
-      { day: "16", title: "OOP Basics", emoji: "🧩", totalCells: 45, category: "basics" },
-      { day: "17", title: "OOP Advanced", emoji: "🏗️", totalCells: 45, category: "basics" },
-      { day: "18", title: "Regex", emoji: "🔍", totalCells: 45, category: "structures" },
-      { day: "19", title: "Generators and Iterators", emoji: "⚡", totalCells: 45, category: "structures" },
-      { day: "20", title: "Capstone Project", emoji: "🏆", totalCells: 45, category: "advanced" },
-      { day: "21", title: "NumPy Fundamentals", emoji: "📊", totalCells: 45, category: "analysis" },
-      { day: "22", title: "NumPy Advanced", emoji: "📈", totalCells: 45, category: "analysis" },
-      { day: "23", title: "Pandas Introduction", emoji: "🐼", totalCells: 45, category: "analysis" },
-      { day: "24", title: "Pandas Selection", emoji: "🎯", totalCells: 45, category: "analysis" },
-      { day: "25", title: "Pandas Cleaning", emoji: "🧹", totalCells: 45, category: "analysis" },
-      { day: "26", title: "Pandas GroupBy", emoji: "🗃️", totalCells: 45, category: "analysis" },
-      { day: "27", title: "Pandas Merging", emoji: "🔗", totalCells: 45, category: "analysis" },
-      { day: "28", title: "Pandas Time Series", emoji: "📉", totalCells: 45, category: "analysis" },
-      { day: "29", title: "Data Visualization", emoji: "🎨", totalCells: 45, category: "analysis" },
-      { day: "30", title: "Phase Analysis & Review", emoji: "🔬", totalCells: 45, category: "advanced" }
+      { day: "01", title: "Data Types and Memory", emoji: "🔢", totalCells: 80, category: "basics", testCount: 25, marksPerQ: 1 },
+      { day: "02", title: "Operators and Expressions", emoji: "➕", totalCells: 80, category: "basics", testCount: 25, marksPerQ: 1 },
+      { day: "03", title: "Strings", emoji: "📝", totalCells: 70, category: "structures", testCount: 25, marksPerQ: 1 },
+      { day: "04", title: "Lists", emoji: "📋", totalCells: 70, category: "structures", testCount: 25, marksPerQ: 1 },
+      { day: "05", title: "Tuples", emoji: "📦", totalCells: 60, category: "structures", testCount: 25, marksPerQ: 1 },
+      { day: "06", title: "Sets", emoji: "⭕", totalCells: 60, category: "structures", testCount: 25, marksPerQ: 1 },
+      { day: "07", title: "Dictionaries", emoji: "🗂️", totalCells: 65, category: "structures", testCount: 25, marksPerQ: 1 },
+      { day: "08", title: "Conditionals", emoji: "🔀", totalCells: 55, category: "basics", testCount: 25, marksPerQ: 1 },
+      { day: "09", title: "Loops", emoji: "🔄", totalCells: 65, category: "basics", testCount: 25, marksPerQ: 1 },
+      { day: "10", title: "Functions", emoji: "⚙️", totalCells: 45, category: "basics", testCount: 25, marksPerQ: 1 },
+      { day: "11", title: "Modules", emoji: "📦", totalCells: 45, category: "basics", testCount: 25, marksPerQ: 1 },
+      { day: "12", title: "Comprehensions", emoji: "🧮", totalCells: 40, category: "structures", testCount: 25, marksPerQ: 1 },
+      { day: "13", title: "Lambda Functions", emoji: "λ", totalCells: 40, category: "basics", testCount: 25, marksPerQ: 1 },
+      { day: "14", title: "Exceptions", emoji: "⚠️", totalCells: 45, category: "basics", testCount: 25, marksPerQ: 1 },
+      { day: "15", title: "File Handling", emoji: "📂", totalCells: 45, category: "basics", testCount: 25, marksPerQ: 1 },
+      { day: "16", title: "OOP Basics", emoji: "🧩", totalCells: 45, category: "basics", testCount: 25, marksPerQ: 1 },
+      { day: "17", title: "OOP Advanced", emoji: "🏗️", totalCells: 45, category: "basics", testCount: 25, marksPerQ: 1 },
+      { day: "18", title: "Regex", emoji: "🔍", totalCells: 45, category: "structures", testCount: 25, marksPerQ: 1 },
+      { day: "19", title: "Generators and Iterators", emoji: "⚡", totalCells: 45, category: "structures", testCount: 25, marksPerQ: 1 },
+      { day: "20", title: "Capstone Project", emoji: "🏆", totalCells: 45, category: "advanced", testCount: 25, marksPerQ: 1 },
+      { day: "21", title: "NumPy Fundamentals", emoji: "📊", totalCells: 45, category: "analysis", testCount: 25, marksPerQ: 1 },
+      { day: "22", title: "NumPy Advanced", emoji: "📈", totalCells: 45, category: "analysis", testCount: 25, marksPerQ: 1 },
+      { day: "23", title: "Pandas Introduction", emoji: "🐼", totalCells: 45, category: "analysis", testCount: 25, marksPerQ: 1 },
+      { day: "24", title: "Pandas Selection", emoji: "🎯", totalCells: 45, category: "analysis", testCount: 25, marksPerQ: 1 },
+      { day: "25", title: "Pandas Cleaning", emoji: "🧹", totalCells: 45, category: "analysis", testCount: 25, marksPerQ: 1 },
+      { day: "26", title: "Pandas GroupBy", emoji: "🗃️", totalCells: 45, category: "analysis", testCount: 25, marksPerQ: 1 },
+      { day: "27", title: "Pandas Merging", emoji: "🔗", totalCells: 45, category: "analysis", testCount: 25, marksPerQ: 1 },
+      { day: "28", title: "Pandas Time Series", emoji: "📉", totalCells: 45, category: "analysis", testCount: 25, marksPerQ: 1 },
+      { day: "29", title: "Data Visualization", emoji: "🎨", totalCells: 45, category: "analysis", testCount: 25, marksPerQ: 1 },
+      { day: "30", title: "Phase Analysis & Review", emoji: "🔬", totalCells: 45, category: "advanced", testCount: 25, marksPerQ: 1 }
     ];
 
     const SQL_METADATA = [
-      { day: "01", title: "Database Fundamentals & SQL Environment", emoji: "🗄️", totalCells: 23, category: "basics" },
-      { day: "02", title: "SELECT & Filtering — Retrieving Rows", emoji: "🔍", totalCells: 23, category: "basics" },
-      { day: "03", title: "Sorting, Pattern Matching & CASE", emoji: "📝", totalCells: 23, category: "basics" },
-      { day: "04", title: "Aggregate Functions & GROUP BY", emoji: "📊", totalCells: 23, category: "basics" },
-      { day: "05", title: "Joins — Combining Multiple Tables", emoji: "🔗", totalCells: 23, category: "basics" },
-      { day: "06", title: "Subqueries", emoji: "🧠", totalCells: 23, category: "structures" },
-      { day: "07", title: "Common Table Expressions (CTEs)", emoji: "🏗️", totalCells: 23, category: "structures" },
-      { day: "08", title: "Window Functions I — Ranking & Numbering", emoji: "🔢", totalCells: 23, category: "structures" },
-      { day: "09", title: "Window Functions II — Analytics & Frames", emoji: "📈", totalCells: 23, category: "structures" },
-      { day: "10", title: "Date & Time Functions", emoji: "📅", totalCells: 23, category: "structures" },
-      { day: "11", title: "String & Type Functions", emoji: "🧹", totalCells: 23, category: "structures" },
-      { day: "12", title: "Data Cleaning & Wrangling in SQL", emoji: "🛠️", totalCells: 23, category: "analysis" },
-      { day: "13", title: "Set Operations & Advanced Joins", emoji: "🥞", totalCells: 23, category: "analysis" },
-      { day: "14", title: "Query Optimisation & Execution Plans", emoji: "⚡", totalCells: 23, category: "analysis" },
-      { day: "15", title: "Views, Stored Procedures & Functions", emoji: "💾", totalCells: 23, category: "analysis" },
-      { day: "16", title: "Advanced Analytics Patterns", emoji: "🔮", totalCells: 23, category: "advanced" },
-      { day: "17", title: "Data Modelling & Analytics Engineering", emoji: "🧱", totalCells: 23, category: "advanced" },
-      { day: "18", title: "SQL Interview Prep & Real-World Patterns", emoji: "🏆", totalCells: 25, category: "advanced" }
+      { day: "01", title: "Database Fundamentals & SQL Environment", emoji: "🗄️", totalCells: 23, category: "basics", testCount: 25, marksPerQ: 1 },
+      { day: "02", title: "SELECT & Filtering — Retrieving Rows", emoji: "🔍", totalCells: 23, category: "basics", testCount: 25, marksPerQ: 1 },
+      { day: "03", title: "Sorting, Pattern Matching & CASE", emoji: "📝", totalCells: 23, category: "basics", testCount: 25, marksPerQ: 1 },
+      { day: "04", title: "Aggregate Functions & GROUP BY", emoji: "📊", totalCells: 23, category: "basics", testCount: 25, marksPerQ: 1 },
+      { day: "05", title: "Joins — Combining Multiple Tables", emoji: "🔗", totalCells: 23, category: "basics", testCount: 25, marksPerQ: 1 },
+      { day: "06", title: "Subqueries", emoji: "🧠", totalCells: 23, category: "structures", testCount: 25, marksPerQ: 1 },
+      { day: "07", title: "Common Table Expressions (CTEs)", emoji: "🏗️", totalCells: 23, category: "structures", testCount: 25, marksPerQ: 1 },
+      { day: "08", title: "Window Functions I — Ranking & Numbering", emoji: "🔢", totalCells: 23, category: "structures", testCount: 25, marksPerQ: 1 },
+      { day: "09", title: "Window Functions II — Analytics & Frames", emoji: "📈", totalCells: 23, category: "structures", testCount: 25, marksPerQ: 1 },
+      { day: "10", title: "Date & Time Functions", emoji: "📅", totalCells: 23, category: "structures", testCount: 25, marksPerQ: 1 },
+      { day: "11", title: "String & Type Functions", emoji: "🧹", totalCells: 23, category: "structures", testCount: 25, marksPerQ: 1 },
+      { day: "12", title: "Data Cleaning & Wrangling in SQL", emoji: "🛠️", totalCells: 23, category: "analysis", testCount: 25, marksPerQ: 1 },
+      { day: "13", title: "Set Operations & Advanced Joins", emoji: "🥞", totalCells: 23, category: "analysis", testCount: 25, marksPerQ: 1 },
+      { day: "14", title: "Query Optimisation & Execution Plans", emoji: "⚡", totalCells: 23, category: "analysis", testCount: 25, marksPerQ: 1 },
+      { day: "15", title: "Views, Stored Procedures & Functions", emoji: "💾", totalCells: 23, category: "analysis", testCount: 25, marksPerQ: 1 },
+      { day: "16", title: "Advanced Analytics Patterns", emoji: "🔮", totalCells: 23, category: "advanced", testCount: 25, marksPerQ: 1 },
+      { day: "17", title: "Data Modelling & Analytics Engineering", emoji: "🧱", totalCells: 23, category: "advanced", testCount: 25, marksPerQ: 1 },
+      { day: "18", title: "SQL Interview Prep & Real-World Patterns", emoji: "🏆", totalCells: 25, category: "advanced", testCount: 25, marksPerQ: 1 }
     ];
 
     const EXCEL_METADATA = [
-      { day: "01", title: "Excel Orientation & Essential Formulas", emoji: "📊", totalCells: 6, category: "basics" },
-      { day: "02", title: "Formatting, Sorting & Filtering", emoji: "🎨", totalCells: 4, category: "basics" },
-      { day: "03", title: "Data Cleaning Essentials", emoji: "🧹", totalCells: 4, category: "basics" },
-      { day: "04", title: "Excel Tables", emoji: "📋", totalCells: 4, category: "structures" },
-      { day: "05", title: "Lookup & Reference Functions", emoji: "🔍", totalCells: 4, category: "structures" },
-      { day: "06", title: "Logic Functions", emoji: "🔀", totalCells: 4, category: "structures" },
-      { day: "07", title: "Text Functions", emoji: "📝", totalCells: 4, category: "analysis" },
-      { day: "08", title: "Date & Time Functions", emoji: "📅", totalCells: 4, category: "analysis" },
-      { day: "09", title: "Conditional Aggregation", emoji: "🧮", totalCells: 4, category: "analysis" },
-      { day: "10", title: "PivotTables Core Mechanics", emoji: "⚙️", totalCells: 4, category: "advanced" },
-      { day: "11", title: "PivotTables Advanced & Charts", emoji: "📈", totalCells: 4, category: "advanced" },
-      { day: "12", title: "Data Validation, What-If & Capstone", emoji: "🏆", totalCells: 4, category: "advanced" }
+      { day: "01", title: "Excel Orientation & Essential Formulas", emoji: "📊", totalCells: 6, category: "basics", testCount: 25, marksPerQ: 1 },
+      { day: "02", title: "Formatting, Sorting & Filtering", emoji: "🎨", totalCells: 4, category: "basics", testCount: 25, marksPerQ: 1 },
+      { day: "03", title: "Data Cleaning Essentials", emoji: "🧹", totalCells: 4, category: "basics", testCount: 25, marksPerQ: 1 },
+      { day: "04", title: "Excel Tables", emoji: "📋", totalCells: 4, category: "structures", testCount: 25, marksPerQ: 1 },
+      { day: "05", title: "Lookup & Reference Functions", emoji: "🔍", totalCells: 4, category: "structures", testCount: 25, marksPerQ: 1 },
+      { day: "06", title: "Logic Functions", emoji: "🔀", totalCells: 4, category: "structures", testCount: 25, marksPerQ: 1 },
+      { day: "07", title: "Text Functions", emoji: "📝", totalCells: 4, category: "analysis", testCount: 25, marksPerQ: 1 },
+      { day: "08", title: "Date & Time Functions", emoji: "📅", totalCells: 4, category: "analysis", testCount: 25, marksPerQ: 1 },
+      { day: "09", title: "Conditional Aggregation", emoji: "🧮", totalCells: 4, category: "analysis", testCount: 25, marksPerQ: 1 },
+      { day: "10", title: "PivotTables Core Mechanics", emoji: "⚙️", totalCells: 4, category: "advanced", testCount: 25, marksPerQ: 1 },
+      { day: "11", title: "PivotTables Advanced & Charts", emoji: "📈", totalCells: 4, category: "advanced", testCount: 25, marksPerQ: 1 },
+      { day: "12", title: "Data Validation, What-If & Capstone", emoji: "🏆", totalCells: 4, category: "advanced", testCount: 25, marksPerQ: 1 }
     ];
 
     let currentCourse = localStorage.getItem('manodemy_active_course') || 'sql';
@@ -6432,10 +6642,12 @@
       let completedDays = 0;
 
       metadata.forEach(d => {
-        const solved = parseInt(localStorage.getItem(`manodemy_${keyPrefix}day${d.day}_solved_count`) || '0', 10);
-        totalSolved += solved;
-        totalCells += d.totalCells;
-        if (solved >= d.totalCells && d.totalCells > 0) {
+        const key = `manodemy_${keyPrefix}day${d.day}_best_score`;
+        const score = parseFloat(localStorage.getItem(key) || '0');
+        const dayQuestions = d.testCount || 25;
+        totalSolved += Math.min(score, dayQuestions);
+        totalCells += dayQuestions;
+        if (score >= dayQuestions) {
           completedDays++;
         }
       });
@@ -6532,59 +6744,47 @@
 
 
     document.addEventListener('DOMContentLoaded', async () => {
-      const CustomAuthStorage = {
+        const CustomAuthStorage = {
           getItem: (key) => {
             let val = null;
-            const match = document.cookie.match(new RegExp('(^| )' + key + '=([^;]+)'));
+            const match = document.cookie.match(new RegExp('(?:^|; )' + key.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)'));
             if (match) {
-              try { val = decodeURIComponent(match[2]); } catch (e) {}
+              try { val = decodeURIComponent(match[1]); } catch (e) {}
             }
             if (!val) {
               let chunks = [];
-              for (let i = 0; ; i++) {
-                const chunkMatch = document.cookie.match(new RegExp('(^| )' + key + '\.' + i + '=([^;]+)'));
+              for (let i = 0; i < 10; i++) {
+                const chunkMatch = document.cookie.match(new RegExp('(?:^|; )' + key.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + '\\.' + i + '=([^;]*)'));
                 if (chunkMatch) {
-                  try { chunks.push(decodeURIComponent(chunkMatch[2])); } catch (e) { break; }
+                  try { chunks.push(decodeURIComponent(chunkMatch[1])); } catch (e) { break; }
                 } else {
                   break;
                 }
               }
-              if (chunks.length > 0) {
-                val = chunks.join('');
-              }
+              if (chunks.length > 0) val = chunks.join('');
             }
             if (!val) {
               try { val = localStorage.getItem(key); } catch (e) {}
-            }
-            if (val) {
-              try { localStorage.setItem(key, val); } catch (e) {}
-              if (!document.cookie.includes(key)) {
-                CustomAuthStorage.setItem(key, val);
-              }
             }
             return val;
           },
           setItem: (key, value) => {
             try { localStorage.setItem(key, value); } catch (e) {}
-            document.cookie = `${key}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=lax`;
-            for (let i = 0; i < 10; i++) {
-              document.cookie = `${key}.${i}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=lax`;
-            }
-            const encodedValue = encodeURIComponent(value);
-            const MAX_CHUNK_SIZE = 3000;
-            if (encodedValue.length <= MAX_CHUNK_SIZE) {
-              try {
+            try {
+              document.cookie = `${key}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=lax`;
+              for (let i = 0; i < 10; i++) {
+                document.cookie = `${key}.${i}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=lax`;
+              }
+              const encodedValue = encodeURIComponent(value);
+              const MAX_CHUNK_SIZE = 3000;
+              if (encodedValue.length <= MAX_CHUNK_SIZE) {
                 document.cookie = `${key}=${encodedValue}; path=/; max-age=604800; secure; samesite=lax`;
-              } catch (e) {}
-            } else {
-              let offset = 0;
-              let chunkIndex = 0;
-              while (offset < encodedValue.length) {
-                const chunk = encodedValue.slice(offset, offset + MAX_CHUNK_SIZE);
-                try {
+              } else {
+                let offset = 0;
+                let chunkIndex = 0;
+                while (offset < encodedValue.length) {
+                  const chunk = encodedValue.substring(offset, offset + MAX_CHUNK_SIZE);
                   document.cookie = `${key}.${chunkIndex}=${chunk}; path=/; max-age=604800; secure; samesite=lax`;
-                } catch (e) {}
-                offset += MAX_CHUNK_SIZE;
                 chunkIndex++;
               }
             }
@@ -6610,6 +6810,10 @@
       if (!session) return;
 
       const user = session.user;
+      localStorage.setItem('manodemy_auth', 'true');
+      if (user.email) {
+        localStorage.setItem('manodemy_user_email', user.email);
+      }
       const profileName = user.user_metadata?.full_name || user.email.split('@')[0];
       const firstName = profileName.split(' ')[0];
 
@@ -6629,23 +6833,25 @@
       const welcomeGreetingEl = document.getElementById('welcomeGreeting');
       if (welcomeGreetingEl) welcomeGreetingEl.textContent = `${greetWord}, ${firstName}! 🚀`;
 
-      // Populate custom message inside the header
-      const headerMsgEl = document.getElementById('headerCustomMessage');
-      if (headerMsgEl) {
-        let personalMessage = `Keep up the amazing work, ${firstName}! ✨`;
-        if (hrs < 12) personalMessage = `Good morning, ${firstName}! Ready to build something great? ☕`;
-        else if (hrs < 18) personalMessage = `Good afternoon, ${firstName}! Let's make today count! ⚡`;
-        else personalMessage = `Good evening, ${firstName}! Unwind with a coding session! 🌙`;
-        headerMsgEl.textContent = personalMessage;
-      }
+
 
       // Admin access toggle + profile plan check
       let userProfile = null;
       try {
         const { data: profile } = await sb.from('profiles').select('role, plan, plan_type').eq('id', user.id).single();
         userProfile = profile;
-        if (profile?.role === 'admin') {
-          document.getElementById('adminLink').style.display = 'block';
+        const isAdmin = (profile && profile.role === 'admin') || user.email === 'manodamy25@gmail.com' || (user.email && user.email.toLowerCase().includes('manodamy'));
+        const isInstructor = isAdmin || (profile && profile.role === 'instructor');
+        
+        if (isAdmin) {
+          const directBtn = document.getElementById('directAdminNavBtn');
+          if (directBtn) directBtn.style.display = 'inline-flex';
+          const adminEl = document.getElementById('adminLink');
+          if (adminEl) adminEl.style.display = 'block';
+        }
+        if (isInstructor) {
+          const instEl = document.getElementById('instructorLink');
+          if (instEl) instEl.style.display = 'block';
         }
       } catch (err) {
         console.warn("Failed checking admin privileges", err);
@@ -6672,13 +6878,13 @@
           }
           if (progress) {
             const allCourses = [
-              { meta: PYTHON_METADATA, prefix: '', total: 1000 },
-              { meta: SQL_METADATA, prefix: 'sql-', total: 123 },
-              { meta: EXCEL_METADATA, prefix: 'excel-', total: 50 }
+              { meta: PYTHON_METADATA, prefix: '', total: 750 },
+              { meta: SQL_METADATA, prefix: 'sql-', total: 450 },
+              { meta: EXCEL_METADATA, prefix: 'excel-', total: 300 }
             ];
             
             allCourses.forEach(course => {
-              const courseChallenges = course.meta.reduce((sum, item) => sum + item.totalCells, 0);
+              const courseChallenges = course.meta.reduce((sum, item) => sum + (item.testCount || 25), 0);
               course.meta.forEach(item => {
                 const dayId = `${course.prefix}day${item.day}`;
                 const dayData = progress[dayId] || { solved_count: 0, solved_cells: [] };
@@ -6823,7 +7029,7 @@
             {
               id: 'sql',
               title: 'SQL',
-              icon: '🗄️',
+              icon: `<svg viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 22px; height: 22px;"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v6c0 1.66 4 3 9 3s9-1.34 9-3V5"></path><path d="M3 11v6c0 1.66 4 3 9 3s9-1.34 9-3v-6"></path></svg>`,
               days: '18 Days',
               class: 'course--sql',
               enrolled: isEnrolledSql
@@ -6831,7 +7037,7 @@
             {
               id: 'excel',
               title: 'Excel',
-              icon: '📊',
+              icon: `<svg viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 22px; height: 22px;"><path d="M14.625 0H8.625L1.5 2.625V20.375L8.625 23H14.625V0Z" fill="#107C41" /><path d="M21.5 2.625H14.625V6.375H21.5V2.625Z" fill="#1F9A55" /><path d="M21.5 6.375H14.625V10.125H21.5V6.375Z" fill="#33C481" /><path d="M21.5 10.125H14.625V13.875H21.5V10.125Z" fill="#107C41" /><path d="M21.5 13.875H14.625V17.625H21.5V13.875Z" fill="#1B9A59" /><path d="M21.5 17.625H14.625V20.375H21.5V17.625Z" fill="#107C41" /><path d="M10.125 6.375H3.375V16.625H10.125V6.375Z" fill="#107C41" /><path d="M11.813 7.875L9.938 11.25L11.813 14.625H9.563L8.438 12.75L7.313 14.625H5.063L6.938 11.25L5.063 7.875H7.313L8.438 9.75L9.563 7.875H11.813Z" fill="white" /></svg>`,
               days: '12 Days',
               class: 'course--excel',
               enrolled: isEnrolledExcel
@@ -6839,7 +7045,7 @@
             {
               id: 'python',
               title: 'Python',
-              icon: '🐍',
+              icon: `<svg viewBox="45.9 0 367.2 459" fill="none" style="width: 22px; height: 22px;"><path fill="#306998" d="M229.5 0C161.4 0 122.4 15.6 122.4 53.6v34.4h107.1v15.3H122.4c-47.8 0-76.5 30.6-76.5 76.5v61.2c0 45.9 28.7 76.5 76.5 76.5h30.6v-45.9c0-51 41.3-91.8 91.8-91.8h107.1V107.1c0-53.6-47.8-107.1-122.4-107.1zM175.9 30.6c8.4 0 15.3 6.9 15.3 15.3s-6.9 15.3-15.3 15.3-15.3-6.9-15.3-15.3 6.9-15.3 15.3-15.3z" /><path fill="#FFE873" d="M229.5 459c68.1 0 107.1-15.6 107.1-53.6v-34.4H229.5v-15.3h107.1c47.8 0 76.5-30.6 76.5-76.5v-61.2c0-45.9-28.7-76.5-76.5-76.5h-30.6v45.9c0 51-41.3 91.8-91.8 91.8H122.4V351.9c0 53.6 47.8 107.1 122.4 107.1zm53.6-30.6c-8.4 0-15.3-6.9-15.3-15.3s6.9-15.3 15.3-15.3 15.3 6.9 15.3 15.3-6.9 15.3-15.3 15.3z" /></svg>`,
               days: '30 Days',
               class: 'course--python',
               enrolled: isEnrolledPython
@@ -6860,9 +7066,16 @@
 
             let progressHTML = `
               <div class="course-select-progress-container">
-                <div class="course-select-progress-text">
-                  <span>Progress</span>
-                  <span class="course-select-progress-val">${stats.totalSolved} / ${stats.totalCells} Solved (${percent}%)</span>
+                <div class="course-select-progress-row">
+                  <span class="course-progress-label">PROGRESS</span>
+                  <div class="course-select-fraction-badge">
+                    <span class="math-fraction">
+                      <span class="frac-num">${stats.totalSolved}</span>
+                      <span class="frac-bar"></span>
+                      <span class="frac-den">${stats.totalCells}</span>
+                    </span>
+                    <span class="frac-pct-badge">${percent}%</span>
+                  </div>
                 </div>
                 <div class="course-select-progress-bar">
                   <div class="course-select-progress-fill" style="width: ${percent}%;"></div>
@@ -7428,7 +7641,7 @@
 
         const totalMarksEl = document.getElementById('heroTotalMarks');
 
-        if (totalMarksEl) totalMarksEl.textContent = boundedTotalMarks.toFixed(1);
+        if (totalMarksEl) totalMarksEl.textContent = Math.round(boundedTotalMarks);
 
         const scorePercentageEl = document.getElementById('heroScorePercentage');
 
@@ -8549,7 +8762,8 @@
           setTimeout(() => {
             const isMobile = window.innerWidth <= 768;
             const spacing = isMobile ? 140 : 108;
-            const targetY = 120 + (currentDay.globalDay - 1) * spacing;
+            const firstCardY = isMobile ? 210 : 240;
+            const targetY = firstCardY + (currentDay.globalDay - 1) * spacing;
             const viewport = document.getElementById('roadmapViewport');
             if (viewport) {
               viewport.scrollTop = targetY - viewport.clientHeight / 2;
@@ -8574,14 +8788,18 @@
         if (!viewport || !canvas) return;
 
         const ctx = canvas.getContext('2d');
-        // Disable image smoothing so pixel-aligned text stays crisp
-        ctx.imageSmoothingEnabled = false;
-        const dpr = Math.min(Math.max(window.devicePixelRatio || 1, 2.0), 2.5); /* Set minimum 2x resolution for extreme crispness, capped at 2.5x to prevent texture limit issues */
+        // Enable high quality anti-aliasing for ultra-crisp vector lines
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        const dpr = Math.min(Math.max(window.devicePixelRatio || 1, 2.0), 2.5);
         
         const width = viewport.clientWidth || 400;
         const isMobile = window.innerWidth <= 768;
         const spacing = isMobile ? 140 : 108;
-        const goalY = 120 + 59 * spacing + (isMobile ? 160 : 140);
+        const firstCardY = isMobile ? 210 : 240; // Spacious 110px+ gap below START gantry
+        const lastCardY = firstCardY + 59 * spacing;
+        const finishY = lastCardY + (isMobile ? 130 : 150); // Spacious 50px+ gap below Day 60 card
+        const goalY = finishY + (isMobile ? 90 : 100);
         const height = goalY + (isMobile ? 140 : 120);
 
         // Dynamic viewport sizing
@@ -8616,30 +8834,66 @@
                        (window.getComputedStyle(document.body).backgroundColor && 
                         isColorDark(window.getComputedStyle(document.body).backgroundColor));
 
-        // 1. Background Gradient
+        // 1. Terrain Background & Ground Micro-Noise
         const bgGrad = ctx.createLinearGradient(0, 0, 0, height);
         if (isDark) {
-          bgGrad.addColorStop(0, '#0d1117');
-          bgGrad.addColorStop(0.5, '#111827');
-          bgGrad.addColorStop(1, '#0a0f1a');
+          bgGrad.addColorStop(0, '#090d16');
+          bgGrad.addColorStop(0.3, '#0d1527');
+          bgGrad.addColorStop(0.7, '#0b1320');
+          bgGrad.addColorStop(1, '#070a12');
         } else {
-          bgGrad.addColorStop(0, '#dce8f5');
-          bgGrad.addColorStop(0.5, '#c8d8ec');
-          bgGrad.addColorStop(1, '#b8ccdf');
+          bgGrad.addColorStop(0, '#dbe7f3');
+          bgGrad.addColorStop(0.25, '#d3e2f0');
+          bgGrad.addColorStop(0.65, '#c5d7e8');
+          bgGrad.addColorStop(1, '#b5cae0');
         }
         ctx.fillStyle = bgGrad;
         ctx.fillRect(0, 0, width, height);
 
-        // 2. Map Grid lines
-        ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.03)' : 'rgba(68,102,170,0.05)';
+        // 1b. Organic Terrain Patches (Simulated Satellite Topography)
+        ctx.save();
+        const patchSeed = [
+          { yRatio: 0.08, xRatio: 0.15, rx: 110, ry: 45, colLight: 'rgba(255,255,255,0.06)', colDark: 'rgba(255,255,255,0.02)' },
+          { yRatio: 0.22, xRatio: 0.85, rx: 130, ry: 55, colLight: 'rgba(0,0,0,0.04)', colDark: 'rgba(0,0,0,0.15)' },
+          { yRatio: 0.38, xRatio: 0.12, rx: 140, ry: 60, colLight: 'rgba(245,158,11,0.04)', colDark: 'rgba(245,158,11,0.03)' },
+          { yRatio: 0.55, xRatio: 0.88, rx: 120, ry: 50, colLight: 'rgba(16,185,129,0.04)', colDark: 'rgba(16,185,129,0.03)' },
+          { yRatio: 0.72, xRatio: 0.18, rx: 150, ry: 65, colLight: 'rgba(6,182,212,0.04)', colDark: 'rgba(6,182,212,0.03)' },
+          { yRatio: 0.88, xRatio: 0.82, rx: 125, ry: 48, colLight: 'rgba(251,191,36,0.05)', colDark: 'rgba(251,191,36,0.03)' }
+        ];
+        patchSeed.forEach(p => {
+          ctx.fillStyle = isDark ? p.colDark : p.colLight;
+          ctx.beginPath();
+          ctx.ellipse(width * p.xRatio, height * p.yRatio, p.rx, p.ry, 0, 0, 2 * Math.PI);
+          ctx.fill();
+        });
+        ctx.restore();
+
+        // 1c. Phase Zone Overlay Tint Bands across Terrain
+        const sqlEndY = 120 + 17 * spacing;
+        const excelEndY = 120 + 29 * spacing;
+        
+        // SQL Zone (Days 1-18)
+        ctx.fillStyle = isDark ? 'rgba(6, 182, 212, 0.03)' : 'rgba(6, 182, 212, 0.04)';
+        ctx.fillRect(0, 0, width, sqlEndY + 50);
+
+        // Excel Zone (Days 19-30)
+        ctx.fillStyle = isDark ? 'rgba(245, 158, 11, 0.03)' : 'rgba(245, 158, 11, 0.04)';
+        ctx.fillRect(0, sqlEndY + 50, width, excelEndY - sqlEndY);
+
+        // Python Zone (Days 31-60)
+        ctx.fillStyle = isDark ? 'rgba(16, 185, 129, 0.03)' : 'rgba(16, 185, 129, 0.04)';
+        ctx.fillRect(0, excelEndY + 50, width, height - excelEndY);
+
+        // 2. Map Grid Lines (Subtle Topographic Survey Grid)
+        ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.025)' : 'rgba(71,85,105,0.04)';
         ctx.lineWidth = 0.5;
-        for (let x = 0; x < width; x += 28) {
+        for (let x = 0; x < width; x += 32) {
           ctx.beginPath();
           ctx.moveTo(x, 0);
           ctx.lineTo(x, height);
           ctx.stroke();
         }
-        for (let y = 0; y < height; y += 28) {
+        for (let y = 0; y < height; y += 32) {
           ctx.beginPath();
           ctx.moveTo(0, y);
           ctx.lineTo(width, y);
@@ -8652,17 +8906,32 @@
         const rightTop = [];
         const leftBot = [];
         const rightBot = [];
+        const grassLeft = [];
+        const grassRight = [];
 
-        const step = 6;
-        const A = isMobile ? 8 : width * 0.16; // Curve amplitude
-        const lambda = 720;     // Wave length (cycle)
-        const ROAD_W = isMobile ? 18 : 32;      // Half road width
-        const WALL_H = isMobile ? 8 : 12;      // Road sidewall height
-        const centerX = isMobile ? 55 : width / 2;
+        const step = 8;
+        const A = isMobile ? width * 0.20 : width * 0.24;
+        const lambda = isMobile ? 640 : 680;
+        const ROAD_W = isMobile ? 28 : 42;                // Increased Road Width for HD scale
+        const WALL_H = isMobile ? 12 : 18;                // Increased Kerb Height
+        const SHOULDER_W = isMobile ? 6 : 10;             // Grass shoulder strip width
+        const centerX = width * 0.50;
+
+        const getRoadX = (yVal) => {
+          const mainWave = Math.sin((2 * Math.PI * yVal) / lambda);
+          const flowWave = Math.sin((4 * Math.PI * yVal) / lambda + 0.6) * 0.28;
+          return centerX + A * (mainWave + flowWave);
+        };
+
+        const getRoadDerivative = (yVal) => {
+          const dy1 = (A * 2 * Math.PI / lambda) * Math.cos((2 * Math.PI * yVal) / lambda);
+          const dy2 = (A * 4 * Math.PI / lambda * 0.28) * Math.cos((4 * Math.PI * yVal) / lambda + 0.6);
+          return dy1 + dy2;
+        };
 
         for (let y = 30; y <= height - 30; y += step) {
-          const x = centerX + A * Math.sin((2 * Math.PI * y) / lambda);
-          const dx_dy = (A * 2 * Math.PI / lambda) * Math.cos((2 * Math.PI * y) / lambda);
+          const x = getRoadX(y);
+          const dx_dy = getRoadDerivative(y);
           const len = Math.sqrt(dx_dy * dx_dy + 1);
           
           const nx = -1 / len;
@@ -8673,15 +8942,33 @@
           rightTop.push({ x: x - nx * ROAD_W, y: y - ny * ROAD_W });
           leftBot.push({ x: x + nx * ROAD_W, y: y + ny * ROAD_W + WALL_H });
           rightBot.push({ x: x - nx * ROAD_W, y: y - ny * ROAD_W + WALL_H });
+          grassLeft.push({ x: x + nx * (ROAD_W + SHOULDER_W), y: y + ny * (ROAD_W + SHOULDER_W) });
+          grassRight.push({ x: x - nx * (ROAD_W + SHOULDER_W), y: y - ny * (ROAD_W + SHOULDER_W) });
         }
 
-        // 4. Draw Cast Shadow
+        // 4. Grass Shoulder Strips beyond road kerb
+        ctx.fillStyle = isDark ? '#1a3322' : '#7db87a';
+        ctx.beginPath();
+        ctx.moveTo(grassLeft[0].x, grassLeft[0].y);
+        for (let i = 1; i < grassLeft.length; i++) ctx.lineTo(grassLeft[i].x, grassLeft[i].y);
+        for (let i = leftTop.length - 1; i >= 0; i--) ctx.lineTo(leftTop[i].x, leftTop[i].y);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(grassRight[0].x, grassRight[0].y);
+        for (let i = 1; i < grassRight.length; i++) ctx.lineTo(grassRight[i].x, grassRight[i].y);
+        for (let i = rightTop.length - 1; i >= 0; i--) ctx.lineTo(rightTop[i].x, rightTop[i].y);
+        ctx.closePath();
+        ctx.fill();
+
+        // 4b. Draw Deep Realistic Cast Shadow
         ctx.save();
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.22)';
-        ctx.shadowBlur = 10;
-        ctx.shadowOffsetX = 10;
-        ctx.shadowOffsetY = 12;
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.32)';
+        ctx.shadowBlur = 18;
+        ctx.shadowOffsetX = 14;
+        ctx.shadowOffsetY = 16;
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
         ctx.beginPath();
         ctx.moveTo(leftTop[0].x, leftTop[0].y);
         for (let i = 1; i < leftTop.length; i++) ctx.lineTo(leftTop[i].x, leftTop[i].y);
@@ -8690,49 +8977,32 @@
         ctx.fill();
         ctx.restore();
 
-        // 5. Right Sidewall
-        for (let i = 0; i < points.length - 1; i++) {
-          const sideGrad = ctx.createLinearGradient(rightTop[i].x, rightTop[i].y, rightBot[i].x, rightBot[i].y);
-          if (isDark) {
-            sideGrad.addColorStop(0, '#334155');
-            sideGrad.addColorStop(1, '#1e293b');
-          } else {
-            sideGrad.addColorStop(0, '#cbd5e1');
-            sideGrad.addColorStop(1, '#94a3b8');
-          }
-          ctx.fillStyle = sideGrad;
-          ctx.beginPath();
-          ctx.moveTo(rightTop[i].x, rightTop[i].y);
-          ctx.lineTo(rightTop[i+1].x, rightTop[i+1].y);
-          ctx.lineTo(rightBot[i+1].x, rightBot[i+1].y);
-          ctx.lineTo(rightBot[i].x, rightBot[i].y);
-          ctx.closePath();
-          ctx.fill();
-        }
+        // 5. Right Sidewall (3D Concrete Kerb)
+        ctx.beginPath();
+        ctx.moveTo(rightTop[0].x, rightTop[0].y);
+        for (let i = 1; i < rightTop.length; i++) ctx.lineTo(rightTop[i].x, rightTop[i].y);
+        for (let i = rightBot.length - 1; i >= 0; i--) ctx.lineTo(rightBot[i].x, rightBot[i].y);
+        ctx.closePath();
+        const rightSideGrad = ctx.createLinearGradient(0, 0, width, 0);
+        rightSideGrad.addColorStop(0, isDark ? '#475569' : '#94a3b8');
+        rightSideGrad.addColorStop(1, isDark ? '#1e293b' : '#64748b');
+        ctx.fillStyle = rightSideGrad;
+        ctx.fill();
 
-        // 6. Left Sidewall (Lighter, simulating key light)
-        for (let i = 0; i < points.length - 1; i++) {
-          const sideGrad = ctx.createLinearGradient(leftTop[i].x, leftTop[i].y, leftBot[i].x, leftBot[i].y);
-          if (isDark) {
-            sideGrad.addColorStop(0, '#cbd5e0');
-            sideGrad.addColorStop(0.5, '#94a3b8');
-            sideGrad.addColorStop(1, '#475569');
-          } else {
-            sideGrad.addColorStop(0, '#f1f5f9');
-            sideGrad.addColorStop(0.5, '#e2e8f0');
-            sideGrad.addColorStop(1, '#cbd5e1');
-          }
-          ctx.fillStyle = sideGrad;
-          ctx.beginPath();
-          ctx.moveTo(leftTop[i].x, leftTop[i].y);
-          ctx.lineTo(leftTop[i+1].x, leftTop[i+1].y);
-          ctx.lineTo(leftBot[i+1].x, leftBot[i+1].y);
-          ctx.lineTo(leftBot[i].x, leftBot[i].y);
-          ctx.closePath();
-          ctx.fill();
-        }
+        // 6. Left Sidewall (3D Concrete Kerb with Light Highlight)
+        ctx.beginPath();
+        ctx.moveTo(leftTop[0].x, leftTop[0].y);
+        for (let i = 1; i < leftTop.length; i++) ctx.lineTo(leftTop[i].x, leftTop[i].y);
+        for (let i = leftBot.length - 1; i >= 0; i--) ctx.lineTo(leftBot[i].x, leftBot[i].y);
+        ctx.closePath();
+        const leftSideGrad = ctx.createLinearGradient(0, 0, width, 0);
+        leftSideGrad.addColorStop(0, isDark ? '#cbd5e1' : '#f8fafc');
+        leftSideGrad.addColorStop(0.5, isDark ? '#94a3b8' : '#e2e8f0');
+        leftSideGrad.addColorStop(1, isDark ? '#475569' : '#cbd5e1');
+        ctx.fillStyle = leftSideGrad;
+        ctx.fill();
 
-        // 7. Road Surface
+        // 7. Asphalt Road Surface (Dark Charcoal Realism)
         ctx.beginPath();
         ctx.moveTo(leftTop[0].x, leftTop[0].y);
         for (let i = 1; i < leftTop.length; i++) ctx.lineTo(leftTop[i].x, leftTop[i].y);
@@ -8740,18 +9010,18 @@
         ctx.closePath();
         const roadGrad = ctx.createLinearGradient(centerX, 30, centerX, height - 30);
         if (isDark) {
-          roadGrad.addColorStop(0, '#1e293b');
+          roadGrad.addColorStop(0, '#1c2333');
           roadGrad.addColorStop(0.5, '#0f172a');
-          roadGrad.addColorStop(1, '#020617');
+          roadGrad.addColorStop(1, '#090d16');
         } else {
-          roadGrad.addColorStop(0, '#334155');
+          roadGrad.addColorStop(0, '#2b3648');
           roadGrad.addColorStop(0.5, '#1e293b');
           roadGrad.addColorStop(1, '#0f172a');
         }
         ctx.fillStyle = roadGrad;
         ctx.fill();
 
-        // 8. Clip Road Surface for inner lines / textures
+        // 8. Clip Asphalt Surface for Granular Noise & Highway Markings
         ctx.save();
         ctx.beginPath();
         ctx.moveTo(leftTop[0].x, leftTop[0].y);
@@ -8760,18 +9030,28 @@
         ctx.closePath();
         ctx.clip();
 
-        // Diagonal texture
-        const texGrad = ctx.createLinearGradient(0, 0, width, height);
-        texGrad.addColorStop(0, 'rgba(255,255,255,0.03)');
-        texGrad.addColorStop(0.3, 'rgba(0,0,0,0.04)');
-        texGrad.addColorStop(0.7, 'rgba(255,255,255,0.04)');
-        texGrad.addColorStop(1, 'rgba(0,0,0,0.03)');
-        ctx.fillStyle = texGrad;
+        // Asphalt Micro-Grit Granular Noise Texture
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+        for (let i = 0; i < points.length; i += 3) {
+          const pt = points[i];
+          const rx = pt.x + (Math.sin(i * 1.7) * (ROAD_W - 4));
+          const ry = pt.y + (Math.cos(i * 2.3) * 3);
+          ctx.fillRect(rx, ry, 1.2, 1.2);
+        }
+
+        // Specular Crown Lighting Sheen down Center Road
+        const crownGrad = ctx.createLinearGradient(centerX - ROAD_W, 0, centerX + ROAD_W, 0);
+        crownGrad.addColorStop(0, 'rgba(255,255,255,0)');
+        crownGrad.addColorStop(0.5, 'rgba(255,255,255,0.06)');
+        crownGrad.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = crownGrad;
         ctx.fillRect(0, 0, width, height);
 
-        // White edge lines
-        ctx.strokeStyle = 'rgba(255,255,255,0.45)';
-        ctx.lineWidth = 1.6;
+        // Solid White Outer Edge Lines (3.2px wide with smooth rounded joins)
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+        ctx.lineWidth = 3.2;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
         ctx.beginPath();
         ctx.moveTo(leftTop[0].x, leftTop[0].y);
         for (let i = 1; i < leftTop.length; i++) ctx.lineTo(leftTop[i].x, leftTop[i].y);
@@ -8782,10 +9062,12 @@
         for (let i = 1; i < rightTop.length; i++) ctx.lineTo(rightTop[i].x, rightTop[i].y);
         ctx.stroke();
 
-        // Center line dashed
-        ctx.strokeStyle = 'rgba(255,255,255,0.4)';
-        ctx.lineWidth = 1.5;
-        ctx.setLineDash([12, 10]);
+        // Center Yellow Dashed Highway Lane Line (Crisp HD Rounded Dashes)
+        ctx.strokeStyle = 'rgba(251, 191, 36, 0.9)';
+        ctx.lineWidth = 3.2;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.setLineDash([20, 14]);
         ctx.beginPath();
         ctx.moveTo(points[0].x, points[0].y);
         for (let i = 1; i < points.length; i++) ctx.lineTo(points[i].x, points[i].y);
@@ -8800,9 +9082,9 @@
 
         ctx.restore();
 
-        // 9. Crisp edge lighting rims
-        ctx.strokeStyle = 'rgba(255,255,255,0.22)';
-        ctx.lineWidth = 0.8;
+        // 9. Sharp Concrete Kerb Specular Rims
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+        ctx.lineWidth = 1.2;
         ctx.beginPath();
         ctx.moveTo(leftTop[0].x, leftTop[0].y);
         for (let i = 1; i < leftTop.length; i++) ctx.lineTo(leftTop[i].x, leftTop[i].y);
@@ -8813,102 +9095,177 @@
         for (let i = 1; i < rightTop.length; i++) ctx.lineTo(rightTop[i].x, rightTop[i].y);
         ctx.stroke();
 
-        // Sidewall bottom boundaries
-        ctx.strokeStyle = 'rgba(0, 0, 0, 0.12)';
-        ctx.lineWidth = 0.8;
-        ctx.beginPath();
-        ctx.moveTo(leftBot[0].x, leftBot[0].y);
-        for (let i = 1; i < leftBot.length; i++) ctx.lineTo(leftBot[i].x, leftBot[i].y);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(rightBot[0].x, rightBot[0].y);
-        for (let i = 1; i < rightBot.length; i++) ctx.lineTo(rightBot[i].x, rightBot[i].y);
-        ctx.stroke();
-
-        // 10. Render 3D START Entrance Archway spanning across the road
-        const startY = 65;
+        // 10. Render Realistic 3D Steel Truss START Gantry Archway with LED Beacons & Waving Flags
+        const startY = 70;
         const startX = centerX + A * Math.sin((2 * Math.PI * startY) / lambda);
 
         ctx.save();
-        const columnOffset = isMobile ? 22 : 38;
-        const archWidth = isMobile ? 60 : 104;
+        const archText = isMobile ? '🚦 START YOUR JOURNEY' : '🚦 START YOUR 60-DAY JOURNEY';
+        ctx.font = `900 ${isMobile ? '10px' : '12px'} Arial, sans-serif`;
+        const measuredTextWidth = ctx.measureText(archText).width;
+        
+        const archWidth = Math.max(measuredTextWidth + (isMobile ? 28 : 40), isMobile ? 140 : 220);
+        const archHeight = isMobile ? 28 : 34;
+        const columnOffset = Math.max((archWidth / 2) + 6, ROAD_W + (isMobile ? 12 : 20));
 
-        // Left Column (base shadow)
-        ctx.fillStyle = 'rgba(0,0,0,0.3)';
+        // a) Ground Concrete Footing Foundations & Base Shadows
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
         ctx.beginPath();
-        ctx.ellipse(startX - columnOffset, startY + 12, isMobile ? 4 : 6, isMobile ? 1.8 : 2.5, 0, 0, 2 * Math.PI);
-        ctx.ellipse(startX + columnOffset, startY + 12, isMobile ? 4 : 6, isMobile ? 1.8 : 2.5, 0, 0, 2 * Math.PI);
+        ctx.ellipse(startX - columnOffset, startY + 16, isMobile ? 10 : 14, isMobile ? 4 : 5.5, 0, 0, 2 * Math.PI);
+        ctx.ellipse(startX + columnOffset, startY + 16, isMobile ? 10 : 14, isMobile ? 4 : 5.5, 0, 0, 2 * Math.PI);
         ctx.fill();
 
-        // 3D Pillar columns flanking the road
-        const columnGrad = ctx.createLinearGradient(startX - columnOffset - 4, startY - 40, startX - columnOffset + 4, startY + 10);
-        columnGrad.addColorStop(0, '#cbd5e1');
-        columnGrad.addColorStop(0.3, '#f1f5f9');
-        columnGrad.addColorStop(0.8, '#475569');
-        columnGrad.addColorStop(1, '#1e293b');
+        // 3D Chamfered Concrete Footing Pedestals
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(startX - columnOffset - (isMobile ? 9 : 14), startY + 6, isMobile ? 18 : 28, 10);
+        ctx.fillRect(startX + columnOffset - (isMobile ? 9 : 14), startY + 6, isMobile ? 18 : 28, 10);
+        ctx.fillStyle = '#475569';
+        ctx.fillRect(startX - columnOffset - (isMobile ? 9 : 14), startY + 4, isMobile ? 18 : 28, 3);
+        ctx.fillRect(startX + columnOffset - (isMobile ? 9 : 14), startY + 4, isMobile ? 18 : 28, 3);
 
-        // Left Pillar
+        // Steel Baseplates with Silver Bolt Rivets
+        ctx.fillStyle = '#64748b';
+        ctx.fillRect(startX - columnOffset - (isMobile ? 7 : 11), startY + 1, isMobile ? 14 : 22, 3);
+        ctx.fillRect(startX + columnOffset - (isMobile ? 7 : 11), startY + 1, isMobile ? 14 : 22, 3);
+        ctx.fillStyle = '#f8fafc';
+        [-8, 8].forEach(ox => {
+          ctx.fillRect(startX - columnOffset + ox - 1, startY + 2, 2, 2);
+          ctx.fillRect(startX + columnOffset + ox - 1, startY + 2, 2, 2);
+        });
+
+        // b) Dual Steel Vertical Lattice Pillars with Metallic Specular Sheen
+        const columnGrad = ctx.createLinearGradient(startX - columnOffset - 6, startY - 55, startX - columnOffset + 6, startY + 6);
+        columnGrad.addColorStop(0, '#ffffff');
+        columnGrad.addColorStop(0.2, '#cbd5e1');
+        columnGrad.addColorStop(0.7, '#475569');
+        columnGrad.addColorStop(1, '#0f172a');
+
+        // Left Steel Columns (Dual Tube Pillar)
         ctx.fillStyle = columnGrad;
-        ctx.fillRect(startX - columnOffset - 3, startY - 45, isMobile ? 4 : 6, 56);
-        ctx.fillStyle = '#334155';
-        ctx.fillRect(startX - columnOffset - 5, startY + 9, isMobile ? 8 : 10, 3); // base cap
-        ctx.fillRect(startX - columnOffset - 4, startY - 48, isMobile ? 6 : 8, 3);  // top cap
+        ctx.fillRect(startX - columnOffset - (isMobile ? 5 : 7), startY - 60, isMobile ? 4 : 6, 64);
+        ctx.fillRect(startX - columnOffset + (isMobile ? 1 : 1), startY - 60, isMobile ? 4 : 6, 64);
 
-        // Right Pillar
-        ctx.fillStyle = columnGrad;
-        ctx.fillRect(startX + columnOffset - 3, startY - 45, isMobile ? 4 : 6, 56);
-        ctx.fillStyle = '#334155';
-        ctx.fillRect(startX + columnOffset - 5, startY + 9, isMobile ? 8 : 10, 3); // base cap
-        ctx.fillRect(startX + columnOffset - 4, startY - 48, isMobile ? 6 : 8, 3);  // top cap
+        // Right Steel Columns (Dual Tube Pillar)
+        ctx.fillRect(startX + columnOffset - (isMobile ? 5 : 7), startY - 60, isMobile ? 4 : 6, 64);
+        ctx.fillRect(startX + columnOffset + (isMobile ? 1 : 1), startY - 60, isMobile ? 4 : 6, 64);
 
-        // 3D Cross Archway Signboard
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.22)';
+        // Neon Cyan Strip on Inner Edges
+        ctx.fillStyle = '#06b6d4';
+        ctx.shadowColor = '#06b6d4';
         ctx.shadowBlur = 8;
-        ctx.shadowOffsetY = 4;
+        ctx.fillRect(startX - columnOffset + (isMobile ? 5 : 7), startY - 58, 2, 60);
+        ctx.fillRect(startX + columnOffset - (isMobile ? 7 : 9), startY - 58, 2, 60);
+        ctx.shadowBlur = 0;
 
-        const archGrad = ctx.createLinearGradient(startX, startY - 50, startX, startY - 26);
-        archGrad.addColorStop(0, '#10b981');
-        archGrad.addColorStop(1, '#047857');
+        // Pillar Diagonal Cross Ties
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 1.6;
+        for (let py = startY - 54; py <= startY + 2; py += 14) {
+          ctx.beginPath();
+          ctx.moveTo(startX - columnOffset - (isMobile ? 5 : 7), py);
+          ctx.lineTo(startX - columnOffset + (isMobile ? 5 : 7), py + 10);
+          ctx.moveTo(startX + columnOffset - (isMobile ? 5 : 7), py);
+          ctx.lineTo(startX + columnOffset + (isMobile ? 5 : 7), py + 10);
+          ctx.stroke();
+        }
+
+        // c) Overhead Horizontal Lattice Truss Beam
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 3.2;
+        ctx.beginPath();
+        ctx.moveTo(startX - columnOffset, startY - 56);
+        ctx.lineTo(startX + columnOffset, startY - 56);
+        ctx.moveTo(startX - columnOffset, startY - 34);
+        ctx.lineTo(startX + columnOffset, startY - 34);
+        ctx.stroke();
+
+        // Overhead Truss Zig-Zag Struts
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        for (let tx = startX - columnOffset; tx < startX + columnOffset; tx += 20) {
+          ctx.moveTo(tx, startY - 56);
+          ctx.lineTo(tx + 10, startY - 34);
+          ctx.lineTo(tx + 20, startY - 56);
+        }
+        ctx.stroke();
+
+        // Top Post Caps with Glowing Green Beacons
+        [-columnOffset, columnOffset].forEach(ox => {
+          ctx.fillStyle = '#1e293b';
+          ctx.fillRect(startX + ox - 6, startY - 66, 12, 6);
+          ctx.fillStyle = '#10b981';
+          ctx.shadowColor = '#10b981';
+          ctx.shadowBlur = 14;
+          ctx.beginPath();
+          ctx.arc(startX + ox, startY - 68, 4, 0, 2 * Math.PI);
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        });
+
+        // d) Signboard Metallic Clamps/Brackets
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(startX - (archWidth / 3) - 4, startY - 62, 8, 36);
+        ctx.fillRect(startX + (archWidth / 3) - 4, startY - 62, 8, 36);
+
+        // e) Realistic Highway Green Overhead Signboard
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+        ctx.shadowBlur = 16;
+        ctx.shadowOffsetY = 8;
+
+        const archGrad = ctx.createLinearGradient(startX, startY - 60, startX, startY - 24);
+        archGrad.addColorStop(0, '#047857');
+        archGrad.addColorStop(0.3, '#10b981');
+        archGrad.addColorStop(0.7, '#059669');
+        archGrad.addColorStop(1, '#022c22');
         ctx.fillStyle = archGrad;
         ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = isMobile ? 1.2 : 1.8;
+        ctx.lineWidth = 2.5;
         
-        // Curved banner path for archway
-        drawRoundedRect(ctx, startX - (archWidth / 2) - 4, startY - 56, archWidth + 8, 24, 3);
+        const signLeft = startX - (archWidth / 2);
+        const signTop = startY - 58;
+
+        drawRoundedRect(ctx, signLeft, signTop, archWidth, archHeight, 6);
         ctx.fill();
         ctx.stroke();
+
+        // Inner Silver Border Inset & Gold Corner Rivets
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+        ctx.lineWidth = 1.0;
+        drawRoundedRect(ctx, signLeft + 3, signTop + 3, archWidth - 6, archHeight - 6, 4);
+        ctx.stroke();
+
+        ctx.fillStyle = '#fbbf24';
+        [signLeft + 6, signLeft + archWidth - 6].forEach(rx => {
+          [signTop + 6, signTop + archHeight - 6].forEach(ry => {
+            ctx.beginPath();
+            ctx.arc(rx, ry, 1.5, 0, 2 * Math.PI);
+            ctx.fill();
+          });
+        });
         ctx.restore();
 
-        // Text inside Archway
+        // f) Crisp White Lettering Centered inside Signboard
+        ctx.save();
         ctx.fillStyle = '#ffffff';
-        ctx.font = `900 ${isMobile ? '8px' : '9.5px'} Arial`;
+        ctx.font = `900 ${isMobile ? '10px' : '12px'} Arial, sans-serif`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(isMobile ? '🏁 START' : '🏁 START: SQL', startX, startY - 44);
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
+        ctx.shadowBlur = 3;
+        ctx.shadowOffsetY = 1;
+        ctx.fillText(archText, startX, startY - 41);
+        ctx.restore();
 
-        // 11. Plot and draw all 60 Day nodes
-        const cardW = 210;
-        const cardH = 88; // Wide and tall native DOM cards
-
+        // 11. Plot and draw all 60 Day nodes with Dynamic Edge Cards & HD 3D Signposts
         roadmapDays.forEach((day, index) => {
-          const cy = 120 + index * spacing; // Dynamic spacing to completely avoid card overlap on mobile/desktop
-          const cx = centerX + A * Math.sin((2 * Math.PI * cy) / lambda);
+          const cy = firstCardY + index * spacing;
+          const cx = getRoadX(cy);
 
-          // Alternating placement rules
-          const isRight = isMobile ? true : cx < centerX;
-          const gap = isMobile ? 18 : 28;
-          const cardX = isRight ? cx + gap : cx - gap - cardW;
-          const cardY = cy - cardH / 2;
-
-          day.cx = cx;
-          day.cy = cy;
-          day.cardX = cardX;
-          day.cardY = cardY;
-          day.cardW = cardW;
-          day.cardH = cardH;
-
-          // Theme color configurations
-          let colors = { light: '#fef3c7', mid: '#f59e0b', dark: '#b45309' }; // excel
+          // Position card on opposite side of curve peak for optimal balance
+          const isRight = cx < centerX;
+          
+          let colors = { light: '#fef3c7', mid: '#f59e0b', dark: '#b45309' };
           if (day.phase === 'sql') colors = { light: '#ecfeff', mid: '#06b6d4', dark: '#0891b2' };
           if (day.phase === 'python') colors = { light: '#ecfdf5', mid: '#10b981', dark: '#047857' };
           
@@ -8916,62 +9273,57 @@
             colors = { light: isDark ? '#1e293b' : '#f1f5f9', mid: '#94a3b8', dark: '#64748b' };
           }
 
-          const isHovered = window.hoveredDayId === day.globalDay;
-
-          // a) Connector Line
-          ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.22)' : 'rgba(0,0,0,0.12)';
-          ctx.lineWidth = 1;
-          ctx.setLineDash([4, 3]);
-          ctx.beginPath();
-          if (isRight) {
-            ctx.moveTo(cx, cy);
-            ctx.lineTo(cardX, cy);
-          } else {
-            ctx.moveTo(cx, cy);
-            ctx.lineTo(cardX + cardW, cy);
-          }
-          ctx.stroke();
-          ctx.setLineDash([]);
-
           // b) Post Ground Shadow
-          ctx.fillStyle = 'rgba(0,0,0,0.28)';
+          ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
           ctx.beginPath();
-          ctx.ellipse(cx, cy + 18, 10, 3.5, 0, 0, 2 * Math.PI);
+          ctx.ellipse(cx, cy + 22, 14, 5, 0, 0, 2 * Math.PI);
           ctx.fill();
 
-          // c) Chunky 3D Steel Cylinder Pole (Width: 6.5px instead of 4px)
-          const poleGrad = ctx.createLinearGradient(cx - 3.5, cy - 12, cx + 3.5, cy + 18);
-          poleGrad.addColorStop(0, '#94a3b8');
-          poleGrad.addColorStop(0.3, '#f8fafc');
-          poleGrad.addColorStop(0.7, '#475569');
+          // c) Chunky 3D Metallic Steel Pole (Width: 12px)
+          const poleGrad = ctx.createLinearGradient(cx - 6, cy - 18, cx + 6, cy + 22);
+          poleGrad.addColorStop(0, '#e2e8f0');
+          poleGrad.addColorStop(0.3, '#ffffff');
+          poleGrad.addColorStop(0.7, '#64748b');
           poleGrad.addColorStop(1, '#1e293b');
           ctx.fillStyle = poleGrad;
-          
-          // Base flange collar details for 3D look
-          ctx.fillRect(cx - 3.5, cy - 12, 7, 30);
-          
-          // Flange ring
-          ctx.fillStyle = '#475569';
-          ctx.fillRect(cx - 5, cy + 15, 10, 3);
+          ctx.fillRect(cx - 6, cy - 18, 12, 40);
 
-          // d) Bigger Beveled Signboard (36x24px instead of 28x20px)
+          // Base Flange Ring
+          ctx.fillStyle = '#334155';
+          ctx.fillRect(cx - 8, cy + 19, 16, 4);
+
+          // d) Enlarged 3D Milestone Signboard (54x34px desktop / 44x28px mobile)
           ctx.save();
-          ctx.shadowColor = 'rgba(0,0,0,0.22)';
-          ctx.shadowBlur = 5;
-          ctx.shadowOffsetY = 3;
-          
-          const signY = cy - 24;
+          const signW = isMobile ? 44 : 54;
+          const signH = isMobile ? 28 : 34;
+          const signY = cy - 30;
+
+          if (day.isCompleted) {
+            ctx.shadowColor = 'rgba(251, 191, 36, 0.8)';
+            ctx.shadowBlur = 18;
+          } else {
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+            ctx.shadowBlur = 8;
+            ctx.shadowOffsetY = 4;
+          }
+
           ctx.fillStyle = colors.mid;
           ctx.strokeStyle = '#ffffff';
-          ctx.lineWidth = 1.8;
+          ctx.lineWidth = 2.2;
           
-          drawRoundedRect(ctx, cx - 18, signY - 12, 36, 24, 4);
+          drawRoundedRect(ctx, cx - (signW / 2), signY - (signH / 2), signW, signH, 6);
           ctx.fill();
           ctx.stroke();
 
-          // Signboard text labels
+          // Inner Bevel Ledge
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+          ctx.lineWidth = 1.0;
+          drawRoundedRect(ctx, cx - (signW / 2) + 2, signY - (signH / 2) + 2, signW - 4, signH - 4, 4);
+          ctx.stroke();
+
+          // Signboard Text Label
           ctx.fillStyle = '#ffffff';
-          ctx.font = '800 11px Arial';
+          ctx.font = `900 ${isMobile ? '12px' : '14px'} Arial`;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           let signLabel = day.globalDay;
@@ -8980,15 +9332,20 @@
           ctx.fillText(signLabel, cx, signY);
           ctx.restore();
 
-          // Render card as dynamic HTML DOM element for 100% crisp anti-aliasing
+          // Render DOM Day Card (Dynamic Width positioned touching outer edge)
           const cardEl = document.createElement('div');
           cardEl.className = `roadmap-day-node ${day.phase} ${day.isCompleted ? 'completed' : ''} ${day.isLocked ? 'locked' : ''} ${day.isCurrent ? 'current' : ''} ${isRight ? 'right' : 'left'}`;
           cardEl.style.position = 'absolute';
-          cardEl.style.left = `${isRight ? cx + gap : cx - gap}px`;
+          if (isRight) {
+            cardEl.style.left = `${width}px`;
+            cardEl.style.transform = 'translate(-100%, -50%)';
+          } else {
+            cardEl.style.left = '0px';
+            cardEl.style.transform = 'translateY(-50%)';
+          }
           cardEl.style.top = `${cy}px`;
           cardEl.style.width = 'auto';
           cardEl.style.height = 'auto';
-          cardEl.style.transform = isRight ? 'translateY(-50%)' : 'translate(-100%, -50%)';
           cardEl.style.pointerEvents = 'auto';
 
           const solvedCount = day.solvedCount || 0;
@@ -9004,23 +9361,18 @@
 
           cardEl.innerHTML = `
             <div class="roadmap-day-card ${day.phase} ${day.isLocked ? 'locked' : ''} ${day.isCurrent ? 'current' : ''}">
-              <!-- 1. Centered Top Pill -->
               <div class="card-pill">
                 ${pillText}
               </div>
-              
-              <!-- 2. Middle Row: Icon + Title -->
               <div class="card-content-row">
                 <span class="card-emoji">${day.emoji}</span>
                 <span class="card-title-text">${day.title}</span>
               </div>
-              
-              <!-- 3. Bottom Row: Progress Section -->
               <div class="card-progress-section">
                 <div class="card-progress-bar-wrapper">
                   <div class="card-progress-bar-fill" style="width: ${progressPercent}%;"></div>
                 </div>
-                <div class="card-progress-text">${day.isLocked ? 'Locked' : `${solvedCount}/${cells}`}</div>
+                <div class="card-progress-text">${day.isLocked ? 'Locked' : `${solvedCount}/25`}</div>
               </div>
             </div>
           `;
@@ -9034,21 +9386,74 @@
           };
 
           container.appendChild(cardEl);
+
+          // Measure Real Rendered Dynamic Width of Card
+          const dynamicCardW = Math.round(cardEl.offsetWidth || (isMobile ? 175 : 210));
+          const targetX = isRight ? (width - dynamicCardW) : dynamicCardW;
+
+          day.cx = cx;
+          day.cy = cy;
+          day.cardX = isRight ? (width - dynamicCardW) : 0;
+          day.cardY = cy - 44;
+          day.cardW = dynamicCardW;
+          day.cardH = 88;
+
+          // a) Phase-Colored Gradient Connector Line attached to dynamic card border
+          ctx.save();
+          ctx.strokeStyle = colors.mid;
+          ctx.lineWidth = 2.2;
+          ctx.globalAlpha = day.isLocked ? 0.35 : 0.85;
+          ctx.setLineDash([6, 4]);
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.lineTo(targetX, cy);
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          // Terminal Anchor Dot where line meets dynamic card border
+          ctx.fillStyle = colors.mid;
+          ctx.beginPath();
+          ctx.arc(targetX, cy, 3.5, 0, 2 * Math.PI);
+          ctx.fill();
+          ctx.restore();
         });
 
-        // 12. Render Stunning 3D Display Pedestal and Download Button at GOAL
-        const goalX = centerX + A * Math.sin((2 * Math.PI * goalY) / lambda);
+        // 12. Render Grand 3-Tier Gold Goal Pedestal
+        const goalX = getRoadX(goalY);
 
-        // Pedestal base plate (Shadow & Concrete)
-        ctx.fillStyle = 'rgba(0,0,0,0.25)';
+        // Tier 1 Base Plinth Shadow
+        ctx.fillStyle = 'rgba(0,0,0,0.35)';
         ctx.beginPath();
-        ctx.ellipse(goalX, goalY + 16, 28, 8, 0, 0, 2 * Math.PI);
+        ctx.ellipse(goalX, goalY + 22, 42, 12, 0, 0, 2 * Math.PI);
         ctx.fill();
 
-        ctx.fillStyle = '#475569';
-        ctx.fillRect(goalX - 25, goalY + 8, 50, 8);
+        // Tier 1 Concrete Base
         ctx.fillStyle = '#334155';
-        ctx.fillRect(goalX - 20, goalY, 40, 8);
+        ctx.fillRect(goalX - 38, goalY + 10, 76, 12);
+        ctx.fillStyle = '#475569';
+        ctx.fillRect(goalX - 38, goalY + 8, 76, 3);
+
+        // Tier 2 Gold Stepped Base
+        const tier2Grad = ctx.createLinearGradient(goalX - 28, goalY, goalX + 28, goalY + 10);
+        tier2Grad.addColorStop(0, '#f59e0b');
+        tier2Grad.addColorStop(0.5, '#fbbf24');
+        tier2Grad.addColorStop(1, '#b45309');
+        ctx.fillStyle = tier2Grad;
+        ctx.fillRect(goalX - 28, goalY - 2, 56, 10);
+
+        // Tier 3 Top Platform
+        ctx.fillStyle = '#fef3c7';
+        ctx.fillRect(goalX - 22, goalY - 6, 44, 4);
+
+        // Glowing Trophy Aura
+        ctx.save();
+        ctx.shadowColor = 'rgba(251, 191, 36, 0.9)';
+        ctx.shadowBlur = 32;
+        ctx.fillStyle = 'rgba(251, 191, 36, 0.2)';
+        ctx.beginPath();
+        ctx.arc(goalX, goalY - 22, 34, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.restore();
 
         // a) 3D Rolled Diploma
         ctx.save();
@@ -9121,65 +9526,103 @@
 
 
         // ==================================================
-        // FINISH Archway - mirrors the START archway at top
+        // FINISH Grand Championship Gantry - Victory Archway
         // ==================================================
-        const finishY = goalY - 80; // Sits 80px above the certificate pedestal
         const finishX = centerX + A * Math.sin((2 * Math.PI * finishY) / lambda);
 
         ctx.save();
-        const finColumnOffset = isMobile ? 22 : 38;
-        const finArchWidth = isMobile ? 60 : 104;
+        const finText = isMobile ? '🏁 FINISH LINE!' : '🏁 FINISH LINE - DATA ANALYST CERTIFIED';
+        ctx.font = `900 ${isMobile ? '10px' : '12px'} Arial, sans-serif`;
+        const measuredFinWidth = ctx.measureText(finText).width;
 
-        // Pillar base shadows
-        ctx.fillStyle = 'rgba(0,0,0,0.3)';
+        const finArchWidth = Math.max(measuredFinWidth + (isMobile ? 28 : 40), isMobile ? 140 : 260);
+        const finArchHeight = isMobile ? 28 : 34;
+        const finColumnOffset = Math.max((finArchWidth / 2) + 6, ROAD_W + (isMobile ? 12 : 20));
+
+        // Pillar Base Shadows & Heavy Concrete Footings
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
         ctx.beginPath();
-        ctx.ellipse(finishX - finColumnOffset, finishY + 12, isMobile ? 4 : 6, isMobile ? 1.8 : 2.5, 0, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.ellipse(finishX + finColumnOffset, finishY + 12, isMobile ? 4 : 6, isMobile ? 1.8 : 2.5, 0, 0, 2 * Math.PI);
+        ctx.ellipse(finishX - finColumnOffset, finishY + 14, isMobile ? 8 : 12, isMobile ? 3.5 : 5, 0, 0, 2 * Math.PI);
+        ctx.ellipse(finishX + finColumnOffset, finishY + 14, isMobile ? 8 : 12, isMobile ? 3.5 : 5, 0, 0, 2 * Math.PI);
         ctx.fill();
 
-        // Left & Right 3D Pillars (same metallic gradient as START)
-        const finColGrad = ctx.createLinearGradient(finishX - finColumnOffset - 4, finishY - 40, finishX - finColumnOffset + 4, finishY + 10);
-        finColGrad.addColorStop(0, '#cbd5e1');
-        finColGrad.addColorStop(0.3, '#f1f5f9');
-        finColGrad.addColorStop(0.8, '#475569');
-        finColGrad.addColorStop(1, '#1e293b');
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(finishX - finColumnOffset - (isMobile ? 7 : 11), finishY + 4, isMobile ? 14 : 22, 10);
+        ctx.fillRect(finishX + finColumnOffset - (isMobile ? 7 : 11), finishY + 4, isMobile ? 14 : 22, 10);
+        ctx.fillStyle = '#fbbf24';
+        ctx.fillRect(finishX - finColumnOffset - (isMobile ? 7 : 11), finishY + 2, isMobile ? 14 : 22, 2);
+        ctx.fillRect(finishX + finColumnOffset - (isMobile ? 7 : 11), finishY + 2, isMobile ? 14 : 22, 2);
+
+        // 3D Polished Gold Championship Pillars
+        const finColGrad = ctx.createLinearGradient(finishX - finColumnOffset - 6, finishY - 54, finishX - finColumnOffset + 6, finishY + 10);
+        finColGrad.addColorStop(0, '#fef08a');
+        finColGrad.addColorStop(0.3, '#fbbf24');
+        finColGrad.addColorStop(0.7, '#d97706');
+        finColGrad.addColorStop(1, '#78350f');
 
         ctx.fillStyle = finColGrad;
-        ctx.fillRect(finishX - finColumnOffset - 3, finishY - 45, isMobile ? 4 : 6, 56); // Left pillar
-        ctx.fillStyle = '#334155';
-        ctx.fillRect(finishX - finColumnOffset - 5, finishY + 9, isMobile ? 8 : 10, 3);  // Left base cap
-        ctx.fillRect(finishX - finColumnOffset - 4, finishY - 48, isMobile ? 6 : 8, 3);  // Left top cap
+        ctx.fillRect(finishX - finColumnOffset - (isMobile ? 4 : 6), finishY - 54, isMobile ? 8 : 12, 58);
+        ctx.fillRect(finishX + finColumnOffset - (isMobile ? 4 : 6), finishY - 54, isMobile ? 8 : 12, 58);
 
-        ctx.fillStyle = finColGrad;
-        ctx.fillRect(finishX + finColumnOffset - 3, finishY - 45, isMobile ? 4 : 6, 56); // Right pillar
-        ctx.fillStyle = '#334155';
-        ctx.fillRect(finishX + finColumnOffset - 5, finishY + 9, isMobile ? 8 : 10, 3);  // Right base cap
-        ctx.fillRect(finishX + finColumnOffset - 4, finishY - 48, isMobile ? 6 : 8, 3);  // Right top cap
+        // Gold Beacons on Top of Towers
+        [-finColumnOffset, finColumnOffset].forEach(ox => {
+          ctx.fillStyle = '#fbbf24';
+          ctx.shadowColor = '#fbbf24';
+          ctx.shadowBlur = 20;
+          ctx.beginPath();
+          ctx.arc(finishX + ox, finishY - 58, 5, 0, 2 * Math.PI);
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        });
 
-        // Checkered flag banner across the top (gold/amber theme)
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.22)';
-        ctx.shadowBlur = 8;
-        ctx.shadowOffsetY = 4;
+        // Championship Victory Banner (Gold & Amber Theme)
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.45)';
+        ctx.shadowBlur = 14;
+        ctx.shadowOffsetY = 6;
 
-        const finBannerGrad = ctx.createLinearGradient(finishX, finishY - 50, finishX, finishY - 26);
-        finBannerGrad.addColorStop(0, '#fbbf24');
-        finBannerGrad.addColorStop(1, '#d97706');
+        const finBannerGrad = ctx.createLinearGradient(finishX, finishY - 56, finishX, finishY - 22);
+        finBannerGrad.addColorStop(0, '#fef08a');
+        finBannerGrad.addColorStop(0.25, '#fbbf24');
+        finBannerGrad.addColorStop(0.7, '#f59e0b');
+        finBannerGrad.addColorStop(1, '#78350f');
         ctx.fillStyle = finBannerGrad;
         ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = isMobile ? 1.2 : 1.8;
-        drawRoundedRect(ctx, finishX - (finArchWidth / 2) - 4, finishY - 56, finArchWidth + 8, 24, 3);
+        ctx.lineWidth = 2.5;
+
+        const finSignLeft = finishX - (finArchWidth / 2);
+        const finSignTop = finishY - 54;
+
+        drawRoundedRect(ctx, finSignLeft, finSignTop, finArchWidth, finArchHeight, 6);
         ctx.fill();
         ctx.stroke();
+
+        // Inner Gold Foil Border Inset & Gold Corner Rivets
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+        ctx.lineWidth = 1.0;
+        drawRoundedRect(ctx, finSignLeft + 3, finSignTop + 3, finArchWidth - 6, finArchHeight - 6, 4);
+        ctx.stroke();
+
+        ctx.fillStyle = '#ffffff';
+        [finSignLeft + 6, finSignLeft + finArchWidth - 6].forEach(rx => {
+          [finSignTop + 6, finSignTop + finArchHeight - 6].forEach(ry => {
+            ctx.beginPath();
+            ctx.arc(rx, ry, 1.5, 0, 2 * Math.PI);
+            ctx.fill();
+          });
+        });
         ctx.restore();
 
-        // FINISH text inside banner
+        // FINISH Victory Text
+        ctx.save();
         ctx.fillStyle = '#ffffff';
-        ctx.font = `900 ${isMobile ? '8px' : '9.5px'} Arial`;
+        ctx.font = `900 ${isMobile ? '10px' : '12px'} Arial, sans-serif`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText('🏆 FINISH!', finishX, finishY - 44);
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+        ctx.shadowBlur = 4;
+        ctx.shadowOffsetY = 1;
+        ctx.fillText(finText, finishX, finishY - 37);
+        ctx.restore();
         // ==================================================
 
         // b) Stunning Capsule Button (Expanded 160x32px for better readability)
@@ -9801,35 +10244,39 @@
 
 
 
-        const maxDayXP = 1000 * (item.totalCells / TOTAL_CHALLENGES);
-
+        const testCount = 25;
+        const totalTestMarks = 25;
         const bestScore = parseFloat(localStorage.getItem(`manodemy_${keyPrefix}day${item.day}_best_score`) || '0');
+        const testBestScore = Math.min(bestScore, totalTestMarks);
 
+        // 1. Marks Badge: X.X / 25 Marks
+        const marksBadgeHTML = `
+          <div class="day-xp-badge" title="${totalTestMarks} Total Interview Marks">
+            ${testBestScore.toFixed(1)} / ${totalTestMarks} Marks
+          </div>
+        `;
 
-
-        let xpBadgeHTML = '';
-
-        if (bestScore > 0) {
-
-          xpBadgeHTML = `<div class="day-xp-badge">${bestScore.toFixed(1)} / ${maxDayXP.toFixed(1)} Marks</div>`;
-
-        } else {
-
-          xpBadgeHTML = `<div class="day-xp-badge" style="color: var(--ink-dim); background: rgba(0, 0, 0, 0.03); border: 1px solid rgba(0, 0, 0, 0.05); text-shadow: none; box-shadow: none;">0.0 / ${maxDayXP.toFixed(1)} Marks</div>`;
-
-        }
-
-
+        // 2. Questions Badge: X / 25 Questions
+        const questionsBadgeHTML = `
+          <div class="day-test-badge ${isLockedDay ? 'locked' : ''}" title="${testCount} Interview Questions">
+            <span class="test-badge-fraction">
+              <span class="test-frac-num">${testBestScore > 0 ? testBestScore.toFixed(0) : '0'}</span>
+              <span class="test-frac-sep">/</span>
+              <span class="test-frac-den">${testCount}</span>
+            </span>
+            <span class="test-badge-label">Questions</span>
+          </div>
+        `;
 
         const isCurrentActive = resumeTarget === getDayUrl(currentCourse, item.day);
-
-
 
         const card = document.createElement('a');
 
         card.className = 'day-card' + (isCurrentActive ? ' active-day' : '') + (isLockedDay ? ' day-card--locked' : '');
 
-        card.href = isLockedDay ? 'landing_v2/index.html#pricing?locked=true' : getDayUrl(currentCourse, item.day) + `?v=2.1`;
+        const targetDayUrl = isLockedDay ? 'landing_v2/index.html#pricing?locked=true' : getDayUrl(currentCourse, item.day) + `?v=2.1`;
+
+        card.href = targetDayUrl;
 
         card.setAttribute('data-day', item.day);
 
@@ -9837,17 +10284,19 @@
 
         card.setAttribute('tabindex', '0');
 
-
-
         card.innerHTML = `
 
           <span class="day-num">Day ${item.day}</span>
 
           <span class="day-emoji">${item.emoji}</span>
 
-          <span class="day-title">${item.title}</span>
+          <span class="day-title">
+            <a class="day-title-link" href="${targetDayUrl}" tabindex="-1" onclick="event.stopPropagation()">${item.title}</a>
+          </span>
 
-          ${xpBadgeHTML}
+          ${questionsBadgeHTML}
+
+          ${marksBadgeHTML}
 
           ${badgeHTML}
 

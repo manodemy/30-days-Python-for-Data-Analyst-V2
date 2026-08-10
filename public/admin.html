@@ -3201,23 +3201,32 @@
             
             <!-- Live Pricing Configurator Card -->
             <div style="background: var(--elevated); border: 1px solid var(--rim); border-radius: var(--radius-lg); padding: 1.25rem; position: relative;">
-              <div style="margin-bottom: 0.85rem;">
-                <h3 style="font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; color: var(--ink);">
-                  <span id="cfgRegionFlag">🇮🇳</span> <span id="cfgRegionTitle">India Domestic Pricing</span>
-                </h3>
-              </div>
-
-              <!-- Presets placed directly below Header Title in a clean responsive grid -->
-              <div style="margin-bottom: 1.1rem; background: var(--base); padding: 0.65rem 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--rim-subtle);">
-                <div style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-muted); margin-bottom: 0.45rem; font-weight: 600;">
-                  ⚡ Quick Strategy Presets
-                </div>
-                <div id="cfgPresetButtons" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: 0.45rem;">
-                  <!-- Rendered via renderPresetButtons() without text truncation -->
-                </div>
-              </div>
-
               <form id="masterPricingForm" onsubmit="event.preventDefault(); openPublishConfirmModal();">
+                <!-- Header with Action Buttons on Top Right -->
+                <div style="margin-bottom: 0.85rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+                  <h3 style="font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; color: var(--ink); margin: 0;">
+                    <span id="cfgRegionFlag">🇮🇳</span> <span id="cfgRegionTitle">India Domestic Pricing</span>
+                  </h3>
+                  <div style="display: flex; align-items: center; gap: 0.6rem;">
+                    <button type="button" id="btnSavePricingDraft" onclick="saveDraftPricing()" class="btn-outline-gold" style="font-size: 0.8rem; font-weight: 600; padding: 0.45rem 1rem; display: inline-flex; align-items: center; gap: 0.35rem; border-radius: var(--radius-sm); cursor: pointer;">
+                      <span>💾 Save</span>
+                    </button>
+                    <button class="btn-gold" id="btnPublishPricing" type="submit" style="font-size: 0.8rem; font-weight: 700; padding: 0.45rem 1.15rem; display: inline-flex; align-items: center; gap: 0.35rem; border-radius: var(--radius-sm); cursor: pointer;">
+                      <span>🚀 Publish</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Presets placed directly below Header Title in a clean responsive grid -->
+                <div style="margin-bottom: 1.1rem; background: var(--base); padding: 0.65rem 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--rim-subtle);">
+                  <div style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-muted); margin-bottom: 0.45rem; font-weight: 600;">
+                    ⚡ Quick Strategy Presets
+                  </div>
+                  <div id="cfgPresetButtons" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: 0.45rem;">
+                    <!-- Rendered via renderPresetButtons() without text truncation -->
+                  </div>
+                </div>
+
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
                   <div class="field">
                     <label style="font-size: 0.72rem; color: var(--ink-dim); margin-bottom: 0.3rem; display: block;">
@@ -3236,7 +3245,7 @@
                   </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.25rem;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
                   <div class="field">
                     <label style="font-size: 0.72rem; color: var(--ink-dim); margin-bottom: 0.3rem; display: block;">
                       Discount Badge
@@ -3252,16 +3261,6 @@
                     <input id="cfg_preset_label" type="text" placeholder="e.g. Early Access Offer"
                       style="font-size: 0.82rem; color: var(--ink); background: var(--base); border: 1px solid var(--rim); padding: 0.55rem 0.75rem; border-radius: var(--radius-sm); width: 100%;" />
                   </div>
-                </div>
-
-                <!-- Save & Publish Actions -->
-                <div style="display: flex; align-items: center; justify-content: flex-end; gap: 0.75rem; border-top: 1px solid var(--rim); padding-top: 1rem;">
-                  <button type="button" id="btnSavePricingDraft" onclick="saveDraftPricing()" class="btn-outline-gold" style="font-size: 0.85rem; font-weight: 600; padding: 0.6rem 1.25rem; display: inline-flex; align-items: center; gap: 0.4rem; border-radius: var(--radius-sm); cursor: pointer;">
-                    <span>💾 Save</span>
-                  </button>
-                  <button class="btn-gold" id="btnPublishPricing" type="submit" style="font-size: 0.85rem; font-weight: 700; padding: 0.6rem 1.35rem; display: inline-flex; align-items: center; gap: 0.4rem; border-radius: var(--radius-sm); cursor: pointer;">
-                    <span>🚀 Publish</span>
-                  </button>
                 </div>
               </form>
             </div>

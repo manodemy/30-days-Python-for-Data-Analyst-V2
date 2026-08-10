@@ -5351,7 +5351,7 @@
           updated_at: new Date().toISOString()
         };
 
-        await sb.from('settings').upsert({ key: 'pricing', value: settingsPayload, updated_at: new Date().toISOString() });
+        await sb.from('settings').upsert({ key: 'pricing', value: settingsPayload, updated_at: new Date().toISOString() }, { onConflict: 'key' });
 
         // 3. Log audit event
         try {
@@ -5367,12 +5367,12 @@
           console.warn('[Pricing] Audit log insert:', auditErr);
         }
 
-        showToast(`🎉 New ${isINR ? '₹' + sale : '$' + sale} pricing published live across all landing & checkout pages!`, 'success');
+        _adminCache.invalidate('pricing');
+        showToast(`🎉 New ${isINR ? '₹' + sale : '$' + sale} pricing published live across all landing pages!`, 'success');
         closePublishConfirmModal();
         loadPricingData();
-        renderDashboard();
       } catch (err) {
-        showToast('❌ Error publishing price: ' + err.message, 'error');
+        showToast('❌ Error publishing price: ' + (err.message || err), 'error');
       } finally {
         if (btn) { btn.textContent = '🚀 Publish'; btn.disabled = false; }
       }
@@ -5505,58 +5505,72 @@
       };
     }
 
+    function safeIsoDate(val) {
+      if (!val) return null;
+      const d = new Date(val);
+      if (!isNaN(d.getTime())) return d.toISOString();
+      const parts = String(val).match(/(\d{2})[-/](\d{2})[-/](\d{4})\s*(\d{2})?:?(\d{2})?/);
+      if (parts) {
+        const [_, day, month, year, hr, min] = parts;
+        const fallbackD = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day), Number(hr || 0), Number(min || 0)));
+        if (!isNaN(fallbackD.getTime())) return fallbackD.toISOString();
+      }
+      return null;
+    }
+
     window.handleCreateCoupon = async function() {
-      const btn = document.getElementById('btnSaveCoupon');
+      const btn = document.getElementById('btnSaveCoupon') || document.querySelector('#couponCreatorForm button[type="submit"]');
+      const origText = btn ? (btn.textContent || '+ Create & Activate Promo Code') : '+ Create & Activate Promo Code';
       if (btn) { btn.textContent = 'Activating…'; btn.disabled = true; }
 
-      const code = (document.getElementById('new_coupon_code').value || '').trim().toUpperCase();
-      const mode = document.getElementById('new_coupon_mode').value;
-      const value = Number(document.getElementById('new_coupon_value').value) || 0;
-      const scope = document.getElementById('new_coupon_scope').value;
-      const maxUses = document.getElementById('new_coupon_max_uses').value ? parseInt(document.getElementById('new_coupon_max_uses').value, 10) : null;
-      const startsInput = document.getElementById('new_coupon_starts').value;
-      const starts = startsInput ? new Date(startsInput).toISOString() : null;
-      const expiresInput = document.getElementById('new_coupon_expires').value;
-      const expires = expiresInput ? new Date(expiresInput).toISOString() : null;
-      const tag = document.getElementById('new_coupon_tag').value || null;
-      const singleEmail = document.getElementById('new_coupon_single_email').checked;
-
-      // Map discount_type to valid DB CHECK constraint values ('percentage' or 'fixed')
-      const discountType = mode === 'PERCENT' ? 'percentage' : 'fixed';
-
-      // Map applies_to to valid DB CHECK constraint values ('INR', 'USD', or 'both')
-      let appliesTo = 'both';
-      if (scope === 'INR' || mode === 'FIXED_INR') appliesTo = 'INR';
-      else if (scope === 'USD' || mode === 'FIXED_USD') appliesTo = 'USD';
-      else if (scope === 'BOTH') appliesTo = 'both';
-
-      // Construct comprehensive payload mapping all schema variations
-      let payload = {
-        code,
-        discount_type: discountType,
-        discount_value: value,
-        applies_to: appliesTo,
-        max_uses: maxUses,
-        current_uses: 0,
-        starts_at: starts,
-        expires_at: expires,
-        is_active: true,
-        created_at: new Date().toISOString(),
-        mode: mode,
-        value: value,
-        currency_scope: scope,
-        uses_count: 0,
-        single_use_per_email: singleEmail,
-        campaign_tag: tag
-      };
-
-      const strippedCols = [];
-
       try {
+        const codeInput = document.getElementById('new_coupon_code');
+        const code = (codeInput?.value || '').trim().toUpperCase();
+        if (!code) throw new Error('Please enter a promo code.');
+
+        const mode = document.getElementById('new_coupon_mode')?.value || 'PERCENT';
+        const value = Number(document.getElementById('new_coupon_value')?.value) || 0;
+        const scope = document.getElementById('new_coupon_scope')?.value || 'BOTH';
+        const maxUses = document.getElementById('new_coupon_max_uses')?.value ? parseInt(document.getElementById('new_coupon_max_uses').value, 10) : null;
+        
+        const startsInput = document.getElementById('new_coupon_starts')?.value;
+        const starts = safeIsoDate(startsInput);
+        
+        const expiresInput = document.getElementById('new_coupon_expires')?.value;
+        const expires = safeIsoDate(expiresInput);
+        
+        const tag = document.getElementById('new_coupon_tag')?.value || null;
+        const singleEmail = document.getElementById('new_coupon_single_email')?.checked || false;
+
+        const discountType = mode === 'PERCENT' ? 'percentage' : 'fixed';
+        let appliesTo = 'both';
+        if (scope === 'INR' || mode === 'FIXED_INR') appliesTo = 'INR';
+        else if (scope === 'USD' || mode === 'FIXED_USD') appliesTo = 'USD';
+        else if (scope === 'BOTH') appliesTo = 'both';
+
+        let payload = {
+          code,
+          discount_type: discountType,
+          discount_value: value,
+          applies_to: appliesTo,
+          max_uses: maxUses,
+          current_uses: 0,
+          starts_at: starts,
+          expires_at: expires,
+          is_active: true,
+          created_at: new Date().toISOString(),
+          mode: mode,
+          value: value,
+          currency_scope: scope,
+          uses_count: 0,
+          single_use_per_email: singleEmail,
+          campaign_tag: tag
+        };
+
+        const strippedCols = [];
         let attempts = 0;
         let lastError = null;
 
-        // Auto-healing loop: if DB schema cache lacks a column, strip it and retry instantly
         while (attempts < 12) {
           attempts++;
           const res = await sb.from('coupons').insert([payload]);
@@ -5577,7 +5591,6 @@
 
         if (lastError) throw lastError;
 
-        // Log audit
         try {
           const { data: { user } } = await sb.auth.getUser();
           await sb.from('admin_audit_log').insert([{
@@ -5590,18 +5603,15 @@
           }]);
         } catch (e) {}
 
-        if (strippedCols.includes('starts_at') || strippedCols.includes('campaign_tag')) {
-          showToast(`🎉 Promo code ${code} created! (Run migration 029 in Supabase SQL Editor to save 'starts_at' in DB)`, 'info');
-        } else {
-          showToast(`🎉 Promo code ${code} activated and live in cloud!`, 'success');
-        }
-        document.getElementById('couponCreatorForm').reset();
+        showToast(`🎉 Promo code ${code} activated and live in cloud!`, 'success');
+        const form = document.getElementById('couponCreatorForm');
+        if (form) form.reset();
         await loadCouponsList();
         if (typeof runSandboxTest === 'function') runSandboxTest(code);
       } catch (err) {
-        showToast('❌ Error creating coupon: ' + err.message, 'error');
+        showToast('❌ Error creating coupon: ' + (err.message || err), 'error');
       } finally {
-        if (btn) { btn.textContent = '+ Create & Activate Promo Code'; btn.disabled = false; }
+        if (btn) { btn.textContent = origText; btn.disabled = false; }
       }
     };
 

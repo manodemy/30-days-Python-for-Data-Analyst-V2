@@ -5917,12 +5917,28 @@
           totalNetRevenue += netRev;
           totalAdSpend += spend;
 
-          const roasColor = netRoas >= 3.0 ? 'var(--emerald)' : (netRoas >= 1.0 ? 'var(--gold)' : 'var(--rose)');
+          let contentDisplay = item.ad_content || 'none';
+          if (contentDisplay.startsWith('http://') || contentDisplay.startsWith('https://')) {
+            contentDisplay = `<a href="${contentDisplay}" target="_blank" class="badge badge-sapphire" style="text-decoration:none;">🔗 View Post</a>`;
+          } else if (contentDisplay.startsWith('t.me/')) {
+            contentDisplay = `<a href="https://${contentDisplay}" target="_blank" class="badge badge-sapphire" style="text-decoration:none;">✈️ View Post</a>`;
+          }
+
+          let creativeDisplay = '';
+          if (item.creative_id && item.creative_id !== 'none') {
+            if (item.creative_id.startsWith('http://') || item.creative_id.startsWith('https://')) {
+              creativeDisplay = `<a href="${item.creative_id}" target="_blank" class="badge badge-gold" style="text-decoration:none; margin-left:4px;">🔗 Creative</a>`;
+            } else if (item.creative_id.startsWith('t.me/')) {
+              creativeDisplay = `<a href="https://${item.creative_id}" target="_blank" class="badge badge-gold" style="text-decoration:none; margin-left:4px;">✈️ Creative</a>`;
+            } else {
+              creativeDisplay = `<span class="badge badge-sapphire" style="font-size:0.65rem; margin-left:4px;">${item.creative_id}</span>`;
+            }
+          }
 
           return `
             <tr>
               <td style="font-weight:700; color:var(--gold);">${item.campaign_name}</td>
-              <td class="cell-mono" style="font-size:0.78rem; color:var(--ink);">${item.ad_content} ${item.creative_id !== 'none' ? `<span class="badge badge-sapphire" style="font-size:0.65rem;">${item.creative_id}</span>` : ''}</td>
+              <td class="cell-mono" style="font-size:0.78rem; color:var(--ink);">${contentDisplay}${creativeDisplay}</td>
               <td><span class="badge badge-neutral">${item.platform}</span></td>
               <td class="cell-mono" style="font-weight:700;">${sales}</td>
               <td class="cell-mono">₹${grossRev.toLocaleString('en-IN')}</td>

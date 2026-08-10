@@ -129,19 +129,29 @@
         // Any logged-in user is authorized to view the dashboard!
         document.documentElement.classList.add('authorized');
 
-        if (plan === 'pro' || isEnrolledLocal) {
+        // System Admin Check
+        const userEmail = (session.user.email || '').toLowerCase();
+        const isSystemAdmin = userEmail === 'manodamy25@gmail.com' || userEmail.includes('manodemy') || userEmail.includes('manodamy');
 
+        if (isSystemAdmin) {
+          localStorage.setItem('manodemy_enrolled', 'true');
+          localStorage.setItem('manodemy_user_email', userEmail);
+          document.documentElement.classList.add('authorized');
           return;
+        }
 
+        if (plan === 'pro' || isEnrolledLocal) {
+          return;
         }
 
         // Verify with Supabase RPC
-        const { data: profile } = await sb.from('profiles').select('plan, plan_type, role').eq('id', session.user.id).single();
+        const { data: profile } = await sb.from('profiles').select('plan, plan_type, role').eq('id', session.user.id).maybeSingle();
         const [{ data: enrolledSql }, { data: enrolledExcel }] = await Promise.all([
           sb.rpc('check_enrollment', { p_course_id: 'sql-20day' }),
           sb.rpc('check_enrollment', { p_course_id: 'excel-12day' })
         ]);
         const enrolled = (
+          isSystemAdmin ||
           enrolledSql === true ||
           enrolledExcel === true ||
           profile?.plan === 'pro' ||
@@ -151,13 +161,9 @@
         );
 
         if (enrolled) {
-
           localStorage.setItem('manodemy_enrolled', 'true');
-
         } else {
-
           localStorage.setItem('manodemy_enrolled', 'false');
-
         }
 
       } catch (err) {
@@ -6838,9 +6844,10 @@
       // Admin access toggle + profile plan check
       let userProfile = null;
       try {
-        const { data: profile } = await sb.from('profiles').select('role, plan, plan_type').eq('id', user.id).single();
+        const { data: profile } = await sb.from('profiles').select('role, plan, plan_type').eq('id', user.id).maybeSingle();
         userProfile = profile;
-        const isAdmin = (profile && profile.role === 'admin') || user.email === 'manodamy25@gmail.com' || (user.email && user.email.toLowerCase().includes('manodamy'));
+        const userEmail = (user.email || '').toLowerCase();
+        const isAdmin = (profile && profile.role === 'admin') || userEmail === 'manodamy25@gmail.com' || userEmail.includes('manodemy') || userEmail.includes('manodamy');
         const isInstructor = isAdmin || (profile && profile.role === 'instructor');
         
         if (isAdmin) {

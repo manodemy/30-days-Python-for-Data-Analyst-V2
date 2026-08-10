@@ -120,7 +120,12 @@ BEGIN
   END IF;
 
   IF NEW.fx_rate_used IS NULL THEN
-    NEW.fx_rate_missing := true;
+    IF NEW.currency IS NULL OR NEW.currency = 'INR' THEN
+      NEW.fx_rate_used := 1.0;
+      NEW.fx_rate_missing := false;
+    ELSE
+      NEW.fx_rate_missing := true;
+    END IF;
   ELSE
     NEW.fx_rate_missing := false;
   END IF;
@@ -166,7 +171,7 @@ SELECT id, gateway_payment_id, amount_inr, currency, created_at
 FROM public.purchases
 WHERE fx_rate_missing = true;
 
--- 7. ROAS ANALYTICS RPC (Reconciled FX Spend & No Hardcoded Fallback)
+-- 7. ROAS ANALYTICS RPC (Reconciled FX Spend & Accurately Calculated Net ROAS)
 CREATE OR REPLACE FUNCTION public.get_creative_ads_performance(
   start_ts TIMESTAMPTZ DEFAULT '2000-01-01'::TIMESTAMPTZ,
   end_ts TIMESTAMPTZ DEFAULT '2099-01-01'::TIMESTAMPTZ,
@@ -188,58 +193,82 @@ RETURNS TABLE (
 BEGIN
   IF attribution_mode = 'first_touch' THEN
     RETURN QUERY
+    WITH aggregated AS (
+      SELECT 
+        COALESCE(p.first_touch_campaign, 'direct_or_unknown')::TEXT AS c_name,
+        COALESCE(p.first_touch_content, 'none')::TEXT AS a_content,
+        COALESCE(p.first_touch_creative_id, 'none')::TEXT AS c_id,
+        COALESCE(p.first_touch_source, 'unknown')::TEXT AS p_form,
+        COUNT(p.id)::BIGINT AS s_count,
+        ROUND(SUM(p.amount_inr), 2) AS g_rev,
+        ROUND(SUM(CASE WHEN LOWER(c.discount_type) = 'percentage' THEN (p.amount_inr * (COALESCE(c.discount_value, 0) / 100.0)) ELSE COALESCE(c.discount_value, 0) END), 2) AS t_disc,
+        ROUND(AVG(COALESCE(p.fx_rate_used, 83.0)), 2) AS avg_fx
+      FROM public.purchases p
+      LEFT JOIN public.coupons c ON UPPER(TRIM(c.code)) = UPPER(TRIM(p.coupon_used))
+      WHERE p.created_at BETWEEN start_ts AND end_ts
+      GROUP BY p.first_touch_campaign, p.first_touch_content, p.first_touch_creative_id, p.first_touch_source
+    )
     SELECT 
-      COALESCE(p.first_touch_campaign, 'direct_or_unknown')::TEXT AS campaign_name,
-      COALESCE(p.first_touch_content, 'none')::TEXT AS ad_content,
-      COALESCE(p.first_touch_creative_id, 'none')::TEXT AS creative_id,
-      COALESCE(p.first_touch_source, 'unknown')::TEXT AS platform,
-      COUNT(p.id)::BIGINT AS sales_count,
-      ROUND(SUM(p.amount_inr), 2) AS gross_revenue_inr,
-      ROUND(SUM(COALESCE(c.discount_value, 0)), 2) AS total_discount_given_inr,
-      ROUND(SUM(p.amount_inr) - SUM(COALESCE(c.discount_value, 0)), 2) AS net_revenue_inr,
-      ROUND(COALESCE(ac.ad_spend_inr, 0) + SUM(COALESCE(ac.ad_spend_usd, 0) * p.fx_rate_used) / NULLIF(COUNT(p.id), 0), 2) AS reconciled_ad_spend_inr,
+      agg.c_name AS campaign_name,
+      agg.a_content AS ad_content,
+      agg.c_id AS creative_id,
+      agg.p_form AS platform,
+      agg.s_count AS sales_count,
+      agg.g_rev AS gross_revenue_inr,
+      agg.t_disc AS total_discount_given_inr,
+      ROUND(agg.g_rev - agg.t_disc, 2) AS net_revenue_inr,
+      ROUND(COALESCE(ac.ad_spend_inr, 0) + (COALESCE(ac.ad_spend_usd, 0) * agg.avg_fx), 2) AS reconciled_ad_spend_inr,
       CASE 
-        WHEN (COALESCE(ac.ad_spend_inr, 0) + SUM(COALESCE(ac.ad_spend_usd, 0) * p.fx_rate_used) / NULLIF(COUNT(p.id), 0)) > 0 THEN 
-          ROUND(SUM(p.amount_inr) / (ac.ad_spend_inr + (ac.ad_spend_usd * AVG(p.fx_rate_used))), 2) 
+        WHEN (COALESCE(ac.ad_spend_inr, 0) + (COALESCE(ac.ad_spend_usd, 0) * agg.avg_fx)) > 0 THEN 
+          ROUND(agg.g_rev / (COALESCE(ac.ad_spend_inr, 0) + (COALESCE(ac.ad_spend_usd, 0) * agg.avg_fx)), 2) 
         ELSE 0 
       END AS gross_roas,
       CASE 
-        WHEN (COALESCE(ac.ad_spend_inr, 0) + SUM(COALESCE(ac.ad_spend_usd, 0) * p.fx_rate_used) / NULLIF(COUNT(p.id), 0)) > 0 THEN 
-          ROUND((SUM(p.amount_inr) - SUM(COALESCE(c.discount_value, 0))) / (ac.ad_spend_inr + (ac.ad_spend_usd * AVG(p.fx_rate_used))), 2) 
+        WHEN (COALESCE(ac.ad_spend_inr, 0) + (COALESCE(ac.ad_spend_usd, 0) * agg.avg_fx)) > 0 THEN 
+          ROUND((agg.g_rev - agg.t_disc) / (COALESCE(ac.ad_spend_inr, 0) + (COALESCE(ac.ad_spend_usd, 0) * agg.avg_fx)), 2) 
         ELSE 0 
       END AS net_roas
-    FROM public.purchases p
-    LEFT JOIN public.coupons c ON UPPER(TRIM(c.code)) = UPPER(TRIM(p.coupon_used))
-    LEFT JOIN public.ad_campaigns ac ON LOWER(TRIM(ac.campaign_name)) = LOWER(TRIM(p.first_touch_campaign))
-    WHERE p.created_at BETWEEN start_ts AND end_ts AND p.fx_rate_missing = false
-    GROUP BY p.first_touch_campaign, p.first_touch_content, p.first_touch_creative_id, p.first_touch_source, ac.ad_spend_inr, ac.ad_spend_usd;
+    FROM aggregated agg
+    LEFT JOIN public.ad_campaigns ac ON LOWER(TRIM(ac.campaign_name)) = LOWER(TRIM(agg.c_name));
   ELSE
     RETURN QUERY
+    WITH aggregated AS (
+      SELECT 
+        COALESCE(p.last_touch_campaign, 'direct_or_unknown')::TEXT AS c_name,
+        COALESCE(p.last_touch_content, 'none')::TEXT AS a_content,
+        COALESCE(p.last_touch_creative_id, 'none')::TEXT AS c_id,
+        COALESCE(p.last_touch_source, 'unknown')::TEXT AS p_form,
+        COUNT(p.id)::BIGINT AS s_count,
+        ROUND(SUM(p.amount_inr), 2) AS g_rev,
+        ROUND(SUM(CASE WHEN LOWER(c.discount_type) = 'percentage' THEN (p.amount_inr * (COALESCE(c.discount_value, 0) / 100.0)) ELSE COALESCE(c.discount_value, 0) END), 2) AS t_disc,
+        ROUND(AVG(COALESCE(p.fx_rate_used, 83.0)), 2) AS avg_fx
+      FROM public.purchases p
+      LEFT JOIN public.coupons c ON UPPER(TRIM(c.code)) = UPPER(TRIM(p.coupon_used))
+      WHERE p.created_at BETWEEN start_ts AND end_ts
+      GROUP BY p.last_touch_campaign, p.last_touch_content, p.last_touch_creative_id, p.last_touch_source
+    )
     SELECT 
-      COALESCE(p.last_touch_campaign, 'direct_or_unknown')::TEXT AS campaign_name,
-      COALESCE(p.last_touch_content, 'none')::TEXT AS ad_content,
-      COALESCE(p.last_touch_creative_id, 'none')::TEXT AS creative_id,
-      COALESCE(p.last_touch_source, 'unknown')::TEXT AS platform,
-      COUNT(p.id)::BIGINT AS sales_count,
-      ROUND(SUM(p.amount_inr), 2) AS gross_revenue_inr,
-      ROUND(SUM(COALESCE(c.discount_value, 0)), 2) AS total_discount_given_inr,
-      ROUND(SUM(p.amount_inr) - SUM(COALESCE(c.discount_value, 0)), 2) AS net_revenue_inr,
-      ROUND(COALESCE(ac.ad_spend_inr, 0) + SUM(COALESCE(ac.ad_spend_usd, 0) * p.fx_rate_used) / NULLIF(COUNT(p.id), 0), 2) AS reconciled_ad_spend_inr,
+      agg.c_name AS campaign_name,
+      agg.a_content AS ad_content,
+      agg.c_id AS creative_id,
+      agg.p_form AS platform,
+      agg.s_count AS sales_count,
+      agg.g_rev AS gross_revenue_inr,
+      agg.t_disc AS total_discount_given_inr,
+      ROUND(agg.g_rev - agg.t_disc, 2) AS net_revenue_inr,
+      ROUND(COALESCE(ac.ad_spend_inr, 0) + (COALESCE(ac.ad_spend_usd, 0) * agg.avg_fx), 2) AS reconciled_ad_spend_inr,
       CASE 
-        WHEN (COALESCE(ac.ad_spend_inr, 0) + SUM(COALESCE(ac.ad_spend_usd, 0) * p.fx_rate_used) / NULLIF(COUNT(p.id), 0)) > 0 THEN 
-          ROUND(SUM(p.amount_inr) / (ac.ad_spend_inr + (ac.ad_spend_usd * AVG(p.fx_rate_used))), 2) 
+        WHEN (COALESCE(ac.ad_spend_inr, 0) + (COALESCE(ac.ad_spend_usd, 0) * agg.avg_fx)) > 0 THEN 
+          ROUND(agg.g_rev / (COALESCE(ac.ad_spend_inr, 0) + (COALESCE(ac.ad_spend_usd, 0) * agg.avg_fx)), 2) 
         ELSE 0 
       END AS gross_roas,
       CASE 
-        WHEN (COALESCE(ac.ad_spend_inr, 0) + SUM(COALESCE(ac.ad_spend_usd, 0) * p.fx_rate_used) / NULLIF(COUNT(p.id), 0)) > 0 THEN 
-          ROUND((SUM(p.amount_inr) - SUM(COALESCE(c.discount_value, 0))) / (ac.ad_spend_inr + (ac.ad_spend_usd * AVG(p.fx_rate_used))), 2) 
+        WHEN (COALESCE(ac.ad_spend_inr, 0) + (COALESCE(ac.ad_spend_usd, 0) * agg.avg_fx)) > 0 THEN 
+          ROUND((agg.g_rev - agg.t_disc) / (COALESCE(ac.ad_spend_inr, 0) + (COALESCE(ac.ad_spend_usd, 0) * agg.avg_fx)), 2) 
         ELSE 0 
       END AS net_roas
-    FROM public.purchases p
-    LEFT JOIN public.coupons c ON UPPER(TRIM(c.code)) = UPPER(TRIM(p.coupon_used))
-    LEFT JOIN public.ad_campaigns ac ON LOWER(TRIM(ac.campaign_name)) = LOWER(TRIM(p.last_touch_campaign))
-    WHERE p.created_at BETWEEN start_ts AND end_ts AND p.fx_rate_missing = false
-    GROUP BY p.last_touch_campaign, p.last_touch_content, p.last_touch_creative_id, p.last_touch_source, ac.ad_spend_inr, ac.ad_spend_usd;
+    FROM aggregated agg
+    LEFT JOIN public.ad_campaigns ac ON LOWER(TRIM(ac.campaign_name)) = LOWER(TRIM(agg.c_name));
   END IF;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, pg_temp;

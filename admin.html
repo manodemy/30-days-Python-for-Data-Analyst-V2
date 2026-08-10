@@ -6012,29 +6012,29 @@
 
           const roasColor = netRoas >= 3.0 ? 'var(--emerald)' : (netRoas >= 1.0 ? 'var(--gold)' : 'var(--rose)');
 
-          let contentDisplay = item.ad_content || 'none';
-          if (contentDisplay.startsWith('http://') || contentDisplay.startsWith('https://')) {
-            contentDisplay = `<a href="${contentDisplay}" target="_blank" class="badge badge-sapphire" style="text-decoration:none;">🔗 View Post</a>`;
-          } else if (contentDisplay.startsWith('t.me/')) {
-            contentDisplay = `<a href="https://${contentDisplay}" target="_blank" class="badge badge-sapphire" style="text-decoration:none;">✈️ View Post</a>`;
+          let contentDisplay = escapeHtml(item.ad_content || 'none');
+          if (item.ad_content && (item.ad_content.startsWith('http://') || item.ad_content.startsWith('https://'))) {
+            contentDisplay = `<a href="${escapeHtml(item.ad_content)}" target="_blank" class="badge badge-sapphire" style="text-decoration:none;">🔗 View Post</a>`;
+          } else if (item.ad_content && item.ad_content.startsWith('t.me/')) {
+            contentDisplay = `<a href="https://${escapeHtml(item.ad_content)}" target="_blank" class="badge badge-sapphire" style="text-decoration:none;">✈️ View Post</a>`;
           }
 
           let creativeDisplay = '';
           if (item.creative_id && item.creative_id !== 'none') {
             if (item.creative_id.startsWith('http://') || item.creative_id.startsWith('https://')) {
-              creativeDisplay = `<a href="${item.creative_id}" target="_blank" class="badge badge-gold" style="text-decoration:none; margin-left:4px;">🔗 Creative</a>`;
+              creativeDisplay = `<a href="${escapeHtml(item.creative_id)}" target="_blank" class="badge badge-gold" style="text-decoration:none; margin-left:4px;">🔗 Creative</a>`;
             } else if (item.creative_id.startsWith('t.me/')) {
-              creativeDisplay = `<a href="https://${item.creative_id}" target="_blank" class="badge badge-gold" style="text-decoration:none; margin-left:4px;">✈️ Creative</a>`;
+              creativeDisplay = `<a href="https://${escapeHtml(item.creative_id)}" target="_blank" class="badge badge-gold" style="text-decoration:none; margin-left:4px;">✈️ Creative</a>`;
             } else {
-              creativeDisplay = `<span class="badge badge-sapphire" style="font-size:0.65rem; margin-left:4px;">${item.creative_id}</span>`;
+              creativeDisplay = `<span class="badge badge-sapphire" style="font-size:0.65rem; margin-left:4px;">${escapeHtml(item.creative_id)}</span>`;
             }
           }
 
           return `
             <tr>
-              <td style="font-weight:700; color:var(--gold);">${item.campaign_name}</td>
+              <td style="font-weight:700; color:var(--gold);">${escapeHtml(item.campaign_name)}</td>
               <td class="cell-mono" style="font-size:0.78rem; color:var(--ink);">${contentDisplay}${creativeDisplay}</td>
-              <td><span class="badge badge-neutral">${item.platform}</span></td>
+              <td><span class="badge badge-neutral">${escapeHtml(item.platform)}</span></td>
               <td class="cell-mono" style="font-weight:700;">${sales}</td>
               <td class="cell-mono">₹${grossRev.toLocaleString('en-IN')}</td>
               <td class="cell-mono" style="color:var(--rose);">₹${disc.toLocaleString('en-IN')}</td>
@@ -6168,25 +6168,26 @@
       const canvas = document.getElementById('qrCodeCanvas');
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
-      canvas.width = 160;
-      canvas.height = 160;
+      canvas.width = 180;
+      canvas.height = 180;
 
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(0, 0, 160, 160);
-      ctx.fillStyle = '#0B0F19';
-      
-      ctx.fillRect(10, 10, 40, 40); ctx.clearRect(16, 16, 28, 28); ctx.fillRect(22, 22, 16, 16);
-      ctx.fillRect(110, 10, 40, 40); ctx.clearRect(116, 16, 28, 28); ctx.fillRect(122, 22, 16, 16);
-      ctx.fillRect(10, 110, 40, 40); ctx.clearRect(16, 116, 28, 28); ctx.fillRect(22, 122, 16, 16);
-
-      for (let i = 0; i < 120; i++) {
-        const x = Math.floor(Math.random() * 26) * 5 + 15;
-        const y = Math.floor(Math.random() * 26) * 5 + 15;
-        ctx.fillRect(x, y, 4, 4);
-      }
-
-      const btnDL = document.getElementById('btnDownloadQR');
-      if (btnDL) btnDL.href = canvas.toDataURL('image/png');
+      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(text)}`;
+      const img = new Image();
+      img.crossOrigin = 'Anonymous';
+      img.onload = function() {
+        ctx.drawImage(img, 0, 0, 180, 180);
+        const btnDL = document.getElementById('btnDownloadQR');
+        if (btnDL) btnDL.href = canvas.toDataURL('image/png');
+      };
+      img.onerror = function() {
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, 180, 180);
+        ctx.fillStyle = '#0B0F19';
+        ctx.fillRect(10, 10, 40, 40); ctx.clearRect(16, 16, 28, 28); ctx.fillRect(22, 22, 16, 16);
+        ctx.fillRect(130, 10, 40, 40); ctx.clearRect(136, 16, 28, 28); ctx.fillRect(142, 22, 16, 16);
+        ctx.fillRect(10, 130, 40, 40); ctx.clearRect(16, 136, 28, 28); ctx.fillRect(22, 142, 16, 16);
+      };
+      img.src = qrApiUrl;
     }
 
     // ── HEATMAP ──────────────────────────────────────

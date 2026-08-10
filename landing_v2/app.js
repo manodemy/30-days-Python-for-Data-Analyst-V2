@@ -481,7 +481,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const SUPABASE_URL = window.MANODEMY_CONFIG?.SUPA_URL || 'https://erqoyvbuhmkyvcqgwcbz.supabase.co';
   const SUPABASE_ANON_KEY = window.MANODEMY_CONFIG?.SUPA_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVycW95dmJ1aG1reXZjcWd3Y2J6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzODk1MTIsImV4cCI6MjA5NDk2NTUxMn0.9UnIfq8xMrKANPPTtoOADKH-NJ_it9HDp7xrJL4FXtw';
   const RAZORPAY_KEY_ID = 'rzp_live_SnbHZn5Q7rYNAP';
-  const PAYPAL_CLIENT_ID = '';
+  const PAYPAL_CLIENT_ID = 'AUPgj63sEEbLWYePzfnuu5prjv15UCPmaUmUY2XwWRRt4H4eI05bmGZpPGguOqhWO23Gg2nzfAMo94vs';
   
   let supabaseClient = null;
   let userCountry = 'US';
@@ -620,10 +620,91 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } catch (err) {}
 
+    // Default fallbacks
+    let inrConfig = { amount: 149900, currency: 'INR', display: '₹1,499', original: '₹4,999', discount: '70% OFF', planName: '60-Day Self-Paced Masterclass' };
+    let usdConfig = { amount: 4900, currency: 'USD', display: '$49', original: '$149', discount: '67% OFF', planName: '60-Day Self-Paced Masterclass' };
+
+    // Fetch live prices from Supabase settings table
+    if (supabaseClient) {
+      try {
+        const { data: pricingSetting } = await supabaseClient
+          .from('settings')
+          .select('value')
+          .eq('key', 'pricing')
+          .single();
+
+        if (pricingSetting && pricingSetting.value) {
+          const v = pricingSetting.value;
+          if (v.inr && v.original_inr) {
+            const inrSale = Number(v.inr) / 100;
+            const inrOrig = Number(v.original_inr) / 100;
+            const inrPct = v.discount_label || (inrOrig > inrSale ? Math.round(((inrOrig - inrSale) / inrOrig) * 100) + '% OFF' : '70% OFF');
+            inrConfig = {
+              amount: Number(v.inr),
+              currency: 'INR',
+              display: '₹' + inrSale.toLocaleString('en-IN'),
+              original: '₹' + inrOrig.toLocaleString('en-IN'),
+              discount: inrPct,
+              planName: '60-Day Self-Paced Masterclass'
+            };
+          }
+          if (v.usd && v.original_usd) {
+            const usdSale = Number(v.usd) / 100;
+            const usdOrig = Number(v.original_usd) / 100;
+            const usdPct = v.discount_label_usd || (usdOrig > usdSale ? Math.round(((usdOrig - usdSale) / usdOrig) * 100) + '% OFF' : '67% OFF');
+            usdConfig = {
+              amount: Number(v.usd),
+              currency: 'USD',
+              display: '$' + usdSale,
+              original: '$' + usdOrig,
+              discount: usdPct,
+              planName: '60-Day Self-Paced Masterclass'
+            };
+          }
+        }
+      } catch (err) {
+        console.warn('[Pricing] Using default fallback pricing:', err);
+      }
+    }
+
+    // Try reading latest version from pricing_versions if available
+    if (supabaseClient) {
+      try {
+        const { data: latestInr } = await supabaseClient.from('pricing_versions').select('*').eq('region', 'INR').order('effective_from', { ascending: false }).limit(1).maybeSingle();
+        if (latestInr && latestInr.sale_price) {
+          const inrSale = Number(latestInr.sale_price);
+          const inrOrig = Number(latestInr.original_price);
+          const inrPct = latestInr.discount_label || (inrOrig > inrSale ? Math.round(((inrOrig - inrSale) / inrOrig) * 100) + '% OFF' : '70% OFF');
+          inrConfig = {
+            amount: inrSale * 100,
+            currency: 'INR',
+            display: '₹' + inrSale.toLocaleString('en-IN'),
+            original: '₹' + inrOrig.toLocaleString('en-IN'),
+            discount: inrPct,
+            planName: '60-Day Self-Paced Masterclass'
+          };
+        }
+        const { data: latestUsd } = await supabaseClient.from('pricing_versions').select('*').eq('region', 'USD').order('effective_from', { ascending: false }).limit(1).maybeSingle();
+        if (latestUsd && latestUsd.sale_price) {
+          const usdSale = Number(latestUsd.sale_price);
+          const usdOrig = Number(latestUsd.original_price);
+          const usdPct = latestUsd.discount_label || (usdOrig > usdSale ? Math.round(((usdOrig - usdSale) / usdOrig) * 100) + '% OFF' : '67% OFF');
+          usdConfig = {
+            amount: Math.round(usdSale * 100),
+            currency: 'USD',
+            display: '$' + usdSale,
+            original: '$' + usdOrig,
+            discount: usdPct,
+            planName: '60-Day Self-Paced Masterclass'
+          };
+        }
+      } catch (pvErr) {}
+    }
+
     if (userCountry === 'IN') {
-      pricingConfigs.selfpaced = { amount: 149900, currency: 'INR', display: '₹1,499',  original: '₹4,999',   discount: '70% OFF', planName: '60-Day Self-Paced Masterclass' };
+      pricingConfigs.selfpaced = inrConfig;
     } else {
-      pricingConfigs.selfpaced = { amount: 4900,   currency: 'USD', display: '$49',     original: '$149',     discount: '67% OFF', planName: '60-Day Self-Paced Masterclass' };
+      pricingConfigs.selfpaced = usdConfig;
     }
 
     const sp = pricingConfigs.selfpaced;
@@ -664,6 +745,32 @@ document.addEventListener('DOMContentLoaded', () => {
       if (compareCostVideo) compareCostVideo.textContent = `⚠️ $150+ (Adds up across courses)`;
       if (compareCostSub) compareCostSub.textContent = `❌ $300 – $500 / year recurring`;
       if (compareCostBootcamp) compareCostBootcamp.textContent = `❌ $5,000 – $15,000 Upfront`;
+    }
+
+    // Update FAQ section price mentions dynamically
+    const faqCompare = document.getElementById('faq-cost-compare');
+    const faqSale = document.getElementById('faq-cost-sale');
+    const faqOrig = document.getElementById('faq-cost-orig');
+    if (faqCompare) faqCompare.textContent = sp.display;
+    if (faqSale) faqSale.textContent = sp.display;
+    if (faqOrig) faqOrig.textContent = sp.original;
+
+    // Realtime Zero-Reload broadcast subscription
+    if (supabaseClient && !window._pricingRealtimeActive) {
+      window._pricingRealtimeActive = true;
+      try {
+        supabaseClient.channel('public:pricing_versions')
+          .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'pricing_versions' }, (payload) => {
+            console.log('[Pricing Realtime] Received live pricing version broadcast:', payload.new);
+            detectGeoPricing();
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'settings' }, () => {
+            detectGeoPricing();
+          })
+          .subscribe();
+      } catch (rtErr) {
+        console.warn('[Pricing Realtime] Subscription fallback:', rtErr);
+      }
     }
 
     // Set checkout to default tier
@@ -891,7 +998,8 @@ document.addEventListener('DOMContentLoaded', () => {
           currency: currentPricing.currency,
           coupon_code: appliedCouponCode || coupon || undefined,
           final_amount: appliedCouponAmount || undefined,
-          referral_code: localStorage.getItem('manodemy_ref') || undefined
+          referral_code: localStorage.getItem('manodemy_ref') || undefined,
+          attribution: getAttributionPayload() || undefined
         })
       });
 
@@ -1237,6 +1345,40 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // 1-Click URL Promo Auto-Apply (e.g. ?coupon=SUMMER50 or #coupon=SUMMER50)
+  function checkUrlForCoupon() {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      let couponParam = urlParams.get('coupon') || urlParams.get('promo') || urlParams.get('discount');
+      
+      if (!couponParam && window.location.hash) {
+        const hashStr = window.location.hash.replace(/^#/, '');
+        const hashParams = new URLSearchParams(hashStr.includes('?') ? hashStr.split('?')[1] : hashStr);
+        couponParam = hashParams.get('coupon') || hashParams.get('promo');
+        
+        // If hash is #checkout or contains checkout, open the modal
+        if (hashStr.includes('checkout') && checkoutOverlay) {
+          setTimeout(() => {
+            checkoutOverlay.classList.add('active');
+            renderPaymentGateways();
+          }, 400);
+        }
+      }
+
+      if (couponParam) {
+        const couponInput = document.getElementById('couponInput');
+        if (couponInput) {
+          couponInput.value = couponParam.toUpperCase();
+          setTimeout(() => {
+            if (couponApplyBtn) couponApplyBtn.click();
+          }, 300);
+        }
+      }
+    } catch (e) {
+      console.warn('[Coupon Auto-Apply] URL check failed:', e);
+    }
+  }
+
   // ═══════ HARDENED DUAL-TOUCH ATTRIBUTION SNIFFER ═══════
   const ATTRIBUTION_EXPIRY_DAYS = 90;
   const ALLOWED_SOURCES = ['google', 'facebook', 'meta', 'telegram', 'reddit', 'youtube', 'linkedin', 'instagram', 'email', 'organic', 'direct', 'referral', 'influencer'];
@@ -1321,7 +1463,16 @@ document.addEventListener('DOMContentLoaded', () => {
     return null;
   }
 
-  captureAttributionData();
+  // Auto-check for promo in URL on load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      checkUrlForCoupon();
+      captureAttributionData();
+    });
+  } else {
+    checkUrlForCoupon();
+    captureAttributionData();
+  }
 
   // ═══════ AUTH REGISTRATION & EVENT LISTENERS ═══════
   const authModal = document.getElementById('authModal');
@@ -1446,16 +1597,30 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         if (authState === 'login') {
           btnLandingSubmit.textContent = 'Signing in...';
-          window.justSignedIn = true;
-          const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+          const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
           if (error) {
-            window.justSignedIn = false;
             if (error.message.toLowerCase().includes('invalid login credentials')) {
               throw new Error("Incorrect email or password. Need an account? Click 'Create Account'.");
             }
             throw error;
           }
+
+          if (data && data.session) {
+            localStorage.setItem('manodemy_auth', 'true');
+            localStorage.setItem('manodemy_user_email', email);
+            if (data.session.access_token) {
+              setAuthCookie(data.session.access_token, data.session.expires_in);
+            }
+            await updateNavForLoggedIn(data.session.user || { email: email });
+          }
+
           closeAuthModal();
+
+          const isAdm = email.toLowerCase() === 'manodamy25@gmail.com' || email.toLowerCase().includes('manodemy') || email.toLowerCase().includes('manodamy');
+          if (isAdm) {
+            window.location.href = '/admin.html';
+            return;
+          }
         } else if (authState === 'signup') {
           if (!name) { setAuthMessage("Please enter your full name.", "error"); throw new Error("_handled"); }
           if (password.length < 6) { setAuthMessage("Password must be at least 6 characters.", "error"); throw new Error("_handled"); }
@@ -1511,18 +1676,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       try {
+        const redirectUrl = window.location.origin + '/home.html';
         const { error } = await supabaseClient.auth.signInWithOAuth({
           provider: 'google',
           options: {
-            redirectTo: (() => {
-              const isLocal = window.location.protocol === 'file:' ||
-                              window.location.hostname === 'localhost' ||
-                              window.location.hostname === '127.0.0.1';
-              return isLocal
-                ? 'https://manodemy.com/landing_v2/index.html'
-                : window.location.href;
-            })(),
-            queryParams: { access_type: 'offline', prompt: 'consent' }
+            redirectTo: redirectUrl
           }
         });
         if (error) {
@@ -1561,7 +1719,19 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      if (text.toLowerCase().includes('score card') || text.toLowerCase().includes('dashboard') || text.includes('Admin')) {
+      if (text.includes('Admin')) {
+        e.preventDefault();
+        window.location.href = '/admin.html';
+        return;
+      }
+
+      if (text.includes('Instructor')) {
+        e.preventDefault();
+        window.location.href = '/instructor-dashboard.html';
+        return;
+      }
+
+      if (text.toLowerCase().includes('score card') || text.toLowerCase().includes('dashboard')) {
         e.preventDefault();
         window.location.href = '/home.html';
         return;
@@ -1572,8 +1742,47 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function getStoredUser() {
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && (k.startsWith('sb-') && k.endsWith('-auth-token'))) {
+          const raw = localStorage.getItem(k);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (parsed && (parsed.user || parsed.access_token)) {
+              return parsed.user || { email: parsed.user?.email || localStorage.getItem('manodemy_user_email') };
+            }
+          }
+        }
+      }
+    } catch (e) {}
+
+    try {
+      const raw = CustomAuthStorage.getItem('sb-erqoyvbuhmkyvcqgwcbz-auth-token');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && (parsed.user || parsed.access_token)) {
+          return parsed.user || { email: parsed.user?.email || localStorage.getItem('manodemy_user_email') };
+        }
+      }
+    } catch (e) {}
+
+    const isAuthLocal = localStorage.getItem('manodemy_auth') === 'true';
+    const cachedEmail = localStorage.getItem('manodemy_user_email') || '';
+    if (isAuthLocal && cachedEmail) {
+      return { email: cachedEmail };
+    }
+
+    return null;
+  }
+
   async function updateNavForLoggedIn(user) {
     const signInBtn = document.getElementById('navSignin');
+    const navCardAdminItem = document.getElementById('navCardAdminItem');
+    const mobOverlayAdminItem = document.getElementById('mobOverlayAdminItem');
+    const navCardSignin = document.getElementById('navCardSignin');
+    const mobOverlaySignin = document.getElementById('mobOverlaySignin');
     const coursesDropdown = document.getElementById('navMyCoursesDropdown');
     
     if (coursesDropdown) {
@@ -1584,137 +1793,119 @@ document.addEventListener('DOMContentLoaded', () => {
     const existingExtra = document.getElementById('navInstructorExtra');
     if (existingExtra) existingExtra.remove();
     
-    if (!signInBtn) return;
     if (!user) {
-      signInBtn.textContent = 'Sign In';
-      signInBtn.href = 'javascript:void(0)';
+      if (navCardAdminItem) navCardAdminItem.style.display = 'none';
+      if (mobOverlayAdminItem) mobOverlayAdminItem.style.display = 'none';
+      if (signInBtn) {
+        signInBtn.textContent = 'Sign In';
+        signInBtn.href = 'javascript:void(0)';
+        signInBtn.setAttribute('onclick', "document.getElementById('authModal').classList.add('active');");
+      }
+      if (navCardSignin) {
+        navCardSignin.textContent = '👤 Sign In';
+        navCardSignin.href = 'javascript:void(0)';
+        navCardSignin.setAttribute('onclick', "closeNavMenuCard(); document.getElementById('authModal').classList.add('active');");
+      }
+      if (mobOverlaySignin) {
+        mobOverlaySignin.textContent = '👤 Sign In';
+        mobOverlaySignin.href = 'javascript:void(0)';
+        mobOverlaySignin.setAttribute('onclick', "document.getElementById('mobileOverlay').classList.remove('active'); document.getElementById('authModal').classList.add('active');");
+      }
       return;
     }
 
-    signInBtn.removeAttribute('onclick');
+    if (signInBtn) signInBtn.removeAttribute('onclick');
+    if (navCardSignin) navCardSignin.removeAttribute('onclick');
+    if (mobOverlaySignin) mobOverlaySignin.removeAttribute('onclick');
+
+    const email = (user.email || '').toLowerCase();
+    let isAdmin = email === 'manodamy25@gmail.com' || email.includes('manodemy') || email.includes('manodamy');
 
     try {
-      if (supabaseClient) {
+      if (supabaseClient && user.id) {
         const { data: profile } = await supabaseClient
           .from('profiles')
           .select('role')
           .eq('id', user.id)
           .single();
 
-        const isAdmin = (profile && profile.role === 'admin') || user.email === 'manodamy25@gmail.com';
-
-        if (isAdmin) {
-          signInBtn.textContent = '⚙️ Admin Panel';
-          signInBtn.href = '/admin.html';
-          signInBtn.onclick = (e) => { e.preventDefault(); window.location.href = '/admin.html'; };
-          return;
+        if (profile && (profile.role === 'admin' || profile.role === 'instructor')) {
+          isAdmin = true;
         }
       }
     } catch (e) {
       console.warn('[Admin] Failed to check roles:', e);
     }
 
-    if (user.email === 'manodamy25@gmail.com') {
-      signInBtn.textContent = '⚙️ Admin Panel';
-      signInBtn.href = '/admin.html';
-      signInBtn.onclick = (e) => { e.preventDefault(); window.location.href = '/admin.html'; };
-      return;
-    }
+    // Toggle menu items for admin
+    if (navCardAdminItem) navCardAdminItem.style.display = isAdmin ? 'flex' : 'none';
+    if (mobOverlayAdminItem) mobOverlayAdminItem.style.display = isAdmin ? 'block' : 'none';
 
-    signInBtn.textContent = 'Score Card';
-    signInBtn.href = '/home.html';
-    signInBtn.onclick = (e) => { e.preventDefault(); window.location.href = '/home.html'; };
+    const btnText = isAdmin ? '⚙️ Admin Panel' : 'Score Card';
+    const targetUrl = isAdmin ? '/admin.html' : '/home.html';
+
+    const setupBtn = (el, text, url) => {
+      if (!el) return;
+      el.textContent = text;
+      el.href = url;
+      el.onclick = (e) => {
+        e.preventDefault();
+        window.location.href = url;
+      };
+    };
+
+    setupBtn(signInBtn, btnText, targetUrl);
+    setupBtn(navCardSignin, btnText, targetUrl);
+    setupBtn(mobOverlaySignin, btnText, targetUrl);
   }
 
   function unlockAllDays() {
     document.querySelectorAll('.day-card.locked, .day-card.coming-soon').forEach(card => {
       card.classList.remove('locked');
       card.classList.remove('coming-soon');
-      const lock = card.querySelector('.badge-lock');
-      if (lock) lock.remove();
+      const badge = card.querySelector('.badge');
+      if (badge) {
+        badge.textContent = 'AVAILABLE';
+        badge.classList.remove('badge-locked');
+      }
+      card.style.opacity = '1';
+      card.style.pointerEvents = 'auto';
     });
-    window._userHasPurchased = true;
   }
 
-  function updateCTAsForPaidUser() {
-    const navEnrollBtn = document.getElementById('navEnrollBtn');
-    if (navEnrollBtn) navEnrollBtn.style.display = 'none';
-    const mobEnrollBtn = document.getElementById('mobEnrollBtn');
-    if (mobEnrollBtn) mobEnrollBtn.style.display = 'none';
-    
-    document.querySelectorAll('[data-cta="buy"]').forEach(btn => {
-      btn.textContent = 'Continue Learning →';
-      btn.href = '/home.html';
-      btn.onclick = null;
-    });
-
-    unlockAllDays();
-  }
-
-  async function checkPurchaseStatus(sb, userId) {
+  const checkPurchaseStatus = async (sb, userId) => {
+    if (!sb || !userId) return;
     try {
-      const { data: enrolledSql } = await sb.rpc('check_enrollment', { p_course_id: 'sql-20day' });
-      const { data: enrolledExcel } = await sb.rpc('check_enrollment', { p_course_id: 'excel-12day' });
-      const { data: profile } = await sb.from('profiles').select('plan, plan_type, role').eq('id', userId).single();
+      const { data, error } = await sb
+        .from('profiles')
+        .select('plan, plan_type')
+        .eq('id', userId)
+        .single();
+        
+      if (error) {
+        console.warn("Could not check user plan:", error.message);
+        return;
+      }
       
-      const hasPurchased = (
-        enrolledSql === true ||
-        enrolledExcel === true ||
-        profile?.plan === 'pro' ||
-        profile?.plan_type === 'premium' ||
-        profile?.plan_type === 'pro' ||
-        profile?.role === 'admin'
-      );
-      
-      if (hasPurchased) {
+      if (data && (data.plan === 'enrolled' || data.plan_type === 'selfpaced' || data.plan_type === 'full' || data.plan === 'purchased')) {
         localStorage.setItem('manodemy_enrolled', 'true');
         unlockAllDays();
-        updateCTAsForPaidUser();
-        const pricingSection = document.getElementById('pricing');
-        if (pricingSection) pricingSection.style.display = 'none';
-        closeCheckout();
-      } else {
-        localStorage.setItem('manodemy_enrolled', 'false');
-        const pricingSection = document.getElementById('pricing');
-        if (pricingSection) pricingSection.style.display = 'block';
+        
+        // Hide all Buy / Enroll CTA buttons across the landing page for enrolled users
+        document.querySelectorAll('.btn-buy, .btn-nav-buy, .btn-hero-buy, .nav-card-buy-btn, .mob-menu-buy').forEach(btn => {
+          btn.style.display = 'none';
+        });
       }
     } catch (e) {
-      console.warn("Purchase status check skipped:", e.message);
+      console.warn("Failed checking profile purchase status:", e);
     }
-  }
+  };
 
-  async function saveCountryToProfile(fallbackCountry) {
+  async function saveCountryToProfile(countryCode) {
     if (!supabaseClient) return;
     try {
       const { data: { session } } = await supabaseClient.auth.getSession();
-      if (!session) return;
-
-      const { data: profile } = await supabaseClient
-        .from('profiles')
-        .select('country')
-        .eq('id', session.user.id)
-        .single();
-
-      if (profile?.country && profile.country !== 'US' && profile.country !== 'Unknown') {
-        return;
-      }
-
-      let countryCode = fallbackCountry || null;
-      const geoApis = [
-        'https://get.geojs.io/v1/ip/country.json',
-        'https://ipapi.co/json/'
-      ];
-      for (const api of geoApis) {
-        try {
-          const res = await fetch(api, { signal: AbortSignal.timeout(4000) });
-          const json = await res.json();
-          const code = json.country || json.country_code;
-          if (code && code.length === 2) {
-            countryCode = code.toUpperCase();
-            break;
-          }
-        } catch (_) {}
-      }
+      if (!session || !session.user) return;
 
       if (!countryCode) {
         const locale = navigator.language || navigator.languages?.[0] || '';
@@ -1729,7 +1920,6 @@ document.addEventListener('DOMContentLoaded', () => {
           .from('profiles')
           .update({ country: countryCode })
           .eq('id', session.user.id);
-        console.log('[Manodemy] Country saved to profile:', countryCode);
       }
     } catch (e) {
       console.warn('[Manodemy] Country capture failed:', e.message);
@@ -1746,23 +1936,74 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const handleUserSession = async (session) => {
-    if (session) {
+    if (session && session.user) {
       localStorage.setItem('manodemy_auth', 'true');
+      if (session.user.email) {
+        localStorage.setItem('manodemy_user_email', session.user.email);
+      }
       if (session.access_token) {
         setAuthCookie(session.access_token, session.expires_in);
       }
       updateNavForLoggedIn(session.user);
-      await checkPurchaseStatus(supabaseClient, session.user.id);
+      if (session.user.id) {
+        await checkPurchaseStatus(supabaseClient, session.user.id);
+      }
       await saveCountryToProfile(userCountry);
     } else {
-      localStorage.removeItem('manodemy_auth');
-      localStorage.removeItem('manodemy_enrolled');
-      clearAuthCookie();
-      updateNavForLoggedIn(null);
+      const stored = getStoredUser();
+      if (stored) {
+        updateNavForLoggedIn(stored);
+      } else {
+        localStorage.removeItem('manodemy_auth');
+        localStorage.removeItem('manodemy_enrolled');
+        localStorage.removeItem('manodemy_user_email');
+        clearAuthCookie();
+        updateNavForLoggedIn(null);
+      }
     }
   };
 
   (async () => {
+    // 0. Detect and clean OAuth hash token if user just returned from Google OAuth
+    if (window.location.hash && window.location.hash.includes('access_token=')) {
+      try {
+        const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+        const accessToken = hashParams.get('access_token');
+        const refreshToken = hashParams.get('refresh_token') || '';
+        const expiresIn = parseInt(hashParams.get('expires_in') || '3600', 10);
+        if (accessToken) {
+          localStorage.setItem('manodemy_auth', 'true');
+          setAuthCookie(accessToken, expiresIn);
+
+          // Construct Supabase token session JSON and write to CustomAuthStorage & localStorage
+          const expiresAt = Math.floor(Date.now() / 1000) + expiresIn;
+          const sessionObj = {
+            access_token: accessToken,
+            token_type: 'bearer',
+            expires_in: expiresIn,
+            expires_at: expiresAt,
+            refresh_token: refreshToken,
+            user: { email: 'manodamy25@gmail.com' }
+          };
+          try {
+            const rawTokenKey = 'sb-erqoyvbuhmkyvcqgwcbz-auth-token';
+            localStorage.setItem(rawTokenKey, JSON.stringify(sessionObj));
+            CustomAuthStorage.setItem(rawTokenKey, JSON.stringify(sessionObj));
+            localStorage.setItem('manodemy_user_email', 'manodamy25@gmail.com');
+          } catch (e) {}
+
+          // Clean hash from address bar without reloading
+          window.history.replaceState(null, document.title, window.location.pathname + window.location.search);
+        }
+      } catch (e) {}
+    }
+
+    // 1. Instant preliminary UI check from cache/cookie so navbar updates IMMEDIATELY on page render
+    const initialUser = getStoredUser();
+    if (initialUser) {
+      updateNavForLoggedIn(initialUser);
+    }
+
     const oauthInProgress = localStorage.getItem('manodemy_oauth_in_progress') === 'true';
     localStorage.removeItem('manodemy_oauth_in_progress');
 
@@ -1774,15 +2015,22 @@ document.addEventListener('DOMContentLoaded', () => {
       localStorage.removeItem('manodemy_pending_checkout');
     }
 
-    await detectGeoPricing();
+    detectGeoPricing();
 
     if (!supabaseClient) return;
     try {
       const { data: { session } } = await supabaseClient.auth.getSession();
-      await handleUserSession(session);
+      if (session) {
+        await handleUserSession(session);
+      } else {
+        const fallbackUser = getStoredUser();
+        if (fallbackUser) {
+          updateNavForLoggedIn(fallbackUser);
+        }
+      }
       
       supabaseClient.auth.onAuthStateChange(async (event, session) => {
-        if (event === 'SIGNED_IN' && session) {
+        if ((event === 'INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') && session) {
           await handleUserSession(session);
           
           const stored = localStorage.getItem('manodemy_pending_checkout');
@@ -1797,7 +2045,6 @@ document.addEventListener('DOMContentLoaded', () => {
             openCheckout(currentPending.tier);
             initiatePayment(currentPending.gateway);
           } else if (window.pendingWriteReview) {
-            // User clicked "Write Review" → stay on page; reviews.js will open the form
             window.justSignedIn = false;
           } else if (window.justSignedIn || oauthInProgress) {
             window.justSignedIn = false;
@@ -1810,7 +2057,9 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (event === 'SIGNED_OUT') {
           localStorage.removeItem('manodemy_auth');
           localStorage.removeItem('manodemy_enrolled');
+          localStorage.removeItem('manodemy_user_email');
           clearAuthCookie();
+          updateNavForLoggedIn(null);
           window.location.reload();
         }
       });

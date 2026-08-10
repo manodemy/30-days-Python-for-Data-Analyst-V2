@@ -764,7 +764,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('[Pricing Realtime] Received live pricing version broadcast:', payload.new);
             detectGeoPricing();
           })
-          .on('postgres_changes', { event: '*', schema: 'public', table: 'settings' }, () => {
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'settings', filter: 'key=eq.pricing' }, () => {
             detectGeoPricing();
           })
           .subscribe();

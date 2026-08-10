@@ -5282,6 +5282,7 @@
         updateMatrixOverview();
         updatePreviewSimulator();
         renderPresetButtons(_activePricingRegion);
+        _adminCache.invalidate('pricing');
         showToast(`🎉 ${isINR ? 'INR (₹' + sale + ')' : 'USD ($' + sale + ')'} pricing saved & published live across all landing pages!`, 'success');
       } catch (err) {
         showToast('❌ Error saving price: ' + err.message, 'error');
@@ -6215,6 +6216,7 @@
         if (error) throw error;
 
         if (statusMsg) { statusMsg.textContent = '✅ Campaign budget saved successfully!'; statusMsg.style.color = 'var(--emerald)'; }
+        _adminCache.invalidate('ads');
         loadCreativeAdsData();
         setTimeout(() => { if (statusMsg) statusMsg.textContent = ''; }, 3000);
       } catch (err) {

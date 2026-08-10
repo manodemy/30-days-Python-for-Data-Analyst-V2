@@ -5288,9 +5288,12 @@
       if (!c) return {};
       const rawMode = (c.mode || c.discount_type || 'PERCENT').toUpperCase();
       let mode = rawMode;
-      if (rawMode === 'PERCENTAGE') mode = 'PERCENT';
-      if (rawMode === 'FLAT_INR') mode = 'FIXED_INR';
-      if (rawMode === 'FLAT_USD') mode = 'FIXED_USD';
+      if (rawMode === 'PERCENTAGE' || rawMode === 'PERCENT') mode = 'PERCENT';
+      else if (c.mode) mode = c.mode;
+      else if (rawMode === 'FIXED') {
+        const app = (c.applies_to || c.currency_scope || 'BOTH').toUpperCase();
+        mode = app === 'USD' ? 'FIXED_USD' : 'FIXED_INR';
+      }
 
       const valNum = Number(c.value !== undefined && c.value !== null ? c.value : c.discount_value);
       const value = isNaN(valNum) ? 0 : valNum;
@@ -5327,26 +5330,33 @@
       const tag = document.getElementById('new_coupon_tag').value || null;
       const singleEmail = document.getElementById('new_coupon_single_email').checked;
 
-      const discountType = mode === 'PERCENT' ? 'percentage' : (mode === 'FIXED_INR' ? 'flat_inr' : 'flat_usd');
+      // Map discount_type to valid DB CHECK constraint values ('percentage' or 'fixed')
+      const discountType = mode === 'PERCENT' ? 'percentage' : 'fixed';
+
+      // Map applies_to to valid DB CHECK constraint values ('INR', 'USD', or 'both')
+      let appliesTo = 'both';
+      if (scope === 'INR' || mode === 'FIXED_INR') appliesTo = 'INR';
+      else if (scope === 'USD' || mode === 'FIXED_USD') appliesTo = 'USD';
+      else if (scope === 'BOTH') appliesTo = 'both';
 
       // Construct comprehensive payload mapping all schema variations
       let payload = {
         code,
         discount_type: discountType,
-        mode: mode,
         discount_value: value,
-        value: value,
-        applies_to: scope.toLowerCase(),
-        currency_scope: scope,
+        applies_to: appliesTo,
         max_uses: maxUses,
         current_uses: 0,
-        uses_count: 0,
-        single_use_per_email: singleEmail,
         starts_at: starts,
         expires_at: expires,
-        campaign_tag: tag,
         is_active: true,
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
+        mode: mode,
+        value: value,
+        currency_scope: scope,
+        uses_count: 0,
+        single_use_per_email: singleEmail,
+        campaign_tag: tag
       };
 
       try {

@@ -5972,6 +5972,16 @@
 
         loadAdDataQualityAlerts();
 
+        if (error) {
+          console.warn('[Ad Intelligence] RPC error:', error);
+          tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:var(--rose); padding:2rem;">⚠️ Notice: ${error.message || 'RPC function missing'}. If migration 030 isn't executed yet, run <code>030_creative_ads_attribution.sql</code> in your Supabase SQL editor.</td></tr>`;
+          document.getElementById('kpiAdSales').textContent = '0';
+          document.getElementById('kpiAdNetRevenue').textContent = '₹0';
+          document.getElementById('kpiAdSpend').textContent = '₹0';
+          document.getElementById('kpiAdNetROAS').textContent = '0.0x';
+          return;
+        }
+
         const list = data || [];
         if (badge) badge.textContent = `${list.length} Campaigns`;
 
@@ -5999,6 +6009,8 @@
           totalSales += sales;
           totalNetRevenue += netRev;
           totalAdSpend += spend;
+
+          const roasColor = netRoas >= 3.0 ? 'var(--emerald)' : (netRoas >= 1.0 ? 'var(--gold)' : 'var(--rose)');
 
           let contentDisplay = item.ad_content || 'none';
           if (contentDisplay.startsWith('http://') || contentDisplay.startsWith('https://')) {

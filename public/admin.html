@@ -3163,14 +3163,15 @@
                 <!-- ══ TAB 4: PRICING & COUPONS COMMAND CENTER ══ -->
         <div class="tab-pane" id="tab-pricing">
 
-          <!-- 1. DUAL-CURRENCY MATRIX OVERVIEW -->
+          <!-- 1. DUAL-CURRENCY MATRIX OVERVIEW & INTERACTIVE REGION SELECTOR -->
           <div id="moduleMasterMatrix" style="background: var(--elevated); border: 1px solid var(--rim); border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 1.25rem;">
             <div style="font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; color: var(--ink); margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between;">
               <span>🌐 Master Pricing Matrix</span>
             </div>
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
-              <div style="background: var(--base); border: 1px solid var(--rim); border-radius: var(--radius-md); padding: 1rem 1.25rem;">
+              <!-- Interactive INR Card -->
+              <div id="matrixCardInr" onclick="switchPricingRegion('INR')" style="background: rgba(245, 158, 11, 0.06); border: 2px solid var(--gold); border-radius: var(--radius-md); padding: 1rem 1.25rem; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 20px rgba(245, 158, 11, 0.15); position: relative;">
                 <div style="font-size: 0.8rem; font-weight: 700; color: var(--gold); margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: space-between;">
                   <span>🇮🇳 India Domestic (INR)</span>
                   <span class="badge badge-emerald" style="font-size: 0.62rem; padding: 1px 6px;">Razorpay / UPI</span>
@@ -3181,7 +3182,8 @@
                 <div style="font-size: 0.75rem; color: var(--emerald); font-weight: 600; margin-top: 0.3rem;" id="matrixInrBadge">70% OFF (You save ₹3,500)</div>
               </div>
 
-              <div style="background: var(--base); border: 1px solid var(--rim); border-radius: var(--radius-md); padding: 1rem 1.25rem;">
+              <!-- Interactive USD Card -->
+              <div id="matrixCardUsd" onclick="switchPricingRegion('USD')" style="background: var(--base); border: 1px solid var(--rim); border-radius: var(--radius-md); padding: 1rem 1.25rem; cursor: pointer; transition: all 0.2s ease; position: relative;">
                 <div style="font-size: 0.8rem; font-weight: 700; color: var(--sapphire); margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: space-between;">
                   <span>🌍 Outside India (USD)</span>
                   <span class="badge badge-sapphire" style="font-size: 0.62rem; padding: 1px 6px;">PayPal / Stripe</span>
@@ -3191,21 +3193,6 @@
                 </div>
                 <div style="font-size: 0.75rem; color: var(--emerald); font-weight: 600; margin-top: 0.3rem;" id="matrixUsdBadge">67% OFF (You save $100)</div>
               </div>
-            </div>
-          </div>
-
-          <!-- 2. REGION SWITCHER TABS -->
-          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.25rem; background: var(--elevated); padding: 0.35rem 0.5rem; border-radius: var(--radius-md); border: 1px solid var(--rim);">
-            <div style="display: flex; align-items: center; gap: 0.4rem;">
-              <button class="region-tab-btn active" id="btnRegionInr" type="button" onclick="switchPricingRegion('INR')" style="padding: 0.45rem 1.1rem; font-size: 0.82rem; font-weight: 600; border-radius: var(--radius-sm); border: 1px solid transparent; cursor: pointer; transition: all var(--transition); background: var(--gold); color: var(--void);">
-                🇮🇳 India (INR ₹)
-              </button>
-              <button class="region-tab-btn" id="btnRegionUsd" type="button" onclick="switchPricingRegion('USD')" style="padding: 0.45rem 1.1rem; font-size: 0.82rem; font-weight: 600; border-radius: var(--radius-sm); border: 1px solid var(--rim); cursor: pointer; transition: all var(--transition); background: transparent; color: var(--ink-dim);">
-                🌍 Outside India (USD $)
-              </button>
-            </div>
-            <div style="font-size: 0.72rem; color: var(--ink-muted); font-family: var(--font-data); padding-right: 0.5rem;">
-              Gateway: <strong id="pricingActiveGatewayLabel" style="color: var(--sapphire);">Razorpay &amp; UPI</strong>
             </div>
           </div>
 
@@ -5025,35 +5012,41 @@
       if (icon) icon.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
     };
 
-    // Region tab switcher
+    // Region tab switcher (via Master Pricing Matrix Cards)
     window.switchPricingRegion = function(region) {
       _activePricingRegion = region;
-      const btnInr = document.getElementById('btnRegionInr');
-      const btnUsd = document.getElementById('btnRegionUsd');
+      const cardInr = document.getElementById('matrixCardInr');
+      const cardUsd = document.getElementById('matrixCardUsd');
       const modPricing = document.getElementById('moduleMasterPricing');
       const gatewayLabel = document.getElementById('pricingActiveGatewayLabel');
 
-      [btnInr, btnUsd].forEach(b => {
-        if (b) {
-          b.style.background = 'transparent';
-          b.style.color = 'var(--ink-dim)';
-          b.style.border = '1px solid var(--rim)';
+      if (cardInr && cardUsd) {
+        if (region === 'INR') {
+          cardInr.style.border = '2px solid var(--gold)';
+          cardInr.style.background = 'rgba(245, 158, 11, 0.06)';
+          cardInr.style.boxShadow = '0 4px 20px rgba(245, 158, 11, 0.15)';
+
+          cardUsd.style.border = '1px solid var(--rim)';
+          cardUsd.style.background = 'var(--base)';
+          cardUsd.style.boxShadow = 'none';
+        } else {
+          cardUsd.style.border = '2px solid var(--sapphire)';
+          cardUsd.style.background = 'rgba(59, 130, 246, 0.06)';
+          cardUsd.style.boxShadow = '0 4px 20px rgba(59, 130, 246, 0.15)';
+
+          cardInr.style.border = '1px solid var(--rim)';
+          cardInr.style.background = 'var(--base)';
+          cardInr.style.boxShadow = 'none';
         }
-      });
+      }
 
       if (modPricing) modPricing.style.display = 'grid';
 
       const flag = document.getElementById('cfgRegionFlag');
       const title = document.getElementById('cfgRegionTitle');
       const symbols = document.querySelectorAll('.curr-symbol');
-      const presetContainer = document.getElementById('cfgPresetButtons');
 
       if (region === 'INR') {
-        if (btnInr) {
-          btnInr.style.background = 'var(--gold)';
-          btnInr.style.color = 'var(--void)';
-          btnInr.style.border = '1px solid transparent';
-        }
         if (flag) flag.textContent = '🇮🇳';
         if (title) title.textContent = 'India Domestic Pricing (INR)';
         if (gatewayLabel) gatewayLabel.textContent = 'Razorpay & UPI (Auto-Detected)';
@@ -5073,11 +5066,6 @@
         if (elBadge) elBadge.value = autoBadge;
         if (elLabel) elLabel.value = _inrPricingState.preset_label || 'Early Access Offer';
       } else {
-        if (btnUsd) {
-          btnUsd.style.background = 'var(--gold)';
-          btnUsd.style.color = 'var(--void)';
-          btnUsd.style.border = '1px solid transparent';
-        }
         if (flag) flag.textContent = '🌍';
         if (title) title.textContent = 'Outside India Global Pricing (USD)';
         if (gatewayLabel) gatewayLabel.textContent = 'PayPal & Stripe (Global Credit Cards)';

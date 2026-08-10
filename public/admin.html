@@ -89,6 +89,42 @@
       overflow: hidden;
     }
 
+    /* FORM CONTROLS & DROPDOWN STYLING */
+    .form-select, .form-input {
+      background-color: rgba(15, 23, 42, 0.95) !important;
+      color: #F8FAFC !important;
+      border: 1px solid rgba(255, 255, 255, 0.15) !important;
+      border-radius: 10px !important;
+      padding: 0.65rem 0.85rem !important;
+      font-size: 0.85rem !important;
+      font-family: var(--font-body) !important;
+      outline: none !important;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+    }
+
+    .form-select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2300E6F6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+      background-repeat: no-repeat !important;
+      background-position: right 0.85rem center !important;
+      background-size: 1rem !important;
+      padding-right: 2.5rem !important;
+      cursor: pointer !important;
+      appearance: none !important;
+      -webkit-appearance: none !important;
+    }
+
+    .form-select:focus, .form-input:focus {
+      border-color: #00E6F6 !important;
+      box-shadow: 0 0 14px rgba(0, 230, 246, 0.3) !important;
+    }
+
+    .form-select option {
+      background-color: #0F172A !important;
+      color: #F8FAFC !important;
+      padding: 10px !important;
+      font-size: 0.85rem !important;
+    }
+
     /* Noise texture overlay */
     body::before {
       content: '';
@@ -3398,62 +3434,94 @@
 
         <!-- ══ TAB 7: CREATIVE ADS & TRAFFIC INTELLIGENCE ══ -->
         <div class="tab-pane" id="tab-ads">
-          <div class="tab-header" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
+          <div class="tab-header" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem;">
             <div>
-              <h2 class="tab-title">Creative Ads &amp; <em>Traffic Intelligence</em></h2>
-              <span class="tab-period-label" style="display:inline-block; margin-top:0.35rem;">Multi-Touch Attribution, Channel Performance &amp; Net ROAS</span>
+              <h2 class="tab-title" style="font-family:var(--font-display); font-size:1.5rem; font-weight:800; letter-spacing:-0.02em;">
+                Creative Ads &amp; <em style="font-style:normal; background:linear-gradient(135deg, var(--gold) 0%, #FBBF24 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">Traffic Intelligence</em>
+              </h2>
+              <span class="tab-period-label" style="display:inline-block; margin-top:0.25rem; font-size:0.82rem; color:var(--ink-muted);">Multi-Touch Attribution, Channel Performance &amp; Net ROAS Suite</span>
             </div>
-            <div style="display:flex; align-items:center; gap:0.5rem; background:rgba(255,255,255,0.03); padding:4px 8px; border-radius:var(--radius-md); border:1px solid var(--rim);">
-              <span style="font-size:0.78rem; color:var(--ink-muted); font-weight:600;">Attribution Mode:</span>
-              <button class="pill active" id="btnAttrLastTouch" onclick="switchAttributionMode('last_touch')">Last-Touch</button>
-              <button class="pill" id="btnAttrFirstTouch" onclick="switchAttributionMode('first_touch')">First-Touch</button>
+            <div style="display:flex; align-items:center; gap:0.5rem; background:rgba(255,255,255,0.03); padding:5px 12px; border-radius:12px; border:1px solid rgba(255,255,255,0.08); backdrop-filter:blur(10px);">
+              <span style="font-size:0.75rem; color:var(--ink-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Attribution Mode:</span>
+              <button class="pill active" id="btnAttrLastTouch" onclick="switchAttributionMode('last_touch')" style="font-size:0.78rem; font-weight:700; padding:4px 14px; border-radius:8px; transition:all 0.2s ease;">Last-Touch</button>
+              <button class="pill" id="btnAttrFirstTouch" onclick="switchAttributionMode('first_touch')" style="font-size:0.78rem; font-weight:700; padding:4px 14px; border-radius:8px; transition:all 0.2s ease;">First-Touch</button>
             </div>
           </div>
 
           <!-- DATA QUALITY & LEAK ALERTS CONTAINER -->
-          <div id="adAlertsContainer" style="display:none; margin-bottom:1.5rem; padding:1rem 1.25rem; background:rgba(244,63,94,0.08); border:1px solid rgba(244,63,94,0.3); border-radius:var(--radius-md); color:#F43F5E; font-size:0.85rem;">
-            <div style="font-weight:700; display:flex; align-items:center; gap:0.5rem; margin-bottom:0.4rem;">
-              <span>⚠️</span> <span>Data Integrity &amp; Coupon Alerts Detected</span>
+          <div id="adAlertsContainer" style="display:none; margin-bottom:1.5rem; padding:1.1rem 1.35rem; background:linear-gradient(135deg, rgba(244,63,94,0.12) 0%, rgba(225,29,72,0.06) 100%); border:1px solid rgba(244,63,94,0.35); border-radius:14px; color:#F43F5E; backdrop-filter:blur(12px); box-shadow:0 8px 24px rgba(244,63,94,0.1);">
+            <div style="font-weight:700; display:flex; align-items:center; gap:0.6rem; margin-bottom:0.4rem; font-size:0.9rem;">
+              <span style="font-size:1.1rem;">⚠️</span> <span>Data Integrity &amp; Security Alerts</span>
             </div>
-            <div id="adAlertsContent" style="color:var(--ink-dim); font-size:0.8rem;"></div>
+            <div id="adAlertsContent" style="color:var(--ink-dim); font-size:0.82rem; line-height:1.5;"></div>
           </div>
 
-          <!-- TOP KPI CARDS -->
-          <div class="kpi-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: 1.5rem;">
-            <div class="kpi-card">
-              <div class="kpi-label">Attributed Sales</div>
-              <div class="kpi-val" id="kpiAdSales">—</div>
-              <div class="kpi-sub">Total Orders Tracked</div>
+          <!-- TOP STUNNING KPI CARDS -->
+          <div class="kpi-grid" style="grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap:1.25rem; margin-bottom:1.75rem;">
+            
+            <!-- KPI 1: SALES -->
+            <div style="background:linear-gradient(135deg, rgba(18,24,38,0.85) 0%, rgba(11,15,25,0.95) 100%); border:1px solid rgba(0,230,246,0.25); border-radius:16px; padding:1.25rem; position:relative; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08); transition:transform 0.2s ease, box-shadow 0.2s ease;">
+              <div style="position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg, #00E6F6, #00A3FF);"></div>
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.5rem;">
+                <span style="font-size:0.75rem; font-weight:800; color:var(--cyan); text-transform:uppercase; letter-spacing:0.06em;">Attributed Sales</span>
+                <span style="font-size:1.25rem; opacity:0.8;">🎯</span>
+              </div>
+              <div class="kpi-val" id="kpiAdSales" style="font-family:var(--font-display); font-size:1.85rem; font-weight:800; color:#FFFFFF; margin-bottom:0.25rem; text-shadow:0 2px 10px rgba(0,230,246,0.3);">—</div>
+              <div style="font-size:0.75rem; color:var(--ink-muted); font-weight:500;">Total Orders Tracked</div>
             </div>
-            <div class="kpi-card">
-              <div class="kpi-label">Attributed Net Revenue</div>
-              <div class="kpi-val" id="kpiAdNetRevenue">—</div>
-              <div class="kpi-sub">After Coupon Discounts</div>
+
+            <!-- KPI 2: REVENUE -->
+            <div style="background:linear-gradient(135deg, rgba(18,24,38,0.85) 0%, rgba(11,15,25,0.95) 100%); border:1px solid rgba(245,158,11,0.25); border-radius:16px; padding:1.25rem; position:relative; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08); transition:transform 0.2s ease, box-shadow 0.2s ease;">
+              <div style="position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg, #F59E0B, #FBBF24);"></div>
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.5rem;">
+                <span style="font-size:0.75rem; font-weight:800; color:var(--gold); text-transform:uppercase; letter-spacing:0.06em;">Net Revenue</span>
+                <span style="font-size:1.25rem; opacity:0.8;">💰</span>
+              </div>
+              <div class="kpi-val" id="kpiAdNetRevenue" style="font-family:var(--font-display); font-size:1.85rem; font-weight:800; color:var(--gold); margin-bottom:0.25rem; text-shadow:0 2px 10px rgba(245,158,11,0.3);">—</div>
+              <div style="font-size:0.75rem; color:var(--ink-muted); font-weight:500;">After Coupon Discounts</div>
             </div>
-            <div class="kpi-card">
-              <div class="kpi-label">Reconciled Ad Spend</div>
-              <div class="kpi-val" id="kpiAdSpend">—</div>
-              <div class="kpi-sub">INR + USD Converted</div>
+
+            <!-- KPI 3: AD SPEND -->
+            <div style="background:linear-gradient(135deg, rgba(18,24,38,0.85) 0%, rgba(11,15,25,0.95) 100%); border:1px solid rgba(168,85,247,0.25); border-radius:16px; padding:1.25rem; position:relative; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08); transition:transform 0.2s ease, box-shadow 0.2s ease;">
+              <div style="position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg, #A855F7, #C084FC);"></div>
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.5rem;">
+                <span style="font-size:0.75rem; font-weight:800; color:#C084FC; text-transform:uppercase; letter-spacing:0.06em;">Reconciled Ad Spend</span>
+                <span style="font-size:1.25rem; opacity:0.8;">💳</span>
+              </div>
+              <div class="kpi-val" id="kpiAdSpend" style="font-family:var(--font-display); font-size:1.85rem; font-weight:800; color:#FFFFFF; margin-bottom:0.25rem;">—</div>
+              <div style="font-size:0.75rem; color:var(--ink-muted); font-weight:500;">INR + USD Converted</div>
             </div>
-            <div class="kpi-card">
-              <div class="kpi-label">Blended Net ROAS</div>
-              <div class="kpi-val" id="kpiAdNetROAS" style="color:var(--emerald);">—</div>
-              <div class="kpi-sub">Net Profit Multiplier</div>
+
+            <!-- KPI 4: NET ROAS -->
+            <div style="background:linear-gradient(135deg, rgba(18,24,38,0.85) 0%, rgba(11,15,25,0.95) 100%); border:1px solid rgba(16,185,129,0.25); border-radius:16px; padding:1.25rem; position:relative; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08); transition:transform 0.2s ease, box-shadow 0.2s ease;">
+              <div style="position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg, #10B981, #34D399);"></div>
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.5rem;">
+                <span style="font-size:0.75rem; font-weight:800; color:var(--emerald); text-transform:uppercase; letter-spacing:0.06em;">Blended Net ROAS</span>
+                <span style="font-size:1.25rem; opacity:0.8;">⚡</span>
+              </div>
+              <div class="kpi-val" id="kpiAdNetROAS" style="font-family:var(--font-display); font-size:1.85rem; font-weight:800; color:var(--emerald); margin-bottom:0.25rem; text-shadow:0 2px 10px rgba(16,185,129,0.3);">—</div>
+              <div style="font-size:0.75rem; color:var(--ink-muted); font-weight:500;">Net Profit Multiplier</div>
             </div>
+
           </div>
 
-          <!-- 2-COLUMN TOOLS GRID -->
-          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap:1.5rem; margin-bottom:1.5rem;">
+          <!-- 2-COLUMN LUXURY TOOLS GRID -->
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap:1.5rem; margin-bottom:1.75rem;">
             
             <!-- SMART LINK & DIRECT QR GENERATOR -->
-            <div style="background:var(--elevated); border:1px solid var(--rim); border-radius:var(--radius-lg); padding:1.25rem;">
-              <h3 style="font-family:var(--font-display); font-size:1rem; font-weight:700; color:var(--ink); margin:0 0 1rem 0; display:flex; align-items:center; gap:0.5rem;">
-                <span>🔗</span> <span>1-Click Smart Ad Link &amp; Direct QR Generator</span>
-              </h3>
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.85rem; margin-bottom:0.85rem;">
+            <div style="background:linear-gradient(135deg, rgba(18,24,38,0.75) 0%, rgba(11,15,25,0.85) 100%); border:1px solid rgba(255,255,255,0.08); border-radius:18px; padding:1.5rem; backdrop-filter:blur(16px); box-shadow:0 12px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);">
+              <div style="display:flex; align-items:center; gap:0.65rem; margin-bottom:1.25rem; padding-bottom:0.75rem; border-bottom:1px solid rgba(255,255,255,0.06);">
+                <div style="width:36px; height:36px; border-radius:10px; background:rgba(0,230,246,0.12); border:1px solid rgba(0,230,246,0.3); display:flex; align-items:center; justify-content:center; font-size:1.1rem; color:var(--cyan);">🔗</div>
                 <div>
-                  <label class="form-label">Ad Platform / Channel</label>
-                  <select class="form-select" id="genPlatform">
+                  <h3 style="font-family:var(--font-display); font-size:1.05rem; font-weight:800; color:#FFFFFF; margin:0; letter-spacing:-0.01em;">1-Click Smart Ad Link &amp; Direct QR Generator</h3>
+                  <span style="font-size:0.75rem; color:var(--ink-muted);">Create trackable links &amp; high-res QR codes for ads</span>
+                </div>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+                <div>
+                  <label class="form-label" style="font-size:0.75rem; font-weight:700; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.4rem; display:block;">Ad Platform / Channel</label>
+                  <select class="form-select" id="genPlatform" style="width:100%; background:rgba(10,14,23,0.8); border:1px solid rgba(255,255,255,0.12); border-radius:10px; color:#F8FAFC; padding:0.65rem 0.85rem; font-size:0.85rem; outline:none; transition:all 0.2s ease;">
                     <option value="telegram">✈️ Telegram (Channel/Ads)</option>
                     <option value="meta">📘 Meta / Instagram Ads</option>
                     <option value="google">🔍 Google Ads (CPC)</option>
@@ -3464,55 +3532,66 @@
                   </select>
                 </div>
                 <div>
-                  <label class="form-label">Campaign Name</label>
-                  <input type="text" class="form-input" id="genCampaign" placeholder="e.g. august_python_launch" />
+                  <label class="form-label" style="font-size:0.75rem; font-weight:700; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.4rem; display:block;">Campaign Name</label>
+                  <input type="text" class="form-input" id="genCampaign" placeholder="e.g. august_python_launch" style="width:100%; background:rgba(10,14,23,0.8); border:1px solid rgba(255,255,255,0.12); border-radius:10px; color:#F8FAFC; padding:0.65rem 0.85rem; font-size:0.85rem; outline:none; transition:all 0.2s ease;" />
                 </div>
               </div>
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.85rem; margin-bottom:0.85rem;">
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
                 <div>
-                  <label class="form-label">Ad Creative / Post ID</label>
-                  <input type="text" class="form-input" id="genContent" placeholder="e.g. post_25_video" />
+                  <label class="form-label" style="font-size:0.75rem; font-weight:700; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.4rem; display:block;">Ad Post Link or Creative ID</label>
+                  <input type="text" class="form-input" id="genContent" placeholder="e.g. t.me/manodemy/142 or post_25" style="width:100%; background:rgba(10,14,23,0.8); border:1px solid rgba(255,255,255,0.12); border-radius:10px; color:#F8FAFC; padding:0.65rem 0.85rem; font-size:0.85rem; outline:none; transition:all 0.2s ease;" />
                 </div>
                 <div>
-                  <label class="form-label">Creative Variant ID</label>
-                  <input type="text" class="form-input" id="genCreativeId" placeholder="e.g. banner_red_v2" />
+                  <label class="form-label" style="font-size:0.75rem; font-weight:700; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.4rem; display:block;">Creative Variant ID (Optional)</label>
+                  <input type="text" class="form-input" id="genCreativeId" placeholder="e.g. banner_red_v2" style="width:100%; background:rgba(10,14,23,0.8); border:1px solid rgba(255,255,255,0.12); border-radius:10px; color:#F8FAFC; padding:0.65rem 0.85rem; font-size:0.85rem; outline:none; transition:all 0.2s ease;" />
                 </div>
               </div>
-              <div style="margin-bottom:1rem;">
-                <label class="form-label">Attach Auto-Apply Coupon (Optional)</label>
-                <select class="form-select" id="genCouponSelect">
+
+              <div style="margin-bottom:1.25rem;">
+                <label class="form-label" style="font-size:0.75rem; font-weight:700; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.4rem; display:block;">Attach Auto-Apply Coupon (Optional)</label>
+                <select class="form-select" id="genCouponSelect" style="width:100%; background:rgba(10,14,23,0.8); border:1px solid rgba(255,255,255,0.12); border-radius:10px; color:#F8FAFC; padding:0.65rem 0.85rem; font-size:0.85rem; outline:none; transition:all 0.2s ease;">
                   <option value="">No Coupon (Full Price)</option>
                 </select>
               </div>
-              <button class="apply-btn" style="width:100%; margin-bottom:1rem;" onclick="generateSmartAdLink()">⚡ Generate Trackable URL &amp; QR Code</button>
+
+              <button class="apply-btn" style="width:100%; height:44px; background:linear-gradient(135deg, #00E6F6 0%, #0088FF 100%); color:#0B0F19; font-family:var(--font-display); font-size:0.88rem; font-weight:800; border:none; border-radius:10px; cursor:pointer; box-shadow:0 4px 16px rgba(0,230,246,0.35); transition:all 0.2s ease; display:flex; align-items:center; justify-content:center; gap:0.5rem;" onclick="generateSmartAdLink()">
+                <span>⚡</span> <span>Generate Trackable URL &amp; QR Code</span>
+              </button>
               
-              <div id="genResultBox" style="display:none; background:rgba(0,0,0,0.3); border:1px solid var(--rim); border-radius:var(--radius-md); padding:1rem;">
-                <label class="form-label" style="color:var(--gold);">Trackable Landing URL:</label>
-                <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
-                  <input type="text" class="form-input" id="genOutputUrl" readonly style="font-family:var(--font-mono); font-size:0.75rem; color:var(--ink-muted);" />
-                  <button class="apply-btn" onclick="copySmartAdUrl()">Copy</button>
+              <div id="genResultBox" style="display:none; margin-top:1.25rem; background:rgba(0,0,0,0.4); border:1px solid rgba(0,230,246,0.3); border-radius:14px; padding:1.25rem; box-shadow:inset 0 2px 8px rgba(0,0,0,0.4);">
+                <label class="form-label" style="color:var(--gold); font-weight:700; font-size:0.8rem; margin-bottom:0.5rem; display:block;">Trackable Landing URL:</label>
+                <div style="display:flex; gap:0.6rem; margin-bottom:1.25rem;">
+                  <input type="text" class="form-input" id="genOutputUrl" readonly style="font-family:var(--font-mono); font-size:0.78rem; color:#FFFFFF; background:rgba(15,23,42,0.9); border:1px solid rgba(255,255,255,0.15); border-radius:8px; padding:0.5rem 0.75rem; flex:1;" />
+                  <button class="apply-btn" onclick="copySmartAdUrl()" style="background:var(--gold); color:#0B0F19; font-weight:800; padding:0 1.1rem; border-radius:8px; font-size:0.8rem;">Copy</button>
                 </div>
                 <div style="text-align:center;">
-                  <canvas id="qrCodeCanvas" style="background:#fff; padding:10px; border-radius:8px; display:inline-block;"></canvas>
-                  <div style="margin-top:0.5rem;">
-                    <a id="btnDownloadQR" download="manodemy-ad-qr.png" href="#" class="btn-sec" style="font-size:0.78rem; text-decoration:none; padding:4px 12px; display:inline-block;">⬇️ Download QR Code PNG</a>
+                  <canvas id="qrCodeCanvas" style="background:#FFFFFF; padding:12px; border-radius:12px; display:inline-block; box-shadow:0 8px 24px rgba(0,0,0,0.5);"></canvas>
+                  <div style="margin-top:0.75rem;">
+                    <a id="btnDownloadQR" download="manodemy-ad-qr.png" href="#" class="btn-sec" style="font-size:0.8rem; text-decoration:none; padding:6px 16px; border-radius:8px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); color:#FFFFFF; font-weight:600; display:inline-block; transition:all 0.2s ease;">⬇️ Download Direct QR Code PNG</a>
                   </div>
                 </div>
               </div>
             </div>
 
             <!-- LOG AD SPEND FORM -->
-            <div style="background:var(--elevated); border:1px solid var(--rim); border-radius:var(--radius-lg); padding:1.25rem;">
-              <h3 style="font-family:var(--font-display); font-size:1rem; font-weight:700; color:var(--ink); margin:0 0 1rem 0; display:flex; align-items:center; gap:0.5rem;">
-                <span>💰</span> <span>Log Campaign Ad Spend Budget</span>
-              </h3>
-              <div style="margin-bottom:0.85rem;">
-                <label class="form-label">Campaign Name (Must match URL tag)</label>
-                <input type="text" class="form-input" id="spendCampaignName" placeholder="e.g. august_python_launch" />
+            <div style="background:linear-gradient(135deg, rgba(18,24,38,0.75) 0%, rgba(11,15,25,0.85) 100%); border:1px solid rgba(255,255,255,0.08); border-radius:18px; padding:1.5rem; backdrop-filter:blur(16px); box-shadow:0 12px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);">
+              <div style="display:flex; align-items:center; gap:0.65rem; margin-bottom:1.25rem; padding-bottom:0.75rem; border-bottom:1px solid rgba(255,255,255,0.06);">
+                <div style="width:36px; height:36px; border-radius:10px; background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.3); display:flex; align-items:center; justify-content:center; font-size:1.1rem; color:var(--emerald);">💰</div>
+                <div>
+                  <h3 style="font-family:var(--font-display); font-size:1.05rem; font-weight:800; color:#FFFFFF; margin:0; letter-spacing:-0.01em;">Log Campaign Ad Spend Budget</h3>
+                  <span style="font-size:0.75rem; color:var(--ink-muted);">Record ad costs to compute Net ROAS automatically</span>
+                </div>
               </div>
-              <div style="margin-bottom:0.85rem;">
-                <label class="form-label">Ad Platform</label>
-                <select class="form-select" id="spendPlatform">
+
+              <div style="margin-bottom:1rem;">
+                <label class="form-label" style="font-size:0.75rem; font-weight:700; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.4rem; display:block;">Campaign Name (Must match URL tag)</label>
+                <input type="text" class="form-input" id="spendCampaignName" placeholder="e.g. august_python_launch" style="width:100%; background:rgba(10,14,23,0.8); border:1px solid rgba(255,255,255,0.12); border-radius:10px; color:#F8FAFC; padding:0.65rem 0.85rem; font-size:0.85rem; outline:none; transition:all 0.2s ease;" />
+              </div>
+
+              <div style="margin-bottom:1rem;">
+                <label class="form-label" style="font-size:0.75rem; font-weight:700; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.4rem; display:block;">Ad Platform</label>
+                <select class="form-select" id="spendPlatform" style="width:100%; background:rgba(10,14,23,0.8); border:1px solid rgba(255,255,255,0.12); border-radius:10px; color:#F8FAFC; padding:0.65rem 0.85rem; font-size:0.85rem; outline:none; transition:all 0.2s ease;">
                   <option value="telegram">Telegram</option>
                   <option value="meta">Meta / Instagram</option>
                   <option value="google">Google Ads</option>
@@ -3521,27 +3600,31 @@
                   <option value="influencer">Influencers</option>
                 </select>
               </div>
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.85rem; margin-bottom:1rem;">
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.25rem;">
                 <div>
-                  <label class="form-label">Ad Spend (INR ₹)</label>
-                  <input type="number" class="form-input" id="spendInr" placeholder="0" />
+                  <label class="form-label" style="font-size:0.75rem; font-weight:700; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.4rem; display:block;">Ad Spend (INR ₹)</label>
+                  <input type="number" class="form-input" id="spendInr" placeholder="0" style="width:100%; background:rgba(10,14,23,0.8); border:1px solid rgba(255,255,255,0.12); border-radius:10px; color:#F8FAFC; padding:0.65rem 0.85rem; font-size:0.85rem; outline:none; transition:all 0.2s ease;" />
                 </div>
                 <div>
-                  <label class="form-label">Ad Spend (USD $)</label>
-                  <input type="number" class="form-input" id="spendUsd" placeholder="0" />
+                  <label class="form-label" style="font-size:0.75rem; font-weight:700; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.4rem; display:block;">Ad Spend (USD $)</label>
+                  <input type="number" class="form-input" id="spendUsd" placeholder="0" style="width:100%; background:rgba(10,14,23,0.8); border:1px solid rgba(255,255,255,0.12); border-radius:10px; color:#F8FAFC; padding:0.65rem 0.85rem; font-size:0.85rem; outline:none; transition:all 0.2s ease;" />
                 </div>
               </div>
-              <button class="apply-btn" style="width:100%;" onclick="saveAdCampaignSpend()">💾 Save Campaign Ad Budget</button>
-              <div id="spendStatusMsg" style="margin-top:0.75rem; font-size:0.8rem; text-align:center;"></div>
+
+              <button class="apply-btn" style="width:100%; height:44px; background:linear-gradient(135deg, #10B981 0%, #059669 100%); color:#FFFFFF; font-family:var(--font-display); font-size:0.88rem; font-weight:800; border:none; border-radius:10px; cursor:pointer; box-shadow:0 4px 16px rgba(16,185,129,0.35); transition:all 0.2s ease; display:flex; align-items:center; justify-content:center; gap:0.5rem;" onclick="saveAdCampaignSpend()">
+                <span>💾</span> <span>Save Campaign Ad Budget</span>
+              </button>
+              <div id="spendStatusMsg" style="margin-top:0.75rem; font-size:0.82rem; font-weight:600; text-align:center;"></div>
             </div>
 
           </div>
 
           <!-- PERFORMANCE LEADERBOARD TABLE -->
-          <div class="table-panel">
-            <div class="table-panel-header" style="display:flex; align-items:center; justify-content:space-between;">
-              <span class="table-panel-title">Creative Ads &amp; Channel Conversion Leaderboard</span>
-              <span class="badge badge-gold" id="adCampaignCountBadge">0 Campaigns</span>
+          <div class="table-panel" style="background:linear-gradient(135deg, rgba(18,24,38,0.75) 0%, rgba(11,15,25,0.85) 100%); border:1px solid rgba(255,255,255,0.08); border-radius:18px; backdrop-filter:blur(16px); box-shadow:0 12px 32px rgba(0,0,0,0.4); overflow:hidden;">
+            <div class="table-panel-header" style="display:flex; align-items:center; justify-content:space-between; padding:1.25rem 1.5rem; border-bottom:1px solid rgba(255,255,255,0.06);">
+              <span class="table-panel-title" style="font-family:var(--font-display); font-size:1.05rem; font-weight:800; color:#FFFFFF;">Creative Ads &amp; Channel Conversion Leaderboard</span>
+              <span class="badge badge-gold" id="adCampaignCountBadge" style="font-size:0.75rem; font-weight:700; padding:4px 12px; border-radius:8px;">0 Campaigns</span>
             </div>
             <div class="table-wrap">
               <table id="adPerformanceTable">
@@ -3559,7 +3642,7 @@
                   </tr>
                 </thead>
                 <tbody id="adPerformanceTbody">
-                  <tr><td colspan="9" style="text-align:center; color:var(--ink-muted); padding:2rem;">Loading attribution leaderboard…</td></tr>
+                  <tr><td colspan="9" style="text-align:center; color:var(--ink-muted); padding:2.5rem;">Loading attribution leaderboard…</td></tr>
                 </tbody>
               </table>
             </div>

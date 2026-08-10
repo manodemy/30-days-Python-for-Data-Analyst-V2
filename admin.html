@@ -5844,8 +5844,9 @@
       <td><span class="badge badge-info">${a.action}</span></td>
       <td class="cell-mono" style="color:var(--ink-muted);">${formatAuditValue(a.changed_data?.old?.value || a.changed_data?.old)}</td>
       <td class="cell-mono" style="color:var(--ink); font-weight: 500;">${formatAuditValue(a.changed_data?.new?.value || a.changed_data?.new)}</td>
-      <td class="cell-mono" style="color:var(--ink-muted);">${new Date(a.created_at).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</td>
     </tr>`).join('');
+    }
+
     // ── CREATIVE ADS & ATTRIBUTION INTELLIGENCE ──────────────
     let currentAttributionMode = 'last_touch';
 

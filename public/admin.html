@@ -5052,6 +5052,7 @@
     let _inrPricingState = { sale_price: 1499, original_price: 4999, discount_label: '70% OFF', preset_label: 'Early Access Offer' };
     let _usdPricingState = { sale_price: 49, original_price: 149, discount_label: '67% OFF', preset_label: 'Global Early Pass' };
     let _allCouponsList = [];
+    let _isUserEditedBadge = false;
 
     // Accordion expand/collapse helper
     window.toggleAccordion = function(contentId, iconId) {
@@ -5087,159 +5088,156 @@
       const presetContainer = document.getElementById('cfgPresetButtons');
 
       if (region === 'INR') {
-        let _isUserEditedBadge = false;
-
-        if (region === 'INR') {
-          if (btnInr) {
-            btnInr.style.background = 'var(--gold)';
-            btnInr.style.color = 'var(--void)';
-            btnInr.style.border = '1px solid transparent';
-          }
-          if (flag) flag.textContent = '🇮🇳';
-          if (title) title.textContent = 'India Domestic Pricing (INR)';
-          if (gatewayLabel) gatewayLabel.textContent = 'Razorpay & UPI (Auto-Detected)';
-          symbols.forEach(s => s.textContent = '₹');
-
-          const elSale = document.getElementById('cfg_sale_price');
-          const elOrig = document.getElementById('cfg_original_price');
-          const elBadge = document.getElementById('cfg_discount_badge');
-          const elLabel = document.getElementById('cfg_preset_label');
-
-          const saleVal = Number(_inrPricingState.sale_price) || 1499;
-          const origVal = Number(_inrPricingState.original_price) || 4999;
-          const autoBadge = (origVal > 0 && origVal > saleVal) ? (Math.round(((origVal - saleVal) / origVal) * 100) + '% OFF') : '70% OFF';
-
-          if (elSale) elSale.value = saleVal;
-          if (elOrig) elOrig.value = origVal;
-          if (elBadge) elBadge.value = autoBadge;
-          if (elLabel) elLabel.value = _inrPricingState.preset_label || 'Early Access Offer';
-
-          if (presetContainer) {
-            presetContainer.innerHTML = `
-              <button type="button" class="btn-preset" onclick="applyPresetPrice(1499, 4999, '70% OFF', 'Early Access Offer')" style="font-size: 0.72rem; padding: 0.35rem 0.65rem; border-radius: 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--rim); color: var(--ink); cursor: pointer;">
-                ⚡ Default 70% (₹1,499)
-              </button>
-              <button type="button" class="btn-preset" onclick="applyPresetPrice(999, 4999, '80% OFF', 'Flash Sale Deal')" style="font-size: 0.72rem; padding: 0.35rem 0.65rem; border-radius: 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--rim); color: var(--emerald); cursor: pointer;">
-                🔥 Super Deal (₹999)
-              </button>
-              <button type="button" class="btn-preset" onclick="applyPresetPrice(2499, 4999, '50% OFF', 'Standard Admission')" style="font-size: 0.72rem; padding: 0.35rem 0.65rem; border-radius: 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--rim); color: var(--gold); cursor: pointer;">
-                💎 Regular (₹2,499)
-              </button>
-              <button type="button" class="btn-preset" onclick="applyPresetPrice(499, 4999, '90% OFF', 'Launch Special')" style="font-size: 0.72rem; padding: 0.35rem 0.65rem; border-radius: 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--rim); color: var(--sapphire); cursor: pointer;">
-                🚀 Launch (₹499)
-              </button>
-            `;
-          }
-        } else {
-          if (btnUsd) {
-            btnUsd.style.background = 'var(--gold)';
-            btnUsd.style.color = 'var(--void)';
-            btnUsd.style.border = '1px solid transparent';
-          }
-          if (flag) flag.textContent = '🌍';
-          if (title) title.textContent = 'Outside India Global Pricing (USD)';
-          if (gatewayLabel) gatewayLabel.textContent = 'PayPal & Stripe (Global Credit Cards)';
-          symbols.forEach(s => s.textContent = '$');
-
-          const elSale = document.getElementById('cfg_sale_price');
-          const elOrig = document.getElementById('cfg_original_price');
-          const elBadge = document.getElementById('cfg_discount_badge');
-          const elLabel = document.getElementById('cfg_preset_label');
-
-          const saleVal = Number(_usdPricingState.sale_price) || 49;
-          const origVal = Number(_usdPricingState.original_price) || 149;
-          const autoBadge = (origVal > 0 && origVal > saleVal) ? (Math.round(((origVal - saleVal) / origVal) * 100) + '% OFF') : '67% OFF';
-
-          if (elSale) elSale.value = saleVal;
-          if (elOrig) elOrig.value = origVal;
-          if (elBadge) elBadge.value = autoBadge;
-          if (elLabel) elLabel.value = _usdPricingState.preset_label || 'Global Early Pass';
-
-          if (presetContainer) {
-            presetContainer.innerHTML = `
-              <button type="button" class="btn-preset" onclick="applyPresetPrice(49, 149, '67% OFF', 'Global Early Pass')" style="font-size: 0.72rem; padding: 0.35rem 0.65rem; border-radius: 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--rim); color: var(--ink); cursor: pointer;">
-                ⚡ Default 67% ($49)
-              </button>
-              <button type="button" class="btn-preset" onclick="applyPresetPrice(29, 149, '81% OFF', 'Global Flash Deal')" style="font-size: 0.72rem; padding: 0.35rem 0.65rem; border-radius: 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--rim); color: var(--emerald); cursor: pointer;">
-                🔥 Super Deal ($29)
-              </button>
-              <button type="button" class="btn-preset" onclick="applyPresetPrice(79, 149, '47% OFF', 'Standard Admission')" style="font-size: 0.72rem; padding: 0.35rem 0.65rem; border-radius: 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--rim); color: var(--gold); cursor: pointer;">
-                💎 Regular ($79)
-              </button>
-              <button type="button" class="btn-preset" onclick="applyPresetPrice(19, 149, '87% OFF', 'Launch Special')" style="font-size: 0.72rem; padding: 0.35rem 0.65rem; border-radius: 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--rim); color: var(--sapphire); cursor: pointer;">
-                🚀 Launch ($19)
-              </button>
-            `;
-          }
+        if (btnInr) {
+          btnInr.style.background = 'var(--gold)';
+          btnInr.style.color = 'var(--void)';
+          btnInr.style.border = '1px solid transparent';
         }
+        if (flag) flag.textContent = '🇮🇳';
+        if (title) title.textContent = 'India Domestic Pricing (INR)';
+        if (gatewayLabel) gatewayLabel.textContent = 'Razorpay & UPI (Auto-Detected)';
+        symbols.forEach(s => s.textContent = '₹');
 
-        _isUserEditedBadge = false;
-        updatePreviewSimulator();
-      };
-
-      // Apply preset values to form
-      window.applyPresetPrice = function(sale, orig, badge, label) {
-        _isUserEditedBadge = false;
         const elSale = document.getElementById('cfg_sale_price');
         const elOrig = document.getElementById('cfg_original_price');
         const elBadge = document.getElementById('cfg_discount_badge');
         const elLabel = document.getElementById('cfg_preset_label');
-        if (elSale) elSale.value = sale;
-        if (elOrig) elOrig.value = orig;
-        
-        const calcBadge = (orig > 0 && orig > sale) ? (Math.round(((orig - sale) / orig) * 100) + '% OFF') : (badge || 'SPECIAL OFFER');
-        if (elBadge) elBadge.value = calcBadge;
-        if (elLabel) elLabel.value = label;
-        updatePreviewSimulator();
-        showToast(`Preset "${label}" applied to form. Click "Confirm & Publish" to push live.`, 'info');
-      };
 
-      // Keystroke reactive live student simulator
-      window.updatePreviewSimulator = function(options = {}) {
-        const saleInput = Number(document.getElementById('cfg_sale_price')?.value) || 0;
-        const origInput = Number(document.getElementById('cfg_original_price')?.value) || 0;
-        const badgeField = document.getElementById('cfg_discount_badge');
-        let badgeInput = badgeField?.value || '';
+        const saleVal = Number(_inrPricingState.sale_price) || 1499;
+        const origVal = Number(_inrPricingState.original_price) || 4999;
+        const autoBadge = (origVal > 0 && origVal > saleVal) ? (Math.round(((origVal - saleVal) / origVal) * 100) + '% OFF') : '70% OFF';
 
-        const simSale = document.getElementById('simSalePrice');
-        const simOrig = document.getElementById('simOriginalPrice');
-        const simBadge = document.getElementById('simDiscountBadge');
-        const simSavings = document.getElementById('simSavingsCallout');
-        const simCta = document.getElementById('simCtaPrice');
+        if (elSale) elSale.value = saleVal;
+        if (elOrig) elOrig.value = origVal;
+        if (elBadge) elBadge.value = autoBadge;
+        if (elLabel) elLabel.value = _inrPricingState.preset_label || 'Early Access Offer';
 
-        const isINR = _activePricingRegion === 'INR';
-        const sym = isINR ? '₹' : '$';
-
-        if (options.isPriceChange) {
-          _isUserEditedBadge = false;
+        if (presetContainer) {
+          presetContainer.innerHTML = `
+            <button type="button" class="btn-preset" onclick="applyPresetPrice(1499, 4999, '70% OFF', 'Early Access Offer')" style="font-size: 0.72rem; padding: 0.35rem 0.65rem; border-radius: 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--rim); color: var(--ink); cursor: pointer;">
+              ⚡ Default 70% (₹1,499)
+            </button>
+            <button type="button" class="btn-preset" onclick="applyPresetPrice(999, 4999, '80% OFF', 'Flash Sale Deal')" style="font-size: 0.72rem; padding: 0.35rem 0.65rem; border-radius: 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--rim); color: var(--emerald); cursor: pointer;">
+              🔥 Super Deal (₹999)
+            </button>
+            <button type="button" class="btn-preset" onclick="applyPresetPrice(2499, 4999, '50% OFF', 'Standard Admission')" style="font-size: 0.72rem; padding: 0.35rem 0.65rem; border-radius: 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--rim); color: var(--gold); cursor: pointer;">
+              💎 Regular (₹2,499)
+            </button>
+            <button type="button" class="btn-preset" onclick="applyPresetPrice(499, 4999, '90% OFF', 'Launch Special')" style="font-size: 0.72rem; padding: 0.35rem 0.65rem; border-radius: 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--rim); color: var(--sapphire); cursor: pointer;">
+              🚀 Launch (₹499)
+            </button>
+          `;
         }
-
-        if (origInput > 0 && origInput > saleInput && (!_isUserEditedBadge || !badgeInput)) {
-          const pct = Math.round(((origInput - saleInput) / origInput) * 100);
-          badgeInput = `${pct}% OFF`;
-          if (badgeField && badgeField.value !== badgeInput) {
-            badgeField.value = badgeInput;
-          }
+      } else {
+        if (btnUsd) {
+          btnUsd.style.background = 'var(--gold)';
+          btnUsd.style.color = 'var(--void)';
+          btnUsd.style.border = '1px solid transparent';
         }
+        if (flag) flag.textContent = '🌍';
+        if (title) title.textContent = 'Outside India Global Pricing (USD)';
+        if (gatewayLabel) gatewayLabel.textContent = 'PayPal & Stripe (Global Credit Cards)';
+        symbols.forEach(s => s.textContent = '$');
 
-        if (simSale) simSale.textContent = `${sym}${isINR ? saleInput.toLocaleString('en-IN') : saleInput}`;
-        if (simOrig) simOrig.textContent = `${sym}${isINR ? origInput.toLocaleString('en-IN') : origInput}`;
-        if (simBadge) simBadge.textContent = badgeInput || 'SPECIAL OFFER';
-        if (simCta) simCta.textContent = `${sym}${isINR ? saleInput.toLocaleString('en-IN') : saleInput}`;
+        const elSale = document.getElementById('cfg_sale_price');
+        const elOrig = document.getElementById('cfg_original_price');
+        const elBadge = document.getElementById('cfg_discount_badge');
+        const elLabel = document.getElementById('cfg_preset_label');
 
-        const savings = Math.max(0, origInput - saleInput);
-        if (simSavings) {
-          simSavings.textContent = `You save ${sym}${isINR ? savings.toLocaleString('en-IN') : savings} with this lifetime pass`;
+        const saleVal = Number(_usdPricingState.sale_price) || 49;
+        const origVal = Number(_usdPricingState.original_price) || 149;
+        const autoBadge = (origVal > 0 && origVal > saleVal) ? (Math.round(((origVal - saleVal) / origVal) * 100) + '% OFF') : '67% OFF';
+
+        if (elSale) elSale.value = saleVal;
+        if (elOrig) elOrig.value = origVal;
+        if (elBadge) elBadge.value = autoBadge;
+        if (elLabel) elLabel.value = _usdPricingState.preset_label || 'Global Early Pass';
+
+        if (presetContainer) {
+          presetContainer.innerHTML = `
+            <button type="button" class="btn-preset" onclick="applyPresetPrice(49, 149, '67% OFF', 'Global Early Pass')" style="font-size: 0.72rem; padding: 0.35rem 0.65rem; border-radius: 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--rim); color: var(--ink); cursor: pointer;">
+              ⚡ Default 67% ($49)
+            </button>
+            <button type="button" class="btn-preset" onclick="applyPresetPrice(29, 149, '81% OFF', 'Global Flash Deal')" style="font-size: 0.72rem; padding: 0.35rem 0.65rem; border-radius: 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--rim); color: var(--emerald); cursor: pointer;">
+              🔥 Super Deal ($29)
+            </button>
+            <button type="button" class="btn-preset" onclick="applyPresetPrice(79, 149, '47% OFF', 'Standard Admission')" style="font-size: 0.72rem; padding: 0.35rem 0.65rem; border-radius: 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--rim); color: var(--gold); cursor: pointer;">
+              💎 Regular ($79)
+            </button>
+            <button type="button" class="btn-preset" onclick="applyPresetPrice(19, 149, '87% OFF', 'Launch Special')" style="font-size: 0.72rem; padding: 0.35rem 0.65rem; border-radius: 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--rim); color: var(--sapphire); cursor: pointer;">
+              🚀 Launch ($19)
+            </button>
+          `;
         }
-      };
+      }
 
-      // Bind two-way live inputs
-      document.getElementById('cfg_sale_price')?.addEventListener('input', () => updatePreviewSimulator({ isPriceChange: true }));
-      document.getElementById('cfg_original_price')?.addEventListener('input', () => updatePreviewSimulator({ isPriceChange: true }));
-      document.getElementById('cfg_discount_badge')?.addEventListener('input', () => {
-        _isUserEditedBadge = true;
-        updatePreviewSimulator();
-      });
+      _isUserEditedBadge = false;
+      updatePreviewSimulator();
+    };
+
+    // Apply preset values to form
+    window.applyPresetPrice = function(sale, orig, badge, label) {
+      _isUserEditedBadge = false;
+      const elSale = document.getElementById('cfg_sale_price');
+      const elOrig = document.getElementById('cfg_original_price');
+      const elBadge = document.getElementById('cfg_discount_badge');
+      const elLabel = document.getElementById('cfg_preset_label');
+      if (elSale) elSale.value = sale;
+      if (elOrig) elOrig.value = orig;
+      
+      const calcBadge = (orig > 0 && orig > sale) ? (Math.round(((orig - sale) / orig) * 100) + '% OFF') : (badge || 'SPECIAL OFFER');
+      if (elBadge) elBadge.value = calcBadge;
+      if (elLabel) elLabel.value = label;
+      updatePreviewSimulator();
+      showToast(`Preset "${label}" applied to form. Click "Confirm & Publish" to push live.`, 'info');
+    };
+
+    // Keystroke reactive live student simulator
+    window.updatePreviewSimulator = function(options = {}) {
+      const saleInput = Number(document.getElementById('cfg_sale_price')?.value) || 0;
+      const origInput = Number(document.getElementById('cfg_original_price')?.value) || 0;
+      const badgeField = document.getElementById('cfg_discount_badge');
+      let badgeInput = badgeField?.value || '';
+
+      const simSale = document.getElementById('simSalePrice');
+      const simOrig = document.getElementById('simOriginalPrice');
+      const simBadge = document.getElementById('simDiscountBadge');
+      const simSavings = document.getElementById('simSavingsCallout');
+      const simCta = document.getElementById('simCtaPrice');
+
+      const isINR = _activePricingRegion === 'INR';
+      const sym = isINR ? '₹' : '$';
+
+      if (options.isPriceChange) {
+        _isUserEditedBadge = false;
+      }
+
+      if (origInput > 0 && origInput > saleInput && (!_isUserEditedBadge || !badgeInput)) {
+        const pct = Math.round(((origInput - saleInput) / origInput) * 100);
+        badgeInput = `${pct}% OFF`;
+        if (badgeField && badgeField.value !== badgeInput) {
+          badgeField.value = badgeInput;
+        }
+      }
+
+      if (simSale) simSale.textContent = `${sym}${isINR ? saleInput.toLocaleString('en-IN') : saleInput}`;
+      if (simOrig) simOrig.textContent = `${sym}${isINR ? origInput.toLocaleString('en-IN') : origInput}`;
+      if (simBadge) simBadge.textContent = badgeInput || 'SPECIAL OFFER';
+      if (simCta) simCta.textContent = `${sym}${isINR ? saleInput.toLocaleString('en-IN') : saleInput}`;
+
+      const savings = Math.max(0, origInput - saleInput);
+      if (simSavings) {
+        simSavings.textContent = `You save ${sym}${isINR ? savings.toLocaleString('en-IN') : savings} with this lifetime pass`;
+      }
+    };
+
+    // Bind two-way live inputs
+    document.getElementById('cfg_sale_price')?.addEventListener('input', () => updatePreviewSimulator({ isPriceChange: true }));
+    document.getElementById('cfg_original_price')?.addEventListener('input', () => updatePreviewSimulator({ isPriceChange: true }));
+    document.getElementById('cfg_discount_badge')?.addEventListener('input', () => {
+      _isUserEditedBadge = true;
+      updatePreviewSimulator();
+    });
 
     // 2-Step Confirmation Modal open & close
     window.openPublishConfirmModal = function() {

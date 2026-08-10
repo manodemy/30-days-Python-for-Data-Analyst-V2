@@ -5329,8 +5329,8 @@
 
       const discountType = mode === 'PERCENT' ? 'percentage' : (mode === 'FIXED_INR' ? 'flat_inr' : 'flat_usd');
 
-      // Attempt 1: Full payload including extra schema columns
-      const fullPayload = {
+      // Construct comprehensive payload mapping all schema variations
+      let payload = {
         code,
         discount_type: discountType,
         mode: mode,
@@ -5349,27 +5349,29 @@
         created_at: new Date().toISOString()
       };
 
-      // Fallback 2: Strictly standard columns supported by core table
-      const standardPayload = {
-        code,
-        discount_type: discountType,
-        discount_value: value,
-        applies_to: scope.toLowerCase(),
-        max_uses: maxUses,
-        current_uses: 0,
-        starts_at: starts,
-        expires_at: expires,
-        is_active: true,
-        created_at: new Date().toISOString()
-      };
-
       try {
-        let res = await sb.from('coupons').insert([fullPayload]);
-        if (res.error) {
-          // Retry with standard columns if DB table lacks custom columns
-          res = await sb.from('coupons').insert([standardPayload]);
+        let attempts = 0;
+        let lastError = null;
+
+        // Auto-healing loop: if DB schema cache lacks a column, strip it and retry instantly
+        while (attempts < 12) {
+          attempts++;
+          const res = await sb.from('coupons').insert([payload]);
+          if (!res.error) {
+            lastError = null;
+            break;
+          }
+          lastError = res.error;
+          const match = res.error.message ? res.error.message.match(/Could not find the '([^']+)' column/i) : null;
+          if (match && match[1]) {
+            const missingCol = match[1];
+            delete payload[missingCol];
+          } else {
+            break;
+          }
         }
-        if (res.error) throw res.error;
+
+        if (lastError) throw lastError;
 
         // Log audit
         try {
@@ -5379,7 +5381,7 @@
             actor_email: user ? user.email : 'manodamy25@gmail.com',
             action: 'CREATE_COUPON',
             entity_table: 'coupons',
-            new_value: standardPayload,
+            new_value: payload,
             occurred_at: new Date().toISOString()
           }]);
         } catch (e) {}

@@ -3320,29 +3320,35 @@
 
                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; margin-bottom: 0.65rem;">
                     <div class="field">
-                      <label style="font-size: 0.7rem; color: var(--ink-dim);">Max Uses Cap</label>
-                      <input id="new_coupon_max_uses" type="number" min="1" placeholder="∞ Unlimited"
-                        style="font-family: var(--font-data); font-size: 0.78rem; color: var(--ink); background: var(--elevated); border: 1px solid var(--rim); padding: 0.45rem 0.65rem; border-radius: var(--radius-sm); width: 100%;" />
+                      <label style="font-size: 0.7rem; color: var(--ink-dim);">Start Time</label>
+                      <input id="new_coupon_starts" type="datetime-local"
+                        style="font-size: 0.78rem; color: var(--ink); background: var(--elevated); border: 1px solid var(--rim); padding: 0.45rem 0.65rem; border-radius: var(--radius-sm); width: 100%;" />
                     </div>
                     <div class="field">
                       <label style="font-size: 0.7rem; color: var(--ink-dim);">Expiration Date</label>
-                      <input id="new_coupon_expires" type="date"
+                      <input id="new_coupon_expires" type="datetime-local"
                         style="font-size: 0.78rem; color: var(--ink); background: var(--elevated); border: 1px solid var(--rim); padding: 0.45rem 0.65rem; border-radius: var(--radius-sm); width: 100%;" />
                     </div>
                   </div>
 
                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; margin-bottom: 0.85rem;">
                     <div class="field">
+                      <label style="font-size: 0.7rem; color: var(--ink-dim);">Max Uses Cap</label>
+                      <input id="new_coupon_max_uses" type="number" min="1" placeholder="∞ Unlimited"
+                        style="font-family: var(--font-data); font-size: 0.78rem; color: var(--ink); background: var(--elevated); border: 1px solid var(--rim); padding: 0.45rem 0.65rem; border-radius: var(--radius-sm); width: 100%;" />
+                    </div>
+                    <div class="field">
                       <label style="font-size: 0.7rem; color: var(--ink-dim);">Campaign Tag</label>
                       <input id="new_coupon_tag" type="text" placeholder="e.g. launch_deal"
                         style="font-size: 0.78rem; color: var(--ink); background: var(--elevated); border: 1px solid var(--rim); padding: 0.45rem 0.65rem; border-radius: var(--radius-sm); width: 100%;" />
                     </div>
-                    <div class="field" style="display: flex; align-items: center; gap: 0.4rem; margin-top: 1.1rem;">
-                      <input id="new_coupon_single_email" type="checkbox" style="cursor: pointer;" />
-                      <label for="new_coupon_single_email" style="font-size: 0.7rem; color: var(--ink); cursor: pointer;">
-                        1 use per email
-                      </label>
-                    </div>
+                  </div>
+
+                  <div style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.85rem;">
+                    <input id="new_coupon_single_email" type="checkbox" style="cursor: pointer;" />
+                    <label for="new_coupon_single_email" style="font-size: 0.7rem; color: var(--ink); cursor: pointer;">
+                      1 use per email
+                    </label>
                   </div>
 
                   <button class="btn-gold" id="btnSaveCoupon" type="submit" style="width: 100%; font-size: 0.82rem; font-weight: 700; padding: 0.55rem; border-radius: var(--radius-sm); cursor: pointer;">
@@ -3369,6 +3375,7 @@
                         <th>Currency</th>
                         <th>Redemptions</th>
                         <th>Status</th>
+                        <th>Starts</th>
                         <th>Expires</th>
                         <th>Tag</th>
                         <th>Link</th>
@@ -5285,7 +5292,10 @@
       const value = Number(document.getElementById('new_coupon_value').value) || 0;
       const scope = document.getElementById('new_coupon_scope').value;
       const maxUses = document.getElementById('new_coupon_max_uses').value ? parseInt(document.getElementById('new_coupon_max_uses').value, 10) : null;
-      const expires = document.getElementById('new_coupon_expires').value ? new Date(document.getElementById('new_coupon_expires').value + 'T23:59:59Z').toISOString() : null;
+      const startsInput = document.getElementById('new_coupon_starts').value;
+      const starts = startsInput ? new Date(startsInput).toISOString() : null;
+      const expiresInput = document.getElementById('new_coupon_expires').value;
+      const expires = expiresInput ? new Date(expiresInput).toISOString() : null;
       const tag = document.getElementById('new_coupon_tag').value || null;
       const singleEmail = document.getElementById('new_coupon_single_email').checked;
 
@@ -5297,6 +5307,7 @@
         max_uses: maxUses,
         uses_count: 0,
         single_use_per_email: singleEmail,
+        starts_at: starts,
         expires_at: expires,
         campaign_tag: tag,
         is_active: true,
@@ -5362,13 +5373,17 @@
         return;
       }
 
-      const isExpired = coupon.expires_at && new Date(coupon.expires_at) < new Date();
+      const now = new Date();
+      const isNotStarted = coupon.starts_at && new Date(coupon.starts_at) > now;
+      const isExpired = coupon.expires_at && new Date(coupon.expires_at) < now;
       const isCapReached = coupon.max_uses && (coupon.uses_count || 0) >= coupon.max_uses;
       const isActive = coupon.is_active !== false;
       const isScopeMismatch = coupon.currency_scope !== 'BOTH' && coupon.currency_scope !== _activePricingRegion;
 
       if (!isActive) {
         if (statusBadge) { statusBadge.textContent = 'PAUSED'; statusBadge.className = 'badge badge-warn'; }
+      } else if (isNotStarted) {
+        if (statusBadge) { statusBadge.textContent = 'SCHEDULED'; statusBadge.className = 'badge badge-warn'; }
       } else if (isExpired) {
         if (statusBadge) { statusBadge.textContent = 'EXPIRED'; statusBadge.className = 'badge badge-err'; }
       } else if (isCapReached) {
@@ -5380,7 +5395,7 @@
       }
 
       let discountAmount = 0;
-      if (isActive && !isExpired && !isCapReached && !isScopeMismatch) {
+      if (isActive && !isNotStarted && !isExpired && !isCapReached && !isScopeMismatch) {
         if (coupon.mode === 'PERCENT') {
           discountAmount = Math.round(basePrice * (coupon.value / 100));
         } else if (coupon.mode === 'FIXED_INR' && isINR) {
@@ -5425,7 +5440,7 @@
         if (!tbody) return;
 
         if (!_allCouponsList.length) {
-          tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; color:var(--ink-muted); padding:2rem;">No coupons found. Create your first promo code above!</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; color:var(--ink-muted); padding:2rem;">No coupons found. Create your first promo code above!</td></tr>';
           return;
         }
 
@@ -5433,15 +5448,28 @@
           const uses = c.uses_count || 0;
           const max = c.max_uses || null;
           const pct = max ? Math.min(100, Math.round((uses / max) * 100)) : null;
-          const isExpired = c.expires_at && new Date(c.expires_at) < new Date();
+          const now = new Date();
+          const isNotStarted = c.starts_at && new Date(c.starts_at) > now;
+          const isExpired = c.expires_at && new Date(c.expires_at) < now;
           const isActive = c.is_active !== false;
 
           let statusBadge = '<span class="badge badge-emerald">Active</span>';
           if (!isActive) statusBadge = '<span class="badge badge-warn">Paused</span>';
+          else if (isNotStarted) statusBadge = '<span class="badge badge-sapphire">Scheduled</span>';
           else if (isExpired) statusBadge = '<span class="badge badge-err">Expired</span>';
           else if (max && uses >= max) statusBadge = '<span class="badge badge-err">Cap Full</span>';
 
           const valText = c.mode === 'PERCENT' ? `${c.value}% OFF` : (c.mode === 'FIXED_INR' ? `₹${c.value} FLAT` : `$${c.value} FLAT`);
+
+          const formatDt = (isoStr, defaultStr) => {
+            if (!isoStr) return defaultStr;
+            const d = new Date(isoStr);
+            if (isNaN(d.getTime())) return defaultStr;
+            return d.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+          };
+
+          const startsStr = formatDt(c.starts_at, 'Immediate');
+          const expiresStr = formatDt(c.expires_at, 'Never');
 
           return `
             <tr>
@@ -5456,7 +5484,8 @@
                 ${max ? `<div style="width:60px; height:3px; background:var(--rim); border-radius:2px; margin-top:3px; overflow:hidden;"><div style="width:${pct}%; height:100%; background:${pct > 90 ? 'var(--rose)' : 'var(--emerald)'};"></div></div>` : ''}
               </td>
               <td>${statusBadge}</td>
-              <td class="cell-mono" style="font-size:0.75rem; color:var(--ink-dim);">${c.expires_at ? new Date(c.expires_at).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) : 'Never'}</td>
+              <td class="cell-mono" style="font-size:0.75rem; color:var(--ink-dim);">${startsStr}</td>
+              <td class="cell-mono" style="font-size:0.75rem; color:var(--ink-dim);">${expiresStr}</td>
               <td><span style="font-size:0.75rem; color:var(--ink-muted);">${c.campaign_tag || '—'}</span></td>
               <td>
                 <button type="button" onclick="copyCouponShareLink('${c.code}')" class="btn-ghost" style="font-size:0.7rem; padding:2px 8px;">🔗 Copy</button>

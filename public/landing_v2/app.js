@@ -1279,17 +1279,19 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         const { data, error } = await supabaseClient
           .from('coupons')
-          .select('discount_type, discount_value, is_active, expires_at, applies_to')
+          .select('discount_type, discount_value, is_active, starts_at, expires_at, applies_to')
           .eq('code', code.toUpperCase())
           .single();
 
         const isActive = data ? (Boolean(data.is_active) === true) : false;
+        const starts = data ? data.starts_at : null;
+        const isNotStarted = starts && new Date(starts) > new Date();
         const expiry = data ? data.expires_at : null;
         const isExpired = expiry && new Date(expiry) < new Date();
         const appliesTo = data?.applies_to || 'both';
         const currencyMatch = appliesTo === 'both' || appliesTo === currentPricing.currency;
 
-        if (data && isActive && !isExpired && currencyMatch) {
+        if (data && isActive && !isNotStarted && !isExpired && currencyMatch) {
           const type = data.discount_type || 'percentage';
           const val = data.discount_value ?? 0;
           

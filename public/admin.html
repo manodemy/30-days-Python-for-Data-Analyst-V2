@@ -4283,8 +4283,18 @@
       setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 3000);
     }
 
-    // ── QUERY BUILDERS ───────────────────────────────
-    function getFilter() { return window.bdFilter; }
+    function getFilter() {
+      if (!window.bdFilter || !window.bdFilter.from || !window.bdFilter.to) {
+        const today = new Date();
+        const from = '2020-01-01T00:00:00Z';
+        const pad = n => n.toString().padStart(2, '0');
+        const toStr = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`;
+        const to = toStr + 'T23:59:59Z';
+        const prev = typeof calculatePrevPeriod === 'function' ? calculatePrevPeriod(from, to) : { prevFrom: from, prevTo: to };
+        window.bdFilter = { from, to, comparePrevious: false, prevFrom: prev.prevFrom, prevTo: prev.prevTo };
+      }
+      return window.bdFilter;
+    }
 
     async function fetchMetric(table, selectExpr, extraFilters = []) {
       let q = sb.from(table).select(selectExpr)
@@ -4443,8 +4453,6 @@
         ]);
 
         const audits = auditingResult?.data || [];
-
-        fetchAndRenderReferralData();
 
       if (funnelData && funnelData.length > 0) {
         latestFunnelData = funnelData[0];

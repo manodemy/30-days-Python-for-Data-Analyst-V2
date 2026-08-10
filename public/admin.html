@@ -3165,16 +3165,10 @@
 
           <!-- MASTER MATRIX OVERVIEW VIEW (Positioned at Top) -->
           <div id="moduleMasterMatrix" style="background: var(--elevated); border: 1px solid var(--rim); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.5rem;">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
-              <div>
-                <h3 style="font-family: var(--font-display); font-size: 1.15rem; color: var(--ink);">
-                  🌐 Master Dual-Currency Matrix Overview
-                </h3>
-                <span style="font-size: 0.75rem; color: var(--ink-dim);">Comparative view of domestic India vs International global student offerings</span>
-              </div>
-              <span class="badge badge-sapphire" style="font-size: 0.7rem; padding: 3px 10px; border-radius: 9999px;">
-                Side-by-Side Read-Only Comparison
-              </span>
+            <div style="margin-bottom: 1.25rem;">
+              <h3 style="font-family: var(--font-display); font-size: 1.15rem; color: var(--ink);">
+                🌐 Master Dual-Currency Matrix Overview
+              </h3>
             </div>
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
@@ -3187,7 +3181,7 @@
                   ₹1,499 <span style="font-size: 0.9rem; color: var(--ink-dim); text-decoration: line-through;" id="matrixInrOrig">₹4,999</span>
                 </div>
                 <div style="font-size: 0.78rem; color: var(--emerald); font-weight: 600; margin: 0.4rem 0;" id="matrixInrBadge">70% OFF (You save ₹3,500)</div>
-                <div style="font-size: 0.72rem; color: var(--ink-muted);">Target: Students &amp; professionals in India. Includes instant UPI QR &amp; NetBanking.</div>
+                
               </div>
 
               <div style="background: var(--base); border: 1px solid var(--rim); border-radius: var(--radius-md); padding: 1.25rem;">
@@ -3199,7 +3193,7 @@
                   $49 <span style="font-size: 0.9rem; color: var(--ink-dim); text-decoration: line-through;" id="matrixUsdOrig">$149</span>
                 </div>
                 <div style="font-size: 0.78rem; color: var(--emerald); font-weight: 600; margin: 0.4rem 0;" id="matrixUsdBadge">67% OFF (You save $100)</div>
-                <div style="font-size: 0.72rem; color: var(--ink-muted);">Target: International students. Handled via PayPal &amp; global credit cards.</div>
+                
               </div>
             </div>
           </div>
@@ -3226,33 +3220,25 @@
             
             <!-- Left Card: Active Live Pricing Configurator -->
             <div style="background: var(--elevated); border: 1px solid var(--rim); border-radius: var(--radius-lg); padding: 1.5rem; position: relative; overflow: hidden;">
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
-                <div>
-                  <h3 style="font-family: var(--font-display); font-size: 1.15rem; color: var(--ink); margin-bottom: 0.2rem;">
-                    <span id="cfgRegionFlag">🇮🇳</span> <span id="cfgRegionTitle">India Domestic Pricing</span>
-                  </h3>
-                  <span style="font-size: 0.72rem; color: var(--ink-muted);">Changes will update all student landing pages, cards, and checkout modals</span>
-                </div>
-                <span class="badge badge-gold" id="cfgStatusBadge" style="font-size: 0.68rem; padding: 2px 8px; border-radius: 9999px;">
-                  Active Live Tier
-                </span>
+              <div style="margin-bottom: 1.25rem;">
+                <h3 style="font-family: var(--font-display); font-size: 1.15rem; color: var(--ink);">
+                  <span id="cfgRegionFlag">🇮🇳</span> <span id="cfgRegionTitle">India Domestic Pricing</span>
+                </h3>
               </div>
 
               <form id="masterPricingForm" onsubmit="event.preventDefault(); openPublishConfirmModal();">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
                   <div class="field">
-                    <label style="font-size: 0.75rem; color: var(--ink-dim); margin-bottom: 0.4rem; display: flex; align-items: center; justify-content: space-between;">
-                      <span>Sale Price (<span class="curr-symbol">₹</span>) *</span>
-                      <span style="font-size: 0.65rem; color: var(--gold); font-family: var(--font-data);">STUDENT PAYS</span>
+                    <label style="font-size: 0.75rem; color: var(--ink-dim); margin-bottom: 0.4rem; display: block;">
+                      Sale Price (<span class="curr-symbol">₹</span>) *
                     </label>
                     <input id="cfg_sale_price" type="number" step="any" min="1" placeholder="1499" required
                       style="font-family: var(--font-price); font-size: 1.1rem; font-weight: 700; color: var(--emerald); background: var(--base); border: 1px solid var(--rim); padding: 0.65rem 0.85rem; border-radius: var(--radius-sm); width: 100%;" />
                   </div>
 
                   <div class="field">
-                    <label style="font-size: 0.75rem; color: var(--ink-dim); margin-bottom: 0.4rem; display: flex; align-items: center; justify-content: space-between;">
-                      <span>Original Regular (<span class="curr-symbol">₹</span>) *</span>
-                      <span style="font-size: 0.65rem; color: var(--ink-muted); font-family: var(--font-data);">CROSS-OUT</span>
+                    <label style="font-size: 0.75rem; color: var(--ink-dim); margin-bottom: 0.4rem; display: block;">
+                      Original Regular (<span class="curr-symbol">₹</span>) *
                     </label>
                     <input id="cfg_original_price" type="number" step="any" min="1" placeholder="4999" required
                       style="font-family: var(--font-price); font-size: 1.1rem; font-weight: 500; color: var(--ink-dim); text-decoration: line-through; background: var(--base); border: 1px solid var(--rim); padding: 0.65rem 0.85rem; border-radius: var(--radius-sm); width: 100%;" />
@@ -3301,10 +3287,7 @@
                 </div>
 
                 <!-- Publish Action with 2-Step Confirmation -->
-                <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; border-top: 1px solid var(--rim); padding-top: 1.25rem;">
-                  <div style="font-size: 0.72rem; color: var(--ink-dim); line-height: 1.4;">
-                    <span>🔒 Requires confirmation modal before broadcast</span>
-                  </div>
+                <div style="display: flex; align-items: center; justify-content: flex-end; gap: 1rem; border-top: 1px solid var(--rim); padding-top: 1.25rem;">
                   <button class="btn-gold" id="btnPublishPricing" type="submit" style="font-size: 0.88rem; font-weight: 700; padding: 0.7rem 1.5rem; display: inline-flex; align-items: center; gap: 0.5rem; border-radius: var(--radius-sm); cursor: pointer;">
                     <span>🚀 Confirm &amp; Publish to Cloud</span>
                   </button>
@@ -3315,17 +3298,12 @@
             <!-- Right Card: Live Student View Simulator (Mirroring Real-Time Student Checkout) -->
             <div style="background: var(--elevated); border: 1px solid var(--rim); border-radius: var(--radius-lg); padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between;">
               <div>
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
+                <div style="margin-bottom: 1.25rem;">
                   <h3 style="font-family: var(--font-display); font-size: 1.15rem; color: var(--ink); display: flex; align-items: center; gap: 0.4rem;">
                     <span>👁️ Live Student View Simulator</span>
                   </h3>
-                  <span class="badge badge-sapphire" style="font-size: 0.68rem; padding: 2px 8px; border-radius: 9999px;">
-                    Keystroke Reactive
-                  </span>
                 </div>
-                <div style="font-size: 0.76rem; color: var(--ink-muted); margin-bottom: 1.25rem; line-height: 1.5;">
-                  This is exactly how the pricing card, discount chip, and savings calculation appear to visitors on the landing page and checkout:
-                </div>
+                
 
                 <!-- Simulated Landing Card Container -->
                 <div id="simulatedStudentCard" style="background: var(--base); border: 2px solid var(--rim-strong); border-radius: var(--radius-md); padding: 1.5rem; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
@@ -3366,10 +3344,7 @@
                 </div>
               </div>
 
-              <div style="font-size: 0.72rem; color: var(--ink-muted); margin-top: 1rem; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--rim); padding-top: 0.75rem;">
-                <span>Zero client-side computation vulnerability</span>
-                <span style="color: var(--emerald);">✓ Server Derived Amount</span>
-              </div>
+              
             </div>
           </div>
 

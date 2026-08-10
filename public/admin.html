@@ -3285,135 +3285,81 @@
             </div>
 
             <div id="accCouponContent" style="padding: 1.25rem;">
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem;">
-                
-                <!-- Left: Coupon Creator Form -->
-                <div style="background: var(--base); border: 1px solid var(--rim); border-radius: var(--radius-md); padding: 1.1rem;">
-                  <div style="font-size: 0.82rem; font-weight: 700; color: var(--gold); margin-bottom: 0.85rem; display: flex; align-items: center; justify-content: space-between;">
-                    <span>Create Promo Code</span>
-                    <button type="button" onclick="autoGenerateCouponCode()" style="font-size: 0.65rem; background: var(--elevated); border: 1px solid var(--rim); color: var(--sapphire); padding: 2px 7px; border-radius: 4px; cursor: pointer;">
-                      ⚡ Auto Code
-                    </button>
-                  </div>
-
-                  <form id="couponCreatorForm" onsubmit="event.preventDefault(); handleCreateCoupon();">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; margin-bottom: 0.65rem;">
-                      <div class="field">
-                        <label style="font-size: 0.7rem; color: var(--ink-dim);">Promo Code *</label>
-                        <input id="new_coupon_code" type="text" placeholder="e.g. DATA50" required
-                          style="text-transform: uppercase; font-family: var(--font-data); font-weight: 700; letter-spacing: 0.08em; color: var(--ink); background: var(--elevated); border: 1px solid var(--rim); padding: 0.45rem 0.65rem; border-radius: var(--radius-sm); width: 100%;" />
-                      </div>
-                      <div class="field">
-                        <label style="font-size: 0.7rem; color: var(--ink-dim);">Discount Mode *</label>
-                        <select id="new_coupon_mode" onchange="updateCouponModeLabel()"
-                          style="font-size: 0.78rem; color: var(--ink); background: var(--elevated); border: 1px solid var(--rim); padding: 0.45rem 0.65rem; border-radius: var(--radius-sm); width: 100%;">
-                          <option value="PERCENT">% Percentage Off</option>
-                          <option value="FIXED_INR">₹ Flat Discount (INR)</option>
-                          <option value="FIXED_USD">$ Flat Discount (USD)</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; margin-bottom: 0.65rem;">
-                      <div class="field">
-                        <label id="couponValueInputLabel" style="font-size: 0.7rem; color: var(--ink-dim);">Discount Value (%) *</label>
-                        <input id="new_coupon_value" type="number" step="any" min="1" placeholder="50" required
-                          style="font-family: var(--font-data); font-weight: 700; color: var(--emerald); background: var(--elevated); border: 1px solid var(--rim); padding: 0.45rem 0.65rem; border-radius: var(--radius-sm); width: 100%;" />
-                      </div>
-                      <div class="field">
-                        <label style="font-size: 0.7rem; color: var(--ink-dim);">Currency Scope</label>
-                        <select id="new_coupon_scope"
-                          style="font-size: 0.78rem; color: var(--ink); background: var(--elevated); border: 1px solid var(--rim); padding: 0.45rem 0.65rem; border-radius: var(--radius-sm); width: 100%;">
-                          <option value="BOTH">Both (INR ₹ &amp; USD $)</option>
-                          <option value="INR">INR Only (India)</option>
-                          <option value="USD">USD Only (Global)</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; margin-bottom: 0.65rem;">
-                      <div class="field">
-                        <label style="font-size: 0.7rem; color: var(--ink-dim);">Max Uses Cap</label>
-                        <input id="new_coupon_max_uses" type="number" min="1" placeholder="∞ Unlimited"
-                          style="font-family: var(--font-data); font-size: 0.78rem; color: var(--ink); background: var(--elevated); border: 1px solid var(--rim); padding: 0.45rem 0.65rem; border-radius: var(--radius-sm); width: 100%;" />
-                      </div>
-                      <div class="field">
-                        <label style="font-size: 0.7rem; color: var(--ink-dim);">Expiration Date</label>
-                        <input id="new_coupon_expires" type="date"
-                          style="font-size: 0.78rem; color: var(--ink); background: var(--elevated); border: 1px solid var(--rim); padding: 0.45rem 0.65rem; border-radius: var(--radius-sm); width: 100%;" />
-                      </div>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; margin-bottom: 0.85rem;">
-                      <div class="field">
-                        <label style="font-size: 0.7rem; color: var(--ink-dim);">Campaign Tag</label>
-                        <input id="new_coupon_tag" type="text" placeholder="e.g. launch_deal"
-                          style="font-size: 0.78rem; color: var(--ink); background: var(--elevated); border: 1px solid var(--rim); padding: 0.45rem 0.65rem; border-radius: var(--radius-sm); width: 100%;" />
-                      </div>
-                      <div class="field" style="display: flex; align-items: center; gap: 0.4rem; margin-top: 1.1rem;">
-                        <input id="new_coupon_single_email" type="checkbox" style="cursor: pointer;" />
-                        <label for="new_coupon_single_email" style="font-size: 0.7rem; color: var(--ink); cursor: pointer;">
-                          1 use per email
-                        </label>
-                      </div>
-                    </div>
-
-                    <button class="btn-gold" id="btnSaveCoupon" type="submit" style="width: 100%; font-size: 0.82rem; font-weight: 700; padding: 0.55rem; border-radius: var(--radius-sm); cursor: pointer;">
-                      + Create &amp; Activate Coupon
-                    </button>
-                  </form>
+              <!-- Coupon Creator Form -->
+              <div style="background: var(--base); border: 1px solid var(--rim); border-radius: var(--radius-md); padding: 1.1rem; margin-bottom: 1.5rem;">
+                <div style="font-size: 0.82rem; font-weight: 700; color: var(--gold); margin-bottom: 0.85rem; display: flex; align-items: center; justify-content: space-between;">
+                  <span>Create Promo Code</span>
+                  <button type="button" onclick="autoGenerateCouponCode()" style="font-size: 0.65rem; background: var(--elevated); border: 1px solid var(--rim); color: var(--sapphire); padding: 2px 7px; border-radius: 4px; cursor: pointer;">
+                    ⚡ Auto Code
+                  </button>
                 </div>
 
-                <!-- Right: Test Sandbox & Auto-Apply Link -->
-                <div style="background: var(--base); border: 1px solid var(--rim); border-radius: var(--radius-md); padding: 1.1rem; display: flex; flex-direction: column; justify-content: space-between;">
-                  <div>
-                    <div style="font-size: 0.82rem; font-weight: 700; color: var(--sapphire); margin-bottom: 0.75rem;">
-                      🧪 Coupon Test Sandbox
+                <form id="couponCreatorForm" onsubmit="event.preventDefault(); handleCreateCoupon();">
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; margin-bottom: 0.65rem;">
+                    <div class="field">
+                      <label style="font-size: 0.7rem; color: var(--ink-dim);">Promo Code *</label>
+                      <input id="new_coupon_code" type="text" placeholder="e.g. DATA50" required
+                        style="text-transform: uppercase; font-family: var(--font-data); font-weight: 700; letter-spacing: 0.08em; color: var(--ink); background: var(--elevated); border: 1px solid var(--rim); padding: 0.45rem 0.65rem; border-radius: var(--radius-sm); width: 100%;" />
                     </div>
-
-                    <div style="display: flex; gap: 0.4rem; margin-bottom: 0.85rem;">
-                      <input id="sandboxCouponInput" type="text" placeholder="Code (e.g. DATA50)"
-                        style="text-transform: uppercase; font-family: var(--font-data); font-weight: 700; letter-spacing: 0.08em; color: var(--ink); background: var(--elevated); border: 1px solid var(--rim); padding: 0.45rem 0.65rem; border-radius: var(--radius-sm); flex-grow: 1;" />
-                      <button type="button" onclick="runSandboxTest()" class="btn-outline-gold" style="font-size: 0.75rem; padding: 0.45rem 0.85rem;">
-                        Test Code
-                      </button>
-                    </div>
-
-                    <!-- Sandbox Result Box -->
-                    <div id="sandboxResultBox" style="background: var(--elevated); border: 1px solid var(--rim); border-radius: var(--radius-sm); padding: 0.85rem; margin-bottom: 1rem;">
-                      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem;">
-                        <span style="font-size: 0.72rem; color: var(--ink-dim);">Status:</span>
-                        <span class="badge badge-emerald" id="sbxStatusBadge" style="font-size: 0.65rem;">READY</span>
-                      </div>
-                      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.35rem;">
-                        <span style="font-size: 0.72rem; color: var(--ink-dim);">Base Price:</span>
-                        <span style="font-family: var(--font-data); font-weight: 600; color: var(--ink); font-size: 0.8rem;" id="sbxBasePrice">₹1,499</span>
-                      </div>
-                      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.35rem;">
-                        <span style="font-size: 0.72rem; color: var(--ink-dim);">Discount:</span>
-                        <span style="font-family: var(--font-data); font-weight: 600; color: var(--emerald); font-size: 0.8rem;" id="sbxDiscountAmount">-₹0</span>
-                      </div>
-                      <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--rim); padding-top: 0.4rem; margin-top: 0.4rem;">
-                        <span style="font-size: 0.78rem; font-weight: 700; color: var(--ink);">Student Payable:</span>
-                        <span style="font-family: var(--font-data); font-size: 1.15rem; font-weight: 800; color: var(--gold);" id="sbxFinalPrice">₹1,499</span>
-                      </div>
+                    <div class="field">
+                      <label style="font-size: 0.7rem; color: var(--ink-dim);">Discount Mode *</label>
+                      <select id="new_coupon_mode" onchange="updateCouponModeLabel()"
+                        style="font-size: 0.78rem; color: var(--ink); background: var(--elevated); border: 1px solid var(--rim); padding: 0.45rem 0.65rem; border-radius: var(--radius-sm); width: 100%;">
+                        <option value="PERCENT">% Percentage Off</option>
+                        <option value="FIXED_INR">₹ Flat Discount (INR)</option>
+                        <option value="FIXED_USD">$ Flat Discount (USD)</option>
+                      </select>
                     </div>
                   </div>
 
-                  <!-- Auto-Apply Link -->
-                  <div style="background: rgba(59, 130, 246, 0.04); border: 1px solid rgba(59, 130, 246, 0.15); border-radius: var(--radius-sm); padding: 0.65rem;">
-                    <div style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--sapphire); font-weight: 700; margin-bottom: 0.3rem;">
-                      🔗 Auto-Apply Link
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; margin-bottom: 0.65rem;">
+                    <div class="field">
+                      <label id="couponValueInputLabel" style="font-size: 0.7rem; color: var(--ink-dim);">Discount Value (%) *</label>
+                      <input id="new_coupon_value" type="number" step="any" min="1" placeholder="50" required
+                        style="font-family: var(--font-data); font-weight: 700; color: var(--emerald); background: var(--elevated); border: 1px solid var(--rim); padding: 0.45rem 0.65rem; border-radius: var(--radius-sm); width: 100%;" />
                     </div>
-                    <div style="display: flex; align-items: center; gap: 0.4rem;">
-                      <input id="shareableLinkUrl" type="text" readonly value="https://www.manodemy.com/?coupon=DATA50"
-                        style="font-family: var(--font-data); font-size: 0.7rem; color: var(--ink-dim); background: var(--base); border: 1px solid var(--rim); padding: 0.4rem 0.55rem; border-radius: 4px; flex-grow: 1;" />
-                      <button type="button" onclick="copyShareableLink()" class="btn-outline-gold" style="font-size: 0.7rem; padding: 0.4rem 0.65rem; white-space: nowrap;">
-                        📋 Copy Link
-                      </button>
+                    <div class="field">
+                      <label style="font-size: 0.7rem; color: var(--ink-dim);">Currency Scope</label>
+                      <select id="new_coupon_scope"
+                        style="font-size: 0.78rem; color: var(--ink); background: var(--elevated); border: 1px solid var(--rim); padding: 0.45rem 0.65rem; border-radius: var(--radius-sm); width: 100%;">
+                        <option value="BOTH">Both (INR ₹ &amp; USD $)</option>
+                        <option value="INR">INR Only (India)</option>
+                        <option value="USD">USD Only (Global)</option>
+                      </select>
                     </div>
                   </div>
-                </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; margin-bottom: 0.65rem;">
+                    <div class="field">
+                      <label style="font-size: 0.7rem; color: var(--ink-dim);">Max Uses Cap</label>
+                      <input id="new_coupon_max_uses" type="number" min="1" placeholder="∞ Unlimited"
+                        style="font-family: var(--font-data); font-size: 0.78rem; color: var(--ink); background: var(--elevated); border: 1px solid var(--rim); padding: 0.45rem 0.65rem; border-radius: var(--radius-sm); width: 100%;" />
+                    </div>
+                    <div class="field">
+                      <label style="font-size: 0.7rem; color: var(--ink-dim);">Expiration Date</label>
+                      <input id="new_coupon_expires" type="date"
+                        style="font-size: 0.78rem; color: var(--ink); background: var(--elevated); border: 1px solid var(--rim); padding: 0.45rem 0.65rem; border-radius: var(--radius-sm); width: 100%;" />
+                    </div>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; margin-bottom: 0.85rem;">
+                    <div class="field">
+                      <label style="font-size: 0.7rem; color: var(--ink-dim);">Campaign Tag</label>
+                      <input id="new_coupon_tag" type="text" placeholder="e.g. launch_deal"
+                        style="font-size: 0.78rem; color: var(--ink); background: var(--elevated); border: 1px solid var(--rim); padding: 0.45rem 0.65rem; border-radius: var(--radius-sm); width: 100%;" />
+                    </div>
+                    <div class="field" style="display: flex; align-items: center; gap: 0.4rem; margin-top: 1.1rem;">
+                      <input id="new_coupon_single_email" type="checkbox" style="cursor: pointer;" />
+                      <label for="new_coupon_single_email" style="font-size: 0.7rem; color: var(--ink); cursor: pointer;">
+                        1 use per email
+                      </label>
+                    </div>
+                  </div>
+
+                  <button class="btn-gold" id="btnSaveCoupon" type="submit" style="width: 100%; font-size: 0.82rem; font-weight: 700; padding: 0.55rem; border-radius: var(--radius-sm); cursor: pointer;">
+                    + Create &amp; Activate Coupon
+                  </button>
+                </form>
               </div>
 
               <!-- Active Coupons Table Panel -->

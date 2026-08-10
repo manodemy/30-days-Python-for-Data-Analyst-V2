@@ -1,5 +1,5 @@
-const CACHE_NAME = 'manodemy-static-cache-v89';
-const DYNAMIC_CACHE_NAME = 'manodemy-dynamic-cache-v89';
+const CACHE_NAME = 'manodemy-static-cache-v90';
+const DYNAMIC_CACHE_NAME = 'manodemy-dynamic-cache-v90';
 
 // Static assets to precache immediately (only truly stable assets)
 const PRECACHE_ASSETS = [

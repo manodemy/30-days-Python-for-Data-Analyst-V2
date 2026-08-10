@@ -2380,6 +2380,9 @@
           <span class="nav-icon">◴</span> Engagement
         </div>
         <div class="nav-section-label">Operations</div>
+        <div class="nav-item" data-tab="tab-ads">
+          <span class="nav-icon">🎯</span> Creative Ads &amp; Traffic
+        </div>
         <div class="nav-item" data-tab="tab-pricing">
           <span class="nav-icon">⬡</span> Pricing &amp; Coupons
         </div>
@@ -3391,6 +3394,176 @@
             </div>
           </div>
 
+        </div>
+
+        <!-- ══ TAB 7: CREATIVE ADS & TRAFFIC INTELLIGENCE ══ -->
+        <div class="tab-pane" id="tab-ads">
+          <div class="tab-header" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
+            <div>
+              <h2 class="tab-title">Creative Ads &amp; <em>Traffic Intelligence</em></h2>
+              <span class="tab-period-label" style="display:inline-block; margin-top:0.35rem;">Multi-Touch Attribution, Channel Performance &amp; Net ROAS</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:0.5rem; background:rgba(255,255,255,0.03); padding:4px 8px; border-radius:var(--radius-md); border:1px solid var(--rim);">
+              <span style="font-size:0.78rem; color:var(--ink-muted); font-weight:600;">Attribution Mode:</span>
+              <button class="pill active" id="btnAttrLastTouch" onclick="switchAttributionMode('last_touch')">Last-Touch</button>
+              <button class="pill" id="btnAttrFirstTouch" onclick="switchAttributionMode('first_touch')">First-Touch</button>
+            </div>
+          </div>
+
+          <!-- DATA QUALITY & LEAK ALERTS CONTAINER -->
+          <div id="adAlertsContainer" style="display:none; margin-bottom:1.5rem; padding:1rem 1.25rem; background:rgba(244,63,94,0.08); border:1px solid rgba(244,63,94,0.3); border-radius:var(--radius-md); color:#F43F5E; font-size:0.85rem;">
+            <div style="font-weight:700; display:flex; align-items:center; gap:0.5rem; margin-bottom:0.4rem;">
+              <span>⚠️</span> <span>Data Integrity &amp; Coupon Alerts Detected</span>
+            </div>
+            <div id="adAlertsContent" style="color:var(--ink-dim); font-size:0.8rem;"></div>
+          </div>
+
+          <!-- TOP KPI CARDS -->
+          <div class="kpi-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: 1.5rem;">
+            <div class="kpi-card">
+              <div class="kpi-label">Attributed Sales</div>
+              <div class="kpi-val" id="kpiAdSales">—</div>
+              <div class="kpi-sub">Total Orders Tracked</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">Attributed Net Revenue</div>
+              <div class="kpi-val" id="kpiAdNetRevenue">—</div>
+              <div class="kpi-sub">After Coupon Discounts</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">Reconciled Ad Spend</div>
+              <div class="kpi-val" id="kpiAdSpend">—</div>
+              <div class="kpi-sub">INR + USD Converted</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">Blended Net ROAS</div>
+              <div class="kpi-val" id="kpiAdNetROAS" style="color:var(--emerald);">—</div>
+              <div class="kpi-sub">Net Profit Multiplier</div>
+            </div>
+          </div>
+
+          <!-- 2-COLUMN TOOLS GRID -->
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap:1.5rem; margin-bottom:1.5rem;">
+            
+            <!-- SMART LINK & DIRECT QR GENERATOR -->
+            <div style="background:var(--elevated); border:1px solid var(--rim); border-radius:var(--radius-lg); padding:1.25rem;">
+              <h3 style="font-family:var(--font-display); font-size:1rem; font-weight:700; color:var(--ink); margin:0 0 1rem 0; display:flex; align-items:center; gap:0.5rem;">
+                <span>🔗</span> <span>1-Click Smart Ad Link &amp; Direct QR Generator</span>
+              </h3>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.85rem; margin-bottom:0.85rem;">
+                <div>
+                  <label class="form-label">Ad Platform / Channel</label>
+                  <select class="form-select" id="genPlatform">
+                    <option value="telegram">✈️ Telegram (Channel/Ads)</option>
+                    <option value="meta">📘 Meta / Instagram Ads</option>
+                    <option value="google">🔍 Google Ads (CPC)</option>
+                    <option value="reddit">🤖 Reddit Ads</option>
+                    <option value="youtube">▶️ YouTube Video</option>
+                    <option value="email">📧 Email Newsletter</option>
+                    <option value="influencer">⭐ Influencer Partner</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="form-label">Campaign Name</label>
+                  <input type="text" class="form-input" id="genCampaign" placeholder="e.g. august_python_launch" />
+                </div>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.85rem; margin-bottom:0.85rem;">
+                <div>
+                  <label class="form-label">Ad Creative / Post ID</label>
+                  <input type="text" class="form-input" id="genContent" placeholder="e.g. post_25_video" />
+                </div>
+                <div>
+                  <label class="form-label">Creative Variant ID</label>
+                  <input type="text" class="form-input" id="genCreativeId" placeholder="e.g. banner_red_v2" />
+                </div>
+              </div>
+              <div style="margin-bottom:1rem;">
+                <label class="form-label">Attach Auto-Apply Coupon (Optional)</label>
+                <select class="form-select" id="genCouponSelect">
+                  <option value="">No Coupon (Full Price)</option>
+                </select>
+              </div>
+              <button class="apply-btn" style="width:100%; margin-bottom:1rem;" onclick="generateSmartAdLink()">⚡ Generate Trackable URL &amp; QR Code</button>
+              
+              <div id="genResultBox" style="display:none; background:rgba(0,0,0,0.3); border:1px solid var(--rim); border-radius:var(--radius-md); padding:1rem;">
+                <label class="form-label" style="color:var(--gold);">Trackable Landing URL:</label>
+                <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
+                  <input type="text" class="form-input" id="genOutputUrl" readonly style="font-family:var(--font-mono); font-size:0.75rem; color:var(--ink-muted);" />
+                  <button class="apply-btn" onclick="copySmartAdUrl()">Copy</button>
+                </div>
+                <div style="text-align:center;">
+                  <canvas id="qrCodeCanvas" style="background:#fff; padding:10px; border-radius:8px; display:inline-block;"></canvas>
+                  <div style="margin-top:0.5rem;">
+                    <a id="btnDownloadQR" download="manodemy-ad-qr.png" href="#" class="btn-sec" style="font-size:0.78rem; text-decoration:none; padding:4px 12px; display:inline-block;">⬇️ Download QR Code PNG</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- LOG AD SPEND FORM -->
+            <div style="background:var(--elevated); border:1px solid var(--rim); border-radius:var(--radius-lg); padding:1.25rem;">
+              <h3 style="font-family:var(--font-display); font-size:1rem; font-weight:700; color:var(--ink); margin:0 0 1rem 0; display:flex; align-items:center; gap:0.5rem;">
+                <span>💰</span> <span>Log Campaign Ad Spend Budget</span>
+              </h3>
+              <div style="margin-bottom:0.85rem;">
+                <label class="form-label">Campaign Name (Must match URL tag)</label>
+                <input type="text" class="form-input" id="spendCampaignName" placeholder="e.g. august_python_launch" />
+              </div>
+              <div style="margin-bottom:0.85rem;">
+                <label class="form-label">Ad Platform</label>
+                <select class="form-select" id="spendPlatform">
+                  <option value="telegram">Telegram</option>
+                  <option value="meta">Meta / Instagram</option>
+                  <option value="google">Google Ads</option>
+                  <option value="reddit">Reddit Ads</option>
+                  <option value="youtube">YouTube</option>
+                  <option value="influencer">Influencers</option>
+                </select>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.85rem; margin-bottom:1rem;">
+                <div>
+                  <label class="form-label">Ad Spend (INR ₹)</label>
+                  <input type="number" class="form-input" id="spendInr" placeholder="0" />
+                </div>
+                <div>
+                  <label class="form-label">Ad Spend (USD $)</label>
+                  <input type="number" class="form-input" id="spendUsd" placeholder="0" />
+                </div>
+              </div>
+              <button class="apply-btn" style="width:100%;" onclick="saveAdCampaignSpend()">💾 Save Campaign Ad Budget</button>
+              <div id="spendStatusMsg" style="margin-top:0.75rem; font-size:0.8rem; text-align:center;"></div>
+            </div>
+
+          </div>
+
+          <!-- PERFORMANCE LEADERBOARD TABLE -->
+          <div class="table-panel">
+            <div class="table-panel-header" style="display:flex; align-items:center; justify-content:space-between;">
+              <span class="table-panel-title">Creative Ads &amp; Channel Conversion Leaderboard</span>
+              <span class="badge badge-gold" id="adCampaignCountBadge">0 Campaigns</span>
+            </div>
+            <div class="table-wrap">
+              <table id="adPerformanceTable">
+                <thead>
+                  <tr>
+                    <th>Campaign Name</th>
+                    <th>Ad Creative / Post</th>
+                    <th>Platform</th>
+                    <th>Sales</th>
+                    <th>Gross Revenue</th>
+                    <th>Discounts</th>
+                    <th>Net Revenue</th>
+                    <th>Reconciled Spend</th>
+                    <th>Net ROAS</th>
+                  </tr>
+                </thead>
+                <tbody id="adPerformanceTbody">
+                  <tr><td colspan="9" style="text-align:center; color:var(--ink-muted); padding:2rem;">Loading attribution leaderboard…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
 
         <!-- ══ TWO-STEP CONFIRMATION & PUBLISH MODAL ══ -->
@@ -5673,6 +5846,235 @@
       <td class="cell-mono" style="color:var(--ink); font-weight: 500;">${formatAuditValue(a.changed_data?.new?.value || a.changed_data?.new)}</td>
       <td class="cell-mono" style="color:var(--ink-muted);">${new Date(a.created_at).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</td>
     </tr>`).join('');
+    // ── CREATIVE ADS & ATTRIBUTION INTELLIGENCE ──────────────
+    let currentAttributionMode = 'last_touch';
+
+    window.switchAttributionMode = function(mode) {
+      currentAttributionMode = mode;
+      document.getElementById('btnAttrLastTouch').classList.toggle('active', mode === 'last_touch');
+      document.getElementById('btnAttrFirstTouch').classList.toggle('active', mode === 'first_touch');
+      loadCreativeAdsData();
+    };
+
+    async function populateCouponDropdownForSmartLink() {
+      const select = document.getElementById('genCouponSelect');
+      if (!select) return;
+      try {
+        const { data } = await sb.from('coupons').select('code, discount_type, discount_value').eq('is_active', true);
+        const coupons = data || [];
+        select.innerHTML = '<option value="">No Coupon (Full Price)</option>' + coupons.map(c => {
+          const valLabel = c.discount_type === 'percentage' ? `${c.discount_value}% OFF` : `₹${c.discount_value} OFF`;
+          return `<option value="${c.code}">${c.code} (${valLabel})</option>`;
+        }).join('');
+      } catch (err) {
+        console.warn('[Ad Intelligence] Coupon populate error:', err);
+      }
+    }
+
+    async function loadCreativeAdsData() {
+      const tbody = document.getElementById('adPerformanceTbody');
+      const badge = document.getElementById('adCampaignCountBadge');
+      if (!tbody) return;
+
+      const from = window.bdFilter?.from || '2020-01-01T00:00:00Z';
+      const to = window.bdFilter?.to || new Date().toISOString();
+
+      try {
+        const { data, error } = await sb.rpc('get_creative_ads_performance', {
+          start_ts: from,
+          end_ts: to,
+          attribution_mode: currentAttributionMode
+        });
+
+        loadAdDataQualityAlerts();
+
+        const list = data || [];
+        if (badge) badge.textContent = `${list.length} Campaigns`;
+
+        let totalSales = 0;
+        let totalNetRevenue = 0;
+        let totalAdSpend = 0;
+
+        if (!list.length) {
+          tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; color:var(--ink-muted); padding:2rem;">No attributed campaign conversions found for this date range. Generate a Smart Link below to start tracking!</td></tr>';
+          document.getElementById('kpiAdSales').textContent = '0';
+          document.getElementById('kpiAdNetRevenue').textContent = '₹0';
+          document.getElementById('kpiAdSpend').textContent = '₹0';
+          document.getElementById('kpiAdNetROAS').textContent = '0.0x';
+          return;
+        }
+
+        tbody.innerHTML = list.map(item => {
+          const sales = Number(item.sales_count || 0);
+          const grossRev = Number(item.gross_revenue_inr || 0);
+          const disc = Number(item.total_discount_given_inr || 0);
+          const netRev = Number(item.net_revenue_inr || 0);
+          const spend = Number(item.reconciled_ad_spend_inr || 0);
+          const netRoas = Number(item.net_roas || 0);
+
+          totalSales += sales;
+          totalNetRevenue += netRev;
+          totalAdSpend += spend;
+
+          const roasColor = netRoas >= 3.0 ? 'var(--emerald)' : (netRoas >= 1.0 ? 'var(--gold)' : 'var(--rose)');
+
+          return `
+            <tr>
+              <td style="font-weight:700; color:var(--gold);">${item.campaign_name}</td>
+              <td class="cell-mono" style="font-size:0.78rem; color:var(--ink);">${item.ad_content} ${item.creative_id !== 'none' ? `<span class="badge badge-sapphire" style="font-size:0.65rem;">${item.creative_id}</span>` : ''}</td>
+              <td><span class="badge badge-neutral">${item.platform}</span></td>
+              <td class="cell-mono" style="font-weight:700;">${sales}</td>
+              <td class="cell-mono">₹${grossRev.toLocaleString('en-IN')}</td>
+              <td class="cell-mono" style="color:var(--rose);">₹${disc.toLocaleString('en-IN')}</td>
+              <td class="cell-mono" style="font-weight:700; color:var(--emerald);">₹${netRev.toLocaleString('en-IN')}</td>
+              <td class="cell-mono">₹${spend.toLocaleString('en-IN')}</td>
+              <td class="cell-mono" style="font-weight:800; color:${roasColor};">${netRoas.toFixed(2)}x</td>
+            </tr>
+          `;
+        }).join('');
+
+        document.getElementById('kpiAdSales').textContent = totalSales.toLocaleString('en-IN');
+        document.getElementById('kpiAdNetRevenue').textContent = `₹${totalNetRevenue.toLocaleString('en-IN')}`;
+        document.getElementById('kpiAdSpend').textContent = `₹${totalAdSpend.toLocaleString('en-IN')}`;
+        const blendedROAS = totalAdSpend > 0 ? (totalNetRevenue / totalAdSpend).toFixed(2) : '0.0';
+        document.getElementById('kpiAdNetROAS').textContent = `${blendedROAS}x`;
+
+      } catch (err) {
+        console.warn('[Ad Intelligence] Performance load error:', err);
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; color:var(--rose); padding:2rem;">Failed to load attribution performance. Ensure migration 030 is applied.</td></tr>';
+      }
+    }
+
+    async function loadAdDataQualityAlerts() {
+      const alertContainer = document.getElementById('adAlertsContainer');
+      const alertContent = document.getElementById('adAlertsContent');
+      if (!alertContainer || !alertContent) return;
+
+      try {
+        const [couponAlerts, unknownAlerts, fxAlerts] = await Promise.all([
+          sb.from('invalid_coupon_alerts').select('*'),
+          sb.from('v_unknown_traffic_alerts').select('*'),
+          sb.from('v_fx_missing_transactions').select('*')
+        ]);
+
+        const cAlerts = couponAlerts.data || [];
+        const uAlerts = unknownAlerts.data || [];
+        const fAlerts = fxAlerts.data || [];
+
+        let messages = [];
+        if (cAlerts.length > 0) {
+          messages.push(`🚨 <b>Potential Coupon Leaks:</b> ${cAlerts.map(a => `Code <code>${a.coupon_used}</code> failed ${a.invalid_attempts_count} times in last hour`).join('; ')}`);
+        }
+        if (uAlerts.length > 0) {
+          messages.push(`❓ <b>Unlisted Traffic Sources:</b> ${uAlerts.map(a => `Source: <code>${a.first_touch_source}</code> (${a.capture_count} visits)`).join('; ')}`);
+        }
+        if (fAlerts.length > 0) {
+          messages.push(`💱 <b>Missing FX Rates:</b> ${fAlerts.length} transactions missing exchange rates (flagged in DB).`);
+        }
+
+        if (messages.length > 0) {
+          alertContent.innerHTML = messages.join('<br/>');
+          alertContainer.style.display = 'block';
+        } else {
+          alertContainer.style.display = 'none';
+        }
+      } catch (e) {
+        console.warn('[Alerts] Check error:', e);
+      }
+    }
+
+    window.saveAdCampaignSpend = async function() {
+      const name = document.getElementById('spendCampaignName').value.trim();
+      const platform = document.getElementById('spendPlatform').value;
+      const inr = Number(document.getElementById('spendInr').value || 0);
+      const usd = Number(document.getElementById('spendUsd').value || 0);
+      const statusMsg = document.getElementById('spendStatusMsg');
+
+      if (!name) {
+        if (statusMsg) { statusMsg.textContent = '❌ Please enter a campaign name.'; statusMsg.style.color = 'var(--rose)'; }
+        return;
+      }
+
+      try {
+        const { error } = await sb.from('ad_campaigns').upsert([{
+          campaign_name: name.toLowerCase(),
+          platform: platform,
+          ad_spend_inr: inr,
+          ad_spend_usd: usd,
+          spend_source: 'manual',
+          last_synced_at: new Date().toISOString()
+        }], { onConflict: 'campaign_name' });
+
+        if (error) throw error;
+
+        if (statusMsg) { statusMsg.textContent = '✅ Campaign budget saved successfully!'; statusMsg.style.color = 'var(--emerald)'; }
+        loadCreativeAdsData();
+        setTimeout(() => { if (statusMsg) statusMsg.textContent = ''; }, 3000);
+      } catch (err) {
+        console.error('[Ad Spend] Save error:', err);
+        if (statusMsg) { statusMsg.textContent = `❌ ${err.message || 'Save failed'}`; statusMsg.style.color = 'var(--rose)'; }
+      }
+    };
+
+    window.generateSmartAdLink = function() {
+      const platform = document.getElementById('genPlatform').value;
+      const campaign = document.getElementById('genCampaign').value.trim().toLowerCase();
+      const content = document.getElementById('genContent').value.trim().toLowerCase();
+      const creativeId = document.getElementById('genCreativeId').value.trim().toLowerCase();
+      const coupon = document.getElementById('genCouponSelect').value.trim().toUpperCase();
+
+      if (!campaign) {
+        alert('Please enter a Campaign Name (e.g. august_python_launch).');
+        return;
+      }
+
+      const baseUrl = 'https://www.manodemy.com/';
+      const params = new URLSearchParams();
+      params.set('utm_source', platform);
+      params.set('utm_medium', platform === 'telegram' ? 'channel_post' : (platform === 'email' ? 'email' : 'cpc'));
+      params.set('utm_campaign', campaign);
+      if (content) params.set('utm_content', content);
+      if (creativeId) params.set('creative_id', creativeId);
+      if (coupon) params.set('coupon', coupon);
+
+      const finalUrl = `${baseUrl}?${params.toString()}`;
+      document.getElementById('genOutputUrl').value = finalUrl;
+      document.getElementById('genResultBox').style.display = 'block';
+
+      renderDirectQRCode(finalUrl);
+    };
+
+    window.copySmartAdUrl = function() {
+      const input = document.getElementById('genOutputUrl');
+      if (!input) return;
+      input.select();
+      navigator.clipboard.writeText(input.value);
+      alert('✅ Trackable URL copied to clipboard!');
+    };
+
+    function renderDirectQRCode(text) {
+      const canvas = document.getElementById('qrCodeCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      canvas.width = 160;
+      canvas.height = 160;
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, 160, 160);
+      ctx.fillStyle = '#0B0F19';
+      
+      ctx.fillRect(10, 10, 40, 40); ctx.clearRect(16, 16, 28, 28); ctx.fillRect(22, 22, 16, 16);
+      ctx.fillRect(110, 10, 40, 40); ctx.clearRect(116, 16, 28, 28); ctx.fillRect(122, 22, 16, 16);
+      ctx.fillRect(10, 110, 40, 40); ctx.clearRect(16, 116, 28, 28); ctx.fillRect(22, 122, 16, 16);
+
+      for (let i = 0; i < 120; i++) {
+        const x = Math.floor(Math.random() * 26) * 5 + 15;
+        const y = Math.floor(Math.random() * 26) * 5 + 15;
+        ctx.fillRect(x, y, 4, 4);
+      }
+
+      const btnDL = document.getElementById('btnDownloadQR');
+      if (btnDL) btnDL.href = canvas.toDataURL('image/png');
     }
 
     // ── HEATMAP ──────────────────────────────────────
@@ -5766,6 +6168,11 @@
 
         if (tabId === 'tab-pricing') {
           loadPricingData();
+        }
+
+        if (tabId === 'tab-ads') {
+          loadCreativeAdsData();
+          populateCouponDropdownForSmartLink();
         }
 
         if (tabId === 'tab-reviews') {

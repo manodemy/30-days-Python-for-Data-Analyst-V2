@@ -1237,6 +1237,92 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // ═══════ HARDENED DUAL-TOUCH ATTRIBUTION SNIFFER ═══════
+  const ATTRIBUTION_EXPIRY_DAYS = 90;
+  const ALLOWED_SOURCES = ['google', 'facebook', 'meta', 'telegram', 'reddit', 'youtube', 'linkedin', 'instagram', 'email', 'organic', 'direct', 'referral', 'influencer'];
+  const ALLOWED_MEDIUMS = ['cpc', 'channel_post', 'sponsor_ad', 'banner', 'social', 'organic', 'email', 'referral', 'affiliate'];
+
+  function sanitizeClientInput(str, isCoupon = false) {
+    if (!str) return '';
+    const trimmed = String(str).trim();
+    const transformed = isCoupon ? trimmed.toUpperCase() : trimmed.toLowerCase();
+    return transformed.replace(/[^a-z0-9_\-]/gi, '').substring(0, 100);
+  }
+
+  function getCookie(name) {
+    const v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+    return v ? v[2] : null;
+  }
+
+  function setCookie(name, value, days) {
+    const d = new Date();
+    d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+    document.cookie = name + "=" + value + ";path=/;expires=" + d.toUTCString() + ";SameSite=Lax;Secure";
+  }
+
+  window.captureAttributionData = function() {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const rawSource = urlParams.get('utm_source');
+      const rawMedium = urlParams.get('utm_medium');
+      
+      if (!rawSource && !rawMedium) return;
+
+      const src = sanitizeClientInput(rawSource);
+      const med = sanitizeClientInput(rawMedium);
+      const camp = sanitizeClientInput(urlParams.get('utm_campaign') || 'direct');
+      const content = sanitizeClientInput(urlParams.get('utm_content') || 'none');
+      const creativeId = sanitizeClientInput(urlParams.get('creative_id') || 'none');
+      const coupon = sanitizeClientInput(urlParams.get('coupon'), true);
+
+      const validSource = ALLOWED_SOURCES.includes(src) ? src : 'unknown';
+      const validMedium = ALLOWED_MEDIUMS.includes(med) ? med : 'unknown';
+
+      const touchData = {
+        source: validSource,
+        medium: validMedium,
+        campaign: camp,
+        content: content,
+        creative_id: creativeId,
+        coupon: coupon,
+        timestamp: new Date().toISOString()
+      };
+
+      let attrRecord = null;
+      try {
+        const cData = getCookie('_manodemy_attr');
+        if (cData) attrRecord = JSON.parse(decodeURIComponent(cData));
+      } catch (e) {}
+
+      if (!attrRecord) {
+        attrRecord = {
+          first_touch: touchData,
+          last_touch: touchData
+        };
+      } else {
+        attrRecord.last_touch = touchData;
+      }
+
+      const encoded = encodeURIComponent(JSON.stringify(attrRecord));
+      setCookie('_manodemy_attr', encoded, ATTRIBUTION_EXPIRY_DAYS);
+      try { localStorage.setItem('manodemy_attribution', JSON.stringify(attrRecord)); } catch (e) {}
+    } catch (err) {
+      console.warn('[Attribution] Capture error:', err);
+    }
+  };
+
+  function getAttributionPayload() {
+    try {
+      const cData = getCookie('_manodemy_attr');
+      if (cData) return JSON.parse(decodeURIComponent(cData));
+      const ls = localStorage.getItem('manodemy_attribution');
+      if (ls) return JSON.parse(ls);
+    } catch (e) {}
+    return null;
+  }
+
+  captureAttributionData();
+
   // ═══════ AUTH REGISTRATION & EVENT LISTENERS ═══════
   const authModal = document.getElementById('authModal');
   const landingLoginForm = document.getElementById('landingLoginForm');

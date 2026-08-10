@@ -5252,12 +5252,12 @@
     };
 
     // Save draft changes locally without pushing to cloud
-    window.saveDraftPricing = function() {
+    window.saveDraftPricing = async function() {
       const isINR = _activePricingRegion === 'INR';
       const sale = Number(document.getElementById('cfg_sale_price')?.value) || 0;
       const orig = Number(document.getElementById('cfg_original_price')?.value) || 0;
       const badge = document.getElementById('cfg_discount_badge')?.value || (isINR ? '70% OFF' : '67% OFF');
-      const tag = document.getElementById('cfg_preset_label')?.value || 'Draft Update';
+      const tag = document.getElementById('cfg_preset_label')?.value || 'Manual Update';
 
       if (isINR) {
         _inrPricingState = { sale_price: sale, original_price: orig, discount_label: badge, preset_label: tag };
@@ -5265,10 +5265,27 @@
         _usdPricingState = { sale_price: sale, original_price: orig, discount_label: badge, preset_label: tag };
       }
 
-      updateMatrixOverview();
-      updatePreviewSimulator();
-      renderPresetButtons(_activePricingRegion);
-      showToast(`💾 ${isINR ? 'INR (₹)' : 'USD ($)'} changes saved! Click "Publish" when ready to push live to cloud.`, 'info');
+      try {
+        const settingsPayload = {
+          inr: _inrPricingState.sale_price * 100,
+          original_inr: _inrPricingState.original_price * 100,
+          usd: _usdPricingState.sale_price * 100,
+          original_usd: _usdPricingState.original_price * 100,
+          discount_label: _inrPricingState.discount_label,
+          discount_label_usd: _usdPricingState.discount_label,
+          updated_at: new Date().toISOString()
+        };
+
+        const { error } = await sb.from('settings').upsert({ key: 'pricing', value: settingsPayload, updated_at: new Date().toISOString() }, { onConflict: 'key' });
+        if (error) throw error;
+
+        updateMatrixOverview();
+        updatePreviewSimulator();
+        renderPresetButtons(_activePricingRegion);
+        showToast(`🎉 ${isINR ? 'INR (₹' + sale + ')' : 'USD ($' + sale + ')'} pricing saved & published live across all landing pages!`, 'success');
+      } catch (err) {
+        showToast('❌ Error saving price: ' + err.message, 'error');
+      }
     };
 
     window.closePublishConfirmModal = function() {
@@ -6388,6 +6405,7 @@
 
         if (tabId === 'tab-pricing') {
           loadPricingData();
+          loadCouponsList();
         }
 
         if (tabId === 'tab-ads') {
@@ -7247,6 +7265,7 @@
         document.getElementById('btnPromoteUser')?.addEventListener('click', updateRoleForUser);
 
         loadPricingData();
+        loadCouponsList();
       })();
     });
   </script>

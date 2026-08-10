@@ -3517,22 +3517,25 @@
           </div>
 
           <!-- 2-COLUMN LUXURY TOOLS GRID -->
-          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap:1.5rem; margin-bottom:1.75rem;">
-            
-            <!-- SMART LINK & DIRECT QR GENERATOR -->
-            <div style="background:linear-gradient(135deg, rgba(18,24,38,0.75) 0%, rgba(11,15,25,0.85) 100%); border:1px solid rgba(255,255,255,0.08); border-radius:18px; padding:1.5rem; backdrop-filter:blur(16px); box-shadow:0 12px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);">
-              <div style="display:flex; align-items:center; gap:0.65rem; margin-bottom:1.25rem; padding-bottom:0.75rem; border-bottom:1px solid rgba(255,255,255,0.06);">
-                <div style="width:36px; height:36px; border-radius:10px; background:rgba(0,230,246,0.12); border:1px solid rgba(0,230,246,0.3); display:flex; align-items:center; justify-content:center; font-size:1.1rem; color:var(--cyan);">🔗</div>
+          <!-- UNIFIED SMART CAMPAIGN & AD BUDGET CONTROLLER -->
+          <div style="background:linear-gradient(135deg, rgba(18,24,38,0.85) 0%, rgba(11,15,25,0.92) 100%); border:1px solid rgba(0,230,246,0.25); border-radius:20px; padding:1.75rem; backdrop-filter:blur(20px); box-shadow:0 16px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1); margin-bottom:1.75rem;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; padding-bottom:1rem; border-bottom:1px solid rgba(255,255,255,0.08);">
+              <div style="display:flex; align-items:center; gap:0.75rem;">
+                <div style="width:42px; height:42px; border-radius:12px; background:linear-gradient(135deg, rgba(0,230,246,0.15) 0%, rgba(16,185,129,0.15) 100%); border:1px solid rgba(0,230,246,0.35); display:flex; align-items:center; justify-content:center; font-size:1.25rem; color:var(--cyan);">🚀</div>
                 <div>
-                  <h3 style="font-family:var(--font-display); font-size:1.05rem; font-weight:800; color:#FFFFFF; margin:0; letter-spacing:-0.01em;">1-Click Smart Ad Link &amp; Direct QR Generator</h3>
-                  <span style="font-size:0.75rem; color:var(--ink-muted);">Create trackable links &amp; high-res QR codes for ads</span>
+                  <h3 style="font-family:var(--font-display); font-size:1.15rem; font-weight:800; color:#FFFFFF; margin:0; letter-spacing:-0.01em;">Smart Campaign Studio &amp; Ad Budget Controller</h3>
+                  <span style="font-size:0.78rem; color:var(--ink-muted);">Set campaign budget, generate trackable URLs, and auto-compute live ROI &amp; Net ROAS in one unified step</span>
                 </div>
               </div>
+              <div id="genStatusMsg" style="font-size:0.85rem; font-weight:700;"></div>
+            </div>
 
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+            <form onsubmit="event.preventDefault(); generateAndSaveSmartCampaign();">
+              <!-- Row 1: Platform & Campaign Name -->
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-bottom:1.25rem;">
                 <div>
-                  <label class="form-label" style="font-size:0.75rem; font-weight:700; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.4rem; display:block;">Ad Platform / Channel</label>
-                  <select class="form-select" id="genPlatform" style="width:100%; background:rgba(10,14,23,0.8); border:1px solid rgba(255,255,255,0.12); border-radius:10px; color:#F8FAFC; padding:0.65rem 0.85rem; font-size:0.85rem; outline:none; transition:all 0.2s ease;">
+                  <label class="form-label" style="font-size:0.75rem; font-weight:700; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.4rem; display:block;">Ad Platform / Channel *</label>
+                  <select class="form-select" id="genPlatform" style="width:100%; background:rgba(10,14,23,0.85); border:1px solid rgba(255,255,255,0.12); border-radius:10px; color:#F8FAFC; padding:0.7rem 0.9rem; font-size:0.88rem; outline:none; transition:all 0.2s ease;">
                     <option value="telegram">✈️ Telegram (Channel/Ads)</option>
                     <option value="meta">📘 Meta / Instagram Ads</option>
                     <option value="google">🔍 Google Ads (CPC)</option>
@@ -3543,92 +3546,66 @@
                   </select>
                 </div>
                 <div>
-                  <label class="form-label" style="font-size:0.75rem; font-weight:700; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.4rem; display:block;">Campaign Name</label>
-                  <input type="text" class="form-input" id="genCampaign" placeholder="e.g. august_python_launch" style="width:100%; background:rgba(10,14,23,0.8); border:1px solid rgba(255,255,255,0.12); border-radius:10px; color:#F8FAFC; padding:0.65rem 0.85rem; font-size:0.85rem; outline:none; transition:all 0.2s ease;" />
+                  <label class="form-label" style="font-size:0.75rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.4rem; display:block;">Campaign Name (UTM Campaign Tag) *</label>
+                  <input type="text" class="form-input" id="genCampaign" placeholder="e.g. august_python_launch" required style="width:100%; background:rgba(10,14,23,0.85); border:1px solid rgba(255,255,255,0.12); border-radius:10px; color:#F8FAFC; padding:0.7rem 0.9rem; font-size:0.88rem; outline:none; transition:all 0.2s ease;" />
                 </div>
               </div>
 
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+              <!-- Row 2: Ad Spend Budget (INR & USD) -->
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-bottom:1.25rem; background:rgba(16,185,129,0.06); border:1px dashed rgba(16,185,129,0.25); padding:1rem; border-radius:12px;">
                 <div>
-                  <label class="form-label" style="font-size:0.75rem; font-weight:700; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.4rem; display:block;">Ad Post Link or Creative ID</label>
-                  <input type="text" class="form-input" id="genContent" placeholder="e.g. t.me/manodemy/142 or post_25" style="width:100%; background:rgba(10,14,23,0.8); border:1px solid rgba(255,255,255,0.12); border-radius:10px; color:#F8FAFC; padding:0.65rem 0.85rem; font-size:0.85rem; outline:none; transition:all 0.2s ease;" />
+                  <label class="form-label" style="font-size:0.75rem; font-weight:700; color:var(--emerald); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.4rem; display:block;">💰 Campaign Budget / Ad Spend (INR ₹)</label>
+                  <input type="number" class="form-input" id="spendInr" placeholder="0 (Leave 0 for unpaid/organic)" style="width:100%; background:rgba(10,14,23,0.9); border:1px solid rgba(16,185,129,0.3); border-radius:10px; color:#F8FAFC; padding:0.65rem 0.85rem; font-size:0.88rem; outline:none; transition:all 0.2s ease;" />
+                </div>
+                <div>
+                  <label class="form-label" style="font-size:0.75rem; font-weight:700; color:var(--emerald); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.4rem; display:block;">💵 Campaign Budget / Ad Spend (USD $)</label>
+                  <input type="number" class="form-input" id="spendUsd" placeholder="0" style="width:100%; background:rgba(10,14,23,0.9); border:1px solid rgba(16,185,129,0.3); border-radius:10px; color:#F8FAFC; padding:0.65rem 0.85rem; font-size:0.88rem; outline:none; transition:all 0.2s ease;" />
+                </div>
+              </div>
+
+              <!-- Row 3: Ad Post Link & Variant ID -->
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-bottom:1.25rem;">
+                <div>
+                  <label class="form-label" style="font-size:0.75rem; font-weight:700; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.4rem; display:block;">Ad Post Link or Creative ID (Optional)</label>
+                  <input type="text" class="form-input" id="genContent" placeholder="e.g. t.me/manodemy/142 or post_25" style="width:100%; background:rgba(10,14,23,0.85); border:1px solid rgba(255,255,255,0.12); border-radius:10px; color:#F8FAFC; padding:0.7rem 0.9rem; font-size:0.88rem; outline:none; transition:all 0.2s ease;" />
                 </div>
                 <div>
                   <label class="form-label" style="font-size:0.75rem; font-weight:700; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.4rem; display:block;">Creative Variant ID (Optional)</label>
-                  <input type="text" class="form-input" id="genCreativeId" placeholder="e.g. banner_red_v2" style="width:100%; background:rgba(10,14,23,0.8); border:1px solid rgba(255,255,255,0.12); border-radius:10px; color:#F8FAFC; padding:0.65rem 0.85rem; font-size:0.85rem; outline:none; transition:all 0.2s ease;" />
+                  <input type="text" class="form-input" id="genCreativeId" placeholder="e.g. banner_red_v2" style="width:100%; background:rgba(10,14,23,0.85); border:1px solid rgba(255,255,255,0.12); border-radius:10px; color:#F8FAFC; padding:0.7rem 0.9rem; font-size:0.88rem; outline:none; transition:all 0.2s ease;" />
                 </div>
               </div>
 
-              <div style="margin-bottom:1.25rem;">
+              <!-- Row 4: Coupon Selection -->
+              <div style="margin-bottom:1.5rem;">
                 <label class="form-label" style="font-size:0.75rem; font-weight:700; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.4rem; display:block;">Attach Auto-Apply Coupon (Optional)</label>
-                <select class="form-select" id="genCouponSelect" style="width:100%; background:rgba(10,14,23,0.8); border:1px solid rgba(255,255,255,0.12); border-radius:10px; color:#F8FAFC; padding:0.65rem 0.85rem; font-size:0.85rem; outline:none; transition:all 0.2s ease;">
+                <select class="form-select" id="genCouponSelect" style="width:100%; background:rgba(10,14,23,0.85); border:1px solid rgba(255,255,255,0.12); border-radius:10px; color:#F8FAFC; padding:0.7rem 0.9rem; font-size:0.88rem; outline:none; transition:all 0.2s ease;">
                   <option value="">No Coupon (Full Price)</option>
                 </select>
               </div>
 
-              <button class="apply-btn" style="width:100%; height:44px; background:linear-gradient(135deg, #00E6F6 0%, #0088FF 100%); color:#0B0F19; font-family:var(--font-display); font-size:0.88rem; font-weight:800; border:none; border-radius:10px; cursor:pointer; box-shadow:0 4px 16px rgba(0,230,246,0.35); transition:all 0.2s ease; display:flex; align-items:center; justify-content:center; gap:0.5rem;" onclick="generateSmartAdLink()">
-                <span>⚡</span> <span>Generate Trackable URL &amp; QR Code</span>
+              <!-- Submit Button -->
+              <button type="submit" class="apply-btn" style="width:100%; height:48px; background:linear-gradient(135deg, #00E6F6 0%, #10B981 100%); color:#0B0F19; font-family:var(--font-display); font-size:0.95rem; font-weight:800; border:none; border-radius:12px; cursor:pointer; box-shadow:0 6px 20px rgba(0,230,246,0.3); transition:all 0.2s ease; display:flex; align-items:center; justify-content:center; gap:0.6rem;">
+                <span>⚡</span> <span>CREATE CAMPAIGN, SAVE BUDGET &amp; GENERATE TRACKABLE URL</span>
               </button>
-              
-              <div id="genResultBox" style="display:none; margin-top:1.25rem; background:rgba(0,0,0,0.4); border:1px solid rgba(0,230,246,0.3); border-radius:14px; padding:1.25rem; box-shadow:inset 0 2px 8px rgba(0,0,0,0.4);">
-                <label class="form-label" style="color:var(--gold); font-weight:700; font-size:0.8rem; margin-bottom:0.5rem; display:block;">Trackable Landing URL:</label>
-                <div style="display:flex; gap:0.6rem; margin-bottom:1.25rem;">
-                  <input type="text" class="form-input" id="genOutputUrl" readonly style="font-family:var(--font-mono); font-size:0.78rem; color:#FFFFFF; background:rgba(15,23,42,0.9); border:1px solid rgba(255,255,255,0.15); border-radius:8px; padding:0.5rem 0.75rem; flex:1;" />
-                  <button class="apply-btn" onclick="copySmartAdUrl()" style="background:var(--gold); color:#0B0F19; font-weight:800; padding:0 1.1rem; border-radius:8px; font-size:0.8rem;">Copy</button>
-                </div>
-                <div style="text-align:center;">
-                  <canvas id="qrCodeCanvas" style="background:#FFFFFF; padding:12px; border-radius:12px; display:inline-block; box-shadow:0 8px 24px rgba(0,0,0,0.5);"></canvas>
-                  <div style="margin-top:0.75rem;">
-                    <a id="btnDownloadQR" download="manodemy-ad-qr.png" href="#" class="btn-sec" style="font-size:0.8rem; text-decoration:none; padding:6px 16px; border-radius:8px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); color:#FFFFFF; font-weight:600; display:inline-block; transition:all 0.2s ease;">⬇️ Download Direct QR Code PNG</a>
-                  </div>
+            </form>
+
+            <!-- Output Result Banner -->
+            <div id="genResultBox" style="display:none; margin-top:1.5rem; background:rgba(0,0,0,0.5); border:1px solid rgba(0,230,246,0.4); border-radius:16px; padding:1.5rem; box-shadow:0 8px 24px rgba(0,0,0,0.4);">
+              <div style="display:flex; align-items:center; justify-space-between; margin-bottom:1rem;">
+                <span style="color:var(--emerald); font-weight:800; font-size:0.9rem;">✅ Campaign &amp; Budget Saved! Trackable Link Ready:</span>
+                <span id="genBudgetSavedBadge" style="font-size:0.75rem; font-weight:700; padding:3px 10px; border-radius:6px; background:rgba(16,185,129,0.2); color:var(--emerald);">Budget Logged</span>
+              </div>
+              <div style="display:flex; gap:0.75rem; margin-bottom:1.5rem;">
+                <input type="text" class="form-input" id="genOutputUrl" readonly style="font-family:var(--font-mono); font-size:0.82rem; color:#FFFFFF; background:rgba(15,23,42,0.95); border:1px solid rgba(255,255,255,0.2); border-radius:10px; padding:0.65rem 0.85rem; flex:1;" />
+                <button class="apply-btn" onclick="copySmartAdUrl()" style="background:var(--gold); color:#0B0F19; font-weight:800; padding:0 1.5rem; border-radius:10px; font-size:0.85rem; cursor:pointer;">📋 Copy URL</button>
+              </div>
+              <div style="text-align:center;">
+                <canvas id="qrCodeCanvas" style="background:#FFFFFF; padding:14px; border-radius:14px; display:inline-block; box-shadow:0 8px 24px rgba(0,0,0,0.5);"></canvas>
+                <div style="margin-top:1rem;">
+                  <a id="btnDownloadQR" download="manodemy-ad-qr.png" href="#" class="btn-sec" style="font-size:0.82rem; text-decoration:none; padding:8px 20px; border-radius:10px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); color:#FFFFFF; font-weight:700; display:inline-block; transition:all 0.2s ease;">⬇️ Download High-Res QR Code PNG</a>
                 </div>
               </div>
             </div>
-
-            <!-- LOG AD SPEND FORM -->
-            <div style="background:linear-gradient(135deg, rgba(18,24,38,0.75) 0%, rgba(11,15,25,0.85) 100%); border:1px solid rgba(255,255,255,0.08); border-radius:18px; padding:1.5rem; backdrop-filter:blur(16px); box-shadow:0 12px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);">
-              <div style="display:flex; align-items:center; gap:0.65rem; margin-bottom:1.25rem; padding-bottom:0.75rem; border-bottom:1px solid rgba(255,255,255,0.06);">
-                <div style="width:36px; height:36px; border-radius:10px; background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.3); display:flex; align-items:center; justify-content:center; font-size:1.1rem; color:var(--emerald);">💰</div>
-                <div>
-                  <h3 style="font-family:var(--font-display); font-size:1.05rem; font-weight:800; color:#FFFFFF; margin:0; letter-spacing:-0.01em;">Log Campaign Ad Spend Budget</h3>
-                  <span style="font-size:0.75rem; color:var(--ink-muted);">Record ad costs to compute Net ROAS automatically</span>
-                </div>
-              </div>
-
-              <div style="margin-bottom:1rem;">
-                <label class="form-label" style="font-size:0.75rem; font-weight:700; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.4rem; display:block;">Campaign Name (Must match URL tag)</label>
-                <input type="text" class="form-input" id="spendCampaignName" placeholder="e.g. august_python_launch" style="width:100%; background:rgba(10,14,23,0.8); border:1px solid rgba(255,255,255,0.12); border-radius:10px; color:#F8FAFC; padding:0.65rem 0.85rem; font-size:0.85rem; outline:none; transition:all 0.2s ease;" />
-              </div>
-
-              <div style="margin-bottom:1rem;">
-                <label class="form-label" style="font-size:0.75rem; font-weight:700; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.4rem; display:block;">Ad Platform</label>
-                <select class="form-select" id="spendPlatform" style="width:100%; background:rgba(10,14,23,0.8); border:1px solid rgba(255,255,255,0.12); border-radius:10px; color:#F8FAFC; padding:0.65rem 0.85rem; font-size:0.85rem; outline:none; transition:all 0.2s ease;">
-                  <option value="telegram">Telegram</option>
-                  <option value="meta">Meta / Instagram</option>
-                  <option value="google">Google Ads</option>
-                  <option value="reddit">Reddit Ads</option>
-                  <option value="youtube">YouTube</option>
-                  <option value="influencer">Influencers</option>
-                </select>
-              </div>
-
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.25rem;">
-                <div>
-                  <label class="form-label" style="font-size:0.75rem; font-weight:700; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.4rem; display:block;">Ad Spend (INR ₹)</label>
-                  <input type="number" class="form-input" id="spendInr" placeholder="0" style="width:100%; background:rgba(10,14,23,0.8); border:1px solid rgba(255,255,255,0.12); border-radius:10px; color:#F8FAFC; padding:0.65rem 0.85rem; font-size:0.85rem; outline:none; transition:all 0.2s ease;" />
-                </div>
-                <div>
-                  <label class="form-label" style="font-size:0.75rem; font-weight:700; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.4rem; display:block;">Ad Spend (USD $)</label>
-                  <input type="number" class="form-input" id="spendUsd" placeholder="0" style="width:100%; background:rgba(10,14,23,0.8); border:1px solid rgba(255,255,255,0.12); border-radius:10px; color:#F8FAFC; padding:0.65rem 0.85rem; font-size:0.85rem; outline:none; transition:all 0.2s ease;" />
-                </div>
-              </div>
-
-              <button class="apply-btn" style="width:100%; height:44px; background:linear-gradient(135deg, #10B981 0%, #059669 100%); color:#FFFFFF; font-family:var(--font-display); font-size:0.88rem; font-weight:800; border:none; border-radius:10px; cursor:pointer; box-shadow:0 4px 16px rgba(16,185,129,0.35); transition:all 0.2s ease; display:flex; align-items:center; justify-content:center; gap:0.5rem;" onclick="saveAdCampaignSpend()">
-                <span>💾</span> <span>Save Campaign Ad Budget</span>
-              </button>
-              <div id="spendStatusMsg" style="margin-top:0.75rem; font-size:0.82rem; font-weight:600; text-align:center;"></div>
-            </div>
-
           </div>
 
           <!-- PERFORMANCE LEADERBOARD TABLE -->
@@ -3650,6 +3627,7 @@
                     <th>Net Revenue</th>
                     <th>Reconciled Spend</th>
                     <th>Net ROAS</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody id="adPerformanceTbody">
@@ -6196,6 +6174,7 @@
               <td class="cell-mono" style="font-weight:700; color:var(--emerald);">₹${netRev.toLocaleString('en-IN')}</td>
               <td class="cell-mono">₹${spend.toLocaleString('en-IN')}</td>
               <td class="cell-mono" style="font-weight:800; color:${roasColor};">${netRoas.toFixed(2)}x</td>
+              <td><button class="btn-ghost" style="padding:3px 8px; font-size:0.72rem; border-radius:6px; border:1px solid rgba(255,255,255,0.15); cursor:pointer; color:var(--cyan);" onclick="quickEditCampaignSpend('${escapeHtml(item.campaign_name)}', ${spend}, '${escapeHtml(item.platform)}')">✏️ Budget</button></td>
             </tr>
           `;
         }).join('');
@@ -6250,21 +6229,25 @@
       }
     }
 
-    window.saveAdCampaignSpend = async function() {
-      const name = document.getElementById('spendCampaignName').value.trim();
-      const platform = document.getElementById('spendPlatform').value;
+    window.generateAndSaveSmartCampaign = async function() {
+      const platform = document.getElementById('genPlatform').value;
+      const campaign = document.getElementById('genCampaign').value.trim().toLowerCase();
+      const content = document.getElementById('genContent').value.trim().toLowerCase();
+      const creativeId = document.getElementById('genCreativeId').value.trim().toLowerCase();
+      const coupon = document.getElementById('genCouponSelect').value.trim().toUpperCase();
       const inr = Number(document.getElementById('spendInr').value || 0);
       const usd = Number(document.getElementById('spendUsd').value || 0);
-      const statusMsg = document.getElementById('spendStatusMsg');
+      const statusMsg = document.getElementById('genStatusMsg');
 
-      if (!name) {
-        if (statusMsg) { statusMsg.textContent = '❌ Please enter a campaign name.'; statusMsg.style.color = 'var(--rose)'; }
+      if (!campaign) {
+        alert('Please enter a Campaign Name (e.g. august_python_launch).');
         return;
       }
 
+      // 1. Save Budget atomically to ad_campaigns table
       try {
         const { error } = await sb.from('ad_campaigns').upsert([{
-          campaign_name: name.toLowerCase(),
+          campaign_name: campaign,
           platform: platform,
           ad_spend_inr: inr,
           ad_spend_usd: usd,
@@ -6272,30 +6255,17 @@
           last_synced_at: new Date().toISOString()
         }], { onConflict: 'campaign_name' });
 
-        if (error) throw error;
-
-        if (statusMsg) { statusMsg.textContent = '✅ Campaign budget saved successfully!'; statusMsg.style.color = 'var(--emerald)'; }
-        _adminCache.invalidate('ads');
-        loadCreativeAdsData();
-        setTimeout(() => { if (statusMsg) statusMsg.textContent = ''; }, 3000);
-      } catch (err) {
-        console.error('[Ad Spend] Save error:', err);
-        if (statusMsg) { statusMsg.textContent = `❌ ${err.message || 'Save failed'}`; statusMsg.style.color = 'var(--rose)'; }
-      }
-    };
-
-    window.generateSmartAdLink = function() {
-      const platform = document.getElementById('genPlatform').value;
-      const campaign = document.getElementById('genCampaign').value.trim().toLowerCase();
-      const content = document.getElementById('genContent').value.trim().toLowerCase();
-      const creativeId = document.getElementById('genCreativeId').value.trim().toLowerCase();
-      const coupon = document.getElementById('genCouponSelect').value.trim().toUpperCase();
-
-      if (!campaign) {
-        alert('Please enter a Campaign Name (e.g. august_python_launch).');
-        return;
+        if (error) {
+          console.warn('[Ad Campaign] Upsert notice:', error);
+        } else {
+          _adminCache.invalidate('ads');
+          loadCreativeAdsData();
+        }
+      } catch (e) {
+        console.warn('[Ad Campaign] Budget save exception:', e);
       }
 
+      // 2. Generate Trackable URL
       const baseUrl = 'https://www.manodemy.com/';
       const params = new URLSearchParams();
       params.set('utm_source', platform);
@@ -6309,7 +6279,49 @@
       document.getElementById('genOutputUrl').value = finalUrl;
       document.getElementById('genResultBox').style.display = 'block';
 
+      const savedBadge = document.getElementById('genBudgetSavedBadge');
+      if (savedBadge) {
+        savedBadge.textContent = inr > 0 || usd > 0 ? `Budget Logged: ₹${inr.toLocaleString('en-IN')}` : 'Organic / No Spend Logged';
+      }
+
+      if (statusMsg) {
+        statusMsg.textContent = '✅ Campaign & Budget Saved!';
+        statusMsg.style.color = 'var(--emerald)';
+        setTimeout(() => { statusMsg.textContent = ''; }, 4000);
+      }
+
       renderDirectQRCode(finalUrl);
+    };
+
+    window.generateSmartAdLink = window.generateAndSaveSmartCampaign;
+    window.saveAdCampaignSpend = window.generateAndSaveSmartCampaign;
+
+    window.quickEditCampaignSpend = async function(campaignName, currentInr, platform) {
+      const newInrStr = prompt(`Update Ad Spend Budget (INR ₹) for "${campaignName}":`, currentInr || 0);
+      if (newInrStr === null) return;
+      const newInr = Number(newInrStr);
+      if (isNaN(newInr) || newInr < 0) {
+        alert('Please enter a valid non-negative number for the budget.');
+        return;
+      }
+
+      try {
+        const { error } = await sb.from('ad_campaigns').upsert([{
+          campaign_name: campaignName.toLowerCase(),
+          platform: platform || 'telegram',
+          ad_spend_inr: newInr,
+          ad_spend_usd: 0,
+          spend_source: 'manual',
+          last_synced_at: new Date().toISOString()
+        }], { onConflict: 'campaign_name' });
+
+        if (error) throw error;
+        _adminCache.invalidate('ads');
+        loadCreativeAdsData();
+        alert(`✅ Budget updated for ${campaignName}! ROI & Net ROAS recalculated.`);
+      } catch (err) {
+        alert(`❌ Failed updating budget: ${err.message}`);
+      }
     };
 
     window.copySmartAdUrl = function() {

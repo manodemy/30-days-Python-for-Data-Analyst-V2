@@ -3214,10 +3214,20 @@
             
             <!-- Left Card: Live Pricing Configurator -->
             <div style="background: var(--elevated); border: 1px solid var(--rim); border-radius: var(--radius-lg); padding: 1.25rem; position: relative;">
-              <div style="margin-bottom: 1rem;">
+              <div style="margin-bottom: 0.85rem;">
                 <h3 style="font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; color: var(--ink);">
                   <span id="cfgRegionFlag">🇮🇳</span> <span id="cfgRegionTitle">India Domestic Pricing</span>
                 </h3>
+              </div>
+
+              <!-- Presets placed directly below Header Title in a Single Line -->
+              <div style="margin-bottom: 1.1rem; background: var(--base); padding: 0.6rem 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--rim-subtle);">
+                <div style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-muted); margin-bottom: 0.45rem; font-weight: 600;">
+                  ⚡ Quick Strategy Presets
+                </div>
+                <div id="cfgPresetButtons" style="display: flex; align-items: center; gap: 0.4rem; justify-content: space-between;">
+                  <!-- Rendered via renderPresetButtons() in single line, ASC by price, no % -->
+                </div>
               </div>
 
               <form id="masterPricingForm" onsubmit="event.preventDefault(); openPublishConfirmModal();">
@@ -3239,7 +3249,7 @@
                   </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.25rem;">
                   <div class="field">
                     <label style="font-size: 0.72rem; color: var(--ink-dim); margin-bottom: 0.3rem; display: block;">
                       Discount Badge
@@ -3254,28 +3264,6 @@
                     </label>
                     <input id="cfg_preset_label" type="text" placeholder="e.g. Early Access Offer"
                       style="font-size: 0.82rem; color: var(--ink); background: var(--base); border: 1px solid var(--rim); padding: 0.55rem 0.75rem; border-radius: var(--radius-sm); width: 100%;" />
-                  </div>
-                </div>
-
-                <!-- 1-Click Quick Presets -->
-                <div style="margin-bottom: 1.25rem; background: var(--base); padding: 0.65rem 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--rim-subtle);">
-                  <div style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-muted); margin-bottom: 0.4rem; font-weight: 600;">
-                    ⚡ Quick Presets
-                  </div>
-                  <div id="cfgPresetButtons" style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
-                    <!-- Presets inserted via JS -->
-                    <button type="button" class="btn-preset inr-preset" onclick="applyPresetPrice(1499, 4999, '70% OFF', 'Early Access Offer')" style="font-size: 0.7rem; padding: 0.3rem 0.6rem; border-radius: 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--rim); color: var(--ink); cursor: pointer;">
-                      ⚡ Default 70% (₹1,499)
-                    </button>
-                    <button type="button" class="btn-preset inr-preset" onclick="applyPresetPrice(999, 4999, '80% OFF', 'Flash Sale Deal')" style="font-size: 0.7rem; padding: 0.3rem 0.6rem; border-radius: 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--rim); color: var(--emerald); cursor: pointer;">
-                      🔥 Super Deal (₹999)
-                    </button>
-                    <button type="button" class="btn-preset inr-preset" onclick="applyPresetPrice(2499, 4999, '50% OFF', 'Standard Admission')" style="font-size: 0.7rem; padding: 0.3rem 0.6rem; border-radius: 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--rim); color: var(--gold); cursor: pointer;">
-                      💎 Regular (₹2,499)
-                    </button>
-                    <button type="button" class="btn-preset inr-preset" onclick="applyPresetPrice(499, 4999, '90% OFF', 'Launch Special')" style="font-size: 0.7rem; padding: 0.3rem 0.6rem; border-radius: 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--rim); color: var(--sapphire); cursor: pointer;">
-                      🚀 Launch (₹499)
-                    </button>
                   </div>
                 </div>
 
@@ -5081,23 +5069,6 @@
         if (elOrig) elOrig.value = origVal;
         if (elBadge) elBadge.value = autoBadge;
         if (elLabel) elLabel.value = _inrPricingState.preset_label || 'Early Access Offer';
-
-        if (presetContainer) {
-          presetContainer.innerHTML = `
-            <button type="button" class="btn-preset" onclick="applyPresetPrice(1499, 4999, '70% OFF', 'Early Access Offer')" style="font-size: 0.72rem; padding: 0.35rem 0.65rem; border-radius: 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--rim); color: var(--ink); cursor: pointer;">
-              ⚡ Default 70% (₹1,499)
-            </button>
-            <button type="button" class="btn-preset" onclick="applyPresetPrice(999, 4999, '80% OFF', 'Flash Sale Deal')" style="font-size: 0.72rem; padding: 0.35rem 0.65rem; border-radius: 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--rim); color: var(--emerald); cursor: pointer;">
-              🔥 Super Deal (₹999)
-            </button>
-            <button type="button" class="btn-preset" onclick="applyPresetPrice(2499, 4999, '50% OFF', 'Standard Admission')" style="font-size: 0.72rem; padding: 0.35rem 0.65rem; border-radius: 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--rim); color: var(--gold); cursor: pointer;">
-              💎 Regular (₹2,499)
-            </button>
-            <button type="button" class="btn-preset" onclick="applyPresetPrice(499, 4999, '90% OFF', 'Launch Special')" style="font-size: 0.72rem; padding: 0.35rem 0.65rem; border-radius: 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--rim); color: var(--sapphire); cursor: pointer;">
-              🚀 Launch (₹499)
-            </button>
-          `;
-        }
       } else {
         if (btnUsd) {
           btnUsd.style.background = 'var(--gold)';
@@ -5122,27 +5093,68 @@
         if (elOrig) elOrig.value = origVal;
         if (elBadge) elBadge.value = autoBadge;
         if (elLabel) elLabel.value = _usdPricingState.preset_label || 'Global Early Pass';
-
-        if (presetContainer) {
-          presetContainer.innerHTML = `
-            <button type="button" class="btn-preset" onclick="applyPresetPrice(49, 149, '67% OFF', 'Global Early Pass')" style="font-size: 0.72rem; padding: 0.35rem 0.65rem; border-radius: 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--rim); color: var(--ink); cursor: pointer;">
-              ⚡ Default 67% ($49)
-            </button>
-            <button type="button" class="btn-preset" onclick="applyPresetPrice(29, 149, '81% OFF', 'Global Flash Deal')" style="font-size: 0.72rem; padding: 0.35rem 0.65rem; border-radius: 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--rim); color: var(--emerald); cursor: pointer;">
-              🔥 Super Deal ($29)
-            </button>
-            <button type="button" class="btn-preset" onclick="applyPresetPrice(79, 149, '47% OFF', 'Standard Admission')" style="font-size: 0.72rem; padding: 0.35rem 0.65rem; border-radius: 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--rim); color: var(--gold); cursor: pointer;">
-              💎 Regular ($79)
-            </button>
-            <button type="button" class="btn-preset" onclick="applyPresetPrice(19, 149, '87% OFF', 'Launch Special')" style="font-size: 0.72rem; padding: 0.35rem 0.65rem; border-radius: 4px; background: rgba(255,255,255,0.04); border: 1px solid var(--rim); color: var(--sapphire); cursor: pointer;">
-              🚀 Launch ($19)
-            </button>
-          `;
-        }
       }
 
+      renderPresetButtons(region);
       _isUserEditedBadge = false;
       updatePreviewSimulator();
+    };
+
+    // Dynamic preset button renderer (single line, ASC order, linked to cloud price, no %)
+    window.renderPresetButtons = function(region) {
+      const container = document.getElementById('cfgPresetButtons');
+      if (!container) return;
+
+      const isINR = (region || _activePricingRegion) === 'INR';
+      const sym = isINR ? '₹' : '$';
+
+      const cloudSale = isINR ? (Number(_inrPricingState.sale_price) || 1499) : (Number(_usdPricingState.sale_price) || 49);
+      const cloudOrig = isINR ? (Number(_inrPricingState.original_price) || 4999) : (Number(_usdPricingState.original_price) || 149);
+      const cloudTag = isINR ? (_inrPricingState.preset_label || 'Early Access Offer') : (_usdPricingState.preset_label || 'Global Early Pass');
+
+      let rawPresets = isINR ? [
+        { sale: 499, orig: 4999, tag: 'Launch Special', label: '🚀 Launch', color: 'var(--sapphire)' },
+        { sale: 999, orig: 4999, tag: 'Flash Sale Deal', label: '🔥 Super Deal', color: 'var(--emerald)' },
+        { sale: 2499, orig: 4999, tag: 'Standard Admission', label: '💎 Regular', color: 'var(--ink)' },
+      ] : [
+        { sale: 19, orig: 149, tag: 'Launch Special', label: '🚀 Launch', color: 'var(--sapphire)' },
+        { sale: 29, orig: 149, tag: 'Global Flash Deal', label: '🔥 Super Deal', color: 'var(--emerald)' },
+        { sale: 79, orig: 149, tag: 'Standard Admission', label: '💎 Regular', color: 'var(--ink)' },
+      ];
+
+      let existing = rawPresets.find(p => p.sale === cloudSale);
+      if (existing) {
+        existing.isActiveCloud = true;
+        existing.label = `⚡ Active (${sym}${isINR ? cloudSale.toLocaleString('en-IN') : cloudSale})`;
+        existing.color = 'var(--gold)';
+      } else {
+        rawPresets.push({
+          sale: cloudSale,
+          orig: cloudOrig,
+          tag: cloudTag,
+          label: `⚡ Active (${sym}${isINR ? cloudSale.toLocaleString('en-IN') : cloudSale})`,
+          color: 'var(--gold)',
+          isActiveCloud: true
+        });
+      }
+
+      rawPresets.forEach(p => {
+        if (!p.isActiveCloud) {
+          p.label = `${p.label} (${sym}${isINR ? p.sale.toLocaleString('en-IN') : p.sale})`;
+        }
+      });
+
+      rawPresets.sort((a, b) => a.sale - b.sale);
+
+      container.innerHTML = rawPresets.map(p => {
+        const isGold = p.isActiveCloud;
+        const bg = isGold ? 'rgba(245,158,11,0.12)' : 'rgba(255,255,255,0.03)';
+        const border = isGold ? '1px solid rgba(245,158,11,0.4)' : '1px solid var(--rim)';
+        const weight = isGold ? '700' : '600';
+        return `<button type="button" class="btn-preset" onclick="applyPresetPrice(${p.sale}, ${p.orig}, '', '${p.tag}')" style="flex: 1; min-width: 0; white-space: nowrap; font-size: 0.72rem; font-weight: ${weight}; padding: 0.45rem 0.4rem; border-radius: 6px; background: ${bg}; border: ${border}; color: ${p.color}; cursor: pointer; text-align: center; transition: all 0.2s; text-overflow: ellipsis; overflow: hidden;">
+          ${p.label}
+        </button>`;
+      }).join('');
     };
 
     // Apply preset values to form

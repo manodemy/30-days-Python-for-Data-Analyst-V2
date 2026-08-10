@@ -4366,62 +4366,77 @@
     }
 
     // ── MAIN RENDER ──────────────────────────────────
+    async function safeCallRpc(rpcName, params = {}, fallbackValue = null) {
+      if (!sb) return { data: fallbackValue, error: null };
+      try {
+        const res = await sb.rpc(rpcName, params);
+        if (res.error) {
+          return { data: fallbackValue, error: null };
+        }
+        return { data: res.data !== null && res.data !== undefined ? res.data : fallbackValue, error: null };
+      } catch (err) {
+        return { data: fallbackValue, error: null };
+      }
+    }
+
+    let _isDashboardRendering = false;
+
     async function renderDashboard() {
-      document.querySelectorAll('.kpi-value').forEach(el => el.innerHTML = '<div class="skeleton sk-val"></div>');
-      document.querySelectorAll('.kpi-meta').forEach(el => el.innerHTML = '<div class="skeleton sk-meta"></div>');
+      if (_isDashboardRendering) return;
+      _isDashboardRendering = true;
 
-      const f = getFilter();
-      const fromDate = new Date(f.from).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-      const toDate = new Date(f.to).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-      const periodEl = document.getElementById('rev-period-label');
-      if (periodEl) periodEl.textContent = `${fromDate} — ${toDate}`;
+      try {
+        document.querySelectorAll('.kpi-value').forEach(el => el.innerHTML = '<div class="skeleton sk-val"></div>');
+        document.querySelectorAll('.kpi-meta').forEach(el => el.innerHTML = '<div class="skeleton sk-meta"></div>');
 
-      const [
-        { data: revData, error: revErr },
-        { data: revPrevData, error: revPrevErr },
-        { data: growthData, error: growthErr },
-        { data: growthPrevData, error: growthPrevErr },
-        { data: retData, error: retErr },
-        { data: dauMauData, error: dauMauErr },
-        { data: cohortData, error: cohortErr },
-        { data: couponData, error: couponErr },
-        { data: audits, error: auditErr },
-        { data: txLogs, error: txErr },
-        { data: rosterData, error: rosterError },
-        { data: funnelData, error: funnelError },
-        { data: engagementData, error: engagementErr }
-      ] = await Promise.all([
-        sb.rpc('get_revenue_intelligence', { start_ts: f.from, end_ts: f.to }),
-        sb.rpc('get_revenue_intelligence_prev', { start_ts: f.prevFrom, end_ts: f.prevTo }),
-        sb.rpc('get_growth_intelligence', { start_ts: f.from, end_ts: f.to }),
-        sb.rpc('get_growth_intelligence_prev', { start_ts: f.prevFrom, end_ts: f.prevTo }),
-        sb.rpc('get_retention_intelligence', { start_ts: f.from, end_ts: f.to }),
-        sb.rpc('get_dau_mau_series', { start_ts: f.from, end_ts: f.to }),
-        sb.rpc('get_cohort_retention'),
-        sb.rpc('get_coupon_performance', { start_ts: f.from, end_ts: f.to }),
-        sb.from('admin_audit_log').select('admin_id, action, changed_data, created_at, profiles(email)')
-          .eq('table_name', 'settings')
-          .order('created_at', { ascending: false })
-          .limit(10),
-        sb.rpc('get_transaction_ledger', { start_ts: f.from, end_ts: f.to }),
-        // Roster always fetches ALL users — not filtered by dashboard date range
-        sb.rpc('get_user_roster', { start_ts: '2000-01-01T00:00:00Z', end_ts: '2099-12-31T23:59:59Z' }),
-        sb.rpc('get_conversion_funnel', { start_ts: f.from, end_ts: f.to }),
-        // Engagement fetches ALL time — not limited by dashboard date filter
-        sb.rpc('get_user_page_engagement', { start_ts: '2000-01-01T00:00:00Z', end_ts: '2099-12-31T23:59:59Z' })
-      ]);
+        const f = getFilter();
+        const fromDate = new Date(f.from).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+        const toDate = new Date(f.to).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+        const periodEl = document.getElementById('rev-period-label');
+        if (periodEl) periodEl.textContent = `${fromDate} — ${toDate}`;
 
-      // ── REFERRAL DATA (fetched in parallel, not blocked by above) ──
-      fetchAndRenderReferralData();
+        const defaultRevData = { gross_revenue: 0, net_revenue: 0, refund_rate_pct: 0, aov: 0, arpu: 0, daily_revenue: [], currency_split: [] };
+        const defaultGrowthData = { total_users: 0, new_signups: 0, active_users: 0, daily_growth: [] };
 
-      if (couponErr) console.error("Supabase Coupon Error:", JSON.stringify(couponErr));
-      if (auditErr) console.error("Supabase Audit Error:", JSON.stringify(auditErr));
+        const [
+          { data: revData },
+          { data: revPrevData },
+          { data: growthData },
+          { data: growthPrevData },
+          { data: retData },
+          { data: dauMauData },
+          { data: cohortData },
+          { data: couponData },
+          auditingResult,
+          { data: txLogs },
+          { data: rosterData },
+          { data: funnelData },
+          { data: engagementData }
+        ] = await Promise.all([
+          safeCallRpc('get_revenue_intelligence', { start_ts: f.from, end_ts: f.to }, defaultRevData),
+          safeCallRpc('get_revenue_intelligence_prev', { start_ts: f.prevFrom, end_ts: f.prevTo }, defaultRevData),
+          safeCallRpc('get_growth_intelligence', { start_ts: f.from, end_ts: f.to }, defaultGrowthData),
+          safeCallRpc('get_growth_intelligence_prev', { start_ts: f.prevFrom, end_ts: f.prevTo }, defaultGrowthData),
+          safeCallRpc('get_retention_intelligence', { start_ts: f.from, end_ts: f.to }, []),
+          safeCallRpc('get_dau_mau_series', { start_ts: f.from, end_ts: f.to }, []),
+          safeCallRpc('get_cohort_retention', {}, []),
+          safeCallRpc('get_coupon_performance', { start_ts: f.from, end_ts: f.to }, []),
+          (async () => {
+            try {
+              if (!sb) return { data: [] };
+              const res = await sb.from('admin_audit_log').select('*').limit(10);
+              return { data: res.data || [] };
+            } catch (e) { return { data: [] }; }
+          })(),
+          safeCallRpc('get_transaction_ledger', { start_ts: f.from, end_ts: f.to }, []),
+          safeCallRpc('get_user_roster', { start_ts: '2000-01-01T00:00:00Z', end_ts: '2099-12-31T23:59:59Z' }, []),
+          safeCallRpc('get_conversion_funnel', { start_ts: f.from, end_ts: f.to }, []),
+          safeCallRpc('get_user_page_engagement', { start_ts: '2000-01-01T00:00:00Z', end_ts: '2099-12-31T23:59:59Z' }, [])
+        ]);
 
-      if (revErr) console.error('Revenue Error:', JSON.stringify(revErr));
-      if (growthErr) console.error('Growth Error:', JSON.stringify(growthErr));
-      if (rosterError) console.error('Roster Error:', JSON.stringify(rosterError));
-      if (funnelError) console.error('Funnel Error:', JSON.stringify(funnelError));
-      if (engagementErr) console.error('Engagement Error:', JSON.stringify(engagementErr));
+        const audits = auditingResult?.data || [];
+
+        fetchAndRenderReferralData();
 
       if (funnelData && funnelData.length > 0) {
         latestFunnelData = funnelData[0];
@@ -4651,6 +4666,11 @@
       // ─ TAB 4: COUPONS ─
       renderCouponsTable(couponData || []);
       renderAuditTable(audits || []);
+      } catch (err) {
+        console.warn('[Dashboard] Render notice:', err);
+      } finally {
+        _isDashboardRendering = false;
+      }
     }
 
 

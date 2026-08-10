@@ -15,6 +15,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <link rel="dns-prefetch" href="https://erqoyvbuhmkyvcqgwcbz.supabase.co">
+  <script src="/vendor/qrcode.min.js"></script>
   
   <link
     href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;family=Sora:wght@300;400;600;700;800&amp;family=JetBrains+Mono:wght@300;400;500&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap"
@@ -5974,6 +5975,9 @@
       const to = window.bdFilter?.to || new Date().toISOString();
 
       try {
+        let list = [];
+        let isFallbackMode = false;
+
         const { data, error } = await sb.rpc('get_creative_ads_performance', {
           start_ts: from,
           end_ts: to,
@@ -5983,17 +5987,81 @@
         loadAdDataQualityAlerts();
 
         if (error) {
-          console.warn('[Ad Intelligence] RPC error:', error);
-          tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:var(--rose); padding:2rem;">⚠️ Notice: ${error.message || 'RPC function missing'}. If migration 030 isn't executed yet, run <code>030_creative_ads_attribution.sql</code> in your Supabase SQL editor.</td></tr>`;
-          document.getElementById('kpiAdSales').textContent = '0';
-          document.getElementById('kpiAdNetRevenue').textContent = '₹0';
-          document.getElementById('kpiAdSpend').textContent = '₹0';
-          document.getElementById('kpiAdNetROAS').textContent = '0.0x';
-          return;
+          console.warn('[Ad Intelligence] RPC unavailable, using client-side fallback query:', error);
+          isFallbackMode = true;
+
+          const [purchasesRes, campaignsRes, couponsRes] = await Promise.all([
+            sb.from('purchases').select('*').gte('created_at', from).lte('created_at', to),
+            sb.from('ad_campaigns').select('*'),
+            sb.from('coupons').select('code, discount_type, discount_value')
+          ]);
+
+          const purchases = purchasesRes.data || [];
+          const campaigns = campaignsRes.data || [];
+          const coupons = couponsRes.data || [];
+
+          const couponMap = {};
+          coupons.forEach(c => { if (c.code) couponMap[c.code.toUpperCase()] = c; });
+
+          const campaignSpendMap = {};
+          campaigns.forEach(ac => {
+            if (ac.campaign_name) {
+              campaignSpendMap[ac.campaign_name.toLowerCase()] = Number(ac.ad_spend_inr || 0) + (Number(ac.ad_spend_usd || 0) * 83.0);
+            }
+          });
+
+          const groups = {};
+          purchases.forEach(p => {
+            const attrCamp = (currentAttributionMode === 'first_touch' ? p.first_touch_campaign : p.last_touch_campaign) || 'direct_or_unknown';
+            const attrContent = (currentAttributionMode === 'first_touch' ? p.first_touch_content : p.last_touch_content) || 'none';
+            const attrCreative = (currentAttributionMode === 'first_touch' ? p.first_touch_creative_id : p.last_touch_creative_id) || 'none';
+            const attrSource = (currentAttributionMode === 'first_touch' ? p.first_touch_source : p.last_touch_source) || 'unknown';
+
+            const key = `${attrCamp.toLowerCase()}||${attrContent}||${attrCreative}||${attrSource}`;
+            if (!groups[key]) {
+              groups[key] = {
+                campaign_name: attrCamp,
+                ad_content: attrContent,
+                creative_id: attrCreative,
+                platform: attrSource,
+                sales_count: 0,
+                gross_revenue_inr: 0,
+                total_discount_given_inr: 0,
+                reconciled_ad_spend_inr: campaignSpendMap[attrCamp.toLowerCase()] || 0
+              };
+            }
+
+            const amt = Number(p.amount_inr || (p.amount ? p.amount / 100 : 0));
+            groups[key].sales_count += 1;
+            groups[key].gross_revenue_inr += amt;
+
+            if (p.coupon_used) {
+              const c = couponMap[String(p.coupon_used).toUpperCase()];
+              if (c) {
+                const discVal = Number(c.discount_value || 0);
+                const disc = c.discount_type === 'percentage' ? (amt * (discVal / 100.0)) : discVal;
+                groups[key].total_discount_given_inr += disc;
+              }
+            }
+          });
+
+          list = Object.values(groups).map(g => {
+            const netRev = Math.max(0, g.gross_revenue_inr - g.total_discount_given_inr);
+            const spend = g.reconciled_ad_spend_inr;
+            const grossRoas = spend > 0 ? (g.gross_revenue_inr / spend) : 0;
+            const netRoas = spend > 0 ? (netRev / spend) : 0;
+            return {
+              ...g,
+              net_revenue_inr: netRev,
+              gross_roas: grossRoas,
+              net_roas: netRoas
+            };
+          });
+        } else {
+          list = data || [];
         }
 
-        const list = data || [];
-        if (badge) badge.textContent = `${list.length} Campaigns`;
+        if (badge) badge.textContent = `${list.length} Campaigns${isFallbackMode ? ' (Direct)' : ''}`;
 
         let totalSales = 0;
         let totalNetRevenue = 0;
@@ -6177,27 +6245,56 @@
     function renderDirectQRCode(text) {
       const canvas = document.getElementById('qrCodeCanvas');
       if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      canvas.width = 180;
-      canvas.height = 180;
 
-      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(text)}`;
+      try {
+        if (typeof qrcode !== 'undefined') {
+          const qr = qrcode(0, 'M');
+          qr.addData(text);
+          qr.make();
+
+          const ctx = canvas.getContext('2d');
+          const count = qr.getModuleCount();
+          const cellSize = Math.max(4, Math.floor(220 / count));
+          const size = count * cellSize;
+          const margin = Math.floor((240 - size) / 2);
+
+          canvas.width = 240;
+          canvas.height = 240;
+
+          // Pure crisp white background
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(0, 0, 240, 240);
+
+          // Dark QR modules
+          ctx.fillStyle = '#0B0F19';
+          for (let r = 0; r < count; r++) {
+            for (let c = 0; c < count; c++) {
+              if (qr.isDark(r, c)) {
+                ctx.fillRect(margin + c * cellSize, margin + r * cellSize, cellSize, cellSize);
+              }
+            }
+          }
+
+          const btnDL = document.getElementById('btnDownloadQR');
+          if (btnDL) btnDL.href = canvas.toDataURL('image/png');
+          return;
+        }
+      } catch (err) {
+        console.warn('[QR Generator] Local encode error:', err);
+      }
+
+      // API Fallback
+      const ctx = canvas.getContext('2d');
+      canvas.width = 240;
+      canvas.height = 240;
       const img = new Image();
       img.crossOrigin = 'Anonymous';
       img.onload = function() {
-        ctx.drawImage(img, 0, 0, 180, 180);
+        ctx.drawImage(img, 0, 0, 240, 220);
         const btnDL = document.getElementById('btnDownloadQR');
         if (btnDL) btnDL.href = canvas.toDataURL('image/png');
       };
-      img.onerror = function() {
-        ctx.fillStyle = '#FFFFFF';
-        ctx.fillRect(0, 0, 180, 180);
-        ctx.fillStyle = '#0B0F19';
-        ctx.fillRect(10, 10, 40, 40); ctx.clearRect(16, 16, 28, 28); ctx.fillRect(22, 22, 16, 16);
-        ctx.fillRect(130, 10, 40, 40); ctx.clearRect(136, 16, 28, 28); ctx.fillRect(142, 22, 16, 16);
-        ctx.fillRect(10, 130, 40, 40); ctx.clearRect(16, 136, 28, 28); ctx.fillRect(22, 142, 16, 16);
-      };
-      img.src = qrApiUrl;
+      img.src = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(text)}`;
     }
 
     // ── HEATMAP ──────────────────────────────────────

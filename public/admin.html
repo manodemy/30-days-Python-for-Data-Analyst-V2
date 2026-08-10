@@ -5359,6 +5359,8 @@
         campaign_tag: tag
       };
 
+      const strippedCols = [];
+
       try {
         let attempts = 0;
         let lastError = null;
@@ -5375,6 +5377,7 @@
           const match = res.error.message ? res.error.message.match(/Could not find the '([^']+)' column/i) : null;
           if (match && match[1]) {
             const missingCol = match[1];
+            strippedCols.push(missingCol);
             delete payload[missingCol];
           } else {
             break;
@@ -5396,7 +5399,11 @@
           }]);
         } catch (e) {}
 
-        showToast(`🎉 Promo code ${code} activated and live in cloud!`, 'success');
+        if (strippedCols.includes('starts_at') || strippedCols.includes('campaign_tag')) {
+          showToast(`🎉 Promo code ${code} created! (Run migration 029 in Supabase SQL Editor to save 'starts_at' in DB)`, 'info');
+        } else {
+          showToast(`🎉 Promo code ${code} activated and live in cloud!`, 'success');
+        }
         document.getElementById('couponCreatorForm').reset();
         await loadCouponsList();
         if (typeof runSandboxTest === 'function') runSandboxTest(code);

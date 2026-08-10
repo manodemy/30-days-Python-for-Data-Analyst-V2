@@ -3267,10 +3267,13 @@
                   </div>
                 </div>
 
-                <!-- Publish Action -->
-                <div style="display: flex; align-items: center; justify-content: flex-end; border-top: 1px solid var(--rim); padding-top: 1rem;">
+                <!-- Save & Publish Actions -->
+                <div style="display: flex; align-items: center; justify-content: flex-end; gap: 0.75rem; border-top: 1px solid var(--rim); padding-top: 1rem;">
+                  <button type="button" id="btnSavePricingDraft" onclick="saveDraftPricing()" class="btn-outline-gold" style="font-size: 0.85rem; font-weight: 600; padding: 0.6rem 1.25rem; display: inline-flex; align-items: center; gap: 0.4rem; border-radius: var(--radius-sm); cursor: pointer;">
+                    <span>💾 Save</span>
+                  </button>
                   <button class="btn-gold" id="btnPublishPricing" type="submit" style="font-size: 0.85rem; font-weight: 700; padding: 0.6rem 1.35rem; display: inline-flex; align-items: center; gap: 0.4rem; border-radius: var(--radius-sm); cursor: pointer;">
-                    <span>🚀 Confirm &amp; Publish to Cloud</span>
+                    <span>🚀 Publish</span>
                   </button>
                 </div>
               </form>
@@ -3634,7 +3637,7 @@
                 Cancel
               </button>
               <button type="button" id="btnConfirmPublishSubmit" onclick="executePublishPricingToCloud()" class="btn-gold" style="font-size: 0.8rem; font-weight: 700; padding: 0.5rem 1.25rem;">
-                🔥 Confirm &amp; Push Live
+                🚀 Publish
               </button>
             </div>
           </div>
@@ -5248,6 +5251,26 @@
       }
     };
 
+    // Save draft changes locally without pushing to cloud
+    window.saveDraftPricing = function() {
+      const isINR = _activePricingRegion === 'INR';
+      const sale = Number(document.getElementById('cfg_sale_price')?.value) || 0;
+      const orig = Number(document.getElementById('cfg_original_price')?.value) || 0;
+      const badge = document.getElementById('cfg_discount_badge')?.value || (isINR ? '70% OFF' : '67% OFF');
+      const tag = document.getElementById('cfg_preset_label')?.value || 'Draft Update';
+
+      if (isINR) {
+        _inrPricingState = { sale_price: sale, original_price: orig, discount_label: badge, preset_label: tag };
+      } else {
+        _usdPricingState = { sale_price: sale, original_price: orig, discount_label: badge, preset_label: tag };
+      }
+
+      updateMatrixOverview();
+      updatePreviewSimulator();
+      renderPresetButtons(_activePricingRegion);
+      showToast(`💾 ${isINR ? 'INR (₹)' : 'USD ($)'} changes saved! Click "Publish" when ready to push live to cloud.`, 'info');
+    };
+
     window.closePublishConfirmModal = function() {
       const modal = document.getElementById('pricingConfirmModal');
       if (modal) modal.style.display = 'none';
@@ -5256,7 +5279,7 @@
     // Execute publish to Supabase cloud
     window.executePublishPricingToCloud = async function() {
       const btn = document.getElementById('btnConfirmPublishSubmit');
-      if (btn) { btn.textContent = 'Pushing to Cloud…'; btn.disabled = true; }
+      if (btn) { btn.textContent = 'Publishing…'; btn.disabled = true; }
 
       const isINR = _activePricingRegion === 'INR';
       const sale = Number(document.getElementById('cfg_sale_price')?.value) || 0;
@@ -5333,7 +5356,7 @@
       } catch (err) {
         showToast('❌ Error publishing price: ' + err.message, 'error');
       } finally {
-        if (btn) { btn.textContent = '🔥 Confirm & Push to All Students'; btn.disabled = false; }
+        if (btn) { btn.textContent = '🚀 Publish'; btn.disabled = false; }
       }
     };
 

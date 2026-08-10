@@ -3397,11 +3397,13 @@
                 </form>
               </div>
 
-              <!-- Active Coupons Table Panel -->
+              <!-- All Coupons Table Panel -->
               <div class="table-panel">
                 <div class="table-panel-header" style="display: flex; align-items: center; justify-content: space-between;">
-                  <span class="table-panel-title">Active Coupons</span>
-                  <div style="display: flex; align-items: center; gap: 0.4rem;">
+                  <span class="table-panel-title">All Coupons</span>
+                  <div style="display: flex; align-items: center; gap: 0.6rem;">
+                    <button id="couponFilterAll" type="button" onclick="setCouponFilter('all')" class="btn-ghost" style="font-size:0.72rem; padding:3px 10px; background:var(--gold-subtle); color:var(--gold); border:1px solid var(--gold-dim);">All</button>
+                    <button id="couponFilterActive" type="button" onclick="setCouponFilter('active')" class="btn-ghost" style="font-size:0.72rem; padding:3px 10px;">Active Only</button>
                     <input id="couponSearchInput" type="text" placeholder="Search code..." oninput="filterCouponsTable()"
                       style="font-size: 0.72rem; background: var(--base); border: 1px solid var(--rim); padding: 0.3rem 0.65rem; border-radius: var(--radius-sm); color: var(--ink);" />
                   </div>
@@ -5615,173 +5617,144 @@
       }
     };
 
-    // Promo Sandbox Resolver
-    window.runSandboxTest = async function(customCode = null) {
-      const codeInput = document.getElementById('sandboxCouponInput');
-      const code = (customCode || codeInput?.value || '').trim().toUpperCase();
-      if (!code) {
-        showToast('Please enter a coupon code to test', 'info');
-        return;
+    let _couponFilterMode = 'all'; // 'all' or 'active'
+
+    window.setCouponFilter = function(mode) {
+      _couponFilterMode = mode;
+      const btnAll = document.getElementById('couponFilterAll');
+      const btnActive = document.getElementById('couponFilterActive');
+      if (btnAll) {
+        btnAll.style.background = mode === 'all' ? 'var(--gold-subtle)' : '';
+        btnAll.style.color = mode === 'all' ? 'var(--gold)' : '';
+        btnAll.style.border = mode === 'all' ? '1px solid var(--gold-dim)' : '1px solid var(--rim)';
       }
-      if (codeInput) codeInput.value = code;
-
-      const isINR = _activePricingRegion === 'INR';
-      const basePrice = isINR ? _inrPricingState.sale_price : _usdPricingState.sale_price;
-      const sym = isINR ? '₹' : '$';
-
-      const rawCoupon = _allCouponsList.find(c => (c.code || '').toUpperCase() === code);
-      const coupon = normalizeCoupon(rawCoupon);
-
-      const statusBadge = document.getElementById('sbxStatusBadge');
-      const baseEl = document.getElementById('sbxBasePrice');
-      const discEl = document.getElementById('sbxDiscountAmount');
-      const finalEl = document.getElementById('sbxFinalPrice');
-      const shareUrlInput = document.getElementById('shareableLinkUrl');
-
-      if (baseEl) baseEl.textContent = `${sym}${isINR ? basePrice.toLocaleString('en-IN') : basePrice}`;
-      if (shareUrlInput) shareUrlInput.value = `https://www.manodemy.com/?coupon=${code}`;
-
-      if (!rawCoupon) {
-        if (statusBadge) { statusBadge.textContent = 'INVALID CODE'; statusBadge.className = 'badge badge-err'; }
-        if (discEl) discEl.textContent = `-${sym}0`;
-        if (finalEl) finalEl.textContent = `${sym}${isINR ? basePrice.toLocaleString('en-IN') : basePrice}`;
-        return;
+      if (btnActive) {
+        btnActive.style.background = mode === 'active' ? 'var(--gold-subtle)' : '';
+        btnActive.style.color = mode === 'active' ? 'var(--gold)' : '';
+        btnActive.style.border = mode === 'active' ? '1px solid var(--gold-dim)' : '1px solid var(--rim)';
       }
-
-      const now = new Date();
-      const isNotStarted = coupon.starts_at && new Date(coupon.starts_at) > now;
-      const isExpired = coupon.expires_at && new Date(coupon.expires_at) < now;
-      const isCapReached = coupon.max_uses && (coupon.uses_count || 0) >= coupon.max_uses;
-      const isActive = coupon.is_active !== false;
-      const isScopeMismatch = coupon.currency_scope !== 'BOTH' && coupon.currency_scope !== _activePricingRegion;
-
-      if (!isActive) {
-        if (statusBadge) { statusBadge.textContent = 'PAUSED'; statusBadge.className = 'badge badge-warn'; }
-      } else if (isNotStarted) {
-        if (statusBadge) { statusBadge.textContent = 'SCHEDULED'; statusBadge.className = 'badge badge-warn'; }
-      } else if (isExpired) {
-        if (statusBadge) { statusBadge.textContent = 'EXPIRED'; statusBadge.className = 'badge badge-err'; }
-      } else if (isCapReached) {
-        if (statusBadge) { statusBadge.textContent = 'CAP REACHED'; statusBadge.className = 'badge badge-err'; }
-      } else if (isScopeMismatch) {
-        if (statusBadge) { statusBadge.textContent = `MISMATCH (${coupon.currency_scope} ONLY)`; statusBadge.className = 'badge badge-err'; }
-      } else {
-        if (statusBadge) { statusBadge.textContent = 'ACTIVE & VALID'; statusBadge.className = 'badge badge-emerald'; }
-      }
-
-      let discountAmount = 0;
-      if (isActive && !isNotStarted && !isExpired && !isCapReached && !isScopeMismatch) {
-        if (coupon.mode === 'PERCENT') {
-          discountAmount = Math.round(basePrice * (coupon.value / 100));
-        } else if (coupon.mode === 'FIXED_INR' && isINR) {
-          discountAmount = Math.min(basePrice, coupon.value);
-        } else if (coupon.mode === 'FIXED_USD' && !isINR) {
-          discountAmount = Math.min(basePrice, coupon.value);
-        }
-      }
-
-      const finalPrice = Math.max(0, basePrice - discountAmount);
-      if (discEl) discEl.textContent = `-${sym}${isINR ? discountAmount.toLocaleString('en-IN') : discountAmount}`;
-      if (finalEl) finalEl.textContent = `${sym}${isINR ? finalPrice.toLocaleString('en-IN') : finalPrice}`;
+      renderCouponsTable(_allCouponsList);
     };
 
-    window.copyShareableLink = function() {
-      const url = document.getElementById('shareableLinkUrl')?.value;
-      if (url) {
-        navigator.clipboard.writeText(url).then(() => {
-          showToast('🔗 1-Click Auto-Apply Promo URL copied to clipboard!', 'success');
-        });
-      }
-    };
-
-    window.copyCouponShareLink = function(code) {
-      const url = `https://www.manodemy.com/?coupon=${code}`;
-      navigator.clipboard.writeText(url).then(() => {
-        showToast(`🔗 Auto-apply link for ${code} copied!`, 'success');
-      });
-    };
-
-    // Load active coupons table
     async function loadCouponsList() {
+      const tbody = document.getElementById('activeCouponsTbody');
+      if (tbody) tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:2rem;"><div class="skeleton sk-val" style="height:18px;border-radius:4px;max-width:300px;margin:0 auto;"></div></td></tr>';
       try {
         const { data, error } = await sb.from('coupons').select('*').order('created_at', { ascending: false });
+        if (error) throw error;
         _allCouponsList = data || [];
 
         const badge = document.getElementById('activeCouponsCountBadge');
+        const now = new Date();
         const activeCount = _allCouponsList.filter(rawC => {
           const c = normalizeCoupon(rawC);
-          return c.is_active !== false;
+          const isExpired = c.expires_at && new Date(c.expires_at) < now;
+          return c.is_active !== false && !isExpired;
         }).length;
         if (badge) badge.textContent = `${activeCount} Active`;
 
-        const tbody = document.getElementById('activeCouponsTbody');
-        if (!tbody) return;
-
-        if (!_allCouponsList.length) {
-          tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; color:var(--ink-muted); padding:2rem;">No coupons found. Create your first promo code above!</td></tr>';
-          return;
-        }
-
-        tbody.innerHTML = _allCouponsList.map(rawC => {
-          const c = normalizeCoupon(rawC);
-          const uses = c.uses_count || 0;
-          const max = c.max_uses || null;
-          const pct = max ? Math.min(100, Math.round((uses / max) * 100)) : null;
-          const now = new Date();
-          const isNotStarted = c.starts_at && new Date(c.starts_at) > now;
-          const isExpired = c.expires_at && new Date(c.expires_at) < now;
-          const isActive = c.is_active !== false;
-
-          let statusBadge = '<span class="badge badge-emerald">Active</span>';
-          if (!isActive) statusBadge = '<span class="badge badge-warn">Paused</span>';
-          else if (isNotStarted) statusBadge = '<span class="badge badge-sapphire">Scheduled</span>';
-          else if (isExpired) statusBadge = '<span class="badge badge-err">Expired</span>';
-          else if (max && uses >= max) statusBadge = '<span class="badge badge-err">Cap Full</span>';
-
-          const valText = c.mode === 'PERCENT' ? `${c.value}% OFF` : (c.mode === 'FIXED_INR' ? `₹${c.value} FLAT` : `$${c.value} FLAT`);
-
-          const formatDt = (isoStr, defaultStr) => {
-            if (!isoStr) return defaultStr;
-            const d = new Date(isoStr);
-            if (isNaN(d.getTime())) return defaultStr;
-            return d.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
-          };
-
-          const startsStr = formatDt(c.starts_at, 'Immediate');
-          const expiresStr = formatDt(c.expires_at, 'Never');
-
-          return `
-            <tr>
-              <td>
-                <strong style="font-family:var(--font-data); color:var(--ink); font-size:0.9rem; letter-spacing:0.05em;">${c.code}</strong>
-                ${c.single_use_per_email ? '<div style="font-size:0.65rem; color:var(--sapphire);">1/email</div>' : ''}
-              </td>
-              <td><span style="color:var(--gold); font-weight:600;">${valText}</span></td>
-              <td><span class="badge badge-neutral">${c.currency_scope || 'BOTH'}</span></td>
-              <td class="cell-mono">
-                <div>${uses} / ${max || '∞'}</div>
-                ${max ? `<div style="width:60px; height:3px; background:var(--rim); border-radius:2px; margin-top:3px; overflow:hidden;"><div style="width:${pct}%; height:100%; background:${pct > 90 ? 'var(--rose)' : 'var(--emerald)'};"></div></div>` : ''}
-              </td>
-              <td>${statusBadge}</td>
-              <td class="cell-mono" style="font-size:0.75rem; color:var(--ink-dim);">${startsStr}</td>
-              <td class="cell-mono" style="font-size:0.75rem; color:var(--ink-dim);">${expiresStr}</td>
-              <td><span style="font-size:0.75rem; color:var(--ink-muted);">${c.campaign_tag || '—'}</span></td>
-              <td>
-                <button type="button" onclick="copyCouponShareLink('${c.code}')" class="btn-ghost" style="font-size:0.7rem; padding:2px 8px;">🔗 Copy</button>
-              </td>
-              <td>
-                <div style="display:flex; align-items:center; gap:0.4rem;">
-                  <button type="button" onclick="runSandboxTest('${c.code}')" class="btn-ghost" style="font-size:0.7rem; padding:2px 6px;">🧪 Test</button>
-                  <button type="button" onclick="toggleCouponCloud('${c.id || c.code}', ${!isActive})" class="btn-ghost" style="font-size:0.7rem; padding:2px 6px; color:${isActive ? 'var(--amber)' : 'var(--emerald)'};">${isActive ? 'Pause' : 'Resume'}</button>
-                  <button type="button" onclick="deleteCouponCloud('${c.id || c.code}', '${c.code}')" class="btn-ghost" style="font-size:0.7rem; padding:2px 6px; color:var(--rose);">🗑</button>
-                </div>
-              </td>
-            </tr>
-          `;
-        }).join('');
+        renderCouponsTable(_allCouponsList);
       } catch (err) {
         console.warn('[Coupons] Load error:', err);
+        const tbody = document.getElementById('activeCouponsTbody');
+        if (tbody) tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:2rem;color:var(--rose);">⚠️ Failed to load coupons: ${escapeHtml(err.message || String(err))}</td></tr>`;
       }
+    }
+
+    function renderCouponsTable(list) {
+      const tbody = document.getElementById('activeCouponsTbody');
+      if (!tbody) return;
+
+      const now = new Date();
+      const filtered = _couponFilterMode === 'active'
+        ? list.filter(rawC => {
+            const c = normalizeCoupon(rawC);
+            const isExpired = c.expires_at && new Date(c.expires_at) < now;
+            return c.is_active !== false && !isExpired;
+          })
+        : list;
+
+      if (!filtered.length) {
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; color:var(--ink-muted); padding:2rem;">${_couponFilterMode === 'active' ? 'No active coupons. All may be paused or expired.' : 'No coupons found. Create your first promo code above!'}</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(rawC => {
+        const c = normalizeCoupon(rawC);
+        const uses = c.uses_count || 0;
+        const max = c.max_uses || null;
+        const pct = max ? Math.min(100, Math.round((uses / max) * 100)) : null;
+        const isNotStarted = c.starts_at && new Date(c.starts_at) > now;
+        const isExpired = c.expires_at && new Date(c.expires_at) < now;
+        const isActive = c.is_active !== false;
+
+        let statusBadge = '<span class="badge badge-emerald">Active</span>';
+        if (!isActive) statusBadge = '<span class="badge badge-warn">Paused</span>';
+        else if (isNotStarted) statusBadge = '<span class="badge badge-sapphire">Scheduled</span>';
+        else if (isExpired) statusBadge = '<span class="badge badge-err">Expired</span>';
+        else if (max && uses >= max) statusBadge = '<span class="badge badge-err">Cap Full</span>';
+
+        const valText = c.mode === 'PERCENT'
+          ? `${c.value}% OFF`
+          : (c.mode === 'FIXED_INR' ? `₹${c.value} FLAT` : `$${c.value} FLAT`);
+
+        const formatDt = (isoStr, defaultStr) => {
+          if (!isoStr) return defaultStr;
+          const d = new Date(isoStr);
+          if (isNaN(d.getTime())) return defaultStr;
+          return d.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+        };
+
+        const startsStr = formatDt(c.starts_at, 'Immediate');
+        const expiresStr = formatDt(c.expires_at, 'Never');
+        const safeId = escapeHtml(String(c.id || c.code));
+        const safeCode = escapeHtml(c.code);
+
+        return `
+          <tr data-coupon-id="${safeId}" data-coupon-code="${safeCode}" data-is-active="${isActive}">
+            <td>
+              <strong style="font-family:var(--font-data); color:var(--ink); font-size:0.9rem; letter-spacing:0.05em;">${safeCode}</strong>
+              ${c.single_use_per_email ? '<div style="font-size:0.65rem; color:var(--sapphire);">1/email</div>' : ''}
+            </td>
+            <td><span style="color:var(--gold); font-weight:600;">${valText}</span></td>
+            <td><span class="badge badge-neutral">${escapeHtml(c.currency_scope || 'BOTH')}</span></td>
+            <td class="cell-mono">
+              <div>${uses} / ${max || '∞'}</div>
+              ${max ? `<div style="width:60px; height:3px; background:var(--rim); border-radius:2px; margin-top:3px; overflow:hidden;"><div style="width:${pct}%; height:100%; background:${pct > 90 ? 'var(--rose)' : 'var(--emerald)'};"></div></div>` : ''}
+            </td>
+            <td>${statusBadge}</td>
+            <td class="cell-mono" style="font-size:0.75rem; color:var(--ink-dim);">${startsStr}</td>
+            <td class="cell-mono" style="font-size:0.75rem; color:var(--ink-dim);">${expiresStr}</td>
+            <td><span style="font-size:0.75rem; color:var(--ink-muted);">${escapeHtml(c.campaign_tag || '—')}</span></td>
+            <td>
+              <button type="button" class="btn-ghost coupon-copy-btn" data-code="${safeCode}" style="font-size:0.7rem; padding:2px 8px;">🔗 Copy</button>
+            </td>
+            <td>
+              <div style="display:flex; align-items:center; gap:0.4rem;">
+                <button type="button" class="btn-ghost coupon-test-btn" data-code="${safeCode}" style="font-size:0.7rem; padding:2px 6px;">🧪 Test</button>
+                <button type="button" class="btn-ghost coupon-toggle-btn" data-id="${safeId}" data-active="${isActive}" style="font-size:0.7rem; padding:2px 6px; color:${isActive ? 'var(--amber)' : 'var(--emerald)'};">${isActive ? 'Pause' : 'Resume'}</button>
+                <button type="button" class="btn-ghost coupon-delete-btn" data-id="${safeId}" data-code="${safeCode}" style="font-size:0.7rem; padding:2px 6px; color:var(--rose);">🗑</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      tbody.querySelectorAll('.coupon-copy-btn').forEach(btn => {
+        btn.addEventListener('click', () => copyCouponShareLink(btn.dataset.code));
+      });
+      tbody.querySelectorAll('.coupon-test-btn').forEach(btn => {
+        btn.addEventListener('click', () => runSandboxTest(btn.dataset.code));
+      });
+      tbody.querySelectorAll('.coupon-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const isActiveNow = btn.dataset.active === 'true';
+          toggleCouponCloud(btn.dataset.id, !isActiveNow);
+        });
+      });
+      tbody.querySelectorAll('.coupon-delete-btn').forEach(btn => {
+        btn.addEventListener('click', () => deleteCouponCloud(btn.dataset.id, btn.dataset.code));
+      });
     }
 
     window.filterCouponsTable = function() {

@@ -3591,9 +3591,12 @@
 
             <!-- Output Result Banner -->
             <div id="genResultBox" style="display:none; margin-top:1.5rem; background:rgba(0,0,0,0.5); border:1px solid rgba(0,230,246,0.4); border-radius:16px; padding:1.5rem; box-shadow:0 8px 24px rgba(0,0,0,0.4);">
-              <div style="display:flex; align-items:center; justify-space-between; margin-bottom:1rem;">
-                <span style="color:var(--emerald); font-weight:800; font-size:0.9rem;">✅ Campaign &amp; Budget Saved! Trackable Link Ready:</span>
-                <span id="genBudgetSavedBadge" style="font-size:0.75rem; font-weight:700; padding:3px 10px; border-radius:6px; background:rgba(16,185,129,0.2); color:var(--emerald);">Budget Logged</span>
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
+                <div style="display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap;">
+                  <span style="color:var(--emerald); font-weight:800; font-size:0.9rem;">✅ Campaign &amp; Budget Saved! Trackable Link Ready:</span>
+                  <span id="genBudgetSavedBadge" style="font-size:0.75rem; font-weight:700; padding:3px 10px; border-radius:6px; background:rgba(16,185,129,0.2); color:var(--emerald);">Budget Logged</span>
+                </div>
+                <button class="btn-ghost" onclick="closeSmartAdResultBox()" style="width:30px; height:30px; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.06); color:#A0AEC0; font-size:1.1rem; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s ease;" title="Close Banner">✕</button>
               </div>
               <div style="display:flex; gap:0.75rem; margin-bottom:1.5rem;">
                 <input type="text" class="form-input" id="genOutputUrl" readonly style="font-family:var(--font-mono); font-size:0.82rem; color:#FFFFFF; background:rgba(15,23,42,0.95); border:1px solid rgba(255,255,255,0.2); border-radius:10px; padding:0.65rem 0.85rem; flex:1;" />
@@ -6291,6 +6294,11 @@
         console.warn('[Alerts] Check error:', e);
       }
     }
+
+    window.closeSmartAdResultBox = function() {
+      const box = document.getElementById('genResultBox');
+      if (box) box.style.display = 'none';
+    };
 
     window.generateAndSaveSmartCampaign = async function() {
       const platform = document.getElementById('genPlatform').value;

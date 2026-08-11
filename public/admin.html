@@ -6053,7 +6053,7 @@
           const [purchasesRes, campaignsRes, clicksRes, profilesRes] = await Promise.all([
             sb.from('purchases').select('*').gte('created_at', from).lte('created_at', to),
             sb.from('ad_campaigns').select('*'),
-            sb.from('campaign_clicks').select('*').gte('created_at', from).lte('created_at', to),
+            sb.from('campaign_clicks').select('*'),
             sb.from('profiles').select('*').gte('created_at', from).lte('created_at', to)
           ]);
 

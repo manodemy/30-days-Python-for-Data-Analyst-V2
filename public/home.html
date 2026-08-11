@@ -127,7 +127,13 @@
             } catch (e) {}
 
             sb.rpc('track_campaign_click', { p_campaign: utmCampaign, p_visitor_id: vid, p_source: utmSource }).catch(() => {
-              sb.from('campaign_clicks').insert([{ campaign_name: utmCampaign, visitor_id: vid, source: utmSource }]).catch(() => {});
+              sb.from('campaign_clicks').insert([{ campaign_name: utmCampaign, visitor_id: vid, source: utmSource }]).catch(() => {
+                fetch(SUPA_URL + '/rest/v1/campaign_clicks', {
+                  method: 'POST',
+                  headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY, 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ campaign_name: utmCampaign, visitor_id: vid, source: utmSource })
+                }).catch(() => {});
+              });
             });
           }
         } catch (e) {

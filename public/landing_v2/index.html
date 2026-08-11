@@ -36,6 +36,27 @@
             localClicks.push({ campaign_name: utmCampaign, visitor_id: vid, source: utmSource, created_at: new Date().toISOString() });
             localStorage.setItem('manodemy_local_campaign_clicks', JSON.stringify(localClicks.slice(-100)));
           } catch (e) {}
+
+          // ⚡ Post click directly to Supabase DB so it reflects globally on Admin Leaderboard!
+          const SUPA_URL = 'https://erqoyvbuhmkyvcqgwcbz.supabase.co';
+          const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVycW95dmJ1aG1reXZjcWd3Y2J6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzODk1MTIsImV4cCI6MjA5NDk2NTUxMn0.9UnIfq8xMrKANPPTtoOADKH-NJ_it9HDp7xrJL4FXtw';
+
+          fetch(SUPA_URL + '/rest/v1/campaign_clicks', {
+            method: 'POST',
+            headers: {
+              'apikey': SUPA_KEY,
+              'Authorization': 'Bearer ' + SUPA_KEY,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              campaign_name: utmCampaign,
+              visitor_id: vid,
+              source: utmSource,
+              user_agent: navigator.userAgent || null
+            })
+          }).catch(function(err) {
+            console.warn('[Click Telemetry] DB post notice:', err);
+          });
         }
       } catch (e) {}
     })();

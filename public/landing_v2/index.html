@@ -11,6 +11,35 @@
     gtag('js', new Date());
     gtag('config', 'AW-18220099107');
   </script>
+  <script>
+    (function() {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        let utmCampaign = urlParams.get('utm_campaign') || urlParams.get('campaign');
+        let utmSource = urlParams.get('utm_source') || 'direct';
+        if (utmCampaign) {
+          utmCampaign = utmCampaign.trim().toLowerCase();
+          if (!localStorage.getItem('manodemy_first_touch_campaign')) {
+            localStorage.setItem('manodemy_first_touch_campaign', utmCampaign);
+            localStorage.setItem('manodemy_first_touch_source', utmSource);
+          }
+          localStorage.setItem('manodemy_last_touch_campaign', utmCampaign);
+
+          let vid = localStorage.getItem('manodemy_visitor_id');
+          if (!vid) {
+            vid = 'v_' + Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
+            localStorage.setItem('manodemy_visitor_id', vid);
+          }
+
+          try {
+            const localClicks = JSON.parse(localStorage.getItem('manodemy_local_campaign_clicks') || '[]');
+            localClicks.push({ campaign_name: utmCampaign, visitor_id: vid, source: utmSource, created_at: new Date().toISOString() });
+            localStorage.setItem('manodemy_local_campaign_clicks', JSON.stringify(localClicks.slice(-100)));
+          } catch (e) {}
+        }
+      } catch (e) {}
+    })();
+  </script>
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">

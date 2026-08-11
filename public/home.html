@@ -103,13 +103,45 @@
 
 
 
+        // Capture campaign click telemetry BEFORE any auth checks or redirects
+        try {
+          const urlParams = new URLSearchParams(window.location.search);
+          let utmCampaign = urlParams.get('utm_campaign') || urlParams.get('campaign');
+          let utmSource = urlParams.get('utm_source') || 'direct';
+          if (utmCampaign) {
+            utmCampaign = utmCampaign.trim().toLowerCase();
+            localStorage.setItem('manodemy_first_touch_campaign', utmCampaign);
+            localStorage.setItem('manodemy_first_touch_source', utmSource);
+            localStorage.setItem('manodemy_last_touch_campaign', utmCampaign);
+
+            let vid = localStorage.getItem('manodemy_visitor_id');
+            if (!vid) {
+              vid = 'v_' + Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
+              localStorage.setItem('manodemy_visitor_id', vid);
+            }
+
+            try {
+              const localClicks = JSON.parse(localStorage.getItem('manodemy_local_campaign_clicks') || '[]');
+              localClicks.push({ campaign_name: utmCampaign, visitor_id: vid, source: utmSource, created_at: new Date().toISOString() });
+              localStorage.setItem('manodemy_local_campaign_clicks', JSON.stringify(localClicks.slice(-100)));
+            } catch (e) {}
+
+            sb.rpc('track_campaign_click', { p_campaign: utmCampaign, p_visitor_id: vid, p_source: utmSource }).catch(() => {
+              sb.from('campaign_clicks').insert([{ campaign_name: utmCampaign, visitor_id: vid, source: utmSource }]).catch(() => {});
+            });
+          }
+        } catch (e) {
+          console.warn('[Telemetry] Capture notice:', e);
+        }
+
         const { data: { session }, error } = await sb.auth.getSession();
 
         if (error || !session) {
 
           document.cookie = "sb-access-token=; path=/; max-age=0; SameSite=Lax; Secure";
 
-          window.location.replace("landing_v2/index.html?reason=login_required");
+          const query = window.location.search ? `${window.location.search}&reason=login_required` : '?reason=login_required';
+          window.location.replace(`landing_v2/index.html${query}`);
 
           return;
 

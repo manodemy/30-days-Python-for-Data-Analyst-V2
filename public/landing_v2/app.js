@@ -1451,7 +1451,19 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (err) {
       console.warn('[Attribution] Capture error:', err);
     }
-  };
+  async function syncProfileAttribution(userId) {
+    try {
+      const ftCamp = localStorage.getItem('manodemy_first_touch_campaign') || localStorage.getItem('manodemy_last_touch_campaign');
+      const ftSrc = localStorage.getItem('manodemy_first_touch_source') || 'direct';
+      if (ftCamp && userId && typeof supabaseClient !== 'undefined' && supabaseClient) {
+        await supabaseClient.from('profiles').update({
+          first_touch_campaign: ftCamp.toLowerCase(),
+          first_touch_source: ftSrc.toLowerCase(),
+          last_touch_campaign: ftCamp.toLowerCase()
+        }).eq('id', userId);
+      }
+    } catch (e) {}
+  }
 
   function getAttributionPayload() {
     try {
@@ -1610,6 +1622,9 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('manodemy_user_email', email);
             if (data.session.access_token) {
               setAuthCookie(data.session.access_token, data.session.expires_in);
+            }
+            if (data.session.user && data.session.user.id) {
+              syncProfileAttribution(data.session.user.id);
             }
             await updateNavForLoggedIn(data.session.user || { email: email });
           }

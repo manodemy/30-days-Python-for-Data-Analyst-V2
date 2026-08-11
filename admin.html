@@ -6051,10 +6051,10 @@
           isFallbackMode = true;
 
           const [purchasesRes, campaignsRes, clicksRes, profilesRes] = await Promise.all([
-            sb.from('purchases').select('*').gte('created_at', from).lte('created_at', to),
+            sb.from('purchases').select('*'),
             sb.from('ad_campaigns').select('*'),
             sb.from('campaign_clicks').select('*'),
-            sb.from('profiles').select('*').gte('created_at', from).lte('created_at', to)
+            sb.from('profiles').select('*')
           ]);
 
           const purchases = purchasesRes.data || [];
@@ -6120,15 +6120,22 @@
             }
           });
 
+          const userCampaignMap = {};
+          const userEmailCampaignMap = {};
+
           profiles.forEach(prof => {
-            const key = (prof.first_touch_campaign || '').toLowerCase();
-            if (key && groups[key]) {
-              groups[key].total_signins += 1;
+            const key = (prof.first_touch_campaign || prof.last_touch_campaign || '').toLowerCase();
+            if (key) {
+              if (prof.id) userCampaignMap[prof.id] = key;
+              if (prof.email) userEmailCampaignMap[prof.email.toLowerCase()] = key;
+              if (groups[key]) {
+                groups[key].total_signins += 1;
+              }
             }
           });
 
           purchases.forEach(p => {
-            const key = (p.first_touch_campaign || p.last_touch_campaign || '').toLowerCase();
+            const key = (p.first_touch_campaign || p.last_touch_campaign || userCampaignMap[p.user_id] || userEmailCampaignMap[(p.email || '').toLowerCase()] || '').toLowerCase();
             if (key) {
               if (!groups[key]) {
                 groups[key] = {
@@ -6145,9 +6152,9 @@
                   reconciled_ad_spend_inr: 0
                 };
               }
-              if (p.status === 'completed') {
+              if (p.status === 'completed' || p.status === 'success' || p.status === 'paid') {
                 groups[key].total_purchases += 1;
-                groups[key].net_revenue_inr += Number(p.amount_inr || (p.amount ? p.amount / 100 : 0));
+                groups[key].net_revenue_inr += Number(p.amount_inr || p.amount_usd ? (p.amount_inr || (p.amount_usd * 83)) : (p.amount ? p.amount / 100 : 0));
               }
             }
           });

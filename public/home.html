@@ -158,6 +158,19 @@
           document.cookie = `sb-access-token=${session.access_token}; path=/; max-age=${maxAge}; SameSite=Lax; Secure`;
         }
 
+        // Sync touch campaign to profile for Sign In & Purchase attribution
+        try {
+          const ftCamp = localStorage.getItem('manodemy_first_touch_campaign') || localStorage.getItem('manodemy_last_touch_campaign');
+          const ftSrc = localStorage.getItem('manodemy_first_touch_source') || 'direct';
+          if (ftCamp && session && session.user && session.user.id) {
+            sb.from('profiles').update({
+              first_touch_campaign: ftCamp.toLowerCase(),
+              first_touch_source: ftSrc.toLowerCase(),
+              last_touch_campaign: ftCamp.toLowerCase()
+            }).eq('id', session.user.id).then(() => {}).catch(() => {});
+          }
+        } catch (e) {}
+
 
 
         const isEnrolledLocal = localStorage.getItem('manodemy_enrolled') === 'true';

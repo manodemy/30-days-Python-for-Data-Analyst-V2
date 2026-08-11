@@ -6166,6 +6166,32 @@
           list = res.data || [];
         }
 
+        // Seamlessly merge locally stored campaigns if not yet returned by DB query
+        try {
+          const localCamps = JSON.parse(localStorage.getItem('manodemy_local_ad_campaigns') || '[]');
+          localCamps.forEach(lc => {
+            const exists = list.some(item => (item.campaign_name || '').toLowerCase() === (lc.campaign_name || '').toLowerCase());
+            if (!exists && lc.campaign_name) {
+              list.unshift({
+                campaign_id: lc.campaign_id || ('CMP-' + lc.campaign_name.substring(0, 6).toUpperCase()),
+                campaign_name: lc.campaign_name,
+                platform: lc.platform || 'telegram',
+                start_date: lc.start_date || new Date().toISOString(),
+                target_url: lc.target_url || `https://www.manodemy.com/?utm_campaign=${lc.campaign_name}`,
+                total_visits: 0,
+                unique_visitors: 0,
+                total_signins: 0,
+                total_purchases: 0,
+                net_revenue_inr: 0,
+                reconciled_ad_spend_inr: Number(lc.ad_spend_inr || 0),
+                net_roas: 0
+              });
+            }
+          });
+        } catch (e) {
+          console.warn('[Ad Storage] Local merge notice:', e);
+        }
+
         if (badge) badge.textContent = `${list.length} Campaigns${isFallbackMode ? ' (Direct)' : ''}`;
 
         let totalSales = 0;
@@ -6373,9 +6399,34 @@
         }, 1800);
       }
 
-      // 2. Save Campaign Record & Budget atomically to ad_campaigns table
+      // 2. Save to LocalStorage immediately so it never disappears on refresh
       try {
-        const { error } = await sb.from('ad_campaigns').upsert([{
+        const local = JSON.parse(localStorage.getItem('manodemy_local_ad_campaigns') || '[]');
+        const campObj = {
+          campaign_id: campaignId,
+          campaign_name: campaign,
+          platform: platform,
+          target_url: finalUrl,
+          ad_spend_inr: inr,
+          ad_spend_usd: usd,
+          coupon_attached: coupon,
+          creative_id: creativeId,
+          start_date: new Date().toISOString()
+        };
+        const existingIdx = local.findIndex(c => (c.campaign_name || '').toLowerCase() === campaign.toLowerCase());
+        if (existingIdx >= 0) {
+          local[existingIdx] = { ...local[existingIdx], ...campObj };
+        } else {
+          local.unshift(campObj);
+        }
+        localStorage.setItem('manodemy_local_ad_campaigns', JSON.stringify(local));
+      } catch (e) {
+        console.warn('[Ad Storage] Local save notice:', e);
+      }
+
+      // 3. Save Campaign Record & Budget to ad_campaigns table with progressive schema fallback
+      try {
+        let { error } = await sb.from('ad_campaigns').upsert([{
           campaign_id: campaignId,
           campaign_name: campaign,
           platform: platform,
@@ -6390,11 +6441,24 @@
         }], { onConflict: 'campaign_name' });
 
         if (error) {
-          console.warn('[Ad Campaign] Upsert notice:', error);
-        } else {
-          _adminCache.invalidate('ads');
-          loadCreativeAdsData();
+          console.warn('[Ad Campaign] Full schema upsert failed, trying standard schema fallback:', error.message);
+          const stdObj = {
+            campaign_name: campaign,
+            platform: platform,
+            ad_spend_inr: inr,
+            ad_spend_usd: usd,
+            spend_source: 'manual',
+            last_synced_at: new Date().toISOString()
+          };
+          const stdRes = await sb.from('ad_campaigns').upsert([stdObj], { onConflict: 'campaign_name' });
+          if (stdRes.error) {
+            console.warn('[Ad Campaign] Standard schema upsert failed, trying plain insert:', stdRes.error.message);
+            await sb.from('ad_campaigns').insert([stdObj]).catch(err => console.warn('[Ad Campaign] Plain insert notice:', err.message));
+          }
         }
+
+        _adminCache.invalidate('ads');
+        loadCreativeAdsData();
       } catch (e) {
         console.warn('[Ad Campaign] Budget save exception:', e);
       }

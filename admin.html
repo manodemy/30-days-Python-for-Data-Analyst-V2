@@ -3618,20 +3618,23 @@
               <table id="adPerformanceTable">
                 <thead>
                   <tr>
+                    <th>Campaign ID</th>
+                    <th>ROI / Net ROAS</th>
                     <th>Campaign Name</th>
-                    <th>Ad Creative / Post</th>
-                    <th>Platform</th>
-                    <th>Sales</th>
-                    <th>Gross Revenue</th>
-                    <th>Discounts</th>
+                    <th>Campaign Type</th>
+                    <th>Start Date</th>
+                    <th>Link</th>
+                    <th>QR Code</th>
+                    <th>Visits</th>
+                    <th>Unique Users</th>
+                    <th>Sign Ins</th>
+                    <th>Purchases</th>
                     <th>Net Revenue</th>
-                    <th>Reconciled Spend</th>
-                    <th>Net ROAS</th>
-                    <th>Action</th>
+                    <th>Budget</th>
                   </tr>
                 </thead>
                 <tbody id="adPerformanceTbody">
-                  <tr><td colspan="9" style="text-align:center; color:var(--ink-muted); padding:2.5rem;">Loading attribution leaderboard…</td></tr>
+                  <tr><td colspan="13" style="text-align:center; color:var(--ink-muted); padding:2.5rem;">Loading attribution leaderboard…</td></tr>
                 </tbody>
               </table>
             </div>
@@ -6033,87 +6036,131 @@
         let list = [];
         let isFallbackMode = false;
 
-        const { data, error } = await sb.rpc('get_creative_ads_performance', {
-          start_ts: from,
-          end_ts: to,
-          attribution_mode: currentAttributionMode
-        });
+        let res = await sb.rpc('get_ad_intelligence_v2', { start_ts: from, end_ts: to });
+        if (res.error) {
+          res = await sb.rpc('get_creative_ads_performance', { start_ts: from, end_ts: to, attribution_mode: currentAttributionMode });
+        }
 
         loadAdDataQualityAlerts();
 
-        if (error) {
-          console.warn('[Ad Intelligence] RPC unavailable, using client-side fallback query:', error);
+        if (res.error) {
+          console.warn('[Ad Intelligence] RPC unavailable, using client-side fallback query:', res.error);
           isFallbackMode = true;
 
-          const [purchasesRes, campaignsRes, couponsRes] = await Promise.all([
+          const [purchasesRes, campaignsRes, clicksRes, profilesRes] = await Promise.all([
             sb.from('purchases').select('*').gte('created_at', from).lte('created_at', to),
             sb.from('ad_campaigns').select('*'),
-            sb.from('coupons').select('code, discount_type, discount_value')
+            sb.from('campaign_clicks').select('*').gte('created_at', from).lte('created_at', to),
+            sb.from('profiles').select('*').gte('created_at', from).lte('created_at', to)
           ]);
 
           const purchases = purchasesRes.data || [];
           const campaigns = campaignsRes.data || [];
-          const coupons = couponsRes.data || [];
+          const clicks = clicksRes.data || [];
+          const profiles = profilesRes.data || [];
 
-          const couponMap = {};
-          coupons.forEach(c => { if (c.code) couponMap[c.code.toUpperCase()] = c; });
-
-          const campaignSpendMap = {};
+          const campaignMap = {};
           campaigns.forEach(ac => {
             if (ac.campaign_name) {
-              campaignSpendMap[ac.campaign_name.toLowerCase()] = Number(ac.ad_spend_inr || 0) + (Number(ac.ad_spend_usd || 0) * 83.0);
+              const cName = ac.campaign_name.toLowerCase();
+              campaignMap[cName] = {
+                campaign_id: ac.campaign_id || ('CMP-' + cName.substring(0, 6).toUpperCase()),
+                campaign_name: ac.campaign_name,
+                platform: ac.platform || 'telegram',
+                start_date: ac.start_date || ac.created_at || new Date().toISOString(),
+                target_url: ac.target_url || `https://www.manodemy.com/?utm_campaign=${cName}`,
+                spend: Number(ac.ad_spend_inr || 0) + (Number(ac.ad_spend_usd || 0) * 83.0)
+              };
             }
           });
 
           const groups = {};
-          purchases.forEach(p => {
-            const attrCamp = (currentAttributionMode === 'first_touch' ? p.first_touch_campaign : p.last_touch_campaign) || 'direct_or_unknown';
-            const attrContent = (currentAttributionMode === 'first_touch' ? p.first_touch_content : p.last_touch_content) || 'none';
-            const attrCreative = (currentAttributionMode === 'first_touch' ? p.first_touch_creative_id : p.last_touch_creative_id) || 'none';
-            const attrSource = (currentAttributionMode === 'first_touch' ? p.first_touch_source : p.last_touch_source) || 'unknown';
 
-            const key = `${attrCamp.toLowerCase()}||${attrContent}||${attrCreative}||${attrSource}`;
-            if (!groups[key]) {
-              groups[key] = {
-                campaign_name: attrCamp,
-                ad_content: attrContent,
-                creative_id: attrCreative,
-                platform: attrSource,
-                sales_count: 0,
-                gross_revenue_inr: 0,
-                total_discount_given_inr: 0,
-                reconciled_ad_spend_inr: campaignSpendMap[attrCamp.toLowerCase()] || 0
-              };
+          // Seed from campaigns table
+          Object.values(campaignMap).forEach(c => {
+            const key = c.campaign_name.toLowerCase();
+            groups[key] = {
+              campaign_id: c.campaign_id,
+              campaign_name: c.campaign_name,
+              platform: c.platform,
+              start_date: c.start_date,
+              target_url: c.target_url,
+              total_visits: 0,
+              unique_visitors: new Set(),
+              total_signins: 0,
+              total_purchases: 0,
+              net_revenue_inr: 0,
+              reconciled_ad_spend_inr: c.spend
+            };
+          });
+
+          clicks.forEach(cc => {
+            const key = (cc.campaign_name || '').toLowerCase();
+            if (key) {
+              if (!groups[key]) {
+                groups[key] = {
+                  campaign_id: 'CMP-' + key.substring(0,6).toUpperCase(),
+                  campaign_name: cc.campaign_name,
+                  platform: cc.source || 'direct',
+                  start_date: cc.created_at,
+                  target_url: `https://www.manodemy.com/?utm_campaign=${key}`,
+                  total_visits: 0,
+                  unique_visitors: new Set(),
+                  total_signins: 0,
+                  total_purchases: 0,
+                  net_revenue_inr: 0,
+                  reconciled_ad_spend_inr: 0
+                };
+              }
+              groups[key].total_visits += 1;
+              if (cc.visitor_id) groups[key].unique_visitors.add(cc.visitor_id);
             }
+          });
 
-            const amt = Number(p.amount_inr || (p.amount ? p.amount / 100 : 0));
-            groups[key].sales_count += 1;
-            groups[key].gross_revenue_inr += amt;
+          profiles.forEach(prof => {
+            const key = (prof.first_touch_campaign || '').toLowerCase();
+            if (key && groups[key]) {
+              groups[key].total_signins += 1;
+            }
+          });
 
-            if (p.coupon_used) {
-              const c = couponMap[String(p.coupon_used).toUpperCase()];
-              if (c) {
-                const discVal = Number(c.discount_value || 0);
-                const disc = c.discount_type === 'percentage' ? (amt * (discVal / 100.0)) : discVal;
-                groups[key].total_discount_given_inr += disc;
+          purchases.forEach(p => {
+            const key = (p.first_touch_campaign || p.last_touch_campaign || '').toLowerCase();
+            if (key) {
+              if (!groups[key]) {
+                groups[key] = {
+                  campaign_id: 'CMP-' + key.substring(0,6).toUpperCase(),
+                  campaign_name: key,
+                  platform: p.first_touch_source || 'organic',
+                  start_date: p.created_at,
+                  target_url: `https://www.manodemy.com/?utm_campaign=${key}`,
+                  total_visits: 0,
+                  unique_visitors: new Set(),
+                  total_signins: 0,
+                  total_purchases: 0,
+                  net_revenue_inr: 0,
+                  reconciled_ad_spend_inr: 0
+                };
+              }
+              if (p.status === 'completed') {
+                groups[key].total_purchases += 1;
+                groups[key].net_revenue_inr += Number(p.amount_inr || (p.amount ? p.amount / 100 : 0));
               }
             }
           });
 
           list = Object.values(groups).map(g => {
-            const netRev = Math.max(0, g.gross_revenue_inr - g.total_discount_given_inr);
             const spend = g.reconciled_ad_spend_inr;
-            const grossRoas = spend > 0 ? (g.gross_revenue_inr / spend) : 0;
+            const netRev = g.net_revenue_inr;
             const netRoas = spend > 0 ? (netRev / spend) : 0;
             return {
               ...g,
-              net_revenue_inr: netRev,
-              gross_roas: grossRoas,
+              unique_visitors: g.unique_visitors instanceof Set ? g.unique_visitors.size : (g.unique_visitors || 0),
               net_roas: netRoas
             };
           });
         } else {
-          list = data || [];
+          list = res.data || [];
         }
 
         if (badge) badge.textContent = `${list.length} Campaigns${isFallbackMode ? ' (Direct)' : ''}`;
@@ -6123,7 +6170,7 @@
         let totalAdSpend = 0;
 
         if (!list.length) {
-          tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; color:var(--ink-muted); padding:2rem;">No attributed campaign conversions found for this date range. Generate a Smart Link below to start tracking!</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="13" style="text-align:center; color:var(--ink-muted); padding:2rem;">No attributed campaigns found. Create a campaign above to launch tracking live!</td></tr>';
           document.getElementById('kpiAdSales').textContent = '0';
           document.getElementById('kpiAdNetRevenue').textContent = '₹0';
           document.getElementById('kpiAdSpend').textContent = '₹0';
@@ -6132,49 +6179,65 @@
         }
 
         tbody.innerHTML = list.map(item => {
-          const sales = Number(item.sales_count || 0);
-          const grossRev = Number(item.gross_revenue_inr || 0);
-          const disc = Number(item.total_discount_given_inr || 0);
+          const cId = escapeHtml(item.campaign_id || ('CMP-' + (item.campaign_name || 'AD').substring(0, 6).toUpperCase()));
+          const cName = escapeHtml(item.campaign_name || 'unnamed');
+          const platform = escapeHtml(item.platform || 'telegram');
+          const startDateStr = item.start_date ? new Date(item.start_date).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }) : 'Today';
+          const targetUrl = item.target_url || `https://www.manodemy.com/?utm_source=${platform}&utm_campaign=${encodeURIComponent(item.campaign_name)}`;
+          
+          const visits = Number(item.total_visits || 0);
+          const unqVisits = Number(item.unique_visitors || 0);
+          const signins = Number(item.total_signins || 0);
+          const sales = Number(item.total_purchases || item.sales_count || 0);
           const netRev = Number(item.net_revenue_inr || 0);
           const spend = Number(item.reconciled_ad_spend_inr || 0);
-          const netRoas = Number(item.net_roas || 0);
+          const netRoas = Number(item.net_roas || (spend > 0 ? netRev / spend : 0));
 
           totalSales += sales;
           totalNetRevenue += netRev;
           totalAdSpend += spend;
 
-          const roasColor = netRoas >= 3.0 ? 'var(--emerald)' : (netRoas >= 1.0 ? 'var(--gold)' : 'var(--rose)');
+          let roasBadgeStyle = 'background:rgba(168,85,247,0.15); color:#C084FC; border:1px solid rgba(168,85,247,0.3);';
+          let roasLabel = 'Organic (∞)';
 
-          let contentDisplay = escapeHtml(item.ad_content || 'none');
-          if (item.ad_content && (item.ad_content.startsWith('http://') || item.ad_content.startsWith('https://'))) {
-            contentDisplay = `<a href="${escapeHtml(item.ad_content)}" target="_blank" class="badge badge-sapphire" style="text-decoration:none;">🔗 View Post</a>`;
-          } else if (item.ad_content && item.ad_content.startsWith('t.me/')) {
-            contentDisplay = `<a href="https://${escapeHtml(item.ad_content)}" target="_blank" class="badge badge-sapphire" style="text-decoration:none;">✈️ View Post</a>`;
-          }
-
-          let creativeDisplay = '';
-          if (item.creative_id && item.creative_id !== 'none') {
-            if (item.creative_id.startsWith('http://') || item.creative_id.startsWith('https://')) {
-              creativeDisplay = `<a href="${escapeHtml(item.creative_id)}" target="_blank" class="badge badge-gold" style="text-decoration:none; margin-left:4px;">🔗 Creative</a>`;
-            } else if (item.creative_id.startsWith('t.me/')) {
-              creativeDisplay = `<a href="https://${escapeHtml(item.creative_id)}" target="_blank" class="badge badge-gold" style="text-decoration:none; margin-left:4px;">✈️ Creative</a>`;
+          if (spend > 0) {
+            if (netRoas >= 3.0) {
+              roasBadgeStyle = 'background:rgba(16,185,129,0.18); color:#10B981; border:1px solid rgba(16,185,129,0.4); box-shadow:0 0 10px rgba(16,185,129,0.25);';
+              roasLabel = `${netRoas.toFixed(2)}x ROAS 🚀`;
+            } else if (netRoas >= 1.5) {
+              roasBadgeStyle = 'background:rgba(0,230,246,0.15); color:#00E6F6; border:1px solid rgba(0,230,246,0.35);';
+              roasLabel = `${netRoas.toFixed(2)}x ROAS 📈`;
+            } else if (netRoas >= 1.0) {
+              roasBadgeStyle = 'background:rgba(245,158,11,0.15); color:#F59E0B; border:1px solid rgba(245,158,11,0.35);';
+              roasLabel = `${netRoas.toFixed(2)}x ROAS ⚖️`;
             } else {
-              creativeDisplay = `<span class="badge badge-sapphire" style="font-size:0.65rem; margin-left:4px;">${escapeHtml(item.creative_id)}</span>`;
+              roasBadgeStyle = 'background:rgba(244,63,94,0.15); color:#F43F5E; border:1px solid rgba(244,63,94,0.35);';
+              roasLabel = `${netRoas.toFixed(2)}x ROAS ⚠️`;
             }
           }
 
           return `
             <tr>
-              <td style="font-weight:700; color:var(--gold);">${escapeHtml(item.campaign_name)}</td>
-              <td class="cell-mono" style="font-size:0.78rem; color:var(--ink);">${contentDisplay}${creativeDisplay}</td>
-              <td><span class="badge badge-neutral">${escapeHtml(item.platform)}</span></td>
-              <td class="cell-mono" style="font-weight:700;">${sales}</td>
-              <td class="cell-mono">₹${grossRev.toLocaleString('en-IN')}</td>
-              <td class="cell-mono" style="color:var(--rose);">₹${disc.toLocaleString('en-IN')}</td>
-              <td class="cell-mono" style="font-weight:700; color:var(--emerald);">₹${netRev.toLocaleString('en-IN')}</td>
-              <td class="cell-mono">₹${spend.toLocaleString('en-IN')}</td>
-              <td class="cell-mono" style="font-weight:800; color:${roasColor};">${netRoas.toFixed(2)}x</td>
-              <td><button class="btn-ghost" style="padding:3px 8px; font-size:0.72rem; border-radius:6px; border:1px solid rgba(255,255,255,0.15); cursor:pointer; color:var(--cyan);" onclick="quickEditCampaignSpend('${escapeHtml(item.campaign_name)}', ${spend}, '${escapeHtml(item.platform)}')">✏️ Budget</button></td>
+              <td class="cell-mono"><span class="badge badge-sapphire" style="font-size:0.75rem; font-weight:800; letter-spacing:0.04em;">${cId}</span></td>
+              <td><span class="badge" style="font-size:0.75rem; font-weight:800; padding:4px 10px; border-radius:8px; ${roasBadgeStyle}">${roasLabel}</span></td>
+              <td style="font-weight:700; color:var(--gold);">${cName}</td>
+              <td><span class="badge badge-neutral" style="text-transform:capitalize;">${platform}</span></td>
+              <td style="font-size:0.78rem; color:var(--ink-dim);">${startDateStr}</td>
+              <td>
+                <button class="apply-btn" style="padding:4px 10px; font-size:0.75rem; border-radius:6px; background:rgba(0,230,246,0.15); border:1px solid rgba(0,230,246,0.3); color:var(--cyan); font-weight:700; cursor:pointer;" onclick="copyCampaignLink('${escapeHtml(targetUrl)}')">📋 Link</button>
+              </td>
+              <td>
+                <button class="apply-btn" style="padding:4px 10px; font-size:0.75rem; border-radius:6px; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); color:var(--gold); font-weight:700; cursor:pointer;" onclick="downloadCampaignQR('${cName}', '${escapeHtml(targetUrl)}')">📲 QR Code</button>
+              </td>
+              <td class="cell-mono" style="font-weight:700; color:#F8FAFC;">${visits}</td>
+              <td class="cell-mono" style="font-weight:700; color:var(--cyan);">${unqVisits}</td>
+              <td class="cell-mono" style="font-weight:700; color:var(--gold);">${signins}</td>
+              <td class="cell-mono" style="font-weight:800; color:#FFFFFF;">${sales}</td>
+              <td class="cell-mono" style="font-weight:800; color:var(--emerald);">₹${netRev.toLocaleString('en-IN')}</td>
+              <td class="cell-mono" style="white-space:nowrap;">
+                ₹${spend.toLocaleString('en-IN')}
+                <button class="btn-ghost" style="padding:2px 7px; font-size:0.7rem; border-radius:6px; border:1px solid rgba(16,185,129,0.3); cursor:pointer; color:var(--emerald); background:rgba(16,185,129,0.1); margin-left:6px; font-weight:700;" onclick="quickAddCampaignSpend('${cName}', ${spend}, '${platform}')">➕ Add Budget</button>
+              </td>
             </tr>
           `;
         }).join('');
@@ -6187,7 +6250,7 @@
 
       } catch (err) {
         console.warn('[Ad Intelligence] Performance load error:', err);
-        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; color:var(--rose); padding:2rem;">Failed to load attribution performance. Ensure migration 030 is applied.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="13" style="text-align:center; color:var(--rose); padding:2rem;">Failed to load attribution performance. Ensure migration 048 is applied.</td></tr>';
       }
     }
 
@@ -6244,13 +6307,30 @@
         return;
       }
 
-      // 1. Save Budget atomically to ad_campaigns table
+      const campaignId = 'CMP-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+      const baseUrl = 'https://www.manodemy.com/';
+      const params = new URLSearchParams();
+      params.set('utm_source', platform);
+      params.set('utm_medium', platform === 'telegram' ? 'channel_post' : (platform === 'email' ? 'email' : 'cpc'));
+      params.set('utm_campaign', campaign);
+      if (content) params.set('utm_content', content);
+      if (creativeId) params.set('creative_id', creativeId);
+      if (coupon) params.set('coupon', coupon);
+
+      const finalUrl = `${baseUrl}?${params.toString()}`;
+
+      // 1. Save Campaign Record & Budget atomically to ad_campaigns table
       try {
         const { error } = await sb.from('ad_campaigns').upsert([{
+          campaign_id: campaignId,
           campaign_name: campaign,
           platform: platform,
+          target_url: finalUrl,
           ad_spend_inr: inr,
           ad_spend_usd: usd,
+          coupon_attached: coupon,
+          creative_id: creativeId,
+          start_date: new Date().toISOString(),
           spend_source: 'manual',
           last_synced_at: new Date().toISOString()
         }], { onConflict: 'campaign_name' });
@@ -6265,17 +6345,7 @@
         console.warn('[Ad Campaign] Budget save exception:', e);
       }
 
-      // 2. Generate Trackable URL
-      const baseUrl = 'https://www.manodemy.com/';
-      const params = new URLSearchParams();
-      params.set('utm_source', platform);
-      params.set('utm_medium', platform === 'telegram' ? 'channel_post' : (platform === 'email' ? 'email' : 'cpc'));
-      params.set('utm_campaign', campaign);
-      if (content) params.set('utm_content', content);
-      if (creativeId) params.set('creative_id', creativeId);
-      if (coupon) params.set('coupon', coupon);
-
-      const finalUrl = `${baseUrl}?${params.toString()}`;
+      // 2. Display Result Banner
       document.getElementById('genOutputUrl').value = finalUrl;
       document.getElementById('genResultBox').style.display = 'block';
 
@@ -6296,20 +6366,73 @@
     window.generateSmartAdLink = window.generateAndSaveSmartCampaign;
     window.saveAdCampaignSpend = window.generateAndSaveSmartCampaign;
 
-    window.quickEditCampaignSpend = async function(campaignName, currentInr, platform) {
-      const newInrStr = prompt(`Update Ad Spend Budget (INR ₹) for "${campaignName}":`, currentInr || 0);
-      if (newInrStr === null) return;
-      const newInr = Number(newInrStr);
-      if (isNaN(newInr) || newInr < 0) {
-        alert('Please enter a valid non-negative number for the budget.');
+    window.copyCampaignLink = function(url) {
+      if (!url) return;
+      navigator.clipboard.writeText(url);
+      alert('📋 Campaign Link copied to clipboard!\n\n' + url);
+    };
+
+    window.downloadCampaignQR = function(campaignName, url) {
+      try {
+        if (typeof qrcode !== 'undefined') {
+          const qr = qrcode(0, 'M');
+          qr.addData(url || 'https://www.manodemy.com');
+          qr.make();
+
+          const tempCanvas = document.createElement('canvas');
+          const count = qr.getModuleCount();
+          const cellSize = Math.max(6, Math.floor(300 / count));
+          const size = count * cellSize;
+          const margin = 20;
+
+          tempCanvas.width = size + (margin * 2);
+          tempCanvas.height = size + (margin * 2);
+
+          const ctx = tempCanvas.getContext('2d');
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+          ctx.fillStyle = '#0B0F19';
+          for (let r = 0; r < count; r++) {
+            for (let c = 0; c < count; c++) {
+              if (qr.isDark(r, c)) {
+                ctx.fillRect(margin + c * cellSize, margin + r * cellSize, cellSize, cellSize);
+              }
+            }
+          }
+
+          const safeFilename = (campaignName || 'campaign').toLowerCase().replace(/[^a-z0-9_-]/g, '_') + '_qr.png';
+          const link = document.createElement('a');
+          link.download = safeFilename;
+          link.href = tempCanvas.toDataURL('image/png');
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        } else {
+          alert('QR Code generator loading… please try again in a moment.');
+        }
+      } catch (err) {
+        console.error('[QR Download] Error:', err);
+        alert('Failed generating QR code download.');
+      }
+    };
+
+    window.quickAddCampaignSpend = async function(campaignName, currentInr, platform) {
+      const addInrStr = prompt(`Add incremental budget (INR ₹) for "${campaignName}" (Current: ₹${(currentInr||0).toLocaleString('en-IN')}):`, '1000');
+      if (addInrStr === null) return;
+      const addInr = Number(addInrStr);
+      if (isNaN(addInr) || addInr <= 0) {
+        alert('Please enter a valid positive number for the budget to add.');
         return;
       }
+
+      const newTotalInr = Number(currentInr || 0) + addInr;
 
       try {
         const { error } = await sb.from('ad_campaigns').upsert([{
           campaign_name: campaignName.toLowerCase(),
           platform: platform || 'telegram',
-          ad_spend_inr: newInr,
+          ad_spend_inr: newTotalInr,
           ad_spend_usd: 0,
           spend_source: 'manual',
           last_synced_at: new Date().toISOString()
@@ -6318,7 +6441,7 @@
         if (error) throw error;
         _adminCache.invalidate('ads');
         loadCreativeAdsData();
-        alert(`✅ Budget updated for ${campaignName}! ROI & Net ROAS recalculated.`);
+        alert(`✅ Added ₹${addInr.toLocaleString('en-IN')} budget to ${campaignName}!\nNew Total Budget: ₹${newTotalInr.toLocaleString('en-IN')}.\nROI recalculated live!`);
       } catch (err) {
         alert(`❌ Failed updating budget: ${err.message}`);
       }

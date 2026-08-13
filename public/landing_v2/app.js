@@ -1494,19 +1494,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (err) {
       console.warn('[Attribution] Capture error:', err);
     }
-  async function syncProfileAttribution(userId) {
-    try {
-      const ftCamp = localStorage.getItem('manodemy_first_touch_campaign') || localStorage.getItem('manodemy_last_touch_campaign');
-      const ftSrc = localStorage.getItem('manodemy_first_touch_source') || 'direct';
-      if (ftCamp && userId && typeof supabaseClient !== 'undefined' && supabaseClient) {
-        await supabaseClient.from('profiles').update({
-          first_touch_campaign: ftCamp.toLowerCase(),
-          first_touch_source: ftSrc.toLowerCase(),
-          last_touch_campaign: ftCamp.toLowerCase()
-        }).eq('id', userId);
-      }
-    } catch (e) {}
-  }
+  };
 
   function getAttributionPayload() {
     try {

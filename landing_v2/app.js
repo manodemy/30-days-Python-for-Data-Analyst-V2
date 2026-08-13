@@ -1975,6 +1975,13 @@ document.addEventListener('DOMContentLoaded', () => {
           localStorage.setItem('manodemy_auth', 'true');
           setAuthCookie(accessToken, expiresIn);
 
+          // Decode the JWT to extract the real user's email (do NOT hardcode)
+          let userEmail = '';
+          try {
+            const jwtPayload = JSON.parse(atob(accessToken.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+            userEmail = jwtPayload.email || jwtPayload.user_metadata?.email || '';
+          } catch (jwtErr) {}
+
           // Construct Supabase token session JSON and write to CustomAuthStorage & localStorage
           const expiresAt = Math.floor(Date.now() / 1000) + expiresIn;
           const sessionObj = {
@@ -1983,13 +1990,13 @@ document.addEventListener('DOMContentLoaded', () => {
             expires_in: expiresIn,
             expires_at: expiresAt,
             refresh_token: refreshToken,
-            user: { email: 'manodamy25@gmail.com' }
+            user: { email: userEmail }
           };
           try {
             const rawTokenKey = 'sb-erqoyvbuhmkyvcqgwcbz-auth-token';
             localStorage.setItem(rawTokenKey, JSON.stringify(sessionObj));
             CustomAuthStorage.setItem(rawTokenKey, JSON.stringify(sessionObj));
-            localStorage.setItem('manodemy_user_email', 'manodamy25@gmail.com');
+            if (userEmail) localStorage.setItem('manodemy_user_email', userEmail);
           } catch (e) {}
 
           // Clean hash from address bar without reloading

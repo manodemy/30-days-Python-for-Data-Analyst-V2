@@ -494,84 +494,127 @@ document.addEventListener('DOMContentLoaded', () => {
   let appliedCouponAmount = null;
   let currentPricing = { amount: 4900, currency: 'USD', display: '$49', original: '$149', discount: '67% OFF' };
 
+  const isSecureEnv = window.location.protocol === 'https:';
+  const secureCookieFlag = isSecureEnv ? '; Secure' : '';
+
   const CustomAuthStorage = {
-          getItem: (key) => {
-            let val = null;
-            const match = document.cookie.match(new RegExp('(^| )' + key + '=([^;]+)'));
-            if (match) {
-              try { val = decodeURIComponent(match[2]); } catch (e) {}
-            }
-            if (!val) {
-              let chunks = [];
-              for (let i = 0; ; i++) {
-                const chunkMatch = document.cookie.match(new RegExp('(^| )' + key + '\.' + i + '=([^;]+)'));
-                if (chunkMatch) {
-                  try { chunks.push(decodeURIComponent(chunkMatch[2])); } catch (e) { break; }
-                } else {
-                  break;
-                }
-              }
-              if (chunks.length > 0) {
-                val = chunks.join('');
-              }
-            }
-            if (!val) {
-              try { val = localStorage.getItem(key); } catch (e) {}
-            }
-            if (val) {
-              try { localStorage.setItem(key, val); } catch (e) {}
-              if (!document.cookie.includes(key)) {
-                CustomAuthStorage.setItem(key, val);
-              }
-            }
-            return val;
-          },
-          setItem: (key, value) => {
-            try { localStorage.setItem(key, value); } catch (e) {}
-            document.cookie = `${key}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=lax`;
-            for (let i = 0; i < 10; i++) {
-              document.cookie = `${key}.${i}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=lax`;
-            }
-            const encodedValue = encodeURIComponent(value);
-            const MAX_CHUNK_SIZE = 3000;
-            if (encodedValue.length <= MAX_CHUNK_SIZE) {
-              try {
-                document.cookie = `${key}=${encodedValue}; path=/; max-age=604800; secure; samesite=lax`;
-              } catch (e) {}
+    getItem: (key) => {
+      let val = null;
+      try {
+        const match = document.cookie.match(new RegExp('(?:^|; )' + key.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)'));
+        if (match) {
+          try { val = decodeURIComponent(match[1]); } catch (e) { val = match[1]; }
+        }
+        if (!val) {
+          let chunks = [];
+          for (let i = 0; i < 10; i++) {
+            const chunkMatch = document.cookie.match(new RegExp('(?:^|; )' + key.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + '\\.' + i + '=([^;]*)'));
+            if (chunkMatch) {
+              try { chunks.push(decodeURIComponent(chunkMatch[1])); } catch (e) { chunks.push(chunkMatch[1]); }
             } else {
-              let offset = 0;
-              let chunkIndex = 0;
-              while (offset < encodedValue.length) {
-                const chunk = encodedValue.slice(offset, offset + MAX_CHUNK_SIZE);
-                try {
-                  document.cookie = `${key}.${chunkIndex}=${chunk}; path=/; max-age=604800; secure; samesite=lax`;
-                } catch (e) {}
-                offset += MAX_CHUNK_SIZE;
-                chunkIndex++;
-              }
-            }
-          },
-          removeItem: (key) => {
-            try { localStorage.removeItem(key); } catch (e) {}
-            document.cookie = `${key}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=lax`;
-            for (let i = 0; i < 10; i++) {
-              document.cookie = `${key}.${i}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=lax`;
+              break;
             }
           }
-        };
-
-  if (window.supabase) {
-    try {
-      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-        auth: {
-          storage: CustomAuthStorage
+          if (chunks.length > 0) val = chunks.join('');
         }
-      });
-      fetchLiveCounts();
-    } catch (e) {
-      console.error("Supabase init error:", e);
+      } catch (e) {}
+
+      if (!val) {
+        try { val = localStorage.getItem(key); } catch (e) {}
+      }
+      if (val) {
+        try { localStorage.setItem(key, val); } catch (e) {}
+        if (!document.cookie.includes(key)) {
+          try { CustomAuthStorage.setItem(key, val); } catch (e) {}
+        }
+      }
+      return val;
+    },
+    setItem: (key, value) => {
+      try { localStorage.setItem(key, value); } catch (e) {}
+      try {
+        document.cookie = `${key}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT${secureCookieFlag}; SameSite=Lax`;
+        for (let i = 0; i < 10; i++) {
+          document.cookie = `${key}.${i}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT${secureCookieFlag}; SameSite=Lax`;
+        }
+        const encodedValue = encodeURIComponent(value);
+        const MAX_CHUNK_SIZE = 3000;
+        if (encodedValue.length <= MAX_CHUNK_SIZE) {
+          document.cookie = `${key}=${encodedValue}; path=/; max-age=604800${secureCookieFlag}; SameSite=Lax`;
+        } else {
+          let offset = 0;
+          let chunkIndex = 0;
+          while (offset < encodedValue.length) {
+            const chunk = encodedValue.substring(offset, offset + MAX_CHUNK_SIZE);
+            document.cookie = `${key}.${chunkIndex}=${chunk}; path=/; max-age=604800${secureCookieFlag}; SameSite=Lax`;
+            offset += MAX_CHUNK_SIZE;
+            chunkIndex++;
+          }
+        }
+      } catch (e) {}
+    },
+    removeItem: (key) => {
+      try { localStorage.removeItem(key); } catch (e) {}
+      try {
+        document.cookie = `${key}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT${secureCookieFlag}; SameSite=Lax`;
+        for (let i = 0; i < 10; i++) {
+          document.cookie = `${key}.${i}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT${secureCookieFlag}; SameSite=Lax`;
+        }
+      } catch (e) {}
     }
+  };
+
+  async function ensureSupabaseClient() {
+    if (supabaseClient) return supabaseClient;
+    if (window.supabase && typeof window.supabase.createClient === 'function') {
+      try {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+          auth: { storage: CustomAuthStorage }
+        });
+        return supabaseClient;
+      } catch (e) {
+        console.error("Supabase init error:", e);
+      }
+    }
+    return new Promise((resolve) => {
+      let attempts = 0;
+      const checkInterval = setInterval(() => {
+        attempts++;
+        if (window.supabase && typeof window.supabase.createClient === 'function') {
+          clearInterval(checkInterval);
+          try {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+              auth: { storage: CustomAuthStorage }
+            });
+            resolve(supabaseClient);
+          } catch (e) {
+            resolve(null);
+          }
+        } else if (attempts >= 10) {
+          clearInterval(checkInterval);
+          const script = document.createElement('script');
+          script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js';
+          script.onload = () => {
+            try {
+              supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+                auth: { storage: CustomAuthStorage }
+              });
+              resolve(supabaseClient);
+            } catch (e) {
+              resolve(null);
+            }
+          };
+          script.onerror = () => resolve(null);
+          document.head.appendChild(script);
+        }
+      }, 100);
+    });
   }
+
+  // Initialize immediately if window.supabase is ready
+  ensureSupabaseClient().then(client => {
+    if (client) fetchLiveCounts();
+  });
 
   // Fetch live learner stats from Supabase
   async function fetchLiveCounts() {
@@ -1595,7 +1638,9 @@ document.addEventListener('DOMContentLoaded', () => {
     landingLoginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       clearAuthMessage();
-      if (!supabaseClient) { setAuthMessage("Authentication services are currently offline.", "error"); return; }
+      
+      const sb = await ensureSupabaseClient();
+      if (!sb) { setAuthMessage("Authentication services are currently initializing. Please try again in a moment.", "error"); return; }
 
       const email = landingEmail.value.trim();
       const password = landingPassword.value;
@@ -1609,10 +1654,13 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         if (authState === 'login') {
           btnLandingSubmit.textContent = 'Signing in...';
-          const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+          const { data, error } = await sb.auth.signInWithPassword({ email, password });
           if (error) {
             if (error.message.toLowerCase().includes('invalid login credentials')) {
               throw new Error("Incorrect email or password. Need an account? Click 'Create Account'.");
+            }
+            if (error.message.toLowerCase().includes('email not confirmed')) {
+              throw new Error("Please verify your email address before logging in, or reset password.");
             }
             throw error;
           }
@@ -1623,19 +1671,37 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.session.access_token) {
               setAuthCookie(data.session.access_token, data.session.expires_in);
             }
-            if (data.session.user && data.session.user.id) {
-              syncProfileAttribution(data.session.user.id);
-            }
             await updateNavForLoggedIn(data.session.user || { email: email });
           }
 
-          closeAuthModal();
+          setAuthMessage("Signed in successfully! Redirecting...", "success");
 
-          const isAdm = email.toLowerCase() === 'manodamy25@gmail.com' || email.toLowerCase().includes('manodemy') || email.toLowerCase().includes('manodamy');
-          if (isAdm) {
-            window.location.href = '/admin.html';
-            return;
-          }
+          setTimeout(() => {
+            closeAuthModal();
+
+            const isAdm = email.toLowerCase() === 'manodamy25@gmail.com' || email.toLowerCase().includes('manodemy') || email.toLowerCase().includes('manodamy');
+            if (isAdm) {
+              window.location.href = '/admin.html';
+              return;
+            }
+
+            if (window.pendingCheckout) {
+              const currentPending = window.pendingCheckout;
+              window.pendingCheckout = null;
+              openCheckout(currentPending.tier);
+              initiatePayment(currentPending.gateway);
+              return;
+            }
+
+            const urlP = new URLSearchParams(window.location.search);
+            const redirectParam = urlP.get('redirect');
+            if (redirectParam && redirectParam.startsWith('/')) {
+              window.location.href = redirectParam;
+              return;
+            }
+
+            window.location.href = '/home.html';
+          }, 350);
         } else if (authState === 'signup') {
           if (!name) { setAuthMessage("Please enter your full name.", "error"); throw new Error("_handled"); }
           if (password.length < 6) { setAuthMessage("Password must be at least 6 characters.", "error"); throw new Error("_handled"); }
@@ -1643,7 +1709,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
           btnLandingSubmit.textContent = 'Creating Account...';
           window.justSignedIn = true;
-          const { data, error } = await supabaseClient.auth.signUp({
+          const { data, error } = await sb.auth.signUp({
             email, password,
             options: { data: { full_name: name } }
           });
@@ -1661,7 +1727,7 @@ document.addEventListener('DOMContentLoaded', () => {
           btnLandingSubmit.textContent = 'Sending...';
           const basePath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
           const resetUrl = window.location.origin + basePath + '/reset-password.html';
-          const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: resetUrl });
+          const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: resetUrl });
           if (error) throw error;
           setAuthMessage("If an account exists, a recovery link has been sent to your email.", "success");
         }
@@ -1678,7 +1744,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (googleSigninBtn) {
     googleSigninBtn.addEventListener('click', async (e) => {
       e.preventDefault();
-      if (!supabaseClient) { setAuthMessage("Authentication services are currently offline.", "error"); return; }
+      const sb = await ensureSupabaseClient();
+      if (!sb) { setAuthMessage("Authentication services are currently initializing. Please try again.", "error"); return; }
 
       const originalText = googleSigninBtn.innerHTML;
       googleSigninBtn.innerHTML = 'Redirecting securely...';
@@ -1691,8 +1758,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       try {
-        const redirectUrl = window.location.origin + '/home.html';
-        const { error } = await supabaseClient.auth.signInWithOAuth({
+        const redirectUrl = window.location.origin + '/landing_v2/index.html' + window.location.search;
+        const { error } = await sb.auth.signInWithOAuth({
           provider: 'google',
           options: {
             redirectTo: redirectUrl
@@ -1705,6 +1772,7 @@ document.addEventListener('DOMContentLoaded', () => {
           googleSigninBtn.style.opacity = '1';
         }
       } catch (err) {
+        setAuthMessage('Google Login Error: ' + (err.message || 'Network error'), "error");
         googleSigninBtn.innerHTML = originalText;
         googleSigninBtn.disabled = false;
         googleSigninBtn.style.opacity = '1';
@@ -1943,11 +2011,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const setAuthCookie = (token, expiresSec) => {
     const maxAge = expiresSec || 604800; // default 7 days
-    document.cookie = `sb-access-token=${token}; path=/; max-age=${maxAge}; SameSite=Lax; Secure`;
+    const isSecure = window.location.protocol === 'https:';
+    document.cookie = `sb-access-token=${token}; path=/; max-age=${maxAge}; SameSite=Lax${isSecure ? '; Secure' : ''}`;
   };
 
   const clearAuthCookie = () => {
-    document.cookie = `sb-access-token=; path=/; max-age=0; SameSite=Lax; Secure`;
+    const isSecure = window.location.protocol === 'https:';
+    document.cookie = `sb-access-token=; path=/; max-age=0; SameSite=Lax${isSecure ? '; Secure' : ''}`;
   };
 
   const handleUserSession = async (session) => {
@@ -1961,7 +2031,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       updateNavForLoggedIn(session.user);
       if (session.user.id) {
-        await checkPurchaseStatus(supabaseClient, session.user.id);
+        const sb = await ensureSupabaseClient();
+        await checkPurchaseStatus(sb || supabaseClient, session.user.id);
       }
       await saveCountryToProfile(userCountry);
     } else {
@@ -1979,6 +2050,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   (async () => {
+    let justExtractedOAuth = false;
     // 0. Detect and clean OAuth hash token if user just returned from Google OAuth
     if (window.location.hash && window.location.hash.includes('access_token=')) {
       try {
@@ -1987,6 +2059,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const refreshToken = hashParams.get('refresh_token') || '';
         const expiresIn = parseInt(hashParams.get('expires_in') || '3600', 10);
         if (accessToken) {
+          justExtractedOAuth = true;
           localStorage.setItem('manodemy_auth', 'true');
           setAuthCookie(accessToken, expiresIn);
 
@@ -2026,7 +2099,7 @@ document.addEventListener('DOMContentLoaded', () => {
       updateNavForLoggedIn(initialUser);
     }
 
-    const oauthInProgress = localStorage.getItem('manodemy_oauth_in_progress') === 'true';
+    const oauthInProgress = localStorage.getItem('manodemy_oauth_in_progress') === 'true' || justExtractedOAuth;
     localStorage.removeItem('manodemy_oauth_in_progress');
 
     const storedPending = localStorage.getItem('manodemy_pending_checkout');
@@ -2039,9 +2112,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     detectGeoPricing();
 
-    if (!supabaseClient) return;
+    const sb = await ensureSupabaseClient();
+    if (!sb) return;
     try {
-      const { data: { session } } = await supabaseClient.auth.getSession();
+      const { data: { session } } = await sb.auth.getSession();
       if (session) {
         await handleUserSession(session);
       } else {
@@ -2051,7 +2125,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
       
-      supabaseClient.auth.onAuthStateChange(async (event, session) => {
+      sb.auth.onAuthStateChange(async (event, session) => {
         if ((event === 'INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') && session) {
           await handleUserSession(session);
           
@@ -2072,6 +2146,12 @@ document.addEventListener('DOMContentLoaded', () => {
             window.justSignedIn = false;
             setTimeout(() => {
               if (!window.pendingCheckout && !window.pendingWriteReview) {
+                const urlP = new URLSearchParams(window.location.search);
+                const redirectParam = urlP.get('redirect');
+                if (redirectParam && redirectParam.startsWith('/')) {
+                  window.location.href = redirectParam;
+                  return;
+                }
                 window.location.href = '/home.html';
               }
             }, 300);

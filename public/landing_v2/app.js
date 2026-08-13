@@ -1746,11 +1746,21 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       try {
-        const redirectUrl = window.location.origin + '/landing_v2/index.html' + window.location.search;
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectParam = urlParams.get('redirect');
+        const targetNext = window.pendingCheckout 
+          ? '/landing_v2/index.html?resume_checkout=true' 
+          : (redirectParam && redirectParam.startsWith('/') ? redirectParam : '/home.html');
+        const redirectUrl = window.location.origin + '/auth/callback?next=' + encodeURIComponent(targetNext);
+
         const { error } = await sb.auth.signInWithOAuth({
           provider: 'google',
           options: {
-            redirectTo: redirectUrl
+            redirectTo: redirectUrl,
+            queryParams: {
+              access_type: 'offline',
+              prompt: 'consent'
+            }
           }
         });
         if (error) {

@@ -140,43 +140,6 @@
           }
         }) : null;
 
-        // Capture campaign click telemetry BEFORE any auth checks or redirects
-        try {
-          const urlParams = new URLSearchParams(window.location.search);
-          let utmCampaign = urlParams.get('utm_campaign') || urlParams.get('campaign');
-          let utmSource = urlParams.get('utm_source') || 'direct';
-          if (utmCampaign && sb) {
-            utmCampaign = utmCampaign.trim().toLowerCase();
-            localStorage.setItem('manodemy_first_touch_campaign', utmCampaign);
-            localStorage.setItem('manodemy_first_touch_source', utmSource);
-            localStorage.setItem('manodemy_last_touch_campaign', utmCampaign);
-
-            let vid = localStorage.getItem('manodemy_visitor_id');
-            if (!vid) {
-              vid = 'v_' + Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
-              localStorage.setItem('manodemy_visitor_id', vid);
-            }
-
-            try {
-              const localClicks = JSON.parse(localStorage.getItem('manodemy_local_campaign_clicks') || '[]');
-              localClicks.push({ campaign_name: utmCampaign, visitor_id: vid, source: utmSource, created_at: new Date().toISOString() });
-              localStorage.setItem('manodemy_local_campaign_clicks', JSON.stringify(localClicks.slice(-100)));
-            } catch (e) {}
-
-            sb.rpc('track_campaign_click', { p_campaign: utmCampaign, p_visitor_id: vid, p_source: utmSource }).catch(() => {
-              sb.from('campaign_clicks').insert([{ campaign_name: utmCampaign, visitor_id: vid, source: utmSource }]).catch(() => {
-                fetch(SUPA_URL + '/rest/v1/campaign_clicks', {
-                  method: 'POST',
-                  headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY, 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ campaign_name: utmCampaign, visitor_id: vid, source: utmSource })
-                }).catch(() => {});
-              });
-            });
-          }
-        } catch (e) {
-          console.warn('[Telemetry] Capture notice:', e);
-        }
-
         let session = null;
         if (sb) {
           try {
@@ -191,8 +154,7 @@
 
         if (!session && !hasLocalAuth && !isSystemAdmin) {
           document.cookie = `sb-access-token=; path=/; max-age=0; SameSite=Lax${secureCookieFlag}`;
-          const query = window.location.search ? `${window.location.search}&reason=login_required` : '?reason=login_required';
-          window.location.replace(`landing_v2/index.html${query}`);
+          window.location.replace("landing_v2/index.html?reason=login_required");
           return;
         }
 
@@ -202,19 +164,6 @@
         }
 
         document.documentElement.classList.add('authorized');
-
-        // Sync touch campaign to profile for Sign In & Purchase attribution
-        try {
-          const ftCamp = localStorage.getItem('manodemy_first_touch_campaign') || localStorage.getItem('manodemy_last_touch_campaign');
-          const ftSrc = localStorage.getItem('manodemy_first_touch_source') || 'direct';
-          if (ftCamp && session && session.user && session.user.id) {
-            sb.from('profiles').update({
-              first_touch_campaign: ftCamp.toLowerCase(),
-              first_touch_source: ftSrc.toLowerCase(),
-              last_touch_campaign: ftCamp.toLowerCase()
-            }).eq('id', session.user.id).then(() => {}).catch(() => {});
-          }
-        } catch (e) {}
 
         const isEnrolledLocal = localStorage.getItem('manodemy_enrolled') === 'true';
         const plan = session?.user?.user_metadata?.plan;
@@ -634,9 +583,41 @@
     /* Prevent flashing of unauthorized content */
 
     html:not(.authorized) body {
-
+      background: #060919 !important;
+      overflow: hidden !important;
+    }
+    html:not(.authorized) body > * {
       display: none !important;
-
+    }
+    html:not(.authorized) body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, #0f172a 0%, #030712 100%);
+      z-index: 999999;
+    }
+    html:not(.authorized) body::after {
+      content: "Loading Dashboard...";
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: #38bdf8;
+      background: rgba(15, 23, 42, 0.85);
+      padding: 12px 24px;
+      border-radius: 9999px;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      box-shadow: 0 0 30px rgba(56, 189, 248, 0.25);
+      animation: dashAuthPulse 1.5s ease-in-out infinite;
+      z-index: 1000000;
+    }
+    @keyframes dashAuthPulse {
+      0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(0.98); }
+      50% { opacity: 1; transform: translate(-50%, -50%) scale(1.02); }
     }
 
     /* Styling for locked day cards in curriculum grid */

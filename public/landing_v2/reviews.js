@@ -10,19 +10,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ─── Supabase init ──────────────────────────────────────────
   const initSupabase = () => {
-    if (window.supabaseClient) return window.supabaseClient;
     if (!window.MANODEMY_CONFIG?.SUPA_URL || !window.MANODEMY_CONFIG?.SUPA_KEY) {
       console.warn('[Reviews] Supabase config missing.');
       return null;
     }
     try {
-      if (window.supabase) {
-        return window.supabase.createClient(
-          window.MANODEMY_CONFIG.SUPA_URL,
-          window.MANODEMY_CONFIG.SUPA_KEY
-        );
-      }
-      return null;
+      return window.supabase?.createClient(
+        window.MANODEMY_CONFIG.SUPA_URL,
+        window.MANODEMY_CONFIG.SUPA_KEY
+      );
     } catch (err) {
       console.error('[Reviews] Supabase init failed:', err);
       return null;

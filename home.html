@@ -583,9 +583,41 @@
     /* Prevent flashing of unauthorized content */
 
     html:not(.authorized) body {
-
+      background: #060919 !important;
+      overflow: hidden !important;
+    }
+    html:not(.authorized) body > * {
       display: none !important;
-
+    }
+    html:not(.authorized) body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, #0f172a 0%, #030712 100%);
+      z-index: 999999;
+    }
+    html:not(.authorized) body::after {
+      content: "Loading Dashboard...";
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: #38bdf8;
+      background: rgba(15, 23, 42, 0.85);
+      padding: 12px 24px;
+      border-radius: 9999px;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      box-shadow: 0 0 30px rgba(56, 189, 248, 0.25);
+      animation: dashAuthPulse 1.5s ease-in-out infinite;
+      z-index: 1000000;
+    }
+    @keyframes dashAuthPulse {
+      0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(0.98); }
+      50% { opacity: 1; transform: translate(-50%, -50%) scale(1.02); }
     }
 
     /* Styling for locked day cards in curriculum grid */

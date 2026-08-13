@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "Manodemy Web V2 Static HTML Platform with Server-side Edge Paywall",
   "scripts": {
+    "prebuild": "node scripts/sync-assets.js",
+    "sync": "node scripts/sync-assets.js",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

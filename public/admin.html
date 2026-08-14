@@ -6491,7 +6491,7 @@
 
         showToast(`✅ Campaign "${newName}" updated successfully in database!`, 'success');
         closeEditCampaignModal();
-        loadAttributionPerformance();
+        loadCreativeAdsData();
       } catch (err) {
         showToast('❌ Error updating campaign: ' + err.message, 'error');
       } finally {
@@ -6520,11 +6520,13 @@
         } catch (e) {}
 
         showToast(`🗑️ Campaign "${name}" deleted from database!`, 'success');
-        loadAttributionPerformance();
+        loadCreativeAdsData();
       } catch (err) {
         showToast('❌ Error deleting campaign: ' + err.message, 'error');
       }
     };
+
+    window.loadAttributionPerformance = loadCreativeAdsData;
 
     window.copyCampaignLink = function(url) {
       if (!url) return;

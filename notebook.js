@@ -24,6 +24,7 @@ const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsI
 
 (function initNotebookAttribution() {
   try {
+    if (window.self !== window.top) return;
     const urlParams = new URLSearchParams(window.location.search);
     const utmCamp = urlParams.get('utm_campaign') || urlParams.get('campaign') || urlParams.get('c');
     const utmSource = urlParams.get('utm_source') || 'direct';

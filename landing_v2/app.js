@@ -3,6 +3,8 @@
 document.addEventListener('DOMContentLoaded', () => {
 
   /* ═══ CAMPAIGN & AD ATTRIBUTION CAPTURE ═══ */
+  if (window.self !== window.top) return; // Prevent iframe embedding from firing tracking
+
   const urlParams = new URLSearchParams(window.location.search);
   const utmCamp = urlParams.get('utm_campaign') || urlParams.get('campaign') || urlParams.get('c');
   const utmSource = urlParams.get('utm_source') || (document.referrer.includes('instagram.com') ? 'instagram' : 'direct');
@@ -29,8 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   document.cookie = `manodemy_visitor_id=${visitorId}; path=/; max-age=2592000; SameSite=Lax`;
 
-  // Transmit debounced campaign click to Supabase
-  const campaignToTrack = utmCamp ? utmCamp.toLowerCase().trim() : (urlParams.get('utm_source') ? 'organic_social' : null);
+  // Transmit debounced campaign click to Supabase ONLY when utm_campaign is explicitly present
+  const campaignToTrack = utmCamp ? utmCamp.toLowerCase().trim() : null;
   if (campaignToTrack) {
     // Rapid-Fire Protection: 3-second throttle (prevents dual-execution on same page load)
     const debounceKey = `manodemy_last_click_${campaignToTrack}`;

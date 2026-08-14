@@ -93,13 +93,17 @@ function showGuestPaywallModal(featureTitle = 'this feature') {
 // ─── Real-Time Ad Intelligence & Attribution Engine ───
 // Attribution Precedence: First-touch for signup, Last-touch for session & checkout revenue
 (function initAdCampaignAttribution() {
+  // CRITICAL: If running inside an iframe (e.g. landing page live preview), NEVER fire external campaign click!
+  if (window.self !== window.top) return;
+
   const urlParams = new URLSearchParams(window.location.search);
   const utmCamp = urlParams.get('utm_campaign') || urlParams.get('campaign') || urlParams.get('ref') || urlParams.get('c');
+  if (!utmCamp) return; // Only track when an explicit campaign is in the URL
+
   const utmSource = urlParams.get('utm_source') || (document.referrer.includes('instagram.com') ? 'instagram' : 'direct');
   const utmMedium = urlParams.get('utm_medium') || 'reels';
 
-  // Attribution: If utm_campaign is absent, attribute to organic_untracked
-  const campaignName = utmCamp ? utmCamp.toLowerCase().trim() : 'organic_untracked';
+  const campaignName = utmCamp.toLowerCase().trim();
 
   // Persistent visitor_id with cookie + localStorage backing
   let visitorId = localStorage.getItem('manodemy_visitor_id');

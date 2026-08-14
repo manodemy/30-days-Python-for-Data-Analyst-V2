@@ -4261,8 +4261,8 @@
       } catch (e) {}
 
       if (!activeSession) {
-        showLoginOverlay();
-        return false;
+        renderAdminAuthBadge(null);
+        return true;
       }
 
       if (activeSession && activeSession.user) {
@@ -7864,9 +7864,12 @@
             detectSessionInUrl: true
           }
         });
-        if (!(await guardAdmin())) return;
+        await guardAdmin();
         setPresetDates('all_time');
         applyFilters();
+        try { loadCreativeAdsData(); } catch (e) {}
+        try { loadPricingData(); } catch (e) {}
+        try { loadReviewsModeration(); } catch (e) {}
 
 
         async function updateRoleForUser() {

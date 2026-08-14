@@ -63,7 +63,8 @@ function isPaidUser() {
 const URL_PARAMS = new URLSearchParams(window.location.search);
 const REEL_QUESTION_PARAM = URL_PARAMS.get('q') || URL_PARAMS.get('question');
 const REEL_DAY_PARAM = parseInt(URL_PARAMS.get('day') || '1', 10);
-const IS_GUEST_REEL = Boolean(REEL_QUESTION_PARAM && !isPaidUser() && !isAdminUser());
+const FORCE_GUEST_MODE = URL_PARAMS.get('preview') === 'guest' || URL_PARAMS.get('guest') === 'true';
+const IS_GUEST_REEL = Boolean(REEL_QUESTION_PARAM && (FORCE_GUEST_MODE || (!isPaidUser() && !isAdminUser())));
 const ALLOWED_GUEST_QUESTION_NUM = IS_GUEST_REEL ? parseInt(REEL_QUESTION_PARAM, 10) : null;
 
 function showGuestPaywallModal(featureTitle = 'this feature') {
@@ -3878,10 +3879,12 @@ function loadDayContent(dayId) {
     return;
   }
 
-  // 2. Days 03–04: Paywall check for non-paid users (unless guest reel link)
-  if (dayNum >= 3 && !isPaidUser() && !IS_GUEST_REEL) {
-    showGuestPaywallModal(`Day ${String(dayNum).padStart(2, '0')}`);
-    return;
+  // 2. Days 03–30: Paywall check for non-paid users
+  if (!isPaidUser() && !isAdminUser()) {
+    if (dayNum >= 3 && (!IS_GUEST_REEL || dayNum !== REEL_DAY_PARAM)) {
+      showGuestPaywallModal(`Day ${String(dayNum).padStart(2, '0')}`);
+      return;
+    }
   }
 
   const dayContent = window.COURSE_CONTENT && window.COURSE_CONTENT[dayId];

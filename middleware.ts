@@ -182,5 +182,9 @@ export const config = {
     '/excel/day11.html', '/excel/day12.html',
     // Secure notebook routes (days 03–30 are premium)
     '/notebook/:path*',
+    // Ultra-short campaign links & redirection triggers
+    '/bio', '/insta',
+    '/q1', '/q2', '/q3', '/q4', '/q5',
+    '/go/:path*', '/r/:path*',
   ],
 };

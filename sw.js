@@ -1,19 +1,11 @@
-const CACHE_NAME = 'manodemy-static-cache-v61';
-const DYNAMIC_CACHE_NAME = 'manodemy-dynamic-cache-v61';
-
-
-
-
-
-
+const CACHE_NAME = 'manodemy-static-cache-v130';
+const DYNAMIC_CACHE_NAME = 'manodemy-dynamic-cache-v130';
 
 // Static assets to precache immediately (only truly stable assets)
 const PRECACHE_ASSETS = [
   '/favicon.ico',
   '/icon-192x192.png',
   '/icon-512x512.png',
-  '/chart.js',
-  '/supabase.js',
   '/landing_v2/reviews.js'
 ];
 
@@ -65,8 +57,11 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // 1. STRICT BYPASS: Do not cache transactions, auth requests, or dynamic API endpoints
+  // 1. STRICT BYPASS: Do not cache admin panel, transactions, auth requests, or dynamic API endpoints
   if (
+    url.pathname === '/admin.html' ||
+    url.pathname === '/admin' ||
+    url.pathname.startsWith('/api/') ||
     url.origin.includes('supabase.co') ||
     url.pathname.includes('/rest/v1/') ||
     url.pathname.includes('/auth/v1/') ||
@@ -142,7 +137,6 @@ self.addEventListener('fetch', event => {
     })
   );
 });
-
 
 // Handle skip waiting postMessage
 self.addEventListener('message', event => {

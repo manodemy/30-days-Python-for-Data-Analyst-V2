@@ -2455,7 +2455,10 @@
           <button class="pill" data-preset="this_year">This Y</button>
           <button class="pill" data-preset="last_year">Last Y</button>
           <button class="pill active" data-preset="all_time">All Time</button>
-          <div id="adminAuthBadge" style="margin-left:auto; display:flex; align-items:center; gap:8px;"></div>
+          <div style="margin-left:auto; display:flex; align-items:center; gap:8px;">
+            <div id="realtimeIndicator" style="display:inline-flex; align-items:center;"></div>
+            <div id="adminAuthBadge" style="display:flex; align-items:center; gap:8px;"></div>
+          </div>
         </div>
         <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-top: 0.85rem; gap: 1rem;">
           <div style="display: flex; align-items: center; gap: 0.5rem;">
@@ -4186,13 +4189,91 @@
   <!-- External JS Dependencies (Moved from head for PageSpeed optimisation) -->
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="supabase.js" defer></script>
-  <script defer src="chart.js"></script>
+  <script src="supabase.js"></script>
+  <script src="chart.js"></script>
 
   <script>
     const SUPA_URL = 'https://erqoyvbuhmkyvcqgwcbz.supabase.co';
     const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVycW95dmJ1aG1reXZjcWd3Y2J6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzODk1MTIsImV4cCI6MjA5NDk2NTUxMn0.9UnIfq8xMrKANPPTtoOADKH-NJ_it9HDp7xrJL4FXtw';
-    let sb;
+
+    const CustomAuthStorage = {
+      getItem: (key) => {
+        let val = null;
+        const match = document.cookie.match(new RegExp('(?:^|; )' + key.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)'));
+        if (match) {
+          try { val = decodeURIComponent(match[1]); } catch (e) {}
+        }
+        if (!val) {
+          let chunks = [];
+          for (let i = 0; i < 10; i++) {
+            const chunkMatch = document.cookie.match(new RegExp('(?:^|; )' + key.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + '\\.' + i + '=([^;]*)'));
+            if (chunkMatch) {
+              try { chunks.push(decodeURIComponent(chunkMatch[1])); } catch (e) { break; }
+            } else {
+              break;
+            }
+          }
+          if (chunks.length > 0) val = chunks.join('');
+        }
+        if (!val) {
+          try { val = localStorage.getItem(key); } catch (e) {}
+        }
+        return val;
+      },
+      setItem: (key, value) => {
+        try { localStorage.setItem(key, value); } catch (e) {}
+        try {
+          document.cookie = `${key}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=lax`;
+          for (let i = 0; i < 10; i++) {
+            document.cookie = `${key}.${i}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=lax`;
+          }
+          const encodedValue = encodeURIComponent(value);
+          const MAX_CHUNK_SIZE = 3000;
+          if (encodedValue.length <= MAX_CHUNK_SIZE) {
+            document.cookie = `${key}=${encodedValue}; path=/; max-age=604800; secure; samesite=lax`;
+          } else {
+            let offset = 0;
+            let chunkIndex = 0;
+            while (offset < encodedValue.length) {
+              const chunk = encodedValue.substring(offset, offset + MAX_CHUNK_SIZE);
+              document.cookie = `${key}.${chunkIndex}=${chunk}; path=/; max-age=604800; secure; samesite=lax`;
+              offset += MAX_CHUNK_SIZE;
+              chunkIndex++;
+            }
+          }
+        } catch (e) {}
+      },
+      removeItem: (key) => {
+        try { localStorage.removeItem(key); } catch (e) {}
+        try {
+          document.cookie = `${key}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=lax`;
+          for (let i = 0; i < 10; i++) {
+            document.cookie = `${key}.${i}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=lax`;
+          }
+        } catch (e) {}
+      }
+    };
+
+    let sb = null;
+    function initSupabaseClient() {
+      if (sb) return sb;
+      try {
+        if (window.supabase && typeof window.supabase.createClient === 'function') {
+          sb = window.supabase.createClient(SUPA_URL, SUPA_KEY, {
+            auth: {
+              storage: CustomAuthStorage,
+              autoRefreshToken: true,
+              persistSession: true,
+              detectSessionInUrl: true
+            }
+          });
+        }
+      } catch (e) {
+        console.warn('[Admin] Supabase client init warning:', e);
+      }
+      return sb;
+    }
+    initSupabaseClient();
 
     let INR_TO_USD_RATE = parseFloat(localStorage.getItem('bd_inr_usd_rate')) || 83.5;
     const inrEl = document.getElementById('inrUsdRate');
@@ -7914,157 +7995,145 @@
 
     });
 
-    window.addEventListener('load', () => {
-      (async function init() {
-        const CustomAuthStorage = {
-          getItem: (key) => {
-            let val = null;
-            const match = document.cookie.match(new RegExp('(?:^|; )' + key.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)'));
-            if (match) {
-              try { val = decodeURIComponent(match[1]); } catch (e) {}
-            }
-            if (!val) {
-              let chunks = [];
-              for (let i = 0; i < 10; i++) {
-                const chunkMatch = document.cookie.match(new RegExp('(?:^|; )' + key.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + '\\.' + i + '=([^;]*)'));
-                if (chunkMatch) {
-                  try { chunks.push(decodeURIComponent(chunkMatch[1])); } catch (e) { break; }
-                } else {
-                  break;
-                }
-              }
-              if (chunks.length > 0) val = chunks.join('');
-            }
-            if (!val) {
-              try { val = localStorage.getItem(key); } catch (e) {}
-            }
-            return val;
-          },
-          setItem: (key, value) => {
-            try { localStorage.setItem(key, value); } catch (e) {}
-            try {
-              document.cookie = `${key}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=lax`;
-              for (let i = 0; i < 10; i++) {
-                document.cookie = `${key}.${i}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=lax`;
-              }
-              const encodedValue = encodeURIComponent(value);
-              const MAX_CHUNK_SIZE = 3000;
-              if (encodedValue.length <= MAX_CHUNK_SIZE) {
-                document.cookie = `${key}=${encodedValue}; path=/; max-age=604800; secure; samesite=lax`;
+    // ── SUPABASE REALTIME SYNCHRONIZATION ───────────
+    let _realtimeChannel = null;
+    function connectRealtimeSync() {
+      if (!sb || typeof sb.channel !== 'function') return;
+      if (_realtimeChannel) return;
+
+      try {
+        _realtimeChannel = sb.channel('admin-realtime-room')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'purchases' }, (payload) => {
+            console.log('[Realtime ⚡] Purchase event:', payload.eventType);
+            showToast(`Live Event: Purchase ${payload.eventType}`, 'info');
+            renderDashboard();
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, (payload) => {
+            console.log('[Realtime ⚡] Profiles event:', payload.eventType);
+            renderDashboard();
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'smart_campaigns' }, (payload) => {
+            console.log('[Realtime ⚡] Campaigns event:', payload.eventType);
+            try { loadCreativeAdsData(); } catch (e) {}
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'reviews' }, (payload) => {
+            console.log('[Realtime ⚡] Reviews event:', payload.eventType);
+            try { fetchAdminReviews(); } catch (e) {}
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'coupons' }, (payload) => {
+            console.log('[Realtime ⚡] Coupons event:', payload.eventType);
+            try { loadCouponsList(); } catch (e) {}
+          })
+          .subscribe((status) => {
+            console.log('[Realtime ⚡] Subscription Status:', status);
+            const ind = document.getElementById('realtimeIndicator');
+            if (ind) {
+              if (status === 'SUBSCRIBED') {
+                ind.innerHTML = `<span style="color:#10b981;font-weight:700;font-size:0.72rem;display:inline-flex;align-items:center;gap:5px;background:rgba(16,185,129,0.1);padding:3px 8px;border-radius:20px;border:1px solid rgba(16,185,129,0.3);">
+                  <span style="width:6px;height:6px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981;"></span> REALTIME LIVE
+                </span>`;
               } else {
-                let offset = 0;
-                let chunkIndex = 0;
-                while (offset < encodedValue.length) {
-                  const chunk = encodedValue.substring(offset, offset + MAX_CHUNK_SIZE);
-                  document.cookie = `${key}.${chunkIndex}=${chunk}; path=/; max-age=604800; secure; samesite=lax`;
-                  offset += MAX_CHUNK_SIZE;
-                  chunkIndex++;
-                }
-              }
-            } catch (e) {}
-          },
-          removeItem: (key) => {
-            try { localStorage.removeItem(key); } catch (e) {}
-            try {
-              document.cookie = `${key}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=lax`;
-              for (let i = 0; i < 10; i++) {
-                document.cookie = `${key}.${i}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=lax`;
-              }
-            } catch (e) {}
-          }
-        };
-        sb = supabase.createClient(SUPA_URL, SUPA_KEY, {
-          auth: {
-            storage: CustomAuthStorage,
-            autoRefreshToken: true,
-            persistSession: true,
-            detectSessionInUrl: true
-          }
-        });
-        await guardAdmin();
-        initFilterListeners();
-        setPresetDates('all_time');
-        renderDashboard();
-        try { loadCreativeAdsData(); } catch (e) {}
-        try { loadPricingData(); } catch (e) {}
-        try { loadReviewsModeration(); } catch (e) {}
-
-
-        async function updateRoleForUser() {
-          const email = document.getElementById('promoteEmailInput').value.trim();
-          const role = document.getElementById('promoteRoleSelect').value;
-
-          if (!email) {
-            showToast('Please enter a user email address', 'error');
-            return;
-          }
-
-          const btn = document.getElementById('btnPromoteUser');
-          btn.disabled = true;
-          btn.textContent = 'Updating...';
-
-          try {
-            // Find user profile by email
-            const { data: profileRow, error: findError } = await sb
-              .from('profiles')
-              .select('id, full_name')
-              .eq('email', email)
-              .single();
-
-            if (findError || !profileRow) {
-              showToast('No user profile found with that email address', 'error');
-              btn.disabled = false;
-              btn.textContent = 'Update Role';
-              return;
-            }
-
-            // Update role
-            const { error: updateError } = await sb
-              .from('profiles')
-              .update({ role })
-              .eq('id', profileRow.id);
-
-            if (updateError) {
-              showToast('Failed to update role: ' + updateError.message, 'error');
-              btn.disabled = false;
-              btn.textContent = 'Update Role';
-              return;
-            }
-
-            // If promoting to instructor or admin, ensure record exists in instructor_profiles
-            if (['instructor', 'admin'].includes(role)) {
-              const { error: instError } = await sb
-                .from('instructor_profiles')
-                .upsert({
-                  id: profileRow.id,
-                  display_name: profileRow.full_name || email.split('@')[0],
-                  specialization: 'Data Analytics',
-                  is_public: true,
-                  updated_at: new Date().toISOString()
-                }, { onConflict: 'id' });
-
-              if (instError) {
-                console.error('Failed to create instructor profile:', instError);
+                ind.innerHTML = `<span style="color:var(--ink-muted);font-size:0.72rem;background:rgba(255,255,255,0.04);padding:3px 8px;border-radius:20px;">
+                  Connecting Live...
+                </span>`;
               }
             }
+          });
+      } catch (err) {
+        console.warn('[Realtime] Subscription failed:', err);
+      }
+    }
 
-            showToast(`Successfully updated ${email} to ${role}!`, 'success');
-            document.getElementById('promoteEmailInput').value = '';
-            if (typeof fetchRoster === 'function') fetchRoster(); // Refresh user roster if it exists
+    async function updateRoleForUser() {
+      const email = document.getElementById('promoteEmailInput')?.value.trim();
+      const role = document.getElementById('promoteRoleSelect')?.value;
 
-          } catch (err) {
-            showToast('An unexpected error occurred: ' + err.message, 'error');
-          } finally {
-            btn.disabled = false;
-            btn.textContent = 'Update Role';
+      if (!email) {
+        showToast('Please enter a user email address', 'error');
+        return;
+      }
+
+      const btn = document.getElementById('btnPromoteUser');
+      if (btn) { btn.disabled = true; btn.textContent = 'Updating...'; }
+
+      try {
+        const { data: profileRow, error: findError } = await sb
+          .from('profiles')
+          .select('id, full_name')
+          .eq('email', email)
+          .single();
+
+        if (findError || !profileRow) {
+          showToast('No user profile found with that email address', 'error');
+          if (btn) { btn.disabled = false; btn.textContent = 'Update Role'; }
+          return;
+        }
+
+        const { error: updateError } = await sb
+          .from('profiles')
+          .update({ role })
+          .eq('id', profileRow.id);
+
+        if (updateError) {
+          showToast('Failed to update role: ' + updateError.message, 'error');
+          if (btn) { btn.disabled = false; btn.textContent = 'Update Role'; }
+          return;
+        }
+
+        if (['instructor', 'admin'].includes(role)) {
+          const { error: instError } = await sb
+            .from('instructor_profiles')
+            .upsert({
+              id: profileRow.id,
+              display_name: profileRow.full_name || email.split('@')[0],
+              specialization: 'Data Analytics',
+              is_public: true,
+              updated_at: new Date().toISOString()
+            }, { onConflict: 'id' });
+
+          if (instError) {
+            console.error('Failed to create instructor profile:', instError);
           }
         }
 
-        document.getElementById('btnPromoteUser')?.addEventListener('click', updateRoleForUser);
+        showToast(`Successfully updated ${email} to ${role}!`, 'success');
+        const inp = document.getElementById('promoteEmailInput');
+        if (inp) inp.value = '';
+        renderDashboard();
 
-        loadPricingData();
-      })();
-    });
+      } catch (err) {
+        showToast('An unexpected error occurred: ' + err.message, 'error');
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = 'Update Role'; }
+      }
+    }
+    document.getElementById('btnPromoteUser')?.addEventListener('click', updateRoleForUser);
+
+    // ── INSTANT INTELLIGENCE SUITE BOOTSTRAP ─────────
+    let _hasBooted = false;
+    async function bootIntelligenceSuite() {
+      if (_hasBooted) return;
+      _hasBooted = true;
+
+      initSupabaseClient();
+      initFilterListeners();
+      setPresetDates('all_time');
+      renderDashboard();
+
+      // Background parallel tasks (non-blocking)
+      guardAdmin().catch(console.warn);
+      try { loadCreativeAdsData(); } catch (e) {}
+      try { loadPricingData(); } catch (e) {}
+      try { loadReviewsModeration(); } catch (e) {}
+      connectRealtimeSync();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', bootIntelligenceSuite);
+    } else {
+      bootIntelligenceSuite();
+    }
+    window.addEventListener('load', bootIntelligenceSuite);
   </script>
   <!-- ADMIN CERTIFICATE PREVIEW MODAL -->
   <div id="certificate-modal" class="modal-backdrop hidden cert-modal-backdrop">

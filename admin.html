@@ -7041,36 +7041,26 @@
         console.warn('[Ad Storage] Local save notice:', e);
       }
 
-      // 3. Save Campaign Record & Budget to ad_campaigns table with progressive schema fallback
+      // 3. Save Campaign Record & Budget to ad_campaigns table
       try {
-        let { error } = await sb.from('ad_campaigns').upsert([{
-          campaign_id: campaignId,
+        const payload = {
           campaign_name: campaign,
           platform: platform,
           target_url: finalUrl,
           ad_spend_inr: inr,
           ad_spend_usd: usd,
-          coupon_attached: coupon,
-          creative_id: creativeId,
-          start_date: new Date().toISOString(),
+          coupon_attached: coupon || null,
+          creative_id: creativeId || null,
           spend_source: 'manual',
           last_synced_at: new Date().toISOString()
-        }], { onConflict: 'campaign_name' });
+        };
 
+        let { error } = await sb.from('ad_campaigns').upsert([payload], { onConflict: 'campaign_name' });
         if (error) {
-          console.warn('[Ad Campaign] Full schema upsert failed, trying standard schema fallback:', error.message);
-          const stdObj = {
-            campaign_name: campaign,
-            platform: platform,
-            ad_spend_inr: inr,
-            ad_spend_usd: usd,
-            spend_source: 'manual',
-            last_synced_at: new Date().toISOString()
-          };
-          const stdRes = await sb.from('ad_campaigns').upsert([stdObj], { onConflict: 'campaign_name' });
-          if (stdRes.error) {
-            console.warn('[Ad Campaign] Standard schema upsert failed, trying plain insert:', stdRes.error.message);
-            await sb.from('ad_campaigns').insert([stdObj]).catch(err => console.warn('[Ad Campaign] Plain insert notice:', err.message));
+          console.warn('[Ad Campaign] Upsert notice, attempting direct update/insert:', error.message);
+          const { error: updateErr } = await sb.from('ad_campaigns').update(payload).eq('campaign_name', campaign);
+          if (updateErr) {
+            await sb.from('ad_campaigns').insert([payload]).catch(err => console.warn('[Ad Campaign] Insert error:', err));
           }
         }
 

@@ -2,8 +2,45 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  /* ═══ REFERRAL LINK CAPTURE ═══ */
+  /* ═══ CAMPAIGN & AD ATTRIBUTION CAPTURE ═══ */
   const urlParams = new URLSearchParams(window.location.search);
+  const utmCamp = urlParams.get('utm_campaign') || urlParams.get('campaign');
+  const utmSource = urlParams.get('utm_source') || 'direct';
+
+  if (utmCamp) {
+    const cleanCamp = utmCamp.toLowerCase().trim();
+    const existingFirst = localStorage.getItem('manodemy_first_campaign');
+    if (!existingFirst) {
+      localStorage.setItem('manodemy_first_campaign', cleanCamp);
+      document.cookie = `manodemy_first_campaign=${cleanCamp}; path=/; max-age=2592000; SameSite=Lax`;
+    }
+    localStorage.setItem('manodemy_last_campaign', cleanCamp);
+    document.cookie = `manodemy_last_campaign=${cleanCamp}; path=/; max-age=2592000; SameSite=Lax`;
+  }
+
+  let visitorId = localStorage.getItem('manodemy_visitor_id');
+  if (!visitorId) {
+    const cookieMatch = document.cookie.match(/(?:^|; )manodemy_visitor_id=([^;]*)/);
+    if (cookieMatch) visitorId = decodeURIComponent(cookieMatch[1]);
+  }
+  if (!visitorId) {
+    visitorId = 'vis_' + Math.random().toString(36).substring(2, 11) + Date.now().toString(36);
+    localStorage.setItem('manodemy_visitor_id', visitorId);
+  }
+  document.cookie = `manodemy_visitor_id=${visitorId}; path=/; max-age=2592000; SameSite=Lax`;
+
+  window.getAttributionPayload = function() {
+    const lastCamp = localStorage.getItem('manodemy_last_campaign') || (document.cookie.match(/(?:^|; )manodemy_last_campaign=([^;]*)/)?.[1]);
+    const firstCamp = localStorage.getItem('manodemy_first_campaign') || (document.cookie.match(/(?:^|; )manodemy_first_campaign=([^;]*)/)?.[1]);
+    return {
+      campaign_name: lastCamp || 'organic_untracked',
+      first_touch_campaign: firstCamp || lastCamp || 'organic_untracked',
+      last_touch_campaign: lastCamp || 'organic_untracked',
+      visitor_id: visitorId || undefined
+    };
+  };
+
+  /* ═══ REFERRAL LINK CAPTURE ═══ */
   const refParam = urlParams.get('ref');
   
   if (refParam && refParam.trim().length === 8) {
@@ -1042,7 +1079,8 @@ document.addEventListener('DOMContentLoaded', () => {
           coupon_code: appliedCouponCode || coupon || undefined,
           final_amount: appliedCouponAmount || undefined,
           referral_code: localStorage.getItem('manodemy_ref') || undefined,
-          attribution: getAttributionPayload() || undefined
+          campaign_name: localStorage.getItem('manodemy_last_campaign') || 'organic_untracked',
+          attribution: (typeof getAttributionPayload === 'function' ? getAttributionPayload() : undefined)
         })
       });
 

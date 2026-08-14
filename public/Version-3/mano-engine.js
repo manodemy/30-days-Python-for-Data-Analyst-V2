@@ -90,23 +90,40 @@ function showGuestPaywallModal(featureTitle = 'this feature') {
   }
 }
 
-// ─── Real-Time Ad Intelligence Telemetry ───
-(function trackReelAdTelemetry() {
-  const day = URL_PARAMS.get('day');
-  const q = URL_PARAMS.get('q') || URL_PARAMS.get('question');
-  const utmCamp = URL_PARAMS.get('utm_campaign');
-  const utmSource = URL_PARAMS.get('utm_source') || 'instagram';
+// ─── Real-Time Ad Intelligence & Attribution Engine ───
+// Attribution Precedence: First-touch for signup, Last-touch for session & checkout revenue
+(function initAdCampaignAttribution() {
+  const utmCamp = URL_PARAMS.get('utm_campaign') || URL_PARAMS.get('campaign') || URL_PARAMS.get('ref');
+  const utmSource = URL_PARAMS.get('utm_source') || 'direct';
+  const utmMedium = URL_PARAMS.get('utm_medium') || 'web';
 
-  if (!day || !q) return;
+  // §3.2 Fallback: If utm_campaign is absent, attribute to organic_untracked (NO client-side synthesis)
+  const campaignName = utmCamp ? utmCamp.toLowerCase().trim() : 'organic_untracked';
 
-  const campaignName = (utmCamp || `sql_day${String(day).padStart(2,'0')}_q${q}`).toLowerCase().trim();
+  // Persistent visitor_id with cookie + localStorage backing
   let visitorId = localStorage.getItem('manodemy_visitor_id');
+  if (!visitorId) {
+    const cookieMatch = document.cookie.match(/(?:^|; )manodemy_visitor_id=([^;]*)/);
+    if (cookieMatch) visitorId = decodeURIComponent(cookieMatch[1]);
+  }
   if (!visitorId) {
     visitorId = 'vis_' + Math.random().toString(36).substring(2, 11) + Date.now().toString(36);
     localStorage.setItem('manodemy_visitor_id', visitorId);
   }
+  document.cookie = `manodemy_visitor_id=${visitorId}; path=/; max-age=2592000; SameSite=Lax`;
 
-  // 1. Local telemetry storage for zero-latency admin dashboard aggregation
+  // §3.1 Attribution: First-Touch (set once) vs Last-Touch (updated on new session)
+  const existingFirst = localStorage.getItem('manodemy_first_campaign');
+  if (!existingFirst && campaignName !== 'organic_untracked') {
+    localStorage.setItem('manodemy_first_campaign', campaignName);
+    document.cookie = `manodemy_first_campaign=${campaignName}; path=/; max-age=2592000; SameSite=Lax`;
+  }
+  if (campaignName !== 'organic_untracked') {
+    localStorage.setItem('manodemy_last_campaign', campaignName);
+    document.cookie = `manodemy_last_campaign=${campaignName}; path=/; max-age=2592000; SameSite=Lax`;
+  }
+
+  // 1. Client-side local cache for instant admin dashboard offline aggregation
   try {
     const localClicks = JSON.parse(localStorage.getItem('manodemy_local_campaign_clicks') || '[]');
     localClicks.push({
@@ -118,7 +135,7 @@ function showGuestPaywallModal(featureTitle = 'this feature') {
     localStorage.setItem('manodemy_local_campaign_clicks', JSON.stringify(localClicks.slice(-200)));
   } catch (e) {}
 
-  // 2. Transmit to Supabase RPC & Ad Campaigns table
+  // 2. Transmit to Supabase via debounced SECURITY DEFINER RPC (track_campaign_click)
   const SUPA_URL = 'https://erqoyvbuhmkyvcqgwcbz.supabase.co';
   const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVycW95dmJ1aG1reXZjcWd3Y2J6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzODk1MTIsImV4cCI6MjA5NDk2NTUxMn0.9UnIfq8xMrKANPPTtoOADKH-NJ_it9HDp7xrJL4FXtw';
 
@@ -128,19 +145,15 @@ function showGuestPaywallModal(featureTitle = 'this feature') {
       sb.rpc('track_campaign_click', {
         p_campaign: campaignName,
         p_visitor_id: visitorId,
-        p_source: utmSource
+        p_source: utmSource,
+        p_user_agent: navigator.userAgent || ''
       }).then(() => {
-        console.log('[Ad Intelligence] Captured reel click:', campaignName);
-      }).catch(() => {});
-
-      sb.from('ad_campaigns').upsert({
-        campaign_name: campaignName,
-        platform: 'Meta',
-        start_date: new Date().toISOString(),
-        target_url: window.location.href
-      }, { onConflict: 'campaign_name' }).then(() => {});
+        console.log('[Attribution] Stamped debounced campaign click:', campaignName);
+      }).catch((err) => {
+        console.warn('[Attribution] RPC notice:', err);
+      });
     } catch (err) {
-      console.warn('[Ad Intelligence] Notice:', err);
+      console.warn('[Attribution] Init notice:', err);
     }
   }
 })();

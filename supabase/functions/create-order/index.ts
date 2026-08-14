@@ -33,8 +33,14 @@ serve(async (req) => {
     )
     if (authError || !user) throw new Error('Unauthorized')
 
-    const { gateway, currency, coupon_code, final_amount, referral_code, batch_id, course_id } = await req.json()
+    const { gateway, currency, coupon_code, final_amount, referral_code, batch_id, course_id, campaign_name, attribution } = await req.json()
     const targetCourseId = course_id || 'bundle-data-analytics'
+
+    // §3.1 & §3.2 Attribution Precedence: Freeze last-touch campaign onto order (fallback: organic_untracked)
+    let resolvedCampaign = (campaign_name || attribution?.last_touch_campaign || attribution?.campaign_name || '').toString().trim().toLowerCase()
+    if (!resolvedCampaign || resolvedCampaign === 'null' || resolvedCampaign === 'undefined') {
+      resolvedCampaign = 'organic_untracked'
+    }
 
     // ── Batch Validation ──
     if (batch_id) {
@@ -191,7 +197,8 @@ serve(async (req) => {
         coupon_code: coupon_code ? coupon_code.toUpperCase() : null,  // ← save applied coupon code
         coupon_discount_inr,                                            // ← save discount amount in INR
         referral_code: validatedReferralCode,                            // ← save referral code for commission
-        batch_id: batch_id || null                                      // ← save selected batch ID
+        batch_id: batch_id || null,                                      // ← save selected batch ID
+        campaign_name: resolvedCampaign                                  // ← freeze last-touch attribution snapshot
       })
       .select()
       .single()

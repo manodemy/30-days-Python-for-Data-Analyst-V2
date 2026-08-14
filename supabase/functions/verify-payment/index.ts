@@ -233,6 +233,54 @@ async function processReferralCommission(supabase: any, order: any, buyerUserId:
   }
 }
 
+// ─────────────────────────────────────────────────────────────
+// Attributed Purchase Recording (§3.1, §3.4, §3.6)
+// Records to purchases table with idempotency on payment_id
+// Normalizes revenue to net_revenue_inr at write time (FX rate 83.5 for USD)
+// ─────────────────────────────────────────────────────────────
+async function recordAttributedPurchase(supabase: any, order: any, payment: any, user: any) {
+  try {
+    const paymentId = payment.gateway_payment_id || payment.id;
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('first_touch_campaign, last_touch_campaign')
+      .eq('id', user.id)
+      .single();
+
+    const firstTouch = profile?.first_touch_campaign || order.campaign_name || 'organic_untracked';
+    const lastTouch = order.campaign_name || profile?.last_touch_campaign || 'organic_untracked';
+
+    const grossAmount = order.amount ? (order.amount / 100) : 0;
+    const isUSD = order.currency === 'USD';
+    const netRevenueInr = isUSD ? Math.round(grossAmount * 83.5) : grossAmount;
+
+    await supabase
+      .from('purchases')
+      .upsert({
+        user_id: user.id,
+        email: user.email || null,
+        order_id: order.id,
+        payment_id: paymentId,
+        course_id: order.course_id,
+        amount: order.amount,
+        amount_gross: grossAmount,
+        currency: order.currency || 'INR',
+        amount_inr: isUSD ? netRevenueInr : grossAmount,
+        amount_usd: isUSD ? grossAmount : Math.round(grossAmount / 83.5),
+        net_revenue_inr: netRevenueInr,
+        coupon_code: order.coupon_code || null,
+        coupon_discount_inr: order.coupon_discount_inr || 0,
+        first_touch_campaign: firstTouch,
+        last_touch_campaign: lastTouch,
+        status: 'completed',
+        created_at: new Date().toISOString()
+      }, { onConflict: 'payment_id' });
+    console.log(`[Attribution] Recorded purchase for ${user.id} -> Campaign: ${lastTouch}, Net INR: ${netRevenueInr}`);
+  } catch (err) {
+    console.error('[verify-payment] Attributed purchase recording error:', err);
+  }
+}
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -361,6 +409,9 @@ serve(async (req) => {
         batch_id: order.batch_id || null
       }, { onConflict: 'user_id,course_id' })
 
+      // ── Attribution Recording (§3.1, §3.4, §3.6) ──
+      await recordAttributedPurchase(supabase, order, payment, user)
+
       // ── Referral Commission (idempotent — UNIQUE on order_id prevents double) ──
       await processReferralCommission(supabase, order, user.id)
 
@@ -429,6 +480,9 @@ serve(async (req) => {
         enrolled_at: new Date().toISOString(),
         batch_id: order.batch_id || null
       }, { onConflict: 'user_id,course_id' })
+
+      // ── Attribution Recording (§3.1, §3.4, §3.6) ──
+      await recordAttributedPurchase(supabase, order, payment, user)
 
       // ── Referral Commission ──
       await processReferralCommission(supabase, order, user.id)

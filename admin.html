@@ -3615,7 +3615,10 @@
           <div class="table-panel" style="background:linear-gradient(135deg, rgba(18,24,38,0.75) 0%, rgba(11,15,25,0.85) 100%); border:1px solid rgba(255,255,255,0.08); border-radius:18px; backdrop-filter:blur(16px); box-shadow:0 12px 32px rgba(0,0,0,0.4); overflow:hidden;">
             <div class="table-panel-header" style="display:flex; align-items:center; justify-content:space-between; padding:1.25rem 1.5rem; border-bottom:1px solid rgba(255,255,255,0.06);">
               <span class="table-panel-title" style="font-family:var(--font-display); font-size:1.05rem; font-weight:800; color:#FFFFFF;">Creative Ads &amp; Channel Conversion Leaderboard</span>
-              <span class="badge badge-gold" id="adCampaignCountBadge" style="font-size:0.75rem; font-weight:700; padding:4px 12px; border-radius:8px;">0 Campaigns</span>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <button type="button" id="btnToggleArchived" onclick="toggleArchivedCampaigns()" style="padding:4px 10px; font-size:0.72rem; font-weight:700; border-radius:6px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); color:var(--ink-dim); cursor:pointer; transition:all 0.2s ease;">👁️ Show Archived</button>
+                <span class="badge badge-gold" id="adCampaignCountBadge" style="font-size:0.75rem; font-weight:700; padding:4px 12px; border-radius:8px;">0 Campaigns</span>
+              </div>
             </div>
             <div class="table-wrap">
               <table id="adPerformanceTable">
@@ -6286,18 +6289,24 @@
           console.warn('[Ad Storage] Local click aggregation notice:', e);
         }
 
-        if (badge) badge.textContent = `${list.length} Campaigns${isFallbackMode ? ' (Direct)' : ''}`;
+        // Filter out hidden/archived campaigns unless user clicked "Show Archived"
+        const hiddenCamps = JSON.parse(localStorage.getItem('manodemy_hidden_campaigns') || '[]');
+        if (!_showArchivedCampaigns) {
+          list = list.filter(item => !hiddenCamps.includes((item.campaign_name || '').toLowerCase().trim()));
+        }
+
+        if (badge) badge.textContent = `${list.length} Campaigns${isFallbackMode ? ' (Direct)' : ''}${_showArchivedCampaigns ? ' (All)' : ''}`;
 
         let totalSales = 0;
         let totalNetRevenue = 0;
         let totalAdSpend = 0;
 
         if (!list.length) {
-          tbody.innerHTML = '<tr><td colspan="13" style="text-align:center; color:var(--ink-muted); padding:2rem;">No attributed campaigns found. Create a campaign above to launch tracking live!</td></tr>';
-          document.getElementById('kpiAdSales').textContent = '0';
-          document.getElementById('kpiAdNetRevenue').textContent = '₹0';
-          document.getElementById('kpiAdSpend').textContent = '₹0';
-          document.getElementById('kpiAdNetROAS').textContent = '0.0x';
+          tbody.innerHTML = '<tr><td colspan="14" style="text-align:center; color:var(--ink-muted); padding:2rem;">No campaigns to display. Create a campaign above or click "Show Archived" to view hidden rows.</td></tr>';
+          const k1 = document.getElementById('kpiAdSales'); if (k1) k1.textContent = '0';
+          const k2 = document.getElementById('kpiAdNetRevenue'); if (k2) k2.textContent = '₹0';
+          const k3 = document.getElementById('kpiAdSpend'); if (k3) k3.textContent = '₹0';
+          const k4 = document.getElementById('kpiAdNetROAS'); if (k4) k4.textContent = '0.0x';
           return;
         }
 
@@ -6315,6 +6324,7 @@
           const netRev = Number(item.net_revenue_inr || 0);
           const spend = Number(item.reconciled_ad_spend_inr || 0);
           const netRoas = Number(item.net_roas || (spend > 0 ? netRev / spend : 0));
+          const isHidden = hiddenCamps.includes((item.campaign_name || '').toLowerCase().trim());
 
           totalSales += sales;
           totalNetRevenue += netRev;
@@ -6340,10 +6350,10 @@
           }
 
           return `
-            <tr>
+            <tr style="${isHidden ? 'opacity: 0.6; background: rgba(255,255,255,0.02);' : ''}">
               <td class="cell-mono"><span class="badge badge-sapphire" style="font-size:0.75rem; font-weight:800; letter-spacing:0.04em;">${cId}</span></td>
               <td><span class="badge" style="font-size:0.75rem; font-weight:800; padding:4px 10px; border-radius:8px; ${roasBadgeStyle}">${roasLabel}</span></td>
-              <td style="font-weight:700; color:var(--gold);">${cName}</td>
+              <td style="font-weight:700; color:var(--gold);">${cName} ${isHidden ? '<span class="badge badge-neutral" style="font-size:0.6rem; padding:1px 5px; margin-left:4px;">Archived</span>' : ''}</td>
               <td><span class="badge badge-neutral" style="text-transform:capitalize;">${platform}</span></td>
               <td style="font-size:0.78rem; color:var(--ink-dim);">${startDateStr}</td>
               <td>
@@ -6363,21 +6373,28 @@
               </td>
               <td style="white-space:nowrap;">
                 <button class="apply-btn" style="padding:4px 8px; font-size:0.75rem; border-radius:6px; background:rgba(59,130,246,0.15); border:1px solid rgba(59,130,246,0.35); color:#60A5FA; font-weight:700; cursor:pointer; margin-right:4px;" onclick="openEditCampaignModal('${cId}', '${escapeHtml(cName)}', '${escapeHtml(platform)}', '${escapeHtml(targetUrl)}', ${spend}, '${item.start_date || ''}')">✏️ Edit</button>
-                <button class="apply-btn" style="padding:4px 8px; font-size:0.75rem; border-radius:6px; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.35); color:#F87171; font-weight:700; cursor:pointer;" onclick="deleteCampaignRecord('${cId}', '${escapeHtml(cName)}')">🗑️ Delete</button>
+                ${isHidden 
+                  ? `<button class="apply-btn" style="padding:4px 8px; font-size:0.75rem; border-radius:6px; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.35); color:var(--emerald); font-weight:700; cursor:pointer;" onclick="restoreCampaignRecord('${escapeHtml(cName)}')">♻️ Restore</button>`
+                  : `<button class="apply-btn" style="padding:4px 8px; font-size:0.75rem; border-radius:6px; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.35); color:#F87171; font-weight:700; cursor:pointer;" onclick="deleteCampaignRecord('${cId}', '${escapeHtml(cName)}')">🗑️ Delete</button>`
+                }
               </td>
             </tr>
           `;
         }).join('');
 
-        document.getElementById('kpiAdSales').textContent = totalSales.toLocaleString('en-IN');
-        document.getElementById('kpiAdNetRevenue').textContent = `₹${totalNetRevenue.toLocaleString('en-IN')}`;
-        document.getElementById('kpiAdSpend').textContent = `₹${totalAdSpend.toLocaleString('en-IN')}`;
+        const elSales = document.getElementById('kpiAdSales');
+        if (elSales) elSales.textContent = totalSales.toLocaleString('en-IN');
+        const elNetRev = document.getElementById('kpiAdNetRevenue');
+        if (elNetRev) elNetRev.textContent = `₹${totalNetRevenue.toLocaleString('en-IN')}`;
+        const elSpend = document.getElementById('kpiAdSpend');
+        if (elSpend) elSpend.textContent = `₹${totalAdSpend.toLocaleString('en-IN')}`;
         const blendedROAS = totalAdSpend > 0 ? (totalNetRevenue / totalAdSpend).toFixed(2) : '0.0';
-        document.getElementById('kpiAdNetROAS').textContent = `${blendedROAS}x`;
+        const elRoas = document.getElementById('kpiAdNetROAS');
+        if (elRoas) elRoas.textContent = `${blendedROAS}x`;
 
       } catch (err) {
         console.warn('[Ad Intelligence] Performance load error:', err);
-        tbody.innerHTML = '<tr><td colspan="14" style="text-align:center; color:var(--rose); padding:2rem;">Failed to load attribution performance. Ensure migration 048 is applied.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="14" style="text-align:center; color:var(--rose); padding:2rem;">Notice loading attribution performance: ' + escapeHtml(err.message || 'Unknown error') + '</td></tr>';
       }
     }
 
@@ -6499,30 +6516,49 @@
       }
     };
 
-    window.deleteCampaignRecord = async function(id, name) {
-      if (!confirm(`Are you sure you want to delete campaign "${name}" (${id})?\n\nThis will remove the campaign record from Supabase database.`)) {
+    let _showArchivedCampaigns = false;
+
+    window.toggleArchivedCampaigns = function() {
+      _showArchivedCampaigns = !_showArchivedCampaigns;
+      const btn = document.getElementById('btnToggleArchived');
+      if (btn) {
+        btn.innerHTML = _showArchivedCampaigns ? '👁️ Viewing All (Click to Hide Archived)' : '👁️ Show Archived';
+        btn.style.background = _showArchivedCampaigns ? 'rgba(245,158,11,0.2)' : 'rgba(255,255,255,0.06)';
+        btn.style.color = _showArchivedCampaigns ? 'var(--gold)' : 'var(--ink-dim)';
+      }
+      loadCreativeAdsData();
+    };
+
+    window.deleteCampaignRecord = function(id, name) {
+      if (!confirm(`Hide campaign "${name}" (${id}) from the active leaderboard view?\n\n(Note: Historical data and analytics remain safely preserved in the database and can be viewed anytime via "Show Archived").`)) {
         return;
       }
 
       try {
-        // 1. Delete from Supabase ad_campaigns
-        let { error } = await sb.from('ad_campaigns').delete().eq('campaign_name', name);
-        if (error) {
-          const res2 = await sb.from('ad_campaigns').delete().eq('campaign_id', id);
-          if (res2.error) throw res2.error;
+        const hidden = JSON.parse(localStorage.getItem('manodemy_hidden_campaigns') || '[]');
+        const clean = (name || '').toLowerCase().trim();
+        if (!hidden.includes(clean)) {
+          hidden.push(clean);
+          localStorage.setItem('manodemy_hidden_campaigns', JSON.stringify(hidden));
         }
 
-        // 2. Delete from local cache
-        try {
-          const localCamps = JSON.parse(localStorage.getItem('manodemy_local_ad_campaigns') || '[]');
-          const filtered = localCamps.filter(c => (c.campaign_name || '').toLowerCase() !== name.toLowerCase() && c.campaign_id !== id);
-          localStorage.setItem('manodemy_local_ad_campaigns', JSON.stringify(filtered));
-        } catch (e) {}
-
-        showToast(`🗑️ Campaign "${name}" deleted from database!`, 'success');
+        showToast(`👁️ Campaign "${name}" hidden from active view (preserved in database)!`, 'success');
         loadCreativeAdsData();
       } catch (err) {
-        showToast('❌ Error deleting campaign: ' + err.message, 'error');
+        showToast('❌ Error: ' + err.message, 'error');
+      }
+    };
+
+    window.restoreCampaignRecord = function(name) {
+      try {
+        const hidden = JSON.parse(localStorage.getItem('manodemy_hidden_campaigns') || '[]');
+        const clean = (name || '').toLowerCase().trim();
+        const filtered = hidden.filter(h => h !== clean);
+        localStorage.setItem('manodemy_hidden_campaigns', JSON.stringify(filtered));
+        showToast(`✅ Campaign "${name}" restored to active leaderboard!`, 'success');
+        loadCreativeAdsData();
+      } catch (err) {
+        showToast('❌ Error restoring: ' + err.message, 'error');
       }
     };
 

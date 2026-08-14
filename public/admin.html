@@ -6562,6 +6562,9 @@
           console.warn('[Ad Storage] Local merge notice:', e);
         }
 
+        // Sort by start_date DESC (newest campaigns first so created campaigns always show at the top)
+        list.sort((a, b) => new Date(b.start_date || b.created_at || 0) - new Date(a.start_date || a.created_at || 0));
+
         // Filter out hidden/archived campaigns unless user clicked "Show Archived"
         const hiddenCamps = JSON.parse(localStorage.getItem('manodemy_hidden_campaigns') || '[]');
         if (!_showArchivedCampaigns) {

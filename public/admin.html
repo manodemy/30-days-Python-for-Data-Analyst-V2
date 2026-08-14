@@ -6244,9 +6244,6 @@
               net_roas: netRoas
             };
           });
-        } else {
-          list = res.data || [];
-        }
 
         // Seamlessly merge locally stored campaigns if not yet returned by DB query
         try {
@@ -7047,6 +7044,9 @@
     document.querySelectorAll('.nav-item').forEach(item => {
       item.addEventListener('click', () => {
         const tabId = item.dataset.tab;
+        if (!tabId) return;
+        const targetPane = document.getElementById(tabId);
+        if (!targetPane) return;
         
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         document.querySelectorAll('.tab-pane').forEach(t => t.classList.remove('active'));
@@ -7054,7 +7054,7 @@
         // Activate all nav-items matching this tab (syncing bottom tabs & sidebar)
         document.querySelectorAll(`.nav-item[data-tab="${tabId}"]`).forEach(n => n.classList.add('active'));
         
-        document.getElementById(tabId).classList.add('active');
+        targetPane.classList.add('active');
         
         // Hide global filter bar on Pricing, Engagement, and Reviews pages
         const filterBar = document.querySelector('.top-filter-bar');

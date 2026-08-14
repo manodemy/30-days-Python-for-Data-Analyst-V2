@@ -57,10 +57,48 @@ export async function middleware(request: NextRequest) {
   }
 
   // Dynamic /go/[campaign_slug] or /r/[campaign_slug]
-  const goMatch = path.match(/^\/(?:go|r)\/([a-zA-Z0-9_-]+)$/);
+  const goMatch = path.match(/^\/(?:go|r)\/([a-zA-Z0-9_.-]+)$/);
   if (goMatch) {
-    const slug = goMatch[1];
-    const dest = new URL('/', request.url);
+    const slug = goMatch[1].toLowerCase();
+
+    // 1. Check if campaign has a custom target_url saved in Supabase ad_campaigns
+    try {
+      const supabase = createServerClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        cookies: {
+          getAll: () => request.cookies.getAll(),
+          setAll: () => {},
+        }
+      });
+      const { data: camp } = await supabase
+        .from('ad_campaigns')
+        .select('target_url, platform')
+        .ilike('campaign_name', slug)
+        .maybeSingle();
+
+      if (camp && camp.target_url) {
+        const rawDest = camp.target_url.trim();
+        let targetFullUrl: string;
+        if (rawDest.startsWith('http://') || rawDest.startsWith('https://')) {
+          targetFullUrl = rawDest;
+        } else if (rawDest.startsWith('/')) {
+          targetFullUrl = `https://www.manodemy.com${rawDest}`;
+        } else {
+          targetFullUrl = `https://www.manodemy.com/${rawDest}`;
+        }
+
+        const dest = new URL(targetFullUrl);
+        // Forward any extra query parameters from the request URL
+        url.searchParams.forEach((val, key) => {
+          if (!dest.searchParams.has(key)) dest.searchParams.set(key, val);
+        });
+        return NextResponse.redirect(dest, { status: 302 });
+      }
+    } catch (e) {
+      console.warn('[Middleware] Dynamic campaign lookup notice:', e);
+    }
+
+    // 2. Default fallback to main landing page with campaign tag
+    const dest = new URL('/landing_v2/index.html', request.url);
     dest.searchParams.set('utm_source', 'meta');
     dest.searchParams.set('utm_medium', 'reels');
     dest.searchParams.set('utm_campaign', slug);

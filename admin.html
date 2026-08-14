@@ -4654,13 +4654,16 @@
       const mEl = metaId ? document.getElementById(metaId) : null;
       if (!vEl) return;
 
-      vEl.innerHTML = `<span>${formatter(current)}</span>`;
+      const val = (current !== null && current !== undefined) ? current : 0;
+      const formattedCurrent = typeof formatter === 'function' ? formatter(val) : String(val);
+      vEl.innerHTML = `<span>${formattedCurrent}</span>`;
 
       if (mEl) {
         const f = getFilter();
-        if (f.comparePrevious && previous !== null && previous !== undefined) {
-          const d = delta(current, previous);
-          mEl.innerHTML = `<span class="delta delta-${d.direction}">${d.label}</span><span class="kpi-prev">vs ${formatter(previous)}</span>`;
+        if (f && f.comparePrevious && previous !== null && previous !== undefined) {
+          const d = delta(val, previous);
+          const formattedPrev = typeof formatter === 'function' ? formatter(previous) : String(previous);
+          mEl.innerHTML = `<span class="delta delta-${d.direction}">${d.label}</span><span class="kpi-prev">vs ${formattedPrev}</span>`;
         } else {
           mEl.innerHTML = '';
         }
@@ -4669,7 +4672,10 @@
 
     // ── CHART HELPERS ────────────────────────────────
     function destroyChart(id) {
-      if (charts[id]) { charts[id].destroy(); delete charts[id]; }
+      if (charts[id]) { 
+        try { charts[id].destroy(); } catch (e) {}
+        delete charts[id]; 
+      }
     }
 
     const CHART_DEFAULTS = {
@@ -4699,12 +4705,21 @@
     };
 
     function createChart(id, type, data, extraOptions = {}) {
+      const el = document.getElementById(id);
+      if (!el || typeof el.getContext !== 'function') return;
+      if (typeof Chart === 'undefined') {
+        console.warn('[Admin] Chart.js not loaded yet for:', id);
+        return;
+      }
       destroyChart(id);
-      const ctx = document.getElementById(id).getContext('2d');
-      const options = JSON.parse(JSON.stringify(CHART_DEFAULTS));
-      // Deep merge extraOptions
-      const merged = deepMerge(options, extraOptions);
-      charts[id] = new Chart(ctx, { type, data, options: merged });
+      try {
+        const ctx = el.getContext('2d');
+        const options = JSON.parse(JSON.stringify(CHART_DEFAULTS));
+        const merged = deepMerge(options, extraOptions);
+        charts[id] = new Chart(ctx, { type, data, options: merged });
+      } catch (e) {
+        console.warn('[Admin] Error creating chart ' + id + ':', e);
+      }
     }
 
     function deepMerge(target, source) {
@@ -4723,7 +4738,9 @@
     async function safeCallRpc(rpcName, params = {}, fallbackValue = null) {
       if (!sb) return { data: fallbackValue, error: null };
       try {
-        const res = await sb.rpc(rpcName, params);
+        const rpcPromise = sb.rpc(rpcName, params);
+        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('RPC Timeout: ' + rpcName)), 6000));
+        const res = await Promise.race([rpcPromise, timeoutPromise]);
         if (res.error) {
           console.warn(`[Admin Intelligence] RPC ${rpcName} notice:`, res.error);
           return { data: fallbackValue, error: res.error };
@@ -5052,8 +5069,8 @@
     // ── TRANSACTION TABLE ────────────────────────────
     function renderTxTable(txs) {
       const tbody = document.querySelector('#transactionsTable tbody');
-      // HIGH-4 FIX: Cache full dataset so the CSV export button can access all rows (not just current page)
       window._lastTxData = txs || [];
+      if (!tbody) return;
       if (!txs || txs.length === 0) {
         tbody.innerHTML = '<tr><td colspan="13" style="text-align:center;color:var(--ink-muted);padding:2rem;">No transactions in this period</td></tr>';
         return;
@@ -5089,7 +5106,8 @@
       }).join('');
 
       const total = Math.ceil(txs.length / TX_PER_PAGE) || 1;
-      document.getElementById('txPageInfo').textContent = `Page ${currentTxPage} of ${total}`;
+      const txInfo = document.getElementById('txPageInfo');
+      if (txInfo) txInfo.textContent = `Page ${currentTxPage} of ${total}`;
     }
 
     function openRefundModal(id) {

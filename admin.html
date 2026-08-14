@@ -6121,30 +6121,21 @@
 
       try {
         let list = [];
-        let isFallbackMode = false;
-
-        let res = await sb.rpc('get_ad_intelligence_v2', { start_ts: from, end_ts: to });
-        if (res.error) {
-          res = await sb.rpc('get_creative_ads_performance', { start_ts: from, end_ts: to, attribution_mode: currentAttributionMode });
-        }
+        let isFallbackMode = true;
 
         loadAdDataQualityAlerts();
 
-        if (res.error) {
-          console.warn('[Ad Intelligence] RPC unavailable, using client-side fallback query:', res.error);
-          isFallbackMode = true;
+        const [purchasesRes, campaignsRes, clicksRes, profilesRes] = await Promise.all([
+          sb.from('purchases').select('*'),
+          sb.from('ad_campaigns').select('*'),
+          sb.from('campaign_clicks').select('*'),
+          sb.from('profiles').select('*')
+        ]);
 
-          const [purchasesRes, campaignsRes, clicksRes, profilesRes] = await Promise.all([
-            sb.from('purchases').select('*'),
-            sb.from('ad_campaigns').select('*'),
-            sb.from('campaign_clicks').select('*'),
-            sb.from('profiles').select('*')
-          ]);
-
-          const purchases = purchasesRes.data || [];
-          const campaigns = campaignsRes.data || [];
-          const clicks = clicksRes.data || [];
-          const profiles = profilesRes.data || [];
+        const purchases = purchasesRes.data || [];
+        const campaigns = campaignsRes.data || [];
+        const clicks = clicksRes.data || [];
+        const profiles = profilesRes.data || [];
 
           const campaignMap = {};
           campaigns.forEach(ac => {
@@ -6415,6 +6406,24 @@
         console.warn('[Ad Intelligence] Performance load error:', err);
         tbody.innerHTML = '<tr><td colspan="14" style="text-align:center; color:var(--rose); padding:2rem;">Notice loading attribution performance: ' + escapeHtml(err.message || 'Unknown error') + '</td></tr>';
       }
+    }
+
+    // Live Realtime Telemetry Subscription
+    try {
+      if (window.sb && !window._adRealtimeSubscribed) {
+        window._adRealtimeSubscribed = true;
+        sb.channel('realtime_ad_telemetry')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'campaign_clicks' }, () => {
+            console.log('[Realtime Telemetry] Detected new campaign click, refreshing leaderboard...');
+            loadCreativeAdsData();
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'ad_campaigns' }, () => {
+            loadCreativeAdsData();
+          })
+          .subscribe();
+      }
+    } catch (e) {
+      console.warn('[Realtime Telemetry] Notice:', e);
     }
 
     async function loadAdDataQualityAlerts() {

@@ -46,22 +46,29 @@ document.addEventListener('DOMContentLoaded', () => {
       localStorage.setItem('manodemy_local_campaign_clicks', JSON.stringify(localClicks.slice(-200)));
     } catch (e) {}
 
-    if (window.supabase) {
-      try {
-        const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
-        sb.rpc('track_campaign_click', {
+    // Direct REST RPC call (zero SDK dependency)
+    try {
+      fetch(`${SUPA_URL}/rest/v1/rpc/track_campaign_click`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPA_KEY,
+          'Authorization': `Bearer ${SUPA_KEY}`
+        },
+        body: JSON.stringify({
           p_campaign: campaignToTrack,
-          p_visitor_id: visitorId,
           p_source: utmSource,
-          p_user_agent: navigator.userAgent || ''
-        }).then(() => {
-          console.log('[Attribution] Stamped landing page campaign click:', campaignToTrack);
-        }).catch((err) => {
-          console.warn('[Attribution] RPC notice:', err);
-        });
-      } catch (err) {
-        console.warn('[Attribution] Init notice:', err);
-      }
+          p_visitor_id: visitorId
+        })
+      }).then(r => {
+        if (r.ok) {
+          console.log('[Attribution] Successfully logged landing campaign click via REST:', campaignToTrack);
+        }
+      }).catch(err => {
+        console.warn('[Attribution] REST notice:', err);
+      });
+    } catch (err) {
+      console.warn('[Attribution] Direct fetch notice:', err);
     }
   }
 

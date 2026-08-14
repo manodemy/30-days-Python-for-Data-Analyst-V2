@@ -93,11 +93,12 @@ function showGuestPaywallModal(featureTitle = 'this feature') {
 // ─── Real-Time Ad Intelligence & Attribution Engine ───
 // Attribution Precedence: First-touch for signup, Last-touch for session & checkout revenue
 (function initAdCampaignAttribution() {
-  const utmCamp = URL_PARAMS.get('utm_campaign') || URL_PARAMS.get('campaign') || URL_PARAMS.get('ref');
-  const utmSource = URL_PARAMS.get('utm_source') || 'direct';
-  const utmMedium = URL_PARAMS.get('utm_medium') || 'web';
+  const urlParams = new URLSearchParams(window.location.search);
+  const utmCamp = urlParams.get('utm_campaign') || urlParams.get('campaign') || urlParams.get('ref') || urlParams.get('c');
+  const utmSource = urlParams.get('utm_source') || (document.referrer.includes('instagram.com') ? 'instagram' : 'direct');
+  const utmMedium = urlParams.get('utm_medium') || 'reels';
 
-  // §3.2 Fallback: If utm_campaign is absent, attribute to organic_untracked (NO client-side synthesis)
+  // Attribution: If utm_campaign is absent, attribute to organic_untracked
   const campaignName = utmCamp ? utmCamp.toLowerCase().trim() : 'organic_untracked';
 
   // Persistent visitor_id with cookie + localStorage backing
@@ -112,7 +113,7 @@ function showGuestPaywallModal(featureTitle = 'this feature') {
   }
   document.cookie = `manodemy_visitor_id=${visitorId}; path=/; max-age=2592000; SameSite=Lax`;
 
-  // §3.1 Attribution: First-Touch (set once) vs Last-Touch (updated on new session)
+  // First-Touch vs Last-Touch persistence
   const existingFirst = localStorage.getItem('manodemy_first_campaign');
   if (!existingFirst && campaignName !== 'organic_untracked') {
     localStorage.setItem('manodemy_first_campaign', campaignName);
@@ -135,25 +136,33 @@ function showGuestPaywallModal(featureTitle = 'this feature') {
     localStorage.setItem('manodemy_local_campaign_clicks', JSON.stringify(localClicks.slice(-200)));
   } catch (e) {}
 
-  // 2. Transmit to Supabase via debounced SECURITY DEFINER RPC (track_campaign_click)
+  // 2. Direct REST RPC Call (zero external library dependency, 100% resilient & immediate)
   const SUPA_URL = 'https://erqoyvbuhmkyvcqgwcbz.supabase.co';
   const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVycW95dmJ1aG1reXZjcWd3Y2J6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzODk1MTIsImV4cCI6MjA5NDk2NTUxMn0.9UnIfq8xMrKANPPTtoOADKH-NJ_it9HDp7xrJL4FXtw';
 
-  if (window.supabase) {
+  if (campaignName) {
     try {
-      const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
-      sb.rpc('track_campaign_click', {
-        p_campaign: campaignName,
-        p_visitor_id: visitorId,
-        p_source: utmSource,
-        p_user_agent: navigator.userAgent || ''
-      }).then(() => {
-        console.log('[Attribution] Stamped debounced campaign click:', campaignName);
-      }).catch((err) => {
-        console.warn('[Attribution] RPC notice:', err);
+      fetch(`${SUPA_URL}/rest/v1/rpc/track_campaign_click`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPA_KEY,
+          'Authorization': `Bearer ${SUPA_KEY}`
+        },
+        body: JSON.stringify({
+          p_campaign: campaignName,
+          p_source: utmSource,
+          p_visitor_id: visitorId
+        })
+      }).then(r => {
+        if (r.ok) {
+          console.log('[Attribution] Successfully logged debounced campaign click via REST:', campaignName);
+        }
+      }).catch(err => {
+        console.warn('[Attribution] REST call notice:', err);
       });
     } catch (err) {
-      console.warn('[Attribution] Init notice:', err);
+      console.warn('[Attribution] Direct fetch notice:', err);
     }
   }
 })();

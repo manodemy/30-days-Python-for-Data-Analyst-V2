@@ -19,8 +19,32 @@ const TOAST_DURATION_MS = 6000;
 
 
 // Supabase client initialize (assumes loaded in head)
-
 const SUPA_URL = 'https://erqoyvbuhmkyvcqgwcbz.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVycW95dmJ1aG1reXZjcWd3Y2J6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzODk1MTIsImV4cCI6MjA5NDk2NTUxMn0.9UnIfq8xMrKANPPTtoOADKH-NJ_it9HDp7xrJL4FXtw';
+
+(function initNotebookAttribution() {
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    const utmCamp = urlParams.get('utm_campaign') || urlParams.get('campaign') || urlParams.get('c');
+    const utmSource = urlParams.get('utm_source') || 'direct';
+    if (utmCamp) {
+      const cleanCamp = utmCamp.toLowerCase().trim();
+      localStorage.setItem('manodemy_last_campaign', cleanCamp);
+      document.cookie = `manodemy_last_campaign=${cleanCamp}; path=/; max-age=2592000; SameSite=Lax`;
+      let visId = localStorage.getItem('manodemy_visitor_id');
+      if (!visId) {
+        visId = 'vis_' + Math.random().toString(36).substring(2, 11) + Date.now().toString(36);
+        localStorage.setItem('manodemy_visitor_id', visId);
+      }
+      document.cookie = `manodemy_visitor_id=${visId}; path=/; max-age=2592000; SameSite=Lax`;
+      fetch(`${SUPA_URL}/rest/v1/rpc/track_campaign_click`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` },
+        body: JSON.stringify({ p_campaign: cleanCamp, p_visitor_id: visId, p_source: utmSource, p_user_agent: navigator.userAgent || '' })
+      }).catch(() => {});
+    }
+  } catch (e) {}
+})();
 
 let sbClient = null;
 

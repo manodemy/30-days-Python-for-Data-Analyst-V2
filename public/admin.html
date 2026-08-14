@@ -7043,6 +7043,7 @@
 
       // 3. Save Campaign Record & Budget to ad_campaigns table
       try {
+        const client = sb || initSupabaseClient();
         const payload = {
           campaign_name: campaign,
           platform: platform,
@@ -7055,17 +7056,22 @@
           last_synced_at: new Date().toISOString()
         };
 
-        let { error } = await sb.from('ad_campaigns').upsert([payload], { onConflict: 'campaign_name' });
-        if (error) {
-          console.warn('[Ad Campaign] Upsert notice, attempting direct update/insert:', error.message);
-          const { error: updateErr } = await sb.from('ad_campaigns').update(payload).eq('campaign_name', campaign);
-          if (updateErr) {
-            await sb.from('ad_campaigns').insert([payload]).catch(err => console.warn('[Ad Campaign] Insert error:', err));
+        if (client) {
+          let { error } = await client.from('ad_campaigns').upsert([payload], { onConflict: 'campaign_name' });
+          if (error) {
+            console.warn('[Ad Campaign] Upsert notice, attempting direct update/insert:', error.message);
+            const { error: updateErr } = await client.from('ad_campaigns').update(payload).eq('campaign_name', campaign);
+            if (updateErr) {
+              await client.from('ad_campaigns').insert([payload]).catch(err => console.warn('[Ad Campaign] Insert error:', err));
+            }
           }
         }
 
-        _adminCache.invalidate('ads');
+        if (window._adminCache && typeof window._adminCache.invalidate === 'function') {
+          window._adminCache.invalidate('ads');
+        }
         loadCreativeAdsData();
+        showToast(`✅ Campaign "${campaign}" saved to database!`, 'success');
       } catch (e) {
         console.warn('[Ad Campaign] Budget save exception:', e);
       }

@@ -41,7 +41,7 @@ const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsI
       const debounceKey = `manodemy_last_click_${cleanCamp}`;
       const lastTrackTime = parseInt(sessionStorage.getItem(debounceKey) || '0', 10);
       const now = Date.now();
-      if (now - lastTrackTime >= 30 * 60 * 1000) {
+      if (now - lastTrackTime >= 3000) {
         sessionStorage.setItem(debounceKey, now.toString());
         fetch(`${SUPA_URL}/rest/v1/rpc/track_campaign_click`, {
           method: 'POST',

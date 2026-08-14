@@ -32,11 +32,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // Transmit debounced campaign click to Supabase
   const campaignToTrack = utmCamp ? utmCamp.toLowerCase().trim() : (urlParams.get('utm_source') ? 'organic_social' : null);
   if (campaignToTrack) {
-    // Anti-Double-Count Guard: 30-minute rolling session debounce
+    // Rapid-Fire Protection: 3-second throttle (prevents dual-execution on same page load)
     const debounceKey = `manodemy_last_click_${campaignToTrack}`;
     const lastTrackTime = parseInt(sessionStorage.getItem(debounceKey) || '0', 10);
     const now = Date.now();
-    const isDebounced = (now - lastTrackTime < 30 * 60 * 1000);
+    const isDebounced = (now - lastTrackTime < 3000);
 
     if (!isDebounced) {
       sessionStorage.setItem(debounceKey, now.toString());

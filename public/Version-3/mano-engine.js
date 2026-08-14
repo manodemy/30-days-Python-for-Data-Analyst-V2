@@ -132,7 +132,7 @@ function showGuestPaywallModal(featureTitle = 'this feature') {
     const debounceKey = `manodemy_last_click_${campaignName}`;
     const lastTrackTime = parseInt(sessionStorage.getItem(debounceKey) || '0', 10);
     const now = Date.now();
-    const isDebounced = (now - lastTrackTime < 30 * 60 * 1000);
+    const isDebounced = (now - lastTrackTime < 3000);
 
     if (!isDebounced) {
       sessionStorage.setItem(debounceKey, now.toString());

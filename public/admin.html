@@ -3225,9 +3225,9 @@
                   <span class="badge badge-emerald" style="font-size: 0.62rem; padding: 1px 6px;">Razorpay / UPI</span>
                 </div>
                 <div style="font-size: 1.5rem; font-weight: 800; color: var(--ink); font-family: var(--font-data);" id="matrixInrPrice">
-                  ₹1,499 <span style="font-size: 0.85rem; color: var(--ink-dim); text-decoration: line-through;" id="matrixInrOrig">₹4,999</span>
+                  ₹1,999 <span style="font-size: 0.85rem; color: var(--ink-dim); text-decoration: line-through;" id="matrixInrOrig">₹4,999</span>
                 </div>
-                <div style="font-size: 0.75rem; color: var(--emerald); font-weight: 600; margin-top: 0.3rem;" id="matrixInrBadge">70% OFF (You save ₹3,500)</div>
+                <div style="font-size: 0.75rem; color: var(--emerald); font-weight: 600; margin-top: 0.3rem;" id="matrixInrBadge">60% OFF (You save ₹3,000)</div>
               </div>
 
               <!-- Interactive USD Card -->
@@ -3270,7 +3270,7 @@
                     <label style="font-size: 0.72rem; color: var(--ink-dim); margin-bottom: 0.3rem; display: block;">
                       Sale Price (<span class="curr-symbol">₹</span>) *
                     </label>
-                    <input id="cfg_sale_price" type="number" step="any" min="1" placeholder="1499" required
+                    <input id="cfg_sale_price" type="number" step="any" min="1" placeholder="1999" required
                       style="font-family: var(--font-price); font-size: 1.05rem; font-weight: 700; color: var(--emerald); background: var(--base); border: 1px solid var(--rim); padding: 0.55rem 0.75rem; border-radius: var(--radius-sm); width: 100%;" />
                   </div>
 
@@ -5110,7 +5110,7 @@
     // 👑 MASTER PRICING & COUPON INTELLIGENCE CONTROLLER
     // ═══════════════════════════════════════════════════════
     let _activePricingRegion = 'INR';
-    let _inrPricingState = { sale_price: 1499, original_price: 4999, discount_label: '70% OFF', preset_label: 'Early Access Offer' };
+    let _inrPricingState = { sale_price: 1999, original_price: 4999, discount_label: '60% OFF', preset_label: 'Early Access Offer' };
     let _usdPricingState = { sale_price: 49, original_price: 149, discount_label: '67% OFF', preset_label: 'Global Early Pass' };
     let _allCouponsList = [];
     let _isUserEditedBadge = false;
@@ -5170,9 +5170,9 @@
         const elBadge = document.getElementById('cfg_discount_badge');
         const elLabel = document.getElementById('cfg_preset_label');
 
-        const saleVal = Number(_inrPricingState.sale_price) || 1499;
+        const saleVal = Number(_inrPricingState.sale_price) || 1999;
         const origVal = Number(_inrPricingState.original_price) || 4999;
-        const autoBadge = (origVal > 0 && origVal > saleVal) ? (Math.round(((origVal - saleVal) / origVal) * 100) + '% OFF') : '70% OFF';
+        const autoBadge = (origVal > 0 && origVal > saleVal) ? (Math.round(((origVal - saleVal) / origVal) * 100) + '% OFF') : '60% OFF';
 
         if (elSale) elSale.value = saleVal;
         if (elOrig) elOrig.value = origVal;
@@ -5480,10 +5480,10 @@
       const usdP = document.getElementById('matrixUsdPrice');
       const usdB = document.getElementById('matrixUsdBadge');
 
-      const inrSale = Number(_inrPricingState.sale_price) || 1499;
+      const inrSale = Number(_inrPricingState.sale_price) || 1999;
       const inrOrig = Number(_inrPricingState.original_price) || 4999;
       const inrSave = Math.max(0, inrOrig - inrSale);
-      const inrPct = (inrOrig > 0 && inrOrig > inrSale) ? Math.round(((inrOrig - inrSale) / inrOrig) * 100) : 70;
+      const inrPct = (inrOrig > 0 && inrOrig > inrSale) ? Math.round(((inrOrig - inrSale) / inrOrig) * 100) : 60;
 
       const usdSale = Number(_usdPricingState.sale_price) || 49;
       const usdOrig = Number(_usdPricingState.original_price) || 149;
@@ -5910,12 +5910,12 @@
             <tr>
               <td class="cell-mono" style="font-weight:700; color:var(--gold);">${new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' })}</td>
               <td><span class="badge badge-emerald">INR ₹</span></td>
-              <td class="cell-mono">₹1,499</td>
+              <td class="cell-mono">₹1,999</td>
               <td>
-                <span class="badge badge-sapphire" style="font-size:0.68rem;">v1 10:00 AM ₹1,499 (Active Default)</span>
+                <span class="badge badge-sapphire" style="font-size:0.68rem;">v1 10:00 AM ₹1,999 (Active Default)</span>
               </td>
-              <td class="cell-mono" style="color:var(--ink-dim);">₹1,499 – ₹1,499</td>
-              <td class="cell-mono" style="font-weight:700; color:var(--emerald);">₹1,499</td>
+              <td class="cell-mono" style="color:var(--ink-dim);">₹1,999 – ₹1,999</td>
+              <td class="cell-mono" style="font-weight:700; color:var(--emerald);">₹1,999</td>
               <td class="cell-mono" style="color:var(--ink-muted);">1 Version</td>
             </tr>
           `;

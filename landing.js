@@ -425,7 +425,7 @@ async function setupGeoPricing() {
 
 
   // Fetch dynamic pricing from Supabase settings
-  let prices = { inr: 149900, usd: 1900, original_inr: 499900, original_usd: 6900, discount_label_inr: '70% OFF', discount_label_usd: '72% OFF' };
+  let prices = { inr: 199900, usd: 4900, original_inr: 499900, original_usd: 14900, discount_label_inr: '60% OFF', discount_label_usd: '67% OFF' };
   try {
     if (supabaseClient) {
       const { data: dbPricing } = await supabaseClient.from('settings').select('value').eq('key', 'pricing').single();

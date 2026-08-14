@@ -664,7 +664,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (err) {}
 
     // Default fallbacks
-    let inrConfig = { amount: 149900, currency: 'INR', display: '₹1,499', original: '₹4,999', discount: '70% OFF', planName: '60-Day Self-Paced Masterclass' };
+    let inrConfig = { amount: 199900, currency: 'INR', display: '₹1,999', original: '₹4,999', discount: '60% OFF', planName: '60-Day Self-Paced Masterclass' };
     let usdConfig = { amount: 4900, currency: 'USD', display: '$49', original: '$149', discount: '67% OFF', planName: '60-Day Self-Paced Masterclass' };
 
     // Fetch live prices from Supabase settings table

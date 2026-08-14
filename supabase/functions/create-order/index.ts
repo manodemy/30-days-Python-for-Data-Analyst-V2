@@ -74,7 +74,7 @@ serve(async (req) => {
 
     // ── Dynamic Pricing from settings table ──
     const { data: pricingSetting } = await supabase.from('settings').select('value').eq('key', 'pricing').single()
-    const prices = pricingSetting?.value || { inr: 149900, usd: 1900 }
+    const prices = pricingSetting?.value || { inr: 199900, usd: 4900 }
     let amount = currency === 'INR' ? prices.inr : prices.usd  // paise / cents
     let currencyCode = currency || 'INR'
     const originalAmount = amount // capture pre-discount price for discount calculation

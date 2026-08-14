@@ -16,10 +16,10 @@ serve(async (req) => {
     )
     const { data } = await supabase.from('settings').select('value').eq('key', 'pricing').single()
     return new Response(JSON.stringify(data?.value || {
-      inr: 149900, usd: 1900, original_inr: 499900, original_usd: 6900, discount_label_inr: '70% OFF', discount_label_usd: '72% OFF', flash_sale: null
+      inr: 199900, usd: 4900, original_inr: 499900, original_usd: 14900, discount_label_inr: '60% OFF', discount_label_usd: '67% OFF', flash_sale: null
     }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   } catch (e) {
-    return new Response(JSON.stringify({ inr: 149900, usd: 1900, original_inr: 499900, original_usd: 6900, discount_label_inr: '70% OFF', discount_label_usd: '72% OFF' }),
+    return new Response(JSON.stringify({ inr: 199900, usd: 4900, original_inr: 499900, original_usd: 14900, discount_label_inr: '60% OFF', discount_label_usd: '67% OFF' }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   }
 })

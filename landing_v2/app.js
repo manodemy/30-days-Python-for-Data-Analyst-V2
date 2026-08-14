@@ -4,8 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ═══ CAMPAIGN & AD ATTRIBUTION CAPTURE ═══ */
   const urlParams = new URLSearchParams(window.location.search);
-  const utmCamp = urlParams.get('utm_campaign') || urlParams.get('campaign');
-  const utmSource = urlParams.get('utm_source') || 'direct';
+  const utmCamp = urlParams.get('utm_campaign') || urlParams.get('campaign') || urlParams.get('c');
+  const utmSource = urlParams.get('utm_source') || (document.referrer.includes('instagram.com') ? 'instagram' : 'direct');
 
   if (utmCamp) {
     const cleanCamp = utmCamp.toLowerCase().trim();
@@ -28,6 +28,42 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('manodemy_visitor_id', visitorId);
   }
   document.cookie = `manodemy_visitor_id=${visitorId}; path=/; max-age=2592000; SameSite=Lax`;
+
+  // Transmit debounced campaign click to Supabase
+  const campaignToTrack = utmCamp ? utmCamp.toLowerCase().trim() : (urlParams.get('utm_source') ? 'organic_social' : null);
+  if (campaignToTrack) {
+    const SUPA_URL = 'https://erqoyvbuhmkyvcqgwcbz.supabase.co';
+    const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVycW95dmJ1aG1reXZjcWd3Y2J6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzODk1MTIsImV4cCI6MjA5NDk2NTUxMn0.9UnIfq8xMrKANPPTtoOADKH-NJ_it9HDp7xrJL4FXtw';
+
+    try {
+      const localClicks = JSON.parse(localStorage.getItem('manodemy_local_campaign_clicks') || '[]');
+      localClicks.push({
+        campaign_name: campaignToTrack,
+        visitor_id: visitorId,
+        source: utmSource,
+        created_at: new Date().toISOString()
+      });
+      localStorage.setItem('manodemy_local_campaign_clicks', JSON.stringify(localClicks.slice(-200)));
+    } catch (e) {}
+
+    if (window.supabase) {
+      try {
+        const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+        sb.rpc('track_campaign_click', {
+          p_campaign: campaignToTrack,
+          p_visitor_id: visitorId,
+          p_source: utmSource,
+          p_user_agent: navigator.userAgent || ''
+        }).then(() => {
+          console.log('[Attribution] Stamped landing page campaign click:', campaignToTrack);
+        }).catch((err) => {
+          console.warn('[Attribution] RPC notice:', err);
+        });
+      } catch (err) {
+        console.warn('[Attribution] Init notice:', err);
+      }
+    }
+  }
 
   window.getAttributionPayload = function() {
     const lastCamp = localStorage.getItem('manodemy_last_campaign') || (document.cookie.match(/(?:^|; )manodemy_last_campaign=([^;]*)/)?.[1]);

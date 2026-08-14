@@ -3593,15 +3593,33 @@
             <div id="genResultBox" style="display:none; margin-top:1.5rem; background:rgba(0,0,0,0.5); border:1px solid rgba(0,230,246,0.4); border-radius:16px; padding:1.5rem; box-shadow:0 8px 24px rgba(0,0,0,0.4);">
               <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
                 <div style="display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap;">
-                  <span style="color:var(--emerald); font-weight:800; font-size:0.9rem;">✅ Campaign &amp; Budget Saved! Trackable Link Ready:</span>
+                  <span style="color:var(--emerald); font-weight:800; font-size:0.9rem;">✅ Campaign &amp; Budget Saved! Trackable Links Ready:</span>
                   <span id="genBudgetSavedBadge" style="font-size:0.75rem; font-weight:700; padding:3px 10px; border-radius:6px; background:rgba(16,185,129,0.2); color:var(--emerald);">Budget Logged</span>
                 </div>
                 <button class="btn-ghost" onclick="closeSmartAdResultBox()" style="width:30px; height:30px; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.06); color:#A0AEC0; font-size:1.1rem; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s ease;" title="Close Banner">✕</button>
               </div>
-              <div style="display:flex; gap:0.75rem; margin-bottom:1.5rem;">
-                <input type="text" class="form-input" id="genOutputUrl" readonly style="font-family:var(--font-mono); font-size:0.82rem; color:#FFFFFF; background:rgba(15,23,42,0.95); border:1px solid rgba(255,255,255,0.2); border-radius:10px; padding:0.65rem 0.85rem; flex:1;" />
-                <button class="apply-btn" onclick="copySmartAdUrl()" style="background:var(--gold); color:#0B0F19; font-weight:800; padding:0 1.5rem; border-radius:10px; font-size:0.85rem; cursor:pointer;">📋 Copy URL</button>
+
+              <!-- 1. Ultra-Short Link (Perfect for Instagram Reels Comments & Bio) -->
+              <div style="margin-bottom:1rem;">
+                <label style="font-size:0.75rem; font-weight:700; color:var(--cyan); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.35rem; display:flex; align-items:center; gap:6px;">
+                  <span>🔥 Ultra-Short Link</span>
+                  <span style="font-size:0.68rem; background:rgba(0,230,246,0.15); color:var(--cyan); padding:2px 6px; border-radius:4px;">Best for Instagram Reels &amp; Comments</span>
+                </label>
+                <div style="display:flex; gap:0.75rem;">
+                  <input type="text" class="form-input" id="genShortUrl" readonly style="font-family:var(--font-mono); font-size:0.88rem; font-weight:700; color:var(--cyan); background:rgba(15,23,42,0.95); border:1px solid rgba(0,230,246,0.3); border-radius:10px; padding:0.65rem 0.85rem; flex:1;" />
+                  <button class="apply-btn" onclick="copySmartAdShortUrl()" style="background:linear-gradient(135deg, #00E6F6, #10B981); color:#0B0F19; font-weight:800; padding:0 1.25rem; border-radius:10px; font-size:0.82rem; cursor:pointer; white-space:nowrap;">📋 Copy Short Link</button>
+                </div>
               </div>
+
+              <!-- 2. Full Parameter URL -->
+              <div style="margin-bottom:1.5rem;">
+                <label style="font-size:0.75rem; font-weight:700; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.35rem; display:block;">Full Tracking URL (With All UTM Parameters)</label>
+                <div style="display:flex; gap:0.75rem;">
+                  <input type="text" class="form-input" id="genOutputUrl" readonly style="font-family:var(--font-mono); font-size:0.82rem; color:#FFFFFF; background:rgba(15,23,42,0.95); border:1px solid rgba(255,255,255,0.2); border-radius:10px; padding:0.65rem 0.85rem; flex:1;" />
+                  <button class="apply-btn" onclick="copySmartAdUrl()" style="background:var(--gold); color:#0B0F19; font-weight:800; padding:0 1.25rem; border-radius:10px; font-size:0.82rem; cursor:pointer; white-space:nowrap;">📋 Copy Full URL</button>
+                </div>
+              </div>
+
               <div style="text-align:center;">
                 <canvas id="qrCodeCanvas" style="background:#FFFFFF; padding:14px; border-radius:14px; display:inline-block; box-shadow:0 8px 24px rgba(0,0,0,0.5);"></canvas>
                 <div style="margin-top:1rem;">
@@ -6356,8 +6374,9 @@
               <td style="font-weight:700; color:var(--gold);">${cName} ${isHidden ? '<span class="badge badge-neutral" style="font-size:0.6rem; padding:1px 5px; margin-left:4px;">Archived</span>' : ''}</td>
               <td><span class="badge badge-neutral" style="text-transform:capitalize;">${platform}</span></td>
               <td style="font-size:0.78rem; color:var(--ink-dim);">${startDateStr}</td>
-              <td>
-                <button class="apply-btn" style="padding:4px 10px; font-size:0.75rem; border-radius:6px; background:rgba(0,230,246,0.15); border:1px solid rgba(0,230,246,0.3); color:var(--cyan); font-weight:700; cursor:pointer;" onclick="copyCampaignLink('${escapeHtml(targetUrl)}')">📋 Link</button>
+              <td style="white-space:nowrap;">
+                <button class="apply-btn" style="padding:4px 8px; font-size:0.75rem; border-radius:6px; background:rgba(0,230,246,0.15); border:1px solid rgba(0,230,246,0.3); color:var(--cyan); font-weight:700; cursor:pointer;" onclick="copyCampaignShortLink('${cName}', '${escapeHtml(targetUrl)}')">⚡ Short</button>
+                <button class="apply-btn" style="padding:4px 8px; font-size:0.75rem; border-radius:6px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); color:var(--ink-dim); font-weight:700; cursor:pointer; margin-left:3px;" onclick="copyCampaignLink('${escapeHtml(targetUrl)}')">🔗 Full</button>
               </td>
               <td>
                 <button class="apply-btn" style="padding:4px 10px; font-size:0.75rem; border-radius:6px; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); color:var(--gold); font-weight:700; cursor:pointer;" onclick="downloadCampaignQR('${cName}', '${escapeHtml(targetUrl)}')">📲 QR Code</button>
@@ -6601,9 +6620,35 @@
       document.body.appendChild(modal);
     };
 
+    window.getCampaignShortUrl = function(campaignName) {
+      if (!campaignName) return 'https://www.manodemy.com';
+      const c = campaignName.toLowerCase().trim();
+      if (c === 'reel_day04_q1_high_performers') return 'https://www.manodemy.com/q1';
+      if (c === 'reel_day04_q2_salary_analytics') return 'https://www.manodemy.com/q2';
+      if (c === 'reel_day04_q3_dept_ranking') return 'https://www.manodemy.com/q3';
+      if (c === 'reel_day04_q4_sales_growth') return 'https://www.manodemy.com/q4';
+      if (c === 'reel_day04_q5_churn_retention') return 'https://www.manodemy.com/q5';
+      if (c === 'insta_bio_link') return 'https://www.manodemy.com/bio';
+      return `https://www.manodemy.com/go/${encodeURIComponent(c)}`;
+    };
+
     window.closeSmartAdResultBox = function() {
       const box = document.getElementById('genResultBox');
       if (box) box.style.display = 'none';
+    };
+
+    window.copySmartAdShortUrl = function() {
+      const el = document.getElementById('genShortUrl');
+      if (!el || !el.value) return;
+      navigator.clipboard.writeText(el.value);
+      alert('🔥 Ultra-Short Link Copied to Clipboard!\n\n' + el.value + '\n\nPerfect for Instagram Reels Comments & Bio.');
+    };
+
+    window.copySmartAdUrl = function() {
+      const el = document.getElementById('genOutputUrl');
+      if (!el || !el.value) return;
+      navigator.clipboard.writeText(el.value);
+      alert('📋 Full Campaign URL Copied to Clipboard!\n\n' + el.value);
     };
 
     window.generateAndSaveSmartCampaign = async function() {
@@ -6632,6 +6677,7 @@
       if (coupon) params.set('coupon', coupon);
 
       const finalUrl = `${baseUrl}?${params.toString()}`;
+      const shortUrl = window.getCampaignShortUrl(campaign);
 
       // 1. Optimistic Immediate Table Row Prepend (Instant UI feedback!)
       const tbody = document.getElementById('adPerformanceTbody');
@@ -6654,8 +6700,9 @@
           <td style="font-weight:700; color:var(--gold);">${escapeHtml(campaign)}</td>
           <td><span class="badge badge-neutral" style="text-transform:capitalize;">${escapeHtml(platform)}</span></td>
           <td style="font-size:0.78rem; color:var(--ink-dim);">${nowStr}</td>
-          <td>
-            <button class="apply-btn" style="padding:4px 10px; font-size:0.75rem; border-radius:6px; background:rgba(0,230,246,0.15); border:1px solid rgba(0,230,246,0.3); color:var(--cyan); font-weight:700; cursor:pointer;" onclick="copyCampaignLink('${escapeHtml(finalUrl)}')">📋 Link</button>
+          <td style="white-space:nowrap;">
+            <button class="apply-btn" style="padding:4px 8px; font-size:0.75rem; border-radius:6px; background:rgba(0,230,246,0.15); border:1px solid rgba(0,230,246,0.3); color:var(--cyan); font-weight:700; cursor:pointer;" onclick="copyCampaignShortLink('${escapeHtml(campaign)}', '${escapeHtml(finalUrl)}')">⚡ Short</button>
+            <button class="apply-btn" style="padding:4px 8px; font-size:0.75rem; border-radius:6px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); color:var(--ink-dim); font-weight:700; cursor:pointer; margin-left:3px;" onclick="copyCampaignLink('${escapeHtml(finalUrl)}')">🔗 Full</button>
           </td>
           <td>
             <button class="apply-btn" style="padding:4px 10px; font-size:0.75rem; border-radius:6px; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); color:var(--gold); font-weight:700; cursor:pointer;" onclick="downloadCampaignQR('${escapeHtml(campaign)}', '${escapeHtml(finalUrl)}')">📲 QR Code</button>
@@ -6743,8 +6790,11 @@
         console.warn('[Ad Campaign] Budget save exception:', e);
       }
 
-      // 3. Display Result Banner
-      document.getElementById('genOutputUrl').value = finalUrl;
+      // 4. Display Result Banner
+      const shortEl = document.getElementById('genShortUrl');
+      if (shortEl) shortEl.value = shortUrl;
+      const fullEl = document.getElementById('genOutputUrl');
+      if (fullEl) fullEl.value = finalUrl;
       document.getElementById('genResultBox').style.display = 'block';
 
       const savedBadge = document.getElementById('genBudgetSavedBadge');
@@ -6758,16 +6808,22 @@
         setTimeout(() => { statusMsg.textContent = ''; }, 4000);
       }
 
-      renderDirectQRCode(finalUrl);
+      renderDirectQRCode(shortUrl || finalUrl);
     };
 
     window.generateSmartAdLink = window.generateAndSaveSmartCampaign;
     window.saveAdCampaignSpend = window.generateAndSaveSmartCampaign;
 
+    window.copyCampaignShortLink = function(campaignName, targetUrl) {
+      const shortUrl = window.getCampaignShortUrl(campaignName);
+      navigator.clipboard.writeText(shortUrl);
+      alert('🔥 Ultra-Short Link Copied to Clipboard!\n\n' + shortUrl + '\n\nRedirects with full tracking attribution.');
+    };
+
     window.copyCampaignLink = function(url) {
       if (!url) return;
       navigator.clipboard.writeText(url);
-      alert('📋 Campaign Link copied to clipboard!\n\n' + url);
+      alert('📋 Full Campaign Link copied to clipboard!\n\n' + url);
     };
 
     window.downloadCampaignQR = function(campaignName, url) {

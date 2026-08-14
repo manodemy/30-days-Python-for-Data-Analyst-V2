@@ -25,6 +25,51 @@ export async function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
   const path = url.pathname;
 
+  // ── Layer 0: Short URL Campaign Redirection (e.g. /q1, /q2, /go/reel1, /r/bio) ──
+  const shortMap: Record<string, string> = {
+    '/q1': '/sql-practice?day=4&q=1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q1_high_performers',
+    '/q2': '/sql-practice?day=4&q=2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q2_salary_analytics',
+    '/q3': '/sql-practice?day=4&q=3&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q3_dept_ranking',
+    '/q4': '/sql-practice?day=4&q=4&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q4_sales_growth',
+    '/q5': '/sql-practice?day=4&q=5&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q5_churn_retention',
+    '/go/q1': '/sql-practice?day=4&q=1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q1_high_performers',
+    '/go/q2': '/sql-practice?day=4&q=2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q2_salary_analytics',
+    '/go/q3': '/sql-practice?day=4&q=3&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q3_dept_ranking',
+    '/go/q4': '/sql-practice?day=4&q=4&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q4_sales_growth',
+    '/go/q5': '/sql-practice?day=4&q=5&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q5_churn_retention',
+    '/go/reel1': '/sql-practice?day=4&q=1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q1_high_performers',
+    '/go/reel2': '/sql-practice?day=4&q=2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q2_salary_analytics',
+    '/go/reel3': '/sql-practice?day=4&q=3&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q3_dept_ranking',
+    '/go/reel4': '/sql-practice?day=4&q=4&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q4_sales_growth',
+    '/go/reel5': '/sql-practice?day=4&q=5&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q5_churn_retention',
+    '/go/bio': '/?utm_source=meta&utm_medium=cpc&utm_campaign=insta_bio_link',
+    '/bio': '/?utm_source=meta&utm_medium=cpc&utm_campaign=insta_bio_link',
+    '/insta': '/?utm_source=meta&utm_medium=cpc&utm_campaign=insta_bio_link'
+  };
+
+  const lowerPath = path.toLowerCase();
+  if (shortMap[lowerPath]) {
+    const dest = new URL(shortMap[lowerPath], request.url);
+    url.searchParams.forEach((val, key) => {
+      if (!dest.searchParams.has(key)) dest.searchParams.set(key, val);
+    });
+    return NextResponse.redirect(dest, { status: 302 });
+  }
+
+  // Dynamic /go/[campaign_slug] or /r/[campaign_slug]
+  const goMatch = path.match(/^\/(?:go|r)\/([a-zA-Z0-9_-]+)$/);
+  if (goMatch) {
+    const slug = goMatch[1];
+    const dest = new URL('/', request.url);
+    dest.searchParams.set('utm_source', 'meta');
+    dest.searchParams.set('utm_medium', 'reels');
+    dest.searchParams.set('utm_campaign', slug);
+    url.searchParams.forEach((val, key) => {
+      if (!dest.searchParams.has(key)) dest.searchParams.set(key, val);
+    });
+    return NextResponse.redirect(dest, { status: 302 });
+  }
+
   // ── Layer A: Redirect legacy dayXX.html → /notebook/dayXX ──────────────────
   const legacyMatch = path.match(/^\/day(\d{2})\.html$/);
   if (legacyMatch) {

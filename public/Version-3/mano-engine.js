@@ -63,8 +63,7 @@ function isPaidUser() {
 const URL_PARAMS = new URLSearchParams(window.location.search);
 const REEL_QUESTION_PARAM = URL_PARAMS.get('q') || URL_PARAMS.get('question');
 const REEL_DAY_PARAM = parseInt(URL_PARAMS.get('day') || '1', 10);
-const FORCE_GUEST_MODE = URL_PARAMS.get('preview') === 'guest' || URL_PARAMS.get('guest') === 'true';
-const IS_GUEST_REEL = Boolean(REEL_QUESTION_PARAM && (FORCE_GUEST_MODE || (!isPaidUser() && !isAdminUser())));
+const IS_GUEST_REEL = Boolean(REEL_QUESTION_PARAM && !URL_PARAMS.has('admin_override'));
 const ALLOWED_GUEST_QUESTION_NUM = IS_GUEST_REEL ? parseInt(REEL_QUESTION_PARAM, 10) : null;
 
 function showGuestPaywallModal(featureTitle = 'this feature') {

@@ -37,11 +37,18 @@ const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsI
         localStorage.setItem('manodemy_visitor_id', visId);
       }
       document.cookie = `manodemy_visitor_id=${visId}; path=/; max-age=2592000; SameSite=Lax`;
-      fetch(`${SUPA_URL}/rest/v1/rpc/track_campaign_click`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` },
-        body: JSON.stringify({ p_campaign: cleanCamp, p_visitor_id: visId, p_source: utmSource, p_user_agent: navigator.userAgent || '' })
-      }).catch(() => {});
+
+      const debounceKey = `manodemy_last_click_${cleanCamp}`;
+      const lastTrackTime = parseInt(sessionStorage.getItem(debounceKey) || '0', 10);
+      const now = Date.now();
+      if (now - lastTrackTime >= 30 * 60 * 1000) {
+        sessionStorage.setItem(debounceKey, now.toString());
+        fetch(`${SUPA_URL}/rest/v1/rpc/track_campaign_click`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` },
+          body: JSON.stringify({ p_campaign: cleanCamp, p_source: utmSource, p_visitor_id: visId })
+        }).catch(() => {});
+      }
     }
   } catch (e) {}
 })();

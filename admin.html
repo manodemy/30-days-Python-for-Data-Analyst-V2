@@ -6271,30 +6271,6 @@
           console.warn('[Ad Storage] Local merge notice:', e);
         }
 
-        // Aggregate local click events for real-time local display
-        try {
-          const localClicks = JSON.parse(localStorage.getItem('manodemy_local_campaign_clicks') || '[]');
-          const clickGroup = {};
-          localClicks.forEach(lc => {
-            if (lc.campaign_name) {
-              const k = lc.campaign_name.toLowerCase();
-              if (!clickGroup[k]) clickGroup[k] = { visits: 0, visitors: new Set() };
-              clickGroup[k].visits += 1;
-              if (lc.visitor_id) clickGroup[k].visitors.add(lc.visitor_id);
-            }
-          });
-
-          list.forEach(item => {
-            const k = (item.campaign_name || '').toLowerCase();
-            if (clickGroup[k]) {
-              item.total_visits = Math.max(Number(item.total_visits || 0), clickGroup[k].visits);
-              item.unique_visitors = Math.max(Number(item.unique_visitors || 0), clickGroup[k].visitors.size);
-            }
-          });
-        } catch (e) {
-          console.warn('[Ad Storage] Local click aggregation notice:', e);
-        }
-
         // Filter out hidden/archived campaigns unless user clicked "Show Archived"
         const hiddenCamps = JSON.parse(localStorage.getItem('manodemy_hidden_campaigns') || '[]');
         if (!_showArchivedCampaigns) {

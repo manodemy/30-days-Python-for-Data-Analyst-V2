@@ -33,7 +33,8 @@ serve(async (req) => {
     )
     if (authError || !user) throw new Error('Unauthorized')
 
-    const { gateway, currency, coupon_code, final_amount, referral_code, batch_id } = await req.json()
+    const { gateway, currency, coupon_code, final_amount, referral_code, batch_id, course_id } = await req.json()
+    const targetCourseId = course_id || 'bundle-data-analytics'
 
     // ── Batch Validation ──
     if (batch_id) {
@@ -158,8 +159,8 @@ serve(async (req) => {
       .from('enrollments')
       .select('id')
       .eq('user_id', user.id)
-      .eq('course_id', 'python-30day')
-      .single()
+      .in('course_id', [targetCourseId, 'bundle-data-analytics'])
+      .maybeSingle()
 
     if (existing) {
       return new Response(
@@ -182,7 +183,7 @@ serve(async (req) => {
       .from('orders')
       .insert({
         user_id: user.id,
-        course_id: 'python-30day',
+        course_id: targetCourseId,
         amount,
         currency: currencyCode,
         gateway,

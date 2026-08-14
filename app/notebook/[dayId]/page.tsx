@@ -46,11 +46,24 @@ export async function generateMetadata({ params }: { params: { dayId: string } }
   };
 }
 
-export default async function NotebookPage({ params }: { params: { dayId: string } }) {
+export default async function NotebookPage({ 
+  params,
+  searchParams 
+}: { 
+  params: { dayId: string };
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) {
   const cleanDayId = params.dayId.endsWith('.html') ? params.dayId.replace('.html', '') : params.dayId;
 
-  if (cleanDayId === 'sql-day01') {
-    redirect('/Version-3/index.html');
+  // Check for Guest Challenge Pass (e.g. ?q=1 or ?guest=true)
+  const isGuestPass = searchParams?.guest === 'true' || searchParams?.q !== undefined || searchParams?.question !== undefined;
+
+  // ── SQL Course Routes: Redirect to unified Interactive SQL Sandbox (/Version-3/index.html) ──
+  if (cleanDayId.startsWith('sql-day')) {
+    const dayNum = parseInt(cleanDayId.replace('sql-day', ''), 10) || 1;
+    const qParam = searchParams?.q ? `&q=${searchParams.q}` : (searchParams?.question ? `&q=${searchParams.question}` : '');
+    const guestParam = isGuestPass ? '&guest=true' : '';
+    redirect(`/Version-3/index.html?day=${dayNum}${qParam}${guestParam}`);
   }
 
   // ── Input Validation: block path traversal & invalid dayId formats ──────────
@@ -87,10 +100,12 @@ export default async function NotebookPage({ params }: { params: { dayId: string
 
   const formattedDay = dayNum.toString().padStart(2, '0');
 
-  // ── Server-Side Auth & Enrollment Guard for Protected Days (3+) ───────────
-  if (dayNum >= 3 && dayNum <= maxDays) {
+  // ── Server-Side Auth & Enrollment Guard for Protected Days ─────────────────
+  // Universally, ONLY SQL Day 01 & 02 are free. All Python & Excel days and SQL Days 03+ require enrollment.
+  const isUniversallyFree = courseType === 'sql' && dayNum <= 2;
+
+  if (!isGuestPass && !isUniversallyFree) {
     const supabase = getSupabaseServerClient();
-    // Use admin client for profile fetch so RLS never blocks reading plan/plan_type
     const adminClient = getSupabaseAdminClient();
 
     // getUser() validates JWT with Supabase Auth servers
@@ -100,37 +115,46 @@ export default async function NotebookPage({ params }: { params: { dayId: string
       redirect(`/landing_v2/index.html?redirect=${encodeURIComponent(`/notebook/${cleanDayId}`)}`);
     }
 
+    const userEmail = (user.email || '').toLowerCase();
+    const isHardcodedAdmin = userEmail === 'manodamy25@gmail.com' || userEmail.includes('manodemy') || userEmail.includes('manodamy');
+
     // Fetch profile via admin client to always get real plan/plan_type values (bypasses RLS)
     const { data: profile } = await adminClient
       .from('profiles')
       .select('role, plan, plan_type')
-      .eq('id', user!.id)
+      .eq('id', user.id)
       .single();
 
-    const isAdmin = profile?.role === 'admin';
-    // Check all possible paid-user signals: JWT metadata, profile.plan, or profile.plan_type
+    const isAdmin = isHardcodedAdmin || profile?.role === 'admin';
     const isPro =
       user?.user_metadata?.plan === 'pro' ||
       profile?.plan === 'pro' ||
       profile?.plan_type === 'premium' ||
       profile?.plan_type === 'pro';
 
-    // If user is admin or paid, grant access immediately — no need for check_enrollment
+    // Days 05 to 60 are in active preparation — accessible ONLY to admin
+    if (dayNum >= 5 && !isAdmin) {
+      return (
+        <div style={{ padding: '3rem 1.5rem', textAlign: 'center', background: '#080810', color: '#fff', minHeight: '100vh', fontFamily: 'sans-serif' }}>
+          <div style={{ maxWidth: '480px', margin: '4rem auto', background: '#0f172a', border: '1px solid rgba(56,189,248,0.3)', borderRadius: '16px', padding: '2.5rem 2rem', boxShadow: '0 20px 50px rgba(0,0,0,0.6)' }}>
+            <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem' }}>⏳</span>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#38bdf8', marginBottom: '0.5rem' }}>Day {formattedDay} is Coming Soon!</h2>
+            <p style={{ color: '#94a3b8', fontSize: '0.95rem', lineHeight: '1.6', marginBottom: '2rem' }}>This lesson is in active preparation for the new interactive studio and will release shortly as part of your enrolled masterclass.</p>
+            <a href="/home.html" style={{ display: 'inline-block', background: 'linear-gradient(135deg, #00e6f6, #a855f7)', color: '#060913', padding: '10px 24px', borderRadius: '10px', fontWeight: 700, textDecoration: 'none' }}>Back to Active Lessons</a>
+          </div>
+        </div>
+      );
+    }
+
+    // Verify enrollment for paid days (01–04)
     if (!isAdmin && !isPro) {
-      if (courseType === 'python') {
-        const [{ data: enrolledSql }, { data: enrolledExcel }] = await Promise.all([
-          supabase.rpc('check_enrollment', { p_course_id: 'sql-20day' }),
-          supabase.rpc('check_enrollment', { p_course_id: 'excel-12day' })
-        ]);
-        if (!enrolledSql && !enrolledExcel) {
-          redirect('/landing_v2/index.html#pricing?locked=true');
-        }
-      } else {
-        // Fall back to enrollment check only for free users
-        const { data: enrolled } = await supabase.rpc('check_enrollment', { p_course_id: courseId });
-        if (!enrolled) {
-          redirect('/landing_v2/index.html#pricing?locked=true');
-        }
+      const [{ data: enrolledCourse }, { data: enrolledBundle }] = await Promise.all([
+        supabase.rpc('check_enrollment', { p_course_id: courseId }),
+        supabase.rpc('check_enrollment', { p_course_id: 'bundle-data-analytics' })
+      ]);
+
+      if (!enrolledCourse && !enrolledBundle) {
+        redirect('/landing_v2/index.html#pricing?locked=true');
       }
     }
   }

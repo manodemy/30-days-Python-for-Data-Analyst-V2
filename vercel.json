@@ -373,8 +373,16 @@
   ],
   "rewrites": [
     {
-      "source": "/notebook/sql-day:day(0[1-9]|1[0-8])",
-      "destination": "/sql/day:day.html"
+      "source": "/sql-practice",
+      "destination": "/Version-3/index.html"
+    },
+    {
+      "source": "/try",
+      "destination": "/Version-3/index.html"
+    },
+    {
+      "source": "/sql-challenge",
+      "destination": "/Version-3/index.html"
     },
     {
       "source": "/python",

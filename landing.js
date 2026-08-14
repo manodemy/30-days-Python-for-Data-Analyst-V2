@@ -516,14 +516,6 @@ function setupGatewayButtons() {
 
     container.innerHTML = `
 
-      <button class="gateway-btn razorpay" id="payRazorpay" type="button">
-
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 4l5.5 16h3L17 7.5 14.5 20h3L23 4h-3l-4 11L12.5 4h-3l-4 11L1.5 4H3z"/></svg>
-
-        Pay with Card — ${currentPricing.display}
-
-      </button>
-
       <button class="gateway-btn paypal" id="payPaypal" type="button">
 
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797H9.603c-.564 0-1.04.408-1.13.964L7.076 21.337z"/></svg>
@@ -532,7 +524,7 @@ function setupGatewayButtons() {
 
       </button>
 
-      <p style="text-align:center;font-size:0.75rem;color:#64748b;margin:0">Visa • Mastercard • PayPal Balance</p>
+      <p style="text-align:center;font-size:0.75rem;color:#64748b;margin:0">Visa • Mastercard • Amex • PayPal Balance</p>
 
     `;
 

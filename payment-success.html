@@ -69,7 +69,7 @@
 
   <h1>Payment Successful!</h1>
 
-  <p>Welcome to the <strong>30-Day Python Data Analytics Masterclass</strong>. Your lifetime access is now active.</p>
+  <p>Welcome to the <strong>Complete 60-Day Data Analytics Masterclass (SQL + Excel + Python)</strong>. Your lifetime masterclass access is now active.</p>
 
   <p class="order-id" id="orderId"></p>
 
@@ -97,12 +97,8 @@
     });
   }
 
-
-
   // Verify enrollment with Supabase
-
   const SUPA_URL = 'https://erqoyvbuhmkyvcqgwcbz.supabase.co';
-
   const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVycW95dmJ1aG1reXZjcWd3Y2J6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzODk1MTIsImV4cCI6MjA5NDk2NTUxMn0.9UnIfq8xMrKANPPTtoOADKH-NJ_it9HDp7xrJL4FXtw';
 
   const CustomAuthStorage = {
@@ -138,17 +134,14 @@
               }
               const encodedValue = encodeURIComponent(value);
               const MAX_CHUNK_SIZE = 3000;
-              if (encodedValue.length <= MAX_CHUNK_SIZE) {
-                document.cookie = `${key}=${encodedValue}; path=/; max-age=604800; secure; samesite=lax`;
-              } else {
-                let offset = 0;
-                let chunkIndex = 0;
-                while (offset < encodedValue.length) {
-                  const chunk = encodedValue.substring(offset, offset + MAX_CHUNK_SIZE);
-                  document.cookie = `${key}.${chunkIndex}=${chunk}; path=/; max-age=604800; secure; samesite=lax`;
-                  offset += MAX_CHUNK_SIZE;
-                  chunkIndex++;
+              if (encodedValue.length > MAX_CHUNK_SIZE) {
+                const numChunks = Math.ceil(encodedValue.length / MAX_CHUNK_SIZE);
+                for (let i = 0; i < numChunks; i++) {
+                  const chunk = encodedValue.substring(i * MAX_CHUNK_SIZE, (i + 1) * MAX_CHUNK_SIZE);
+                  document.cookie = `${key}.${i}=${chunk}; path=/; max-age=31536000; secure; samesite=lax`;
                 }
+              } else {
+                document.cookie = `${key}=${encodedValue}; path=/; max-age=31536000; secure; samesite=lax`;
               }
             } catch (e) {}
           },
@@ -161,7 +154,7 @@
               }
             } catch (e) {}
           }
-        };
+  };
 
   const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY, {
     auth: {
@@ -169,23 +162,20 @@
     }
   });
 
-
-
-  sb.rpc('check_enrollment', { p_course_id: 'python-30day' }).then(({ data }) => {
-
-    if (data === true) {
-
+  // Verify enrollment across courses or bundle
+  Promise.all([
+    sb.rpc('check_enrollment', { p_course_id: 'bundle-data-analytics' }),
+    sb.rpc('check_enrollment', { p_course_id: 'sql-20day' }),
+    sb.rpc('check_enrollment', { p_course_id: 'python-30day' }),
+    sb.rpc('check_enrollment', { p_course_id: 'excel-12day' })
+  ]).then(results => {
+    if (results.some(r => r.data === true)) {
       localStorage.setItem('manodemy_auth', 'true');
-
       localStorage.setItem('manodemy_enrolled', 'true');
-
     }
-
   }).catch(e => console.error(e));
 
 </script>
-
-
 
   <!-- Manodemy Telemetry & Analytics -->
 

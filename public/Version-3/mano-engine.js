@@ -27,7 +27,27 @@ let COURSE_CONFIG = {
 };
 
 // ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// MANODEMY ACCESS CONTROL, GUEST SANDBOX & AD TELEMETRY
+// ═══════════════════════════════════════════════════════════════
+
+function isAdminUser() {
+  try {
+    const cachedEmail = (localStorage.getItem('manodemy_user_email') || '').toLowerCase();
+    if (cachedEmail === 'manodamy25@gmail.com' || cachedEmail.includes('manodemy') || cachedEmail.includes('manodamy')) return true;
+    const supaData = localStorage.getItem('sb-erqoyvbuhmkyvcqgwcbz-auth-token');
+    if (supaData) {
+      const parsed = JSON.parse(supaData);
+      const email = (parsed?.user?.email || '').toLowerCase();
+      if (email === 'manodamy25@gmail.com' || email.includes('manodemy') || email.includes('manodamy')) return true;
+      if (parsed?.user?.user_metadata?.role === 'admin' || parsed?.user?.user_metadata?.plan === 'admin') return true;
+    }
+  } catch (e) {}
+  return false;
+}
+
 function isPaidUser() {
+  if (isAdminUser()) return true;
   if (localStorage.getItem('manodemy_enrolled') === 'true') return true;
   try {
     const supaData = localStorage.getItem('sb-erqoyvbuhmkyvcqgwcbz-auth-token');
@@ -38,6 +58,92 @@ function isPaidUser() {
   } catch (e) {}
   return false;
 }
+
+// Guest Reel Pass Parameters
+const URL_PARAMS = new URLSearchParams(window.location.search);
+const REEL_QUESTION_PARAM = URL_PARAMS.get('q') || URL_PARAMS.get('question');
+const REEL_DAY_PARAM = parseInt(URL_PARAMS.get('day') || '1', 10);
+const IS_GUEST_REEL = Boolean(REEL_QUESTION_PARAM && !isPaidUser() && !isAdminUser());
+const ALLOWED_GUEST_QUESTION_NUM = IS_GUEST_REEL ? parseInt(REEL_QUESTION_PARAM, 10) : null;
+
+function showGuestPaywallModal(featureTitle = 'this feature') {
+  let modal = document.getElementById('manodemyPaywallModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'manodemyPaywallModal';
+    modal.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(6,9,19,0.85);backdrop-filter:blur(14px);z-index:999999;display:flex;align-items:center;justify-content:center;padding:1.5rem;animation:fadeIn 0.25s ease;';
+    modal.innerHTML = `
+      <div style="background:linear-gradient(145deg, #0d1226, #161c38);border:1px solid rgba(0,230,246,0.45);border-radius:24px;max-width:480px;width:100%;padding:2.5rem 2rem;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,0.85), 0 0 40px rgba(0,230,246,0.25);position:relative;color:#fff;font-family:Inter,sans-serif;">
+        <button onclick="document.getElementById('manodemyPaywallModal').remove()" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.08);border:none;color:#94a3b8;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;">✕</button>
+        <div style="font-size:3.5rem;margin-bottom:1rem;">🔒</div>
+        <h2 style="font-size:1.65rem;font-weight:900;margin-bottom:0.6rem;background:linear-gradient(135deg, #00e6f6, #a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Unlock All 60 Days</h2>
+        <p style="color:#94a3b8;font-size:0.92rem;line-height:1.6;margin-bottom:2rem;">
+          You're previewing a free challenge question. Enroll in the <strong>Complete Data Analytics Masterclass</strong> to unlock all 60 days of SQL, Excel & Python, audio narration, interactive slides & verified certificate!
+        </p>
+        <a href="/landing_v2/index.html#pricing" style="display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;width:100%;padding:14px 24px;background:linear-gradient(135deg, #00e6f6, #a855f7);color:#060913;font-weight:800;font-size:1.05rem;border-radius:14px;text-decoration:none;box-shadow:0 8px 30px rgba(0,230,246,0.4);transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+          🚀 Enroll Now & Unlock Everything →
+        </a>
+        <p style="margin-top:1.2rem;font-size:0.78rem;color:#64748b;">Instant Lifetime Access • 750+ Real Interview Questions • Verified Certificate</p>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+}
+
+// ─── Real-Time Ad Intelligence Telemetry ───
+(function trackReelAdTelemetry() {
+  const day = URL_PARAMS.get('day');
+  const q = URL_PARAMS.get('q') || URL_PARAMS.get('question');
+  const utmCamp = URL_PARAMS.get('utm_campaign');
+  const utmSource = URL_PARAMS.get('utm_source') || 'instagram';
+
+  if (!day || !q) return;
+
+  const campaignName = (utmCamp || `sql_day${String(day).padStart(2,'0')}_q${q}`).toLowerCase().trim();
+  let visitorId = localStorage.getItem('manodemy_visitor_id');
+  if (!visitorId) {
+    visitorId = 'vis_' + Math.random().toString(36).substring(2, 11) + Date.now().toString(36);
+    localStorage.setItem('manodemy_visitor_id', visitorId);
+  }
+
+  // 1. Local telemetry storage for zero-latency admin dashboard aggregation
+  try {
+    const localClicks = JSON.parse(localStorage.getItem('manodemy_local_campaign_clicks') || '[]');
+    localClicks.push({
+      campaign_name: campaignName,
+      visitor_id: visitorId,
+      source: utmSource,
+      created_at: new Date().toISOString()
+    });
+    localStorage.setItem('manodemy_local_campaign_clicks', JSON.stringify(localClicks.slice(-200)));
+  } catch (e) {}
+
+  // 2. Transmit to Supabase RPC & Ad Campaigns table
+  const SUPA_URL = 'https://erqoyvbuhmkyvcqgwcbz.supabase.co';
+  const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVycW95dmJ1aG1reXZjcWd3Y2J6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzODk1MTIsImV4cCI6MjA5NDk2NTUxMn0.9UnIfq8xMrKANPPTtoOADKH-NJ_it9HDp7xrJL4FXtw';
+
+  if (window.supabase) {
+    try {
+      const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+      sb.rpc('track_campaign_click', {
+        p_campaign: campaignName,
+        p_visitor_id: visitorId,
+        p_source: utmSource
+      }).then(() => {
+        console.log('[Ad Intelligence] Captured reel click:', campaignName);
+      }).catch(() => {});
+
+      sb.from('ad_campaigns').upsert({
+        campaign_name: campaignName,
+        platform: 'Meta',
+        start_date: new Date().toISOString(),
+        target_url: window.location.href
+      }, { onConflict: 'campaign_name' }).then(() => {});
+    } catch (err) {
+      console.warn('[Ad Intelligence] Notice:', err);
+    }
+  }
+})();
 
 let db = null;
 let SQL_INSTANCE = null;  // Cached SQL.js constructor
@@ -2068,6 +2174,11 @@ let testAnswers = []; // array of { answer: string, attempted: bool }
 let testSubmitted = false;
 
 function openTestPortal() {
+  if (IS_GUEST_REEL || (!isPaidUser() && !isAdminUser() && currentDay !== 'day01' && currentDay !== 'day02')) {
+    showGuestPaywallModal('the 25-question interview test');
+    return;
+  }
+
   if (window.ProgressManager) {
     const dp = ProgressManager.getDayProgress(currentDay);
     if (dp && dp.testAttempt && !dp.testAttempt.submitted) {
@@ -3020,6 +3131,10 @@ function renderPracticeQuestion() {
 
 
 function playQuestionAudio(btn, audioSrc) {
+  if (IS_GUEST_REEL || (!isPaidUser() && !isAdminUser() && currentDay !== 'day01' && currentDay !== 'day02')) {
+    showGuestPaywallModal('question audio narration');
+    return;
+  }
   const src = audioSrc || 'New_Day1Part1Question01.mp3';
   const bar = document.getElementById('questionBar');
 
@@ -3107,6 +3222,10 @@ function playQuestionAudio(btn, audioSrc) {
 // ─── Solution audio + code typewriter ───────────────────────────────────────
 
 function playSolutionAudio(solutionEntry, triggerBtn) {
+  if (IS_GUEST_REEL || (!isPaidUser() && !isAdminUser() && currentDay !== 'day01' && currentDay !== 'day02')) {
+    showGuestPaywallModal('audio solutions and code typewriter');
+    return;
+  }
   if (!solutionEntry) return;
   const { src, code, startAt, charInterval } = solutionEntry;
   const fullSrc = `/Version-3/${src}`;
@@ -3357,6 +3476,10 @@ function formatGradingDiff(diff) {
 }
 
 function nextQuestion() {
+  if (IS_GUEST_REEL) {
+    showGuestPaywallModal('all 750+ practice questions');
+    return;
+  }
   if (currentPracticeQ < COURSE_CONFIG.practiceQuestions.length - 1) {
     saveCurrentPracticeAnswer();
     clearOutputSection();
@@ -3367,6 +3490,10 @@ function nextQuestion() {
 }
 
 function prevQuestion() {
+  if (IS_GUEST_REEL) {
+    showGuestPaywallModal('all 750+ practice questions');
+    return;
+  }
   if (currentPracticeQ > 0) {
     saveCurrentPracticeAnswer();
     clearOutputSection();
@@ -3703,6 +3830,37 @@ function populateDaySelector() {
 function loadDayContent(dayId) {
   const manifest = window.COURSE_MANIFEST || [];
   const dayMeta = manifest.find(d => d.id === dayId);
+  const dayNum = parseInt(dayId.replace('day', ''), 10) || 1;
+
+  // 1. Days 05–60: Coming Soon lock for non-admin students
+  if (dayNum >= 5 && !isAdminUser()) {
+    if (window.showComingSoonToast) {
+      window.showComingSoonToast(dayMeta?.title || `Day ${String(dayNum).padStart(2, '0')}`, dayNum);
+    }
+    const slideContent = document.getElementById('slideBodyText');
+    if (slideContent) {
+      slideContent.innerHTML = `
+        <div style="padding:48px 24px;text-align:center;color:#fff;font-family:Inter,sans-serif;">
+          <div style="font-size:3.5rem;margin-bottom:1rem;">⏳</div>
+          <h2 style="font-size:1.6rem;font-weight:900;color:#38bdf8;margin-bottom:0.5rem;">Day ${String(dayNum).padStart(2, '0')} is Coming Soon!</h2>
+          <p style="color:#94a3b8;font-size:0.95rem;max-width:420px;margin:0 auto 1.5rem auto;line-height:1.6;">
+            This interactive SQL studio lesson is in active development and will be released shortly as part of your masterclass.
+          </p>
+          <button onclick="loadDayContent('day01')" style="background:linear-gradient(135deg, #00e6f6, #a855f7);border:none;color:#060913;font-weight:800;padding:10px 22px;border-radius:10px;cursor:pointer;">
+            ← Return to Active Lessons
+          </button>
+        </div>
+      `;
+    }
+    return;
+  }
+
+  // 2. Days 03–04: Paywall check for non-paid users (unless guest reel link)
+  if (dayNum >= 3 && !isPaidUser() && !IS_GUEST_REEL) {
+    showGuestPaywallModal(`Day ${String(dayNum).padStart(2, '0')}`);
+    return;
+  }
+
   const dayContent = window.COURSE_CONTENT && window.COURSE_CONTENT[dayId];
 
   if (!dayContent) {
@@ -3718,7 +3876,6 @@ function loadDayContent(dayId) {
     }
 
     // Lazy-load the content script
-    const dayNum = parseInt(dayId.replace('day', ''), 10);
     const script = document.createElement('script');
     script.src = `/Version-3/content/day-${String(dayNum).padStart(2, '0')}.js?v=14.37`;
     script.onload = () => {
@@ -3784,7 +3941,40 @@ function loadDayContent(dayId) {
     // ── Re-render UI ──
     currentSlide = 0;
     currentDay = dayId;
-    currentPracticeQ = 0;
+    
+    // Check if a specific question is requested via URL (?q=1 or ?question=1)
+    const __urlParams = new URLSearchParams(window.location.search);
+    const __qpQ = __urlParams.get('q') || __urlParams.get('question');
+    if (__qpQ && COURSE_CONFIG.practiceQuestions) {
+      const parsedQ = parseInt(__qpQ, 10) - 1;
+      if (parsedQ >= 0 && parsedQ < COURSE_CONFIG.practiceQuestions.length) {
+        currentPracticeQ = parsedQ;
+      } else {
+        currentPracticeQ = 0;
+      }
+    } else {
+      currentPracticeQ = 0;
+    }
+
+    // Guest pass banner if arrived via Instagram / Reel link
+    const __isGuestPass = __urlParams.get('guest') === 'true' || Boolean(__qpQ);
+    if (__isGuestPass) {
+      const existingBanner = document.getElementById('reelGuestPassBanner');
+      if (!existingBanner) {
+        const banner = document.createElement('div');
+        banner.id = 'reelGuestPassBanner';
+        banner.style.cssText = 'background: linear-gradient(135deg, #1e1b4b, #311042); border-bottom: 1px solid #7c3aed; color: #f8fafc; padding: 8px 16px; font-size: 0.82rem; display: flex; align-items: center; justify-content: space-between; gap: 12px; z-index: 100; font-family: sans-serif;';
+        banner.innerHTML = `
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="background:#8b5cf6; color:#fff; font-size:0.68rem; font-weight:800; padding:2px 7px; border-radius:4px; text-transform:uppercase;">Reel Pass</span>
+            <span>🎁 <strong>Instagram Challenge Preview:</strong> Day ${dayId.replace('day', '')}, Question ${currentPracticeQ + 1}</span>
+          </div>
+          <a href="/sql-course" style="background:#10b981; color:#fff; font-weight:700; text-decoration:none; padding:4px 12px; border-radius:6px; font-size:0.75rem; transition: background 0.2s;" onmouseover="this.style.background='#059669'" onmouseout="this.style.background='#10b981'">Unlock All 60 Days →</a>
+        `;
+        document.body.prepend(banner);
+      }
+    }
+
     renderSideSlide();
     clearDrawCanvas();
     renderPracticeQuestion();
@@ -7485,6 +7675,10 @@ function showTapToPlayFallback(index) {
 }
 
 function toggleCombinedPlayback() {
+  if (IS_GUEST_REEL || (!isPaidUser() && !isAdminUser() && currentDay !== 'day01' && currentDay !== 'day02')) {
+    showGuestPaywallModal('video & voice narration');
+    return;
+  }
   if (isCombinedPlaying) {
     pauseCombinedPlayback();
   } else {

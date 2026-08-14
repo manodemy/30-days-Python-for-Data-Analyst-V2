@@ -31,7 +31,7 @@ export async function middleware(request: NextRequest) {
     const dayNum = parseInt(legacyMatch[1], 10);
     if (dayNum >= 3) {
       const dayId = `day${legacyMatch[1]}`;
-      const targetUrl = new URL(`/notebook/${dayId}`, request.url);
+      const targetUrl = new URL(`/notebook/${dayId}${url.search}`, request.url);
       return NextResponse.redirect(targetUrl, { status: 301 });
     }
   }
@@ -41,7 +41,7 @@ export async function middleware(request: NextRequest) {
     const dayNum = parseInt(legacySqlMatch[1], 10);
     if (dayNum >= 3) {
       const dayId = `sql-day${legacySqlMatch[1]}`;
-      const targetUrl = new URL(`/notebook/${dayId}`, request.url);
+      const targetUrl = new URL(`/notebook/${dayId}${url.search}`, request.url);
       return NextResponse.redirect(targetUrl, { status: 301 });
     }
   }
@@ -51,47 +51,64 @@ export async function middleware(request: NextRequest) {
     const dayNum = parseInt(legacyExcelMatch[1], 10);
     if (dayNum >= 3) {
       const dayId = `excel-day${legacyExcelMatch[1]}`;
-      const targetUrl = new URL(`/notebook/${dayId}`, request.url);
+      const targetUrl = new URL(`/notebook/${dayId}${url.search}`, request.url);
       return NextResponse.redirect(targetUrl, { status: 301 });
     }
   }
 
-  // ── Layer B: Edge Auth Guard for premium notebook routes ────────────────────
+  // ── Layer B: Edge Auth Guard for notebook routes ────────────────────────────
   const dayNum = extractNotebookDayNum(path);
+  const isSqlNotebook = path.includes('sql-day');
 
-  if (dayNum !== null && dayNum >= PREMIUM_DAY_MIN && dayNum <= PREMIUM_DAY_MAX) {
-    // Build a response object so @supabase/ssr can refresh cookies if needed
-    const response = NextResponse.next({ request });
+  // SQL Days 01 & 02 are universally free for everyone
+  if (isSqlNotebook && dayNum !== null && dayNum <= 2) {
+    return NextResponse.next();
+  }
 
-    const supabase = createServerClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          // Propagate any refreshed auth cookies back to the browser
-          cookiesToSet.forEach(({ name, value, options }) => {
-            request.cookies.set(name, value);
-            response.cookies.set(name, value, options);
-          });
-        },
-      },
-    });
+  // Check if request is an authorized Reel Guest Challenge Pass (STRICTLY for SQL routes)
+  const isGuestReel = (isSqlNotebook || path.startsWith('/sql-practice') || path.startsWith('/try')) &&
+    (url.searchParams.get('guest') === 'true' || url.searchParams.has('q') || url.searchParams.has('question'));
 
-    // getUser() validates the JWT with Supabase Auth servers — not just cookie presence.
-    // This is the critical difference vs getSession() which only reads local cookies.
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      // Not authenticated → redirect to landing with the intended destination
-      const redirectUrl = new URL('/landing_v2/index.html', request.url);
-      redirectUrl.searchParams.set('redirect', path);
-      return NextResponse.redirect(redirectUrl, { status: 302 });
+  if (dayNum !== null && dayNum >= 1 && dayNum <= PREMIUM_DAY_MAX) {
+    // If coming from an Instagram Reel Guest Pass for SQL, allow through to the sandboxed SQL engine
+    if (isGuestReel) {
+      return NextResponse.next({ request });
     }
 
-    // User IS authenticated. Enrollment check happens server-side in page.tsx
-    // (requires a DB query — too slow for every Edge request; auth check is sufficient here)
-    return response;
+    // Free Python days: Day 01 & Day 02 were legacy free, but universally only SQL Day 01 & 02 are free
+    // Require auth for all premium notebook days
+    if (dayNum >= 1) {
+      // Build a response object so @supabase/ssr can refresh cookies if needed
+      const response = NextResponse.next({ request });
+
+      const supabase = createServerClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        cookies: {
+          getAll() {
+            return request.cookies.getAll();
+          },
+          setAll(cookiesToSet) {
+            // Propagate any refreshed auth cookies back to the browser
+            cookiesToSet.forEach(({ name, value, options }) => {
+              request.cookies.set(name, value);
+              response.cookies.set(name, value, options);
+            });
+          },
+        },
+      });
+
+      // getUser() validates the JWT with Supabase Auth servers — not just cookie presence.
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+      if (authError || !user) {
+        // Not authenticated → redirect to landing with the intended destination
+        const redirectUrl = new URL('/landing_v2/index.html', request.url);
+        redirectUrl.searchParams.set('redirect', path);
+        return NextResponse.redirect(redirectUrl, { status: 302 });
+      }
+
+      // User IS authenticated. Enrollment check happens server-side in page.tsx
+      return response;
+    }
   }
 
   return NextResponse.next();

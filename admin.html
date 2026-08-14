@@ -3567,11 +3567,14 @@
                 </div>
               </div>
 
-              <!-- Row 3: Ad Post Link & Variant ID -->
+              <!-- Row 3: Target Destination Web Link & Variant ID -->
               <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-bottom:1.25rem;">
                 <div>
-                  <label class="form-label" style="font-size:0.75rem; font-weight:700; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.4rem; display:block;">Ad Post Link or Creative ID (Optional)</label>
-                  <input type="text" class="form-input" id="genContent" placeholder="e.g. t.me/manodemy/142 or post_25" style="width:100%; background:rgba(10,14,23,0.85); border:1px solid rgba(255,255,255,0.12); border-radius:10px; color:#F8FAFC; padding:0.7rem 0.9rem; font-size:0.88rem; outline:none; transition:all 0.2s ease;" />
+                  <label class="form-label" style="font-size:0.75rem; font-weight:700; color:var(--cyan); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.4rem; display:flex; align-items:center; gap:6px;">
+                    <span>🎯 Target Destination Web Link / Page URL (Optional)</span>
+                  </label>
+                  <input type="text" class="form-input" id="genTargetUrl" placeholder="e.g. /notebook/day04 or /sql-practice or /landing_v2/index.html" style="width:100%; background:rgba(10,14,23,0.85); border:1px solid rgba(0,230,246,0.3); border-radius:10px; color:#F8FAFC; padding:0.7rem 0.9rem; font-size:0.88rem; outline:none; transition:all 0.2s ease;" />
+                  <span style="font-size:0.7rem; color:var(--ink-muted); margin-top:3px; display:block;">Leave blank for default Landing Page. Paste any custom URL or page path to direct &amp; track data on that exact page.</span>
                 </div>
                 <div>
                   <label class="form-label" style="font-size:0.75rem; font-weight:700; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.4rem; display:block;">Creative Variant ID (Optional)</label>
@@ -6924,7 +6927,7 @@
     window.generateAndSaveSmartCampaign = async function() {
       const platform = document.getElementById('genPlatform').value;
       const campaign = document.getElementById('genCampaign').value.trim().toLowerCase();
-      const content = document.getElementById('genContent').value.trim().toLowerCase();
+      const rawTargetUrl = (document.getElementById('genTargetUrl')?.value || document.getElementById('genContent')?.value || '').trim();
       const creativeId = document.getElementById('genCreativeId').value.trim().toLowerCase();
       const coupon = document.getElementById('genCouponSelect').value.trim().toUpperCase();
       const inr = Number(document.getElementById('spendInr').value || 0);
@@ -6937,16 +6940,33 @@
       }
 
       const campaignId = 'CMP-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-      const baseUrl = 'https://www.manodemy.com/';
-      const params = new URLSearchParams();
-      params.set('utm_source', platform);
-      params.set('utm_medium', platform === 'telegram' ? 'channel_post' : (platform === 'email' ? 'email' : 'cpc'));
-      params.set('utm_campaign', campaign);
-      if (content) params.set('utm_content', content);
-      if (creativeId) params.set('creative_id', creativeId);
-      if (coupon) params.set('coupon', coupon);
+      
+      // Determine destination base URL
+      let baseUrl = 'https://www.manodemy.com/landing_v2/index.html';
+      if (rawTargetUrl) {
+        if (rawTargetUrl.startsWith('http://') || rawTargetUrl.startsWith('https://')) {
+          baseUrl = rawTargetUrl;
+        } else if (rawTargetUrl.startsWith('/')) {
+          baseUrl = 'https://www.manodemy.com' + rawTargetUrl;
+        } else {
+          baseUrl = 'https://www.manodemy.com/' + rawTargetUrl;
+        }
+      }
 
-      const finalUrl = `${baseUrl}?${params.toString()}`;
+      let finalUrl = baseUrl;
+      try {
+        const urlObj = new URL(baseUrl);
+        urlObj.searchParams.set('utm_source', platform);
+        urlObj.searchParams.set('utm_medium', platform === 'telegram' ? 'channel_post' : (platform === 'email' ? 'email' : 'cpc'));
+        urlObj.searchParams.set('utm_campaign', campaign);
+        if (creativeId) urlObj.searchParams.set('creative_id', creativeId);
+        if (coupon) urlObj.searchParams.set('coupon', coupon);
+        finalUrl = urlObj.toString();
+      } catch (e) {
+        const joinChar = baseUrl.includes('?') ? '&' : '?';
+        finalUrl = `${baseUrl}${joinChar}utm_source=${encodeURIComponent(platform)}&utm_medium=${encodeURIComponent(platform === 'telegram' ? 'channel_post' : 'cpc')}&utm_campaign=${encodeURIComponent(campaign)}${creativeId ? '&creative_id=' + encodeURIComponent(creativeId) : ''}${coupon ? '&coupon=' + encodeURIComponent(coupon) : ''}`;
+      }
+
       const shortUrl = window.getCampaignShortUrl(campaign);
 
       // 1. Optimistic Immediate Table Row Prepend (Instant UI feedback!)

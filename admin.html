@@ -4323,8 +4323,12 @@
     async function guardAdmin() {
       let activeSession = null;
       try {
-        const { data: { session } } = await sb.auth.getSession();
-        activeSession = session;
+        if (sb && sb.auth) {
+          const sessionPromise = sb.auth.getSession();
+          const timeoutPromise = new Promise(resolve => setTimeout(() => resolve({ data: { session: null } }), 2500));
+          const { data } = await Promise.race([sessionPromise, timeoutPromise]);
+          activeSession = data?.session || null;
+        }
       } catch (e) {}
 
       renderAdminAuthBadge(activeSession);
@@ -4336,7 +4340,7 @@
           sb.auth.onAuthStateChange((event, session) => {
             renderAdminAuthBadge(session);
             if (session && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION')) {
-              console.log('[Admin Auth] Session event:', event, 'refreshing dashboard metrics...');
+              console.log('[Admin Auth] Session event:', event, 'refreshing metrics...');
               const overlay = document.getElementById('adminLoginOverlay');
               if (overlay) overlay.remove();
               renderDashboard();
@@ -4356,7 +4360,9 @@
         let isAdmin = email === 'manodamy25@gmail.com' || email.includes('manodemy') || email.includes('manodamy');
 
         try {
-          const { data: profile } = await sb.from('profiles').select('role').eq('id', activeSession.user.id).single();
+          const profilePromise = sb.from('profiles').select('role').eq('id', activeSession.user.id).single();
+          const timeoutPromise = new Promise(resolve => setTimeout(() => resolve({ data: null }), 2500));
+          const { data: profile } = await Promise.race([profilePromise, timeoutPromise]);
           if (profile && (profile.role === 'admin' || profile.role === 'instructor')) {
             isAdmin = true;
           }
@@ -4367,7 +4373,7 @@
           return false;
         }
 
-        // Trigger authenticated render
+        // Fresh authenticated render
         renderDashboard();
       }
 
@@ -8267,7 +8273,7 @@
 
     // ── INSTANT INTELLIGENCE SUITE BOOTSTRAP ─────────
     let _hasBooted = false;
-    async function bootIntelligenceSuite() {
+    function bootIntelligenceSuite() {
       if (_hasBooted) return;
       _hasBooted = true;
 
@@ -8275,18 +8281,16 @@
       initFilterListeners();
       setPresetDates('all_time');
 
-      try {
-        await guardAdmin();
-      } catch (e) {
-        console.warn('[Boot] Guard notice:', e);
-      }
-
+      // 1. Render immediately and synchronously so UI never hangs
       renderDashboard();
 
-      // Parallel background loaders
+      // 2. Parallel background loaders
       try { loadCreativeAdsData(); } catch (e) {}
       try { loadPricingData(); } catch (e) {}
       try { loadReviewsModeration(); } catch (e) {}
+
+      // 3. Resolve session in background and refresh on login
+      guardAdmin().catch(console.warn);
       connectRealtimeSync();
     }
 

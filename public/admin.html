@@ -4335,11 +4335,12 @@
           window._authListenerAttached = true;
           sb.auth.onAuthStateChange((event, session) => {
             renderAdminAuthBadge(session);
-            if (session && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
-              console.log('[Admin Auth] Session active, refreshing dashboard metrics...');
+            if (session && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION')) {
+              console.log('[Admin Auth] Session event:', event, 'refreshing dashboard metrics...');
               const overlay = document.getElementById('adminLoginOverlay');
               if (overlay) overlay.remove();
               renderDashboard();
+              try { loadCreativeAdsData(); } catch (e) {}
             }
           });
         }
@@ -4365,6 +4366,9 @@
           document.body.innerHTML = '<div style="color:var(--rose);text-align:center;padding:5rem;font-family:var(--font-mono);font-size:1.1rem;">🚫 Unauthorized. Admin privileges required for ' + escapeHtml(email) + '<br><br><button class="btn-ghost" onclick="adminLogout()" style="cursor:pointer;">Switch Account</button></div>';
           return false;
         }
+
+        // Trigger authenticated render
+        renderDashboard();
       }
 
       return true;
@@ -8270,10 +8274,16 @@
       initSupabaseClient();
       initFilterListeners();
       setPresetDates('all_time');
+
+      try {
+        await guardAdmin();
+      } catch (e) {
+        console.warn('[Boot] Guard notice:', e);
+      }
+
       renderDashboard();
 
-      // Background parallel tasks (non-blocking)
-      guardAdmin().catch(console.warn);
+      // Parallel background loaders
       try { loadCreativeAdsData(); } catch (e) {}
       try { loadPricingData(); } catch (e) {}
       try { loadReviewsModeration(); } catch (e) {}

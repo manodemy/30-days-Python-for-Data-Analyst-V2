@@ -6562,8 +6562,12 @@
           console.warn('[Ad Storage] Local merge notice:', e);
         }
 
-        // Sort by start_date DESC (newest campaigns first so created campaigns always show at the top)
-        list.sort((a, b) => new Date(b.start_date || b.created_at || 0) - new Date(a.start_date || a.created_at || 0));
+        // Sort strictly by creation timestamp / start_date DESC (latest created link ALWAYS appears at the top)
+        list.sort((a, b) => {
+          const tA = a.start_date ? new Date(a.start_date).getTime() : (a.created_at ? new Date(a.created_at).getTime() : 0);
+          const tB = b.start_date ? new Date(b.start_date).getTime() : (b.created_at ? new Date(b.created_at).getTime() : 0);
+          return tB - tA;
+        });
 
         // Filter out hidden/archived campaigns unless user clicked "Show Archived"
         const hiddenCamps = JSON.parse(localStorage.getItem('manodemy_hidden_campaigns') || '[]');
@@ -6768,6 +6772,7 @@
       const dateVal = document.getElementById('edit_campaign_start_date').value;
 
       try {
+        const client = sb || initSupabaseClient();
         const payload = {
           campaign_name: newName,
           platform,
@@ -6779,17 +6784,23 @@
           payload.start_date = new Date(dateVal).toISOString();
         }
 
-        // 1. Update Supabase ad_campaigns
-        let query = sb.from('ad_campaigns');
-        if (id && id.startsWith('CMP-')) {
-          const { error } = await query.update(payload).eq('campaign_id', id);
-          if (error) throw error;
-        } else {
-          const { error } = await query.update(payload).eq('campaign_name', origName);
-          if (error) throw error;
+        // 1. Update existing row in Supabase ad_campaigns (alters existing row in place without creating duplicates)
+        let updateRes = null;
+        if (client) {
+          if (id && id.startsWith('CMP-')) {
+            updateRes = await client.from('ad_campaigns').update(payload).eq('campaign_id', id);
+          }
+          if (!updateRes || updateRes.error) {
+            updateRes = await client.from('ad_campaigns').update(payload).eq('campaign_name', origName);
+          }
+
+          // If campaign name changed, also update campaign_clicks table references
+          if (origName.toLowerCase() !== newName.toLowerCase()) {
+            await client.from('campaign_clicks').update({ campaign_name: newName }).ilike('campaign_name', origName).catch(() => {});
+          }
         }
 
-        // 2. Update local storage cache if present
+        // 2. Update local storage cache
         try {
           const localCamps = JSON.parse(localStorage.getItem('manodemy_local_ad_campaigns') || '[]');
           const updated = localCamps.map(c => {
@@ -6800,6 +6811,10 @@
           });
           localStorage.setItem('manodemy_local_ad_campaigns', JSON.stringify(updated));
         } catch (e) {}
+
+        if (window._adminCache && typeof window._adminCache.invalidate === 'function') {
+          window._adminCache.invalidate('ads');
+        }
 
         showToast(`✅ Campaign "${newName}" updated successfully in database!`, 'success');
         closeEditCampaignModal();
@@ -6824,23 +6839,47 @@
       loadCreativeAdsData();
     };
 
-    window.deleteCampaignRecord = function(id, name) {
-      if (!confirm(`Hide campaign "${name}" (${id}) from the active leaderboard view?\n\n(Note: Historical data and analytics remain safely preserved in the database and can be viewed anytime via "Show Archived").`)) {
+    window.deleteCampaignRecord = async function(id, name) {
+      const cleanName = (name || '').trim();
+      if (!confirm(`Are you sure you want to permanently delete campaign "${cleanName}" (${id}) from both the leaderboard table and Supabase database?`)) {
         return;
       }
 
       try {
-        const hidden = JSON.parse(localStorage.getItem('manodemy_hidden_campaigns') || '[]');
-        const clean = (name || '').toLowerCase().trim();
-        if (!hidden.includes(clean)) {
-          hidden.push(clean);
-          localStorage.setItem('manodemy_hidden_campaigns', JSON.stringify(hidden));
+        const client = sb || initSupabaseClient();
+
+        // 1. Delete permanently from Supabase ad_campaigns table
+        if (client) {
+          if (id && id.startsWith('CMP-')) {
+            const { error: errId } = await client.from('ad_campaigns').delete().eq('campaign_id', id);
+            if (errId) console.warn('[Delete] ID delete notice:', errId.message);
+          }
+          const { error: errName } = await client.from('ad_campaigns').delete().ilike('campaign_name', cleanName);
+          if (errName) console.warn('[Delete] Name delete notice:', errName.message);
+
+          // Also clean up tracked clicks
+          await client.from('campaign_clicks').delete().ilike('campaign_name', cleanName).catch(() => {});
         }
 
-        showToast(`👁️ Campaign "${name}" hidden from active view (preserved in database)!`, 'success');
+        // 2. Remove from LocalStorage
+        try {
+          const localCamps = JSON.parse(localStorage.getItem('manodemy_local_ad_campaigns') || '[]');
+          const filtered = localCamps.filter(c => (c.campaign_name || '').toLowerCase() !== cleanName.toLowerCase() && c.campaign_id !== id);
+          localStorage.setItem('manodemy_local_ad_campaigns', JSON.stringify(filtered));
+
+          const hidden = JSON.parse(localStorage.getItem('manodemy_hidden_campaigns') || '[]');
+          const filteredHidden = hidden.filter(h => h !== cleanName.toLowerCase());
+          localStorage.setItem('manodemy_hidden_campaigns', JSON.stringify(filteredHidden));
+        } catch (e) {}
+
+        if (window._adminCache && typeof window._adminCache.invalidate === 'function') {
+          window._adminCache.invalidate('ads');
+        }
+
+        showToast(`🗑️ Campaign "${cleanName}" permanently deleted from database!`, 'success');
         loadCreativeAdsData();
       } catch (err) {
-        showToast('❌ Error: ' + err.message, 'error');
+        showToast('❌ Error deleting campaign: ' + err.message, 'error');
       }
     };
 

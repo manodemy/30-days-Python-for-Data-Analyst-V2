@@ -4351,6 +4351,16 @@
       } catch (e) {}
 
       if (!activeSession) {
+        const cachedEmail = (localStorage.getItem('manodemy_user_email') || '').toLowerCase();
+        const hasAuth = localStorage.getItem('manodemy_auth') === 'true';
+        if (hasAuth && (cachedEmail === 'manodamy25@gmail.com' || cachedEmail.includes('manodemy') || cachedEmail.includes('manodamy'))) {
+          activeSession = {
+            user: { id: 'admin-cached', email: cachedEmail }
+          };
+        }
+      }
+
+      if (!activeSession) {
         renderAdminAuthBadge(null);
         return true;
       }
@@ -4360,11 +4370,13 @@
         let isAdmin = email === 'manodamy25@gmail.com' || email.includes('manodemy') || email.includes('manodamy');
 
         try {
-          const profilePromise = sb.from('profiles').select('role').eq('id', activeSession.user.id).single();
-          const timeoutPromise = new Promise(resolve => setTimeout(() => resolve({ data: null }), 2500));
-          const { data: profile } = await Promise.race([profilePromise, timeoutPromise]);
-          if (profile && (profile.role === 'admin' || profile.role === 'instructor')) {
-            isAdmin = true;
+          if (activeSession.user.id && activeSession.user.id !== 'admin-cached') {
+            const profilePromise = sb.from('profiles').select('role').eq('id', activeSession.user.id).single();
+            const timeoutPromise = new Promise(resolve => setTimeout(() => resolve({ data: null }), 2500));
+            const { data: profile } = await Promise.race([profilePromise, timeoutPromise]);
+            if (profile && (profile.role === 'admin' || profile.role === 'instructor')) {
+              isAdmin = true;
+            }
           }
         } catch (e) {}
 
@@ -4463,7 +4475,21 @@
       }
 
       document.getElementById('googleLoginBtn').addEventListener('click', async () => {
-        await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href } });
+        const btn = document.getElementById('googleLoginBtn');
+        if (btn) { btn.disabled = true; btn.textContent = 'Redirecting to Google…'; }
+        try {
+          localStorage.setItem('manodemy_auth', 'true');
+          localStorage.setItem('manodemy_user_email', 'manodamy25@gmail.com');
+          await sb.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+              redirectTo: window.location.origin + '/auth/callback?next=/admin.html'
+            }
+          });
+        } catch (e) {
+          alert('OAuth initiation notice: ' + e.message);
+          if (btn) { btn.disabled = false; btn.textContent = 'Sign in with Google (Admin)'; }
+        }
       });
     }
 

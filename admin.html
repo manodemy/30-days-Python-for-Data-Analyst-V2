@@ -8426,11 +8426,23 @@
     </div><!-- /cert-modal-container -->
   </div><!-- /certificate-modal -->
 
-  <!-- Auto-purge Service Worker Cache for Admin -->
+  <!-- Auto-purge Service Worker Cache for Admin & Clean Stale Query Params -->
   <script>
+    try {
+      if (window.location.search.includes('cb=')) {
+        const cleanSearch = window.location.search.replace(/[\?&]cb=\d+/g, '').replace(/^\?$/, '');
+        const cleanUrl = window.location.pathname + cleanSearch;
+        window.history.replaceState({}, document.title, cleanUrl || '/admin.html');
+      }
+    } catch (e) {}
+
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.getRegistrations().then(registrations => {
-        registrations.forEach(r => r.update());
+        registrations.forEach(r => {
+          if (window.location.pathname.includes('admin')) {
+            r.unregister();
+          }
+        });
       });
       if ('caches' in window) {
         caches.keys().then(keys => {

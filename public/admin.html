@@ -6654,11 +6654,32 @@
                 ₹${spend.toLocaleString('en-IN')}
                 <button class="btn-ghost" style="padding:2px 7px; font-size:0.7rem; border-radius:6px; border:1px solid rgba(16,185,129,0.3); cursor:pointer; color:var(--emerald); background:rgba(16,185,129,0.1); margin-left:6px; font-weight:700;" onclick="quickAddCampaignSpend('${cName}', ${spend}, '${platform}')">➕ Add Budget</button>
               </td>
-              <td style="white-space:nowrap;">
-                <button class="apply-btn" style="padding:4px 8px; font-size:0.75rem; border-radius:6px; background:rgba(59,130,246,0.15); border:1px solid rgba(59,130,246,0.35); color:#60A5FA; font-weight:700; cursor:pointer; margin-right:4px;" onclick="openEditCampaignModal('${cId}', '${escapeHtml(cName)}', '${escapeHtml(platform)}', '${escapeHtml(targetUrl)}', ${spend}, '${item.start_date || ''}')">✏️ Edit</button>
+              <td style="white-space:nowrap; position:relative; z-index:10;">
+                <button type="button" class="apply-btn btn-edit-campaign" 
+                  data-id="${cId}" 
+                  data-name="${encodeURIComponent(cName)}" 
+                  data-platform="${encodeURIComponent(platform)}" 
+                  data-url="${encodeURIComponent(targetUrl)}" 
+                  data-spend="${spend}" 
+                  data-date="${item.start_date || ''}" 
+                  style="padding:4px 8px; font-size:0.75rem; border-radius:6px; background:rgba(59,130,246,0.15); border:1px solid rgba(59,130,246,0.35); color:#60A5FA; font-weight:700; cursor:pointer; margin-right:4px; pointer-events:auto; position:relative; z-index:15;" 
+                  onclick="openEditCampaignModal('${cId}', decodeURIComponent('${encodeURIComponent(cName)}'), decodeURIComponent('${encodeURIComponent(platform)}'), decodeURIComponent('${encodeURIComponent(targetUrl)}'), ${spend}, '${item.start_date || ''}')">
+                  ✏️ Edit
+                </button>
                 ${isHidden 
-                  ? `<button class="apply-btn" style="padding:4px 8px; font-size:0.75rem; border-radius:6px; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.35); color:var(--emerald); font-weight:700; cursor:pointer;" onclick="restoreCampaignRecord('${escapeHtml(cName)}')">♻️ Restore</button>`
-                  : `<button class="apply-btn" style="padding:4px 8px; font-size:0.75rem; border-radius:6px; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.35); color:#F87171; font-weight:700; cursor:pointer;" onclick="deleteCampaignRecord('${cId}', '${escapeHtml(cName)}')">🗑️ Delete</button>`
+                  ? `<button type="button" class="apply-btn btn-restore-campaign" 
+                      data-name="${encodeURIComponent(cName)}" 
+                      style="padding:4px 8px; font-size:0.75rem; border-radius:6px; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.35); color:var(--emerald); font-weight:700; cursor:pointer; pointer-events:auto; position:relative; z-index:15;" 
+                      onclick="restoreCampaignRecord(decodeURIComponent('${encodeURIComponent(cName)}'))">
+                      ♻️ Restore
+                    </button>`
+                  : `<button type="button" class="apply-btn btn-del-campaign" 
+                      data-id="${cId}" 
+                      data-name="${encodeURIComponent(cName)}" 
+                      style="padding:4px 8px; font-size:0.75rem; border-radius:6px; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.35); color:#F87171; font-weight:700; cursor:pointer; pointer-events:auto; position:relative; z-index:15;" 
+                      onclick="deleteCampaignRecord('${cId}', decodeURIComponent('${encodeURIComponent(cName)}'))">
+                      🗑️ Delete
+                    </button>`
                 }
               </td>
             </tr>
@@ -6905,6 +6926,46 @@
     };
 
     window.loadAttributionPerformance = loadCreativeAdsData;
+
+    // Attach global delegated click listener for actions in ad leaderboard
+    document.addEventListener('click', function(e) {
+      const delBtn = e.target.closest('.btn-del-campaign');
+      if (delBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        const id = delBtn.getAttribute('data-id');
+        const name = decodeURIComponent(delBtn.getAttribute('data-name') || '');
+        if (typeof window.deleteCampaignRecord === 'function') {
+          window.deleteCampaignRecord(id, name);
+        }
+        return;
+      }
+      const editBtn = e.target.closest('.btn-edit-campaign');
+      if (editBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        const id = editBtn.getAttribute('data-id');
+        const name = decodeURIComponent(editBtn.getAttribute('data-name') || '');
+        const platform = decodeURIComponent(editBtn.getAttribute('data-platform') || '');
+        const url = decodeURIComponent(editBtn.getAttribute('data-url') || '');
+        const spend = Number(editBtn.getAttribute('data-spend') || 0);
+        const date = editBtn.getAttribute('data-date') || '';
+        if (typeof window.openEditCampaignModal === 'function') {
+          window.openEditCampaignModal(id, name, platform, url, spend, date);
+        }
+        return;
+      }
+      const restoreBtn = e.target.closest('.btn-restore-campaign');
+      if (restoreBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        const name = decodeURIComponent(restoreBtn.getAttribute('data-name') || '');
+        if (typeof window.restoreCampaignRecord === 'function') {
+          window.restoreCampaignRecord(name);
+        }
+        return;
+      }
+    });
 
     window.copyCampaignLink = function(url) {
       if (!url) return;

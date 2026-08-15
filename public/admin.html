@@ -6819,7 +6819,9 @@
 
           // If campaign name changed, also update campaign_clicks table references
           if (origName.toLowerCase() !== newName.toLowerCase()) {
-            await client.from('campaign_clicks').update({ campaign_name: newName }).ilike('campaign_name', origName).catch(() => {});
+            try {
+              await client.from('campaign_clicks').update({ campaign_name: newName }).ilike('campaign_name', origName);
+            } catch (e) {}
           }
         }
 
@@ -6881,7 +6883,9 @@
           if (errName) console.warn('[Delete] Name delete notice:', errName.message);
 
           // Also clean up tracked clicks
-          await client.from('campaign_clicks').delete().ilike('campaign_name', cleanName).catch(() => {});
+          try {
+            await client.from('campaign_clicks').delete().ilike('campaign_name', cleanName);
+          } catch (e) {}
         }
 
         // 2. Remove from LocalStorage & register in deleted set
@@ -7180,7 +7184,11 @@
             console.warn('[Ad Campaign] Upsert notice, attempting direct update/insert:', error.message);
             const { error: updateErr } = await client.from('ad_campaigns').update(payload).eq('campaign_name', campaign);
             if (updateErr) {
-              await client.from('ad_campaigns').insert([payload]).catch(err => console.warn('[Ad Campaign] Insert error:', err));
+              try {
+                await client.from('ad_campaigns').insert([payload]);
+              } catch (err) {
+                console.warn('[Ad Campaign] Insert error:', err);
+              }
             }
           }
         }

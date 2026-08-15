@@ -6808,10 +6808,24 @@
 
       try {
         const client = sb || initSupabaseClient();
+        
+        let synchronizedUrl = url;
+        if (origName.toLowerCase() !== newName.toLowerCase() && synchronizedUrl) {
+          try {
+            const urlObj = new URL(synchronizedUrl, window.location.origin);
+            if (urlObj.searchParams.has('utm_campaign')) {
+              urlObj.searchParams.set('utm_campaign', newName);
+              synchronizedUrl = urlObj.toString();
+            }
+          } catch (e) {
+            synchronizedUrl = synchronizedUrl.replace(new RegExp(`([?&]utm_campaign=)[^&]+`, 'i'), `$1${newName}`);
+          }
+        }
+
         const payload = {
           campaign_name: newName,
           platform,
-          target_url: url,
+          target_url: synchronizedUrl,
           ad_spend_inr: spend,
           last_synced_at: new Date().toISOString()
         };

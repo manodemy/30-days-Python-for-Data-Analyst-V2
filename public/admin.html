@@ -4323,12 +4323,8 @@
     async function guardAdmin() {
       let activeSession = null;
       try {
-        if (sb && sb.auth) {
-          const sessionPromise = sb.auth.getSession();
-          const timeoutPromise = new Promise(resolve => setTimeout(() => resolve({ data: { session: null } }), 2500));
-          const { data } = await Promise.race([sessionPromise, timeoutPromise]);
-          activeSession = data?.session || null;
-        }
+        const { data: { session } } = await sb.auth.getSession();
+        activeSession = session;
       } catch (e) {}
 
       renderAdminAuthBadge(activeSession);
@@ -4339,26 +4335,15 @@
           window._authListenerAttached = true;
           sb.auth.onAuthStateChange((event, session) => {
             renderAdminAuthBadge(session);
-            if (session && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION')) {
-              console.log('[Admin Auth] Session event:', event, 'refreshing metrics...');
+            if (session && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
+              console.log('[Admin Auth] Session active, refreshing dashboard metrics...');
               const overlay = document.getElementById('adminLoginOverlay');
               if (overlay) overlay.remove();
               renderDashboard();
-              try { loadCreativeAdsData(); } catch (e) {}
             }
           });
         }
       } catch (e) {}
-
-      if (!activeSession) {
-        const cachedEmail = (localStorage.getItem('manodemy_user_email') || '').toLowerCase();
-        const hasAuth = localStorage.getItem('manodemy_auth') === 'true';
-        if (hasAuth && (cachedEmail === 'manodamy25@gmail.com' || cachedEmail.includes('manodemy') || cachedEmail.includes('manodamy'))) {
-          activeSession = {
-            user: { id: 'admin-cached', email: cachedEmail }
-          };
-        }
-      }
 
       if (!activeSession) {
         renderAdminAuthBadge(null);
@@ -4370,13 +4355,9 @@
         let isAdmin = email === 'manodamy25@gmail.com' || email.includes('manodemy') || email.includes('manodamy');
 
         try {
-          if (activeSession.user.id && activeSession.user.id !== 'admin-cached') {
-            const profilePromise = sb.from('profiles').select('role').eq('id', activeSession.user.id).single();
-            const timeoutPromise = new Promise(resolve => setTimeout(() => resolve({ data: null }), 2500));
-            const { data: profile } = await Promise.race([profilePromise, timeoutPromise]);
-            if (profile && (profile.role === 'admin' || profile.role === 'instructor')) {
-              isAdmin = true;
-            }
+          const { data: profile } = await sb.from('profiles').select('role').eq('id', activeSession.user.id).single();
+          if (profile && (profile.role === 'admin' || profile.role === 'instructor')) {
+            isAdmin = true;
           }
         } catch (e) {}
 
@@ -4384,9 +4365,6 @@
           document.body.innerHTML = '<div style="color:var(--rose);text-align:center;padding:5rem;font-family:var(--font-mono);font-size:1.1rem;">🚫 Unauthorized. Admin privileges required for ' + escapeHtml(email) + '<br><br><button class="btn-ghost" onclick="adminLogout()" style="cursor:pointer;">Switch Account</button></div>';
           return false;
         }
-
-        // Fresh authenticated render
-        renderDashboard();
       }
 
       return true;
@@ -4475,21 +4453,7 @@
       }
 
       document.getElementById('googleLoginBtn').addEventListener('click', async () => {
-        const btn = document.getElementById('googleLoginBtn');
-        if (btn) { btn.disabled = true; btn.textContent = 'Redirecting to Google…'; }
-        try {
-          localStorage.setItem('manodemy_auth', 'true');
-          localStorage.setItem('manodemy_user_email', 'manodamy25@gmail.com');
-          await sb.auth.signInWithOAuth({
-            provider: 'google',
-            options: {
-              redirectTo: window.location.origin + '/auth/callback?next=/admin.html'
-            }
-          });
-        } catch (e) {
-          alert('OAuth initiation notice: ' + e.message);
-          if (btn) { btn.disabled = false; btn.textContent = 'Sign in with Google (Admin)'; }
-        }
+        await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href } });
       });
     }
 

@@ -6463,9 +6463,11 @@
             };
           });
 
+          const deletedCamps = JSON.parse(localStorage.getItem('manodemy_deleted_campaigns') || '[]');
+
           clicks.forEach(cc => {
-            const key = (cc.campaign_name || '').toLowerCase();
-            if (key) {
+            const key = (cc.campaign_name || '').toLowerCase().trim();
+            if (key && !deletedCamps.includes(key)) {
               if (!groups[key]) {
                 groups[key] = {
                   campaign_id: 'CMP-' + key.substring(0,6).toUpperCase(),
@@ -6490,8 +6492,8 @@
           const userEmailCampaignMap = {};
 
           profiles.forEach(prof => {
-            const key = (prof.first_touch_campaign || prof.last_touch_campaign || '').toLowerCase();
-            if (key) {
+            const key = (prof.first_touch_campaign || prof.last_touch_campaign || '').toLowerCase().trim();
+            if (key && !deletedCamps.includes(key)) {
               if (prof.id) userCampaignMap[prof.id] = key;
               if (prof.email) userEmailCampaignMap[prof.email.toLowerCase()] = key;
               if (groups[key]) {
@@ -6501,8 +6503,8 @@
           });
 
           purchases.forEach(p => {
-            const key = (p.first_touch_campaign || p.last_touch_campaign || userCampaignMap[p.user_id] || userEmailCampaignMap[(p.email || '').toLowerCase()] || '').toLowerCase();
-            if (key) {
+            const key = (p.first_touch_campaign || p.last_touch_campaign || userCampaignMap[p.user_id] || userEmailCampaignMap[(p.email || '').toLowerCase()] || '').toLowerCase().trim();
+            if (key && !deletedCamps.includes(key)) {
               if (!groups[key]) {
                 groups[key] = {
                   campaign_id: 'CMP-' + key.substring(0,6).toUpperCase(),
@@ -6861,7 +6863,7 @@
           await client.from('campaign_clicks').delete().ilike('campaign_name', cleanName).catch(() => {});
         }
 
-        // 2. Remove from LocalStorage
+        // 2. Remove from LocalStorage & register in deleted set
         try {
           const localCamps = JSON.parse(localStorage.getItem('manodemy_local_ad_campaigns') || '[]');
           const filtered = localCamps.filter(c => (c.campaign_name || '').toLowerCase() !== cleanName.toLowerCase() && c.campaign_id !== id);
@@ -6870,6 +6872,12 @@
           const hidden = JSON.parse(localStorage.getItem('manodemy_hidden_campaigns') || '[]');
           const filteredHidden = hidden.filter(h => h !== cleanName.toLowerCase());
           localStorage.setItem('manodemy_hidden_campaigns', JSON.stringify(filteredHidden));
+
+          const deleted = JSON.parse(localStorage.getItem('manodemy_deleted_campaigns') || '[]');
+          if (!deleted.includes(cleanName.toLowerCase())) {
+            deleted.push(cleanName.toLowerCase());
+            localStorage.setItem('manodemy_deleted_campaigns', JSON.stringify(deleted));
+          }
         } catch (e) {}
 
         if (window._adminCache && typeof window._adminCache.invalidate === 'function') {
@@ -6980,6 +6988,13 @@
         alert('Please enter a Campaign Name (e.g. august_python_launch).');
         return;
       }
+
+      // Clear from deleted set if re-creating
+      try {
+        const deleted = JSON.parse(localStorage.getItem('manodemy_deleted_campaigns') || '[]');
+        const updatedDeleted = deleted.filter(d => d !== campaign);
+        localStorage.setItem('manodemy_deleted_campaigns', JSON.stringify(updatedDeleted));
+      } catch (e) {}
 
       const campaignId = 'CMP-' + Math.random().toString(36).substring(2, 8).toUpperCase();
       

@@ -195,8 +195,10 @@
     }
 
     .sidebar-head {
-      padding: 2rem 1.5rem 1.5rem;
+      padding: 1.5rem 1.25rem 1.25rem;
       border-bottom: 1px solid var(--rim);
+      display: flex;
+      flex-direction: column;
     }
 
     .brand-name {
@@ -219,6 +221,21 @@
       text-transform: uppercase;
       color: var(--ink-muted);
       margin-top: 0.3rem;
+    }
+
+    .sidebar-user-block {
+      margin-top: 0.85rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .sidebar-user-top {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
     }
 
     .nav-menu {
@@ -357,7 +374,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 0.75rem;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       min-height: 38px;
     }
 
@@ -377,7 +394,7 @@
       border-radius: 8px;
       padding: 3px;
       overflow-x: auto;
-      max-width: 100%;
+      flex-shrink: 0;
     }
 
     .filter-top-row::-webkit-scrollbar {
@@ -2476,6 +2493,14 @@
       <div class="sidebar-head">
         <div class="brand-name">Mano<em>demy</em></div>
         <div class="brand-sub">Intelligence Suite</div>
+        
+        <!-- SIDEBAR USER & STATUS (NEATLY BELOW LOGO) -->
+        <div class="sidebar-user-block">
+          <div class="sidebar-user-top">
+            <div id="realtimeIndicator"></div>
+          </div>
+          <div id="adminAuthBadge"></div>
+        </div>
       </div>
       <nav class="nav-menu">
         <div class="nav-section-label">Analytics</div>
@@ -2518,7 +2543,7 @@
     </aside>
     <!-- MAIN -->
     <main class="main-content">
-      <!-- FILTER BAR -->
+      <!-- FILTER BAR (SINGLE ROW) -->
       <div class="top-filter-bar">
         <div class="filter-main-bar">
           
@@ -2540,8 +2565,8 @@
             </div>
           </div>
 
-          <!-- CENTER: Inline Custom Date Picker & Compare -->
-          <div class="filter-controls-center">
+          <!-- RIGHT: Inline Custom Date Picker & Compare -->
+          <div class="filter-controls-right">
             <div class="date-range-cluster">
               <div class="date-input-wrap">
                 <input class="date-picker" id="filterFrom" type="date" aria-label="From date" />
@@ -2557,12 +2582,6 @@
               <input id="compareToggle" type="checkbox" />
               <span>Compare</span>
             </label>
-          </div>
-
-          <!-- RIGHT: Realtime Live & Admin Profile Badges -->
-          <div class="filter-controls-right">
-            <div id="realtimeIndicator"></div>
-            <div id="adminAuthBadge"></div>
           </div>
 
         </div>
@@ -4396,18 +4415,20 @@
 
       if (email) {
         container.innerHTML = `
-          <div style="display:inline-flex; align-items:center; gap:5px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:7px; padding:2px 6px;">
-            <span style="font-size:0.7rem; font-weight:700; color:#34D399; display:inline-flex; align-items:center; gap:4px; max-width:190px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; letter-spacing:0.02em;">
+          <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:0.35rem 0.55rem; display:flex; align-items:center; justify-content:space-between; gap:6px; width:100%;">
+            <div style="display:flex; align-items:center; gap:5px; min-width:0; flex:1;">
               <span style="width:6px; height:6px; border-radius:50%; background:#10B981; box-shadow:0 0 6px #10B981; flex-shrink:0;"></span>
-              ${escapeHtml(email)}
-            </span>
-            <button class="btn-ghost" style="padding:2px 6px; font-size:0.68rem; border-radius:4px; cursor:pointer; color:var(--ink-muted); background:transparent; border:1px solid rgba(255,255,255,0.08); transition:all 0.15s ease;" onmouseover="this.style.color='#F87171';this.style.borderColor='rgba(248,113,113,0.3)'" onmouseout="this.style.color='var(--ink-muted)';this.style.borderColor='rgba(255,255,255,0.08)'" onclick="adminLogout()" title="Sign out of admin session">Sign Out</button>
+              <span style="font-size:0.68rem; font-weight:700; color:#34D399; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; letter-spacing:0.02em;" title="${escapeHtml(email)}">
+                ${escapeHtml(email)}
+              </span>
+            </div>
+            <button class="btn-ghost" style="padding:2px 6px; font-size:0.65rem; border-radius:4px; cursor:pointer; color:var(--ink-muted); background:transparent; border:1px solid rgba(255,255,255,0.08); transition:all 0.15s ease; flex-shrink:0;" onmouseover="this.style.color='#F87171';this.style.borderColor='rgba(248,113,113,0.3)'" onmouseout="this.style.color='var(--ink-muted)';this.style.borderColor='rgba(255,255,255,0.08)'" onclick="adminLogout()" title="Sign out of admin session">Sign Out</button>
           </div>
         `;
       } else {
         container.innerHTML = `
-          <button class="btn-gold" style="padding:3px 10px; font-size:0.72rem; font-weight:700; border-radius:6px; cursor:pointer;" onclick="showLoginOverlay()">
-            🔑 Sign In
+          <button class="btn-gold" style="width:100%; padding:0.35rem 0.65rem; font-size:0.72rem; font-weight:700; border-radius:6px; cursor:pointer; text-align:center;" onclick="showLoginOverlay()">
+            🔑 Sign In with Google
           </button>
         `;
       }

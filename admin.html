@@ -165,6 +165,15 @@
       background: transparent;
     }
 
+    /* ─────────────────────────────────────────────
+   APP LAYOUT (full-width, no sidebar)
+───────────────────────────────────────────── */
+    .app-container, .app-wrapper {
+      display: block;
+      width: 100%;
+      min-height: 100vh;
+    }
+
     ::-webkit-scrollbar-thumb {
       background: var(--rim-strong);
       border-radius: 2px;
@@ -631,25 +640,15 @@
       padding: 1.25rem 1.75rem;
     }
 
-    .tab-pane {
-      display: none;
-    }
-
-    .tab-pane.active {
+    .tab-section {
       display: block;
-      animation: tabReveal 0.22s ease;
+      margin-bottom: 2.5rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--rim);
     }
 
-    @keyframes tabReveal {
-      from {
-        opacity: 0;
-        transform: translateY(4px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    .tab-section:last-child {
+      border-bottom: none;
     }
 
     .tab-header {
@@ -2572,82 +2571,6 @@
       width: 100%;
     }
 
-    .tile {
-      background: rgba(0,229,255,0.04);
-      border: 1px solid rgba(0,229,255,0.15);
-      border-top: 2px solid rgba(0,229,255,0.55);
-      border-radius: 3px;
-      padding: 6px 2px;
-      text-align: center;
-      transition: border-color 0.2s;
-    }
-    .tile:hover { border-top-color: #00E5FF; background: rgba(0,229,255,0.08); }
-
-    .tile-day {
-      font-family: 'Raleway', sans-serif;
-      font-size: 8px;
-      font-weight: 600;
-      color: rgba(0,229,255,0.55);
-      letter-spacing: 0.5px;
-      margin-bottom: 2px;
-    }
-
-    .tile-score {
-      font-family: 'Raleway', sans-serif;
-      font-size: 11px;
-      font-weight: 700;
-      color: rgba(255,255,255,0.8);
-    }
-    .tile.low { border-top-color: rgba(255,200,100,0.55); }
-    .tile.low .tile-score { color: rgba(255,200,100,0.8); }
-    .tile.high { border-top-color: #00E5FF; }
-    .tile.high .tile-score { color: rgba(0,229,255,0.95); }
-
-    /* Footer / Signature Area */
-    .cert-footer {
-      border-top: 1px solid rgba(0,229,255,0.1);
-      padding-top: 12px;
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      align-items: center;
-      gap: 20px;
-      width: 90%;
-      margin: 0 auto;
-    }
-
-    .cert-footer-left { text-align: left; }
-    .cert-footer-center { text-align: center; }
-    .cert-footer-right { text-align: right; }
-
-    .cert-sig-block-name {
-      font-family: 'Dancing Script', cursive;
-      font-size: 22px;
-      color: rgba(255,255,255,0.75);
-      margin-bottom: 4px;
-    }
-
-    .cert-sig-block-line { width: 100%; height: 1px; background: rgba(255,255,255,0.1); margin-bottom: 5px; }
-
-    .cert-sig-block-role {
-      font-family: 'Raleway', sans-serif;
-      font-size: 9px;
-      letter-spacing: 3px;
-      color: rgba(255,255,255,0.25);
-      text-transform: uppercase;
-    }
-
-    .cert-crest-emblem {
-      width: 80px;
-      height: 80px;
-      margin: 0 auto;
-      position: relative;
-      filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.25));
-    }
-    .cert-crest-emblem svg {
-      width: 100%;
-      height: 100%;
-    }
-
     /* Glossy Refraction Shine Layer */
     .certificate-body::after {
       content: '';
@@ -2816,9 +2739,6 @@
       from { opacity: 0; transform: translateY(30px); }
       to   { opacity: 1; transform: translateY(0); }
     }
-    .admin-bottom-tabs {
-      display: none;
-    }
   </style>
 </head>
 
@@ -2826,121 +2746,17 @@
   <!-- ════════════════════════════════════════
      APP
 ════════════════════════════════════════ -->
-  <div class="app-container" id="adminPanel">
-    <!-- MOBILE BACKDROP OVERLAY -->
-    <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()" aria-hidden="true"></div>
-
-    <!-- MOBILE BOTTOM TABS (HORIZONTALLY SCROLLABLE) -->
-    <div class="admin-bottom-tabs" id="adminBottomTabs">
-      <div class="nav-item active" data-tab="tab-revenue">
-        <span class="admin-tab-icon">◈</span>
-        <span>Revenue</span>
-      </div>
-      <div class="nav-item" data-tab="tab-growth">
-        <span class="admin-tab-icon">↗</span>
-        <span>Growth</span>
-      </div>
-      <div class="nav-item" data-tab="tab-funnel">
-        <span class="admin-tab-icon">⧩</span>
-        <span>Funnel</span>
-      </div>
-      <div class="nav-item" data-tab="tab-retention">
-        <span class="admin-tab-icon">⟳</span>
-        <span>Retention</span>
-      </div>
-      <div class="nav-item" data-tab="tab-engagement">
-        <span class="admin-tab-icon">◴</span>
-        <span>Engage</span>
-      </div>
-      <div class="nav-item" data-tab="tab-ads">
-        <span class="admin-tab-icon">🎯</span>
-        <span>Ads</span>
-      </div>
-      <div class="nav-item" data-tab="tab-pricing">
-        <span class="admin-tab-icon">⬡</span>
-        <span>Pricing</span>
-      </div>
-      <div class="nav-item" data-tab="tab-reviews">
-        <span class="admin-tab-icon">★</span>
-        <span>Reviews</span>
-      </div>
-      <div class="nav-item" data-tab="tab-settings">
-        <span class="admin-tab-icon">◎</span>
-        <span>Settings</span>
-      </div>
-      <div class="nav-item mobile-more-btn" id="mobileMoreTabBtn" onclick="toggleSidebar()" title="More navigation drawer">
-        <span class="admin-tab-icon">☰</span>
-        <span>Menu</span>
-      </div>
-    </div>
+  <div class="app-wrapper" id="adminPanel">
     <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-head">
-        <div class="sidebar-brand-row">
-          <div class="sidebar-brand-logo">
-            <img class="admin-brand-symbol" src="/landing_v2/manodemy_3d_keycap.png" alt="Manodemy" width="30" height="30" />
-            <div class="brand-text-wrap">
-              <div class="brand-name">Mano<span>demy</span></div>
-              <div class="brand-sub">Admin Panel</div>
-            </div>
-          </div>
-          <div id="realtimeIndicator"></div>
-        </div>
-        
-        <!-- SIDEBAR USER BADGE -->
-        <div class="sidebar-user-block">
-          <div id="adminAuthBadge"></div>
-        </div>
-      </div>
-      <nav class="nav-menu">
-        <div class="nav-section-label">Analytics</div>
-        <div class="nav-item active" data-tab="tab-revenue">
-          <span class="nav-icon">◈</span> Revenue
-        </div>
-        <div class="nav-item" data-tab="tab-growth">
-          <span class="nav-icon">↗</span> Growth
-        </div>
-        <div class="nav-item" data-tab="tab-funnel">
-          <span class="nav-icon" style="color:var(--sapphire);">⧩</span> Funnel
-        </div>
-        <div class="nav-item" data-tab="tab-retention">
-          <span class="nav-icon">⟳</span> Retention
-        </div>
-        <div class="nav-item" data-tab="tab-engagement">
-          <span class="nav-icon">◴</span> Engagement
-        </div>
-        <div class="nav-section-label">Operations</div>
-        <div class="nav-item" data-tab="tab-ads">
-          <span class="nav-icon">🎯</span> Creative Ads &amp; Traffic
-        </div>
-        <div class="nav-item" data-tab="tab-pricing">
-          <span class="nav-icon">⬡</span> Pricing &amp; Coupons
-        </div>
-        <div class="nav-item" data-tab="tab-reviews">
-          <span class="nav-icon">★</span> Reviews Moderation
-        </div>
-        <div class="nav-item" data-tab="tab-settings">
-          <span class="nav-icon">◎</span> Settings
-        </div>
-        <div class="nav-section-label">Navigation</div>
-        <a href="home.html" class="nav-item" style="text-decoration: none; display: flex; color: var(--ink-dim);">
-          <span class="nav-icon">🎓</span> Student Dashboard
-        </a>
-      </nav>
-      <div class="sidebar-foot">
-        <div class="brand-sub" style="text-align:center;padding:0.5rem 0;">Manodemy Admin Panel</div>
-      </div>
-    </aside>
     <!-- MAIN -->
-    <main class="main-content">
+    <main class="main-content" style="margin-left:0; width:100%;">
       <!-- FILTER BAR (SINGLE ROW) -->
       <div class="top-filter-bar">
         <div class="filter-main-bar">
           
           <!-- LEFT: Mobile Hamburger & Quick Presets Group -->
           <div class="filter-controls-left">
-            <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation">☰</button>
-            <div class="filter-top-row">
+              <div class="filter-top-row">
               <button class="pill" data-preset="today">Today</button>
               <button class="pill" data-preset="yesterday">Yesterday</button>
               <button class="pill" data-preset="last7">7D</button>
@@ -2979,7 +2795,7 @@
       <!-- PAGE CONTENT -->
       <div class="page-content">
         <!-- ══ TAB 1: REVENUE ══ -->
-        <div class="tab-pane active" id="tab-revenue">
+        <div class="tab-section" id="tab-revenue">
           <div class="tab-header">
             <h2 class="tab-title">Reve<em>nue</em></h2>
             <span class="tab-period-label" id="rev-period-label">Loading period…</span>
@@ -3129,7 +2945,7 @@
           </div>
         </div>
         <!-- ══ TAB 2: GROWTH ══ -->
-        <div class="tab-pane" id="tab-growth">
+        <div class="tab-section" id="tab-growth">
           <div class="tab-header">
             <h2 class="tab-title">Gro<em>wth</em></h2>
             <span class="tab-period-label">Acquisition &amp; Funnel</span>
@@ -3312,7 +3128,7 @@
           </div>
         </div>
         <!-- ══ TAB: FUNNEL ══ -->
-        <div class="tab-pane" id="tab-funnel">
+        <div class="tab-section" id="tab-funnel">
           <div class="tab-header" style="display:flex; justify-content:space-between; align-items:center;">
             <div>
               <h2 class="tab-title">Conversion <em>Funnel</em></h2>
@@ -3513,7 +3329,7 @@
           </div>
         </div>
         <!-- ══ TAB 3: RETENTION ══ -->
-        <div class="tab-pane" id="tab-retention">
+        <div class="tab-section" id="tab-retention">
           <div class="tab-header">
             <h2 class="tab-title">Reten<em>tion</em></h2>
             <span class="tab-period-label">Engagement &amp; Churn</span>
@@ -3623,7 +3439,7 @@
           </div>
         </div>
         <!-- ══ TAB: ENGAGEMENT ══ -->
-        <div class="tab-pane" id="tab-engagement">
+        <div class="tab-section" id="tab-engagement">
           <div class="tab-header">
             <h2 class="tab-title">User <em>Engagement</em></h2>
             <div style="display:flex;align-items:center;gap:0.75rem;">
@@ -3716,7 +3532,7 @@
           </div>
         </div>
                 <!-- ══ TAB 4: PRICING & COUPONS COMMAND CENTER ══ -->
-        <div class="tab-pane" id="tab-pricing">
+        <div class="tab-section" id="tab-pricing">
 
           <!-- 1. DUAL-CURRENCY MATRIX OVERVIEW & INTERACTIVE REGION SELECTOR -->
           <div id="moduleMasterMatrix" style="background: var(--elevated); border: 1px solid var(--rim); border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 1.25rem;">
@@ -3951,7 +3767,7 @@
         </div>
 
         <!-- ══ TAB 7: CREATIVE ADS & TRAFFIC INTELLIGENCE ══ -->
-        <div class="tab-pane" id="tab-ads">
+        <div class="tab-section" id="tab-ads">
           <div class="tab-header" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem;">
             <div>
               <h2 class="tab-title" style="font-family:var(--font-display); font-size:1.5rem; font-weight:800; letter-spacing:-0.02em;">
@@ -4285,7 +4101,7 @@
         </div>
 
         <!-- ══ TAB 5: SETTINGS ══ -->
-        <div class="tab-pane" id="tab-settings">
+        <div class="tab-section" id="tab-settings">
           <div class="tab-header">
             <h2 class="tab-title">Set<em>tings</em></h2>
             <span class="tab-period-label">Configuration &amp; Access Control</span>
@@ -4343,7 +4159,7 @@
           </div>
         </div>
         <!-- ══ TAB 8: REVIEWS MODERATION ══ -->
-        <div class="tab-pane" id="tab-reviews">
+        <div class="tab-section" id="tab-reviews">
           <style>
             /* Premium Scoped Styles for Reviews Moderation */
             .rev-kpi-grid {
@@ -8212,87 +8028,18 @@
       renderDashboard();
     }
 
-    // ── TAB SWITCHING ENGINE (SYNCED ACROSS SIDEBAR, MOBILE STRIP & BOTTOM BAR) ──
-    window.switchTab = function(tabId) {
-      if (!tabId) return;
-      const targetPane = document.getElementById(tabId);
-      if (!targetPane) return;
-      
-      // Update active class on all nav triggers
-      document.querySelectorAll('.nav-item').forEach(n => {
-        if (n.dataset.tab === tabId) {
-          n.classList.add('active');
-          if (n.closest('.admin-bottom-tabs')) {
-            n.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-          }
-        } else {
-          n.classList.remove('active');
-        }
-      });
+    
+    // All sections always visible — no tab switching needed
+    // Ensure filter bar always shows
+    const filterBar = document.querySelector('.top-filter-bar');
+    if (filterBar) filterBar.style.display = 'block';
 
-      // Switch active tab pane
-      document.querySelectorAll('.tab-pane').forEach(t => t.classList.remove('active'));
-      targetPane.classList.add('active');
-      
-      // Hide global filter bar on Pricing, Engagement, and Reviews pages
-      const filterBar = document.querySelector('.top-filter-bar');
-      if (filterBar) {
-        filterBar.style.display = (tabId === 'tab-pricing' || tabId === 'tab-engagement' || tabId === 'tab-reviews') ? 'none' : 'block';
-      }
-
-      if (tabId === 'tab-pricing') {
-        loadPricingData();
-        loadCouponsList();
-      }
-
-      if (tabId === 'tab-ads') {
-        loadCreativeAdsData();
-        populateCouponDropdownForSmartLink();
-      }
-
-      if (tabId === 'tab-reviews') {
-        fetchAdminReviews();
-      }
-
-      if (window.innerWidth <= 768) window.closeSidebar();
-    };
-
-    // Attach click listeners to all sidebar items, bottom items, and mobile tab strip buttons
-    document.querySelectorAll('.nav-item, .mobile-tab-btn').forEach(item => {
-      item.addEventListener('click', () => {
-        const tabId = item.dataset.tab;
-        if (tabId) window.switchTab(tabId);
-      });
-    });
-
-    // ── MOBILE SIDEBAR DRAWER CONTROLLER ─────────────
-    window.openSidebar = function() {
-      document.getElementById('sidebar')?.classList.add('open');
-      document.getElementById('sidebarBackdrop')?.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    };
-
-    window.closeSidebar = function() {
-      document.getElementById('sidebar')?.classList.remove('open');
-      document.getElementById('sidebarBackdrop')?.classList.remove('active');
-      document.body.style.overflow = '';
-    };
-
-    window.toggleSidebar = function() {
-      const sb = document.getElementById('sidebar');
-      if (sb && sb.classList.contains('open')) {
-        window.closeSidebar();
-      } else {
-        window.openSidebar();
-      }
-    };
-
-    // NOTE: pill, applyFilterBtn, compareToggle listeners are registered by
-    // initFilterListeners() (called at startup). Do NOT re-register them here
-    // to avoid double-firing renderDashboard.
-    document.getElementById('funnelVisitedInput')?.addEventListener('change', renderDashboard);
-    document.getElementById('hamburgerBtn')?.addEventListener('click', window.toggleSidebar);
-    document.getElementById('sidebarBackdrop')?.addEventListener('click', window.closeSidebar);
+    // Trigger data loaders for all sections on startup
+    try { loadPricingData(); } catch(e) {}
+    try { loadCouponsList(); } catch(e) {}
+    try { loadCreativeAdsData(); } catch(e) {}
+    try { populateCouponDropdownForSmartLink(); } catch(e) {}
+    try { fetchAdminReviews(); } catch(e) {}
 
     // ── SETTINGS ─────────────────────────────────────
     document.getElementById('saveRateBtn').addEventListener('click', () => {

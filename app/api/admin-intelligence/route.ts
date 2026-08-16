@@ -3,8 +3,8 @@ import { createClient } from '@supabase/supabase-js';
 
 export const dynamic = 'force-dynamic';
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || 'https://erqoyvbuhmkyvcqgwcbz.supabase.co';
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVycW95dmJ1aG1reXZjcWd3Y2J6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3OTM4OTUxMiwiZXhwIjoyMDk0OTY1NTEyfQ.pp5wMb4qwuIBq57YyAsPTtxtcnHY1Xmx_1uMMEkPaL0';
+const SUPABASE_URL = 'https://erqoyvbuhmkyvcqgwcbz.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVycW95dmJ1aG1reXZjcWd3Y2J6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3OTM4OTUxMiwiZXhwIjoyMDk0OTY1NTEyfQ.pp5wMb4qwuIBq57YyAsPTtxtcnHY1Xmx_1uMMEkPaL0';
 
 export async function GET(req: Request) {
   try {

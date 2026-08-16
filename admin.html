@@ -4720,6 +4720,61 @@
               detectSessionInUrl: true
             }
           });
+
+          // Immediate synchronous URL hash parsing for OAuth callbacks
+          if (window.location.hash && window.location.hash.includes('access_token=')) {
+            try {
+              const hashParams = new URLSearchParams(window.location.hash.substring(1));
+              const accessToken = hashParams.get('access_token');
+              const refreshToken = hashParams.get('refresh_token');
+              const expiresIn = parseInt(hashParams.get('expires_in') || '604800', 10);
+              
+              if (accessToken) {
+                document.cookie = `sb-access-token=${accessToken}; path=/; max-age=${expiresIn}; SameSite=Lax; Secure`;
+                try {
+                  const payload = JSON.parse(atob(accessToken.split('.')[1]));
+                  if (payload && payload.email) {
+                    localStorage.setItem('manodemy_auth', 'true');
+                    localStorage.setItem('manodemy_user_email', payload.email);
+                    renderAdminAuthBadge({ user: { email: payload.email } });
+                  }
+                } catch(jwtErr) {}
+
+                if (refreshToken) {
+                  sb.auth.setSession({ access_token: accessToken, refresh_token: refreshToken }).then(({ data }) => {
+                    if (data && data.session) {
+                      renderAdminAuthBadge(data.session);
+                    }
+                  }).catch(() => {});
+                }
+              }
+            } catch(e) {}
+          }
+
+          // Immediate Auth State Change Listener
+          if (sb && sb.auth && !window._globalAuthListenerAttached) {
+            window._globalAuthListenerAttached = true;
+            sb.auth.onAuthStateChange((event, session) => {
+              if (session && session.user && session.user.email) {
+                localStorage.setItem('manodemy_auth', 'true');
+                localStorage.setItem('manodemy_user_email', session.user.email);
+                renderAdminAuthBadge(session);
+                const overlay = document.getElementById('adminLoginOverlay');
+                if (overlay) overlay.remove();
+                renderDashboard();
+                try { loadCreativeAdsData(); } catch (e) {}
+              } else if (event === 'SIGNED_OUT') {
+                renderAdminAuthBadge(null);
+              }
+            });
+
+            // Asynchronously resolve initial session immediately
+            sb.auth.getSession().then(({ data }) => {
+              if (data && data.session) {
+                renderAdminAuthBadge(data.session);
+              }
+            }).catch(() => {});
+          }
         }
       } catch (e) {
         console.warn('[Admin] Supabase client init warning:', e);
@@ -4763,6 +4818,18 @@
               }
             } catch(e) {}
           }
+        }
+      }
+      if (!email) {
+        const cookieMatch = document.cookie.match(/(?:^|; )sb-access-token=([^;]*)/);
+        if (cookieMatch) {
+          try {
+            const token = decodeURIComponent(cookieMatch[1]);
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            if (payload && payload.email) {
+              email = payload.email;
+            }
+          } catch(e) {}
         }
       }
 

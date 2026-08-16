@@ -21,9 +21,10 @@ function extractNotebookDayNum(pathname: string): number | null {
   return isNaN(num) ? null : num;
 }
 
-function trackEdgeCampaignClick(campaign: string, source: string, visitorId: string, userAgent?: string) {
+async function trackEdgeCampaignClick(campaign: string, source: string, visitorId: string, userAgent?: string) {
+  if (!campaign || campaign === 'organic_untracked') return;
   try {
-    fetch(`${SUPABASE_URL}/rest/v1/campaign_clicks`, {
+    await fetch(`${SUPABASE_URL}/rest/v1/campaign_clicks`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -37,7 +38,7 @@ function trackEdgeCampaignClick(campaign: string, source: string, visitorId: str
         source: source || 'direct',
         user_agent: userAgent || null
       })
-    }).catch(() => {});
+    });
   } catch (e) {}
 }
 
@@ -55,7 +56,7 @@ export async function middleware(request: NextRequest) {
   const inboundCamp = url.searchParams.get('utm_campaign') || url.searchParams.get('campaign') || url.searchParams.get('c');
   if (inboundCamp) {
     const inboundSource = url.searchParams.get('utm_source') || 'direct';
-    trackEdgeCampaignClick(inboundCamp, inboundSource, visitorId, userAgent);
+    await trackEdgeCampaignClick(inboundCamp, inboundSource, visitorId, userAgent);
   }
 
   // ── Layer 0: Short URL Campaign Redirection (e.g. /q1, /q2, /go/reel1, /r/bio) ──
@@ -90,7 +91,7 @@ export async function middleware(request: NextRequest) {
 
     const targetCamp = dest.searchParams.get('utm_campaign');
     if (targetCamp) {
-      trackEdgeCampaignClick(targetCamp, 'instagram', visitorId, userAgent);
+      await trackEdgeCampaignClick(targetCamp, 'instagram', visitorId, userAgent);
     }
 
     const response = NextResponse.redirect(dest, { status: 302 });
@@ -105,7 +106,7 @@ export async function middleware(request: NextRequest) {
   const goMatch = path.match(/^\/(?:go|r)\/([a-zA-Z0-9_.-]+)$/);
   if (goMatch) {
     const slug = goMatch[1].toLowerCase();
-    trackEdgeCampaignClick(slug, 'meta', visitorId, userAgent);
+    await trackEdgeCampaignClick(slug, 'meta', visitorId, userAgent);
 
     // 1. Check if campaign has a custom target_url saved in Supabase ad_campaigns
     try {

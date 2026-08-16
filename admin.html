@@ -5156,7 +5156,7 @@
         case 'all_time':
         default:
           fromDate = '2020-01-01';
-          toDate = todayStr;
+          toDate = '2099-12-31';
           break;
       }
 
@@ -5164,7 +5164,7 @@
         from: `${fromDate}T00:00:00Z`,
         to: `${toDate}T23:59:59Z`,
         fromRaw: fromDate,
-        toRaw: toDate
+        toRaw: toDate === '2099-12-31' ? todayStr : toDate
       };
     }
 

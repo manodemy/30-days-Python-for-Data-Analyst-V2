@@ -7452,7 +7452,9 @@
           const cName = escapeHtml(item.campaign_name || 'unnamed');
           const platform = escapeHtml(item.platform || 'telegram');
           const startDateStr = item.start_date ? new Date(item.start_date).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }) : 'Today';
-          const targetUrl = item.target_url || `https://www.manodemy.com/?utm_source=${platform}&utm_campaign=${encodeURIComponent(item.campaign_name)}`;
+          const targetUrl = (item.target_url && item.target_url.toLowerCase().includes('utm_campaign')) 
+            ? item.target_url 
+            : `https://www.manodemy.com/?utm_source=${encodeURIComponent(platform)}&utm_campaign=${encodeURIComponent(item.campaign_name)}`;
           
           const visits = Number(item.total_visits || 0);
           const unqVisits = Number(item.unique_visitors || 0);
@@ -7855,6 +7857,15 @@
       });
     };
 
+    window.copyCampaignShortLink = function(name, url) {
+      const shortUrl = window.getCampaignShortUrl ? window.getCampaignShortUrl(name) : (url || `https://www.manodemy.com/go/${encodeURIComponent(name)}`);
+      navigator.clipboard.writeText(shortUrl).then(() => {
+        showToast(`⚡ Short link copied: ${shortUrl}`, 'success');
+      }).catch(() => {
+        prompt('Copy short link:', shortUrl);
+      });
+    };
+
     window.downloadCampaignQR = function(name, url, qrSvgUrl) {
       const modal = document.createElement('div');
       modal.id = 'qrDownloadModal';
@@ -7886,12 +7897,12 @@
     window.getCampaignShortUrl = function(campaignName) {
       if (!campaignName) return 'https://www.manodemy.com';
       const c = campaignName.toLowerCase().trim();
-      if (c === 'reel_day04_q1_high_performers') return 'https://www.manodemy.com/q1';
-      if (c === 'reel_day04_q2_salary_analytics') return 'https://www.manodemy.com/q2';
-      if (c === 'reel_day04_q3_dept_ranking') return 'https://www.manodemy.com/q3';
-      if (c === 'reel_day04_q4_sales_growth') return 'https://www.manodemy.com/q4';
-      if (c === 'reel_day04_q5_churn_retention') return 'https://www.manodemy.com/q5';
-      if (c === 'insta_bio_link') return 'https://www.manodemy.com/bio';
+      if (c === 'reel_day04_q1_high_performers' || c === 'instagram_reel_01') return 'https://www.manodemy.com/q1';
+      if (c === 'reel_day04_q2_salary_analytics' || c === 'instagram_reel_02') return 'https://www.manodemy.com/q2';
+      if (c === 'reel_day04_q3_dept_ranking' || c === 'instagram_reel_03') return 'https://www.manodemy.com/q3';
+      if (c === 'reel_day04_q4_sales_growth' || c === 'instagram_reel_04') return 'https://www.manodemy.com/q4';
+      if (c === 'reel_day04_q5_churn_retention' || c === 'instagram_reel_05') return 'https://www.manodemy.com/q5';
+      if (c === 'insta_bio_link' || c === 'inta_bio_link') return 'https://www.manodemy.com/bio';
       return `https://www.manodemy.com/go/${encodeURIComponent(c)}`;
     };
 

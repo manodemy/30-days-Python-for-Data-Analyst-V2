@@ -21,9 +21,41 @@ function extractNotebookDayNum(pathname: string): number | null {
   return isNaN(num) ? null : num;
 }
 
+function trackEdgeCampaignClick(campaign: string, source: string, visitorId: string, userAgent?: string) {
+  try {
+    fetch(`${SUPABASE_URL}/rest/v1/rpc/track_campaign_click`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+      },
+      body: JSON.stringify({
+        p_campaign: campaign.toLowerCase().trim(),
+        p_visitor_id: visitorId,
+        p_source: source || 'direct',
+        p_user_agent: userAgent || null
+      })
+    }).catch(() => {});
+  } catch (e) {}
+}
+
 export async function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
   const path = url.pathname;
+
+  let visitorId = request.cookies.get('manodemy_visitor_id')?.value;
+  if (!visitorId) {
+    visitorId = 'vis_' + Math.random().toString(36).substring(2, 11) + Date.now().toString(36);
+  }
+  const userAgent = request.headers.get('user-agent') || undefined;
+
+  // Track any inbound campaign click query param
+  const inboundCamp = url.searchParams.get('utm_campaign') || url.searchParams.get('campaign') || url.searchParams.get('c');
+  if (inboundCamp) {
+    const inboundSource = url.searchParams.get('utm_source') || 'direct';
+    trackEdgeCampaignClick(inboundCamp, inboundSource, visitorId, userAgent);
+  }
 
   // ── Layer 0: Short URL Campaign Redirection (e.g. /q1, /q2, /go/reel1, /r/bio) ──
   const shortMap: Record<string, string> = {
@@ -49,17 +81,30 @@ export async function middleware(request: NextRequest) {
 
   const lowerPath = path.toLowerCase();
   if (shortMap[lowerPath]) {
-    const dest = new URL(shortMap[lowerPath], request.url);
+    const targetPath = shortMap[lowerPath];
+    const dest = new URL(targetPath, request.url);
     url.searchParams.forEach((val, key) => {
       if (!dest.searchParams.has(key)) dest.searchParams.set(key, val);
     });
-    return NextResponse.redirect(dest, { status: 302 });
+
+    const targetCamp = dest.searchParams.get('utm_campaign');
+    if (targetCamp) {
+      trackEdgeCampaignClick(targetCamp, 'instagram', visitorId, userAgent);
+    }
+
+    const response = NextResponse.redirect(dest, { status: 302 });
+    if (targetCamp) {
+      response.cookies.set('manodemy_last_campaign', targetCamp, { path: '/', maxAge: 2592000, sameSite: 'lax' });
+    }
+    response.cookies.set('manodemy_visitor_id', visitorId, { path: '/', maxAge: 2592000, sameSite: 'lax' });
+    return response;
   }
 
   // Dynamic /go/[campaign_slug] or /r/[campaign_slug]
   const goMatch = path.match(/^\/(?:go|r)\/([a-zA-Z0-9_.-]+)$/);
   if (goMatch) {
     const slug = goMatch[1].toLowerCase();
+    trackEdgeCampaignClick(slug, 'meta', visitorId, userAgent);
 
     // 1. Check if campaign has a custom target_url saved in Supabase ad_campaigns
     try {
@@ -91,7 +136,11 @@ export async function middleware(request: NextRequest) {
         url.searchParams.forEach((val, key) => {
           if (!dest.searchParams.has(key)) dest.searchParams.set(key, val);
         });
-        return NextResponse.redirect(dest, { status: 302 });
+
+        const response = NextResponse.redirect(dest, { status: 302 });
+        response.cookies.set('manodemy_last_campaign', slug, { path: '/', maxAge: 2592000, sameSite: 'lax' });
+        response.cookies.set('manodemy_visitor_id', visitorId, { path: '/', maxAge: 2592000, sameSite: 'lax' });
+        return response;
       }
     } catch (e) {
       console.warn('[Middleware] Dynamic campaign lookup notice:', e);
@@ -105,7 +154,11 @@ export async function middleware(request: NextRequest) {
     url.searchParams.forEach((val, key) => {
       if (!dest.searchParams.has(key)) dest.searchParams.set(key, val);
     });
-    return NextResponse.redirect(dest, { status: 302 });
+
+    const response = NextResponse.redirect(dest, { status: 302 });
+    response.cookies.set('manodemy_last_campaign', slug, { path: '/', maxAge: 2592000, sameSite: 'lax' });
+    response.cookies.set('manodemy_visitor_id', visitorId, { path: '/', maxAge: 2592000, sameSite: 'lax' });
+    return response;
   }
 
   // ── Layer A: Redirect legacy dayXX.html → /notebook/dayXX ──────────────────

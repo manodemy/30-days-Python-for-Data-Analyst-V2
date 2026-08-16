@@ -1696,56 +1696,258 @@
     }
 
     /* ─────────────────────────────────────────────
-   RESPONSIVE
+   RESPONSIVE (EXECUTIVE MOBILE UI/UX ENGINE)
 ───────────────────────────────────────────── */
     @media (max-width: 768px) {
+      /* Off-Canvas Sliding Navigation Drawer */
       .sidebar {
-        position: fixed;
-        height: 100vh;
-        transform: translateX(-100%);
-        box-shadow: 24px 0 40px rgba(0, 0, 0, 0.6);
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        bottom: 0 !important;
+        width: 285px !important;
+        max-width: 84vw !important;
+        height: 100vh !important;
+        z-index: 2500 !important;
+        transform: translateX(-100%) !important;
+        transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        box-shadow: 20px 0 45px rgba(0, 0, 0, 0.85) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        background: #0B0F19 !important;
       }
 
       .sidebar.open {
-        transform: translateX(0);
+        transform: translateX(0) !important;
+      }
+
+      .sidebar-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(6, 9, 19, 0.75);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        z-index: 2400;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s ease;
+      }
+
+      .sidebar-backdrop.active {
+        opacity: 1;
+        pointer-events: auto;
       }
 
       .hamburger {
-        display: block;
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 30px;
+        font-size: 0.95rem;
+        padding: 0;
+        flex-shrink: 0;
+        border-radius: 6px;
       }
 
-      .chart-grid-main {
-        grid-template-columns: 1fr;
+      /* Mobile Top Filter Bar (2 Adaptive Rows) */
+      .top-filter-bar {
+        padding: 0.4rem 0.65rem !important;
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 100 !important;
+        background: rgba(11, 15, 25, 0.96) !important;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
       }
 
-      .chart-grid-half {
-        grid-template-columns: 1fr;
+      .filter-main-bar {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 0.38rem !important;
+        flex-wrap: wrap !important;
+        min-height: auto !important;
       }
 
-      .form-grid-3 {
-        grid-template-columns: 1fr;
+      .filter-controls-left {
+        display: flex !important;
+        align-items: center !important;
+        gap: 0.4rem !important;
+        width: 100% !important;
+        overflow: hidden !important;
       }
 
+      .filter-top-row {
+        display: flex !important;
+        align-items: center !important;
+        gap: 3px !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        scrollbar-width: none !important;
+        flex: 1 !important;
+        min-width: 0 !important;
+        padding: 2px 3px !important;
+      }
+
+      .filter-top-row::-webkit-scrollbar {
+        display: none !important;
+      }
+
+      .filter-controls-right {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 0.35rem !important;
+        width: 100% !important;
+        margin-left: 0 !important;
+      }
+
+      .date-range-cluster {
+        display: flex !important;
+        align-items: center !important;
+        gap: 2px !important;
+        flex: 1 !important;
+        min-width: 0 !important;
+        padding: 2px 4px !important;
+      }
+
+      .date-input-wrap {
+        flex: 1 !important;
+        min-width: 0 !important;
+      }
+
+      .date-picker {
+        width: 100% !important;
+        font-size: 0.68rem !important;
+        padding: 0.22rem 0.2rem !important;
+      }
+
+      .apply-btn {
+        padding: 0.22rem 0.5rem !important;
+        font-size: 0.68rem !important;
+        flex-shrink: 0 !important;
+      }
+
+      .compare-row {
+        padding: 0.22rem 0.45rem !important;
+        font-size: 0.68rem !important;
+        flex-shrink: 0 !important;
+      }
+
+      /* KPI Cards 2-Column Balanced Grid */
+      .kpi-grid,
+      .kpi-row,
+      #engSummaryBar,
+      [class*="kpi-grid"],
+      [id*="kpiGrid"] {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 0.55rem !important;
+      }
+
+      .kpi-grid > .kpi-wrapper:nth-child(5),
+      .kpi-grid > .kpi-card:nth-child(5),
+      .kpi-row > .kpi-card:nth-child(5) {
+        grid-column: span 2 !important;
+      }
+
+      .kpi-card {
+        padding: 0.7rem 0.65rem !important;
+      }
+
+      .kpi-value,
+      .kpi-val,
+      .kpi-number {
+        font-size: 1.35rem !important;
+      }
+
+      .kpi-label,
+      .kpi-lbl {
+        font-size: 0.62rem !important;
+      }
+
+      /* Charts & Grids */
+      .chart-grid-main,
+      .chart-grid-half,
+      .charts-grid,
+      .form-grid-3,
       .form-grid-2 {
-        grid-template-columns: 1fr;
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 0.85rem !important;
+      }
+
+      .chart-card {
+        padding: 0.85rem !important;
+        border-radius: 12px !important;
       }
 
       .page-content {
-        padding: 1.25rem 1rem;
+        padding: 0.85rem 0.75rem calc(68px + env(safe-area-inset-bottom, 0px)) !important;
       }
 
-      .kpi-grid {
-        grid-template-columns: 1fr 1fr;
+      .tab-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.3rem !important;
+        margin-bottom: 0.85rem !important;
+      }
+
+      .tab-title {
+        font-size: 1.38rem !important;
+      }
+
+      /* Table Controls & Toolbars */
+      .table-panel-header,
+      .filter-toolbar,
+      .panel-header-controls {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 0.5rem !important;
+      }
+
+      .table-panel-header > div,
+      .filter-toolbar > div {
+        flex-wrap: wrap !important;
+        width: 100% !important;
+      }
+
+      .table-panel-header input[type="text"],
+      .table-panel-header select,
+      .filter-toolbar input[type="text"],
+      .filter-toolbar select,
+      .search-input,
+      .filter-select {
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+
+      .table-wrap {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        overscroll-behavior-x: contain !important;
+        border-radius: 8px !important;
+      }
+
+      /* Modals */
+      .modal-box,
+      .modal-card,
+      #refundModal > div,
+      #couponModal > div {
+        width: 92% !important;
+        max-width: 440px !important;
+        max-height: 88vh !important;
+        overflow-y: auto !important;
+        padding: 1.25rem !important;
+        border-radius: 14px !important;
       }
     }
 
     @media (max-width: 480px) {
-      .kpi-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .filter-top-row {
-        gap: 0.35rem;
+      .kpi-grid,
+      .kpi-row,
+      #engSummaryBar {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 0.45rem !important;
       }
     }
 
@@ -2416,20 +2618,18 @@
 
     /* === ADMIN PANEL MOBILE RESPONSIVE OVERRIDES === */
     @media (max-width: 768px) {
-      .sidebar {
-        display: none !important;
-      }
       .admin-bottom-tabs {
         position: fixed !important;
         bottom: 0 !important;
         left: 0 !important;
         right: 0 !important;
-        height: 56px !important;
+        height: 54px !important;
         padding-bottom: env(safe-area-inset-bottom, 0px) !important;
-        background: #0B0F19 !important; /* var(--base) */
-        border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+        background: #0B0F19 !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
         display: flex !important;
         z-index: 2000 !important;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4) !important;
       }
       .admin-bottom-tabs .nav-item {
         flex: 1 !important;
@@ -2439,7 +2639,7 @@
         justify-content: center !important;
         gap: 2px !important;
         min-height: 44px !important;
-        color: #475569 !important; /* var(--ink-muted) */
+        color: #64748B !important;
         font-size: 10px !important;
         font-weight: 600 !important;
         font-family: 'Outfit', sans-serif !important;
@@ -2449,15 +2649,15 @@
         margin: 0 !important;
         background: transparent !important;
         border: none !important;
-        border-top: 3px solid transparent !important;
+        border-top: 2px solid transparent !important;
       }
       .admin-bottom-tabs .nav-item.active {
-        color: #00E6F6 !important; /* var(--cyan) */
-        border-top-color: #00E6F6 !important;
+        color: #10B981 !important;
+        border-top-color: #10B981 !important;
         background: transparent !important;
       }
       .admin-tab-icon {
-        font-size: 16px !important;
+        font-size: 15px !important;
         margin: 0 !important;
       }
       .page-content {
@@ -2499,8 +2699,11 @@
      APP
 ════════════════════════════════════════ -->
   <div class="app-container" id="adminPanel">
+    <!-- MOBILE BACKDROP OVERLAY -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()" aria-hidden="true"></div>
+
     <!-- MOBILE BOTTOM TABS -->
-    <div class="admin-bottom-tabs">
+    <div class="admin-bottom-tabs" id="adminBottomTabs">
       <div class="nav-item active" data-tab="tab-revenue">
         <span class="admin-tab-icon">◈</span>
         <span>Revenue</span>
@@ -2513,13 +2716,13 @@
         <span class="admin-tab-icon">⧩</span>
         <span>Funnel</span>
       </div>
-      <div class="nav-item" data-tab="tab-engagement">
-        <span class="admin-tab-icon">◴</span>
-        <span>Engage</span>
-      </div>
       <div class="nav-item" data-tab="tab-reviews">
         <span class="admin-tab-icon">★</span>
         <span>Reviews</span>
+      </div>
+      <div class="nav-item mobile-more-btn" id="mobileMoreTabBtn" onclick="toggleSidebar()" title="More navigation tabs">
+        <span class="admin-tab-icon">☰</span>
+        <span>More</span>
       </div>
     </div>
     <!-- SIDEBAR -->
@@ -7892,15 +8095,38 @@
           fetchAdminReviews();
         }
 
-        if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
+        if (window.innerWidth <= 768) window.closeSidebar();
       });
     });
+
+    // ── MOBILE SIDEBAR DRAWER CONTROLLER ─────────────
+    window.openSidebar = function() {
+      document.getElementById('sidebar')?.classList.add('open');
+      document.getElementById('sidebarBackdrop')?.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    };
+
+    window.closeSidebar = function() {
+      document.getElementById('sidebar')?.classList.remove('open');
+      document.getElementById('sidebarBackdrop')?.classList.remove('active');
+      document.body.style.overflow = '';
+    };
+
+    window.toggleSidebar = function() {
+      const sb = document.getElementById('sidebar');
+      if (sb && sb.classList.contains('open')) {
+        window.closeSidebar();
+      } else {
+        window.openSidebar();
+      }
+    };
 
     // NOTE: pill, applyFilterBtn, compareToggle listeners are registered by
     // initFilterListeners() (called at startup). Do NOT re-register them here
     // to avoid double-firing renderDashboard.
     document.getElementById('funnelVisitedInput')?.addEventListener('change', renderDashboard);
-    document.getElementById('hamburgerBtn')?.addEventListener('click', () => document.getElementById('sidebar').classList.toggle('open'));
+    document.getElementById('hamburgerBtn')?.addEventListener('click', window.toggleSidebar);
+    document.getElementById('sidebarBackdrop')?.addEventListener('click', window.closeSidebar);
 
     // ── SETTINGS ─────────────────────────────────────
     document.getElementById('saveRateBtn').addEventListener('click', () => {

@@ -1695,90 +1695,10 @@
       gap: 0.5rem;
     }
 
-    /* Mobile Header & Tabs Strip Default (Desktop Hidden) */
-    .mobile-top-header {
-      display: none;
-    }
-    .mobile-tabs-strip {
-      display: none;
-    }
-
     /* ─────────────────────────────────────────────
    RESPONSIVE (EXECUTIVE MOBILE UI/UX ENGINE)
 ───────────────────────────────────────────── */
     @media (max-width: 768px) {
-      /* Mobile App Header (Always Visible at Top) */
-      .mobile-top-header {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        padding: 0.5rem 0.75rem !important;
-        background: #0B0F19 !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-        position: sticky !important;
-        top: 0 !important;
-        z-index: 1500 !important;
-        width: 100% !important;
-        box-sizing: border-box !important;
-      }
-
-      .mobile-brand-title {
-        display: flex !important;
-        align-items: center !important;
-        gap: 6px !important;
-      }
-
-      /* Swipeable Mobile Tabs Strip (1-Tap Switching) */
-      .mobile-tabs-strip {
-        display: flex !important;
-        align-items: center !important;
-        gap: 6px !important;
-        padding: 0.4rem 0.65rem !important;
-        background: #070B14 !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
-        overflow-x: auto !important;
-        -webkit-overflow-scrolling: touch !important;
-        scrollbar-width: none !important;
-        position: sticky !important;
-        top: 44px !important;
-        z-index: 1400 !important;
-        width: 100% !important;
-        box-sizing: border-box !important;
-      }
-
-      .mobile-tabs-strip::-webkit-scrollbar {
-        display: none !important;
-      }
-
-      .mobile-tab-btn {
-        display: inline-flex !important;
-        align-items: center !important;
-        gap: 5px !important;
-        padding: 0.35rem 0.75rem !important;
-        border-radius: 20px !important;
-        font-size: 0.72rem !important;
-        font-weight: 600 !important;
-        font-family: 'Plus Jakarta Sans', sans-serif !important;
-        color: #94A3B8 !important;
-        background: rgba(255, 255, 255, 0.03) !important;
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
-        white-space: nowrap !important;
-        cursor: pointer !important;
-        flex-shrink: 0 !important;
-        transition: all 0.18s ease !important;
-      }
-
-      .mobile-tab-btn.active {
-        color: #10B981 !important;
-        background: rgba(16, 185, 129, 0.12) !important;
-        border-color: rgba(16, 185, 129, 0.35) !important;
-        box-shadow: 0 0 10px rgba(16, 185, 129, 0.15) !important;
-      }
-
-      .mobile-tab-btn .nav-icon {
-        font-size: 0.85rem !important;
-      }
-
       /* Off-Canvas Sliding Navigation Drawer */
       .sidebar {
         position: fixed !important;
@@ -1822,29 +1742,30 @@
         display: inline-flex !important;
         align-items: center;
         justify-content: center;
-        width: 34px;
-        height: 32px;
-        font-size: 1rem;
+        width: 32px;
+        height: 30px;
+        font-size: 0.95rem;
         padding: 0;
         flex-shrink: 0;
         border-radius: 6px;
-        background: rgba(255, 255, 255, 0.05) !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        background: rgba(255, 255, 255, 0.06) !important;
+        border: 1px solid rgba(255, 255, 255, 0.12) !important;
         color: #E2E8F0 !important;
       }
 
-      /* Mobile Top Filter Bar (Presets & Date Pickers) */
+      /* Clean Mobile Top Filter Bar (Presets & Date Pickers) */
       .top-filter-bar {
-        padding: 0.4rem 0.65rem !important;
-        position: static !important;
+        padding: 0.45rem 0.65rem !important;
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 100 !important;
         width: 100% !important;
         box-sizing: border-box !important;
         background: rgba(11, 15, 25, 0.96) !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-      }
-
-      .top-filter-bar .hamburger {
-        display: none !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
       }
 
       .filter-main-bar {
@@ -2728,38 +2649,50 @@
         bottom: 0 !important;
         left: 0 !important;
         right: 0 !important;
-        height: 54px !important;
+        height: 56px !important;
         padding-bottom: env(safe-area-inset-bottom, 0px) !important;
-        background: #0B0F19 !important;
+        background: rgba(11, 15, 25, 0.96) !important;
+        backdrop-filter: blur(14px) !important;
+        -webkit-backdrop-filter: blur(14px) !important;
         border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
         display: flex !important;
+        align-items: center !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        scrollbar-width: none !important;
         z-index: 2000 !important;
-        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4) !important;
+        box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.5) !important;
+        padding-left: 6px !important;
+        padding-right: 6px !important;
+      }
+      .admin-bottom-tabs::-webkit-scrollbar {
+        display: none !important;
       }
       .admin-bottom-tabs .nav-item {
-        flex: 1 !important;
+        flex: 0 0 auto !important;
+        min-width: 68px !important;
+        padding: 0 8px !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
-        gap: 2px !important;
-        min-height: 44px !important;
+        gap: 3px !important;
+        min-height: 48px !important;
         color: #64748B !important;
         font-size: 10px !important;
         font-weight: 600 !important;
         font-family: 'Outfit', sans-serif !important;
-        transition: color 200ms ease !important;
+        transition: all 180ms ease !important;
         cursor: pointer !important;
-        padding: 0 !important;
-        margin: 0 !important;
         background: transparent !important;
         border: none !important;
         border-top: 2px solid transparent !important;
+        white-space: nowrap !important;
       }
       .admin-bottom-tabs .nav-item.active {
         color: #10B981 !important;
         border-top-color: #10B981 !important;
-        background: transparent !important;
+        background: rgba(16, 185, 129, 0.08) !important;
       }
       .admin-tab-icon {
         font-size: 15px !important;
@@ -2807,7 +2740,7 @@
     <!-- MOBILE BACKDROP OVERLAY -->
     <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()" aria-hidden="true"></div>
 
-    <!-- MOBILE BOTTOM TABS -->
+    <!-- MOBILE BOTTOM TABS (HORIZONTALLY SCROLLABLE) -->
     <div class="admin-bottom-tabs" id="adminBottomTabs">
       <div class="nav-item active" data-tab="tab-revenue">
         <span class="admin-tab-icon">◈</span>
@@ -2821,13 +2754,33 @@
         <span class="admin-tab-icon">⧩</span>
         <span>Funnel</span>
       </div>
+      <div class="nav-item" data-tab="tab-retention">
+        <span class="admin-tab-icon">⟳</span>
+        <span>Retention</span>
+      </div>
+      <div class="nav-item" data-tab="tab-engagement">
+        <span class="admin-tab-icon">◴</span>
+        <span>Engage</span>
+      </div>
+      <div class="nav-item" data-tab="tab-ads">
+        <span class="admin-tab-icon">🎯</span>
+        <span>Ads</span>
+      </div>
+      <div class="nav-item" data-tab="tab-pricing">
+        <span class="admin-tab-icon">⬡</span>
+        <span>Pricing</span>
+      </div>
       <div class="nav-item" data-tab="tab-reviews">
         <span class="admin-tab-icon">★</span>
         <span>Reviews</span>
       </div>
-      <div class="nav-item mobile-more-btn" id="mobileMoreTabBtn" onclick="toggleSidebar()" title="More navigation tabs">
+      <div class="nav-item" data-tab="tab-settings">
+        <span class="admin-tab-icon">◎</span>
+        <span>Settings</span>
+      </div>
+      <div class="nav-item mobile-more-btn" id="mobileMoreTabBtn" onclick="toggleSidebar()" title="More navigation drawer">
         <span class="admin-tab-icon">☰</span>
-        <span>More</span>
+        <span>Menu</span>
       </div>
     </div>
     <!-- SIDEBAR -->
@@ -2890,35 +2843,6 @@
     </aside>
     <!-- MAIN -->
     <main class="main-content">
-      <!-- MOBILE APP HEADER (ALWAYS VISIBLE ON MOBILE) -->
-      <header class="mobile-top-header">
-        <button class="hamburger" id="hamburgerBtnMobile" onclick="toggleSidebar()" aria-label="Toggle navigation menu">
-          <span>☰</span>
-        </button>
-        <div class="mobile-brand-title">
-          <img class="admin-brand-symbol" src="/landing_v2/manodemy_3d_keycap.png" alt="Manodemy" width="22" height="22" />
-          <div class="brand-name" style="font-size:1.15rem;margin:0;">Mano<span>demy</span></div>
-        </div>
-        <div id="mobileRealtimeSlot">
-          <span style="color:#34D399;font-weight:800;font-size:0.62rem;display:inline-flex;align-items:center;gap:4px;background:rgba(16,185,129,0.12);padding:2px 6px;border-radius:6px;border:1px solid rgba(16,185,129,0.28);letter-spacing:0.04em;">
-            <span style="width:5px;height:5px;border-radius:50%;background:#10B981;box-shadow:0 0 6px #10B981;"></span> LIVE
-          </span>
-        </div>
-      </header>
-
-      <!-- MOBILE HORIZONTAL TAB STRIP (INSTANT 1-TAP TAB SWITCHING ACROSS ALL 9 TABS) -->
-      <nav class="mobile-tabs-strip" id="mobileTabsStrip" aria-label="Mobile Navigation Tabs">
-        <button class="mobile-tab-btn active" data-tab="tab-revenue"><span class="nav-icon">◈</span> Revenue</button>
-        <button class="mobile-tab-btn" data-tab="tab-growth"><span class="nav-icon">↗</span> Growth</button>
-        <button class="mobile-tab-btn" data-tab="tab-funnel"><span class="nav-icon" style="color:var(--sapphire);">⧩</span> Funnel</button>
-        <button class="mobile-tab-btn" data-tab="tab-retention"><span class="nav-icon">⟳</span> Retention</button>
-        <button class="mobile-tab-btn" data-tab="tab-engagement"><span class="nav-icon">◴</span> Engagement</button>
-        <button class="mobile-tab-btn" data-tab="tab-ads"><span class="nav-icon">🎯</span> Ads & Traffic</button>
-        <button class="mobile-tab-btn" data-tab="tab-pricing"><span class="nav-icon">⬡</span> Coupons</button>
-        <button class="mobile-tab-btn" data-tab="tab-reviews"><span class="nav-icon">★</span> Reviews</button>
-        <button class="mobile-tab-btn" data-tab="tab-settings"><span class="nav-icon">◎</span> Settings</button>
-      </nav>
-
       <!-- FILTER BAR (SINGLE ROW) -->
       <div class="top-filter-bar">
         <div class="filter-main-bar">
@@ -8200,10 +8124,10 @@
       if (!targetPane) return;
       
       // Update active class on all nav triggers
-      document.querySelectorAll('.nav-item, .mobile-tab-btn').forEach(n => {
+      document.querySelectorAll('.nav-item').forEach(n => {
         if (n.dataset.tab === tabId) {
           n.classList.add('active');
-          if (n.classList.contains('mobile-tab-btn')) {
+          if (n.closest('.admin-bottom-tabs')) {
             n.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
           }
         } else {

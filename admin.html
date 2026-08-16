@@ -4736,9 +4736,25 @@
       const container = document.getElementById('adminAuthBadge');
       if (!container) return;
       
-      const storedEmail = (localStorage.getItem('manodemy_user_email') || '').trim();
-      const isAuthLocal = localStorage.getItem('manodemy_auth') === 'true';
-      const email = session?.user?.email || (isAuthLocal && storedEmail ? storedEmail : null);
+      let email = session?.user?.email;
+      if (!email) {
+        email = (localStorage.getItem('manodemy_user_email') || '').trim();
+      }
+      if (!email) {
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && (k.startsWith('sb-') && k.endsWith('-auth-token') || k === 'supabase.auth.token')) {
+            try {
+              const parsed = JSON.parse(localStorage.getItem(k));
+              const u = parsed?.user || parsed?.currentSession?.user;
+              if (u?.email) {
+                email = u.email;
+                break;
+              }
+            } catch(e) {}
+          }
+        }
+      }
 
       if (email) {
         container.innerHTML = `
@@ -9022,12 +9038,14 @@
       if (_hasBooted) return;
       _hasBooted = true;
 
-      initSupabaseClient();
-      initFilterListeners();
-      setPresetDates('all_time');
+      try { initSupabaseClient(); } catch (e) {}
+      try { renderAdminAuthBadge(null); } catch (e) {}
+      try { initFilterListeners(); } catch (e) {}
+      try { setPresetDates('all_time'); } catch (e) {}
 
-      // 1. Render immediately and synchronously so UI never hangs
-      renderDashboard();
+      // 1. Render immediately and switch to Creative Ads tab
+      try { switchTab('tab-ads'); } catch (e) {}
+      try { renderDashboard(); } catch (e) {}
 
       // 2. Parallel background loaders
       try { loadCreativeAdsData(); } catch (e) {}
@@ -9035,8 +9053,8 @@
       try { fetchAdminReviews(); } catch (e) {}
 
       // 3. Resolve session in background and refresh on login
-      guardAdmin().catch(console.warn);
-      connectRealtimeSync();
+      try { guardAdmin().catch(console.warn); } catch (e) {}
+      try { connectRealtimeSync(); } catch (e) {}
     }
 
     if (document.readyState === 'loading') {

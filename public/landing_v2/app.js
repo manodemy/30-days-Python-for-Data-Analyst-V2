@@ -1192,6 +1192,9 @@ document.addEventListener('DOMContentLoaded', () => {
           theme: { color: '#0B0F19' },
           modal: { ondismiss: () => { resetCheckoutUI(); } }
         };
+        if (typeof fbq === 'function') {
+          fbq('track', 'InitiateCheckout', { content_name: '60-Day Data Analyst Masterclass', value: 1999.00, currency: 'INR' });
+        }
         const rzp = new Razorpay(options);
         rzp.on('payment.failed', function () {
           window.location.href = `payment-failed.html?reason=declined`;

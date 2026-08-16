@@ -19,6 +19,7 @@ desktop.ini
 
 # Temporary/Debug files
 *.log
+*.tsbuildinfo
 data_folder/
 sample.txt
 test.txt

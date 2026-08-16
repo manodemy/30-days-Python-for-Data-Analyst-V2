@@ -27,7 +27,7 @@ export async function GET(req: Request) {
       clicksRes,
       auditsRes
     ] = await Promise.all([
-      sb.from('profiles').select('id, full_name, email, role, created_at, country').order('created_at', { ascending: false }),
+      sb.from('profiles').select('id, full_name, email, role, created_at, country, first_touch_campaign, last_touch_campaign').order('created_at', { ascending: false }),
       sb.from('purchases').select('id, user_id, course_id, amount_inr, amount_original, currency, coupon_used, payment_gateway, status, refunded_at, created_at, coupon_discount_inr').order('created_at', { ascending: false }),
       sb.from('activity_logs').select('id, user_id, event_type, created_at').gte('created_at', from).lte('created_at', to),
       sb.from('page_views').select('id, created_at').gte('created_at', from).lte('created_at', to),
@@ -360,7 +360,13 @@ export async function GET(req: Request) {
       };
     });
 
+    const fromTime = from ? new Date(from).getTime() : 0;
+    const toTime = to ? new Date(to).getTime() : Infinity;
+
     clicks.forEach((cc: any) => {
+      const clickTime = cc.created_at ? new Date(cc.created_at).getTime() : 0;
+      if (clickTime && (clickTime < fromTime || clickTime > toTime)) return;
+
       const key = String(cc.campaign_name || cc.utm_campaign || '').toLowerCase().trim();
       if (key) {
         if (!groups[key]) {
@@ -390,7 +396,8 @@ export async function GET(req: Request) {
       if (key) {
         if (prof.id) userCampaignMap[prof.id] = key;
         if (prof.email) userEmailCampaignMap[prof.email.toLowerCase()] = key;
-        if (groups[key]) {
+        const profTime = prof.created_at ? new Date(prof.created_at).getTime() : 0;
+        if ((!profTime || (profTime >= fromTime && profTime <= toTime)) && groups[key]) {
           groups[key].total_signins += 1;
         }
       }
@@ -414,9 +421,12 @@ export async function GET(req: Request) {
             reconciled_ad_spend_inr: 0
           };
         }
-        if (['completed', 'paid', 'captured', 'successful'].includes(p.status)) {
-          groups[key].total_purchases += 1;
-          groups[key].net_revenue_inr += Number(p.amount_inr || (p.amount_usd ? p.amount_usd * 83 : 0));
+        const pTime = p.created_at ? new Date(p.created_at).getTime() : 0;
+        if (!pTime || (pTime >= fromTime && pTime <= toTime)) {
+          if (['completed', 'paid', 'captured', 'successful'].includes(p.status)) {
+            groups[key].total_purchases += 1;
+            groups[key].net_revenue_inr += Number(p.amount_inr || (p.amount_usd ? p.amount_usd * 83 : 0));
+          }
         }
       }
     });

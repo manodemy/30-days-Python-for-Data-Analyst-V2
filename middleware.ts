@@ -23,18 +23,19 @@ function extractNotebookDayNum(pathname: string): number | null {
 
 function trackEdgeCampaignClick(campaign: string, source: string, visitorId: string, userAgent?: string) {
   try {
-    fetch(`${SUPABASE_URL}/rest/v1/rpc/track_campaign_click`, {
+    fetch(`${SUPABASE_URL}/rest/v1/campaign_clicks`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'apikey': SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Prefer': 'return=minimal'
       },
       body: JSON.stringify({
-        p_campaign: campaign.toLowerCase().trim(),
-        p_visitor_id: visitorId,
-        p_source: source || 'direct',
-        p_user_agent: userAgent || null
+        campaign_name: campaign.toLowerCase().trim(),
+        visitor_id: visitorId,
+        source: source || 'direct',
+        user_agent: userAgent || null
       })
     }).catch(() => {});
   } catch (e) {}

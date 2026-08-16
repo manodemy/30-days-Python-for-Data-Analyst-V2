@@ -47,21 +47,22 @@ document.addEventListener('DOMContentLoaded', () => {
       const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVycW95dmJ1aG1reXZjcWd3Y2J6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzODk1MTIsImV4cCI6MjA5NDk2NTUxMn0.9UnIfq8xMrKANPPTtoOADKH-NJ_it9HDp7xrJL4FXtw';
 
       try {
-        fetch(`${SUPA_URL}/rest/v1/rpc/track_campaign_click`, {
+        fetch(`${SUPA_URL}/rest/v1/campaign_clicks`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'apikey': SUPA_KEY,
-            'Authorization': `Bearer ${SUPA_KEY}`
+            'Authorization': `Bearer ${SUPA_KEY}`,
+            'Prefer': 'return=minimal'
           },
           body: JSON.stringify({
-            p_campaign: campaignToTrack,
-            p_source: utmSource,
-            p_visitor_id: visitorId
+            campaign_name: campaignToTrack,
+            source: utmSource,
+            visitor_id: visitorId
           })
         }).then(r => {
           if (r.ok) {
-            console.log('[Attribution] Successfully logged unique campaign click via REST:', campaignToTrack);
+            console.log('[Attribution] ✅ Click logged to campaign_clicks:', campaignToTrack);
           }
         }).catch(err => {
           console.warn('[Attribution] REST notice:', err);

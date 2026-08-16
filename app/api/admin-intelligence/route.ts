@@ -326,21 +326,109 @@ export async function GET(req: Request) {
       page_metrics: {}
     }));
 
-    // ── 9. CREATIVE ADS PERFORMANCE ──
-    const creativeAds = campaigns.map(c => {
-      const clickCount = clicks.filter(cl => cl.campaign_id === c.id || cl.utm_campaign === c.campaign_name).length;
-      return {
-        id: c.id,
+    // ── 9. CREATIVE ADS & ATTRIBUTION INTELLIGENCE ──
+    const campaignMap: Record<string, any> = {};
+    campaigns.forEach(ac => {
+      if (ac.campaign_name && ac.spend_source !== 'deleted') {
+        const cName = ac.campaign_name.toLowerCase().trim();
+        campaignMap[cName] = {
+          campaign_id: ac.campaign_id || ('CMP-' + cName.substring(0, 6).toUpperCase()),
+          campaign_name: ac.campaign_name,
+          platform: ac.platform || 'telegram',
+          start_date: ac.start_date || ac.created_at || new Date().toISOString(),
+          target_url: ac.target_url || `https://www.manodemy.com/?utm_campaign=${cName}`,
+          spend: Number(ac.ad_spend_inr || 0) + (Number(ac.ad_spend_usd || 0) * 83.0)
+        };
+      }
+    });
+
+    const groups: Record<string, any> = {};
+    Object.values(campaignMap).forEach(c => {
+      const key = c.campaign_name.toLowerCase().trim();
+      groups[key] = {
+        campaign_id: c.campaign_id,
         campaign_name: c.campaign_name,
         platform: c.platform,
-        ad_spend_inr: c.ad_spend_inr || 0,
-        ad_spend_usd: c.ad_spend_usd || 0,
-        impressions: c.impressions || (clickCount * 12),
-        clicks: clickCount,
-        cpc: clickCount > 0 ? Number(((c.ad_spend_inr || 0) / clickCount).toFixed(2)) : 0,
-        revenue_inr: 0,
-        revenue_usd: 0,
-        purchases_count: 0
+        start_date: c.start_date,
+        target_url: c.target_url,
+        total_visits: 0,
+        unique_visitors: new Set(),
+        total_signins: 0,
+        total_purchases: 0,
+        net_revenue_inr: 0,
+        reconciled_ad_spend_inr: c.spend
+      };
+    });
+
+    clicks.forEach(cc => {
+      const key = (cc.campaign_name || cc.utm_campaign || '').toLowerCase().trim();
+      if (key) {
+        if (!groups[key]) {
+          groups[key] = {
+            campaign_id: 'CMP-' + key.substring(0,6).toUpperCase(),
+            campaign_name: cc.campaign_name || cc.utm_campaign,
+            platform: cc.source || 'direct',
+            start_date: cc.created_at,
+            target_url: `https://www.manodemy.com/?utm_campaign=${key}`,
+            total_visits: 0,
+            unique_visitors: new Set(),
+            total_signins: 0,
+            total_purchases: 0,
+            net_revenue_inr: 0,
+            reconciled_ad_spend_inr: 0
+          };
+        }
+        groups[key].total_visits += 1;
+        if (cc.visitor_id) groups[key].unique_visitors.add(cc.visitor_id);
+      }
+    });
+
+    const userCampaignMap: Record<string, string> = {};
+    const userEmailCampaignMap: Record<string, string> = {};
+    allProfiles.forEach(prof => {
+      const key = (prof.first_touch_campaign || prof.last_touch_campaign || '').toLowerCase().trim();
+      if (key) {
+        if (prof.id) userCampaignMap[prof.id] = key;
+        if (prof.email) userEmailCampaignMap[prof.email.toLowerCase()] = key;
+        if (groups[key]) {
+          groups[key].total_signins += 1;
+        }
+      }
+    });
+
+    allPurchases.forEach(p => {
+      const key = (p.first_touch_campaign || p.last_touch_campaign || userCampaignMap[p.user_id] || userEmailCampaignMap[(p.email || '').toLowerCase()] || '').toLowerCase().trim();
+      if (key) {
+        if (!groups[key]) {
+          groups[key] = {
+            campaign_id: 'CMP-' + key.substring(0,6).toUpperCase(),
+            campaign_name: key,
+            platform: p.first_touch_source || 'organic',
+            start_date: p.created_at,
+            target_url: `https://www.manodemy.com/?utm_campaign=${key}`,
+            total_visits: 0,
+            unique_visitors: new Set(),
+            total_signins: 0,
+            total_purchases: 0,
+            net_revenue_inr: 0,
+            reconciled_ad_spend_inr: 0
+          };
+        }
+        if (['completed', 'paid', 'captured', 'successful'].includes(p.status)) {
+          groups[key].total_purchases += 1;
+          groups[key].net_revenue_inr += Number(p.amount_inr || (p.amount_usd ? p.amount_usd * 83 : 0));
+        }
+      }
+    });
+
+    const creativeAds = Object.values(groups).map(g => {
+      const spend = g.reconciled_ad_spend_inr;
+      const netRev = g.net_revenue_inr;
+      const netRoas = spend > 0 ? (netRev / spend) : 0;
+      return {
+        ...g,
+        unique_visitors: g.unique_visitors instanceof Set ? g.unique_visitors.size : (g.unique_visitors || 0),
+        net_roas: netRoas
       };
     });
 
@@ -361,6 +449,10 @@ export async function GET(req: Request) {
         funnelData,
         engagementData,
         creativeAds,
+        allPurchases,
+        allProfiles,
+        campaigns,
+        clicks,
         audits
       }
     });

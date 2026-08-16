@@ -7117,41 +7117,66 @@
 
         loadAdDataQualityAlerts();
 
-        const [purchasesRes, campaignsRes, clicksRes, profilesRes] = await Promise.all([
-          sb.from('purchases').select('*'),
-          sb.from('ad_campaigns').select('*'),
-          sb.from('campaign_clicks').select('*'),
-          sb.from('profiles').select('*')
-        ]);
-
-        const purchases = purchasesRes.data || [];
-        const campaignsRaw = campaignsRes.data || [];
-        const clicks = clicksRes.data || [];
-        const profiles = profilesRes.data || [];
-
-        // Extract database-persisted deletions + local deletions
-        const dbDeleted = campaignsRaw.filter(c => c.spend_source === 'deleted').map(c => (c.campaign_name || '').toLowerCase().trim());
-        const localDeleted = (JSON.parse(localStorage.getItem('manodemy_deleted_campaigns') || '[]')).map(s => (s || '').toLowerCase().trim());
-        const deletedCamps = [...new Set([...dbDeleted, ...localDeleted])];
-
-        const campaigns = campaignsRaw.filter(c => c.spend_source !== 'deleted' && !deletedCamps.includes((c.campaign_name || '').toLowerCase().trim()));
-
-        const campaignMap = {};
-        campaigns.forEach(ac => {
-          if (ac.campaign_name) {
-            const cName = ac.campaign_name.toLowerCase().trim();
-            if (cName && !deletedCamps.includes(cName)) {
-              campaignMap[cName] = {
-                campaign_id: ac.campaign_id || ('CMP-' + cName.substring(0, 6).toUpperCase()),
-                campaign_name: ac.campaign_name,
-                platform: ac.platform || 'telegram',
-                start_date: ac.start_date || ac.created_at || new Date().toISOString(),
-                target_url: ac.target_url || `https://www.manodemy.com/?utm_campaign=${cName}`,
-                spend: Number(ac.ad_spend_inr || 0) + (Number(ac.ad_spend_usd || 0) * 83.0)
-              };
+        // ── Primary Engine: Fetch high-permission server payload ──
+        let loadedFromServer = false;
+        try {
+          const apiUrl = `/api/admin-intelligence?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
+          const res = await fetch(apiUrl, { cache: 'no-store' });
+          if (res.ok) {
+            const json = await res.json();
+            if (json && json.success && json.data && Array.isArray(json.data.creativeAds)) {
+              list = json.data.creativeAds;
+              isFallbackMode = false;
+              loadedFromServer = true;
+              console.log('[Ad Intelligence] ✅ Loaded live server payload from /api/admin-intelligence');
+              
+              if (json.data.revData) {
+                totalNetRevenue = Number(json.data.revData.net_revenue_inr || json.data.revData.net_revenue || 0);
+                totalSales = Number(json.data.revData.total_transactions || 0);
+              }
             }
           }
-        });
+        } catch (apiErr) {
+          console.warn('[Ad Intelligence] Server API notice, running client-side fallback:', apiErr);
+        }
+
+        // ── Secondary Engine: Direct Client DB Queries ──
+        if (!loadedFromServer) {
+          const [purchasesRes, campaignsRes, clicksRes, profilesRes] = await Promise.all([
+            sb.from('purchases').select('*'),
+            sb.from('ad_campaigns').select('*'),
+            sb.from('campaign_clicks').select('*'),
+            sb.from('profiles').select('*')
+          ]);
+
+          const purchases = purchasesRes.data || [];
+          const campaignsRaw = campaignsRes.data || [];
+          const clicks = clicksRes.data || [];
+          const profiles = profilesRes.data || [];
+
+          // Extract database-persisted deletions + local deletions
+          const dbDeleted = campaignsRaw.filter(c => c.spend_source === 'deleted').map(c => (c.campaign_name || '').toLowerCase().trim());
+          const localDeleted = (JSON.parse(localStorage.getItem('manodemy_deleted_campaigns') || '[]')).map(s => (s || '').toLowerCase().trim());
+          const deletedCamps = [...new Set([...dbDeleted, ...localDeleted])];
+
+          const campaigns = campaignsRaw.filter(c => c.spend_source !== 'deleted' && !deletedCamps.includes((c.campaign_name || '').toLowerCase().trim()));
+
+          const campaignMap = {};
+          campaigns.forEach(ac => {
+            if (ac.campaign_name) {
+              const cName = ac.campaign_name.toLowerCase().trim();
+              if (cName && !deletedCamps.includes(cName)) {
+                campaignMap[cName] = {
+                  campaign_id: ac.campaign_id || ('CMP-' + cName.substring(0, 6).toUpperCase()),
+                  campaign_name: ac.campaign_name,
+                  platform: ac.platform || 'telegram',
+                  start_date: ac.start_date || ac.created_at || new Date().toISOString(),
+                  target_url: ac.target_url || `https://www.manodemy.com/?utm_campaign=${cName}`,
+                  spend: Number(ac.ad_spend_inr || 0) + (Number(ac.ad_spend_usd || 0) * 83.0)
+                };
+              }
+            }
+          });
 
           const groups = {};
 
@@ -7247,6 +7272,7 @@
               net_roas: netRoas
             };
           });
+        }
 
         // Seamlessly merge locally stored campaigns if not yet returned by DB query
         try {
@@ -7293,8 +7319,6 @@
         if (badge) badge.textContent = `${list.length} Campaigns${isFallbackMode ? ' (Direct)' : ''}${_showArchivedCampaigns ? ' (All)' : ''}`;
 
         let totalVisits = 0;
-        let totalSales = 0;
-        let totalNetRevenue = 0;
         let totalAdSpend = 0;
 
         if (!list.length) {
@@ -7323,9 +7347,11 @@
           const isHidden = hiddenCamps.includes((item.campaign_name || '').toLowerCase().trim());
 
           totalVisits += visits;
-          totalSales += sales;
-          totalNetRevenue += netRev;
           totalAdSpend += spend;
+          if (!loadedFromServer) {
+            totalSales += sales;
+            totalNetRevenue += netRev;
+          }
 
           let roasBadgeStyle = 'background:rgba(168,85,247,0.15); color:#C084FC; border:1px solid rgba(168,85,247,0.3);';
           let roasLabel = 'Organic (∞)';

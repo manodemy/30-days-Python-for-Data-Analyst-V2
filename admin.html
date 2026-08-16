@@ -4807,7 +4807,7 @@
         btn.style.opacity = '0.85';
       }
       try {
-        const redirectUrl = window.location.origin + '/auth/callback?next=' + encodeURIComponent('/admin.html');
+        const redirectUrl = window.location.origin + '/admin.html';
         const { error } = await sb.auth.signInWithOAuth({
           provider: 'google',
           options: {

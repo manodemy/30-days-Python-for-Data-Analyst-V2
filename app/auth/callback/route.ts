@@ -48,10 +48,10 @@ export async function GET(request: NextRequest) {
           secure: isSecure
         });
 
-        // If user is admin, route to admin portal
+        // If user is admin and safeNext is home, route to admin portal
         const userEmail = (data.session.user.email || '').toLowerCase();
         const isAdmin = userEmail === 'manodamy25@gmail.com' || userEmail.includes('manodemy') || userEmail.includes('manodamy');
-        if (isAdmin && safeNext === '/home.html') {
+        if (isAdmin && (safeNext === '/home.html' || safeNext === '/')) {
           return NextResponse.redirect(new URL('/admin.html', origin));
         }
 
@@ -62,6 +62,6 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  // Fallback if no code or exchange failed
-  return NextResponse.redirect(new URL('/landing_v2/index.html?reason=auth_failed', origin));
+  // Preserve requested destination (e.g., /admin.html)
+  return NextResponse.redirect(new URL(safeNext, origin));
 }

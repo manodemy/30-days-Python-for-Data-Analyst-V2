@@ -1695,10 +1695,90 @@
       gap: 0.5rem;
     }
 
+    /* Mobile Header & Tabs Strip Default (Desktop Hidden) */
+    .mobile-top-header {
+      display: none;
+    }
+    .mobile-tabs-strip {
+      display: none;
+    }
+
     /* ─────────────────────────────────────────────
    RESPONSIVE (EXECUTIVE MOBILE UI/UX ENGINE)
 ───────────────────────────────────────────── */
     @media (max-width: 768px) {
+      /* Mobile App Header (Always Visible at Top) */
+      .mobile-top-header {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        padding: 0.5rem 0.75rem !important;
+        background: #0B0F19 !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 1500 !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+      }
+
+      .mobile-brand-title {
+        display: flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+      }
+
+      /* Swipeable Mobile Tabs Strip (1-Tap Switching) */
+      .mobile-tabs-strip {
+        display: flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        padding: 0.4rem 0.65rem !important;
+        background: #070B14 !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        scrollbar-width: none !important;
+        position: sticky !important;
+        top: 44px !important;
+        z-index: 1400 !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+      }
+
+      .mobile-tabs-strip::-webkit-scrollbar {
+        display: none !important;
+      }
+
+      .mobile-tab-btn {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 5px !important;
+        padding: 0.35rem 0.75rem !important;
+        border-radius: 20px !important;
+        font-size: 0.72rem !important;
+        font-weight: 600 !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        color: #94A3B8 !important;
+        background: rgba(255, 255, 255, 0.03) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        white-space: nowrap !important;
+        cursor: pointer !important;
+        flex-shrink: 0 !important;
+        transition: all 0.18s ease !important;
+      }
+
+      .mobile-tab-btn.active {
+        color: #10B981 !important;
+        background: rgba(16, 185, 129, 0.12) !important;
+        border-color: rgba(16, 185, 129, 0.35) !important;
+        box-shadow: 0 0 10px rgba(16, 185, 129, 0.15) !important;
+      }
+
+      .mobile-tab-btn .nav-icon {
+        font-size: 0.85rem !important;
+      }
+
       /* Off-Canvas Sliding Navigation Drawer */
       .sidebar {
         position: fixed !important;
@@ -1742,22 +1822,29 @@
         display: inline-flex !important;
         align-items: center;
         justify-content: center;
-        width: 32px;
-        height: 30px;
-        font-size: 0.95rem;
+        width: 34px;
+        height: 32px;
+        font-size: 1rem;
         padding: 0;
         flex-shrink: 0;
         border-radius: 6px;
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: #E2E8F0 !important;
       }
 
-      /* Mobile Top Filter Bar (2 Adaptive Rows) */
+      /* Mobile Top Filter Bar (Presets & Date Pickers) */
       .top-filter-bar {
         padding: 0.4rem 0.65rem !important;
-        position: sticky !important;
-        top: 0 !important;
-        z-index: 100 !important;
+        position: static !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
         background: rgba(11, 15, 25, 0.96) !important;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+      }
+
+      .top-filter-bar .hamburger {
+        display: none !important;
       }
 
       .filter-main-bar {
@@ -1870,7 +1957,9 @@
       .chart-grid-half,
       .charts-grid,
       .form-grid-3,
-      .form-grid-2 {
+      .form-grid-2,
+      .ad-form-grid,
+      .coupon-form-grid {
         display: grid !important;
         grid-template-columns: 1fr !important;
         gap: 0.85rem !important;
@@ -1921,11 +2010,27 @@
         max-width: 100% !important;
       }
 
+      /* ALL TABLES ACCESSIBILITY */
       .table-wrap {
         overflow-x: auto !important;
         -webkit-overflow-scrolling: touch !important;
         overscroll-behavior-x: contain !important;
         border-radius: 8px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        display: block !important;
+        margin-bottom: 1rem !important;
+      }
+
+      .table-wrap table {
+        min-width: 620px !important;
+      }
+
+      /* Form inputs & touch targets */
+      input[type="text"], input[type="number"], input[type="email"], input[type="date"], select, textarea {
+        font-size: 14px !important;
+        min-height: 38px !important;
+        box-sizing: border-box !important;
       }
 
       /* Modals */
@@ -2785,6 +2890,35 @@
     </aside>
     <!-- MAIN -->
     <main class="main-content">
+      <!-- MOBILE APP HEADER (ALWAYS VISIBLE ON MOBILE) -->
+      <header class="mobile-top-header">
+        <button class="hamburger" id="hamburgerBtnMobile" onclick="toggleSidebar()" aria-label="Toggle navigation menu">
+          <span>☰</span>
+        </button>
+        <div class="mobile-brand-title">
+          <img class="admin-brand-symbol" src="/landing_v2/manodemy_3d_keycap.png" alt="Manodemy" width="22" height="22" />
+          <div class="brand-name" style="font-size:1.15rem;margin:0;">Mano<span>demy</span></div>
+        </div>
+        <div id="mobileRealtimeSlot">
+          <span style="color:#34D399;font-weight:800;font-size:0.62rem;display:inline-flex;align-items:center;gap:4px;background:rgba(16,185,129,0.12);padding:2px 6px;border-radius:6px;border:1px solid rgba(16,185,129,0.28);letter-spacing:0.04em;">
+            <span style="width:5px;height:5px;border-radius:50%;background:#10B981;box-shadow:0 0 6px #10B981;"></span> LIVE
+          </span>
+        </div>
+      </header>
+
+      <!-- MOBILE HORIZONTAL TAB STRIP (INSTANT 1-TAP TAB SWITCHING ACROSS ALL 9 TABS) -->
+      <nav class="mobile-tabs-strip" id="mobileTabsStrip" aria-label="Mobile Navigation Tabs">
+        <button class="mobile-tab-btn active" data-tab="tab-revenue"><span class="nav-icon">◈</span> Revenue</button>
+        <button class="mobile-tab-btn" data-tab="tab-growth"><span class="nav-icon">↗</span> Growth</button>
+        <button class="mobile-tab-btn" data-tab="tab-funnel"><span class="nav-icon" style="color:var(--sapphire);">⧩</span> Funnel</button>
+        <button class="mobile-tab-btn" data-tab="tab-retention"><span class="nav-icon">⟳</span> Retention</button>
+        <button class="mobile-tab-btn" data-tab="tab-engagement"><span class="nav-icon">◴</span> Engagement</button>
+        <button class="mobile-tab-btn" data-tab="tab-ads"><span class="nav-icon">🎯</span> Ads & Traffic</button>
+        <button class="mobile-tab-btn" data-tab="tab-pricing"><span class="nav-icon">⬡</span> Coupons</button>
+        <button class="mobile-tab-btn" data-tab="tab-reviews"><span class="nav-icon">★</span> Reviews</button>
+        <button class="mobile-tab-btn" data-tab="tab-settings"><span class="nav-icon">◎</span> Settings</button>
+      </nav>
+
       <!-- FILTER BAR (SINGLE ROW) -->
       <div class="top-filter-bar">
         <div class="filter-main-bar">
@@ -8059,43 +8193,56 @@
       renderDashboard();
     }
 
-    // ── EVENTS ───────────────────────────────────────
-    document.querySelectorAll('.nav-item').forEach(item => {
+    // ── TAB SWITCHING ENGINE (SYNCED ACROSS SIDEBAR, MOBILE STRIP & BOTTOM BAR) ──
+    window.switchTab = function(tabId) {
+      if (!tabId) return;
+      const targetPane = document.getElementById(tabId);
+      if (!targetPane) return;
+      
+      // Update active class on all nav triggers
+      document.querySelectorAll('.nav-item, .mobile-tab-btn').forEach(n => {
+        if (n.dataset.tab === tabId) {
+          n.classList.add('active');
+          if (n.classList.contains('mobile-tab-btn')) {
+            n.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+          }
+        } else {
+          n.classList.remove('active');
+        }
+      });
+
+      // Switch active tab pane
+      document.querySelectorAll('.tab-pane').forEach(t => t.classList.remove('active'));
+      targetPane.classList.add('active');
+      
+      // Hide global filter bar on Pricing, Engagement, and Reviews pages
+      const filterBar = document.querySelector('.top-filter-bar');
+      if (filterBar) {
+        filterBar.style.display = (tabId === 'tab-pricing' || tabId === 'tab-engagement' || tabId === 'tab-reviews') ? 'none' : 'block';
+      }
+
+      if (tabId === 'tab-pricing') {
+        loadPricingData();
+        loadCouponsList();
+      }
+
+      if (tabId === 'tab-ads') {
+        loadCreativeAdsData();
+        populateCouponDropdownForSmartLink();
+      }
+
+      if (tabId === 'tab-reviews') {
+        fetchAdminReviews();
+      }
+
+      if (window.innerWidth <= 768) window.closeSidebar();
+    };
+
+    // Attach click listeners to all sidebar items, bottom items, and mobile tab strip buttons
+    document.querySelectorAll('.nav-item, .mobile-tab-btn').forEach(item => {
       item.addEventListener('click', () => {
         const tabId = item.dataset.tab;
-        if (!tabId) return;
-        const targetPane = document.getElementById(tabId);
-        if (!targetPane) return;
-        
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        document.querySelectorAll('.tab-pane').forEach(t => t.classList.remove('active'));
-        
-        // Activate all nav-items matching this tab (syncing bottom tabs & sidebar)
-        document.querySelectorAll(`.nav-item[data-tab="${tabId}"]`).forEach(n => n.classList.add('active'));
-        
-        targetPane.classList.add('active');
-        
-        // Hide global filter bar on Pricing, Engagement, and Reviews pages
-        const filterBar = document.querySelector('.top-filter-bar');
-        if (filterBar) {
-          filterBar.style.display = (tabId === 'tab-pricing' || tabId === 'tab-engagement' || tabId === 'tab-reviews') ? 'none' : 'block';
-        }
-
-        if (tabId === 'tab-pricing') {
-          loadPricingData();
-          loadCouponsList();
-        }
-
-        if (tabId === 'tab-ads') {
-          loadCreativeAdsData();
-          populateCouponDropdownForSmartLink();
-        }
-
-        if (tabId === 'tab-reviews') {
-          fetchAdminReviews();
-        }
-
-        if (window.innerWidth <= 768) window.closeSidebar();
+        if (tabId) window.switchTab(tabId);
       });
     });
 

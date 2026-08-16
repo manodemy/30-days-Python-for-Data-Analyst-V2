@@ -328,9 +328,9 @@ export async function GET(req: Request) {
 
     // ── 9. CREATIVE ADS & ATTRIBUTION INTELLIGENCE ──
     const campaignMap: Record<string, any> = {};
-    campaigns.forEach(ac => {
+    campaigns.forEach((ac: any) => {
       if (ac.campaign_name && ac.spend_source !== 'deleted') {
-        const cName = ac.campaign_name.toLowerCase().trim();
+        const cName = String(ac.campaign_name).toLowerCase().trim();
         campaignMap[cName] = {
           campaign_id: ac.campaign_id || ('CMP-' + cName.substring(0, 6).toUpperCase()),
           campaign_name: ac.campaign_name,
@@ -343,8 +343,8 @@ export async function GET(req: Request) {
     });
 
     const groups: Record<string, any> = {};
-    Object.values(campaignMap).forEach(c => {
-      const key = c.campaign_name.toLowerCase().trim();
+    Object.values(campaignMap).forEach((c: any) => {
+      const key = String(c.campaign_name).toLowerCase().trim();
       groups[key] = {
         campaign_id: c.campaign_id,
         campaign_name: c.campaign_name,
@@ -360,8 +360,8 @@ export async function GET(req: Request) {
       };
     });
 
-    clicks.forEach(cc => {
-      const key = (cc.campaign_name || cc.utm_campaign || '').toLowerCase().trim();
+    clicks.forEach((cc: any) => {
+      const key = String(cc.campaign_name || cc.utm_campaign || '').toLowerCase().trim();
       if (key) {
         if (!groups[key]) {
           groups[key] = {
@@ -385,8 +385,8 @@ export async function GET(req: Request) {
 
     const userCampaignMap: Record<string, string> = {};
     const userEmailCampaignMap: Record<string, string> = {};
-    allProfiles.forEach(prof => {
-      const key = (prof.first_touch_campaign || prof.last_touch_campaign || '').toLowerCase().trim();
+    allProfiles.forEach((prof: any) => {
+      const key = String(prof.first_touch_campaign || prof.last_touch_campaign || '').toLowerCase().trim();
       if (key) {
         if (prof.id) userCampaignMap[prof.id] = key;
         if (prof.email) userEmailCampaignMap[prof.email.toLowerCase()] = key;
@@ -396,8 +396,8 @@ export async function GET(req: Request) {
       }
     });
 
-    allPurchases.forEach(p => {
-      const key = (p.first_touch_campaign || p.last_touch_campaign || userCampaignMap[p.user_id] || userEmailCampaignMap[(p.email || '').toLowerCase()] || '').toLowerCase().trim();
+    allPurchases.forEach((p: any) => {
+      const key = String(p.first_touch_campaign || p.last_touch_campaign || (p.user_id ? userCampaignMap[p.user_id] : '') || (p.email ? userEmailCampaignMap[p.email.toLowerCase()] : '') || '').toLowerCase().trim();
       if (key) {
         if (!groups[key]) {
           groups[key] = {

@@ -508,11 +508,11 @@
     .date-range-cluster {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      background: rgba(255, 255, 255, 0.03);
+      gap: 3px;
+      background: rgba(15, 23, 42, 0.6);
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 8px;
-      padding: 3px 4px;
+      padding: 2px 3px;
     }
 
     .date-input-wrap {
@@ -521,14 +521,15 @@
     }
 
     .date-picker {
-      background: rgba(6, 9, 19, 0.75);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 5px;
+      background: rgba(8, 12, 22, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 6px;
       color: #F1F5F9;
-      padding: 0.24rem 0.5rem;
-      font-size: 0.72rem;
+      padding: 0.22rem 0.42rem;
+      font-size: 0.68rem;
       font-family: var(--font-data);
       font-weight: 500;
+      letter-spacing: -0.01em;
       outline: none;
       transition: all 0.2s ease;
       cursor: pointer;
@@ -537,12 +538,12 @@
 
     .date-picker::-webkit-calendar-picker-indicator {
       cursor: pointer;
-      opacity: 0.6;
+      opacity: 0.55;
       filter: invert(0.8);
       transition: opacity 0.2s ease;
       margin-left: 2px;
-      width: 12px;
-      height: 12px;
+      width: 11px;
+      height: 11px;
     }
 
     .date-picker::-webkit-calendar-picker-indicator:hover {
@@ -551,14 +552,15 @@
 
     .date-picker:focus {
       border-color: #10B981;
-      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);
+      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
     }
 
     .date-arrow {
       color: var(--ink-muted);
-      font-size: 0.75rem;
-      opacity: 0.6;
+      font-size: 0.68rem;
+      opacity: 0.5;
       user-select: none;
+      padding: 0 1px;
     }
 
     .apply-btn {
@@ -566,21 +568,21 @@
       color: #FFFFFF;
       border: none;
       border-radius: 6px;
-      padding: 0.28rem 0.75rem;
-      font-size: 0.72rem;
+      padding: 0.24rem 0.65rem;
+      font-size: 0.68rem;
       font-family: var(--font-body);
       font-weight: 700;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.04em;
       text-transform: uppercase;
       cursor: pointer;
       transition: all 0.18s ease;
-      box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
     }
 
     .apply-btn:hover {
       opacity: 0.92;
       transform: translateY(-1px);
-      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.45);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
     }
 
     .compare-row {
@@ -1870,7 +1872,10 @@
         gap: 2px !important;
         flex: 1 !important;
         min-width: 0 !important;
-        padding: 2px 4px !important;
+        padding: 2px 3px !important;
+        background: rgba(15, 23, 42, 0.75) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-radius: 7px !important;
       }
 
       .date-input-wrap {
@@ -1880,20 +1885,48 @@
 
       .date-picker {
         width: 100% !important;
-        font-size: 0.68rem !important;
-        padding: 0.22rem 0.2rem !important;
+        font-size: 0.58rem !important;
+        font-weight: 500 !important;
+        letter-spacing: -0.02em !important;
+        padding: 0.18rem 0.25rem !important;
+        height: 25px !important;
+        min-height: 25px !important;
+        border-radius: 5px !important;
+        background: rgba(8, 12, 22, 0.9) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: #F8FAFC !important;
+      }
+
+      .date-picker::-webkit-calendar-picker-indicator {
+        width: 9px !important;
+        height: 9px !important;
+        margin-left: 1px !important;
+        opacity: 0.6 !important;
+      }
+
+      .date-arrow {
+        font-size: 0.58rem !important;
+        color: var(--ink-muted) !important;
+        padding: 0 !important;
       }
 
       .apply-btn {
-        padding: 0.22rem 0.5rem !important;
-        font-size: 0.68rem !important;
+        padding: 0.18rem 0.45rem !important;
+        font-size: 0.60rem !important;
+        font-weight: 700 !important;
+        height: 25px !important;
+        min-height: 25px !important;
+        border-radius: 5px !important;
         flex-shrink: 0 !important;
       }
 
       .compare-row {
-        padding: 0.22rem 0.45rem !important;
-        font-size: 0.68rem !important;
+        padding: 0.18rem 0.42rem !important;
+        font-size: 0.64rem !important;
+        height: 25px !important;
+        min-height: 25px !important;
         flex-shrink: 0 !important;
+        border-radius: 6px !important;
       }
 
       /* KPI Cards 2-Column Balanced Grid */

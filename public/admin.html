@@ -5878,6 +5878,11 @@
           renderAuditTable(audits || []);
         } catch (cpnErr) { console.warn('[Coupons/Audits] Render notice:', cpnErr); }
 
+        // ── TAB: CREATIVE ADS & ATTRIBUTION ──
+        try {
+          loadCreativeAdsData();
+        } catch (adErr) { console.warn('[Creative Ads] Render notice:', adErr); }
+
       } catch (err) {
         console.warn('[Dashboard] Render notice:', err);
       } finally {
@@ -7225,12 +7230,15 @@
       const badge = document.getElementById('adCampaignCountBadge');
       if (!tbody) return;
 
-      const from = window.bdFilter?.from || '2020-01-01T00:00:00Z';
-      const to = window.bdFilter?.to || new Date().toISOString();
+      const f = (typeof getFilter === 'function') ? getFilter() : window.bdFilter;
+      const from = f?.from || '2020-01-01T00:00:00Z';
+      const to = f?.to || new Date().toISOString();
 
       try {
         let list = [];
         let isFallbackMode = true;
+        let totalNetRevenue = 0;
+        let totalSales = 0;
 
         loadAdDataQualityAlerts();
 
@@ -7372,9 +7380,9 @@
                   reconciled_ad_spend_inr: 0
                 };
               }
-              if (p.status === 'completed' || p.status === 'success' || p.status === 'paid') {
+              if (['completed', 'paid', 'captured', 'successful'].includes(p.status)) {
                 groups[key].total_purchases += 1;
-                groups[key].net_revenue_inr += Number(p.amount_inr || p.amount_usd ? (p.amount_inr || (p.amount_usd * 83)) : (p.amount ? p.amount / 100 : 0));
+                groups[key].net_revenue_inr += Number(p.amount_inr || (p.amount_usd ? p.amount_usd * 83 : 0));
               }
             }
           });
@@ -7391,26 +7399,27 @@
           });
         }
 
-        // Seamlessly merge locally stored campaigns if not yet returned by DB query
+        // Merge any locally saved campaign items
         try {
-          const localCamps = JSON.parse(localStorage.getItem('manodemy_local_ad_campaigns') || '[]');
-          localCamps.forEach(lc => {
-            const cleanLcName = (lc.campaign_name || '').toLowerCase().trim();
-            if (cleanLcName && !deletedCamps.includes(cleanLcName)) {
-              const exists = list.some(item => (item.campaign_name || '').toLowerCase().trim() === cleanLcName);
+          const localAds = JSON.parse(localStorage.getItem('manodemy_local_ad_campaigns') || '[]');
+          const deletedLocal = (JSON.parse(localStorage.getItem('manodemy_deleted_campaigns') || '[]')).map(s => (s || '').toLowerCase().trim());
+          localAds.forEach(loc => {
+            const lName = (loc.campaign_name || '').toLowerCase().trim();
+            if (lName && !deletedLocal.includes(lName)) {
+              const exists = list.some(item => (item.campaign_name || '').toLowerCase().trim() === lName);
               if (!exists) {
                 list.unshift({
-                  campaign_id: lc.campaign_id || ('CMP-' + lc.campaign_name.substring(0, 6).toUpperCase()),
-                  campaign_name: lc.campaign_name,
-                  platform: lc.platform || 'telegram',
-                  start_date: lc.start_date || new Date().toISOString(),
-                  target_url: lc.target_url || `https://www.manodemy.com/?utm_campaign=${lc.campaign_name}`,
+                  campaign_id: loc.campaign_id || ('CMP-' + lName.substring(0,6).toUpperCase()),
+                  campaign_name: loc.campaign_name,
+                  platform: loc.platform || 'telegram',
+                  start_date: loc.start_date || new Date().toISOString(),
+                  target_url: loc.target_url || `https://www.manodemy.com/?utm_campaign=${lName}`,
                   total_visits: 0,
                   unique_visitors: 0,
                   total_signins: 0,
                   total_purchases: 0,
                   net_revenue_inr: 0,
-                  reconciled_ad_spend_inr: Number(lc.ad_spend_inr || 0),
+                  reconciled_ad_spend_inr: Number(loc.ad_spend_inr || 0) + (Number(loc.ad_spend_usd || 0) * 83),
                   net_roas: 0
                 });
               }
@@ -7437,6 +7446,8 @@
 
         let totalVisits = 0;
         let totalAdSpend = 0;
+        let totalAttributedSales = 0;
+        let totalAttributedRevenue = 0;
 
         if (!list.length) {
           tbody.innerHTML = '<tr><td colspan="14" style="text-align:center; color:var(--ink-muted); padding:2rem;">No campaigns to display. Create a campaign above or click "Show Archived" to view hidden rows.</td></tr>';
@@ -7467,10 +7478,8 @@
 
           totalVisits += visits;
           totalAdSpend += spend;
-          if (!loadedFromServer) {
-            totalSales += sales;
-            totalNetRevenue += netRev;
-          }
+          totalAttributedSales += sales;
+          totalAttributedRevenue += netRev;
 
           let roasBadgeStyle = 'background:rgba(168,85,247,0.15); color:#C084FC; border:1px solid rgba(168,85,247,0.3);';
           let roasLabel = 'Organic (∞)';
@@ -7551,10 +7560,10 @@
         if (elVisits) elVisits.textContent = totalVisits.toLocaleString('en-IN');
         // ── KPI 2: Net Revenue
         const elNetRev = document.getElementById('kpiAdNetRevenue');
-        if (elNetRev) elNetRev.textContent = `₹${totalNetRevenue.toLocaleString('en-IN')}`;
+        if (elNetRev) elNetRev.textContent = `₹${(totalAttributedRevenue > 0 ? totalAttributedRevenue : totalNetRevenue).toLocaleString('en-IN')}`;
         // ── KPI 3: Total Sales
         const elTotalSales = document.getElementById('kpiAdTotalSales');
-        if (elTotalSales) elTotalSales.textContent = totalSales.toLocaleString('en-IN');
+        if (elTotalSales) elTotalSales.textContent = (totalAttributedSales > 0 ? totalAttributedSales : totalSales).toLocaleString('en-IN');
         // ── KPI 4: Total Ad Spend
         const elSpend = document.getElementById('kpiAdSpend');
         if (elSpend) elSpend.textContent = `₹${totalAdSpend.toLocaleString('en-IN')}`;
@@ -9089,8 +9098,12 @@
             console.log('[Realtime ⚡] Profiles event:', payload.eventType);
             renderDashboard();
           })
-          .on('postgres_changes', { event: '*', schema: 'public', table: 'smart_campaigns' }, (payload) => {
-            console.log('[Realtime ⚡] Campaigns event:', payload.eventType);
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'ad_campaigns' }, (payload) => {
+            console.log('[Realtime ⚡] Ad Campaigns event:', payload.eventType);
+            try { loadCreativeAdsData(); } catch (e) {}
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'campaign_clicks' }, (payload) => {
+            console.log('[Realtime ⚡] Campaign Click event:', payload.eventType);
             try { loadCreativeAdsData(); } catch (e) {}
           })
           .on('postgres_changes', { event: '*', schema: 'public', table: 'reviews' }, (payload) => {
@@ -9116,6 +9129,16 @@
               }
             }
           });
+
+        // Periodic auto-refresh every 12s when tab is active
+        setInterval(() => {
+          if (document.visibilityState === 'visible') {
+            const activePane = document.querySelector('.tab-pane.active')?.id;
+            if (activePane === 'tab-ads') {
+              try { loadCreativeAdsData(); } catch (e) {}
+            }
+          }
+        }, 12000);
       } catch (err) {
         console.warn('[Realtime] Subscription failed:', err);
       }

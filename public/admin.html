@@ -7306,7 +7306,11 @@
           const fromTime = from ? new Date(from).getTime() : 0;
           const toTime = to ? new Date(to).getTime() : Infinity;
 
-          clicks.forEach(cc => {
+          // Sort chronologically and deduplicate clicks from same visitor within 15 seconds
+          const sortedClicks = [...clicks].sort((a, b) => new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime());
+          const lastClickTimeMap = {};
+
+          sortedClicks.forEach(cc => {
             const key = (cc.campaign_name || '').toLowerCase().trim();
             if (key && !deletedCamps.includes(key)) {
               if (!groups[key]) {
@@ -7325,6 +7329,16 @@
                 };
               }
               const clickTime = cc.created_at ? new Date(cc.created_at).getTime() : 0;
+              const vId = cc.visitor_id || 'anon';
+              const dedupeKey = `${key}_${vId}`;
+              const lastTime = lastClickTimeMap[dedupeKey] || 0;
+
+              if (clickTime && lastTime && (clickTime - lastTime < 15000)) {
+                // Skip duplicate click from same visitor within 15 seconds
+                return;
+              }
+              lastClickTimeMap[dedupeKey] = clickTime;
+
               if (!clickTime || (clickTime >= fromTime && clickTime <= toTime)) {
                 groups[key].total_visits += 1;
                 if (cc.visitor_id) groups[key].unique_visitors.add(cc.visitor_id);

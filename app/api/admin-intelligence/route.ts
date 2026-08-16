@@ -363,12 +363,25 @@ export async function GET(req: Request) {
     const fromTime = from ? new Date(from).getTime() : 0;
     const toTime = to ? new Date(to).getTime() : Infinity;
 
-    clicks.forEach((cc: any) => {
+    const sortedClicks = [...clicks].sort((a: any, b: any) => new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime());
+    const lastClickTimeMap: Record<string, number> = {};
+
+    sortedClicks.forEach((cc: any) => {
       const clickTime = cc.created_at ? new Date(cc.created_at).getTime() : 0;
       if (clickTime && (clickTime < fromTime || clickTime > toTime)) return;
 
       const key = String(cc.campaign_name || cc.utm_campaign || '').toLowerCase().trim();
       if (key) {
+        const vId = cc.visitor_id || 'anon';
+        const dedupeKey = `${key}_${vId}`;
+        const lastTime = lastClickTimeMap[dedupeKey] || 0;
+
+        if (clickTime && lastTime && (clickTime - lastTime < 15000)) {
+          // Skip duplicate click from same visitor within 15 seconds
+          return;
+        }
+        lastClickTimeMap[dedupeKey] = clickTime;
+
         if (!groups[key]) {
           groups[key] = {
             campaign_id: 'CMP-' + key.substring(0,6).toUpperCase(),

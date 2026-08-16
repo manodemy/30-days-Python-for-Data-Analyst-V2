@@ -45,19 +45,13 @@ async function trackEdgeCampaignClick(campaign: string, source: string, visitorI
 export async function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
   const path = url.pathname;
+  const lowerPath = path.toLowerCase();
 
   let visitorId = request.cookies.get('manodemy_visitor_id')?.value;
   if (!visitorId) {
     visitorId = 'vis_' + Math.random().toString(36).substring(2, 11) + Date.now().toString(36);
   }
   const userAgent = request.headers.get('user-agent') || undefined;
-
-  // Track any inbound campaign click query param
-  const inboundCamp = url.searchParams.get('utm_campaign') || url.searchParams.get('campaign') || url.searchParams.get('c');
-  if (inboundCamp) {
-    const inboundSource = url.searchParams.get('utm_source') || 'direct';
-    await trackEdgeCampaignClick(inboundCamp, inboundSource, visitorId, userAgent);
-  }
 
   // ── Layer 0: Short URL Campaign Redirection (e.g. /q1, /q2, /go/reel1, /r/bio) ──
   const shortMap: Record<string, string> = {
@@ -81,7 +75,14 @@ export async function middleware(request: NextRequest) {
     '/insta': '/?utm_source=meta&utm_medium=cpc&utm_campaign=insta_bio_link'
   };
 
-  const lowerPath = path.toLowerCase();
+  // Track any inbound campaign click query param ONLY if not from a shortlink redirect
+  const isEdgeTrackedCookie = request.cookies.get('manodemy_edge_tracked')?.value;
+  const inboundCamp = url.searchParams.get('utm_campaign') || url.searchParams.get('campaign') || url.searchParams.get('c');
+  if (inboundCamp && !isEdgeTrackedCookie && !path.startsWith('/go/') && !path.startsWith('/r/') && !shortMap[lowerPath]) {
+    const inboundSource = url.searchParams.get('utm_source') || 'direct';
+    await trackEdgeCampaignClick(inboundCamp, inboundSource, visitorId, userAgent);
+  }
+
   if (shortMap[lowerPath]) {
     const targetPath = shortMap[lowerPath];
     const dest = new URL(targetPath, request.url);
@@ -98,6 +99,7 @@ export async function middleware(request: NextRequest) {
     if (targetCamp) {
       response.cookies.set('manodemy_last_campaign', targetCamp, { path: '/', maxAge: 2592000, sameSite: 'lax' });
     }
+    response.cookies.set('manodemy_edge_tracked', '1', { path: '/', maxAge: 20, sameSite: 'lax' });
     response.cookies.set('manodemy_visitor_id', visitorId, { path: '/', maxAge: 2592000, sameSite: 'lax' });
     return response;
   }

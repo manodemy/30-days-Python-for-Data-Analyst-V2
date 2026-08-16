@@ -136,9 +136,13 @@ function showGuestPaywallModal(featureTitle = 'this feature') {
     const debounceKey = `manodemy_last_click_${campaignName}`;
     const lastTrackTime = parseInt(sessionStorage.getItem(debounceKey) || '0', 10);
     const now = Date.now();
-    const isDebounced = (now - lastTrackTime < 3000);
+    const isDebounced = (now - lastTrackTime < 20000);
+    const isEdgeTracked = document.cookie.includes('manodemy_edge_tracked=1');
 
-    if (!isDebounced) {
+    if (isEdgeTracked) {
+      sessionStorage.setItem(debounceKey, now.toString());
+      document.cookie = 'manodemy_edge_tracked=; path=/; max-age=0; SameSite=Lax';
+    } else if (!isDebounced) {
       sessionStorage.setItem(debounceKey, now.toString());
 
       try {

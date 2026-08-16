@@ -34,13 +34,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // Transmit debounced campaign click to Supabase ONLY when utm_campaign is explicitly present
   const campaignToTrack = utmCamp ? utmCamp.toLowerCase().trim() : null;
   if (campaignToTrack) {
-    // Rapid-Fire Protection: 3-second throttle (prevents dual-execution on same page load)
+    // Rapid-Fire Protection: check if already logged by edge shortlink or in same session within 20s
     const debounceKey = `manodemy_last_click_${campaignToTrack}`;
     const lastTrackTime = parseInt(sessionStorage.getItem(debounceKey) || '0', 10);
     const now = Date.now();
-    const isDebounced = (now - lastTrackTime < 3000);
+    const isDebounced = (now - lastTrackTime < 20000);
+    const isEdgeTracked = document.cookie.includes('manodemy_edge_tracked=1');
 
-    if (!isDebounced) {
+    if (isEdgeTracked) {
+      sessionStorage.setItem(debounceKey, now.toString());
+      document.cookie = 'manodemy_edge_tracked=; path=/; max-age=0; SameSite=Lax';
+    } else if (!isDebounced) {
       sessionStorage.setItem(debounceKey, now.toString());
 
       const SUPA_URL = 'https://erqoyvbuhmkyvcqgwcbz.supabase.co';

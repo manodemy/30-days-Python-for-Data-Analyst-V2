@@ -19,8 +19,40 @@ const TOAST_DURATION_MS = 6000;
 
 
 // Supabase client initialize (assumes loaded in head)
-
 const SUPA_URL = 'https://erqoyvbuhmkyvcqgwcbz.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVycW95dmJ1aG1reXZjcWd3Y2J6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzODk1MTIsImV4cCI6MjA5NDk2NTUxMn0.9UnIfq8xMrKANPPTtoOADKH-NJ_it9HDp7xrJL4FXtw';
+
+(function initNotebookAttribution() {
+  try {
+    if (window.self !== window.top) return;
+    const urlParams = new URLSearchParams(window.location.search);
+    const utmCamp = urlParams.get('utm_campaign') || urlParams.get('campaign') || urlParams.get('c');
+    const utmSource = urlParams.get('utm_source') || 'direct';
+    if (utmCamp) {
+      const cleanCamp = utmCamp.toLowerCase().trim();
+      localStorage.setItem('manodemy_last_campaign', cleanCamp);
+      document.cookie = `manodemy_last_campaign=${cleanCamp}; path=/; max-age=2592000; SameSite=Lax`;
+      let visId = localStorage.getItem('manodemy_visitor_id');
+      if (!visId) {
+        visId = 'vis_' + Math.random().toString(36).substring(2, 11) + Date.now().toString(36);
+        localStorage.setItem('manodemy_visitor_id', visId);
+      }
+      document.cookie = `manodemy_visitor_id=${visId}; path=/; max-age=2592000; SameSite=Lax`;
+
+      const debounceKey = `manodemy_last_click_${cleanCamp}`;
+      const lastTrackTime = parseInt(sessionStorage.getItem(debounceKey) || '0', 10);
+      const now = Date.now();
+      if (now - lastTrackTime >= 3000) {
+        sessionStorage.setItem(debounceKey, now.toString());
+        fetch(`${SUPA_URL}/rest/v1/campaign_clicks`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}`, 'Prefer': 'return=minimal' },
+          body: JSON.stringify({ campaign_name: cleanCamp, source: utmSource, visitor_id: visId })
+        }).catch(() => {});
+      }
+    }
+  } catch (e) {}
+})();
 
 let sbClient = null;
 
@@ -34,19 +66,15 @@ const CustomAuthStorage = {
             if (!val) {
               let chunks = [];
               for (let i = 0; ; i++) {
-                const chunkMatch = document.cookie.match(new RegExp('(^| )' + key + '\\.' + i + '=([^;]+)'));
+                const chunkMatch = document.cookie.match(new RegExp('(^| )' + key + '\.' + i + '=([^;]+)'));
                 if (chunkMatch) {
-                  chunks.push(chunkMatch[2]);
+                  try { chunks.push(decodeURIComponent(chunkMatch[2])); } catch (e) { break; }
                 } else {
                   break;
                 }
               }
               if (chunks.length > 0) {
-                try {
-                  val = decodeURIComponent(chunks.join(''));
-                } catch (e) {
-                  console.error("Failed to decode joined cookie chunks:", e);
-                }
+                val = chunks.join('');
               }
             }
             if (!val) {
@@ -2208,107 +2236,11 @@ window.refreshTocTracking();
 
 // ── DROPDOWN TOGGLE ──
 
-function isPaidUser() {
-  if (localStorage.getItem('manodemy_enrolled') === 'true') return true;
-  try {
-    const supaData = localStorage.getItem('sb-erqoyvbuhmkyvcqgwcbz-auth-token');
-    if (supaData) {
-      const parsed = JSON.parse(supaData);
-      if (parsed?.user?.user_metadata?.plan === 'pro') return true;
-    }
-  } catch (e) {}
-  return false;
-}
-
 function initializeDropdownToggle() {
   const btn = document.getElementById('dayDropdownBtn');
   const menu = document.getElementById('dayDropdownMenu');
 
   if (btn && menu) {
-    const isPaid = isPaidUser();
-    const allDays = window.COURSE_MANIFEST_60 || [];
-    const svgIcons = window.SVG_TRACK_ICONS || {
-      sql: `<span class="track-logo-badge track-logo-sql" title="SQL Track"><svg viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v6c0 1.66 4 3 9 3s9-1.34 9-3V5"></path><path d="M3 11v6c0 1.66 4 3 9 3s9-1.34 9-3v-6"></path></svg></span>`,
-      excel: `<span class="track-logo-badge track-logo-excel" title="Excel Track"><svg viewBox="0 0 23 23" fill="none" style="width:14px;height:14px;"><path d="M14.625 0H8.625L1.5 2.625V20.375L8.625 23H14.625V0Z" fill="#107C41"/><path d="M21.5 2.625H14.625V6.375H21.5V2.625Z" fill="#1F9A55"/><path d="M21.5 6.375H14.625V10.125H21.5V6.375Z" fill="#33C481"/><path d="M21.5 10.125H14.625V13.875H21.5V10.125Z" fill="#107C41"/><path d="M21.5 13.875H14.625V17.625H21.5V13.875Z" fill="#1B9A59"/><path d="M21.5 17.625H14.625V20.375H21.5V17.625Z" fill="#107C41"/><path d="M10.125 6.375H3.375V16.625H10.125V6.375Z" fill="#107C41"/><path d="M11.813 7.875L9.938 11.25L11.813 14.625H9.563L8.438 12.75L7.313 14.625H5.063L6.938 11.25L5.063 7.875H7.313L8.438 9.75L9.563 7.875H11.813Z" fill="white"/></svg></span>`,
-      python: `<span class="track-logo-badge track-logo-python" title="Python Track"><svg viewBox="45.9 0 367.2 459" fill="none" style="width:14px;height:14px;"><path fill="#306998" d="M229.5 0C161.4 0 122.4 15.6 122.4 53.6v34.4h107.1v15.3H122.4c-47.8 0-76.5 30.6-76.5 76.5v61.2c0 45.9 28.7 76.5 76.5 76.5h30.6v-45.9c0-51 41.3-91.8 91.8-91.8h107.1V107.1c0-53.6-47.8-107.1-122.4-107.1zM175.9 30.6c8.4 0 15.3 6.9 15.3 15.3s-6.9 15.3-15.3 15.3-15.3-6.9-15.3-15.3 6.9-15.3 15.3-15.3z" /><path fill="#FFE873" d="M229.5 459c68.1 0 107.1-15.6 107.1-53.6v-34.4H229.5v-15.3h107.1c47.8 0 76.5-30.6 76.5-76.5v-61.2c0-45.9-28.7-76.5-76.5-76.5h-30.6v45.9c0 51-41.3 91.8-91.8 91.8H122.4V351.9c0 53.6 47.8 107.1 22.4 107.1zm53.6-30.6c-8.4 0-15.3-6.9-15.3-15.3s6.9-15.3 15.3-15.3 15.3 6.9 15.3 15.3-6.9 15.3-15.3 15.3z" /></svg></span>`
-    };
-
-    // Update trigger button icon
-    const dayBadge = btn.querySelector('.day-badge');
-    if (dayBadge && !dayBadge.querySelector('.track-logo-excel')) {
-      dayBadge.innerHTML = `<span style="display:inline-flex;align-items:center;gap:4px;">${svgIcons.excel} ${dayBadge.textContent}</span>`;
-    }
-
-    if (allDays.length > 0) {
-      let scrollContainer = menu.querySelector('.dropdown-scroll');
-      if (!scrollContainer) {
-        scrollContainer = menu;
-      }
-      scrollContainer.innerHTML = '';
-
-      const currentPath = window.location.pathname;
-      const tracks = [
-        { key: 'sql', label: '🗄️ SQL Mastery (Days 01–18)', days: allDays.filter(d => d.track === 'sql') },
-        { key: 'excel', label: '📊 Advanced Excel & BI (Days 19–30)', days: allDays.filter(d => d.track === 'excel') },
-        { key: 'python', label: '🐍 Python for Data Analysis (Days 31–60)', days: allDays.filter(d => d.track === 'python') }
-      ];
-
-      tracks.forEach(trackGroup => {
-        const header = document.createElement('div');
-        header.className = 'dropdown-section-header';
-        header.innerHTML = `<span>${trackGroup.label}</span>`;
-        scrollContainer.appendChild(header);
-
-        trackGroup.days.forEach(d => {
-          const isUnpaidLocked = (!d.free && !isPaid);
-          const isComingSoon = (!d.prepared);
-          const isCurrent = (currentPath.includes(d.url.replace('/excel/', '')) || currentPath.includes(d.id));
-          const a = document.createElement('a');
-          a.className = `dropdown-item${isCurrent ? ' active' : ''}${isUnpaidLocked ? ' is-locked' : ''}`;
-          a.href = isUnpaidLocked ? '../index.html#pricing?locked=true' : (isComingSoon ? '#' : d.url);
-
-          const iconSvg = svgIcons[d.track] || '';
-          const dayNumStr = String(d.globalDay).padStart(2, '0');
-
-          let badgeHtml = '';
-          if (isUnpaidLocked) {
-            badgeHtml = '<span class="dropdown-lock-badge" title="Pro subscription required">🔒</span>';
-          } else if (isComingSoon) {
-            badgeHtml = '<span class="day-coming-soon-badge" title="Under active development">Coming Soon</span>';
-          } else if (d.free) {
-            badgeHtml = '<span class="day-free-badge">FREE</span>';
-          }
-
-          a.innerHTML = `
-            <span class="option-day-tag" style="display:inline-flex;align-items:center;gap:8px;overflow:hidden;flex:1;">
-              <span class="track-icon-wrap">${iconSvg}</span>
-              <span style="display:flex;flex-direction:column;gap:1px;overflow:hidden;">
-                <strong style="color:#f8fafc;font-size:0.78rem;">Day ${dayNumStr}</strong>
-                <span class="option-day-title" style="color:#94a3b8;font-size:0.74rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${d.title}</span>
-              </span>
-            </span>
-            ${badgeHtml}
-          `;
-
-          a.addEventListener('click', (e) => {
-            if (isUnpaidLocked) {
-              e.preventDefault();
-              window.location.href = '../index.html#pricing?locked=true';
-            } else if (isComingSoon) {
-              e.preventDefault();
-              if (window.showComingSoonToast) {
-                window.showComingSoonToast(d.title, d.globalDay);
-              } else {
-                alert(`Day ${dayNumStr} is currently in active development and coming soon!`);
-              }
-            }
-          });
-
-          scrollContainer.appendChild(a);
-        });
-      });
-    }
-
     const newBtn = btn.cloneNode(true);
     btn.parentNode.replaceChild(newBtn, btn);
 
@@ -2327,19 +2259,6 @@ function initializeDropdownToggle() {
         }
       }
     });
-
-    if (window.__closeDropdownHandler) {
-      document.removeEventListener('click', window.__closeDropdownHandler);
-    }
-    window.__closeDropdownHandler = (e) => {
-      if (!menu.contains(e.target) && !newBtn.contains(e.target)) {
-        menu.classList.remove('show');
-        newBtn.classList.remove('open');
-      }
-    };
-    document.addEventListener('click', window.__closeDropdownHandler);
-  }
-}
 
     if (window.__closeDropdownHandler) {
       document.removeEventListener('click', window.__closeDropdownHandler);

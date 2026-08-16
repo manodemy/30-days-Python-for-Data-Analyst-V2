@@ -142,21 +142,22 @@ function showGuestPaywallModal(featureTitle = 'this feature') {
       sessionStorage.setItem(debounceKey, now.toString());
 
       try {
-        fetch(`${SUPA_URL}/rest/v1/rpc/track_campaign_click`, {
+        fetch(`${SUPA_URL}/rest/v1/campaign_clicks`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'apikey': SUPA_KEY,
-            'Authorization': `Bearer ${SUPA_KEY}`
+            'Authorization': `Bearer ${SUPA_KEY}`,
+            'Prefer': 'return=minimal'
           },
           body: JSON.stringify({
-            p_campaign: campaignName,
-            p_source: utmSource,
-            p_visitor_id: visitorId
+            campaign_name: campaignName,
+            source: utmSource,
+            visitor_id: visitorId
           })
         }).then(r => {
           if (r.ok) {
-            console.log('[Attribution] Successfully logged unique campaign click via REST:', campaignName);
+            console.log('[Attribution] ✅ Click logged to campaign_clicks:', campaignName);
           }
         }).catch(err => {
           console.warn('[Attribution] REST call notice:', err);

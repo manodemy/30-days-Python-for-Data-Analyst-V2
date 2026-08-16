@@ -465,6 +465,10 @@ export async function GET(req: Request) {
         clicks,
         audits
       }
+    }, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0'
+      }
     });
   } catch (error: any) {
     console.error('Error in GET /api/admin-intelligence:', error);

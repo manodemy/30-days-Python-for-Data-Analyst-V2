@@ -4720,6 +4720,7 @@
               detectSessionInUrl: true
             }
           });
+          window.sb = sb;
 
           // Immediate synchronous URL hash parsing for OAuth callbacks
           if (window.location.hash && window.location.hash.includes('access_token=')) {
@@ -7245,7 +7246,7 @@
         // ── Primary Engine: Fetch high-permission server payload ──
         let loadedFromServer = false;
         try {
-          const apiUrl = `/api/admin-intelligence?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
+          const apiUrl = `/api/admin-intelligence?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&_t=${Date.now()}`;
           const res = await fetch(apiUrl, { cache: 'no-store' });
           if (res.ok) {
             const json = await res.json();
@@ -9233,6 +9234,15 @@
       try { guardAdmin().catch(console.warn); } catch (e) {}
       try { connectRealtimeSync(); } catch (e) {}
     }
+
+    window.addEventListener('focus', () => {
+      try { loadCreativeAdsData(); } catch (e) {}
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        try { loadCreativeAdsData(); } catch (e) {}
+      }
+    });
 
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', bootIntelligenceSuite);

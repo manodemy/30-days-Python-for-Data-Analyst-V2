@@ -48,6 +48,22 @@ export async function GET(request: NextRequest) {
           secure: isSecure
         });
 
+        // Save campaign attribution to profiles table
+        const firstCamp = request.cookies.get('manodemy_first_campaign')?.value;
+        const lastCamp = request.cookies.get('manodemy_last_campaign')?.value || firstCamp;
+        const userId = data.session.user.id;
+
+        if (userId && (firstCamp || lastCamp)) {
+          try {
+            await supabase.from('profiles').update({
+              first_touch_campaign: firstCamp || null,
+              last_touch_campaign: lastCamp || null
+            }).eq('id', userId);
+          } catch (profErr) {
+            console.warn('[Auth Callback] Attribution save notice:', profErr);
+          }
+        }
+
         // If user is admin and safeNext is home, route to admin portal
         const userEmail = (data.session.user.email || '').toLowerCase();
         const isAdmin = userEmail === 'manodamy25@gmail.com' || userEmail.includes('manodemy') || userEmail.includes('manodamy');

@@ -2116,6 +2116,24 @@ document.addEventListener('DOMContentLoaded', () => {
       if (session.user.id) {
         const sb = await ensureSupabaseClient();
         await checkPurchaseStatus(sb || supabaseClient, session.user.id);
+
+        // Sync first_touch_campaign and last_touch_campaign to profiles table for attribution tracking
+        const firstCamp = localStorage.getItem('manodemy_first_campaign') || (document.cookie.match(/(?:^|; )manodemy_first_campaign=([^;]*)/)?.[1]);
+        const lastCamp = localStorage.getItem('manodemy_last_campaign') || (document.cookie.match(/(?:^|; )manodemy_last_campaign=([^;]*)/)?.[1]) || firstCamp;
+        if (firstCamp || lastCamp) {
+          try {
+            const client = sb || supabaseClient;
+            if (client) {
+              await client.from('profiles').update({
+                first_touch_campaign: firstCamp || null,
+                last_touch_campaign: lastCamp || null
+              }).eq('id', session.user.id);
+              console.log('[Attribution] Synced user campaign to profile:', firstCamp, lastCamp);
+            }
+          } catch (attrErr) {
+            console.warn('[Attribution] Profile attribution sync notice:', attrErr);
+          }
+        }
       }
       await saveCountryToProfile(userCountry);
     } else {

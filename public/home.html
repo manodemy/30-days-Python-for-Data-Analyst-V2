@@ -6975,6 +6975,18 @@
           const instEl = document.getElementById('instructorLink');
           if (instEl) instEl.style.display = 'block';
         }
+
+        // Sync campaign attribution to profile if available
+        try {
+          const firstCamp = localStorage.getItem('manodemy_first_campaign') || (document.cookie.match(/(?:^|; )manodemy_first_campaign=([^;]*)/)?.[1]);
+          const lastCamp = localStorage.getItem('manodemy_last_campaign') || (document.cookie.match(/(?:^|; )manodemy_last_campaign=([^;]*)/)?.[1]) || firstCamp;
+          if (user && user.id && user.id !== 'admin-local' && (firstCamp || lastCamp)) {
+            sb.from('profiles').update({
+              first_touch_campaign: firstCamp || null,
+              last_touch_campaign: lastCamp || null
+            }).eq('id', user.id).then(() => {});
+          }
+        } catch (attrErr) {}
       } catch (err) {
         console.warn("Failed checking admin privileges", err);
       }

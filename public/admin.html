@@ -7243,36 +7243,13 @@
 
         loadAdDataQualityAlerts();
 
-        // ── Primary Engine: Fetch high-permission server payload ──
-        let loadedFromServer = false;
-        try {
-          const apiUrl = `/api/admin-intelligence?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&_t=${Date.now()}`;
-          const res = await fetch(apiUrl, { cache: 'no-store' });
-          if (res.ok) {
-            const json = await res.json();
-            if (json && json.success && json.data && Array.isArray(json.data.creativeAds)) {
-              list = json.data.creativeAds;
-              isFallbackMode = false;
-              loadedFromServer = true;
-              console.log('[Ad Intelligence] ✅ Loaded live server payload from /api/admin-intelligence');
-              
-              if (json.data.revData) {
-                totalNetRevenue = Number(json.data.revData.net_revenue_inr || json.data.revData.net_revenue || 0);
-                totalSales = Number(json.data.revData.total_transactions || 0);
-              }
-            }
-          }
-        } catch (apiErr) {
-          console.warn('[Ad Intelligence] Server API notice, running client-side fallback:', apiErr);
-        }
-
-        // ── Secondary Engine: Direct Client DB Queries ──
-        if (!loadedFromServer) {
+        // ── Direct Live Supabase Telemetry Engine (0ms Latency) ──
+        if (sb) {
           const [purchasesRes, campaignsRes, clicksRes, profilesRes] = await Promise.all([
-            sb.from('purchases').select('*'),
+            sb.from('purchases').select('id, user_id, email, amount_inr, amount_usd, status, first_touch_campaign, last_touch_campaign, created_at'),
             sb.from('ad_campaigns').select('*'),
             sb.from('campaign_clicks').select('*'),
-            sb.from('profiles').select('*')
+            sb.from('profiles').select('id, email, first_touch_campaign, last_touch_campaign, created_at')
           ]);
 
           const purchases = purchasesRes.data || [];
@@ -7326,6 +7303,9 @@
             }
           });
 
+          const fromTime = from ? new Date(from).getTime() : 0;
+          const toTime = to ? new Date(to).getTime() : Infinity;
+
           clicks.forEach(cc => {
             const key = (cc.campaign_name || '').toLowerCase().trim();
             if (key && !deletedCamps.includes(key)) {
@@ -7344,8 +7324,11 @@
                   reconciled_ad_spend_inr: 0
                 };
               }
-              groups[key].total_visits += 1;
-              if (cc.visitor_id) groups[key].unique_visitors.add(cc.visitor_id);
+              const clickTime = cc.created_at ? new Date(cc.created_at).getTime() : 0;
+              if (!clickTime || (clickTime >= fromTime && clickTime <= toTime)) {
+                groups[key].total_visits += 1;
+                if (cc.visitor_id) groups[key].unique_visitors.add(cc.visitor_id);
+              }
             }
           });
 
@@ -7357,7 +7340,8 @@
             if (key && !deletedCamps.includes(key)) {
               if (prof.id) userCampaignMap[prof.id] = key;
               if (prof.email) userEmailCampaignMap[prof.email.toLowerCase()] = key;
-              if (groups[key]) {
+              const profTime = prof.created_at ? new Date(prof.created_at).getTime() : 0;
+              if ((!profTime || (profTime >= fromTime && profTime <= toTime)) && groups[key]) {
                 groups[key].total_signins += 1;
               }
             }
@@ -7381,9 +7365,12 @@
                   reconciled_ad_spend_inr: 0
                 };
               }
-              if (['completed', 'paid', 'captured', 'successful'].includes(p.status)) {
-                groups[key].total_purchases += 1;
-                groups[key].net_revenue_inr += Number(p.amount_inr || (p.amount_usd ? p.amount_usd * 83 : 0));
+              const pTime = p.created_at ? new Date(p.created_at).getTime() : 0;
+              if (!pTime || (pTime >= fromTime && pTime <= toTime)) {
+                if (['completed', 'paid', 'captured', 'successful'].includes(p.status)) {
+                  groups[key].total_purchases += 1;
+                  groups[key].net_revenue_inr += Number(p.amount_inr || (p.amount_usd ? p.amount_usd * 83 : 0));
+                }
               }
             }
           });
@@ -7398,6 +7385,7 @@
               net_roas: netRoas
             };
           });
+          isFallbackMode = false;
         }
 
         // Merge any locally saved campaign items

@@ -396,17 +396,27 @@
     },
     {
       "source": "/go/q4",
-      "destination": "/Version-3/index.html?day=4&q=4&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_04",
+      "destination": "/Version-3/index.html?day=4&q=4&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_03",
       "permanent": false
     },
     {
       "source": "/go/reel4",
-      "destination": "/Version-3/index.html?day=4&q=4&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_04",
+      "destination": "/Version-3/index.html?day=4&q=5&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_04",
+      "permanent": false
+    },
+    {
+      "source": "/go/instagram_reel_04",
+      "destination": "/Version-3/index.html?day=4&q=5&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_04",
       "permanent": false
     },
     {
       "source": "/q5",
-      "destination": "/Version-3/index.html?day=4&q=5&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_05",
+      "destination": "/Version-3/index.html?day=4&q=5&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_04",
+      "permanent": false
+    },
+    {
+      "source": "/go/q5",
+      "destination": "/Version-3/index.html?day=4&q=5&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_04",
       "permanent": false
     },
     {

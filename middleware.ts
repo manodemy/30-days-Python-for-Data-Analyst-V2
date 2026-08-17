@@ -70,6 +70,8 @@ export async function middleware(request: NextRequest) {
     '/go/reel3': '/sql-practice?day=4&q=3&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_03',
     '/go/reel4': '/sql-practice?day=4&q=4&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_04',
     '/go/reel5': '/sql-practice?day=4&q=5&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_05',
+    '/go/fb_ads_1': '/?utm_source=meta&utm_medium=cpc&utm_campaign=fb_ads_1',
+    '/fb_ads_1': '/?utm_source=meta&utm_medium=cpc&utm_campaign=fb_ads_1',
     '/go/bio': '/?utm_source=meta&utm_medium=cpc&utm_campaign=insta_bio_link',
     '/bio': '/?utm_source=meta&utm_medium=cpc&utm_campaign=insta_bio_link',
     '/insta': '/?utm_source=meta&utm_medium=cpc&utm_campaign=insta_bio_link'

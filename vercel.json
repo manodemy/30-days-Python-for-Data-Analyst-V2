@@ -315,6 +315,16 @@
       "permanent": false
     },
     {
+      "source": "/go/fb_ads_1",
+      "destination": "/landing_v2/index.html?utm_source=meta&utm_medium=cpc&utm_campaign=fb_ads_1",
+      "permanent": false
+    },
+    {
+      "source": "/fb_ads_1",
+      "destination": "/landing_v2/index.html?utm_source=meta&utm_medium=cpc&utm_campaign=fb_ads_1",
+      "permanent": false
+    },
+    {
       "source": "/go/bio",
       "destination": "/landing_v2/index.html?utm_source=meta&utm_medium=cpc&utm_campaign=insta_bio_link",
       "permanent": false

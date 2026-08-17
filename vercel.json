@@ -441,22 +441,22 @@
     },
     {
       "source": "/go/reel6",
-      "destination": "/Version-3/index.html?day=4&q=7&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_06",
+      "destination": "/Version-3/index.html?day=4&q=8&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_06",
       "permanent": false
     },
     {
       "source": "/go/instagram_reel_06",
-      "destination": "/Version-3/index.html?day=4&q=7&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_06",
+      "destination": "/Version-3/index.html?day=4&q=8&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_06",
       "permanent": false
     },
     {
-      "source": "/q7",
-      "destination": "/Version-3/index.html?day=4&q=7&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_06",
+      "source": "/q8",
+      "destination": "/Version-3/index.html?day=4&q=8&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_06",
       "permanent": false
     },
     {
-      "source": "/go/q7",
-      "destination": "/Version-3/index.html?day=4&q=7&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_06",
+      "source": "/go/q8",
+      "destination": "/Version-3/index.html?day=4&q=8&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_06",
       "permanent": false
     },
 

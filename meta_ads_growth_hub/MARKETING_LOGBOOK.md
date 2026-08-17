@@ -71,17 +71,21 @@
   - **Organic Bootstrap Playbook:** Deploy organic distribution of ready video reels (`Manim_Ad_1_Master_Reel.mp4`) across Instagram Reels, WhatsApp status, and Reddit to generate initial sales before flipping the paid ad switch.
   - **Meta Billing Mechanics:** Reassured founder that Meta does not charge upfront ₹15,000; campaigns can be tested with post-pay threshold or micro-budgets (₹100–₹200) once ready.
 
-### 🟢 Session 15: Meta Pixel Code & Event Tracking Integration (2026-08-16)
-- **Pixel ID Identified:** `1730292165783816` (Manodemy Pixel).
-- **Tracking Architecture Deployed:**
-  1. `landing_v2/index.html` & `public/landing_v2/index.html` ➔ Standard `PageView` base code installed in `<head>`.
-  2. `landing_v2/app.js` & `public/landing_v2/app.js` ➔ `InitiateCheckout` event fired upon Razorpay modal launch (Value: ₹1,999 INR).
-  3. `payment-success.html` & `landing_v2/payment-success.html` & `public/payment-success.html` ➔ `Purchase` conversion event configured with dynamic conversion value (Value: ₹1,999 INR).
-- **Milestone:** Full end-to-end Meta analytics tracking is active across the entire user conversion journey.
+### 🟢 Session 16: Meta Tracking Wizard & Full Attribution Architecture (2026-08-17)
+- **Pixel Setup Wizard Execution:**
+  - Base code verified on live site (`https://www.manodemy.com/`).
+  - Enabled Automatic Advanced Matching for enhanced browser attribution and higher match rates.
+- **End-to-End Attribution Architecture:**
+  1. *Ad Click:* Meta Ad (`utm_source=meta&utm_campaign=phase1_ad1`) ➔ Landing page.
+  2. *Top-Funnel Event:* `PageView` (Meta Pixel ID: `1730292165783816`) + Supabase campaign click logging.
+  3. *Mid-Funnel Event:* `InitiateCheckout` fired when Razorpay modal opens (₹1,999 INR).
+  4. *Bottom-Funnel Event:* `Purchase` fired on `payment-success.html` reporting exact conversion value to Meta Ads Manager.
+  5. *Founder Reporting:* Real-time tracking via Meta Ads Manager columns + Manodemy Admin Dashboard (`admin.html`).
 
 ---
 
 *(All future daily analyses, decisions, ad changes, and metric reviews will be appended below)*
+
 
 
 

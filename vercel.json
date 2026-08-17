@@ -459,6 +459,26 @@
       "destination": "/Version-3/index.html?day=4&q=8&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_06",
       "permanent": false
     },
+    {
+      "source": "/go/reel7",
+      "destination": "/Version-3/index.html?day=4&q=9&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_07",
+      "permanent": false
+    },
+    {
+      "source": "/go/instagram_reel_07",
+      "destination": "/Version-3/index.html?day=4&q=9&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_07",
+      "permanent": false
+    },
+    {
+      "source": "/q9",
+      "destination": "/Version-3/index.html?day=4&q=9&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_07",
+      "permanent": false
+    },
+    {
+      "source": "/go/q9",
+      "destination": "/Version-3/index.html?day=4&q=9&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_07",
+      "permanent": false
+    },
 
     {
       "source": "/day:day(0[3-9]|[12][0-9]|30).html",

@@ -341,32 +341,37 @@
     },
     {
       "source": "/go/reel1",
-      "destination": "/Version-3/index.html?day=4&q=1&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_01",
+      "destination": "/Version-3/index.html?day=4&q=2&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_01",
       "permanent": false
     },
     {
       "source": "/go/instagram_reel_01",
-      "destination": "/Version-3/index.html?day=4&q=1&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_01",
+      "destination": "/Version-3/index.html?day=4&q=2&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_01",
       "permanent": false
     },
     {
       "source": "/q2",
-      "destination": "/Version-3/index.html?day=4&q=2&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_02",
+      "destination": "/Version-3/index.html?day=4&q=2&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_01",
       "permanent": false
     },
     {
       "source": "/go/q2",
-      "destination": "/Version-3/index.html?day=4&q=2&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_02",
+      "destination": "/Version-3/index.html?day=4&q=2&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_01",
       "permanent": false
     },
     {
       "source": "/go/reel2",
-      "destination": "/Version-3/index.html?day=4&q=2&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_02",
+      "destination": "/Version-3/index.html?day=4&q=3&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_02",
       "permanent": false
     },
     {
       "source": "/go/instagram_reel_02",
-      "destination": "/Version-3/index.html?day=4&q=2&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_02",
+      "destination": "/Version-3/index.html?day=4&q=3&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_02",
+      "permanent": false
+    },
+    {
+      "source": "/q3",
+      "destination": "/Version-3/index.html?day=4&q=3&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_02",
       "permanent": false
     },
     {

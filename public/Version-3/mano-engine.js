@@ -8927,96 +8927,61 @@ function scrollToTarget(selector, isSeek = true) {
 }
 
 function playAudio(src, btn) {
-  // Find track index
-  const idx = combinedTracks.findIndex(t => t.src === src);
-  if (idx === -1) {
-    const audioSrc = src.startsWith('http') || src.startsWith('/') ? src : `/Version-3/${src}`;
-    if (currentPlayingAudio && currentPlayingAudio.src.endsWith(src)) {
-      if (currentPlayingAudio.paused) {
-        currentPlayingAudio.play();
-        btn.innerHTML = `<svg class="pause-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
-        btn.classList.add('playing');
-      } else {
-        currentPlayingAudio.pause();
-        btn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
-        btn.classList.remove('playing');
-      }
+  if (IS_GUEST_REEL || (!isPaidUser() && !isAdminUser() && currentDay !== 'day01' && currentDay !== 'day02')) {
+    showGuestPaywallModal('video & voice narration');
+    return;
+  }
+
+  // Find matching track index in the combined timeline
+  const idx = combinedTracks.findIndex(t => t.src === src || t.src.endsWith(src) || src.endsWith(t.src));
+
+  if (idx !== -1) {
+    if (combinedTrackIndex === idx && isCombinedPlaying) {
+      pauseCombinedPlayback();
     } else {
-      if (currentPlayingAudio) {
-        currentPlayingAudio.pause();
-        if (currentPlayingBtn) {
-          currentPlayingBtn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
-          currentPlayingBtn.classList.remove('playing');
-        }
+      let elapsedBefore = 0;
+      for (let i = 0; i < idx; i++) {
+        elapsedBefore += combinedTrackDurations[i] || 0;
       }
-      currentPlayingAudio = new Audio(audioSrc);
-      if (typeof currentPlaybackSpeed !== 'undefined') {
-        currentPlayingAudio.playbackRate = currentPlaybackSpeed;
-      }
-      if (typeof currentPlaybackVolume !== 'undefined') {
-        currentPlayingAudio.volume = currentPlaybackVolume;
-      }
-      currentPlayingAudio.ontimeupdate = () => {
-        if (src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(currentPlayingAudio.currentTime, !currentPlayingAudio.paused);
-        if (src.includes('New_Day1Part1audio03.mp3')) updateDay01Audio03Highlights(currentPlayingAudio.currentTime, !currentPlayingAudio.paused);
-        if (src.includes('New_Day1Part1audio04.mp3') || 
-            src.includes('New_Day1Part1audio07.mp3') || 
-            src.includes('New_Day1Part1audio06.mp3') || 
-            src.includes('New_Day1Part1audio05.mp3') || 
-            src.includes('New_Day1Part1audio08.mp3')) updateDay01CoreEntitiesHighlights(src, !currentPlayingAudio.paused);
-        if (src.includes('New_Day1Part1audio16.mp3') || 
-            src.includes('New_Day1Part1audio17.mp3') || 
-            src.includes('New_Day1Part1audio18.mp3') || 
-            src.includes('New_Day1Part1audio19.mp3') || 
-            src.includes('New_Day1Part1audio20.mp3') || 
-            src.includes('New_Day1Part1audio21.mp3')) updateDay01SqlSubLanguagesHighlights(src, !currentPlayingAudio.paused);
-      };
-      currentPlayingAudio.onpause = () => {
-        if (src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(0, false);
-        if (src.includes('New_Day1Part1audio03.mp3')) updateDay01Audio03Highlights(0, false);
-        if (src.includes('New_Day1Part1audio04.mp3') || 
-            src.includes('New_Day1Part1audio07.mp3') || 
-            src.includes('New_Day1Part1audio06.mp3') || 
-            src.includes('New_Day1Part1audio05.mp3') || 
-            src.includes('New_Day1Part1audio08.mp3')) updateDay01CoreEntitiesHighlights(null, false);
-        if (src.includes('New_Day1Part1audio16.mp3') || 
-            src.includes('New_Day1Part1audio17.mp3') || 
-            src.includes('New_Day1Part1audio18.mp3') || 
-            src.includes('New_Day1Part1audio19.mp3') || 
-            src.includes('New_Day1Part1audio20.mp3') || 
-            src.includes('New_Day1Part1audio21.mp3')) updateDay01SqlSubLanguagesHighlights(null, false);
-      };
-      currentPlayingBtn = btn;
-      currentPlayingAudio.play();
-      btn.innerHTML = `<svg class="pause-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
-      btn.classList.add('playing');
-      currentPlayingAudio.onended = () => {
-        if (src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(0, false);
-        if (src.includes('New_Day1Part1audio03.mp3')) updateDay01Audio03Highlights(0, false);
-        if (src.includes('New_Day1Part1audio04.mp3') || 
-            src.includes('New_Day1Part1audio07.mp3') || 
-            src.includes('New_Day1Part1audio06.mp3') || 
-            src.includes('New_Day1Part1audio05.mp3') || 
-            src.includes('New_Day1Part1audio08.mp3')) updateDay01CoreEntitiesHighlights(null, false);
-        if (src.includes('New_Day1Part1audio16.mp3') || 
-            src.includes('New_Day1Part1audio17.mp3') || 
-            src.includes('New_Day1Part1audio18.mp3') || 
-            src.includes('New_Day1Part1audio19.mp3') || 
-            src.includes('New_Day1Part1audio20.mp3') || 
-            src.includes('New_Day1Part1audio21.mp3')) updateDay01SqlSubLanguagesHighlights(null, false);
-        btn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
-        btn.classList.remove('playing');
-        currentPlayingAudio = null;
-        currentPlayingBtn = null;
-      };
+      seekCombinedPlayback(elapsedBefore, true);
     }
     return;
   }
 
-  if (combinedTrackIndex === idx) {
-    toggleCombinedPlayback();
+  // Fallback for standalone audio not found in manifest
+  const audioSrc = src.startsWith('http') || src.startsWith('/') ? src : `/Version-3/${src}`;
+  if (currentPlayingAudio && currentPlayingAudio.src.endsWith(src)) {
+    if (currentPlayingAudio.paused) {
+      currentPlayingAudio.play();
+      btn.innerHTML = `<svg class="pause-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+      btn.classList.add('playing');
+    } else {
+      currentPlayingAudio.pause();
+      btn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+      btn.classList.remove('playing');
+    }
   } else {
-    loadAndPlayTrack(idx);
+    if (currentPlayingAudio) {
+      currentPlayingAudio.pause();
+      if (currentPlayingBtn) {
+        currentPlayingBtn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+        currentPlayingBtn.classList.remove('playing');
+      }
+    }
+    pauseCombinedPlayback();
+    currentPlayingAudio = new Audio(audioSrc);
+    if (typeof currentPlaybackSpeed !== 'undefined') currentPlayingAudio.playbackRate = currentPlaybackSpeed;
+    if (typeof currentPlaybackVolume !== 'undefined') currentPlayingAudio.volume = currentPlaybackVolume;
+    currentPlayingBtn = btn;
+    currentPlayingAudio.play();
+    btn.innerHTML = `<svg class="pause-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+    btn.classList.add('playing');
+    currentPlayingAudio.onended = () => {
+      btn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+      btn.classList.remove('playing');
+      currentPlayingAudio = null;
+      currentPlayingBtn = null;
+    };
   }
 }
 
@@ -9369,7 +9334,8 @@ function updatePlayButtonStates(isPlaying) {
       const match = onclickStr.match(/playAudio\(['"]([^'"]+)['"]/);
       if (match) {
         const btnSrc = match[1];
-        if (activeSrc && activeSrc === btnSrc && isPlaying) {
+        const isThisTrack = activeSrc && (activeSrc === btnSrc || activeSrc.endsWith(btnSrc) || btnSrc.endsWith(activeSrc));
+        if (isThisTrack && isPlaying) {
           btn.innerHTML = `<svg class="pause-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
           btn.classList.add('playing');
         } else {

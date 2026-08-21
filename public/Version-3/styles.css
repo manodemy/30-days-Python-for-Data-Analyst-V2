@@ -1799,41 +1799,108 @@ pre span {
 
 .timeline-hover-tooltip {
   position: absolute;
-  bottom: 22px;
+  bottom: 24px;
   transform: translateX(-50%);
-  background: #0f172a;
+  background: rgba(15, 23, 42, 0.94) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   color: #f8fafc;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-family: var(--mono, monospace);
-  font-weight: 600;
-  padding: 3px 8px;
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6), 0 0 10px rgba(239, 68, 68, 0.3);
+  font-weight: 500;
+  padding: 5px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.7), 0 0 15px rgba(239, 68, 68, 0.25);
   pointer-events: none;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.15s ease, transform 0.1s ease;
   white-space: nowrap;
-  z-index: 100;
+  z-index: 10000;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: calc(100vw - 32px);
 }
 
 .timeline-hover-tooltip::after {
   content: '';
   position: absolute;
-  bottom: -4px;
-  left: 50%;
+  bottom: -5px;
+  left: calc(50% + var(--arrow-x, 0px));
   transform: translateX(-50%);
   width: 0;
   height: 0;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 4px solid #0f172a;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid rgba(15, 23, 42, 0.94);
+  transition: left 0.05s ease;
 }
 
 .playback-timeline-row:hover .timeline-hover-tooltip.active {
   opacity: 1;
   visibility: visible;
+}
+
+.tt-time {
+  color: #f87171;
+  font-weight: 800;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+}
+
+.tt-divider {
+  width: 1px;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.tt-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.tt-badge--theory {
+  background: rgba(139, 92, 246, 0.2);
+  color: #c4b5fd;
+  border: 1px solid rgba(139, 92, 246, 0.4);
+}
+
+.tt-badge--practice {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fde68a;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.tt-badge--solution {
+  background: rgba(16, 185, 129, 0.2);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.tt-badge--milestone {
+  background: rgba(56, 189, 248, 0.2);
+  color: #7dd3fc;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+}
+
+.tt-title {
+  color: #f1f5f9;
+  font-weight: 600;
+  font-size: 0.75rem;
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .playback-timeline-row .seek-bar {

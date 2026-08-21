@@ -5221,7 +5221,8 @@ function setupTimelineDragging() {
   // Real-time hover preview tooltip showing Scene Title + Time
   timelineRow.addEventListener('mousemove', (e) => {
     const rect = seekBar.getBoundingClientRect();
-    const pos = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    const mouseX = Math.max(0, Math.min(rect.width, e.clientX - rect.left));
+    const pos = rect.width > 0 ? (mouseX / rect.width) : 0;
     const targetTime = pos * totalCombinedDuration;
 
     // Resolve track at this hover position
@@ -5235,7 +5236,7 @@ function setupTimelineDragging() {
         if (t) {
           trackTitle = t.title || t.src || '';
           if (t.type === 'question') trackType = 'Practice';
-          else if (t.type === 'solution') trackType = 'Code Solution';
+          else if (t.type === 'solution') trackType = 'Solution';
           else if (t.type === 'completion') trackType = 'Milestone';
         }
         break;
@@ -5245,8 +5246,37 @@ function setupTimelineDragging() {
 
     if (tooltip) {
       tooltip.classList.add('active');
-      tooltip.style.left = `${Math.max(40, Math.min(rect.width - 40, e.clientX - rect.left))}px`;
-      tooltip.innerHTML = `<span style="color:#ef4444; font-weight:700;">${formatTime(targetTime)}</span> ? <span style="color:#94a3b8;">${trackType}:</span> <strong>${trackTitle}</strong>`;
+
+      let badgeHtml = '';
+      if (trackType === 'Theory') {
+        badgeHtml = '<span class="tt-badge tt-badge--theory">?? Theory</span>';
+      } else if (trackType === 'Practice') {
+        badgeHtml = '<span class="tt-badge tt-badge--practice">?? Practice</span>';
+      } else if (trackType === 'Solution') {
+        badgeHtml = '<span class="tt-badge tt-badge--solution">? Solution</span>';
+      } else {
+        badgeHtml = '<span class="tt-badge tt-badge--milestone">?? Milestone</span>';
+      }
+
+      tooltip.innerHTML = `
+        <span class="tt-time">${formatTime(targetTime)}</span>
+        <span class="tt-divider"></span>
+        ${badgeHtml}
+        <span class="tt-title">${escHtml(trackTitle)}</span>
+      `;
+
+      // Smart Edge Clamping: Ensure tooltip is NEVER cropped at left or right window boundary
+      const tooltipWidth = tooltip.offsetWidth || 220;
+      const halfWidth = tooltipWidth / 2;
+      const minCenter = halfWidth + 8;
+      const maxCenter = Math.max(minCenter, rect.width - halfWidth - 8);
+      const clampedCenter = Math.max(minCenter, Math.min(maxCenter, mouseX));
+
+      tooltip.style.left = `${clampedCenter}px`;
+
+      // Position the pointer arrow precisely above the cursor
+      const arrowOffset = mouseX - clampedCenter;
+      tooltip.style.setProperty('--arrow-x', `${arrowOffset}px`);
     }
   });
 

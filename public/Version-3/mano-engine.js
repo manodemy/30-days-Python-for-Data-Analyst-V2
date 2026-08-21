@@ -8969,8 +8969,8 @@ function clearSlidePlaybackVisibility() {
 
   containers.forEach(container => {
     container.classList.remove('playback-active');
-    container.querySelectorAll('.section-hidden, .vis-target-hidden, .vis-target-dimmed, .narration-spotlight-active').forEach(el => {
-      el.classList.remove('section-hidden', 'vis-target-hidden', 'vis-target-dimmed', 'narration-spotlight-active');
+    container.querySelectorAll('.section-hidden, .vis-target-hidden, .vis-target-dimmed, .narration-spotlight-active, .active-section-mounted, .stunning-section-entry, .instant-display, .row-active-spotlight, .card-active-spotlight, .block-active-spotlight').forEach(el => {
+      el.classList.remove('section-hidden', 'vis-target-hidden', 'vis-target-dimmed', 'narration-spotlight-active', 'active-section-mounted', 'stunning-section-entry', 'instant-display', 'row-active-spotlight', 'card-active-spotlight', 'block-active-spotlight');
       // Also clear any legacy inline styles from previous runs
       el.style.display = '';
       el.style.opacity = '';
@@ -9015,61 +9015,60 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
   containers.forEach(container => {
     container.classList.add('playback-active');
 
-    // Clear previous spotlight & entry animation classes
-    container.querySelectorAll('.narration-spotlight-active, .stunning-section-entry').forEach(el => {
-      el.classList.remove('narration-spotlight-active', 'stunning-section-entry');
+    // 1. Clear previous sub-element spotlight highlights
+    container.querySelectorAll('.narration-spotlight-active, .row-active-spotlight, .card-active-spotlight, .block-active-spotlight').forEach(el => {
+      el.classList.remove('narration-spotlight-active', 'row-active-spotlight', 'card-active-spotlight', 'block-active-spotlight');
     });
 
-    // Find the target element inside this container
+    // 2. Find the target element inside this container
     const targetEl = container.querySelector(targetSelector);
     if (!targetEl) return;
 
-    // Reset visibility classes on all elements
-    container.querySelectorAll('.section-hidden, .vis-target-hidden').forEach(el => {
-      el.classList.remove('section-hidden', 'vis-target-hidden');
-      el.style.display = '';
-    });
-
-    // Find the active section wrapper (.slide-section) that contains targetEl
+    // 3. Find the active section wrapper (.slide-section) that contains targetEl
     const activeSection = targetEl.closest('.slide-section');
     if (!activeSection) {
       container.querySelectorAll('.slide-section').forEach(s => s.classList.remove('section-hidden'));
       return;
     }
 
-    // 4. Handle section entry animation vs instant display on seek
-    if (isSeek) {
-      activeSection.classList.add('instant-display');
-      activeSection.classList.remove('stunning-section-entry');
-    } else {
-      activeSection.classList.remove('instant-display');
-      activeSection.classList.add('stunning-section-entry');
+    // 4. Check if activeSection is ALREADY active and mounted
+    const isAlreadyActiveSection = !activeSection.classList.contains('section-hidden') && 
+                                   activeSection.classList.contains('active-section-mounted');
+
+    if (!isAlreadyActiveSection) {
+      // Hide all non-active slide-sections and remove mounted flag
+      container.querySelectorAll('.slide-section').forEach(section => {
+        if (section !== activeSection) {
+          section.classList.add('section-hidden');
+          section.classList.remove('stunning-section-entry', 'active-section-mounted', 'instant-display');
+        } else {
+          section.classList.remove('section-hidden');
+          section.classList.add('active-section-mounted');
+          if (isSeek) {
+            section.classList.add('instant-display');
+            section.classList.remove('stunning-section-entry');
+          } else {
+            section.classList.remove('instant-display');
+            section.classList.add('stunning-section-entry');
+          }
+        }
+      });
+
+      // Ensure all elements inside activeSection are fully visible
+      activeSection.querySelectorAll('.vis-target-hidden').forEach(el => {
+        el.classList.remove('vis-target-hidden');
+        el.style.display = '';
+      });
+
+      // Reset container scroll position to top ONLY when entering a NEW section!
+      container.scrollTop = 0;
     }
-
-    // 5. Section Isolation: Hide only other slide-sections, keep ALL contents inside activeSection 100% visible!
-    container.querySelectorAll('.slide-section').forEach(section => {
-      if (section !== activeSection) {
-        section.classList.add('section-hidden');
-        section.classList.remove('stunning-section-entry');
-      } else {
-        section.classList.remove('section-hidden');
-      }
-    });
-
-    // Ensure all elements inside activeSection are fully visible (clear any legacy vis-target-hidden)
-    activeSection.querySelectorAll('.vis-target-hidden').forEach(el => {
-      el.classList.remove('vis-target-hidden');
-      el.style.display = '';
-    });
-
-    // Reset container scroll position to top so content is never offset under header
-    container.scrollTop = 0;
 
     // Keep H2 at the top always visible
     const h2 = container.querySelector('h2');
     if (h2) h2.classList.remove('section-hidden', 'vis-target-hidden');
 
-    // 6. Highlight active target row / card / Q&A block
+    // 5. Highlight active target row / card / Q&A block without shifting layout
     const targetRow = targetEl.closest('tr');
     const targetCard = targetEl.closest('.vs-card, .info-card');
     const targetIQ = targetEl.closest('#iqReferentialIntegrity, #iqSqlVsNosql, #iqCompositePk, #parentTableDept');
@@ -9084,7 +9083,7 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
       targetEl.classList.add('narration-spotlight-active');
     }
 
-    // 7. Trigger specific audio visual sync handlers
+    // 6. Trigger specific audio visual sync handlers
     if (typeof updateDay01CoreEntitiesHighlights === 'function') {
       updateDay01CoreEntitiesHighlights(targetSelector, true);
     }

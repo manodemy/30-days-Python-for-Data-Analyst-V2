@@ -15,6 +15,16 @@ It ensures a tight 1:1 synchronization between:
 
 ## 📜 Session Change Log
 
+### 🗓️ Entry: 2026-08-21 — Day 01 Core Structural Entities Table Stationary & Zero-Jerk Row Transition
+* **Target Audio**: `New_Day1Part1audio04.mp3` through `New_Day1Part1audio08.mp3` (`#coreEntities`, `#entityDatabase`, `#entityTable`, `#entityColumn`, `#entityRow`).
+* **Problem Addressed**: Switching tracks between rows within the same section repeatedly re-triggered `stunning-section-entry` animations and reset `container.scrollTop = 0`, causing the table to jump, pop, and scroll unexpectedly.
+* **Resolution**:
+  1. **Section State Tracking (`.active-section-mounted`)**: `updateSlidePlaybackVisibility` now detects if the `.slide-section` is already mounted and active. Sub-track transitions inside the same section bypass scroll resets and entry animations.
+  2. **100% Fixed Table Layout**: The table stays completely steady and stationary on screen while only the blue highlight border smoothly moves from row to row (`Database` ➔ `Table` ➔ `Column` ➔ `Row`).
+* **Files Updated**:
+  - [`public/Version-3/styles.css`](file:///d:/Learn%20Python%20in%2060days/Manodemy_Web_V2/public/Version-3/styles.css): Added `transform: none !important` to `.db-table-mock tr.row-active-spotlight`.
+  - [`public/Version-3/mano-engine.js`](file:///d:/Learn%20Python%20in%2060days/Manodemy_Web_V2/public/Version-3/mano-engine.js): Updated `updateSlidePlaybackVisibility` and `clearSlidePlaybackVisibility`.
+
 ### 🗓️ Entry: 2026-08-21 — Day 01 Topic 01 Full Content Visibility Preservation & Sub-Element Spotlight Refactoring
 * **Target Scope**: All 25 narration tracks across Day 01 Topic 01 (`New_Day1Part1audio01.mp3` through `New_Day1Part1audio25.mp3`).
 * **Root Cause Addressed**: Overly aggressive sibling traversal and `[id]`/`code` block hiding in `updateSlidePlaybackVisibility` caused inner terms (e.g. `Database`, `Table`, `Column`, `Row`), code snippets (`employees`, `salary INTEGER`), and explanatory sections (e.g. comparative cards, sub-language tables, Q&As) to be partially hidden or display only headings during playback.

@@ -7769,6 +7769,7 @@ select:focus:not(:focus-visible) {
   background: #eff6ff !important;
   position: relative;
   z-index: 2;
+  transform: none !important;
 }
 
 .db-table-mock tr.row-active-spotlight td {

@@ -48,6 +48,12 @@ ORDER BY profit DESC;
    - Pausing the lesson (`pauseCombinedPlayback()`) immediately calls `cancelTypewriter()`, halting RAF loops and table scroll intervals.
    - Resuming (`playCombinedPlayback()`) restarts `startAudioSyncedTypewriter(audioObj, solEntry)` from the paused `audio.currentTime`.
 
+4. **Unified Master Timeline & Single-Play Linkage (`playbackMode`)**:
+   - Audio playback supports two unified modes managed by `playbackMode = 'master' | 'single'`:
+     - **Master Mode (`'master'`)**: Initiated from the top "Play Lesson" button. When track $N$ finishes, `onNarrationSegmentEnded` automatically advances to track $N+1$.
+     - **Single Mode (`'single'`)**: Initiated when the user clicks an individual inline card audio, Question Audio button (`#questionAudioBtn`), or Solution Audio button (`#solutionAudioBtn`). The master timeline seek bar immediately updates to the exact track start offset (`elapsedBefore`), plays that track with full typewriter sync, and upon track completion, pauses cleanly without advancing to subsequent tracks.
+   - **Two-Way Button State Sync**: `updateAllPlayButtonStates(isPlaying, activeBtn)` keeps the master timeline play icon and active snippet button in perfect unison.
+
 ---
 
 ## Standard Workflow

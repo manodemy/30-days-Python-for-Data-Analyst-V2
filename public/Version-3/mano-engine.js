@@ -5772,6 +5772,7 @@ let combinedTrackIndex = 0;
 let combinedAudios = [];
 let playProgressInterval = null;
 let isScrubbing = false;
+let playbackMode = 'master'; // 'master' (continuous lesson) | 'single' (individual button snippet)
 
 // P2 #13: Single authoritative duration recomputation — replaces all inline .reduce() calls
 function recomputeTotalDuration() {
@@ -9416,50 +9417,33 @@ function playAudio(src, btn) {
     if (combinedTrackIndex === idx && isCombinedPlaying) {
       pauseCombinedPlayback();
     } else {
+      playbackMode = 'single';
+      currentPlayingBtn = btn;
       let elapsedBefore = 0;
       for (let i = 0; i < idx; i++) {
         elapsedBefore += combinedTrackDurations[i] || 0;
       }
       seekCombinedPlayback(elapsedBefore, true);
+      updateAllPlayButtonStates(true, btn);
     }
     return;
   }
 
   // Fallback for standalone audio not found in manifest
   const audioSrc = src.startsWith('http') || src.startsWith('/') ? src : `/Version-3/${src}`;
-  if (currentPlayingAudio && currentPlayingAudio.src.endsWith(src)) {
-    if (currentPlayingAudio.paused) {
-      currentPlayingAudio.play();
-      btn.innerHTML = `<svg class="pause-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
-      btn.classList.add('playing');
-    } else {
-      currentPlayingAudio.pause();
-      btn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
-      btn.classList.remove('playing');
-    }
-  } else {
-    if (currentPlayingAudio) {
-      currentPlayingAudio.pause();
-      if (currentPlayingBtn) {
-        currentPlayingBtn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
-        currentPlayingBtn.classList.remove('playing');
-      }
-    }
-    pauseCombinedPlayback();
-    currentPlayingAudio = new Audio(audioSrc);
-    if (typeof currentPlaybackSpeed !== 'undefined') currentPlayingAudio.playbackRate = currentPlaybackSpeed;
-    if (typeof currentPlaybackVolume !== 'undefined') currentPlayingAudio.volume = currentPlaybackVolume;
-    currentPlayingBtn = btn;
-    currentPlayingAudio.play();
-    btn.innerHTML = `<svg class="pause-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
-    btn.classList.add('playing');
-    currentPlayingAudio.onended = () => {
-      btn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
-      btn.classList.remove('playing');
-      currentPlayingAudio = null;
-      currentPlayingBtn = null;
-    };
-  }
+  if (currentPlayingAudio) currentPlayingAudio.pause();
+  pauseCombinedPlayback();
+  currentPlayingAudio = new Audio(audioSrc);
+  if (typeof currentPlaybackSpeed !== 'undefined') currentPlayingAudio.playbackRate = currentPlaybackSpeed;
+  if (typeof currentPlaybackVolume !== 'undefined') currentPlayingAudio.volume = currentPlaybackVolume;
+  currentPlayingBtn = btn;
+  currentPlayingAudio.play();
+  updateAllPlayButtonStates(true, btn);
+  currentPlayingAudio.onended = () => {
+    updateAllPlayButtonStates(false);
+    currentPlayingAudio = null;
+    currentPlayingBtn = null;
+  };
 }
 
 function syncCombinedToTrack(srcFilename) {
@@ -9849,6 +9833,7 @@ function updatePlayButtonStates(isPlaying) {
 }
 
 function playCombinedPlayback() {
+  playbackMode = 'master';
   isCombinedPlaying = true;
   if (activeAudioInstance && activeAudioInstance.src && activeAudioInstance.src !== window.location.href) {
     if (activeAudioInstance.ended || activeAudioInstance.currentTime >= (activeAudioInstance.duration || 26) - 0.5) {
@@ -9907,7 +9892,7 @@ function pauseCombinedPlayback() {
   if (activeAudioInstance) {
     activeAudioInstance.pause();
   }
-  updatePlayButtonStates(false);
+  updateAllPlayButtonStates(false);
 
   const activeTrack = combinedTracks[combinedTrackIndex];
   if (activeTrack && activeTrack.type !== 'completion') {

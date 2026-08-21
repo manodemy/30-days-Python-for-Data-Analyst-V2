@@ -7759,39 +7759,61 @@ select:focus:not(:focus-visible) {
 }
 
 /* =================================================================
-   Core Structural Entities Table Row Spotlight & Sequential Reveal
+   Interactive Playback Spotlights (Rows, Cards, Interview Q&As)
    ================================================================= */
-.core-entities-table tr.entity-row {
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+.db-table-mock tr {
+  transition: background 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease !important;
 }
 
-.core-entities-table tr.entity-row.row-active-spotlight {
+.db-table-mock tr.row-active-spotlight {
   background: #eff6ff !important;
-  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.14) !important;
   position: relative;
   z-index: 2;
 }
 
-.core-entities-table tr.entity-row.row-active-spotlight td {
+.db-table-mock tr.row-active-spotlight td {
   color: #1e3a8a !important;
   border-top: 1.5px solid #3b82f6 !important;
   border-bottom: 1.5px solid #3b82f6 !important;
-  font-weight: 500;
 }
 
-.core-entities-table tr.entity-row.row-active-spotlight td strong {
+.db-table-mock tr.row-active-spotlight td strong {
   color: #2563eb !important;
 }
 
-.core-entities-table tr.entity-row.row-active-spotlight td:first-child {
+.db-table-mock tr.row-active-spotlight td:first-child {
   border-left: 3.5px solid #3b82f6 !important;
   border-top-left-radius: 6px;
   border-bottom-left-radius: 6px;
 }
 
-.core-entities-table tr.entity-row.row-active-spotlight td:last-child {
+.db-table-mock tr.row-active-spotlight td:last-child {
   border-right: 1.5px solid #3b82f6 !important;
   border-top-right-radius: 6px;
   border-bottom-right-radius: 6px;
+}
+
+/* VS Comparison Cards Spotlight */
+.vs-card {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease !important;
+}
+
+.vs-card.card-active-spotlight {
+  transform: scale(1.02) translateY(-2px) !important;
+  box-shadow: 0 10px 24px -4px rgba(59, 130, 246, 0.2), 0 0 0 2px #3b82f6 !important;
+  z-index: 4;
+}
+
+/* Interview Q&A and Parent/Child Block Spotlight */
+#iqReferentialIntegrity, #iqSqlVsNosql, #iqCompositePk, #parentTableDept {
+  transition: background 0.3s ease, padding 0.3s ease, border-radius 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+.block-active-spotlight {
+  background: rgba(59, 130, 246, 0.06) !important;
+  border-left: 3.5px solid #3b82f6 !important;
+  border-radius: 6px !important;
+  padding: 8px 12px !important;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.08) !important;
 }
 

@@ -15,6 +15,20 @@ It ensures a tight 1:1 synchronization between:
 
 ## 📜 Session Change Log
 
+### 🗓️ Entry: 2026-08-21 — Day 01 Topic 01 Full Content Visibility Preservation & Sub-Element Spotlight Refactoring
+* **Target Scope**: All 25 narration tracks across Day 01 Topic 01 (`New_Day1Part1audio01.mp3` through `New_Day1Part1audio25.mp3`).
+* **Root Cause Addressed**: Overly aggressive sibling traversal and `[id]`/`code` block hiding in `updateSlidePlaybackVisibility` caused inner terms (e.g. `Database`, `Table`, `Column`, `Row`), code snippets (`employees`, `salary INTEGER`), and explanatory sections (e.g. comparative cards, sub-language tables, Q&As) to be partially hidden or display only headings during playback.
+* **Refactoring Solution**:
+  1. **Full Section Content Preservation**: When any narration track within a `.slide-section` plays, the entire section remains 100% visible, fully rendered with complete descriptive depth (paragraphs, diagrams, code blocks, comparative vs-cards, tables, and Q&As).
+  2. **Complete Table Display & Active Row Spotlight**: The `Core Structural Entities` table is always rendered in full (all 4 rows: Database, Table, Column, Row + definitions + code badges). When individual keyword tracks play (`audio07` for Database, `audio06` for Table, `audio05` for Column, `audio08` for Row), that specific row lights up with `.row-active-spotlight` without hiding or collapsing the other rows.
+  3. **Universal Sub-Item Spotlight System**:
+     - `.db-table-mock tr.row-active-spotlight`: Table rows (Core Entities, SQL Sub-Languages) highlight with sapphire border accents.
+     - `.vs-card.card-active-spotlight`: Comparative cards (PK vs FK, Imperative vs Declarative) highlight with elevation and glowing blue outline.
+     - `.block-active-spotlight`: Interview Q&As and Parent/Child blocks highlight with a sleek left accent border.
+* **Files Updated**:
+  - [`public/Version-3/styles.css`](file:///d:/Learn%20Python%20in%2060days/Manodemy_Web_V2/public/Version-3/styles.css): Added universal row, card, and Q&A spotlight styles.
+  - [`public/Version-3/mano-engine.js`](file:///d:/Learn%20Python%20in%2060days/Manodemy_Web_V2/public/Version-3/mano-engine.js): Refactored `updateSlidePlaybackVisibility` and `updateDay01CoreEntitiesHighlights`.
+
 ### 🗓️ Entry: 2026-08-21 — Day 01 Audio 04–08 Core Structural Entities Sequential Row Spotlight & Order Sync
 * **Target Audio**: `New_Day1Part1audio04.mp3` through `New_Day1Part1audio08.mp3`
 * **Target Container**: `#coreEntitiesTableWrap` (`.core-entities-table`)

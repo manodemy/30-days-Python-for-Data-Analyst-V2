@@ -7859,48 +7859,35 @@ function updateDay01CoreEntitiesHighlights(activeTarget, isPlaying) {
 
   const allRows = [rows.database, rows.table, rows.column, rows.row].filter(Boolean);
 
-  if (!isPlaying || !activeTarget) {
-    allRows.forEach(r => {
-      r.classList.remove('row-active-spotlight', 'vis-target-hidden');
-      r.style.display = '';
+  // Always keep all rows and their child contents fully visible in the DOM
+  allRows.forEach(r => {
+    r.classList.remove('vis-target-hidden');
+    r.style.display = '';
+    r.querySelectorAll('*').forEach(c => {
+      c.classList.remove('vis-target-hidden');
+      c.style.display = '';
     });
+  });
+
+  if (!isPlaying || !activeTarget) {
+    allRows.forEach(r => r.classList.remove('row-active-spotlight'));
     return;
   }
 
-  let revealedRows = [];
   let highlightedRow = null;
 
-  if (activeTarget.includes('coreEntities') || activeTarget.includes('New_Day1Part1audio04')) {
-    revealedRows = allRows;
-  } else if (activeTarget.includes('entityDatabase') || activeTarget.includes('New_Day1Part1audio07')) {
-    revealedRows = [rows.database];
+  if (activeTarget.includes('entityDatabase') || activeTarget.includes('New_Day1Part1audio07')) {
     highlightedRow = rows.database;
   } else if (activeTarget.includes('entityTable') || activeTarget.includes('New_Day1Part1audio06')) {
-    revealedRows = [rows.database, rows.table];
     highlightedRow = rows.table;
   } else if (activeTarget.includes('entityColumn') || activeTarget.includes('New_Day1Part1audio05')) {
-    revealedRows = [rows.database, rows.table, rows.column];
     highlightedRow = rows.column;
   } else if (activeTarget.includes('entityRow') || activeTarget.includes('New_Day1Part1audio08')) {
-    revealedRows = [rows.database, rows.table, rows.column, rows.row];
     highlightedRow = rows.row;
-  } else {
-    revealedRows = allRows;
   }
 
   allRows.forEach(r => {
-    const isRevealed = revealedRows.includes(r);
-    const isHighlighted = (r === highlightedRow);
-
-    if (isRevealed) {
-      r.classList.remove('vis-target-hidden');
-      r.style.display = '';
-    } else {
-      r.classList.add('vis-target-hidden');
-      r.style.display = 'none';
-    }
-
-    r.classList.toggle('row-active-spotlight', isHighlighted);
+    r.classList.toggle('row-active-spotlight', r === highlightedRow);
   });
 }
 
@@ -9050,7 +9037,7 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
       return;
     }
 
-    // Handle Entry Animation vs Instant Display on Seeking
+    // 4. Handle section entry animation vs instant display on seek
     if (isSeek) {
       activeSection.classList.add('instant-display');
       activeSection.classList.remove('stunning-section-entry');
@@ -9059,18 +9046,7 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
       activeSection.classList.add('stunning-section-entry');
     }
 
-    // Identify active block containing targetEl
-    let activeBlock = getVisibilityBlock(targetEl, activeSection) || targetEl;
-    if (activeBlock.classList && activeBlock.classList.contains('audio-play-btn')) {
-      activeBlock = activeBlock.closest('.heading-with-audio, .heading-box-wrap, .warn-box, .info-box, .tip-box, .callout-box, .note-box, .warning-box, h3, h4, [id]') || activeBlock;
-    }
-
-    // Highlight active spoken block if currently playing
-    if (activeBlock && typeof isCombinedPlaying !== 'undefined' && isCombinedPlaying) {
-      activeBlock.classList.add('narration-spotlight-active');
-    }
-
-    // Hide all non-active slide-section wrappers
+    // 5. Section Isolation: Hide only other slide-sections, keep ALL contents inside activeSection 100% visible!
     container.querySelectorAll('.slide-section').forEach(section => {
       if (section !== activeSection) {
         section.classList.add('section-hidden');
@@ -9080,83 +9056,38 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
       }
     });
 
+    // Ensure all elements inside activeSection are fully visible (clear any legacy vis-target-hidden)
+    activeSection.querySelectorAll('.vis-target-hidden').forEach(el => {
+      el.classList.remove('vis-target-hidden');
+      el.style.display = '';
+    });
+
     // Reset container scroll position to top so content is never offset under header
     container.scrollTop = 0;
 
-    // Keep the main heading (H2) at the top of the slide always visible
+    // Keep H2 at the top always visible
     const h2 = container.querySelector('h2');
     if (h2) h2.classList.remove('section-hidden', 'vis-target-hidden');
 
-    // ── Build active track content set (activeBlock + its immediate paragraph, table, code block + parent H3/H4 heading) ──
-    const activeTrackElements = new Set();
-    activeTrackElements.add(activeBlock);
-    activeBlock.querySelectorAll('*').forEach(c => activeTrackElements.add(c));
+    // 6. Highlight active target row / card / Q&A block
+    const targetRow = targetEl.closest('tr');
+    const targetCard = targetEl.closest('.vs-card, .info-card');
+    const targetIQ = targetEl.closest('#iqReferentialIntegrity, #iqSqlVsNosql, #iqCompositePk, #parentTableDept');
 
-    // Also preserve section heading (H3/H4) so topic title remains visible at top
-    const sectionHead = activeSection.querySelector('h3, h4');
-    if (sectionHead) {
-      activeTrackElements.add(sectionHead);
-      sectionHead.querySelectorAll('*').forEach(c => activeTrackElements.add(c));
+    if (targetRow) {
+      targetRow.classList.add('row-active-spotlight');
+    } else if (targetCard) {
+      targetCard.classList.add('card-active-spotlight');
+    } else if (targetIQ) {
+      targetIQ.classList.add('block-active-spotlight');
+    } else if (targetEl) {
+      targetEl.classList.add('narration-spotlight-active');
     }
 
-    let sibling = activeBlock.nextElementSibling;
-
-    while (sibling) {
-      // Stop if sibling is another heading, audio block, or warn/info box belonging to a different track
-      if (sibling.classList.contains('heading-with-audio') ||
-          sibling.classList.contains('heading-box-wrap') ||
-          sibling.classList.contains('warn-box') ||
-          sibling.classList.contains('info-box') ||
-          sibling.classList.contains('tip-box') ||
-          sibling.classList.contains('callout-box') ||
-          sibling.classList.contains('note-box') ||
-          sibling.classList.contains('warning-box') ||
-          sibling.tagName === 'H3' ||
-          sibling.tagName === 'H4' ||
-          sibling.querySelector('.audio-play-btn')) {
-        break;
-      }
-      activeTrackElements.add(sibling);
-      sibling.querySelectorAll('*').forEach(c => activeTrackElements.add(c));
-      sibling = sibling.nextElementSibling;
-    }
-
-    // Special handling for sequential table rows (e.g. Core Structural Entities)
-    if (['#coreEntities', '#entityDatabase', '#entityTable', '#entityColumn', '#entityRow'].includes(targetSelector)) {
-      const tableWrap = activeSection.querySelector('#coreEntitiesTableWrap, .db-mock-table-wrap');
-      if (tableWrap) {
-        activeTrackElements.add(tableWrap);
-        tableWrap.querySelectorAll('table, thead, th, tr:not(.entity-row)').forEach(el => activeTrackElements.add(el));
-      }
-    }
-
-    // ── Strict Topic Isolation: Hide ALL preceding and following blocks in activeSection ──
-    const allChildBlocks = activeSection.querySelectorAll('.heading-with-audio, .heading-box-wrap, h3, h4, p, .warn-box, .info-box, .tip-box, .callout-box, .note-box, .warning-box, .db-mock-table-wrap, table, pre, code, ul, ol, .sql-example, .vs-block, .vs-card, .prec-card, .prec-note, .section-block, [id]');
-    allChildBlocks.forEach(blk => {
-      if (activeTrackElements.has(blk)) {
-        blk.classList.remove('vis-target-hidden');
-        blk.style.display = '';
-      } else {
-        blk.classList.add('vis-target-hidden');
-      }
-    });
-
+    // 7. Trigger specific audio visual sync handlers
     if (typeof updateDay01CoreEntitiesHighlights === 'function') {
       updateDay01CoreEntitiesHighlights(targetSelector, true);
     }
-
-    // ── Clean up empty parent containers ──
-    activeSection.querySelectorAll('.vs-block').forEach(block => {
-      const hasVisible = Array.from(block.children).some(c => !c.classList.contains('vis-target-hidden') && c.style.display !== 'none');
-      if (!hasVisible) block.classList.add('vis-target-hidden');
-    });
-
-    activeSection.querySelectorAll('.db-mock-table-wrap').forEach(wrap => {
-      const tbody = wrap.querySelector('tbody');
-      if (!tbody) return;
-      const hasVisibleRow = Array.from(tbody.querySelectorAll('tr')).some(r => !r.classList.contains('vis-target-hidden') && r.style.display !== 'none');
-      if (!hasVisibleRow) wrap.classList.add('vis-target-hidden');
-    });
   });
 }
 

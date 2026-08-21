@@ -8515,23 +8515,204 @@ code.schema-peek-trigger:hover {
 }
 
 /* ═════════════════════════════════════════════════════════════════
-   DAY 01 TOPIC 02: DIAGRAM STEP HIGHLIGHTS & GLOW
+   DAY 01 TOPIC 02: STORAGE BULLET HIGHLIGHTS & ZOOM ANIMATIONS
    ═════════════════════════════════════════════════════════════════ */
-.diagram-step-pulse {
-  outline: 2px solid #38bdf8 !important;
-  box-shadow: 0 0 20px rgba(56, 189, 248, 0.65), inset 0 0 10px rgba(56, 189, 248, 0.3) !important;
-  border-color: #38bdf8 !important;
-  transform: translateY(-2px) scale(1.03) !important;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
-  z-index: 10;
+.bullet-highlight {
+  color: #38bdf8 !important;
+  font-weight: 700 !important;
+  background: rgba(56, 189, 248, 0.16) !important;
+  border-radius: 4px;
+  padding: 1px 4px;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+  transform: translateX(3px);
+  display: inline-block;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.diagram-step-active {
-  border-color: rgba(56, 189, 248, 0.5) !important;
-  box-shadow: 0 0 25px rgba(56, 189, 248, 0.25) !important;
+.bullet-highlight .bullet-dot {
+  background: #38bdf8 !important;
+  box-shadow: 0 0 8px #38bdf8 !important;
 }
 
-.relation-infographic {
+/* ═════════════════════════════════════════════════════════════════
+   DAY 01 TOPIC 02: INNOVATIVE COMPACT SINGLE-FRAME PROJECTION PIPELINE
+   ═════════════════════════════════════════════════════════════════ */
+.compact-projection-pipeline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  max-width: 440px;
+  margin: 6px auto;
+  padding: 12px 14px;
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  backdrop-filter: blur(12px);
   transition: all 0.3s ease;
 }
+
+.diagram-overview-glow {
+  border-color: rgba(56, 189, 248, 0.6) !important;
+  box-shadow: 0 0 25px rgba(56, 189, 248, 0.3) !important;
+}
+
+.pipeline-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 7px 12px;
+  background: rgba(30, 41, 59, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pipeline-badge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #94a3b8;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: var(--mono, monospace);
+}
+
+.pipeline-badge--green {
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.15);
+}
+
+.pipeline-icon-circle {
+  font-size: 1.1rem;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(56, 189, 248, 0.12);
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.pipeline-icon-circle--cyan {
+  background: rgba(6, 182, 212, 0.15);
+}
+
+.pipeline-icon-circle--green {
+  background: rgba(16, 185, 129, 0.15);
+}
+
+.pipeline-content {
+  flex: 1;
+  overflow: hidden;
+}
+
+.pipeline-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #f8fafc;
+  line-height: 1.2;
+}
+
+.pipeline-desc {
+  font-size: 0.7rem;
+  color: #94a3b8;
+  margin-top: 1px;
+}
+
+.pipeline-attributes {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 3px;
+}
+
+.attr-tag {
+  font-size: 0.68rem;
+  font-family: var(--mono, monospace);
+  padding: 1px 5px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  color: #cbd5e1;
+  transition: all 0.2s ease;
+}
+
+.attr-tag--selected {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  font-weight: 700;
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.attr-tag-pulse {
+  border-color: #38bdf8 !important;
+  color: #38bdf8 !important;
+  background: rgba(56, 189, 248, 0.2) !important;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.5) !important;
+  transform: scale(1.05);
+}
+
+.pipeline-flow-connector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #64748b;
+  margin: -1px 0;
+  transition: all 0.25s ease;
+}
+
+.flow-pill {
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(56, 189, 248, 0.12);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  transition: all 0.25s ease;
+}
+
+.flow-pill--green {
+  background: rgba(16, 185, 129, 0.12);
+  color: #34d399;
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.diagram-node-active {
+  transform: scale(1.03) !important;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.45) !important;
+  background: rgba(30, 41, 59, 0.95) !important;
+  z-index: 5;
+}
+
+.diagram-filter-active {
+  border-color: #00e6f6 !important;
+  box-shadow: 0 0 22px rgba(0, 230, 246, 0.55) !important;
+}
+
+.diagram-result-active {
+  border-color: #10b981 !important;
+  box-shadow: 0 0 22px rgba(16, 185, 129, 0.55) !important;
+}
+
+.connector-active-pulse .flow-pill {
+  box-shadow: 0 0 14px #38bdf8 !important;
+  transform: scale(1.1) !important;
+  border-color: #38bdf8 !important;
+}
+
+.connector-active-pulse .flow-arrow {
+  stroke: #38bdf8 !important;
+  filter: drop-shadow(0 0 4px #38bdf8);
+}
+
 

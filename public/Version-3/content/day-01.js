@@ -634,6 +634,7 @@ WHERE department = 'Engineering';</pre>
       html: `
         <h2>⚡ 02. Column Projection &amp; Performance</h2>
 
+        <!-- Section 1: Intro (Image 1: Heading & Paragraph Only) -->
         <div class="slide-section" id="columnProjectionIntro">
           <h3 class="heading-with-audio">
             What is Column Projection?
@@ -642,73 +643,116 @@ WHERE department = 'Engineering';</pre>
             </button>
           </h3>
           <p><strong>Column Projection</strong> is the act of selecting only the specific columns you need from a query result. In the relational algebra that underpins SQL, a <em>projection</em> operation reduces a relation's attributes from N columns to a smaller subset. It is the fundamental mechanism behind the column list in your <code>SELECT</code> clause.</p>
+        </div>
 
-          <div class="rdbms-infographic" id="cardPagesBlocks">
-            <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
-              <small style="flex: 1; color: #64748b; font-size: 0.75rem;">Under the hood: how relational databases physically store and read data.</small>
-              <button class="audio-play-btn" onclick="playAudio('Day01topic2/New_Day1Part2audio02.mp3', this)" title="Play narration" style="flex-shrink: 0;">
-                <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-              </button>
-            </div>
+        <!-- Section 2: Storage Under the Hood (3 Concept Cards with live keyword zoom) -->
+        <div class="slide-section" id="storageUnderTheHoodSection">
+          <h3 class="heading-with-audio">
+            Under the Hood: Database Storage
+            <button class="audio-play-btn" onclick="playAudio('Day01topic2/New_Day1Part2audio02.mp3', this)" title="Play narration">
+              <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </h3>
+          <p style="margin-bottom: 12px; color: #94a3b8; font-size: 0.85rem;">How relational databases physically store and read data from disk:</p>
+
+          <div class="rdbms-infographic" id="storageConceptsBlock">
             <div class="info-columns">
-              <div class="info-card info-card--blue">
-                <div class="info-card-header">PAGES / BLOCKS</div>
+              <div class="info-card info-card--blue" id="cardPagesBlocks">
+                <div class="info-card-header" style="display: flex; align-items: center; justify-content: space-between;">
+                  <span>PAGES / BLOCKS</span>
+                  <button class="audio-play-btn info-card-play-btn" onclick="playAudio('Day01topic2/New_Day1Part2audio02.mp3', this)" title="Play narration">
+                    <svg class="play-icon" width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                  </button>
+                </div>
                 <ul class="info-card-bullets">
-                  <li><span class="bullet-dot"></span>FIXED-SIZE PAGES (8 KB POSTGRESQL, 16 KB MYSQL)</li>
-                  <li><span class="bullet-dot"></span>EVERY DISK READ FETCHES AN ENTIRE PAGE</li>
-                  <li><span class="bullet-dot"></span>I/O OPERATIONS ARE DONE AT PAGE LEVEL</li>
+                  <li id="bulletPages1"><span class="bullet-dot"></span><span class="bullet-text">FIXED-SIZE PAGES (8 KB POSTGRESQL, 16 KB MYSQL)</span></li>
+                  <li id="bulletPages2"><span class="bullet-dot"></span><span class="bullet-text">EVERY DISK READ FETCHES AN ENTIRE PAGE</span></li>
+                  <li id="bulletPages3"><span class="bullet-dot"></span><span class="bullet-text">I/O OPERATIONS ARE DONE AT PAGE LEVEL</span></li>
                 </ul>
               </div>
               <div class="info-card info-card--purple" id="cardRowOriented">
-                <div class="info-card-header">ROW-ORIENTED</div>
+                <div class="info-card-header" style="display: flex; align-items: center; justify-content: space-between;">
+                  <span>ROW-ORIENTED</span>
+                  <button class="audio-play-btn info-card-play-btn" onclick="playAudio('Day01topic2/New_Day1Part2audio03.mp3', this)" title="Play narration">
+                    <svg class="play-icon" width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                  </button>
+                </div>
                 <ul class="info-card-bullets">
-                  <li><span class="bullet-dot"></span>ALL COLUMNS OF A ROW STORED TOGETHER</li>
-                  <li><span class="bullet-dot"></span>READING ONE COLUMN LOADS THE WHOLE ROW</li>
-                  <li><span class="bullet-dot"></span>IDEAL FOR TRANSACTIONAL (OLTP) WORKLOADS</li>
+                  <li id="bulletRow1"><span class="bullet-dot"></span><span class="bullet-text">ALL COLUMNS OF A ROW STORED TOGETHER</span></li>
+                  <li id="bulletRow2"><span class="bullet-dot"></span><span class="bullet-text">READING ONE COLUMN LOADS THE WHOLE ROW</span></li>
+                  <li id="bulletRow3"><span class="bullet-dot"></span><span class="bullet-text">IDEAL FOR TRANSACTIONAL (OLTP) WORKLOADS</span></li>
                 </ul>
               </div>
               <div class="info-card info-card--red" id="cardFullPageLoad">
-                <div class="info-card-header">FULL PAGE LOAD</div>
+                <div class="info-card-header" style="display: flex; align-items: center; justify-content: space-between;">
+                  <span>FULL PAGE LOAD</span>
+                  <button class="audio-play-btn info-card-play-btn" onclick="playAudio('Day01topic2/New_Day1Part2audio03(new).mp3', this)" title="Play narration">
+                    <svg class="play-icon" width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                  </button>
+                </div>
                 <ul class="info-card-bullets">
-                  <li><span class="bullet-dot"></span>SELECT * LOADS EVERY UNUSED COLUMN</li>
-                  <li><span class="bullet-dot"></span>POLLUTES AND CLOGS BUFFER POOL CACHE</li>
-                  <li><span class="bullet-dot"></span>WASTES MASSIVE DISK &amp; NETWORK BANDWIDTH</li>
+                  <li id="bulletFull1"><span class="bullet-dot"></span><span class="bullet-text">SELECT * LOADS EVERY UNUSED COLUMN</span></li>
+                  <li id="bulletFull2"><span class="bullet-dot"></span><span class="bullet-text">POLLUTES AND CLOGS BUFFER POOL CACHE</span></li>
+                  <li id="bulletFull3"><span class="bullet-dot"></span><span class="bullet-text">WASTES MASSIVE DISK &amp; NETWORK BANDWIDTH</span></li>
                 </ul>
               </div>
             </div>
           </div>
+        </div>
 
-          <div class="relation-infographic" style="padding: 16px 20px;" id="projectionDiagram">
-            <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
-              <div class="explanation-title" style="margin: 0; flex: 1;">How Column Projection Works</div>
-              <button class="audio-play-btn" onclick="playAudio('Day01topic2/New_Day1Part2audio04.mp3', this)" title="Play narration" style="flex-shrink: 0;">
-                <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-              </button>
-            </div>
-            <div class="relation-visual" style="align-items: center;">
-              <div class="relation-node" id="projectionDiskPage" style="flex: none;">
-                <div class="node-icon-badge">💽</div>
-                <div class="node-title">Disk Page</div>
-                <div class="node-subtitle">id · name · dept · salary</div>
-              </div>
-              <div class="relation-link" id="projectionLoads">
-                <div class="link-label">Loads</div>
-                <div class="link-arrow"><div class="link-line"></div><svg class="arrow-head" width="8" height="12" viewBox="0 0 8 12" fill="none"><path d="M2 2L6 6L2 10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></div>
-              </div>
-              <div class="relation-node" id="projectionFilter" style="flex: none;">
-                <div class="node-icon-badge">🔍</div>
-                <div class="node-title">SELECT name, salary</div>
-                <div class="node-subtitle">Projection Filter</div>
-              </div>
-              <div id="projectionResultSet" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
-                <div class="relation-link">
-                  <div class="link-label">Returns</div>
-                  <div class="link-arrow"><div class="link-line"></div><svg class="arrow-head" width="8" height="12" viewBox="0 0 8 12" fill="none"><path d="M2 2L6 6L2 10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></div>
+        <!-- Section 3: How Column Projection Works (Innovative, space-saving single frame diagram) -->
+        <div class="slide-section" id="projectionPipelineSection">
+          <h3 class="heading-with-audio">
+            How Column Projection Works
+            <button class="audio-play-btn" onclick="playAudio('Day01topic2/New_Day1Part2audio04.mp3', this)" title="Play narration">
+              <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </h3>
+
+          <div class="compact-projection-pipeline" id="projectionDiagram">
+            <div class="pipeline-card" id="projectionDiskPage">
+              <div class="pipeline-badge">01</div>
+              <div class="pipeline-icon-circle">💽</div>
+              <div class="pipeline-content">
+                <div class="pipeline-title">Disk Page</div>
+                <div class="pipeline-attributes">
+                  <span class="attr-tag" id="attrId">id</span>
+                  <span class="attr-tag" id="attrName">name</span>
+                  <span class="attr-tag" id="attrDept">dept</span>
+                  <span class="attr-tag" id="attrSalary">salary</span>
                 </div>
-                <div class="relation-node relation-node--child" style="flex: none;">
-                  <div class="node-icon-badge">✅</div>
-                  <div class="node-title">Result Set</div>
-                  <div class="node-subtitle">name · salary only</div>
+              </div>
+            </div>
+
+            <div class="pipeline-flow-connector" id="projectionLoads">
+              <span class="flow-line"></span>
+              <span class="flow-pill flow-pill--blue">LOADS</span>
+              <svg class="flow-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+            </div>
+
+            <div class="pipeline-card" id="projectionFilter">
+              <div class="pipeline-badge">02</div>
+              <div class="pipeline-icon-circle pipeline-icon-circle--cyan">🔍</div>
+              <div class="pipeline-content">
+                <div class="pipeline-title">SELECT name, salary</div>
+                <div class="pipeline-desc">Projection Filter (Discards Unused)</div>
+              </div>
+            </div>
+
+            <div class="pipeline-flow-connector" id="projectionReturns">
+              <span class="flow-line"></span>
+              <span class="flow-pill flow-pill--green">RETURNS</span>
+              <svg class="flow-arrow flow-arrow--green" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+            </div>
+
+            <div class="pipeline-card pipeline-card--success" id="projectionResultSet">
+              <div class="pipeline-badge pipeline-badge--green">03</div>
+              <div class="pipeline-icon-circle pipeline-icon-circle--green">✅</div>
+              <div class="pipeline-content">
+                <div class="pipeline-title">Result Set</div>
+                <div class="pipeline-attributes">
+                  <span class="attr-tag attr-tag--selected">name ✓</span>
+                  <span class="attr-tag attr-tag--selected">salary ✓</span>
                 </div>
               </div>
             </div>

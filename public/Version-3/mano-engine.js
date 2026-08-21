@@ -8912,6 +8912,10 @@ function loadAndPlayTrack(index, targetTime = 0) {
     if (myGeneration !== currentGeneration) return;
     if (track.src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(0, false);
     if (track.src.includes('New_Day1Part1audio03.mp3')) updateDay01Audio03Highlights(0, false);
+    if (track.src.includes('New_Day1Part2audio02.mp3') || track.src.includes('New_Day1Part2audio03.mp3') || track.src.includes('New_Day1Part2audio03(new).mp3')) updateDay01Topic02StorageCards(0, false, null);
+    if (track.src.includes('New_Day1Part2audio04.mp3') || track.src.includes('New_Day1Part2audio05.mp3') || track.src.includes('New_Day1Part2audio06.mp3') || track.src.includes('New_Day1Part2audio07.mp3')) updateDay01Topic02Pipeline(0, false, null);
+    if (track.src.includes('New_Day1Part2audio02.mp3') || track.src.includes('New_Day1Part2audio03.mp3') || track.src.includes('New_Day1Part2audio03(new).mp3')) updateDay01Topic02StorageCards(0, false, null);
+    if (track.src.includes('New_Day1Part2audio04.mp3') || track.src.includes('New_Day1Part2audio05.mp3') || track.src.includes('New_Day1Part2audio06.mp3') || track.src.includes('New_Day1Part2audio07.mp3')) updateDay01Topic02Pipeline(0, false, null);
     if (track.src.includes('New_Day1Part1audio04.mp3') || 
         track.src.includes('New_Day1Part1audio07.mp3') || 
         track.src.includes('New_Day1Part1audio06.mp3') || 
@@ -8959,6 +8963,13 @@ function loadAndPlayTrack(index, targetTime = 0) {
     if (myGeneration !== currentGeneration) return;
     if (track.src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(audio.currentTime, !audio.paused);
     if (track.src.includes('New_Day1Part1audio03.mp3')) updateDay01Audio03Highlights(audio.currentTime, !audio.paused);
+    if (track.src.includes('New_Day1Part2audio02.mp3')) updateDay01Topic02StorageCards(audio.currentTime, !audio.paused, 'audio02');
+    if (track.src.includes('New_Day1Part2audio03.mp3')) updateDay01Topic02StorageCards(audio.currentTime, !audio.paused, 'audio03');
+    if (track.src.includes('New_Day1Part2audio03(new).mp3')) updateDay01Topic02StorageCards(audio.currentTime, !audio.paused, 'audio03new');
+    if (track.src.includes('New_Day1Part2audio04.mp3')) updateDay01Topic02Pipeline(audio.currentTime, !audio.paused, 'audio04');
+    if (track.src.includes('New_Day1Part2audio05.mp3')) updateDay01Topic02Pipeline(audio.currentTime, !audio.paused, 'audio05');
+    if (track.src.includes('New_Day1Part2audio06.mp3')) updateDay01Topic02Pipeline(audio.currentTime, !audio.paused, 'audio06');
+    if (track.src.includes('New_Day1Part2audio07.mp3')) updateDay01Topic02Pipeline(audio.currentTime, !audio.paused, 'audio07');
     if (track.src.includes('New_Day3Part1audio05.mp3')) updateTableHighlights(audio.currentTime, !audio.paused);
     if (track.src.includes('New_Day3Part1audio07.mp3')) updateIntroHighlight(audio.currentTime, !audio.paused);
     if (track.src.includes('New_Day3Part1audio08.mp3')) updateNotCardHighlight(audio.currentTime, !audio.paused);
@@ -10397,4 +10408,125 @@ function updateDay01Topic02Spotlights(activeTarget, isPlaying) {
       if (colCard) colCard.classList.add('card-active-spotlight');
     }
   });
+}
+
+
+// ???????????????????????????????????????????????????????????????
+// DAY 01 TOPIC 02: STORAGE UNDER THE HOOD & PIPELINE SYNC
+// ???????????????????????????????????????????????????????????????
+
+function updateDay01Topic02StorageCards(currentTime, isPlaying, trackKey) {
+  const container = document.getElementById('storageConceptsBlock');
+  if (!container) return;
+
+  const cardPages = document.getElementById('cardPagesBlocks');
+  const cardRow = document.getElementById('cardRowOriented');
+  const cardFull = document.getElementById('cardFullPageLoad');
+
+  if (!cardPages || !cardRow || !cardFull) return;
+
+  if (!isPlaying) {
+    cardPages.classList.remove('card-narration-active');
+    cardRow.classList.remove('card-narration-active');
+    cardFull.classList.remove('card-narration-active');
+    container.querySelectorAll('.bullet-highlight').forEach(el => el.classList.remove('bullet-highlight'));
+    return;
+  }
+
+  // Clear previous active bullets
+  container.querySelectorAll('.bullet-highlight').forEach(el => el.classList.remove('bullet-highlight'));
+
+  if (trackKey === 'audio02') {
+    cardPages.classList.add('card-narration-active');
+    cardRow.classList.remove('card-narration-active');
+    cardFull.classList.remove('card-narration-active');
+
+    const b1 = document.getElementById('bulletPages1');
+    const b2 = document.getElementById('bulletPages2');
+    const b3 = document.getElementById('bulletPages3');
+    if (currentTime >= 7.92 && currentTime < 18.58) {
+      if (b1) b1.classList.add('bullet-highlight');
+    } else if (currentTime >= 18.58) {
+      if (b2) b2.classList.add('bullet-highlight');
+      if (b3) b3.classList.add('bullet-highlight');
+    }
+  } else if (trackKey === 'audio03') {
+    cardPages.classList.remove('card-narration-active');
+    cardRow.classList.add('card-narration-active');
+    cardFull.classList.remove('card-narration-active');
+
+    const b1 = document.getElementById('bulletRow1');
+    const b2 = document.getElementById('bulletRow2');
+    const b3 = document.getElementById('bulletRow3');
+    if (currentTime >= 0 && currentTime < 5.90) {
+      if (b1) b1.classList.add('bullet-highlight');
+    } else if (currentTime >= 5.90 && currentTime < 9.86) {
+      if (b2) b2.classList.add('bullet-highlight');
+    } else if (currentTime >= 9.86) {
+      if (b3) b3.classList.add('bullet-highlight');
+    }
+  } else if (trackKey === 'audio03new') {
+    cardPages.classList.remove('card-narration-active');
+    cardRow.classList.remove('card-narration-active');
+    cardFull.classList.add('card-narration-active');
+
+    const b1 = document.getElementById('bulletFull1');
+    const b2 = document.getElementById('bulletFull2');
+    const b3 = document.getElementById('bulletFull3');
+    if (currentTime >= 0 && currentTime < 6.94) {
+      if (b1) b1.classList.add('bullet-highlight');
+    } else if (currentTime >= 6.94 && currentTime < 12.28) {
+      if (b2) b2.classList.add('bullet-highlight');
+    } else if (currentTime >= 12.28) {
+      if (b3) b3.classList.add('bullet-highlight');
+    }
+  }
+}
+
+function updateDay01Topic02Pipeline(currentTime, isPlaying, trackKey) {
+  const diag = document.getElementById('projectionDiagram');
+  if (!diag) return;
+
+  const nodeDisk = document.getElementById('projectionDiskPage');
+  const connLoads = document.getElementById('projectionLoads');
+  const nodeFilter = document.getElementById('projectionFilter');
+  const connReturns = document.getElementById('projectionReturns');
+  const nodeResult = document.getElementById('projectionResultSet');
+
+  if (!isPlaying) {
+    diag.classList.remove('diagram-overview-glow');
+    if (nodeDisk) nodeDisk.classList.remove('diagram-node-active');
+    if (connLoads) connLoads.classList.remove('connector-active-pulse');
+    if (nodeFilter) nodeFilter.classList.remove('diagram-node-active', 'diagram-filter-active');
+    if (connReturns) connReturns.classList.remove('connector-active-pulse');
+    if (nodeResult) nodeResult.classList.remove('diagram-node-active', 'diagram-result-active');
+    diag.querySelectorAll('.attr-tag-pulse').forEach(el => el.classList.remove('attr-tag-pulse'));
+    return;
+  }
+
+  // Clear all states before applying active track
+  diag.classList.remove('diagram-overview-glow');
+  if (nodeDisk) nodeDisk.classList.remove('diagram-node-active');
+  if (connLoads) connLoads.classList.remove('connector-active-pulse');
+  if (nodeFilter) nodeFilter.classList.remove('diagram-node-active', 'diagram-filter-active');
+  if (connReturns) connReturns.classList.remove('connector-active-pulse');
+  if (nodeResult) nodeResult.classList.remove('diagram-node-active', 'diagram-result-active');
+  diag.querySelectorAll('.attr-tag-pulse').forEach(el => el.classList.remove('attr-tag-pulse'));
+
+  if (trackKey === 'audio04') {
+    if (currentTime < 2.64) {
+      diag.classList.add('diagram-overview-glow');
+    } else {
+      if (nodeDisk) nodeDisk.classList.add('diagram-node-active');
+      diag.querySelectorAll('#attrId, #attrName, #attrDept, #attrSalary').forEach(el => el.classList.add('attr-tag-pulse'));
+    }
+  } else if (trackKey === 'audio05') {
+    if (nodeDisk) nodeDisk.classList.add('diagram-node-active');
+    if (connLoads) connLoads.classList.add('connector-active-pulse');
+  } else if (trackKey === 'audio06') {
+    if (nodeFilter) nodeFilter.classList.add('diagram-node-active', 'diagram-filter-active');
+  } else if (trackKey === 'audio07') {
+    if (connReturns) connReturns.classList.add('connector-active-pulse');
+    if (nodeResult) nodeResult.classList.add('diagram-node-active', 'diagram-result-active');
+  }
 }

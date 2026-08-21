@@ -7740,14 +7740,14 @@ function updatePrecedenceNoteHighlight(currentTime, isPlaying) {
 }
 
 function updateDay01Audio01Highlights(currentTime, isPlaying) {
-  const heroSection = document.getElementById('rdbmsHeroSection');
+  const section = document.getElementById('rdbmsIntro');
   const tableCard = document.getElementById('rdbmsTableCard');
   const table = document.getElementById('rdbmsMockTable');
 
-  if (!heroSection) return;
+  if (!section) return;
 
   if (!isPlaying) {
-    heroSection.classList.remove('narration-zoomed');
+    section.classList.remove('narration-zoomed');
     if (tableCard) {
       tableCard.classList.remove('narration-hidden', 'narration-revealed');
     }
@@ -7760,8 +7760,8 @@ function updateDay01Audio01Highlights(currentTime, isPlaying) {
   }
 
   // Active playing:
-  // 1. Zoom in hero header + intro paragraph at start
-  heroSection.classList.add('narration-zoomed');
+  // 1. Zoom in on narration start
+  section.classList.add('narration-zoomed');
 
   // 2. Control Table Card appearance (Second Image) at 13.94s
   if (tableCard) {

@@ -95,16 +95,13 @@ window.COURSE_CONTENT['day01'] = {
         <h2>📊 01. Relational Databases &amp; SQL</h2>
 
         <div class="slide-section" id="rdbmsIntro">
-          <div class="rdbms-hero-container" id="rdbmsHeroSection">
-            <div class="rdbms-hero-header">
-              <div class="rdbms-step-badge">01</div>
-              <h3 class="rdbms-header-title">What is RDBMS?</h3>
-              <button class="audio-play-btn" onclick="playAudio('New_Day1Part1audio01.mp3', this)" title="Play narration">
-                <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-              </button>
-            </div>
-            <p class="rdbms-intro-desc">A <strong>Relational Database Management System (RDBMS)</strong> is the software used to store, manage, query, and retrieve data stored in a relational database. It formats data into structured <strong>tables</strong> (also called <strong>relations</strong>) which are connected to one another through defined relationships.</p>
-          </div>
+          <h3 class="heading-with-audio">
+            What is RDBMS?
+            <button class="audio-play-btn" onclick="playAudio('New_Day1Part1audio01.mp3', this)" title="Play narration">
+              <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </h3>
+          <p id="rdbmsIntroDesc">A <strong>Relational Database Management System (RDBMS)</strong> is the software used to store, manage, query, and retrieve data stored in a relational database. It formats data into structured <strong>tables</strong> (also called <strong>relations</strong>) which are connected to one another through defined relationships.</p>
           
           <div class="rdbms-diagram-container" id="rdbmsTableCard">
             <div class="rdbms-table-title">📁 Table: Employees</div>

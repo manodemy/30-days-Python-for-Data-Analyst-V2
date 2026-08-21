@@ -7846,6 +7846,64 @@ function updateDay01Audio03Highlights(currentTime, isPlaying) {
   cardConcurrent.classList.toggle('card-narration-active', isCard3);
 }
 
+function updateDay01CoreEntitiesHighlights(activeTarget, isPlaying) {
+  const tableWrap = document.getElementById('coreEntitiesTableWrap');
+  if (!tableWrap) return;
+
+  const rows = {
+    database: document.getElementById('rowDatabase'),
+    table: document.getElementById('rowTable'),
+    column: document.getElementById('rowColumn'),
+    row: document.getElementById('rowRow')
+  };
+
+  const allRows = [rows.database, rows.table, rows.column, rows.row].filter(Boolean);
+
+  if (!isPlaying || !activeTarget) {
+    allRows.forEach(r => {
+      r.classList.remove('row-active-spotlight', 'vis-target-hidden');
+      r.style.display = '';
+    });
+    return;
+  }
+
+  let revealedRows = [];
+  let highlightedRow = null;
+
+  if (activeTarget.includes('coreEntities') || activeTarget.includes('New_Day1Part1audio04')) {
+    revealedRows = allRows;
+  } else if (activeTarget.includes('entityDatabase') || activeTarget.includes('New_Day1Part1audio07')) {
+    revealedRows = [rows.database];
+    highlightedRow = rows.database;
+  } else if (activeTarget.includes('entityTable') || activeTarget.includes('New_Day1Part1audio06')) {
+    revealedRows = [rows.database, rows.table];
+    highlightedRow = rows.table;
+  } else if (activeTarget.includes('entityColumn') || activeTarget.includes('New_Day1Part1audio05')) {
+    revealedRows = [rows.database, rows.table, rows.column];
+    highlightedRow = rows.column;
+  } else if (activeTarget.includes('entityRow') || activeTarget.includes('New_Day1Part1audio08')) {
+    revealedRows = [rows.database, rows.table, rows.column, rows.row];
+    highlightedRow = rows.row;
+  } else {
+    revealedRows = allRows;
+  }
+
+  allRows.forEach(r => {
+    const isRevealed = revealedRows.includes(r);
+    const isHighlighted = (r === highlightedRow);
+
+    if (isRevealed) {
+      r.classList.remove('vis-target-hidden');
+      r.style.display = '';
+    } else {
+      r.classList.add('vis-target-hidden');
+      r.style.display = 'none';
+    }
+
+    r.classList.toggle('row-active-spotlight', isHighlighted);
+  });
+}
+
 // ════════════════════════════════════════════════════════════════════════════════
 
 function loadAndPlayTrack(index, targetTime = 0) {
@@ -7960,6 +8018,11 @@ function loadAndPlayTrack(index, targetTime = 0) {
     if (myGeneration !== currentGeneration) return;
     if (track.src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(0, false);
     if (track.src.includes('New_Day1Part1audio03.mp3')) updateDay01Audio03Highlights(0, false);
+    if (track.src.includes('New_Day1Part1audio04.mp3') || 
+        track.src.includes('New_Day1Part1audio07.mp3') || 
+        track.src.includes('New_Day1Part1audio06.mp3') || 
+        track.src.includes('New_Day1Part1audio05.mp3') || 
+        track.src.includes('New_Day1Part1audio08.mp3')) updateDay01CoreEntitiesHighlights(null, false);
     if (track.src.includes('New_Day3Part1audio05.mp3')) updateTableHighlights(0, false);
     if (track.src.includes('New_Day3Part1audio07.mp3')) updateIntroHighlight(0, false);
     if (track.src.includes('New_Day3Part1audio08.mp3')) updateNotCardHighlight(0, false);
@@ -7973,6 +8036,11 @@ function loadAndPlayTrack(index, targetTime = 0) {
     if (myGeneration !== currentGeneration) return;
     if (track.src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(0, false);
     if (track.src.includes('New_Day1Part1audio03.mp3')) updateDay01Audio03Highlights(0, false);
+    if (track.src.includes('New_Day1Part1audio04.mp3') || 
+        track.src.includes('New_Day1Part1audio07.mp3') || 
+        track.src.includes('New_Day1Part1audio06.mp3') || 
+        track.src.includes('New_Day1Part1audio05.mp3') || 
+        track.src.includes('New_Day1Part1audio08.mp3')) updateDay01CoreEntitiesHighlights(null, false);
     if (track.src.includes('New_Day3Part1audio05.mp3')) updateTableHighlights(0, false);
     if (track.src.includes('New_Day3Part1audio07.mp3')) updateIntroHighlight(0, false);
     if (track.src.includes('New_Day3Part1audio08.mp3')) updateNotCardHighlight(0, false);
@@ -8414,10 +8482,20 @@ function playAudio(src, btn) {
       currentPlayingAudio.ontimeupdate = () => {
         if (src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(currentPlayingAudio.currentTime, !currentPlayingAudio.paused);
         if (src.includes('New_Day1Part1audio03.mp3')) updateDay01Audio03Highlights(currentPlayingAudio.currentTime, !currentPlayingAudio.paused);
+        if (src.includes('New_Day1Part1audio04.mp3') || 
+            src.includes('New_Day1Part1audio07.mp3') || 
+            src.includes('New_Day1Part1audio06.mp3') || 
+            src.includes('New_Day1Part1audio05.mp3') || 
+            src.includes('New_Day1Part1audio08.mp3')) updateDay01CoreEntitiesHighlights(src, !currentPlayingAudio.paused);
       };
       currentPlayingAudio.onpause = () => {
         if (src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(0, false);
         if (src.includes('New_Day1Part1audio03.mp3')) updateDay01Audio03Highlights(0, false);
+        if (src.includes('New_Day1Part1audio04.mp3') || 
+            src.includes('New_Day1Part1audio07.mp3') || 
+            src.includes('New_Day1Part1audio06.mp3') || 
+            src.includes('New_Day1Part1audio05.mp3') || 
+            src.includes('New_Day1Part1audio08.mp3')) updateDay01CoreEntitiesHighlights(null, false);
       };
       currentPlayingBtn = btn;
       currentPlayingAudio.play();
@@ -8426,6 +8504,11 @@ function playAudio(src, btn) {
       currentPlayingAudio.onended = () => {
         if (src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(0, false);
         if (src.includes('New_Day1Part1audio03.mp3')) updateDay01Audio03Highlights(0, false);
+        if (src.includes('New_Day1Part1audio04.mp3') || 
+            src.includes('New_Day1Part1audio07.mp3') || 
+            src.includes('New_Day1Part1audio06.mp3') || 
+            src.includes('New_Day1Part1audio05.mp3') || 
+            src.includes('New_Day1Part1audio08.mp3')) updateDay01CoreEntitiesHighlights(null, false);
         btn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
         btn.classList.remove('playing');
         currentPlayingAudio = null;
@@ -8911,6 +8994,10 @@ function clearSlidePlaybackVisibility() {
       el.style.opacity = '';
     });
   });
+
+  if (typeof updateDay01CoreEntitiesHighlights === 'function') {
+    updateDay01CoreEntitiesHighlights(null, false);
+  }
 }
 
 /**
@@ -9034,6 +9121,15 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
       sibling = sibling.nextElementSibling;
     }
 
+    // Special handling for sequential table rows (e.g. Core Structural Entities)
+    if (['#coreEntities', '#entityDatabase', '#entityTable', '#entityColumn', '#entityRow'].includes(targetSelector)) {
+      const tableWrap = activeSection.querySelector('#coreEntitiesTableWrap, .db-mock-table-wrap');
+      if (tableWrap) {
+        activeTrackElements.add(tableWrap);
+        tableWrap.querySelectorAll('table, thead, th, tr:not(.entity-row)').forEach(el => activeTrackElements.add(el));
+      }
+    }
+
     // ── Strict Topic Isolation: Hide ALL preceding and following blocks in activeSection ──
     const allChildBlocks = activeSection.querySelectorAll('.heading-with-audio, .heading-box-wrap, h3, h4, p, .warn-box, .info-box, .tip-box, .callout-box, .note-box, .warning-box, .db-mock-table-wrap, table, pre, code, ul, ol, .sql-example, .vs-block, .vs-card, .prec-card, .prec-note, .section-block, [id]');
     allChildBlocks.forEach(blk => {
@@ -9044,6 +9140,10 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
         blk.classList.add('vis-target-hidden');
       }
     });
+
+    if (typeof updateDay01CoreEntitiesHighlights === 'function') {
+      updateDay01CoreEntitiesHighlights(targetSelector, true);
+    }
 
     // ── Clean up empty parent containers ──
     activeSection.querySelectorAll('.vs-block').forEach(block => {

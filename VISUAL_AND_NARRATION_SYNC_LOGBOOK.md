@@ -15,6 +15,20 @@ It ensures a tight 1:1 synchronization between:
 
 ## 📜 Session Change Log
 
+### 🗓️ Entry: 2026-08-21 — Day 01 Audio 04–08 Core Structural Entities Sequential Row Spotlight & Order Sync
+* **Target Audio**: `New_Day1Part1audio04.mp3` through `New_Day1Part1audio08.mp3`
+* **Target Container**: `#coreEntitiesTableWrap` (`.core-entities-table`)
+* **Spoken Hierarchy Flow**:
+  1. `New_Day1Part1audio04.mp3` (`#coreEntities`): Intro to strict hierarchy. Table shell and columns (`Term`, `Also Called`, `Description`) are revealed.
+  2. `New_Day1Part1audio07.mp3` (`#entityDatabase`): *"At the top level we have the database, also called a schema..."* ➔ Row 1 (**Database**) appears & glows with cobalt blue spotlight (`#eff6ff`, border `3.5px solid #3b82f6`).
+  3. `New_Day1Part1audio06.mp3` (`#entityTable`): *"Inside the database, we find tables or relations..."* ➔ Row 2 (**Table**) appears below Row 1 & glows.
+  4. `New_Day1Part1audio05.mp3` (`#entityColumn`): *"Each table is made of columns, or also called attributes..."* ➔ Row 3 (**Column**) appears below Row 2 & glows.
+  5. `New_Day1Part1audio08.mp3` (`#entityRow`): *"And finally, we have rows, also known as records or tuples..."* ➔ Row 4 (**Row**) appears with full table complete & glows.
+* **Implementation Deliverables**:
+  1. Updated [`public/Version-3/content/day-01.js`](file:///d:/Learn%20Python%20in%2060days/Manodemy_Web_V2/public/Version-3/content/day-01.js): Added `#coreEntitiesTableWrap`, `#coreEntitiesTable`, and row IDs `#rowDatabase`, `#rowTable`, `#rowColumn`, `#rowRow`.
+  2. Updated [`public/Version-3/styles.css`](file:///d:/Learn%20Python%20in%2060days/Manodemy_Web_V2/public/Version-3/styles.css): Added `.row-active-spotlight` styles with smooth border highlights.
+  3. Updated [`public/Version-3/mano-engine.js`](file:///d:/Learn%20Python%20in%2060days/Manodemy_Web_V2/public/Version-3/mano-engine.js): Implemented `updateDay01CoreEntitiesHighlights(activeTarget, isPlaying)` and connected to `updateSlidePlaybackVisibility`, `loadAndPlayTrack`, and standalone `playAudio`.
+
 ### 🗓️ Entry: 2026-08-21 — Day 01 Audio 03 Three Problems Sequential Card Spotlight & Zoom Sync
 * **Target Audio**: `New_Day1Part1audio03.mp3` (Duration: 20.0s)
 * **Target Container**: `#rdbmsProblems` (`.info-columns`)

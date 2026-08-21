@@ -265,17 +265,17 @@ window.COURSE_CONTENT['day01'] = {
           </h3>
           <p>An RDBMS organizes all data into a strict hierarchy of concepts — every piece of data has a clearly defined place:</p>
 
-          <div class="db-mock-table-wrap">
-            <table class="db-table-mock">
+          <div class="db-mock-table-wrap" id="coreEntitiesTableWrap">
+            <table class="db-table-mock core-entities-table" id="coreEntitiesTable">
               <thead>
                 <tr>
-                  <th>Term</th>
-                  <th>Also Called</th>
-                  <th>Description</th>
+                  <th style="width: 25%;">Term</th>
+                  <th style="width: 25%;">Also Called</th>
+                  <th style="width: 50%;">Description</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
+                <tr id="rowDatabase" class="entity-row">
                   <td>
                     <div class="heading-with-audio" id="entityDatabase">
                       <strong>Database</strong>
@@ -287,7 +287,7 @@ window.COURSE_CONTENT['day01'] = {
                   <td>Schema / Catalog</td>
                   <td>A named container holding related tables, indexes, and views.</td>
                 </tr>
-                <tr>
+                <tr id="rowTable" class="entity-row">
                   <td>
                     <div class="heading-with-audio" id="entityTable">
                       <strong>Table</strong>
@@ -299,7 +299,7 @@ window.COURSE_CONTENT['day01'] = {
                   <td>Relation / Entity</td>
                   <td>A 2D grid of rows and columns representing one entity type (e.g., <code>employees</code>).</td>
                 </tr>
-                <tr>
+                <tr id="rowColumn" class="entity-row">
                   <td>
                     <div class="heading-with-audio" id="entityColumn">
                       <strong>Column</strong>
@@ -311,7 +311,7 @@ window.COURSE_CONTENT['day01'] = {
                   <td>Attribute / Field</td>
                   <td>A named, typed property of the entity. Each column enforces a data type (e.g., <code>salary INTEGER</code>).</td>
                 </tr>
-                <tr>
+                <tr id="rowRow" class="entity-row">
                   <td>
                     <div class="heading-with-audio" id="entityRow">
                       <strong>Row</strong>

@@ -7739,6 +7739,78 @@ function updatePrecedenceNoteHighlight(currentTime, isPlaying) {
   if (cards.or) cards.or.classList.toggle('narration-highlight', currentTime >= 7.9 && currentTime < 8.6);
 }
 
+function updateDay01Audio01Highlights(currentTime, isPlaying) {
+  const heroSection = document.getElementById('rdbmsHeroSection');
+  const tableCard = document.getElementById('rdbmsTableCard');
+  const table = document.getElementById('rdbmsMockTable');
+
+  if (!heroSection) return;
+
+  if (!isPlaying) {
+    heroSection.classList.remove('narration-zoomed');
+    if (tableCard) {
+      tableCard.classList.remove('narration-hidden', 'narration-revealed');
+    }
+    if (table) {
+      table.querySelectorAll('.column-narration-active').forEach(el => el.classList.remove('column-narration-active'));
+      const row2 = table.querySelector('tbody tr.highlighted-row');
+      if (row2) row2.classList.remove('narration-row-pulse');
+    }
+    return;
+  }
+
+  // Active playing:
+  // 1. Zoom in hero header + intro paragraph at start
+  heroSection.classList.add('narration-zoomed');
+
+  // 2. Control Table Card appearance (Second Image) at 13.94s
+  if (tableCard) {
+    if (currentTime < 13.94) {
+      tableCard.classList.add('narration-hidden');
+      tableCard.classList.remove('narration-revealed');
+    } else {
+      tableCard.classList.remove('narration-hidden');
+      tableCard.classList.add('narration-revealed');
+    }
+  }
+
+  // 3. Keyword column highlighting in table
+  if (table) {
+    let activeCol = -1; // 0: ID, 1: Name, 2: Role, 3: Salary
+    let highlightRows = false;
+
+    if (currentTime >= 17.86 && currentTime < 18.88) {
+      activeCol = 0; // "ID"
+    } else if (currentTime >= 18.88 && currentTime < 19.78) {
+      activeCol = 1; // "employee name"
+    } else if (currentTime >= 19.78 && currentTime < 20.12) {
+      activeCol = 2; // "role"
+    } else if (currentTime >= 20.12 && currentTime < 20.88) {
+      activeCol = 3; // "salary"
+    } else if (currentTime >= 20.88 && currentTime <= 23.40) {
+      highlightRows = true; // "while the rows represent individual records."
+    }
+
+    // Apply column active class to headers and cells of matching index
+    const ths = table.querySelectorAll('thead th');
+    const rows = table.querySelectorAll('tbody tr');
+
+    ths.forEach((th, idx) => {
+      th.classList.toggle('column-narration-active', idx === activeCol);
+    });
+
+    rows.forEach(tr => {
+      const tds = tr.querySelectorAll('td');
+      tds.forEach((td, idx) => {
+        td.classList.toggle('column-narration-active', idx === activeCol);
+      });
+      if (tr.classList.contains('highlighted-row')) {
+        tr.classList.toggle('narration-row-pulse', highlightRows);
+      }
+    });
+  }
+}
+
 // ════════════════════════════════════════════════════════════════════════════════
 
 function loadAndPlayTrack(index, targetTime = 0) {
@@ -7851,6 +7923,7 @@ function loadAndPlayTrack(index, targetTime = 0) {
 
   audio.addEventListener('ended', () => {
     if (myGeneration !== currentGeneration) return;
+    if (track.src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(0, false);
     if (track.src.includes('New_Day3Part1audio05.mp3')) updateTableHighlights(0, false);
     if (track.src.includes('New_Day3Part1audio07.mp3')) updateIntroHighlight(0, false);
     if (track.src.includes('New_Day3Part1audio08.mp3')) updateNotCardHighlight(0, false);
@@ -7862,6 +7935,7 @@ function loadAndPlayTrack(index, targetTime = 0) {
 
   audio.addEventListener('pause', () => {
     if (myGeneration !== currentGeneration) return;
+    if (track.src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(0, false);
     if (track.src.includes('New_Day3Part1audio05.mp3')) updateTableHighlights(0, false);
     if (track.src.includes('New_Day3Part1audio07.mp3')) updateIntroHighlight(0, false);
     if (track.src.includes('New_Day3Part1audio08.mp3')) updateNotCardHighlight(0, false);
@@ -7872,6 +7946,7 @@ function loadAndPlayTrack(index, targetTime = 0) {
 
   audio.addEventListener('timeupdate', () => {
     if (myGeneration !== currentGeneration) return;
+    if (track.src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(audio.currentTime, !audio.paused);
     if (track.src.includes('New_Day3Part1audio05.mp3')) updateTableHighlights(audio.currentTime, !audio.paused);
     if (track.src.includes('New_Day3Part1audio07.mp3')) updateIntroHighlight(audio.currentTime, !audio.paused);
     if (track.src.includes('New_Day3Part1audio08.mp3')) updateNotCardHighlight(audio.currentTime, !audio.paused);
@@ -8298,11 +8373,18 @@ function playAudio(src, btn) {
       if (typeof currentPlaybackVolume !== 'undefined') {
         currentPlayingAudio.volume = currentPlaybackVolume;
       }
+      currentPlayingAudio.ontimeupdate = () => {
+        if (src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(currentPlayingAudio.currentTime, !currentPlayingAudio.paused);
+      };
+      currentPlayingAudio.onpause = () => {
+        if (src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(0, false);
+      };
       currentPlayingBtn = btn;
       currentPlayingAudio.play();
       btn.innerHTML = `<svg class="pause-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
       btn.classList.add('playing');
       currentPlayingAudio.onended = () => {
+        if (src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(0, false);
         btn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
         btn.classList.remove('playing');
         currentPlayingAudio = null;

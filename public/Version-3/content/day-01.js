@@ -119,28 +119,45 @@ window.COURSE_CONTENT['day01'] = {
                 <thead>
                   <tr>
                     <th class="col-id">
-                      <span class="col-th-inner">
-                        <span class="col-label"><span class="pk-icon" title="Primary Key">🔑</span> id <span class="pk-tag">PK</span></span>
-                        <span class="type-tag">INT</span>
-                      </span>
+                      <div class="col-th-inner">
+                        <div class="col-name-row">
+                          <span class="col-name"><span class="pk-icon" title="Primary Key">🔑</span> id</span>
+                          <span class="pk-tag">PK</span>
+                        </div>
+                        <div class="col-type-row">
+                          <span class="type-tag">INT</span>
+                        </div>
+                      </div>
                     </th>
                     <th class="col-name">
-                      <span class="col-th-inner">
-                        <span class="col-label">name</span>
-                        <span class="type-tag">VARCHAR</span>
-                      </span>
+                      <div class="col-th-inner">
+                        <div class="col-name-row">
+                          <span class="col-name">name</span>
+                        </div>
+                        <div class="col-type-row">
+                          <span class="type-tag">VARCHAR</span>
+                        </div>
+                      </div>
                     </th>
                     <th class="col-role">
-                      <span class="col-th-inner">
-                        <span class="col-label">role</span>
-                        <span class="type-tag">VARCHAR</span>
-                      </span>
+                      <div class="col-th-inner">
+                        <div class="col-name-row">
+                          <span class="col-name">role</span>
+                        </div>
+                        <div class="col-type-row">
+                          <span class="type-tag">VARCHAR</span>
+                        </div>
+                      </div>
                     </th>
                     <th class="col-salary">
-                      <span class="col-th-inner">
-                        <span class="col-label">salary</span>
-                        <span class="type-tag">DECIMAL</span>
-                      </span>
+                      <div class="col-th-inner">
+                        <div class="col-name-row">
+                          <span class="col-name">salary</span>
+                        </div>
+                        <div class="col-type-row">
+                          <span class="type-tag">DECIMAL</span>
+                        </div>
+                      </div>
                     </th>
                   </tr>
                 </thead>

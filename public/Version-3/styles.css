@@ -411,18 +411,23 @@ a { color: var(--cyan); text-decoration: none; }
   visibility: hidden !important;
 }
 .day-picker-chevron {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  align-items: center;
-  pointer-events: none;
-  color: rgba(255, 255, 255, 0.4);
-  transition: color 0.25s ease;
+  position: static !important;
+  transform: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  pointer-events: none !important;
+  color: rgba(255, 255, 255, 0.45) !important;
+  margin-left: 6px !important;
+  flex-shrink: 0 !important;
+  transition: transform 0.25s ease, color 0.25s ease !important;
 }
 .day-picker-pill:hover .day-picker-chevron {
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+.day-picker-pill.open .day-picker-chevron {
+  transform: rotate(180deg) !important;
+  color: #38bdf8 !important;
 }
 
 .badge {

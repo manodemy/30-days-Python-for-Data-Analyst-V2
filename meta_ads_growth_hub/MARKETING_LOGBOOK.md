@@ -140,4 +140,27 @@
 
 ---
 
+### 🟢 Session 21: UGC Real-Person Walkthrough Ad Architecture for Pomelli (2026-08-17)
+- **Concept:** Realistic UGC (User Generated Content) / Creator-led product demo ad (15–20s).
+- **Format:** Split-screen / Picture-in-Picture (PiP) creator talking directly to camera while interacting with the live `manodemy.com` web app on a laptop.
+- **Narrative Arc:**
+  1. *Hook (0-3s):* "Stop watching 50-hour YouTube tutorials. Here is how I actually learned SQL & Python in 60 days on Manodemy."
+  2. *Daily 3-Step Walkthrough (3-9s):* Creator points to screen: Visual Theory ➔ Live In-Browser Code Practice ➔ Daily Interview Test.
+  3. *Scorecard & Proof (9-12s):* Earn 1,200+ marks across 60 days ➔ Download official job-ready certificate.
+  4. *Offer & CTA (12-15s):* "One-time registration, lifetime access. Try Day 01 & 02 100% free with zero signup at manodemy.com."
+- **Status:** Prompt blueprints engineered for AI avatar generation, scene scripting, voiceover, and visual overlays.
+
+---
+
+### 🟢 Session 22: Production-Grade UGC Ad Prompt Architecture v3 (2026-08-17)
+- **Prompt Engineering Upgrade (v3):**
+  - **Manodemy Specificity Injected:** Exact curriculum structure (SQL 18d + Excel 12d + Python 30d), in-browser zero-install compiler (Wasm/Pyodide), 1,200+ marks scorecard gamification, verified QR certificate.
+  - **Meta Conversion Architecture:** Pattern interrupt hook (0-3s), 3-beat interactive walkthrough (3-9s), credibility & proof (9-12s), risk-reversal CTA (12-15s).
+  - **B-Roll Capture Specs:** Tailored exact URLs (`/sql/day-01.html`, `#curriculum`, `sample-certificate.html`) with smooth cursor timing for screen replacement.
+  - **Negative Prompts & Audio Mastering:** Rigorous exclusions to eliminate AI uncanny valley effects.
+
+---
+
 *(All future daily analyses, decisions, ad changes, and metric reviews will be appended below)*
+
+

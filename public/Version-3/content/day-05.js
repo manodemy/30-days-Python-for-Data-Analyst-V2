@@ -1,4 +1,4 @@
-// Day 05 — Aggregate Functions: COUNT, SUM, AVG, MIN, MAX, NULL behavior
+// Day 05 — Aggregate Functions: Turning Rows into Insights
 if (!window.COURSE_CONTENT) window.COURSE_CONTENT = {};
 window.COURSE_CONTENT['day05'] = {
   "day": 5,
@@ -7,15 +7,33 @@ window.COURSE_CONTENT['day05'] = {
   "emoji": "📊",
   "slides": [
     {
-      "title": "Aggregate Functions — Summarizing Data",
-      "duration": "0:00",
+      "title": "Aggregate Functions — Turning Rows into Insights",
+      "duration": "7:30",
       "html": `
-        <h2>📊 Aggregate Functions</h2>
+        <h2>📊 Aggregate Functions — Turning Rows into Insights</h2>
+
+        <div class="info-box" id="day05LearningObj">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; width: 100%;">
+            <strong style="color: #0f766e;">🎯 Learning Objective</strong>
+          </div>
+          <p>Summarize raw transactional data into business metrics — totals, averages, counts — the KPIs analysts report on daily. By the end of this lesson you will confidently collapse thousands of rows into the single numbers that drive decisions.</p>
+        </div>
 
         <div class="slide-section">
-          <h3>01. What Are Aggregate Functions?</h3>
-          <p>Aggregate functions collapse <strong>multiple rows</strong> into a <strong>single summary value</strong>. They are evaluated at Step 4 (after WHERE filters rows) and are typically used with <code>GROUP BY</code> to produce per-group summaries.</p>
+          <h3 class="heading-with-audio" id="day05WhyAgg">
+            01. Why Aggregation Matters — From Row-Level Data to KPIs
+            <button class="audio-play-btn" onclick="playAudio('Day05/New_Day5Part1audio01.mp3', this)" title="Play narration">
+              <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </h3>
+          <p>Raw transactional tables contain individual rows — one per employee, one per order, one per sale. But stakeholders don't want rows; they want <strong>KPIs</strong>: "What's our total revenue?", "How many active customers?", "What's the average order value?". Aggregate functions are how you bridge that gap.</p>
 
+          <div class="heading-with-audio" id="day05AggRefTable" style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; margin-top: 14px;">
+            <small style="flex: 1; color: #64748b; font-size: 0.75rem;">Aggregate Function Reference</small>
+            <button class="audio-play-btn" onclick="playAudio('Day05/New_Day5Part1audio02.mp3', this)" title="Play narration" style="flex-shrink: 0;">
+              <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </div>
           <div class="db-mock-table-wrap">
             <table class="db-table-mock db-table-mock--compact">
               <thead><tr><th>Function</th><th>Returns</th><th>NULL Behavior</th><th>Example</th></tr></thead>
@@ -30,16 +48,33 @@ window.COURSE_CONTENT['day05'] = {
             </table>
           </div>
 
-          <div class="info-box">
-            ℹ️ <strong>The five aggregates you must know:</strong> <code>COUNT</code>, <code>SUM</code>, <code>AVG</code>, <code>MIN</code>, <code>MAX</code>. Some engines add <code>STDDEV</code>, <code>VARIANCE</code>, <code>MEDIAN</code>, <code>GROUP_CONCAT</code> — but the first five are universal.
+          <div class="info-box" id="day05FiveAggs">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; width: 100%;">
+              <strong style="color: #0f766e;">ℹ️ The five aggregates you must know:</strong>
+              <button class="audio-play-btn" onclick="playAudio('Day05/New_Day5Part1audio03.mp3', this)" title="Play narration" style="flex-shrink: 0;">
+                <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+            </div>
+            <p><code>COUNT</code>, <code>SUM</code>, <code>AVG</code>, <code>MIN</code>, <code>MAX</code>. Some engines add <code>STDDEV</code>, <code>VARIANCE</code>, <code>MEDIAN</code>, <code>GROUP_CONCAT</code> — but the first five are universal and appear in virtually every analyst query.</p>
           </div>
         </div>
 
         <div class="slide-section">
-          <h3>02. COUNT — Counting Rows</h3>
+          <h3 class="heading-with-audio" id="day05Count">
+            02. COUNT — Counting Rows
+            <button class="audio-play-btn" onclick="playAudio('Day05/New_Day5Part1audio04.mp3', this)" title="Play narration">
+              <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </h3>
           <p><code>COUNT(*)</code> counts every row including those with NULLs. <code>COUNT(column)</code> counts only rows where that column is not NULL. <code>COUNT(DISTINCT column)</code> counts unique non-NULL values.</p>
 
-          <pre><code>-- Total number of employees
+          <div class="heading-with-audio" id="day05CountExamples" style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; margin-top: 14px;">
+            <small style="flex: 1; color: #64748b; font-size: 0.75rem;">COUNT Variations in Action</small>
+            <button class="audio-play-btn" onclick="playAudio('Day05/New_Day5Part1audio05.mp3', this)" title="Play narration" style="flex-shrink: 0;">
+              <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </div>
+          <pre id="day05CountCode"><code>-- Total number of employees
 SELECT COUNT(*) AS total_employees
 FROM   employees;
 
@@ -51,23 +86,40 @@ FROM   employees;
 SELECT COUNT(DISTINCT department_id) AS num_departments
 FROM   employees;</code></pre>
 
-          <div class="info-box">
-            ℹ️ <strong>COUNT(*) vs COUNT(col):</strong> Use <code>COUNT(*)</code> to count rows. Use <code>COUNT(col)</code> when you need to know how many rows have a value in that specific column. They differ only when <code>col</code> contains NULLs.
+          <div class="info-box" id="day05CountInfo">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; width: 100%;">
+              <strong style="color: #0f766e;">ℹ️ COUNT(*) vs COUNT(col):</strong>
+              <button class="audio-play-btn" onclick="playAudio('Day05/New_Day5Part1audio06.mp3', this)" title="Play narration" style="flex-shrink: 0;">
+                <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+            </div>
+            <p>Use <code>COUNT(*)</code> to count rows. Use <code>COUNT(col)</code> when you need to know how many rows have a value in that specific column. They differ only when <code>col</code> contains NULLs.</p>
           </div>
         </div>
 
         <div class="slide-section">
-          <h3>03. SUM and AVG</h3>
+          <h3 class="heading-with-audio" id="day05SumAvg">
+            03. SUM & AVG — Totals, Averages, and How NULLs Silently Skew Them
+            <button class="audio-play-btn" onclick="playAudio('Day05/New_Day5Part1audio07.mp3', this)" title="Play narration">
+              <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </h3>
           <p><code>SUM</code> adds all non-NULL values. <code>AVG</code> computes the mean — it divides by the count of non-NULL values, not the total row count. This distinction matters when a column has NULLs.</p>
 
-          <pre><code>-- Total salary payroll and average salary
+          <div class="heading-with-audio" id="day05SumAvgCode" style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; margin-top: 14px;">
+            <small style="flex: 1; color: #64748b; font-size: 0.75rem;">SUM & AVG — Payroll Metrics</small>
+            <button class="audio-play-btn" onclick="playAudio('Day05/New_Day5Part1audio08.mp3', this)" title="Play narration" style="flex-shrink: 0;">
+              <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </div>
+          <pre id="day05SumAvgExample"><code>-- Total salary payroll and average salary
 SELECT SUM(salary)     AS total_payroll,
        AVG(salary)     AS avg_salary,
        MIN(salary)     AS min_salary,
        MAX(salary)     AS max_salary
 FROM   employees;
 
--- Average commission (only among employees who HAVE one)
+-- Average commission (only among those who HAVE one)
 SELECT AVG(commission) AS avg_commission_earned
 FROM   employees
 WHERE  commission IS NOT NULL;
@@ -76,16 +128,74 @@ WHERE  commission IS NOT NULL;
 SELECT AVG(COALESCE(commission, 0)) AS avg_commission_all
 FROM   employees;</code></pre>
 
-          <div class="warn-box">
-            ⚠️ <strong>AVG and NULL — A Common Interview Trap:</strong> If 15 employees exist and 4 have a NULL commission, <code>AVG(commission)</code> divides by 11 (not 15). <code>AVG(COALESCE(commission, 0))</code> divides by 15. The correct choice depends on the business question being asked.
+          <div class="warn-box" id="day05AvgNullWarn">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; width: 100%;">
+              <strong style="color: #b91c1c;">⚠️ AVG and NULL — A Common Interview Trap:</strong>
+              <button class="audio-play-btn" onclick="playAudio('Day05/New_Day5Part1audio09.mp3', this)" title="Play narration" style="flex-shrink: 0;">
+                <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+            </div>
+            <p>If 15 employees exist and 4 have a NULL commission, <code>AVG(commission)</code> divides by 11 (not 15). <code>AVG(COALESCE(commission, 0))</code> divides by 15. The correct choice depends on the business question being asked.</p>
           </div>
         </div>
 
         <div class="slide-section">
-          <h3>04. MIN and MAX</h3>
-          <p><code>MIN</code> and <code>MAX</code> work on numbers, strings (lexicographic), and dates. They are extremely useful for finding boundaries in datasets.</p>
+          <h3 class="heading-with-audio" id="day05Coalesce">
+            04. The COALESCE Safety Net — Defaulting NULLs Before Aggregating
+            <button class="audio-play-btn" onclick="playAudio('Day05/New_Day5Part1audio10.mp3', this)" title="Play narration">
+              <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </h3>
+          <p>When your aggregate could return NULL — either from NULL data or an empty result set — <code>COALESCE</code> provides a safe default. This prevents downstream reports from showing blanks instead of zeros.</p>
 
-          <pre><code>-- Price range across all products
+          <div class="heading-with-audio" id="day05CoalesceCode" style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; margin-top: 14px;">
+            <small style="flex: 1; color: #64748b; font-size: 0.75rem;">COALESCE Patterns for Safe Aggregation</small>
+            <button class="audio-play-btn" onclick="playAudio('Day05/New_Day5Part1audio11.mp3', this)" title="Play narration" style="flex-shrink: 0;">
+              <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </div>
+          <pre id="day05CoalesceExample"><code>-- Safe average: returns 0 instead of NULL for empty set
+SELECT COALESCE(AVG(salary), 0) AS avg_salary
+FROM   employees
+WHERE  department_id = 99;   -- no such dept → AVG returns NULL → COALESCE gives 0
+
+-- Safe sum: if no commissions at all, show 0
+SELECT COALESCE(SUM(commission), 0) AS total_commissions
+FROM   employees
+WHERE  department_id = 50;
+
+-- COALESCE inside aggregate vs outside
+SELECT AVG(COALESCE(commission, 0))   AS avg_all,    -- NULLs become 0, then averaged
+       COALESCE(AVG(commission), 0)   AS avg_safe    -- average non-NULLs, then default
+FROM   employees;</code></pre>
+
+          <div class="pro-tip-box" id="day05CoalesceTip">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; width: 100%;">
+              <strong style="color: #b45309;">💡 Inside vs Outside:</strong>
+              <button class="audio-play-btn" onclick="playAudio('Day05/New_Day5Part1audio12.mp3', this)" title="Play narration" style="flex-shrink: 0;">
+                <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+            </div>
+            <p><code>AVG(COALESCE(commission, 0))</code> changes what's averaged (NULL→0 shifts the mean down). <code>COALESCE(AVG(commission), 0)</code> averages non-NULLs first, then only replaces NULL if the result is NULL. These give <em>different numbers</em> — pick the one that matches the business question.</p>
+          </div>
+        </div>
+
+        <div class="slide-section">
+          <h3 class="heading-with-audio" id="day05MinMax">
+            05. MIN & MAX — Beyond Numbers
+            <button class="audio-play-btn" onclick="playAudio('Day05/New_Day5Part1audio13.mp3', this)" title="Play narration">
+              <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </h3>
+          <p><code>MIN</code> and <code>MAX</code> work on numbers, strings (lexicographic), and dates. They are extremely useful for finding boundaries — price ranges, earliest/latest dates, first/last alphabetical names.</p>
+
+          <div class="heading-with-audio" id="day05MinMaxCode" style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; margin-top: 14px;">
+            <small style="flex: 1; color: #64748b; font-size: 0.75rem;">MIN/MAX on Numbers, Dates, and Strings</small>
+            <button class="audio-play-btn" onclick="playAudio('Day05/New_Day5Part1audio14.mp3', this)" title="Play narration" style="flex-shrink: 0;">
+              <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </div>
+          <pre id="day05MinMaxExample"><code>-- Price range across all products
 SELECT MIN(unit_price) AS cheapest,
        MAX(unit_price) AS most_expensive
 FROM   products;
@@ -95,85 +205,130 @@ SELECT MIN(hire_date) AS first_hire,
        MAX(hire_date) AS latest_hire
 FROM   employees;
 
--- First and last order dates for a customer
-SELECT MIN(order_date) AS first_order,
-       MAX(order_date) AS last_order
-FROM   orders
-WHERE  customer_id = 1;</code></pre>
+-- First and last customer names alphabetically
+SELECT MIN(first_name) AS first_alpha,
+       MAX(first_name) AS last_alpha
+FROM   customers;</code></pre>
 
-          <div class="pro-tip-box">
-            💡 <strong>MIN/MAX on strings:</strong> For TEXT columns, MIN/MAX compare lexicographically (dictionary order), so <code>MAX(name)</code> returns the last name alphabetically. For dates stored as ISO-8601 TEXT (<code>YYYY-MM-DD</code>), lexicographic order equals chronological order — which is why ISO format is so important.
-          </div>
-        </div>
-
-        <div class="slide-section">
-          <h3>05. Aggregates with WHERE</h3>
-          <p>Combining aggregates with <code>WHERE</code> filters rows <em>before</em> the aggregate is computed. This is how you get conditional summaries without <code>GROUP BY</code>.</p>
-
-          <pre><code>-- Average salary of active employees only
-SELECT AVG(salary) AS avg_active_salary
-FROM   employees
-WHERE  is_active = 1;
-
--- Total revenue from Shipped orders
-SELECT SUM(total_amount) AS shipped_revenue
-FROM   orders
-WHERE  status = 'Shipped';
-
--- Number of products priced above 5000
-SELECT COUNT(*) AS premium_product_count
-FROM   products
-WHERE  unit_price > 5000;</code></pre>
-
-          <div class="interview-box">
-            <h4>🎯 Interview Insight — Aggregate with WHERE vs HAVING</h4>
-            <div>
-              <p><strong>Q: What is the difference between WHERE and HAVING with aggregates?</strong></p>
-              <p><em>A: WHERE filters individual rows BEFORE aggregation (Step 3). HAVING filters aggregated groups AFTER aggregation (Step 5). You cannot use aggregate functions in a WHERE clause — use HAVING for post-aggregation filters. WHERE is more performant because it reduces the dataset before the expensive aggregate operation.</em></p>
+          <div class="pro-tip-box" id="day05MinMaxTip">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; width: 100%;">
+              <strong style="color: #b45309;">💡 MIN/MAX on strings:</strong>
+              <button class="audio-play-btn" onclick="playAudio('Day05/New_Day5Part1audio15.mp3', this)" title="Play narration" style="flex-shrink: 0;">
+                <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              </button>
             </div>
+            <p>For TEXT columns, MIN/MAX compare lexicographically (dictionary order), so <code>MAX(name)</code> returns the last name alphabetically. For dates stored as ISO-8601 TEXT (<code>YYYY-MM-DD</code>), lexicographic order equals chronological order — which is why ISO format is so important.</p>
           </div>
         </div>
 
         <div class="slide-section">
-          <h3>06. NULL Behavior in Aggregates — Summary</h3>
-          <p>Understanding how each function handles NULLs prevents incorrect business calculations:</p>
+          <h3 class="heading-with-audio" id="day05Stacking">
+            06. Stacking Aggregates in a Single SELECT
+            <button class="audio-play-btn" onclick="playAudio('Day05/New_Day5Part1audio16.mp3', this)" title="Play narration">
+              <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </h3>
+          <p>You can combine multiple aggregate functions in a single query to build a one-row dashboard. The engine scans the table once and computes all aggregates in parallel — far more efficient than running separate queries.</p>
 
-          <pre><code>-- Demonstration: 15 employees, several have NULL commission
-SELECT COUNT(*)                  AS total_rows,        -- 15
-       COUNT(commission)          AS non_null_count,    -- count with value
-       SUM(commission)            AS sum_commissions,   -- sums non-NULL only
-       AVG(commission)            AS avg_of_non_null,   -- sum / non-null count
-       AVG(COALESCE(commission,0)) AS avg_all,          -- sum / 15
-       MIN(commission)            AS min_commission,    -- ignores NULLs
-       MAX(commission)            AS max_commission     -- ignores NULLs
-FROM   employees;</code></pre>
+          <div class="heading-with-audio" id="day05StackCode" style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; margin-top: 14px;">
+            <small style="flex: 1; color: #64748b; font-size: 0.75rem;">Stacking Aggregates — Data Quality Dashboard</small>
+            <button class="audio-play-btn" onclick="playAudio('Day05/New_Day5Part1audio17.mp3', this)" title="Play narration" style="flex-shrink: 0;">
+              <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </div>
+          <pre id="day05StackExample"><code>-- One-row data quality dashboard
+SELECT COUNT(*)                     AS total_rows,
+       COUNT(commission)            AS has_commission,
+       COUNT(*) - COUNT(commission) AS missing_commission,
+       SUM(salary)                  AS total_payroll,
+       ROUND(AVG(salary), 2)       AS avg_salary,
+       MIN(hire_date)               AS earliest_hire,
+       MAX(hire_date)               AS latest_hire
+FROM   employees;
 
-          <div class="pro-tip-box">
-            💡 <strong>Pro Tip — Validating Data Completeness:</strong> Use <code>COUNT(*) - COUNT(column)</code> to find the number of NULL values in any column: <code>SELECT COUNT(*) - COUNT(commission) AS null_commission_count FROM employees;</code>. This is the standard way to audit data quality in SQL.
+-- Total inventory value (expression inside SUM)
+SELECT SUM(stock_qty * unit_price) AS inventory_value,
+       COUNT(*)                    AS product_count
+FROM   products;</code></pre>
+
+          <div class="info-box" id="day05StackInfo">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; width: 100%;">
+              <strong style="color: #0f766e;">ℹ️ Expressions inside aggregates:</strong>
+              <button class="audio-play-btn" onclick="playAudio('Day05/New_Day5Part1audio18.mp3', this)" title="Play narration" style="flex-shrink: 0;">
+                <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+            </div>
+            <p>Aggregates accept any expression that evaluates to a scalar per row. <code>SUM(qty * unit_price)</code> computes each row's line total first, then sums them all. <code>COUNT(CASE WHEN x THEN 1 END)</code> counts conditionally. The expression is evaluated per row, then aggregated.</p>
           </div>
         </div>
 
         <div class="slide-section">
-          <h3>07. Aggregates with Expressions & DISTINCT</h3>
-          <p>Aggregate functions accept any expression, not just a column. You can also combine <code>DISTINCT</code> with <code>SUM</code>, <code>AVG</code>, <code>MIN</code>, <code>MAX</code>, <code>COUNT</code> to remove duplicates before aggregating.</p>
+          <h3 class="heading-with-audio" id="day05NullDeep">
+            07. NULL Deep Dive — Why AVG Ignores NULLs but COUNT(*) Doesn't
+            <button class="audio-play-btn" onclick="playAudio('Day05/New_Day5Part1audio19.mp3', this)" title="Play narration">
+              <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </h3>
+          <p>Understanding how each function handles NULLs prevents incorrect business calculations. This is the #1 interview topic for SQL analysts.</p>
 
-          <pre><code>-- Total inventory value (expression inside SUM)
-SELECT SUM(stock_qty * unit_price) AS inventory_value
-FROM   products;
+          <div class="heading-with-audio" id="day05NullBehavTable" style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; margin-top: 14px;">
+            <small style="flex: 1; color: #64748b; font-size: 0.75rem;">NULL Behavior Summary Table</small>
+            <button class="audio-play-btn" onclick="playAudio('Day05/New_Day5Part1audio20.mp3', this)" title="Play narration" style="flex-shrink: 0;">
+              <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </div>
+          <div class="db-mock-table-wrap">
+            <table class="db-table-mock db-table-mock--compact">
+              <thead><tr><th>Scenario</th><th>Function</th><th>Result</th><th>Why</th></tr></thead>
+              <tbody>
+                <tr><td>15 rows, 4 NULL commission</td><td><code>COUNT(*)</code></td><td>15</td><td>Counts rows, not values</td></tr>
+                <tr><td>15 rows, 4 NULL commission</td><td><code>COUNT(commission)</code></td><td>11</td><td>Skips NULLs</td></tr>
+                <tr><td>15 rows, 4 NULL commission</td><td><code>AVG(commission)</code></td><td>SUM/11</td><td>Divides by non-NULL count</td></tr>
+                <tr><td>All rows NULL</td><td><code>SUM(col)</code></td><td>NULL</td><td>No values to sum</td></tr>
+                <tr><td>Empty set (0 rows)</td><td><code>COUNT(*)</code></td><td>0</td><td>Zero rows counted</td></tr>
+                <tr><td>Empty set (0 rows)</td><td><code>AVG(col)</code></td><td>NULL</td><td>Nothing to average</td></tr>
+              </tbody>
+            </table>
+          </div>
 
--- Average discount applied on line items
-SELECT AVG(unit_price * 0.1) AS avg_discount
-FROM   order_items;
-
--- Sum of DISTINCT salaries (removes duplicates first)
-SELECT SUM(DISTINCT department_id) AS sum_distinct_depts
+          <div class="heading-with-audio" id="day05NullDemoCode" style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; margin-top: 14px;">
+            <small style="flex: 1; color: #64748b; font-size: 0.75rem;">NULL Behavior — Live Demonstration</small>
+            <button class="audio-play-btn" onclick="playAudio('Day05/New_Day5Part1audio21.mp3', this)" title="Play narration" style="flex-shrink: 0;">
+              <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+          </div>
+          <pre id="day05NullDemoExample"><code>-- Full NULL behavior demonstration
+SELECT COUNT(*)                      AS total_rows,
+       COUNT(commission)              AS non_null_count,
+       SUM(commission)                AS sum_commissions,
+       AVG(commission)                AS avg_of_non_null,
+       AVG(COALESCE(commission, 0))   AS avg_all,
+       MIN(commission)                AS min_commission,
+       MAX(commission)                AS max_commission
 FROM   employees;</code></pre>
 
-          <div class="warn-box">
-            ⚠️ <strong>DISTINCT inside aggregates:</strong> <code>COUNT(DISTINCT col)</code> is supported everywhere, but <code>SUM(DISTINCT col)</code> / <code>AVG(DISTINCT col)</code> are rarely useful in practice (they can hide data). Use them only when you genuinely need to deduplicate before summing.
+          <div class="pro-tip-box" id="day05NullTip">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; width: 100%;">
+              <strong style="color: #b45309;">💡 Data Quality Audit Pattern:</strong>
+              <button class="audio-play-btn" onclick="playAudio('Day05/New_Day5Part1audio22.mp3', this)" title="Play narration" style="flex-shrink: 0;">
+                <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+            </div>
+            <p>Use <code>COUNT(*) - COUNT(column)</code> to find the number of NULL values in any column: <code>SELECT COUNT(*) - COUNT(commission) AS null_count FROM employees;</code>. This is the standard way to audit data completeness in SQL — run it on every new dataset before analysis.</p>
+          </div>
+
+          <div class="warn-box" id="day05DistinctWarn">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; width: 100%;">
+              <strong style="color: #b91c1c;">⚠️ DISTINCT inside aggregates:</strong>
+              <button class="audio-play-btn" onclick="playAudio('Day05/New_Day5Part1audio23.mp3', this)" title="Play narration" style="flex-shrink: 0;">
+                <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+            </div>
+            <p><code>COUNT(DISTINCT col)</code> is supported everywhere and commonly used. But <code>SUM(DISTINCT col)</code> / <code>AVG(DISTINCT col)</code> are rarely useful in practice — they can hide data issues. Use them only when you genuinely need to deduplicate before summing.</p>
           </div>
         </div>
 
+        <!-- ── Interview Q&A ── -->
         <div class="slide-section">
           <div class="interview-box">
             <h4 style="margin: 0; margin-bottom: 12px;">🎯 Interview Q&amp;A — Aggregate Functions</h4>
@@ -261,62 +416,107 @@ FROM   employees;</code></pre>
     {
       "id": 1,
       "prompt": "<strong>Task: Payroll Summary</strong><br/>Find the total payroll (<code>SUM</code>), average salary (<code>AVG</code>), minimum, and maximum salary from the <code>employees</code> table.",
-      "referenceSql": "SELECT SUM(salary) AS total_payroll, AVG(salary) AS avg_salary, MIN(salary) AS min_salary, MAX(salary) AS max_salary FROM employees;"
+      "referenceSql": "SELECT SUM(salary) AS total_payroll, AVG(salary) AS avg_salary, MIN(salary) AS min_salary, MAX(salary) AS max_salary FROM employees;",
+      "questionAudio": "Day05/New_Day5Question01.mp3",
+      "solutionAudio": "Day05/New_Day5Question01sol.mp3"
     },
     {
       "id": 2,
       "prompt": "<strong>Task: Active Employee Count</strong><br/>Count how many employees are currently active (<code>is_active = 1</code>).",
-      "referenceSql": "SELECT COUNT(*) AS active_employees FROM employees WHERE is_active = 1;"
+      "referenceSql": "SELECT COUNT(*) AS active_employees FROM employees WHERE is_active = 1;",
+      "questionAudio": "Day05/New_Day5Question02.mp3",
+      "solutionAudio": "Day05/New_Day5Question02sol.mp3"
     },
     {
       "id": 3,
       "prompt": "<strong>Task: Product Price Range</strong><br/>Find the cheapest (<code>MIN</code>) and most expensive (<code>MAX</code>) <code>unit_price</code> from the <code>products</code> table.",
-      "referenceSql": "SELECT MIN(unit_price) AS cheapest, MAX(unit_price) AS most_expensive FROM products;"
+      "referenceSql": "SELECT MIN(unit_price) AS cheapest, MAX(unit_price) AS most_expensive FROM products;",
+      "questionAudio": "Day05/New_Day5Question03.mp3",
+      "solutionAudio": "Day05/New_Day5Question03sol.mp3"
     },
     {
       "id": 4,
       "prompt": "<strong>Task: Commission Coverage</strong><br/>How many employees have a commission assigned? How many do NOT? Use <code>COUNT(*)</code> and <code>COUNT(commission)</code> in one query.",
-      "referenceSql": "SELECT COUNT(*) AS total, COUNT(commission) AS has_commission, COUNT(*) - COUNT(commission) AS no_commission FROM employees;"
+      "referenceSql": "SELECT COUNT(*) AS total, COUNT(commission) AS has_commission, COUNT(*) - COUNT(commission) AS no_commission FROM employees;",
+      "questionAudio": "Day05/New_Day5Question04.mp3",
+      "solutionAudio": "Day05/New_Day5Question04sol.mp3"
     },
     {
       "id": 5,
       "prompt": "<strong>Task: Shipped Revenue</strong><br/>Calculate the total <code>total_amount</code> from orders where status = 'Shipped'.",
-      "referenceSql": "SELECT SUM(total_amount) AS shipped_revenue FROM orders WHERE status = 'Shipped';"
+      "referenceSql": "SELECT SUM(total_amount) AS shipped_revenue FROM orders WHERE status = 'Shipped';",
+      "questionAudio": "Day05/New_Day5Question05.mp3",
+      "solutionAudio": "Day05/New_Day5Question05sol.mp3"
     },
     {
       "id": 6,
       "prompt": "<strong>Task: Distinct Department Count</strong><br/>Count how many distinct <code>department_id</code> values appear in the <code>employees</code> table.",
-      "referenceSql": "SELECT COUNT(DISTINCT department_id) AS num_departments FROM employees;"
+      "referenceSql": "SELECT COUNT(DISTINCT department_id) AS num_departments FROM employees;",
+      "questionAudio": "Day05/New_Day5Question06.mp3",
+      "solutionAudio": "Day05/New_Day5Question06sol.mp3"
     },
     {
       "id": 7,
       "prompt": "<strong>Task: Inventory Value</strong><br/>Compute the total inventory value as <code>SUM(stock_qty * unit_price)</code> across all products.",
-      "referenceSql": "SELECT SUM(stock_qty * unit_price) AS inventory_value FROM products;"
+      "referenceSql": "SELECT SUM(stock_qty * unit_price) AS inventory_value FROM products;",
+      "questionAudio": "Day05/New_Day5Question07.mp3",
+      "solutionAudio": "Day05/New_Day5Question07sol.mp3"
     },
     {
       "id": 8,
-      "prompt": "<strong>Task: Average commission two ways</strong><br/>Show both <code>AVG(commission)</code> (over non-NULL only) and <code>AVG(COALESCE(commission, 0))</code> (treating NULL as 0) side by side.",
-      "referenceSql": "SELECT AVG(commission) AS avg_non_null, AVG(COALESCE(commission, 0)) AS avg_all FROM employees;"
+      "prompt": "<strong>Task: Average Commission Two Ways</strong><br/>Show both <code>AVG(commission)</code> (over non-NULL only) and <code>AVG(COALESCE(commission, 0))</code> (treating NULL as 0) side by side.",
+      "referenceSql": "SELECT AVG(commission) AS avg_non_null, AVG(COALESCE(commission, 0)) AS avg_all FROM employees;",
+      "questionAudio": "Day05/New_Day5Question08.mp3",
+      "solutionAudio": "Day05/New_Day5Question08sol.mp3"
     },
     {
       "id": 9,
-      "prompt": "<strong>Task: Premium product count</strong><br/>Count how many products have <code>unit_price &gt; 5000</code>.",
-      "referenceSql": "SELECT COUNT(*) AS premium_count FROM products WHERE unit_price > 5000;"
+      "prompt": "<strong>Task: Premium Product Count</strong><br/>Count how many products have <code>unit_price &gt; 5000</code>.",
+      "referenceSql": "SELECT COUNT(*) AS premium_count FROM products WHERE unit_price > 5000;",
+      "questionAudio": "Day05/New_Day5Question09.mp3",
+      "solutionAudio": "Day05/New_Day5Question09sol.mp3"
     },
     {
       "id": 10,
-      "prompt": "<strong>Task: Safe average over empty set</strong><br/>Compute <code>AVG(salary)</code> for employees in <code>department_id = 99</code> (which is empty), wrapping the result with COALESCE to show 0 instead of NULL.",
-      "referenceSql": "SELECT COALESCE(AVG(salary), 0) AS avg_salary FROM employees WHERE department_id = 99;"
+      "prompt": "<strong>Task: Safe Average Over Empty Set</strong><br/>Compute <code>AVG(salary)</code> for employees in <code>department_id = 99</code> (which is empty), wrapping the result with COALESCE to show 0 instead of NULL.",
+      "referenceSql": "SELECT COALESCE(AVG(salary), 0) AS avg_salary FROM employees WHERE department_id = 99;",
+      "questionAudio": "Day05/New_Day5Question10.mp3",
+      "solutionAudio": "Day05/New_Day5Question10sol.mp3"
     },
     {
       "id": 11,
-      "prompt": "<strong>Task: Highest order total</strong><br/>Find the maximum <code>total_amount</code> across all orders.",
-      "referenceSql": "SELECT MAX(total_amount) AS largest_order FROM orders;"
+      "prompt": "<strong>Task: Highest Order Total</strong><br/>Find the maximum <code>total_amount</code> across all orders.",
+      "referenceSql": "SELECT MAX(total_amount) AS largest_order FROM orders;",
+      "questionAudio": "Day05/New_Day5Question11.mp3",
+      "solutionAudio": "Day05/New_Day5Question11sol.mp3"
     },
     {
       "id": 12,
-      "prompt": "<strong>Task: Distinct regions</strong><br/>Count how many distinct <code>region</code> values exist in the <code>customers</code> table.",
-      "referenceSql": "SELECT COUNT(DISTINCT region) AS num_regions FROM customers;"
+      "prompt": "<strong>Task: Distinct Regions</strong><br/>Count how many distinct <code>region</code> values exist in the <code>customers</code> table.",
+      "referenceSql": "SELECT COUNT(DISTINCT region) AS num_regions FROM customers;",
+      "questionAudio": "Day05/New_Day5Question12.mp3",
+      "solutionAudio": "Day05/New_Day5Question12sol.mp3"
+    },
+    {
+      "id": 13,
+      "prompt": "<strong>Task: Conditional Revenue Split</strong><br/>In a single query, compute the total revenue for Shipped orders and the total revenue for Processing orders using <code>SUM(CASE WHEN...)</code>.",
+      "referenceSql": "SELECT SUM(CASE WHEN status = 'Shipped' THEN total_amount ELSE 0 END) AS shipped_rev, SUM(CASE WHEN status = 'Processing' THEN total_amount ELSE 0 END) AS processing_rev FROM orders;",
+      "questionAudio": "Day05/New_Day5Question13.mp3",
+      "solutionAudio": "Day05/New_Day5Question13sol.mp3"
+    },
+    {
+      "id": 14,
+      "prompt": "<strong>Task: Weighted Average Price</strong><br/>Compute the weighted average unit price across all order items, where the weight is the quantity ordered: <code>SUM(unit_price * qty) * 1.0 / SUM(qty)</code>.",
+      "referenceSql": "SELECT ROUND(SUM(unit_price * qty) * 1.0 / SUM(qty), 2) AS weighted_avg_price FROM order_items;",
+      "questionAudio": "Day05/New_Day5Question14.mp3",
+      "solutionAudio": "Day05/New_Day5Question14sol.mp3"
+    },
+    {
+      "id": 15,
+      "prompt": "<strong>Task: Employee Names Concatenated</strong><br/>Use <code>GROUP_CONCAT</code> to produce a single comma-separated string of all employee <code>first_name</code> values from the <code>employees</code> table.",
+      "referenceSql": "SELECT GROUP_CONCAT(first_name, ', ') AS all_names FROM employees;",
+      "questionAudio": "Day05/New_Day5Question15.mp3",
+      "solutionAudio": "Day05/New_Day5Question15sol.mp3"
     }
   ],
   "testQuestions": [

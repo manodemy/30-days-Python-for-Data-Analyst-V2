@@ -3987,7 +3987,7 @@ function loadDayContent(dayId) {
     }
 
     // Guest pass banner if arrived via Instagram / Reel link
-    const __isGuestPass = __urlParams.get('guest') === 'true' || Boolean(__qpQ);
+    const __isGuestPass = __urlParams.get('guest') === 'true' || Boolean(__qpQ) || __urlParams.has('utm_campaign');
     if (__isGuestPass) {
       const existingBanner = document.getElementById('reelGuestPassBanner');
       if (!existingBanner) {
@@ -4003,6 +4003,15 @@ function loadDayContent(dayId) {
         `;
         document.body.prepend(banner);
       }
+    }
+
+    // Auto-select Practice / Coding Editor tab on mobile viewports for Reel visitors or ?q= questions
+    if (__isGuestPass || Boolean(__qpQ) || __urlParams.get('tab') === 'practice' || __urlParams.get('mobile_tab') === 'practice') {
+      setTimeout(() => {
+        if (typeof setMobileTab === 'function') {
+          setMobileTab('practice');
+        }
+      }, 100);
     }
 
     renderSideSlide();

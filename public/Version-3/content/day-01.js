@@ -888,45 +888,45 @@ WHERE department = 'Engineering';
             </button>
           </h3>
           <p>Analytical databases like <strong>Google BigQuery</strong>, <strong>Snowflake</strong>, and <strong>Amazon Redshift</strong> store data by column on disk rather than by row. This means:</p>
-          <div class="rdbms-infographic">
+          <div class="rdbms-infographic" id="columnarConceptsBlock">
             <div class="info-columns">
               <div class="info-card info-card--green" id="cardZeroOverhead">
-                <div class="info-card-header" style="position: relative; display: flex; align-items: center; justify-content: center; width: 100%;">
-                  <span style="flex: 1; text-align: center; padding-left: 24px;">ZERO OVERHEAD</span>
+                <div class="info-card-header" style="display: flex; align-items: center; justify-content: space-between;">
+                  <span>ZERO OVERHEAD</span>
                   <button class="audio-play-btn info-card-play-btn" onclick="playAudio('Day01topic2/New_Day1Part2audio17.mp3', this)" title="Play narration">
                     <svg class="play-icon" width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                   </button>
                 </div>
                 <ul class="info-card-bullets">
-                  <li><span class="bullet-dot"></span>READS ONLY THE REQUESTED COLUMNS FROM DISK</li>
-                  <li><span class="bullet-dot"></span>ZERO I/O WASTED ON UNUSED ATTRIBUTES</li>
-                  <li><span class="bullet-dot"></span>IDEAL FOR ANALYTICAL (OLAP) WORKLOADS</li>
+                  <li id="bulletZero1"><span class="bullet-dot"></span><span class="bullet-text">READS ONLY THE REQUESTED COLUMNS FROM DISK</span></li>
+                  <li id="bulletZero2"><span class="bullet-dot"></span><span class="bullet-text">ZERO I/O WASTED ON UNUSED ATTRIBUTES</span></li>
+                  <li id="bulletZero3"><span class="bullet-dot"></span><span class="bullet-text">IDEAL FOR ANALYTICAL (OLAP) WORKLOADS</span></li>
                 </ul>
               </div>
               <div class="info-card info-card--amber" id="cardBilledPerByte">
-                <div class="info-card-header" style="position: relative; display: flex; align-items: center; justify-content: center; width: 100%;">
-                  <span style="flex: 1; text-align: center; padding-left: 24px;">BILLED PER BYTE</span>
+                <div class="info-card-header" style="display: flex; align-items: center; justify-content: space-between;">
+                  <span>BILLED PER BYTE</span>
                   <button class="audio-play-btn info-card-play-btn" onclick="playAudio('Day01topic2/New_Day1Part2audio18(new).mp3', this)" title="Play narration">
                     <svg class="play-icon" width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                   </button>
                 </div>
                 <ul class="info-card-bullets">
-                  <li><span class="bullet-dot"></span>CLOUD ENGINES BILL PER QUANTITY OF SCANNED DATA</li>
-                  <li><span class="bullet-dot"></span>PROJECTING 2 COLS INSTEAD OF 10 CUTS COST BY 80%</li>
-                  <li><span class="bullet-dot"></span>EFFICIENT QUERY DESIGN DIRECTLY SAVES BUDGET</li>
+                  <li id="bulletBilled1"><span class="bullet-dot"></span><span class="bullet-text">CLOUD ENGINES BILL PER QUANTITY OF SCANNED DATA</span></li>
+                  <li id="bulletBilled2"><span class="bullet-dot"></span><span class="bullet-text">PROJECTING 2 COLS INSTEAD OF 10 CUTS COST BY 80%</span></li>
+                  <li id="bulletBilled3"><span class="bullet-dot"></span><span class="bullet-text">EFFICIENT QUERY DESIGN DIRECTLY SAVES BUDGET</span></li>
                 </ul>
               </div>
               <div class="info-card info-card--cyan" id="cardCompression">
-                <div class="info-card-header" style="position: relative; display: flex; align-items: center; justify-content: center; width: 100%;">
-                  <span style="flex: 1; text-align: center; padding-left: 24px;">COMPRESSION</span>
+                <div class="info-card-header" style="display: flex; align-items: center; justify-content: space-between;">
+                  <span>COMPRESSION</span>
                   <button class="audio-play-btn info-card-play-btn" onclick="playAudio('Day01topic2/New_Day1Part2audio18.mp3', this)" title="Play narration">
                     <svg class="play-icon" width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                   </button>
                 </div>
                 <ul class="info-card-bullets">
-                  <li><span class="bullet-dot"></span>SIMILAR DATA TYPES CLUSTERED ON DISK</li>
-                  <li><span class="bullet-dot"></span>COMPRESSES SIGNIFICANTELY BETTER THAN ROWS</li>
-                  <li><span class="bullet-dot"></span>INDEX-ONLY SCAN BENEFITS AT STORAGE LAYER</li>
+                  <li id="bulletComp1"><span class="bullet-dot"></span><span class="bullet-text">SIMILAR DATA TYPES CLUSTERED ON DISK</span></li>
+                  <li id="bulletComp2"><span class="bullet-dot"></span><span class="bullet-text">COMPRESSES SIGNIFICANTLY BETTER THAN ROWS</span></li>
+                  <li id="bulletComp3"><span class="bullet-dot"></span><span class="bullet-text">INDEX-ONLY SCAN BENEFITS AT STORAGE LAYER</span></li>
                 </ul>
               </div>
             </div>

@@ -8914,6 +8914,8 @@ function loadAndPlayTrack(index, targetTime = 0) {
     if (track.src.includes('New_Day1Part1audio03.mp3')) updateDay01Audio03Highlights(0, false);
     if (track.src.includes('New_Day1Part2audio02.mp3') || track.src.includes('New_Day1Part2audio03.mp3') || track.src.includes('New_Day1Part2audio03(new).mp3')) updateDay01Topic02StorageCards(0, false, null);
     if (track.src.includes('New_Day1Part2audio04.mp3') || track.src.includes('New_Day1Part2audio05.mp3') || track.src.includes('New_Day1Part2audio06.mp3') || track.src.includes('New_Day1Part2audio07.mp3')) updateDay01Topic02Pipeline(0, false, null);
+    if (track.src.includes('New_Day1Part2audio17.mp3') || track.src.includes('New_Day1Part2audio18(new).mp3') || track.src.includes('New_Day1Part2audio18.mp3')) updateDay01Topic02ColumnarCards(0, false, null);
+    if (track.src.includes('New_Day1Part2audio17.mp3') || track.src.includes('New_Day1Part2audio18(new).mp3') || track.src.includes('New_Day1Part2audio18.mp3')) updateDay01Topic02ColumnarCards(0, false, null);
     if (track.src.includes('New_Day1Part2audio02.mp3') || track.src.includes('New_Day1Part2audio03.mp3') || track.src.includes('New_Day1Part2audio03(new).mp3')) updateDay01Topic02StorageCards(0, false, null);
     if (track.src.includes('New_Day1Part2audio04.mp3') || track.src.includes('New_Day1Part2audio05.mp3') || track.src.includes('New_Day1Part2audio06.mp3') || track.src.includes('New_Day1Part2audio07.mp3')) updateDay01Topic02Pipeline(0, false, null);
     if (track.src.includes('New_Day1Part1audio04.mp3') || 
@@ -8970,6 +8972,9 @@ function loadAndPlayTrack(index, targetTime = 0) {
     if (track.src.includes('New_Day1Part2audio05.mp3')) updateDay01Topic02Pipeline(audio.currentTime, !audio.paused, 'audio05');
     if (track.src.includes('New_Day1Part2audio06.mp3')) updateDay01Topic02Pipeline(audio.currentTime, !audio.paused, 'audio06');
     if (track.src.includes('New_Day1Part2audio07.mp3')) updateDay01Topic02Pipeline(audio.currentTime, !audio.paused, 'audio07');
+    if (track.src.includes('New_Day1Part2audio17.mp3')) updateDay01Topic02ColumnarCards(audio.currentTime, !audio.paused, 'audio17');
+    if (track.src.includes('New_Day1Part2audio18(new).mp3')) updateDay01Topic02ColumnarCards(audio.currentTime, !audio.paused, 'audio18new');
+    if (track.src.includes('New_Day1Part2audio18.mp3')) updateDay01Topic02ColumnarCards(audio.currentTime, !audio.paused, 'audio18');
     if (track.src.includes('New_Day3Part1audio05.mp3')) updateTableHighlights(audio.currentTime, !audio.paused);
     if (track.src.includes('New_Day3Part1audio07.mp3')) updateIntroHighlight(audio.currentTime, !audio.paused);
     if (track.src.includes('New_Day3Part1audio08.mp3')) updateNotCardHighlight(audio.currentTime, !audio.paused);
@@ -10528,5 +10533,75 @@ function updateDay01Topic02Pipeline(currentTime, isPlaying, trackKey) {
   } else if (trackKey === 'audio07') {
     if (connReturns) connReturns.classList.add('connector-active-pulse');
     if (nodeResult) nodeResult.classList.add('diagram-node-active', 'diagram-result-active');
+  }
+}
+
+
+function updateDay01Topic02ColumnarCards(currentTime, isPlaying, trackKey) {
+  const container = document.getElementById('columnarConceptsBlock');
+  if (!container) return;
+
+  const cardZero = document.getElementById('cardZeroOverhead');
+  const cardBilled = document.getElementById('cardBilledPerByte');
+  const cardComp = document.getElementById('cardCompression');
+
+  if (!cardZero || !cardBilled || !cardComp) return;
+
+  if (!isPlaying) {
+    cardZero.classList.remove('card-narration-active');
+    cardBilled.classList.remove('card-narration-active');
+    cardComp.classList.remove('card-narration-active');
+    container.querySelectorAll('.bullet-highlight').forEach(el => el.classList.remove('bullet-highlight'));
+    return;
+  }
+
+  // Clear previous active bullets
+  container.querySelectorAll('.bullet-highlight').forEach(el => el.classList.remove('bullet-highlight'));
+
+  if (trackKey === 'audio17') {
+    cardZero.classList.add('card-narration-active');
+    cardBilled.classList.remove('card-narration-active');
+    cardComp.classList.remove('card-narration-active');
+
+    const b1 = document.getElementById('bulletZero1');
+    const b2 = document.getElementById('bulletZero2');
+    const b3 = document.getElementById('bulletZero3');
+    if (currentTime >= 2.58 && currentTime < 6.18) {
+      if (b1) b1.classList.add('bullet-highlight');
+    } else if (currentTime >= 6.18 && currentTime < 9.52) {
+      if (b2) b2.classList.add('bullet-highlight');
+    } else if (currentTime >= 9.52) {
+      if (b3) b3.classList.add('bullet-highlight');
+    }
+  } else if (trackKey === 'audio18new') {
+    cardZero.classList.remove('card-narration-active');
+    cardBilled.classList.add('card-narration-active');
+    cardComp.classList.remove('card-narration-active');
+
+    const b1 = document.getElementById('bulletBilled1');
+    const b2 = document.getElementById('bulletBilled2');
+    const b3 = document.getElementById('bulletBilled3');
+    if (currentTime >= 1.90 && currentTime < 5.38) {
+      if (b1) b1.classList.add('bullet-highlight');
+    } else if (currentTime >= 5.38 && currentTime < 12.74) {
+      if (b2) b2.classList.add('bullet-highlight');
+    } else if (currentTime >= 12.74) {
+      if (b3) b3.classList.add('bullet-highlight');
+    }
+  } else if (trackKey === 'audio18') {
+    cardZero.classList.remove('card-narration-active');
+    cardBilled.classList.remove('card-narration-active');
+    cardComp.classList.add('card-narration-active');
+
+    const b1 = document.getElementById('bulletComp1');
+    const b2 = document.getElementById('bulletComp2');
+    const b3 = document.getElementById('bulletComp3');
+    if (currentTime >= 2.52 && currentTime < 5.78) {
+      if (b1) b1.classList.add('bullet-highlight');
+    } else if (currentTime >= 5.78 && currentTime < 9.02) {
+      if (b2) b2.classList.add('bullet-highlight');
+    } else if (currentTime >= 9.02) {
+      if (b3) b3.classList.add('bullet-highlight');
+    }
   }
 }

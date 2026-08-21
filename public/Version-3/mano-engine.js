@@ -9188,6 +9188,32 @@ function onNarrationSegmentEnded(index, events) {
 
   const endedTrack = combinedTracks[index];
 
+  if (typeof playbackMode !== 'undefined' && playbackMode === 'single') {
+    // Single track snippet finished cleanly ? do NOT auto-advance to next lecture track
+    if (activeAudioInstance) {
+      try { activeAudioInstance.pause(); } catch (e) { }
+      activeAudioInstance.src = "";
+      activeAudioInstance = null;
+    }
+    isCombinedPlaying = false;
+    isNarrationActive = false;
+    updatePlayButtonStates(false);
+    updateProgressUI();
+    cancelTypewriter();
+    if (typeof clearSlidePlaybackVisibility === 'function') clearSlidePlaybackVisibility();
+    const bar = document.getElementById('questionBar');
+    if (bar) bar.classList.remove('question-playing');
+
+    // If Topic 01 Question 1 finished and has separate solution audio, chain smoothly
+    if (endedTrack && endedTrack.type === 'question' && endedTrack.qId === 1 && !endedTrack.src.includes('topic2')) {
+      const solEntry = getSolutionEntry(1);
+      if (solEntry && !endedTrack.src.includes(solEntry.src) && !solEntry.src.includes(endedTrack.src)) {
+        setTimeout(() => playSolutionAudio(solEntry, document.getElementById('solutionAudioBtn')), 400);
+      }
+    }
+    return;
+  }
+
   if (combinedTrackIndex < combinedTracks.length - 1) {
     combinedTrackIndex++;
     loadAndPlayTrack(combinedTrackIndex);
@@ -9711,6 +9737,9 @@ function toggleBufferingState(isBuffering) {
 
 function updatePlayButtonStates(isPlaying) {
   const equalizerHtml = `<span class="audio-wave-equalizer" aria-hidden="true"><span></span><span></span><span></span></span>`;
+  const standardPlaySvg = `<svg class="play-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+  const standardPauseSvg = `<svg class="pause-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+
   const smallPlaySvg = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
   const smallPauseSvg = `<svg class="pause-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
 
@@ -9718,12 +9747,12 @@ function updatePlayButtonStates(isPlaying) {
   const navBtn = document.getElementById('navPlayBtn');
   if (navBtn) {
     if (isPlaying) {
-      navBtn.innerHTML = `${equalizerHtml} <span class="btn-icon" aria-hidden="true">?</span> <span class="btn-text">Pause Lesson</span>`;
+      navBtn.innerHTML = `${equalizerHtml} <span class="btn-icon" aria-hidden="true" style="display:inline-flex;align-items:center;">${standardPauseSvg}</span> <span class="btn-text">Pause Lesson</span>`;
       navBtn.classList.add('playing');
       navBtn.setAttribute('aria-label', 'Pause Lesson');
       navBtn.setAttribute('aria-pressed', 'true');
     } else {
-      navBtn.innerHTML = `<span class="btn-icon" aria-hidden="true">?</span> <span class="btn-text">Play Lesson</span>`;
+      navBtn.innerHTML = `<span class="btn-icon" aria-hidden="true" style="display:inline-flex;align-items:center;">${standardPlaySvg}</span> <span class="btn-text">Play Lesson</span>`;
       navBtn.classList.remove('playing');
       navBtn.setAttribute('aria-label', 'Play Lesson');
       navBtn.setAttribute('aria-pressed', 'false');
@@ -9733,12 +9762,12 @@ function updatePlayButtonStates(isPlaying) {
   const playPauseBtn = document.getElementById('playPauseBtn');
   if (playPauseBtn) {
     if (isPlaying) {
-      playPauseBtn.innerHTML = `${equalizerHtml} <span class="btn-icon" aria-hidden="true">?</span> <span class="btn-text">Pause Lesson</span>`;
+      playPauseBtn.innerHTML = `${equalizerHtml} <span class="btn-icon" aria-hidden="true" style="display:inline-flex;align-items:center;">${standardPauseSvg}</span> <span class="btn-text">Pause Lesson</span>`;
       playPauseBtn.classList.add('playing');
       playPauseBtn.setAttribute('aria-label', 'Pause Lesson');
       playPauseBtn.setAttribute('aria-pressed', 'true');
     } else {
-      playPauseBtn.innerHTML = `<span class="btn-icon" aria-hidden="true">?</span> <span class="btn-text">Play Lesson</span>`;
+      playPauseBtn.innerHTML = `<span class="btn-icon" aria-hidden="true" style="display:inline-flex;align-items:center;">${standardPlaySvg}</span> <span class="btn-text">Play Lesson</span>`;
       playPauseBtn.classList.remove('playing');
       playPauseBtn.setAttribute('aria-label', 'Play Lesson');
       playPauseBtn.setAttribute('aria-pressed', 'false');
@@ -9748,10 +9777,10 @@ function updatePlayButtonStates(isPlaying) {
   const playBtnCombined = document.getElementById('playBtnCombined');
   if (playBtnCombined && playBtnCombined !== playPauseBtn) {
     if (isPlaying) {
-      playBtnCombined.innerHTML = `<svg class="pause-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+      playBtnCombined.innerHTML = standardPauseSvg;
       playBtnCombined.classList.add('playing');
     } else {
-      playBtnCombined.innerHTML = `<svg class="play-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+      playBtnCombined.innerHTML = standardPlaySvg;
       playBtnCombined.classList.remove('playing');
     }
   }

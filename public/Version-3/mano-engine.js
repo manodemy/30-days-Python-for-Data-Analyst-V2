@@ -4630,7 +4630,13 @@ function loadDayContent(dayId) {
 // ─── Keyboard Shortcuts ───────────────────────────────────────────────────────
 function initKeyboardShortcuts() {
   document.addEventListener('keydown', (e) => {
-    // Ctrl+Enter → Run query
+    // Check if user is typing in an active input field or CodeMirror editor
+    const isTyping = e.target.tagName === 'INPUT' || 
+                     e.target.tagName === 'TEXTAREA' || 
+                     e.target.isContentEditable || 
+                     (e.target.closest && (e.target.closest('.CodeMirror') || e.target.closest('#mainEditorWrap') || e.target.closest('#testEditorWrap')));
+
+    // Ctrl+Enter ? Run query
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
       e.preventDefault();
       if (document.getElementById('testOverlay')?.classList.contains('open')) {
@@ -4638,8 +4644,9 @@ function initKeyboardShortcuts() {
       } else {
         runCurrentQuery();
       }
+      return;
     }
-    // Ctrl+L → Clear editor
+    // Ctrl+L ? Clear editor
     if ((e.ctrlKey || e.metaKey) && e.key === 'l') {
       e.preventDefault();
       if (document.getElementById('testOverlay')?.classList.contains('open')) {
@@ -4647,18 +4654,21 @@ function initKeyboardShortcuts() {
       } else {
         clearEditor();
       }
+      return;
     }
-    // Ctrl+→ → Next question
+    // Ctrl+? ? Next question
     if ((e.ctrlKey || e.metaKey) && e.key === 'ArrowRight') {
       e.preventDefault();
       nextQuestion();
+      return;
     }
-    // Ctrl+← → Previous question
+    // Ctrl+? ? Previous question
     if ((e.ctrlKey || e.metaKey) && e.key === 'ArrowLeft') {
       e.preventDefault();
       prevQuestion();
+      return;
     }
-    // Esc → Close any open overlay
+    // Esc ? Close any open overlay
     if (e.key === 'Escape') {
       const testOverlay = document.getElementById('testOverlay');
       const scorecardOverlay = document.getElementById('scorecardOverlay');
@@ -4666,6 +4676,43 @@ function initKeyboardShortcuts() {
       if (scorecardOverlay?.classList.contains('open')) { closeScorecard(); return; }
       if (peekPopover?.classList.contains('open')) { closePeekPopover(); return; }
       if (testOverlay?.classList.contains('open')) { closeTestPortal(); return; }
+    }
+
+    // Media Player Shortcuts (Only when not typing inside editor or search inputs)
+    if (!isTyping) {
+      if (e.key === ' ' || e.key === 'k' || e.key === 'K') {
+        e.preventDefault();
+        toggleCombinedPlayback();
+      } else if (e.key === 'j' || e.key === 'J') {
+        e.preventDefault();
+        skipCombined(-10);
+      } else if (e.key === 'l' || e.key === 'L') {
+        e.preventDefault();
+        skipCombined(10);
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        skipCombined(-5);
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        skipCombined(5);
+      } else if (e.key === 'm' || e.key === 'M') {
+        e.preventDefault();
+        if (activeAudioInstance) {
+          activeAudioInstance.muted = !activeAudioInstance.muted;
+        }
+      } else if (e.key === '>' || (e.shiftKey && e.key === '.')) {
+        e.preventDefault();
+        const speeds = [0.75, 1.0, 1.25, 1.5, 1.75, 2.0];
+        const curIdx = speeds.indexOf(currentPlaybackSpeed || 1.0);
+        const nextSpeed = speeds[Math.min(speeds.length - 1, (curIdx === -1 ? 1 : curIdx) + 1)];
+        selectSpeedOption(nextSpeed, `${nextSpeed}x`);
+      } else if (e.key === '<' || (e.shiftKey && e.key === ',')) {
+        e.preventDefault();
+        const speeds = [0.75, 1.0, 1.25, 1.5, 1.75, 2.0];
+        const curIdx = speeds.indexOf(currentPlaybackSpeed || 1.0);
+        const prevSpeed = speeds[Math.max(0, (curIdx === -1 ? 1 : curIdx) - 1)];
+        selectSpeedOption(prevSpeed, `${prevSpeed}x`);
+      }
     }
   });
 }
@@ -5166,7 +5213,61 @@ function initCustomDropdowns() {
 }
 
 function setupTimelineDragging() {
-  // Stub: visual timeline features removed
+  const seekBar = document.getElementById('seekBar');
+  const tooltip = document.getElementById('timelineHoverTooltip');
+  const timelineRow = document.getElementById('playbackTimelineRow');
+  if (!seekBar || !timelineRow) return;
+
+  // Real-time hover preview tooltip showing Scene Title + Time
+  timelineRow.addEventListener('mousemove', (e) => {
+    const rect = seekBar.getBoundingClientRect();
+    const pos = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    const targetTime = pos * totalCombinedDuration;
+
+    // Resolve track at this hover position
+    let elapsed = 0;
+    let trackTitle = '';
+    let trackType = 'Theory';
+    for (let i = 0; i < combinedTrackDurations.length; i++) {
+      const dur = combinedTrackDurations[i];
+      if (targetTime < elapsed + dur || i === combinedTrackDurations.length - 1) {
+        const t = combinedTracks[i];
+        if (t) {
+          trackTitle = t.title || t.src || '';
+          if (t.type === 'question') trackType = 'Practice';
+          else if (t.type === 'solution') trackType = 'Code Solution';
+          else if (t.type === 'completion') trackType = 'Milestone';
+        }
+        break;
+      }
+      elapsed += dur;
+    }
+
+    if (tooltip) {
+      tooltip.classList.add('active');
+      tooltip.style.left = `${Math.max(40, Math.min(rect.width - 40, e.clientX - rect.left))}px`;
+      tooltip.innerHTML = `<span style="color:#ef4444; font-weight:700;">${formatTime(targetTime)}</span> ? <span style="color:#94a3b8;">${trackType}:</span> <strong>${trackTitle}</strong>`;
+    }
+  });
+
+  timelineRow.addEventListener('mouseleave', () => {
+    if (tooltip) tooltip.classList.remove('active');
+  });
+
+  // Smooth live scrubbing
+  seekBar.addEventListener('input', (e) => {
+    isScrubbing = true;
+    const targetTime = parseFloat(e.target.value);
+    currentCombinedTime = targetTime;
+    updateProgressUI();
+    // Live visual scene sync during scrub
+    seekCombinedPlayback(targetTime, false);
+  });
+
+  seekBar.addEventListener('change', (e) => {
+    isScrubbing = false;
+    seekCombinedPlayback(e.target.value, true);
+  });
 }
 
 let currentPlayingAudio = null;
@@ -8639,8 +8740,9 @@ function onNarrationSegmentEnded(index, events) {
   }
 }
 
-function seekCombinedPlayback(val) {
+function seekCombinedPlayback(val, shouldPlay = true) {
   const targetTime = parseFloat(val);
+  currentCombinedTime = targetTime;
 
   // Find which track this targetTime belongs to
   let elapsed = 0;
@@ -8661,57 +8763,70 @@ function seekCombinedPlayback(val) {
     }
   }
 
-  // Load or seek the track
-  if (combinedTrackIndex !== trackIdx || !activeAudioInstance) {
-    loadAndPlayTrack(trackIdx, localOffset);
-  } else {
-    try {
-      activeAudioInstance.currentTime = localOffset;
-    } catch (e) { }
-    cancelTypewriter();
+  const track = combinedTracks[trackIdx];
 
-    const track = combinedTracks[trackIdx];
-    if (track) {
-      if (track.type === 'question' || track.type === 'solution') {
-        teardownCompletionAnimation();
-        const targetQIdx = COURSE_CONFIG.practiceQuestions ? COURSE_CONFIG.practiceQuestions.findIndex(q => q.id === track.qId) : -1;
-        if (targetQIdx !== -1) {
-          currentPracticeQ = targetQIdx;
-          renderPracticeQuestion();
-          updatePracticeStats();
-        }
-        const bar = document.getElementById('questionBar');
-        if (bar) bar.classList.add('question-playing');
-        setMobileTab('practice');
-
-        if (track.type === 'solution') {
-          const solMap = questionSolutionMap[currentDay] || questionSolutionMap['day01'];
-          const solEntry = solMap ? solMap[track.qId] : null;
-          if (solEntry) {
-            startAudioSyncedTypewriter(activeAudioInstance, solEntry);
-          }
-        }
-      } else if (track.type === 'completion') {
-        if (!completionOverlayDiv || !completionScene) {
-          launchCompletionAnimation(activeAudioInstance);
-        }
-      } else {
-        teardownCompletionAnimation();
-        const bar = document.getElementById('questionBar');
-        if (bar) bar.classList.remove('question-playing');
-        scrollToTarget(track.target);
-        setMobileTab('theory');
+  // 1. INSTANT SYNCHRONOUS SCENE TRANSITION (Zero latency DOM visual directing)
+  if (track) {
+    if (track.type === 'question' || track.type === 'solution') {
+      teardownCompletionAnimation();
+      const targetQIdx = COURSE_CONFIG.practiceQuestions ? COURSE_CONFIG.practiceQuestions.findIndex(q => q.id === track.qId) : -1;
+      if (targetQIdx !== -1) {
+        currentPracticeQ = targetQIdx;
+        renderPracticeQuestion();
+        updatePracticeStats();
       }
-    }
-    if (!isCombinedPlaying) {
-      activeAudioInstance.play().then(() => {
-        isCombinedPlaying = true;
-        updatePlayButtonStates(true);
-      }).catch(() => {});
+      const bar = document.getElementById('questionBar');
+      if (bar) bar.classList.add('question-playing');
+      setMobileTab('practice');
+
+      if (track.type === 'solution') {
+        const solMap = questionSolutionMap[currentDay] || questionSolutionMap['day01'];
+        const solEntry = solMap ? solMap[track.qId] : null;
+        if (solEntry) {
+          startAudioSyncedTypewriter({ currentTime: localOffset, paused: !isCombinedPlaying }, solEntry);
+        }
+      }
+    } else if (track.type === 'completion') {
+      if (!completionOverlayDiv || !completionScene) {
+        launchCompletionAnimation();
+      }
+    } else {
+      teardownCompletionAnimation();
+      const bar = document.getElementById('questionBar');
+      if (bar) bar.classList.remove('question-playing');
+      setMobileTab('theory');
+      if (track.target) {
+        scrollToTarget(track.target, true);
+      }
     }
   }
 
-  currentCombinedTime = targetTime;
+  // 2. AUDIO TRACK RESOLUTION & PLAYBACK
+  if (shouldPlay) {
+    if (combinedTrackIndex !== trackIdx || !activeAudioInstance) {
+      loadAndPlayTrack(trackIdx, localOffset);
+    } else {
+      try {
+        activeAudioInstance.currentTime = localOffset;
+      } catch (e) { }
+
+      if (track && track.type === 'solution') {
+        const solMap = questionSolutionMap[currentDay] || questionSolutionMap['day01'];
+        const solEntry = solMap ? solMap[track.qId] : null;
+        if (solEntry) {
+          startAudioSyncedTypewriter(activeAudioInstance, solEntry);
+        }
+      }
+
+      if (!isCombinedPlaying) {
+        activeAudioInstance.play().then(() => {
+          isCombinedPlaying = true;
+          updatePlayButtonStates(true);
+        }).catch(() => {});
+      }
+    }
+  }
+
   updateProgressUI();
   if (typeof updateChapterListActive === 'function') updateChapterListActive();
 }

@@ -781,6 +781,8 @@ a { color: var(--cyan); text-decoration: none; }
   line-height: 1.55;
   color: #1e293b !important;
   font-weight: 500;
+  text-align: justify !important;
+  text-justify: inter-word !important;
 }
 .question-prompt code {
   background: #f1f5f9 !important;
@@ -2689,6 +2691,8 @@ pre span {
   line-height: 1.55;
   color: #1e293b !important;
   font-weight: 500;
+  text-align: justify !important;
+  text-justify: inter-word !important;
 }
 .test-question-prompt code {
   background: #f1f5f9 !important;

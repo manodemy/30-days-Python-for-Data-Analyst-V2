@@ -2579,6 +2579,189 @@ function resumeTestAttempt(dayId, attempt, timeRemaining) {
   startTestTimer();
 }
 
+function renderTestQuestion(index) {
+  testCurrentQ = index;
+  const questions = (COURSE_CONFIG && COURSE_CONFIG.testQuestions) ? COURSE_CONFIG.testQuestions : [];
+  const q = questions[index];
+
+  const qPromptEl = document.getElementById('testQuestionPrompt');
+  if (qPromptEl) {
+    if (q) {
+      qPromptEl.innerHTML = `<div style="text-align: justify; text-justify: inter-word;"><strong style="color:#0284c7;">Question ${index + 1}:</strong> ${q.prompt}</div>`;
+    } else {
+      qPromptEl.innerHTML = `<div style="text-align: justify; text-justify: inter-word;">Question ${index + 1} not available.</div>`;
+    }
+  }
+
+  const counterEl = document.getElementById('testQCounter');
+  if (counterEl) {
+    counterEl.textContent = `Q${index + 1} / 25`;
+  }
+
+  // Load saved student answer or default boilerplate
+  if (testEditor) {
+    const saved = (testAnswers && testAnswers[index]) ? testAnswers[index].answer : '';
+    testEditor.setValue(saved || '-- Write your answer here\n');
+    setTimeout(() => {
+      testEditor.refresh();
+      testEditor.focus();
+    }, 50);
+  }
+
+  // Reset output terminal for current question
+  const outEl = document.getElementById('testOutput');
+  if (outEl) {
+    outEl.innerHTML = `<div class="output-label">Terminal Output</div><span class="output-success">⚡ Write your SQL query above and click 'Run' to execute it!</span>`;
+  }
+
+  // Update sidebar active button
+  document.querySelectorAll('.test-q-btn').forEach((btn, i) => {
+    btn.classList.toggle('current', i === index);
+  });
+}
+
+function switchTestQuestion(index) {
+  saveCurrentTestAnswer();
+  renderTestQuestion(index);
+}
+
+function saveCurrentTestAnswer() {
+  if (!testEditor || typeof testCurrentQ === 'undefined') return;
+  const val = testEditor.getValue();
+  if (!testAnswers) testAnswers = [];
+  if (!testAnswers[testCurrentQ]) {
+    testAnswers[testCurrentQ] = { answer: '', attempted: false };
+  }
+  testAnswers[testCurrentQ].answer = val;
+  const isAttempted = (val.trim() !== '' && val.trim() !== '-- Write your answer here' && val.trim() !== '-- Write your SQL query here\n' && val.trim() !== '-- Write your query here\n');
+  testAnswers[testCurrentQ].attempted = isAttempted;
+
+  const btn = document.getElementById(`tqBtn${testCurrentQ}`);
+  if (btn) {
+    btn.classList.toggle('attempted', isAttempted);
+  }
+  updateTestProgress();
+}
+
+function clearTestEditor() {
+  if (testEditor) {
+    testEditor.setValue('');
+    testEditor.focus();
+  }
+}
+
+function updateTestTimerDisplay() {
+  const timerEl = document.getElementById('testTimer');
+  if (!timerEl) return;
+  const m = Math.floor(Math.max(0, testSecondsRemaining) / 60);
+  const s = Math.max(0, testSecondsRemaining) % 60;
+  timerEl.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  if (testSecondsRemaining <= 300) {
+    timerEl.classList.add('warning');
+  } else {
+    timerEl.classList.remove('warning');
+  }
+}
+
+function updateTestProgress() {
+  const attemptedCount = (testAnswers || []).filter(a => a && a.attempted).length;
+  const attEl = document.getElementById('testAttemptedCount');
+  if (attEl) attEl.textContent = attemptedCount;
+
+  const progEl = document.getElementById('testProgress');
+  if (progEl) progEl.textContent = `Attempted: ${attemptedCount} / 25`;
+
+  const fillEl = document.getElementById('testProgressFill');
+  if (fillEl) {
+    const pct = Math.round((attemptedCount / 25) * 100);
+    fillEl.style.width = `${pct}%`;
+  }
+}
+
+function runTestQuery() {
+  if (!testEditor) return;
+  saveCurrentTestAnswer();
+  const sql = testEditor.getValue().trim();
+  const outEl = document.getElementById('testOutput');
+  if (!outEl) return;
+
+  if (!sql || sql === '-- Write your answer here' || sql === '-- Write your query here\n') {
+    outEl.innerHTML = `<div class="output-label">Terminal Output</div><span style="color:#ef4444;">⚠️ Please write a query before running.</span>`;
+    return;
+  }
+
+  if (typeof db === 'undefined' || !db) {
+    outEl.innerHTML = `<div class="output-label">Terminal Output</div><span style="color:#ef4444;">Database initializing... please wait.</span>`;
+    return;
+  }
+
+  try {
+    const result = db.exec(sql);
+    const questions = (COURSE_CONFIG && COURSE_CONFIG.testQuestions) ? COURSE_CONFIG.testQuestions : [];
+    const currentQ = questions[testCurrentQ];
+
+    let grading = null;
+    if (window.gradeSubmission && currentQ) {
+      grading = window.gradeSubmission(sql, currentQ, db);
+    }
+
+    let statusBanner = '';
+    if (grading) {
+      if (grading.passed) {
+        statusBanner = `<div style="background:rgba(16,185,129,0.15);border:1px solid #10b981;border-radius:6px;padding:6px 12px;margin-bottom:8px;color:#34d399;font-weight:700;font-size:0.8rem;">✅ Result matches expected solution!</div>`;
+      } else {
+        const diffMsg = grading.error || (grading.diff ? `Mismatch: ${grading.diff.type}` : 'Result does not match expected output.');
+        statusBanner = `<div style="background:rgba(239,68,68,0.12);border:1px solid #ef4444;border-radius:6px;padding:6px 12px;margin-bottom:8px;color:#f87171;font-weight:600;font-size:0.8rem;">⚠️ ${diffMsg}</div>`;
+      }
+    }
+
+    if (!result || result.length === 0) {
+      outEl.innerHTML = `
+        <div class="output-label">Terminal Output</div>
+        ${statusBanner}
+        <span class="output-success">Query executed successfully. (0 rows returned)</span>
+      `;
+      return;
+    }
+
+    const columns = result[0].columns;
+    const values = result[0].values;
+
+    let tableHtml = `<div class="db-mock-table-wrap" style="max-height: 140px; overflow: auto; margin-top: 4px;"><table class="db-table-mock db-table-mock--compact"><thead><tr>`;
+    columns.forEach(col => {
+      tableHtml += `<th>${escHtml(col)}</th>`;
+    });
+    tableHtml += `</tr></thead><tbody>`;
+
+    values.slice(0, 50).forEach(row => {
+      tableHtml += `<tr>`;
+      row.forEach(val => {
+        const cellVal = val === null ? '<span style="color:#ef4444;font-style:italic;">NULL</span>' : escHtml(String(val));
+        tableHtml += `<td>${cellVal}</td>`;
+      });
+      tableHtml += `</tr>`;
+    });
+    tableHtml += `</tbody></table></div>`;
+
+    if (values.length > 50) {
+      tableHtml += `<div style="font-size:0.7rem;color:#64748b;margin-top:4px;">Showing first 50 of ${values.length} rows</div>`;
+    }
+
+    outEl.innerHTML = `
+      <div class="output-label">Terminal Output</div>
+      ${statusBanner}
+      ${tableHtml}
+    `;
+  } catch (err) {
+    const errorHint = (typeof analyzeQueryError === 'function') ? analyzeQueryError(sql, err) : '';
+    outEl.innerHTML = `
+      <div class="output-label">Terminal Output</div>
+      <div style="color:#ef4444;font-weight:700;margin-bottom:4px;">❌ Error: ${escHtml(err.message)}</div>
+      ${errorHint ? `<div style="color:#cbd5e1;font-size:0.78rem;background:rgba(255,255,255,0.05);padding:6px 10px;border-radius:4px;border-left:3px solid #f59e0b;">💡 ${escHtml(errorHint)}</div>` : ''}
+    `;
+  }
+}
+
 function renderScorecardFromAttempt(attempt) {
   if (!attempt) return;
 
@@ -3860,8 +4043,8 @@ function loadDayContent(dayId) {
   const dayMeta = manifest.find(d => d.id === dayId);
   const dayNum = parseInt(dayId.replace('day', ''), 10) || 1;
 
-  // 1. Days 05–60: Coming Soon lock for non-admin students
-  if (dayNum >= 5 && !isAdminUser()) {
+  // 1. Days 06–60: Coming Soon lock for non-admin students
+  if (dayNum >= 6 && !isAdminUser()) {
     if (window.showComingSoonToast) {
       window.showComingSoonToast(dayMeta?.title || `Day ${String(dayNum).padStart(2, '0')}`, dayNum);
     }

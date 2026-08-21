@@ -4089,6 +4089,58 @@ function startAudioSyncedTypewriter(audioObj, solEntry) {
   step();
 }
 
+function showYourTurnBanner() {
+  const toolbar = document.querySelector('.editor-toolbar');
+  if (toolbar && !document.getElementById('yourTurnBanner')) {
+    const banner = document.createElement('div');
+    banner.id = 'yourTurnBanner';
+    banner.className = 'your-turn-banner';
+    banner.innerHTML = `💡 <strong>Your Turn!</strong> Write & Run query before solution plays!`;
+    toolbar.appendChild(banner);
+  }
+}
+
+function removeYourTurnBanner() {
+  const existing = document.getElementById('yourTurnBanner');
+  if (existing) existing.remove();
+}
+
+function renderPracticeQuestion() {
+  const q = COURSE_CONFIG.practiceQuestions[currentPracticeQ];
+  if (q) {
+    const promptEl = document.getElementById('questionPrompt');
+    if (promptEl) promptEl.innerHTML = `Q${q.id}. ${q.prompt}`;
+    setTimeout(() => { if (typeof initSchemaCodePeeking === 'function') initSchemaCodePeeking(); }, 20);
+    const counterEl = document.getElementById('qCounter');
+    if (counterEl) counterEl.textContent = `Question-${String(q.id).padStart(2, '0')}`;
+
+    // Update question audio button based on the question id & active topic slide
+    const btn = document.getElementById('questionAudioBtn');
+    let audioSrc = q.questionAudio || getQuestionAudioSrc(q.id);
+    if (btn) {
+      if (audioSrc) {
+        btn.style.display = 'inline-flex';
+        btn.onclick = () => playQuestionAudio(btn, audioSrc);
+      } else {
+        btn.style.display = 'none';
+      }
+    }
+
+    // Show/hide solution audio button based on whether this question has a solution audio
+    const solBtn = document.getElementById('solutionAudioBtn');
+    if (solBtn) {
+      let solEntry = (q && q.solutionAudio) ? { src: q.solutionAudio, code: q.referenceSql, startAt: 1.5, charInterval: 70 } : getSolutionEntry(q.id);
+      solBtn.style.display = solEntry ? 'inline-flex' : 'none';
+      solBtn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+      solBtn.classList.remove('playing');
+    }
+
+    // Remove highlight when question changes
+    const bar = document.getElementById('questionBar');
+    if (bar) bar.classList.remove('question-playing');
+  }
+}
+
 function playQuestionAudio(btn, audioSrc) {
   if (IS_GUEST_REEL || (!isPaidUser() && !isAdminUser() && currentDay !== 'day01' && currentDay !== 'day02')) {
     showGuestPaywallModal('question audio narration');

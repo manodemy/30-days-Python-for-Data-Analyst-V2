@@ -8732,6 +8732,9 @@ function updateProgressUI() {
   if (playbackTime && !isDragging) {
     playbackTime.textContent = `${formatTime(currentCombinedTime)} / ${formatTime(totalCombinedDuration)}`;
   }
+  if (typeof updateChapterListActive === 'function') {
+    updateChapterListActive();
+  }
 }
 
 function formatTime(secs) {
@@ -9155,28 +9158,51 @@ function skipCombined(deltaSecs) {
 // ─── P1 #7: Chapter list ─────────────────────────────────────────────────────
 function buildChapterList() {
   const listEl = document.getElementById('chapterList');
-  if (!listEl) return;
-  const typeIcons = { narration: '▶', question: '❓', solution: '✅', completion: '🏆' };
+  if (!listEl || !combinedTracks || combinedTracks.length === 0) return;
+
+  const svgPlay = '<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+  const svgPractice = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>';
+  const svgSolution = '<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>';
+  const svgMilestone = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H7"/><path d="M14 14.66V17c0 .55.45 1 1 1h2"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>';
+
   let elapsed = 0;
   listEl.innerHTML = '';
+
   combinedTracks.forEach((track, idx) => {
+    const trackStartSec = elapsed;
     const dur = combinedTrackDurations[idx] || 0;
+    elapsed += dur;
+
     const item = document.createElement('div');
     item.className = 'chapter-item';
+    if (idx === combinedTrackIndex) item.classList.add('active');
     item.dataset.idx = idx;
     item.setAttribute('role', 'option');
+
+    let iconSvg = svgPlay;
+    if (track.type === 'question') {
+      iconSvg = svgPractice;
+    } else if (track.type === 'solution') {
+      iconSvg = svgSolution;
+    } else if (track.type === 'completion') {
+      iconSvg = svgMilestone;
+    }
+
     item.innerHTML = `
-      <span class="chapter-item__icon">${typeIcons[track.type] || '▶'}</span>
-      <span class="chapter-item__time">${formatTime(elapsed)}</span>
-      <span class="chapter-item__title">${track.title || track.src.split('/').pop().replace('.mp3', '')}</span>`;
+      <span class="chapter-item__icon">${iconSvg}</span>
+      <span class="chapter-item__time">${formatTime(trackStartSec)}</span>
+      <span class="chapter-item__title">${escHtml(track.title || track.src.split('/').pop().replace('.mp3', ''))}</span>
+    `;
+
     item.addEventListener('click', (e) => {
       e.stopPropagation();
-      seekCombinedPlayback(elapsed);
-      if (!isCombinedPlaying) playCombinedPlayback();
+      seekCombinedPlayback(trackStartSec, true);
       listEl.style.display = 'none';
+      const btn = document.getElementById('chapterPillBtn');
+      if (btn) { btn.classList.remove('active'); btn.setAttribute('aria-expanded', 'false'); }
     });
+
     listEl.appendChild(item);
-    elapsed += dur;
   });
 }
 
@@ -9184,7 +9210,8 @@ function updateChapterListActive() {
   const listEl = document.getElementById('chapterList');
   if (listEl) {
     listEl.querySelectorAll('.chapter-item').forEach(item => {
-      item.classList.toggle('active', parseInt(item.dataset.idx, 10) === combinedTrackIndex);
+      const idx = parseInt(item.dataset.idx, 10);
+      item.classList.toggle('active', idx === combinedTrackIndex);
     });
   }
   const titleEl = document.getElementById('activeChapterTitle');
@@ -9217,11 +9244,11 @@ document.addEventListener('click', (e) => {
   if (listEl && listEl.style.display !== 'none') {
     if (!listEl.contains(e.target) && (!pillBtn || !pillBtn.contains(e.target))) {
       listEl.style.display = 'none';
+      if (pillBtn) { pillBtn.classList.remove('active'); pillBtn.setAttribute('aria-expanded', 'false'); }
     }
   }
 });
 
-// ─── P1 #8: Captions toggle ──────────────────────────────────────────────────
 let captionsEnabled = false;
 
 function toggleCaptions() {

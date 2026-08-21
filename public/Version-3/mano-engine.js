@@ -4151,42 +4151,18 @@ function playQuestionAudio(btn, audioSrc) {
     return;
   }
   const src = audioSrc || 'New_Day1Part1Question01.mp3';
+  const fullSrc = src.startsWith('http') || src.startsWith('/') ? src : `/Version-3/${src}`;
   const bar = document.getElementById('questionBar');
 
-  // Stop any OTHER standalone audio playing
-  if (currentPlayingAudio && !combinedAudios.includes(currentPlayingAudio)) {
+  // Stop any currently playing audio cleanly
+  if (currentPlayingAudio) {
     currentPlayingAudio.pause();
     if (currentPlayingBtn && currentPlayingBtn !== btn) {
       currentPlayingBtn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
       currentPlayingBtn.classList.remove('playing');
     }
   }
-
-  // Check if this track is already the active combined track
-  const trackIdx = combinedTracks.findIndex(t => t.src === src);
-  const combinedAudio = trackIdx !== -1 ? combinedAudios[trackIdx] : null;
-
-  // Toggle pause/resume if already playing this track
-  if (combinedAudio && combinedTrackIndex === trackIdx && currentPlayingBtn === btn) {
-    if (combinedAudio.paused) {
-      combinedAudio.play();
-      isCombinedPlaying = true;
-      btn.innerHTML = `<svg class="pause-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
-      btn.classList.add('playing');
-      if (bar) bar.classList.add('question-playing');
-      updatePlayButtonStates(true);
-      startProgressLoop();
-    } else {
-      combinedAudio.pause();
-      isCombinedPlaying = false;
-      btn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
-      btn.classList.remove('playing');
-      if (bar) bar.classList.remove('question-playing');
-      updatePlayButtonStates(false);
-      if (playProgressInterval) clearInterval(playProgressInterval);
-    }
-    return;
-  }
+  cancelTypewriter();
 
   // Scroll theory panel to top
   const slideContent = document.getElementById('slideContent');
@@ -4195,20 +4171,35 @@ function playQuestionAudio(btn, audioSrc) {
   // Highlight question bar
   if (bar) bar.classList.add('question-playing');
 
-  // Jump combined system to this track
-  const audio = combinedAudio ? syncCombinedToTrack(src) : new Audio(`/Version-3/${src}`);
-
-  // If question audio contains solution typing (e.g. Day01topic2/New_Day1Part2Question01.mp3), start typewriter!
-  const currentQ = COURSE_CONFIG.practiceQuestions[currentPracticeQ];
-  const solEntryForQ = currentQ ? getSolutionEntry(currentQ.id) : null;
-  if (solEntryForQ && (solEntryForQ.src === src || src.includes(solEntryForQ.src) || solEntryForQ.src.includes(src))) {
-    startAudioSyncedTypewriter(audio, solEntryForQ);
+  // Toggle pause/resume if already playing this track
+  if (currentPlayingAudio && currentPlayingBtn === btn && !currentPlayingAudio.ended) {
+    if (currentPlayingAudio.paused) {
+      currentPlayingAudio.play();
+      btn.innerHTML = `<svg class="pause-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+      btn.classList.add('playing');
+      if (bar) bar.classList.add('question-playing');
+    } else {
+      currentPlayingAudio.pause();
+      btn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+      btn.classList.remove('playing');
+      if (bar) bar.classList.remove('question-playing');
+    }
+    return;
   }
+
+  const audio = new Audio(fullSrc);
   if (typeof currentPlaybackSpeed !== 'undefined') {
     audio.playbackRate = currentPlaybackSpeed;
   }
   if (typeof currentPlaybackVolume !== 'undefined') {
     audio.volume = currentPlaybackVolume;
+  }
+
+  // If question audio contains solution typing (e.g. Day01topic2/New_Day1Part2Question01.mp3 or Question02.mp3), start typewriter!
+  const currentQ = COURSE_CONFIG.practiceQuestions ? COURSE_CONFIG.practiceQuestions[currentPracticeQ] : null;
+  const solEntryForQ = currentQ ? getSolutionEntry(currentQ.id) : null;
+  if (solEntryForQ && (solEntryForQ.src === src || src.includes(solEntryForQ.src) || solEntryForQ.src.includes(src))) {
+    startAudioSyncedTypewriter(audio, solEntryForQ);
   }
 
   currentPlayingAudio = audio;
@@ -4218,7 +4209,7 @@ function playQuestionAudio(btn, audioSrc) {
   btn.innerHTML = `<svg class="pause-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
   btn.classList.add('playing');
 
-  // onended: restore btn, remove bar highlight, chain to solution
+  // onended: restore btn, remove bar highlight, and auto-chain ONLY if Question 1 has a separate solution audio
   const handleEnded = () => {
     btn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
     btn.classList.remove('playing');
@@ -4226,17 +4217,16 @@ function playQuestionAudio(btn, audioSrc) {
     currentPlayingAudio = null;
     currentPlayingBtn = null;
 
-    // Auto-chain: play the solution audio after question narration ends (if separate solution audio)
+    // Only chain to separate solution audio if this is Question 1 and a separate solution track exists (e.g. Topic 01 Q1)
     const q = COURSE_CONFIG.practiceQuestions ? COURSE_CONFIG.practiceQuestions[currentPracticeQ] : null;
-    const solEntry = q ? getSolutionEntry(q.id) : null;
-    if (solEntry && !src.includes(solEntry.src) && !solEntry.src.includes(src)) {
-      setTimeout(() => playSolutionAudio(solEntry), 400);
+    if (q && q.id === 1) {
+      const solEntry = getSolutionEntry(q.id);
+      if (solEntry && !src.includes(solEntry.src) && !solEntry.src.includes(src)) {
+        setTimeout(() => playSolutionAudio(solEntry), 400);
+      }
     }
   };
 
-  // Use once listener to avoid duplicates from combined system re-registering
-  audio.removeEventListener('ended', audio._qEndedHandler);
-  audio._qEndedHandler = handleEnded;
   audio.addEventListener('ended', handleEnded, { once: true });
 }
 
@@ -4252,8 +4242,8 @@ function playSolutionAudio(solutionEntry, triggerBtn) {
   const fullSrc = src.startsWith('http') || src.startsWith('/') ? src : `/Version-3/${src}`;
   const btn = triggerBtn || document.getElementById('solutionAudioBtn');
 
-  // Stop any currently playing standalone audio cleanly
-  if (currentPlayingAudio && !combinedAudios.includes(currentPlayingAudio)) {
+  // Stop any currently playing audio cleanly
+  if (currentPlayingAudio) {
     currentPlayingAudio.pause();
     if (currentPlayingBtn && currentPlayingBtn !== btn) {
       currentPlayingBtn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
@@ -4262,26 +4252,32 @@ function playSolutionAudio(solutionEntry, triggerBtn) {
   }
   cancelTypewriter();
 
+  // Toggle pause/resume if already playing this solution track
+  if (currentPlayingAudio && currentPlayingBtn === btn && !currentPlayingAudio.ended) {
+    if (currentPlayingAudio.paused) {
+      currentPlayingAudio.play();
+      btn.innerHTML = `<svg class="pause-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+      btn.classList.add('playing');
+    } else {
+      currentPlayingAudio.pause();
+      btn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+      btn.classList.remove('playing');
+    }
+    return;
+  }
+
   // Clear editor ready for typewriter safely without triggering focus event
   setEditorCodeSafely('');
 
-  // Use combined audio system if this track is registered in timeline
-  const trackIdx = combinedTracks.findIndex(t => t.src === src);
-  let audio;
-  if (trackIdx !== -1) {
-    const targetOffset = src.includes('New_Day1Part2Question01.mp3') ? 9.0 : 0;
-    loadAndPlayTrack(trackIdx, targetOffset);
-    audio = activeAudioInstance;
-  } else {
-    audio = new Audio(fullSrc);
-    if (src.includes('New_Day1Part2Question01.mp3')) {
-      audio.currentTime = 9.0;
-    }
-    if (typeof currentPlaybackSpeed !== 'undefined') audio.playbackRate = currentPlaybackSpeed;
-    if (typeof currentPlaybackVolume !== 'undefined') audio.volume = currentPlaybackVolume;
-    audio.play().catch(e => console.log('Solution audio play error:', e));
-    startAudioSyncedTypewriter(audio, solutionEntry);
+  const audio = new Audio(fullSrc);
+  if (src.includes('New_Day1Part2Question01.mp3')) {
+    audio.currentTime = 9.0;
   }
+  if (typeof currentPlaybackSpeed !== 'undefined') audio.playbackRate = currentPlaybackSpeed;
+  if (typeof currentPlaybackVolume !== 'undefined') audio.volume = currentPlaybackVolume;
+
+  audio.play().catch(e => console.log('Solution audio play error:', e));
+  startAudioSyncedTypewriter(audio, solutionEntry);
 
   currentPlayingAudio = audio;
   currentPlayingBtn = btn;
@@ -4291,16 +4287,14 @@ function playSolutionAudio(solutionEntry, triggerBtn) {
     btn.classList.add('playing');
   }
 
-  if (audio) {
-    audio.addEventListener('ended', () => {
-      if (btn) {
-        btn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
-        btn.classList.remove('playing');
-      }
-      currentPlayingAudio = null;
-      currentPlayingBtn = null;
-    }, { once: true });
-  }
+  audio.addEventListener('ended', () => {
+    if (btn) {
+      btn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+      btn.classList.remove('playing');
+    }
+    currentPlayingAudio = null;
+    currentPlayingBtn = null;
+  }, { once: true });
 }
 
 function playSolutionAudioFromBtn(btn) {

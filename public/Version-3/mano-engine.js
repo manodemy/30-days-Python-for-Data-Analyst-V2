@@ -4413,7 +4413,6 @@ function updateOverallScoreUI() {
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
       </div>
       <div class="overall-score-content">
-        <span class="overall-score-label">TOTAL SCORE</span>
         <div class="overall-score-val">
           <span class="overall-score-num" id="headerOverallScore">0</span>
           <span class="overall-score-max">/ 1500</span>
@@ -4444,7 +4443,6 @@ function updateOverallScoreUI() {
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
       </div>
       <div class="overall-score-content">
-        <span class="overall-score-label">TOTAL SCORE</span>
         <div class="overall-score-val">
           <span class="overall-score-num" id="testHeaderOverallScore">0</span>
           <span class="overall-score-max">/ 1500</span>
@@ -5367,18 +5365,31 @@ function initCustomDropdowns() {
   const selects = document.querySelectorAll('.day-picker-pill select');
   selects.forEach(select => {
     const wrapper = select.parentElement;
+    if (!wrapper) return;
+
     select.style.display = 'none';
 
     let trigger = wrapper.querySelector('.custom-select-trigger');
     let optionsMenu = wrapper.querySelector('.custom-select-options');
 
     // Remove legacy dot and chevron elements to prevent duplicate icons
-    wrapper.querySelectorAll('.day-picker-dot, .day-picker-chevron').forEach(el => el.remove());
+    wrapper.querySelectorAll('.day-picker-dot, .day-picker-chevron').forEach(el => {
+      if (!el.closest('.custom-select-trigger')) el.remove();
+    });
 
     if (!trigger) {
       trigger = document.createElement('div');
       trigger.className = 'custom-select-trigger';
       wrapper.appendChild(trigger);
+    }
+
+    if (!trigger.querySelector('.selected-text')) {
+      trigger.innerHTML = `
+        <span class="selected-text"></span>
+        <span class="day-picker-chevron">
+          <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1.5L5 5L9 1.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+      `;
     }
 
     if (!optionsMenu) {
@@ -5389,38 +5400,41 @@ function initCustomDropdowns() {
 
     function updateTriggerText() {
       const textSpan = trigger.querySelector('.selected-text');
-      if (textSpan) {
-        const option = select.options[select.selectedIndex];
-        if (select.id === 'topicSelect' && option) {
-          const slideIdx = parseInt(option.value, 10);
-          const duration = getSlideDurationString(slideIdx);
-          const slide = COURSE_CONFIG.slides ? COURSE_CONFIG.slides[slideIdx] : null;
-          const cleanedTitle = slide ? slide.title.replace(/^(Topic\s+\d+:\s*|\d+\.\s*)/i, '') : option.text;
-          const multiTopic3 = COURSE_CONFIG.slides && COURSE_CONFIG.slides.length > 1;
-          textSpan.innerHTML = `
-            <span class="trigger-title">${multiTopic3 ? `Topic 0${slideIdx + 1}: ` : ''}${cleanedTitle}</span>
-            <span class="trigger-duration-badge">${duration}</span>
-          `;
-        } else if (option) {
-          if (select.id === 'daySelect') {
-            const dayNum = option.value.replace('day', '');
-            const allDays = window.COURSE_MANIFEST_60 || [];
-            const activeDay = allDays.find(d => d.id === option.value) || { track: 'sql' };
-            const svgIcons = window.SVG_TRACK_ICONS || {};
-            const iconHtml = svgIcons[activeDay.track] || svgIcons.sql || '🗄️';
+      if (!textSpan) return;
 
-            textSpan.innerHTML = `
-              <span style="display:inline-flex;align-items:center;gap:6px;">
-                ${iconHtml}
-                <strong>Day ${String(dayNum).padStart(2, '0')}</strong>
-              </span>
-            `;
-          } else {
-            textSpan.textContent = option.text;
-          }
-        } else {
-          textSpan.textContent = '';
-        }
+      if (select.selectedIndex < 0 && select.options.length > 0) {
+        select.selectedIndex = 0;
+      }
+      const option = select.options[select.selectedIndex] || select.options[0];
+
+      if (select.id === 'topicSelect') {
+        const slideIdx = option ? parseInt(option.value, 10) : (typeof currentSlide !== 'undefined' ? currentSlide : 0);
+        const duration = getSlideDurationString(slideIdx);
+        const slide = (typeof COURSE_CONFIG !== 'undefined' && COURSE_CONFIG.slides) ? COURSE_CONFIG.slides[slideIdx] : null;
+        let cleanedTitle = slide ? slide.title.replace(/^(Topic\s+\d+:\s*|\d+\.\s*)/i, '') : (option ? option.text : 'Topic Overview');
+        cleanedTitle = cleanedTitle.replace(/\s*\([0-9:]+\)\s*$/, '');
+        const multiTopic = (typeof COURSE_CONFIG !== 'undefined' && COURSE_CONFIG.slides && COURSE_CONFIG.slides.length > 1);
+
+        textSpan.innerHTML = `
+          <span class="trigger-title">${multiTopic ? `Topic 0${slideIdx + 1}: ` : ''}${cleanedTitle}</span>
+          <span class="trigger-duration-badge">${duration}</span>
+        `;
+      } else if (select.id === 'daySelect') {
+        const dayVal = option ? option.value : (typeof currentDay !== 'undefined' ? currentDay : 'day01');
+        const dayNum = dayVal.replace('day', '');
+        const allDays = window.COURSE_MANIFEST_60 || [];
+        const activeDay = allDays.find(d => d.id === dayVal) || { track: 'sql' };
+        const svgIcons = window.SVG_TRACK_ICONS || {};
+        const iconHtml = svgIcons[activeDay.track] || svgIcons.sql || '🗄️';
+
+        textSpan.innerHTML = `
+          <span style="display:inline-flex;align-items:center;gap:6px;">
+            ${iconHtml}
+            <strong>Day ${String(dayNum).padStart(2, '0')}</strong>
+          </span>
+        `;
+      } else if (option) {
+        textSpan.textContent = option.text;
       }
     }
 
@@ -5503,9 +5517,10 @@ function initCustomDropdowns() {
           if (select.id === 'topicSelect') {
             const slideIdx = parseInt(opt.value, 10);
             const duration = getSlideDurationString(slideIdx);
-            const slide = COURSE_CONFIG.slides ? COURSE_CONFIG.slides[slideIdx] : null;
-            const cleanedTitle = slide ? slide.title.replace(/^(Topic\s+\d+:\s*|\d+\.\s*)/i, '') : opt.text;
-            const multiTopic4 = COURSE_CONFIG.slides && COURSE_CONFIG.slides.length > 1;
+            const slide = (typeof COURSE_CONFIG !== 'undefined' && COURSE_CONFIG.slides) ? COURSE_CONFIG.slides[slideIdx] : null;
+            let cleanedTitle = slide ? slide.title.replace(/^(Topic\s+\d+:\s*|\d+\.\s*)/i, '') : opt.text;
+            cleanedTitle = cleanedTitle.replace(/\s*\([0-9:]+\)\s*$/, '');
+            const multiTopic4 = (typeof COURSE_CONFIG !== 'undefined' && COURSE_CONFIG.slides && COURSE_CONFIG.slides.length > 1);
             optionItem.innerHTML = `
               <span class="option-title">${multiTopic4 ? `Topic 0${slideIdx + 1}: ` : ''}${cleanedTitle}</span>
               <span class="option-duration">${duration}</span>
@@ -5531,25 +5546,21 @@ function initCustomDropdowns() {
 
       if (isSingleTopic) {
         wrapper.classList.add('no-dropdown');
-        trigger.innerHTML = `<span class="selected-text"></span>`;
+        const chev = trigger.querySelector('.day-picker-chevron');
+        if (chev) chev.style.display = 'none';
         wrapper.onclick = null;
       } else {
         wrapper.classList.remove('no-dropdown');
-        if (!trigger.querySelector('.day-picker-chevron')) {
-          trigger.innerHTML = `
-            <span class="selected-text"></span>
-            <span class="day-picker-chevron">
-              <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1.5L5 5L9 1.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </span>
-          `;
-        }
+        const chev = trigger.querySelector('.day-picker-chevron');
+        if (chev) chev.style.display = 'flex';
+
         wrapper.onclick = (e) => {
           e.stopPropagation();
           const isOpen = optionsMenu.classList.contains('open');
           document.querySelectorAll('.custom-select-options').forEach(menu => {
             menu.classList.remove('open');
             menu.parentElement.classList.remove('open');
-            menu.previousElementSibling.classList.remove('open');
+            if (menu.previousElementSibling) menu.previousElementSibling.classList.remove('open');
           });
           if (!isOpen) {
             optionsMenu.classList.add('open');
@@ -5611,7 +5622,7 @@ function initCustomDropdowns() {
     document.querySelectorAll('.custom-select-options').forEach(menu => {
       menu.classList.remove('open');
       menu.parentElement.classList.remove('open');
-      menu.previousElementSibling.classList.remove('open');
+      if (menu.previousElementSibling) menu.previousElementSibling.classList.remove('open');
     });
   });
 }

@@ -9694,16 +9694,19 @@ function toggleBufferingState(isBuffering) {
 
 function updatePlayButtonStates(isPlaying) {
   const equalizerHtml = `<span class="audio-wave-equalizer" aria-hidden="true"><span></span><span></span><span></span></span>`;
+  const smallPlaySvg = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+  const smallPauseSvg = `<svg class="pause-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
 
+  // 1. Update Header / Nav Play Lesson buttons
   const navBtn = document.getElementById('navPlayBtn');
   if (navBtn) {
     if (isPlaying) {
-      navBtn.innerHTML = `${equalizerHtml} <span class="btn-icon" aria-hidden="true">⏸</span> <span class="btn-text">Pause Lesson</span>`;
+      navBtn.innerHTML = `${equalizerHtml} <span class="btn-icon" aria-hidden="true">?</span> <span class="btn-text">Pause Lesson</span>`;
       navBtn.classList.add('playing');
       navBtn.setAttribute('aria-label', 'Pause Lesson');
       navBtn.setAttribute('aria-pressed', 'true');
     } else {
-      navBtn.innerHTML = `<span class="btn-icon" aria-hidden="true">▶</span> <span class="btn-text">Play Lesson</span>`;
+      navBtn.innerHTML = `<span class="btn-icon" aria-hidden="true">?</span> <span class="btn-text">Play Lesson</span>`;
       navBtn.classList.remove('playing');
       navBtn.setAttribute('aria-label', 'Play Lesson');
       navBtn.setAttribute('aria-pressed', 'false');
@@ -9713,15 +9716,26 @@ function updatePlayButtonStates(isPlaying) {
   const playPauseBtn = document.getElementById('playPauseBtn');
   if (playPauseBtn) {
     if (isPlaying) {
-      playPauseBtn.innerHTML = `${equalizerHtml} <span class="btn-icon" aria-hidden="true">⏸</span> <span class="btn-text">Pause Lesson</span>`;
+      playPauseBtn.innerHTML = `${equalizerHtml} <span class="btn-icon" aria-hidden="true">?</span> <span class="btn-text">Pause Lesson</span>`;
       playPauseBtn.classList.add('playing');
       playPauseBtn.setAttribute('aria-label', 'Pause Lesson');
       playPauseBtn.setAttribute('aria-pressed', 'true');
     } else {
-      playPauseBtn.innerHTML = `<span class="btn-icon" aria-hidden="true">▶</span> <span class="btn-text">Play Lesson</span>`;
+      playPauseBtn.innerHTML = `<span class="btn-icon" aria-hidden="true">?</span> <span class="btn-text">Play Lesson</span>`;
       playPauseBtn.classList.remove('playing');
       playPauseBtn.setAttribute('aria-label', 'Play Lesson');
       playPauseBtn.setAttribute('aria-pressed', 'false');
+    }
+  }
+
+  const playBtnCombined = document.getElementById('playBtnCombined');
+  if (playBtnCombined && playBtnCombined !== playPauseBtn) {
+    if (isPlaying) {
+      playBtnCombined.innerHTML = `<svg class="pause-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+      playBtnCombined.classList.add('playing');
+    } else {
+      playBtnCombined.innerHTML = `<svg class="play-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+      playBtnCombined.classList.remove('playing');
     }
   }
 
@@ -9730,47 +9744,85 @@ function updatePlayButtonStates(isPlaying) {
     captionEl.classList.toggle('narration-active', isPlaying);
   }
 
-  const activeTrack = combinedTracks[combinedTrackIndex];
+  // 2. Identify active track info & local audio time
+  const activeTrack = (typeof combinedTracks !== 'undefined' && combinedTracks) ? combinedTracks[combinedTrackIndex] : null;
   const activeSrc = activeTrack ? activeTrack.src : '';
+  const currentQ = (typeof COURSE_CONFIG !== 'undefined' && COURSE_CONFIG.practiceQuestions) ? COURSE_CONFIG.practiceQuestions[currentPracticeQ] : null;
+  const audioTime = activeAudioInstance ? (activeAudioInstance.currentTime || 0) : 0;
 
+  // Check if active track is for the currently viewed practice question
+  const isCurrentQActive = activeTrack && currentQ && (
+    activeTrack.qId === currentQ.id ||
+    (currentQ.questionAudio && activeTrack.src.includes(currentQ.questionAudio)) ||
+    (currentQ.solutionAudio && activeTrack.src.includes(currentQ.solutionAudio))
+  );
+
+  // Determine if question vs solution part is playing
+  let isQNarrationPlaying = false;
+  let isSolNarrationPlaying = false;
+
+  if (isPlaying && isCurrentQActive) {
+    if (activeTrack.type === 'solution') {
+      isSolNarrationPlaying = true;
+    } else if (activeTrack.src.includes('New_Day1Part2Question01.mp3')) {
+      // Unified file: 0..9s is question, 9s..24s is solution
+      if (audioTime >= 8.9) {
+        isSolNarrationPlaying = true;
+      } else {
+        isQNarrationPlaying = true;
+      }
+    } else if (activeTrack.src.includes('New_Day1Part2Question02.mp3')) {
+      // Unified file: 0..5.2s is question, 5.2s..24s is solution
+      if (audioTime >= 5.1) {
+        isSolNarrationPlaying = true;
+      } else {
+        isQNarrationPlaying = true;
+      }
+    } else if (activeTrack.type === 'question') {
+      isQNarrationPlaying = true;
+    }
+  }
+
+  // 3. Update Question Audio Button (#questionAudioBtn)
+  const qAudioBtn = document.getElementById('questionAudioBtn');
+  if (qAudioBtn) {
+    if (isQNarrationPlaying) {
+      qAudioBtn.innerHTML = smallPauseSvg;
+      qAudioBtn.classList.add('playing');
+    } else {
+      qAudioBtn.innerHTML = smallPlaySvg;
+      qAudioBtn.classList.remove('playing');
+    }
+  }
+
+  // 4. Update Solution Audio Button (#solutionAudioBtn)
+  const solAudioBtn = document.getElementById('solutionAudioBtn');
+  if (solAudioBtn) {
+    if (isSolNarrationPlaying) {
+      solAudioBtn.innerHTML = smallPauseSvg;
+      solAudioBtn.classList.add('playing');
+    } else {
+      solAudioBtn.innerHTML = smallPlaySvg;
+      solAudioBtn.classList.remove('playing');
+    }
+  }
+
+  // 5. Update Theory Audio Buttons (.audio-play-btn)
   document.querySelectorAll('.audio-play-btn').forEach(btn => {
+    if (btn.id === 'questionAudioBtn' || btn.id === 'solutionAudioBtn') return;
     const onclickStr = btn.getAttribute('onclick') || '';
-
-    // For playAudio('filename.mp3', this)
     if (onclickStr.includes('playAudio')) {
       const match = onclickStr.match(/playAudio\(['"]([^'"]+)['"]/);
       if (match) {
         const btnSrc = match[1];
         const isThisTrack = activeSrc && (activeSrc === btnSrc || activeSrc.endsWith(btnSrc) || btnSrc.endsWith(activeSrc));
         if (isThisTrack && isPlaying) {
-          btn.innerHTML = `<svg class="pause-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+          btn.innerHTML = smallPauseSvg;
           btn.classList.add('playing');
         } else {
-          btn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+          btn.innerHTML = smallPlaySvg;
           btn.classList.remove('playing');
         }
-      }
-    }
-
-    // For playQuestionAudio(this)
-    if (onclickStr.includes('playQuestionAudio')) {
-      if (activeTrack && activeTrack.type === 'question' && isPlaying) {
-        btn.innerHTML = `<svg class="pause-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
-        btn.classList.add('playing');
-      } else {
-        btn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
-        btn.classList.remove('playing');
-      }
-    }
-
-    // For playSolutionAudioFromBtn(this)
-    if (onclickStr.includes('playSolutionAudioFromBtn')) {
-      if (activeTrack && activeTrack.type === 'solution' && isPlaying) {
-        btn.innerHTML = `<svg class="pause-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
-        btn.classList.add('playing');
-      } else {
-        btn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
-        btn.classList.remove('playing');
       }
     }
   });

@@ -104,41 +104,82 @@ window.COURSE_CONTENT['day01'] = {
           <p id="rdbmsIntroDesc">A <strong>Relational Database Management System (RDBMS)</strong> is the software used to store, manage, query, and retrieve data stored in a relational database. It formats data into structured <strong>tables</strong> (also called <strong>relations</strong>) which are connected to one another through defined relationships.</p>
           
           <div class="rdbms-diagram-container" id="rdbmsTableCard">
-            <div class="rdbms-table-title">📁 Table: Employees</div>
-            <table class="db-table-mock rdbms-interactive-mock" id="rdbmsMockTable">
-              <thead>
-                <tr>
-                  <th class="col-id">🔑 ID (PK) <span class="type-tag">INT</span></th>
-                  <th class="col-name">Name <span class="type-tag">VARCHAR</span></th>
-                  <th class="col-role">Role <span class="type-tag">VARCHAR</span></th>
-                  <th class="col-salary">Salary <span class="type-tag">DECIMAL</span></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr class="row-1">
-                  <td class="col-id">1</td>
-                  <td class="col-name">Alice Johnson</td>
-                  <td class="col-role">Data Analyst</td>
-                  <td class="col-salary">$85,000</td>
-                </tr>
-                <tr class="row-2 highlighted-row">
-                  <td class="col-id">2</td>
-                  <td class="col-name">Bob Smith</td>
-                  <td class="col-role">SQL Developer</td>
-                  <td class="col-salary">$92,000</td>
-                </tr>
-                <tr class="row-3">
-                  <td class="col-id">3</td>
-                  <td class="col-name">Charlie Brown</td>
-                  <td class="col-role">DBA</td>
-                  <td class="col-salary">$105,000</td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="rdbms-table-header-bar">
+              <div class="rdbms-table-title">
+                <span class="table-icon">📁</span>
+                <span class="table-name">Table: <code>employees</code></span>
+              </div>
+              <div class="rdbms-table-meta">
+                <span class="meta-badge">3 rows × 4 columns</span>
+              </div>
+            </div>
+            
+            <div class="rdbms-table-responsive-wrapper">
+              <table class="db-table-mock rdbms-interactive-mock" id="rdbmsMockTable">
+                <thead>
+                  <tr>
+                    <th class="col-id">
+                      <span class="col-th-inner">
+                        <span class="col-label"><span class="pk-icon" title="Primary Key">🔑</span> id <span class="pk-tag">PK</span></span>
+                        <span class="type-tag">INT</span>
+                      </span>
+                    </th>
+                    <th class="col-name">
+                      <span class="col-th-inner">
+                        <span class="col-label">name</span>
+                        <span class="type-tag">VARCHAR</span>
+                      </span>
+                    </th>
+                    <th class="col-role">
+                      <span class="col-th-inner">
+                        <span class="col-label">role</span>
+                        <span class="type-tag">VARCHAR</span>
+                      </span>
+                    </th>
+                    <th class="col-salary">
+                      <span class="col-th-inner">
+                        <span class="col-label">salary</span>
+                        <span class="type-tag">DECIMAL</span>
+                      </span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="row-1">
+                    <td class="col-id col-val-id">1</td>
+                    <td class="col-name col-val-name">Alice Johnson</td>
+                    <td class="col-role col-val-role">Data Analyst</td>
+                    <td class="col-salary col-val-salary">$85,000</td>
+                  </tr>
+                  <tr class="row-2 highlighted-row">
+                    <td class="col-id col-val-id">2</td>
+                    <td class="col-name col-val-name">Bob Smith</td>
+                    <td class="col-role col-val-role">SQL Developer</td>
+                    <td class="col-salary col-val-salary">$92,000</td>
+                  </tr>
+                  <tr class="row-3">
+                    <td class="col-id col-val-id">3</td>
+                    <td class="col-name col-val-name">Charlie Brown</td>
+                    <td class="col-role col-val-role">DBA</td>
+                    <td class="col-salary col-val-salary">$105,000</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
             <div class="rdbms-legend">
-              <span class="legend-item"><span class="legend-box legend-box--column"></span> Column (Field / Attribute)</span>
-              <span class="legend-item"><span class="legend-box legend-box--row"></span> Row (Record / Tuple)</span>
-              <span class="legend-item">🔑 Primary Key (PK)</span>
+              <span class="legend-chip legend-chip--column">
+                <span class="legend-indicator legend-indicator--column"></span>
+                <span>Column (Field / Attribute)</span>
+              </span>
+              <span class="legend-chip legend-chip--row">
+                <span class="legend-indicator legend-indicator--row"></span>
+                <span>Row (Record / Tuple)</span>
+              </span>
+              <span class="legend-chip legend-chip--pk">
+                <span class="legend-indicator legend-indicator--pk">🔑</span>
+                <span>Primary Key (PK)</span>
+              </span>
             </div>
           </div>
         </div>

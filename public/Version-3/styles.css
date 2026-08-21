@@ -7348,7 +7348,7 @@ select:focus:not(:focus-visible) {
 }
 
 /* =================================================================
-   Day 01 RDBMS Direct Visual Sync Animations (Audio 01)
+   Day 01 RDBMS Direct Visual Sync Animations & Modern Table Design
    ================================================================= */
 
 /* 1. Zoom-in on the section when narration begins */
@@ -7388,45 +7388,301 @@ select:focus:not(:focus-visible) {
   }
 }
 
-/* 3. Table Column & Row Highlighting */
+/* ── Container Card ── */
+.rdbms-diagram-container {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 20px 22px;
+  margin: 18px 0;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
+  transition: all 0.3s ease;
+}
+
+.rdbms-table-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.rdbms-table-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.rdbms-table-title .table-icon {
+  font-size: 1.1rem;
+}
+
+.rdbms-table-title .table-name code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.90rem;
+  font-weight: 700;
+  background: #f1f5f9;
+  color: #0284c7;
+  padding: 2px 7px;
+  border-radius: 5px;
+  border: 1px solid #e2e8f0;
+}
+
+.rdbms-table-meta .meta-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #64748b;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 3px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.02em;
+}
+
+.rdbms-table-responsive-wrapper {
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+}
+
+/* ── Interactive Table Core ── */
+.rdbms-interactive-mock {
+  width: 100%;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  font-size: 0.88rem;
+  margin: 0 !important;
+  table-layout: fixed;
+}
+
+/* Table Column Widths */
+.rdbms-interactive-mock th.col-id,
+.rdbms-interactive-mock td.col-id {
+  width: 22%;
+  min-width: 110px;
+}
+
+.rdbms-interactive-mock th.col-name,
+.rdbms-interactive-mock td.col-name {
+  width: 30%;
+  min-width: 140px;
+}
+
+.rdbms-interactive-mock th.col-role,
+.rdbms-interactive-mock td.col-role {
+  width: 26%;
+  min-width: 130px;
+}
+
+.rdbms-interactive-mock th.col-salary,
+.rdbms-interactive-mock td.col-salary {
+  width: 22%;
+  min-width: 110px;
+}
+
+/* ── Headers ── */
+.rdbms-interactive-mock thead tr {
+  background: #f8fafc;
+}
+
+.rdbms-interactive-mock th {
+  padding: 10px 14px !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  border-top: none !important;
+  border-left: 1px solid transparent !important;
+  border-right: 1px solid transparent !important;
+  vertical-align: middle;
+  transition: all 0.2s ease;
+}
+
+.rdbms-interactive-mock th .col-th-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.rdbms-interactive-mock th .col-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: #1e293b;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.rdbms-interactive-mock th .pk-tag {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #b45309;
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  padding: 1px 4px;
+  border-radius: 4px;
+  letter-spacing: 0.02em;
+}
+
+.rdbms-interactive-mock th .type-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  background: #e2e8f0;
+  color: #475569;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.03em;
+  border: 1px solid #cbd5e1;
+  text-transform: uppercase;
+}
+
+/* ── Table Rows & Cells ── */
+.rdbms-interactive-mock tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+.rdbms-interactive-mock tbody tr:hover td {
+  background-color: #f8fafc;
+}
+
+.rdbms-interactive-mock td {
+  padding: 11px 14px !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  border-top: none !important;
+  border-left: 1px solid transparent !important;
+  border-right: 1px solid transparent !important;
+  color: #1e293b;
+  font-size: 0.88rem;
+  vertical-align: middle;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.rdbms-interactive-mock tbody tr:last-child td {
+  border-bottom: none !important;
+}
+
+.rdbms-interactive-mock td.col-val-id {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.rdbms-interactive-mock td.col-val-name {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.rdbms-interactive-mock td.col-val-role {
+  color: #334155;
+}
+
+.rdbms-interactive-mock td.col-val-salary {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* ── Highlighted Row (Record / Tuple) ── */
+.rdbms-interactive-mock tbody tr.highlighted-row {
+  background-color: #ecfdf5 !important;
+}
+
+.rdbms-interactive-mock tbody tr.highlighted-row td {
+  background-color: #ecfdf5 !important;
+  color: #065f46 !important;
+  font-weight: 600;
+  border-top: 1px solid rgba(16, 185, 129, 0.2) !important;
+  border-bottom: 1px solid rgba(16, 185, 129, 0.2) !important;
+}
+
+.rdbms-interactive-mock tbody tr.highlighted-row td.col-val-id {
+  color: #059669 !important;
+  font-weight: 700;
+}
+
+.rdbms-interactive-mock tbody tr.highlighted-row.narration-row-pulse td {
+  background-color: #d1fae5 !important;
+  box-shadow: inset 0 0 0 1px #10b981;
+}
+
+/* ── Active Column Narration Highlight ── */
 .rdbms-interactive-mock th.column-narration-active {
-  border-left: 2px dashed #3b82f6 !important;
-  border-right: 2px dashed #3b82f6 !important;
   background: #eff6ff !important;
-  color: #1d4ed8 !important;
+  border-left: 2px solid #3b82f6 !important;
+  border-right: 2px solid #3b82f6 !important;
+}
+
+.rdbms-interactive-mock th.column-narration-active .type-tag {
+  background: #3b82f6 !important;
+  color: #ffffff !important;
+  border-color: #2563eb !important;
 }
 
 .rdbms-interactive-mock td.column-narration-active {
-  border-left: 2px dashed #3b82f6 !important;
-  border-right: 2px dashed #3b82f6 !important;
-  background: rgba(239, 246, 255, 0.6) !important;
-  color: #1e40af !important;
-  font-weight: 600;
-}
-
-.rdbms-interactive-mock tr.highlighted-row.narration-row-pulse td {
-  background-color: #d1fae5 !important;
-  box-shadow: 0 0 12px rgba(16, 185, 129, 0.35);
+  background-color: #eff6ff !important;
+  border-left: 2px solid #3b82f6 !important;
+  border-right: 2px solid #3b82f6 !important;
+  color: #1d4ed8 !important;
   font-weight: 700 !important;
 }
 
-.legend-box {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  vertical-align: middle;
-  margin-right: 6px;
+.rdbms-interactive-mock tbody tr:last-child td.column-narration-active {
+  border-bottom: 2px solid #3b82f6 !important;
 }
 
-.legend-box--column {
-  border: 1.5px dashed #60a5fa;
-  border-radius: 3px;
+/* ── Modern Legend Bar ── */
+.rdbms-legend {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #f1f5f9;
+  flex-wrap: wrap;
+}
+
+.legend-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #475569;
+  background: #f8fafc;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.legend-indicator {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.legend-indicator--column {
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid #3b82f6;
+  border-radius: 2px;
   background: #eff6ff;
 }
 
-.legend-box--row {
-  border-radius: 3px;
-  background: #d1fae5;
-  border: 1px solid #a7f3d0;
+.legend-indicator--row {
+  width: 10px;
+  height: 10px;
+  border: 1px solid #10b981;
+  border-radius: 2px;
+  background: #ecfdf5;
+}
+
+.legend-indicator--pk {
+  font-size: 0.85rem;
+  line-height: 1;
 }
 

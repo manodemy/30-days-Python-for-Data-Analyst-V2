@@ -309,13 +309,26 @@ function renderResultTable(result, targetId) {
   el.innerHTML = html;
 }
 
-function renderError(msg, hint, targetId) {
+function renderError(msg, hintObj, targetId) {
   const el = document.getElementById(targetId);
   if (!el) return;
-  let html = '<div class="output-label">Terminal Output</div>';
-  if (hint) html += `<div class="output-hint">💡 Hint: ${escHtml(hint)}</div>`;
-  html += `<div class="output-error">Error: ${escHtml(msg)}</div>`;
-  el.innerHTML = html;
+
+  let hintHtml = '';
+  if (hintObj) {
+    const hintText = typeof hintObj === 'string' ? hintObj : hintObj.hint;
+    hintHtml = `
+      <div class="sql-diagnostic-card">
+        <div class="diag-header">💡 SQL Coach Hint</div>
+        <div class="diag-body">${hintText}</div>
+      </div>
+    `;
+  }
+
+  el.innerHTML = `
+    <div class="output-label">Terminal Output</div>
+    <div class="output-error" style="margin-top: 6px;">❌ SQLite Error: ${escHtml(msg)}</div>
+    ${hintHtml}
+  `;
 }
 
 function escHtml(s) {
@@ -368,6 +381,11 @@ function initMainEditor() {
   mainEditor.on('focus', () => {
     pauseCombinedPlayback();
   });
+  mainEditor.on('change', (cm, change) => {
+    if (isCombinedPlaying && change.origin !== 'setValue') {
+      pauseCombinedPlayback();
+    }
+  });
   document.getElementById('mainEditorWrap')?.addEventListener('click', () => {
     pauseCombinedPlayback();
   });
@@ -419,49 +437,107 @@ function initTestEditor() {
 function analyzeQueryError(query, rawError) {
   const msg = rawError.message || String(rawError);
   const allColumns = [];
-  COURSE_CONFIG.schema.tables.forEach(t => t.columns.forEach(c => allColumns.push(c.name)));
-  const allTables = COURSE_CONFIG.schema.tables.map(t => t.name);
-
-  // Check for missing quotes around string in WHERE
-  const whereMatch = query.match(/WHERE\s+\w+\s*=\s*([a-zA-Z_]\w*)/i);
-  if (whereMatch && !allColumns.includes(whereMatch[1]) && !allTables.includes(whereMatch[1])) {
-    return `It looks like you're comparing to a text value without quotes. Try wrapping '${whereMatch[1]}' in single quotes.`;
+  const allTables = [];
+  if (COURSE_CONFIG && COURSE_CONFIG.schema && COURSE_CONFIG.schema.tables) {
+    COURSE_CONFIG.schema.tables.forEach(t => {
+      allTables.push(t.name);
+      if (t.columns) t.columns.forEach(c => allColumns.push({ table: t.name, name: c.name }));
+    });
   }
 
-  // Check for column name typo (Levenshtein ≤ 2)
-  const noSuchCol = msg.match(/no such column:\s*(\w+)/i);
+  // 1. Keyword Typo Detection (e.g., FORM -> FROM, SELEST -> SELECT, WHER -> WHERE)
+  const keywordTypos = [
+    { typo: /\bFORM\b/i, correct: 'FROM' },
+    { typo: /\bSELEC\b|\bSELEST\b|\bSELCT\b/i, correct: 'SELECT' },
+    { typo: /\bWHER\b|\bWHRE\b|\bWHR\b/i, correct: 'WHERE' },
+    { typo: /\bGRUP\s+BY\b|\bGROUPBY\b/i, correct: 'GROUP BY' },
+    { typo: /\bORDERBY\b/i, correct: 'ORDER BY' },
+    { typo: /\bHAVNG\b/i, correct: 'HAVING' },
+    { typo: /\bDISTINCTT\b|\bDISTINT\b/i, correct: 'DISTINCT' },
+    { typo: /\bINER\s+JOIN\b/i, correct: 'INNER JOIN' }
+  ];
+
+  for (const kt of keywordTypos) {
+    if (kt.typo.test(query)) {
+      return {
+        type: 'keyword_typo',
+        hint: `Looks like a keyword typo! Did you mean <strong>${kt.correct}</strong>?`
+      };
+    }
+  }
+
+  // 2. Unquoted string literal in WHERE clause
+  const whereMatch = query.match(/WHERE\s+\w+\s*=\s*([a-zA-Z_]\w*)/i);
+  if (whereMatch) {
+    const val = whereMatch[1];
+    const isCol = allColumns.some(c => c.name.toLowerCase() === val.toLowerCase());
+    const isTbl = allTables.some(t => t.toLowerCase() === val.toLowerCase());
+    if (!isCol && !isTbl && !['TRUE', 'FALSE', 'NULL'].includes(val.toUpperCase())) {
+      return {
+        type: 'missing_quotes',
+        hint: `Text values in SQL must be enclosed in single quotes. Try wrapping <code>'${escHtml(val)}'</code> in quotes.`
+      };
+    }
+  }
+
+  // 3. Column Name Typo Detection via Levenshtein Distance
+  const noSuchCol = msg.match(/no such column:\s*([a-zA-Z0-9_]+)/i);
   if (noSuchCol) {
     const typo = noSuchCol[1];
-    let bestMatch = null, bestDist = 3;
-    allColumns.forEach(col => {
-      const d = levenshtein(typo.toLowerCase(), col.toLowerCase());
-      if (d < bestDist) { bestDist = d; bestMatch = col; }
+    let bestMatch = null;
+    let bestDist = 3;
+    allColumns.forEach(c => {
+      const d = levenshtein(typo.toLowerCase(), c.name.toLowerCase());
+      if (d < bestDist) {
+        bestDist = d;
+        bestMatch = c;
+      }
     });
     if (bestMatch) {
-      return `Column '${typo}' doesn't exist. Did you mean '${bestMatch}'?`;
+      return {
+        type: 'column_typo',
+        hint: `Column <code>${escHtml(typo)}</code> doesn't exist. Did you mean <strong><code>${escHtml(bestMatch.name)}</code></strong> (in table <em>${escHtml(bestMatch.table)}</em>)?`
+      };
     }
   }
 
-  // Check for no such table
-  const noSuchTable = msg.match(/no such table:\s*(\w+)/i);
+  // 4. Table Name Typo Detection
+  const noSuchTable = msg.match(/no such table:\s*([a-zA-Z0-9_]+)/i);
   if (noSuchTable) {
     const typo = noSuchTable[1];
-    let bestMatch = null, bestDist = 3;
+    let bestMatch = null;
+    let bestDist = 3;
     allTables.forEach(tbl => {
       const d = levenshtein(typo.toLowerCase(), tbl.toLowerCase());
-      if (d < bestDist) { bestDist = d; bestMatch = tbl; }
+      if (d < bestDist) {
+        bestDist = d;
+        bestMatch = tbl;
+      }
     });
     if (bestMatch) {
-      return `Table '${typo}' doesn't exist. Did you mean '${bestMatch}'?`;
+      return {
+        type: 'table_typo',
+        hint: `Table <code>${escHtml(typo)}</code> doesn't exist. Did you mean <strong><code>${escHtml(bestMatch)}</code></strong>?`
+      };
     }
   }
 
-  // Check for missing FROM
+  // 5. Missing FROM clause
   if (/SELECT/i.test(query) && !/FROM/i.test(query) && /no such column/i.test(msg)) {
-    return 'Your query is missing a FROM clause. Specify which table to query.';
+    return {
+      type: 'missing_from',
+      hint: `Your query is missing a <strong>FROM</strong> clause. Specify which table you want to query.`
+    };
   }
 
-  // Clean up raw message
+  // 6. Missing Semicolon Warning
+  if (!query.trim().endsWith(';')) {
+    return {
+      type: 'missing_semicolon',
+      hint: `Pro-Tip: SQL statements should cleanly end with a semicolon ( <strong>;</strong> ).`
+    };
+  }
+
   return null;
 }
 
@@ -768,6 +844,7 @@ function renderSideSlide() {
     if (skel) { skel.style.display = 'none'; skel.setAttribute('aria-hidden', 'true'); }
     formatHeadingBoxes(slideBodyText);
     autoHighlightSql(slideBodyText);
+    setTimeout(() => { if (typeof initSchemaCodePeeking === 'function') initSchemaCodePeeking(); }, 50);
     // Re-execute any <script> tags injected via innerHTML (browser security blocks them)
     slideBodyText.querySelectorAll('script').forEach(function (oldScript) {
       const newScript = document.createElement('script');
@@ -3529,6 +3606,7 @@ let typewriterRafId = null;
 let currentTableScrollInterval = null;
 
 function cancelTypewriter() {
+  removeYourTurnBanner();
   typewriterTimers.forEach(t => clearTimeout(t));
   typewriterTimers = [];
   if (typewriterRafId !== null) {
@@ -3675,7 +3753,26 @@ function startAudioSyncedTypewriter(audioObj, solEntry) {
   }, { once: true });
 }
 
+
+function showYourTurnBanner(qId) {
+  removeYourTurnBanner();
+  const toolbar = document.querySelector('.editor-toolbar');
+  if (toolbar) {
+    const banner = document.createElement('div');
+    banner.className = 'your-turn-banner';
+    banner.id = 'yourTurnBanner';
+    banner.innerHTML = `? <strong>Your Turn!</strong> Write & Run query before solution plays!`;
+    toolbar.appendChild(banner);
+  }
+}
+
+function removeYourTurnBanner() {
+  const existing = document.getElementById('yourTurnBanner');
+  if (existing) existing.remove();
+}
+
 function renderPracticeQuestion() {
+  setTimeout(() => { if (typeof initSchemaCodePeeking === 'function') initSchemaCodePeeking(); }, 50);
   const q = COURSE_CONFIG.practiceQuestions[currentPracticeQ];
   if (q) {
     document.getElementById('questionPrompt').innerHTML = `Q${q.id}. ${q.prompt}`;
@@ -8516,10 +8613,12 @@ function loadAndPlayTrack(index, targetTime = 0) {
     }
     const bar = document.getElementById('questionBar');
     if (bar) bar.classList.add('question-playing');
+    showYourTurnBanner(track.qId);
     const slideContent = document.getElementById('slideContent');
     if (slideContent) slideContent.scrollTo({ top: 0, behavior: 'smooth' });
     setMobileTab('practice');
   } else if (track.type === 'solution') {
+    removeYourTurnBanner();
     isNarrationActive = false;
     if (typeof clearSlidePlaybackVisibility === 'function') clearSlidePlaybackVisibility();
     const targetQIdx = COURSE_CONFIG.practiceQuestions.findIndex(q => q.id === track.qId);
@@ -8537,6 +8636,7 @@ function loadAndPlayTrack(index, targetTime = 0) {
     }
     setMobileTab('practice');
   } else if (track.type === 'completion') {
+    removeYourTurnBanner();
     isNarrationActive = false;
     if (typeof clearSlidePlaybackVisibility === 'function') clearSlidePlaybackVisibility();
     const bar = document.getElementById('questionBar');
@@ -8827,6 +8927,7 @@ function seekCombinedPlayback(val, shouldPlay = true) {
         }
       }
     } else if (track.type === 'completion') {
+    removeYourTurnBanner();
       if (!completionOverlayDiv || !completionScene) {
         launchCompletionAnimation();
       }
@@ -9148,8 +9249,10 @@ function buildChapterList() {
     if (track.type === 'question') {
       iconSvg = svgPractice;
     } else if (track.type === 'solution') {
+    removeYourTurnBanner();
       iconSvg = svgSolution;
     } else if (track.type === 'completion') {
+    removeYourTurnBanner();
       iconSvg = svgMilestone;
     }
 
@@ -9674,3 +9777,70 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
+
+
+// ??? UX Upgrade: Schema Hover-to-Peek on Code Tags ?????????????????????????
+function initSchemaCodePeeking() {
+  const codeTags = document.querySelectorAll('#questionBar code, #slideBodyText code, #testQuestionPrompt code');
+  const schema = getSchemaInfo();
+  const tableNames = Object.keys(schema);
+
+  codeTags.forEach(tag => {
+    const text = tag.textContent.trim().toLowerCase();
+    if (tableNames.includes(text) && !tag.classList.contains('schema-peek-trigger')) {
+      tag.classList.add('schema-peek-trigger');
+      tag.title = 'Click or hover to inspect table schema';
+      
+      tag.addEventListener('mouseenter', (e) => {
+        showSchemaPeekTooltip(text, e);
+      });
+      tag.addEventListener('mouseleave', () => {
+        hideSchemaPeekTooltip();
+      });
+      tag.addEventListener('click', (e) => {
+        e.stopPropagation();
+        insertSqlSnippet(text + ' ');
+      });
+    }
+  });
+}
+
+let activePeekTooltip = null;
+
+function showSchemaPeekTooltip(tableName, event) {
+  hideSchemaPeekTooltip();
+  const schema = getSchemaInfo();
+  const cols = schema[tableName] || [];
+  if (cols.length === 0) return;
+
+  const tooltip = document.createElement('div');
+  tooltip.className = 'schema-peek-tooltip';
+  tooltip.id = 'schemaPeekTooltip';
+
+  const colsHtml = cols.map(c => `<span class="schema-peek-col" onclick="insertSqlSnippet('${c} ', 0)" title="Click to insert '${c}'">${c}</span>`).join('');
+
+  tooltip.innerHTML = `
+    <div class="schema-peek-header">
+      <strong>?? ${tableName}</strong>
+      <span style="font-size:0.65rem; color:#94a3b8;">${cols.length} columns</span>
+    </div>
+    <div class="schema-peek-cols">${colsHtml}</div>
+    <div class="schema-peek-preview">?? Tip: Click any column to insert into editor</div>
+  `;
+
+  document.body.appendChild(tooltip);
+  activePeekTooltip = tooltip;
+
+  const rect = event.target.getBoundingClientRect();
+  const top = Math.max(10, rect.bottom + 8);
+  const left = Math.max(10, Math.min(window.innerWidth - 300, rect.left));
+  tooltip.style.top = `${top}px`;
+  tooltip.style.left = `${left}px`;
+}
+
+function hideSchemaPeekTooltip() {
+  if (activePeekTooltip) {
+    activePeekTooltip.remove();
+    activePeekTooltip = null;
+  }
+}

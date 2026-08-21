@@ -157,6 +157,23 @@
           <button class="tb-btn tb-btn--clear" onclick="clearEditor()">✕ Clear</button>
         </div>
 
+        <!-- Mobile SQL Quick-Key Chips Toolbar -->
+        <div class="mobile-sql-toolbar" id="mobileSqlToolbar" aria-label="SQL Quick Syntax Chips">
+          <button class="sql-chip" onclick="insertSqlSnippet('SELECT ')">SELECT</button>
+          <button class="sql-chip" onclick="insertSqlSnippet('FROM ')">FROM</button>
+          <button class="sql-chip" onclick="insertSqlSnippet('WHERE ')">WHERE</button>
+          <button class="sql-chip sql-chip--symbol" onclick="insertSqlSnippet('*')">*</button>
+          <button class="sql-chip sql-chip--symbol" onclick="insertSqlSnippet(';')">;</button>
+          <button class="sql-chip" onclick="insertSqlSnippet('GROUP BY ')">GROUP BY</button>
+          <button class="sql-chip" onclick="insertSqlSnippet('ORDER BY ')">ORDER BY</button>
+          <button class="sql-chip" onclick="insertSqlSnippet('LIMIT ')">LIMIT</button>
+          <button class="sql-chip" onclick="insertSqlSnippet('COUNT()', -1)">COUNT()</button>
+          <button class="sql-chip sql-chip--symbol" onclick="insertSqlSnippet(' = ')">=</button>
+          <button class="sql-chip sql-chip--symbol" onclick="insertSqlSnippet(' > ')">&gt;</button>
+          <button class="sql-chip" onclick="insertSqlSnippet('AND ')">AND</button>
+          <button class="sql-chip" onclick="insertSqlSnippet('OR ')">OR</button>
+        </div>
+
         <!-- CodeMirror Mount -->
         <div class="editor-wrap" id="mainEditorWrap"></div>
 
@@ -415,6 +432,23 @@
           <button class="tb-btn tb-btn--run" onclick="runTestQuery()">▶ Run</button>
           <button class="tb-btn tb-btn--tables" onclick="togglePeekPopover(event)">📊 Tables</button>
           <button class="tb-btn tb-btn--clear" onclick="clearTestEditor()">✕ Clear</button>
+        </div>
+
+        <!-- Mobile SQL Quick-Key Chips Toolbar for Test Mode -->
+        <div class="mobile-sql-toolbar" aria-label="SQL Quick Syntax Chips">
+          <button class="sql-chip" onclick="insertSqlSnippet('SELECT ')">SELECT</button>
+          <button class="sql-chip" onclick="insertSqlSnippet('FROM ')">FROM</button>
+          <button class="sql-chip" onclick="insertSqlSnippet('WHERE ')">WHERE</button>
+          <button class="sql-chip sql-chip--symbol" onclick="insertSqlSnippet('*')">*</button>
+          <button class="sql-chip sql-chip--symbol" onclick="insertSqlSnippet(';')">;</button>
+          <button class="sql-chip" onclick="insertSqlSnippet('GROUP BY ')">GROUP BY</button>
+          <button class="sql-chip" onclick="insertSqlSnippet('ORDER BY ')">ORDER BY</button>
+          <button class="sql-chip" onclick="insertSqlSnippet('LIMIT ')">LIMIT</button>
+          <button class="sql-chip" onclick="insertSqlSnippet('COUNT()', -1)">COUNT()</button>
+          <button class="sql-chip sql-chip--symbol" onclick="insertSqlSnippet(' = ')">=</button>
+          <button class="sql-chip sql-chip--symbol" onclick="insertSqlSnippet(' > ')">&gt;</button>
+          <button class="sql-chip" onclick="insertSqlSnippet('AND ')">AND</button>
+          <button class="sql-chip" onclick="insertSqlSnippet('OR ')">OR</button>
         </div>
 
         <div class="test-editor-wrap" id="testEditorWrap"></div>

@@ -4493,8 +4493,20 @@ function updateOverallScoreUI() {
   // 3. Compute score and update values
   let totalScore = 0;
   if (window.ProgressManager) {
-    const overall = window.ProgressManager.getOverallScore();
-    totalScore = overall.totalScore || 0;
+    try {
+      if (typeof window.ProgressManager.getOverallScore === 'function') {
+        const overall = window.ProgressManager.getOverallScore();
+        totalScore = (overall && overall.totalScore) || 0;
+      } else if (typeof window.ProgressManager.getCertificationReport === 'function') {
+        const overall = window.ProgressManager.getCertificationReport();
+        totalScore = (overall && overall.totalScore) || 0;
+      } else if (typeof window.ProgressManager.getOverallStats === 'function') {
+        const overall = window.ProgressManager.getOverallStats();
+        totalScore = (overall && overall.totalScore) || 0;
+      }
+    } catch (e) {
+      console.warn('Error reading ProgressManager score:', e);
+    }
   } else {
     try {
       const raw = localStorage.getItem('manodemy_sql_v3_progress');

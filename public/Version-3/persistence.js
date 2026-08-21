@@ -199,6 +199,10 @@
         grade: percentage >= 90 ? 'Distinction' : (percentage >= 75 ? 'First Class' : (percentage >= 60 ? 'Pass' : 'Incomplete')),
         tracks: trackScores
       };
+    },
+
+    getOverallScore() {
+      return this.getCertificationReport();
     }
   };
 

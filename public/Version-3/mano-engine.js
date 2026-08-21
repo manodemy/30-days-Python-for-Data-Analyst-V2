@@ -3370,21 +3370,25 @@ const questionSolutionMap = {
     1: {
       1: {
         src: 'Day01topic2/New_Day1Part2Question01.mp3',
-        code: 'SELECT name, department\nFROM employees;',
+        code: 'SELECT name,\n       department\nFROM   employees;',
         segments: [
-          { text: "SELECT name, department\n", startAt: 12.48, charInterval: 45 },
-          { text: "FROM employees;", startAt: 13.86, charInterval: 45 }
+          { text: "SELECT ", startAt: 12.48, charInterval: 45 },
+          { text: "name,\n", startAt: 12.80, charInterval: 45 },
+          { text: "       department\n", startAt: 13.50, charInterval: 20 },
+          { text: "FROM   employees;", startAt: 13.86, charInterval: 40 }
         ],
-        scrollAt: 16.0
+        scrollAt: 15.2
       },
       2: {
         src: 'Day01topic2/New_Day1Part2Question02.mp3',
-        code: 'SELECT id, name, salary\nFROM employees;',
+        code: 'SELECT id,\n       name,\n       salary\nFROM   employees;',
         segments: [
-          { text: "SELECT id, name, salary\n", startAt: 5.40, charInterval: 50 },
-          { text: "FROM employees;", startAt: 8.44, charInterval: 50 }
+          { text: "SELECT id,\n", startAt: 5.20, charInterval: 45 },
+          { text: "       name,\n", startAt: 6.34, charInterval: 25 },
+          { text: "       salary\n", startAt: 6.70, charInterval: 25 },
+          { text: "FROM   employees;", startAt: 8.44, charInterval: 40 }
         ],
-        scrollAt: 14.0
+        scrollAt: 11.5
       }
     },
     1: {
@@ -5857,7 +5861,7 @@ const topic01Tracks = [
   { src: 'New_Day1Part1Question03.mp3', target: '#questionBar', title: 'Q2: Inspect sqlite_master', type: 'question', qId: 2 }
 ];
 
-const topic02Durations = [27.5, 27.4, 20.7, 16.6, 12.3, 9.9, 10.4, 10.9, 10.3, 6.7, 9.5, 9.8, 12.7, 12.2, 19.9, 15.4, 17.6, 14.1, 14.0, 16.2, 14.9, 35.7, 31.1, 28.6, 35.6, 27.0, 26.4];
+const topic02Durations = [25.3, 25.2, 18.5, 16.6, 12.3, 7.7, 8.2, 8.7, 8.1, 6.7, 9.5, 9.8, 12.7, 12.2, 19.9, 15.4, 17.6, 14.1, 14.0, 16.2, 14.9, 35.7, 31.1, 28.6, 35.6, 24.8, 24.2];
 const topic02Tracks = [
   { src: 'Day01topic2/New_Day1Part2audio01.mp3', target: '#columnProjectionIntro', title: 'What is Column Projection?' },
   { src: 'Day01topic2/New_Day1Part2audio02.mp3', target: '#cardPagesBlocks', title: 'PAGES / BLOCKS Card' },

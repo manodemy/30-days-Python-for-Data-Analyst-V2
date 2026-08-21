@@ -630,7 +630,7 @@ WHERE department = 'Engineering';</pre>
     },
     {
       title: '02. Column Projection & Performance',
-      duration: '8:09',
+      duration: '8:14',
       html: `
         <h2>⚡ 02. Column Projection &amp; Performance</h2>
 

@@ -7891,6 +7891,44 @@ function updateDay01CoreEntitiesHighlights(activeTarget, isPlaying) {
   });
 }
 
+function updateDay01SqlSubLanguagesHighlights(activeTarget, isPlaying) {
+  const table = document.getElementById('sqlSubLanguagesTable');
+  if (!table) return;
+
+  const rows = {
+    dql: document.getElementById('subLangDql'),
+    dml: document.getElementById('subLangDml'),
+    ddl: document.getElementById('subLangDdl'),
+    tcl: document.getElementById('subLangTcl'),
+    dcl: document.getElementById('subLangDcl')
+  };
+
+  const allRows = [rows.dql, rows.dml, rows.ddl, rows.tcl, rows.dcl].filter(Boolean);
+
+  if (!isPlaying || !activeTarget) {
+    allRows.forEach(r => r.classList.remove('row-active-spotlight'));
+    return;
+  }
+
+  let highlightedRow = null;
+
+  if (activeTarget.includes('subLangDql') || activeTarget.includes('New_Day1Part1audio17')) {
+    highlightedRow = rows.dql;
+  } else if (activeTarget.includes('subLangDml') || activeTarget.includes('New_Day1Part1audio18')) {
+    highlightedRow = rows.dml;
+  } else if (activeTarget.includes('subLangDdl') || activeTarget.includes('New_Day1Part1audio19')) {
+    highlightedRow = rows.ddl;
+  } else if (activeTarget.includes('subLangTcl') || activeTarget.includes('New_Day1Part1audio20')) {
+    highlightedRow = rows.tcl;
+  } else if (activeTarget.includes('subLangDcl') || activeTarget.includes('New_Day1Part1audio21')) {
+    highlightedRow = rows.dcl;
+  }
+
+  allRows.forEach(r => {
+    r.classList.toggle('row-active-spotlight', r === highlightedRow);
+  });
+}
+
 // ════════════════════════════════════════════════════════════════════════════════
 
 function loadAndPlayTrack(index, targetTime = 0) {
@@ -8010,6 +8048,12 @@ function loadAndPlayTrack(index, targetTime = 0) {
         track.src.includes('New_Day1Part1audio06.mp3') || 
         track.src.includes('New_Day1Part1audio05.mp3') || 
         track.src.includes('New_Day1Part1audio08.mp3')) updateDay01CoreEntitiesHighlights(null, false);
+    if (track.src.includes('New_Day1Part1audio16.mp3') || 
+        track.src.includes('New_Day1Part1audio17.mp3') || 
+        track.src.includes('New_Day1Part1audio18.mp3') || 
+        track.src.includes('New_Day1Part1audio19.mp3') || 
+        track.src.includes('New_Day1Part1audio20.mp3') || 
+        track.src.includes('New_Day1Part1audio21.mp3')) updateDay01SqlSubLanguagesHighlights(null, false);
     if (track.src.includes('New_Day3Part1audio05.mp3')) updateTableHighlights(0, false);
     if (track.src.includes('New_Day3Part1audio07.mp3')) updateIntroHighlight(0, false);
     if (track.src.includes('New_Day3Part1audio08.mp3')) updateNotCardHighlight(0, false);
@@ -8028,6 +8072,12 @@ function loadAndPlayTrack(index, targetTime = 0) {
         track.src.includes('New_Day1Part1audio06.mp3') || 
         track.src.includes('New_Day1Part1audio05.mp3') || 
         track.src.includes('New_Day1Part1audio08.mp3')) updateDay01CoreEntitiesHighlights(null, false);
+    if (track.src.includes('New_Day1Part1audio16.mp3') || 
+        track.src.includes('New_Day1Part1audio17.mp3') || 
+        track.src.includes('New_Day1Part1audio18.mp3') || 
+        track.src.includes('New_Day1Part1audio19.mp3') || 
+        track.src.includes('New_Day1Part1audio20.mp3') || 
+        track.src.includes('New_Day1Part1audio21.mp3')) updateDay01SqlSubLanguagesHighlights(null, false);
     if (track.src.includes('New_Day3Part1audio05.mp3')) updateTableHighlights(0, false);
     if (track.src.includes('New_Day3Part1audio07.mp3')) updateIntroHighlight(0, false);
     if (track.src.includes('New_Day3Part1audio08.mp3')) updateNotCardHighlight(0, false);
@@ -8474,6 +8524,12 @@ function playAudio(src, btn) {
             src.includes('New_Day1Part1audio06.mp3') || 
             src.includes('New_Day1Part1audio05.mp3') || 
             src.includes('New_Day1Part1audio08.mp3')) updateDay01CoreEntitiesHighlights(src, !currentPlayingAudio.paused);
+        if (src.includes('New_Day1Part1audio16.mp3') || 
+            src.includes('New_Day1Part1audio17.mp3') || 
+            src.includes('New_Day1Part1audio18.mp3') || 
+            src.includes('New_Day1Part1audio19.mp3') || 
+            src.includes('New_Day1Part1audio20.mp3') || 
+            src.includes('New_Day1Part1audio21.mp3')) updateDay01SqlSubLanguagesHighlights(src, !currentPlayingAudio.paused);
       };
       currentPlayingAudio.onpause = () => {
         if (src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(0, false);
@@ -8483,6 +8539,12 @@ function playAudio(src, btn) {
             src.includes('New_Day1Part1audio06.mp3') || 
             src.includes('New_Day1Part1audio05.mp3') || 
             src.includes('New_Day1Part1audio08.mp3')) updateDay01CoreEntitiesHighlights(null, false);
+        if (src.includes('New_Day1Part1audio16.mp3') || 
+            src.includes('New_Day1Part1audio17.mp3') || 
+            src.includes('New_Day1Part1audio18.mp3') || 
+            src.includes('New_Day1Part1audio19.mp3') || 
+            src.includes('New_Day1Part1audio20.mp3') || 
+            src.includes('New_Day1Part1audio21.mp3')) updateDay01SqlSubLanguagesHighlights(null, false);
       };
       currentPlayingBtn = btn;
       currentPlayingAudio.play();
@@ -8496,6 +8558,12 @@ function playAudio(src, btn) {
             src.includes('New_Day1Part1audio06.mp3') || 
             src.includes('New_Day1Part1audio05.mp3') || 
             src.includes('New_Day1Part1audio08.mp3')) updateDay01CoreEntitiesHighlights(null, false);
+        if (src.includes('New_Day1Part1audio16.mp3') || 
+            src.includes('New_Day1Part1audio17.mp3') || 
+            src.includes('New_Day1Part1audio18.mp3') || 
+            src.includes('New_Day1Part1audio19.mp3') || 
+            src.includes('New_Day1Part1audio20.mp3') || 
+            src.includes('New_Day1Part1audio21.mp3')) updateDay01SqlSubLanguagesHighlights(null, false);
         btn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
         btn.classList.remove('playing');
         currentPlayingAudio = null;
@@ -8985,6 +9053,9 @@ function clearSlidePlaybackVisibility() {
   if (typeof updateDay01CoreEntitiesHighlights === 'function') {
     updateDay01CoreEntitiesHighlights(null, false);
   }
+  if (typeof updateDay01SqlSubLanguagesHighlights === 'function') {
+    updateDay01SqlSubLanguagesHighlights(null, false);
+  }
 }
 
 /**
@@ -9086,6 +9157,9 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
     // 6. Trigger specific audio visual sync handlers
     if (typeof updateDay01CoreEntitiesHighlights === 'function') {
       updateDay01CoreEntitiesHighlights(targetSelector, true);
+    }
+    if (typeof updateDay01SqlSubLanguagesHighlights === 'function') {
+      updateDay01SqlSubLanguagesHighlights(targetSelector, true);
     }
   });
 }

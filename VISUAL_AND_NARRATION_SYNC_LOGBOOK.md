@@ -15,6 +15,22 @@ It ensures a tight 1:1 synchronization between:
 
 ## 📜 Session Change Log
 
+### 🗓️ Entry: 2026-08-21 — Day 01 SQL Sub-Languages Table Stationary & Keyword Row Spotlight Sync
+* **Target Audio**: `New_Day1Part1audio16.mp3` through `New_Day1Part1audio21.mp3` (`#sqlSubLanguages`, `#subLangDql`, `#subLangDml`, `#subLangDdl`, `#subLangTcl`, `#subLangDcl`).
+* **Target Container**: `#sqlSubLanguagesTable` (`.sub-languages-table`)
+* **Behavior & Resolution**:
+  1. **Fixed Stationary Table**: The entire 5-row table (Category, Purpose, Example for DQL, DML, DDL, TCL, DCL) stays 100% visible and fixed in place throughout the narration.
+  2. **Keyword-Level Spotlight**:
+     - `audio16` (Intro): Full table displayed cleanly with zero row highlights.
+     - `audio17` (`DQL`): Row 1 (`#subLangDql`) smoothly glows with `.row-active-spotlight`.
+     - `audio18` (`DML`): Row 2 (`#subLangDml`) smoothly glows with `.row-active-spotlight`.
+     - `audio19` (`DDL`): Row 3 (`#subLangDdl`) smoothly glows with `.row-active-spotlight`.
+     - `audio20` (`TCL`): Row 4 (`#subLangTcl`) smoothly glows with `.row-active-spotlight`.
+     - `audio21` (`DCL`): Row 5 (`#subLangDcl`) smoothly glows with `.row-active-spotlight`.
+  3. **Zero-Jerk Transition**: Because the section is already mounted, switching between row tracks produces zero scroll displacement or pop-in animation, maintaining a rock-solid reading experience.
+* **Files Updated**:
+  - [`public/Version-3/mano-engine.js`](file:///d:/Learn%20Python%20in%2060days/Manodemy_Web_V2/public/Version-3/mano-engine.js): Added `updateDay01SqlSubLanguagesHighlights(activeTarget, isPlaying)` and connected to `loadAndPlayTrack`, `playAudio`, `updateSlidePlaybackVisibility`, and `clearSlidePlaybackVisibility`.
+
 ### 🗓️ Entry: 2026-08-21 — Day 01 Core Structural Entities Table Stationary & Zero-Jerk Row Transition
 * **Target Audio**: `New_Day1Part1audio04.mp3` through `New_Day1Part1audio08.mp3` (`#coreEntities`, `#entityDatabase`, `#entityTable`, `#entityColumn`, `#entityRow`).
 * **Problem Addressed**: Switching tracks between rows within the same section repeatedly re-triggered `stunning-section-entry` animations and reset `container.scrollTop = 0`, causing the table to jump, pop, and scroll unexpectedly.

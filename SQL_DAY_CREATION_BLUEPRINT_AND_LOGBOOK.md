@@ -122,6 +122,10 @@ Before considering any day complete, run this verification checklist:
 
 ## 📝 Living Decision Logbook & Changelog
 
+### 🔹 Day 01 (SQL Foundations & Sub-Languages Sync) — 2026-08-21
+- **Sub-Languages Table Spotlight & Fixed Layout**: Implemented `updateDay01SqlSubLanguagesHighlights(activeTarget, isPlaying)` in `mano-engine.js` covering `audio16` (Intro) through `audio21` (`DQL`, `DML`, `DDL`, `TCL`, `DCL`).
+- **Fixed Position & Zero-Jerk Transitions**: The table stays completely steady and stationary on screen during keyword-by-keyword narration. Sub-track transitions inside the same mounted section bypass scroll jumping and pop-in animations, smoothly highlighting each row with the sapphire spotlight border.
+
 ### 🔹 Day 05 (Aggregate Functions) — 2026-08-21
 - **Upgrade**: Fully upgraded slide theory to 7 outcome-focused sections with 23 `playAudio()` hooks.
 - **Practice Expansion**: Expanded practice questions from 12 to 15 (added conditional aggregation `SUM(CASE WHEN...)`, weighted average price calculation, and `GROUP_CONCAT`).

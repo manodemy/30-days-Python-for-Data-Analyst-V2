@@ -4135,13 +4135,17 @@ function renderPracticeQuestion() {
     if (solBtn) {
       let solEntry = (q && q.solutionAudio) ? { src: q.solutionAudio, code: q.referenceSql, startAt: 1.5, charInterval: 70 } : getSolutionEntry(q.id);
       solBtn.style.display = solEntry ? 'inline-flex' : 'none';
-      solBtn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
-      solBtn.classList.remove('playing');
+      if (solBtn.style.display === 'inline-flex') {
+        solBtn.onclick = () => playSolutionAudioFromBtn(solBtn);
+      }
     }
 
     // Remove highlight when question changes
     const bar = document.getElementById('questionBar');
-    if (bar) bar.classList.remove('question-playing');
+    if (bar && !isCombinedPlaying) bar.classList.remove('question-playing');
+
+    // Instantly sync button states
+    updatePlayButtonStates(isCombinedPlaying);
   }
 }
 
@@ -8762,8 +8766,18 @@ function loadAndPlayTrack(index, targetTime = 0) {
   audio.addEventListener('stalled', () => {
     if (myGeneration === currentGeneration) toggleBufferingState(true);
   });
+  audio.addEventListener('play', () => {
+    if (myGeneration === currentGeneration) {
+      isCombinedPlaying = true;
+      updatePlayButtonStates(true);
+    }
+  });
   audio.addEventListener('playing', () => {
-    if (myGeneration === currentGeneration) toggleBufferingState(false);
+    if (myGeneration === currentGeneration) {
+      isCombinedPlaying = true;
+      toggleBufferingState(false);
+      updatePlayButtonStates(true);
+    }
   });
   audio.addEventListener('canplay', () => {
     if (myGeneration === currentGeneration) toggleBufferingState(false);
@@ -8859,6 +8873,8 @@ function loadAndPlayTrack(index, targetTime = 0) {
 
   audio.addEventListener('pause', () => {
     if (myGeneration !== currentGeneration) return;
+    isCombinedPlaying = false;
+    updatePlayButtonStates(false);
     if (track.src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(0, false);
     if (track.src.includes('New_Day1Part1audio03.mp3')) updateDay01Audio03Highlights(0, false);
     if (track.src.includes('New_Day1Part1audio04.mp3') || 
@@ -8909,6 +8925,7 @@ function loadAndPlayTrack(index, targetTime = 0) {
 
     currentCombinedTime = elapsed;
     updateProgressUI();
+    updatePlayButtonStates(!audio.paused && isCombinedPlaying);
     maybePrefetchNext(audio, index);
   });
 

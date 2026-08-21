@@ -4398,6 +4398,38 @@ function persistSolvedQuestions() {
   localStorage.setItem('manodemy_solved_v3', JSON.stringify([...solvedQuestions]));
 }
 
+function updateOverallScoreUI() {
+  let totalScore = 0;
+  if (window.ProgressManager) {
+    const overall = window.ProgressManager.getOverallScore();
+    totalScore = overall.totalScore || 0;
+  } else {
+    try {
+      const raw = localStorage.getItem('manodemy_sql_v3_progress');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.days) {
+          Object.keys(parsed.days).forEach(k => {
+            totalScore += (parsed.days[k].bestScore || 0);
+          });
+        }
+      }
+    } catch (e) {}
+  }
+
+  const scoreEls = document.querySelectorAll('#headerOverallScore, #testHeaderOverallScore, .overall-score-num');
+  scoreEls.forEach(el => {
+    el.textContent = totalScore;
+  });
+
+  const fills = document.querySelectorAll('#overallScoreBarFill, #testOverallScoreBarFill, .overall-score-bar-fill');
+  const pct = Math.min(100, Math.max(0, (totalScore / 1500) * 100));
+  fills.forEach(f => {
+    f.style.width = `${pct}%`;
+  });
+}
+window.updateOverallScoreUI = updateOverallScoreUI;
+
 function updatePracticeStats() {
   let solved = 0;
   solvedQuestions.forEach(key => {
@@ -4420,6 +4452,9 @@ function updatePracticeStats() {
   const pct = total > 0 ? (solved / total) * 100 : 0;
   const fill = document.getElementById('statsProgressFill');
   if (fill) fill.style.width = `${pct}%`;
+
+  // Always keep overall score out of 1500 in sync
+  updateOverallScoreUI();
 }
 
 function runCurrentQuery() {

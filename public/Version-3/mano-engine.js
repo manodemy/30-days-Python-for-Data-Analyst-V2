@@ -370,6 +370,7 @@ function escHtml(s) {
 
 let mainEditor = null;
 let testEditor = null;
+let isProgrammaticTyping = false;
 
 function initMainEditor() {
   const schema = getSchemaInfo();
@@ -406,15 +407,19 @@ function initMainEditor() {
   });
 
   mainEditor.on('focus', () => {
-    pauseCombinedPlayback();
+    if (!isProgrammaticTyping) {
+      pauseCombinedPlayback();
+    }
   });
   mainEditor.on('change', (cm, change) => {
-    if (isCombinedPlaying && change.origin !== 'setValue') {
+    if (!isProgrammaticTyping && isCombinedPlaying && change.origin && change.origin !== 'setValue') {
       pauseCombinedPlayback();
     }
   });
   document.getElementById('mainEditorWrap')?.addEventListener('click', () => {
-    pauseCombinedPlayback();
+    if (!isProgrammaticTyping) {
+      pauseCombinedPlayback();
+    }
   });
 }
 
@@ -3940,6 +3945,21 @@ function cancelTypewriter() {
   }
 }
 
+function setEditorCodeSafely(val) {
+  if (!mainEditor) return;
+  isProgrammaticTyping = true;
+  try {
+    mainEditor.setValue(val || '');
+    if (val) {
+      const lastLine = mainEditor.lastLine();
+      mainEditor.setCursor({ line: lastLine, ch: mainEditor.getLine(lastLine).length });
+    }
+  } catch (e) {
+  } finally {
+    isProgrammaticTyping = false;
+  }
+}
+
 function startAudioSyncedTypewriter(audioObj, solEntry) {
   cancelTypewriter();
   if (!audioObj || !solEntry) return;
@@ -3981,13 +4001,7 @@ function startAudioSyncedTypewriter(audioObj, solEntry) {
     nextEvtIdx++;
   }
 
-  if (mainEditor) {
-    mainEditor.setValue(currentText);
-    if (currentText) {
-      const lastLine = mainEditor.lastLine();
-      mainEditor.setCursor({ line: lastLine, ch: mainEditor.getLine(lastLine).length });
-    }
-  }
+  setEditorCodeSafely(currentText);
 
   let qFired = nextEvtIdx >= syncEvents.length && syncEvents.length > 0;
   if (qFired && initialTime < scrollAtSec) {
@@ -4016,22 +4030,12 @@ function startAudioSyncedTypewriter(audioObj, solEntry) {
         text = syncEvents[nextEvtIdx].text;
         nextEvtIdx++;
       }
-      if (mainEditor) {
-        mainEditor.setValue(text);
-        if (text) {
-          const lastLine = mainEditor.lastLine();
-          mainEditor.setCursor({ line: lastLine, ch: mainEditor.getLine(lastLine).length });
-        }
-      }
+      setEditorCodeSafely(text);
     }
 
     while (nextEvtIdx < syncEvents.length && ct >= syncEvents[nextEvtIdx].atSec) {
       const ev = syncEvents[nextEvtIdx];
-      if (mainEditor) {
-        mainEditor.setValue(ev.text);
-        const lastLine = mainEditor.lastLine();
-        mainEditor.setCursor({ line: lastLine, ch: mainEditor.getLine(lastLine).length });
-      }
+      setEditorCodeSafely(ev.text);
       nextEvtIdx++;
     }
 
@@ -4244,11 +4248,11 @@ function playSolutionAudio(solutionEntry, triggerBtn) {
     return;
   }
   if (!solutionEntry) return;
-  const { src, code } = solutionEntry;
+  const { src } = solutionEntry;
   const fullSrc = src.startsWith('http') || src.startsWith('/') ? src : `/Version-3/${src}`;
   const btn = triggerBtn || document.getElementById('solutionAudioBtn');
 
-  // Stop any currently playing audio cleanly
+  // Stop any currently playing standalone audio cleanly
   if (currentPlayingAudio && !combinedAudios.includes(currentPlayingAudio)) {
     currentPlayingAudio.pause();
     if (currentPlayingBtn && currentPlayingBtn !== btn) {
@@ -4258,20 +4262,27 @@ function playSolutionAudio(solutionEntry, triggerBtn) {
   }
   cancelTypewriter();
 
-  // Clear editor ready for typewriter
-  if (mainEditor) {
-    mainEditor.setValue('');
-    mainEditor.focus();
+  // Clear editor ready for typewriter safely without triggering focus event
+  setEditorCodeSafely('');
+
+  // Use combined audio system if this track is registered in timeline
+  const trackIdx = combinedTracks.findIndex(t => t.src === src);
+  let audio;
+  if (trackIdx !== -1) {
+    const targetOffset = src.includes('New_Day1Part2Question01.mp3') ? 9.0 : 0;
+    loadAndPlayTrack(trackIdx, targetOffset);
+    audio = activeAudioInstance;
+  } else {
+    audio = new Audio(fullSrc);
+    if (src.includes('New_Day1Part2Question01.mp3')) {
+      audio.currentTime = 9.0;
+    }
+    if (typeof currentPlaybackSpeed !== 'undefined') audio.playbackRate = currentPlaybackSpeed;
+    if (typeof currentPlaybackVolume !== 'undefined') audio.volume = currentPlaybackVolume;
+    audio.play().catch(e => console.log('Solution audio play error:', e));
+    startAudioSyncedTypewriter(audio, solutionEntry);
   }
 
-  // Use combined audio system if this track is registered there
-  const audio = syncCombinedToTrack(src) || new Audio(fullSrc);
-  if (typeof currentPlaybackSpeed !== 'undefined') {
-    audio.playbackRate = currentPlaybackSpeed;
-  }
-  if (typeof currentPlaybackVolume !== 'undefined') {
-    audio.volume = currentPlaybackVolume;
-  }
   currentPlayingAudio = audio;
   currentPlayingBtn = btn;
 
@@ -4280,22 +4291,16 @@ function playSolutionAudio(solutionEntry, triggerBtn) {
     btn.classList.add('playing');
   }
 
-  // If this audio contains both question (0..9s) and solution (9s..24s), and the user explicitly clicked "Solution", seek to where solution explanation starts!
-  if (src.includes('New_Day1Part2Question01.mp3')) {
-    audio.currentTime = 9.0;
+  if (audio) {
+    audio.addEventListener('ended', () => {
+      if (btn) {
+        btn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+        btn.classList.remove('playing');
+      }
+      currentPlayingAudio = null;
+      currentPlayingBtn = null;
+    }, { once: true });
   }
-
-  audio.play().catch(e => console.log('Solution audio play error:', e));
-  startAudioSyncedTypewriter(audio, solutionEntry);
-
-  audio.addEventListener('ended', () => {
-    if (btn) {
-      btn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
-      btn.classList.remove('playing');
-    }
-    currentPlayingAudio = null;
-    currentPlayingBtn = null;
-  }, { once: true });
 }
 
 function playSolutionAudioFromBtn(btn) {

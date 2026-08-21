@@ -806,10 +806,12 @@ function renderSideSlide() {
   const topicSelect = document.getElementById('topicSelect');
   if (topicSelect) topicSelect.value = currentSlide;
 
-  if (typeof combinedTracks !== 'undefined' && combinedTracks && combinedTracks[combinedTrackIndex]) {
-    const activeTrack = combinedTracks[combinedTrackIndex];
-    if (activeTrack && activeTrack.target) {
-      updateSlidePlaybackVisibility(activeTrack.target, true);
+  if (typeof isCombinedPlaying !== 'undefined' && isCombinedPlaying) {
+    if (typeof combinedTracks !== 'undefined' && combinedTracks && combinedTracks[combinedTrackIndex]) {
+      const activeTrack = combinedTracks[combinedTrackIndex];
+      if (activeTrack && activeTrack.target) {
+        updateSlidePlaybackVisibility(activeTrack.target, true);
+      }
     }
   } else if (typeof clearSlidePlaybackVisibility === 'function') {
     clearSlidePlaybackVisibility();

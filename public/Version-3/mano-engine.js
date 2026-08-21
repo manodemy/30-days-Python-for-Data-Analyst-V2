@@ -3327,6 +3327,33 @@ const questionAudioMap = {
 };
 
 // Map per day → question id → { src, code, startAt (seconds), charInterval (ms) }
+
+function getSolutionEntry(qId, topicIdx) {
+  const tIdx = typeof topicIdx === 'number' ? topicIdx : (typeof currentSlide !== 'undefined' ? currentSlide : 0);
+  const daySolMap = typeof questionSolutionMap !== 'undefined' ? (questionSolutionMap[currentDay] || questionSolutionMap['day01']) : null;
+  if (!daySolMap) return null;
+  if (daySolMap[tIdx] && daySolMap[tIdx][qId]) {
+    return daySolMap[tIdx][qId];
+  }
+  if (daySolMap[qId]) {
+    return daySolMap[qId];
+  }
+  return null;
+}
+
+function getQuestionAudioSrc(qId, topicIdx) {
+  const tIdx = typeof topicIdx === 'number' ? topicIdx : (typeof currentSlide !== 'undefined' ? currentSlide : 0);
+  const dayAudioMap = typeof questionAudioMap !== 'undefined' ? (questionAudioMap[currentDay] || questionAudioMap['day01']) : null;
+  if (!dayAudioMap) return null;
+  if (dayAudioMap[tIdx] && dayAudioMap[tIdx][qId]) {
+    return dayAudioMap[tIdx][qId];
+  }
+  if (dayAudioMap[qId]) {
+    return dayAudioMap[qId];
+  }
+  return null;
+}
+
 const questionSolutionMap = {
   'day01': {
     0: {
@@ -4036,15 +4063,7 @@ function renderPracticeQuestion() {
 
     // Update question audio button based on the question id & active topic slide
     const btn = document.getElementById('questionAudioBtn');
-    const dayAudioMap = questionAudioMap[currentDay] || questionAudioMap['day01'];
-    let audioSrc = q.questionAudio;
-    if (!audioSrc && dayAudioMap) {
-      if (dayAudioMap[currentSlide] && dayAudioMap[currentSlide][q.id]) {
-        audioSrc = dayAudioMap[currentSlide][q.id];
-      } else if (dayAudioMap[q.id]) {
-        audioSrc = dayAudioMap[q.id];
-      }
-    }
+    let audioSrc = q.questionAudio || getQuestionAudioSrc(q.id);
     if (btn) {
       if (audioSrc) {
         btn.style.display = 'inline-flex';
@@ -4057,15 +4076,7 @@ function renderPracticeQuestion() {
     // Show/hide solution audio button based on whether this question has a solution audio
     const solBtn = document.getElementById('solutionAudioBtn');
     if (solBtn) {
-      const daySolMap = questionSolutionMap[currentDay] || questionSolutionMap['day01'];
-      let solEntry = (q && q.solutionAudio) ? { src: q.solutionAudio, code: q.referenceSql, startAt: 1.5, charInterval: 70 } : null;
-      if (!solEntry && daySolMap) {
-        if (daySolMap[currentSlide] && daySolMap[currentSlide][q.id]) {
-          solEntry = daySolMap[currentSlide][q.id];
-        } else if (daySolMap[q.id]) {
-          solEntry = daySolMap[q.id];
-        }
-      }
+      let solEntry = (q && q.solutionAudio) ? { src: q.solutionAudio, code: q.referenceSql, startAt: 1.5, charInterval: 70 } : getSolutionEntry(q.id);
       solBtn.style.display = solEntry ? 'inline-flex' : 'none';
       solBtn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
       solBtn.classList.remove('playing');
@@ -4133,6 +4144,13 @@ function playQuestionAudio(btn, audioSrc) {
 
   // Jump combined system to this track
   const audio = combinedAudio ? syncCombinedToTrack(src) : new Audio(`/Version-3/${src}`);
+
+  // If question audio contains solution typing (e.g. Day01topic2/New_Day1Part2Question01.mp3), start typewriter!
+  const currentQ = COURSE_CONFIG.practiceQuestions[currentPracticeQ];
+  const solEntryForQ = currentQ ? getSolutionEntry(currentQ.id) : null;
+  if (solEntryForQ && (solEntryForQ.src === src || src.includes(solEntryForQ.src) || solEntryForQ.src.includes(src))) {
+    startAudioSyncedTypewriter(audio, solEntryForQ);
+  }
   if (typeof currentPlaybackSpeed !== 'undefined') {
     audio.playbackRate = currentPlaybackSpeed;
   }
@@ -9028,9 +9046,8 @@ function loadAndPlayTrack(index, targetTime = 0) {
     }
     const bar = document.getElementById('questionBar');
     if (bar) bar.classList.add('question-playing');
-    const solMap = questionSolutionMap[currentDay] || questionSolutionMap['day01'];
-    const solEntry = solMap ? solMap[track.qId] : null;
-    if (solEntry) {
+    const solEntry = getSolutionEntry(track.qId);
+    if (solEntry && (track.type === 'solution' || track.src.includes(solEntry.src) || solEntry.src.includes(track.src))) {
       startAudioSyncedTypewriter(audio, solEntry);
     }
     setMobileTab('practice');
@@ -9318,10 +9335,9 @@ function seekCombinedPlayback(val, shouldPlay = true) {
       if (bar) bar.classList.add('question-playing');
       setMobileTab('practice');
 
-      if (track.type === 'solution') {
-        const solMap = questionSolutionMap[currentDay] || questionSolutionMap['day01'];
-        const solEntry = solMap ? solMap[track.qId] : null;
-        if (solEntry) {
+      if (track.type === 'solution' || track.type === 'question') {
+        const solEntry = getSolutionEntry(track.qId);
+        if (solEntry && (track.type === 'solution' || track.src.includes(solEntry.src) || solEntry.src.includes(track.src))) {
           startAudioSyncedTypewriter({ currentTime: localOffset, paused: !isCombinedPlaying }, solEntry);
         }
       }
@@ -9350,10 +9366,9 @@ function seekCombinedPlayback(val, shouldPlay = true) {
         activeAudioInstance.currentTime = localOffset;
       } catch (e) { }
 
-      if (track && track.type === 'solution') {
-        const solMap = questionSolutionMap[currentDay] || questionSolutionMap['day01'];
-        const solEntry = solMap ? solMap[track.qId] : null;
-        if (solEntry) {
+      if (track && (track.type === 'solution' || track.type === 'question')) {
+        const solEntry = getSolutionEntry(track.qId);
+        if (solEntry && (track.type === 'solution' || track.src.includes(solEntry.src) || solEntry.src.includes(track.src))) {
           startAudioSyncedTypewriter(activeAudioInstance, solEntry);
         }
       }

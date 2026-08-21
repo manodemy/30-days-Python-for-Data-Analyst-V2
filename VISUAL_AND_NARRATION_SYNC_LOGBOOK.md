@@ -15,6 +15,19 @@ It ensures a tight 1:1 synchronization between:
 
 ## 📜 Session Change Log
 
+### 🗓️ Entry: 2026-08-21 — Professional Web Audio Mechanical Typing Sound Synthesizer & Day 05 Segments
+* **Target Feature**: `startAudioSyncedTypewriter` animation engine in `mano-engine.js`.
+* **Sound Engineering Design**:
+  1. **Zero-Latency Web Audio API Synthesis**: Synthesizes tactile mechanical switch sounds using `AudioContext` without network audio asset requests.
+  2. **Dual-Layer Keystroke Acoustic Model**:
+     - **Layer A (Stem Snap)**: 12ms shaped noise burst filtered through a high-Q bandpass filter centered at `4200Hz` ($\pm 250\text{Hz}$ random jitter).
+     - **Layer B (Bottom-out Thud)**: 35ms damped sine/triangle wave (`185Hz` down to `80Hz`).
+     - **Spacebar / Return Weight**: Spacebars and Enter keys trigger deeper resonance (`110Hz - 135Hz`) and wider bandpass for realistic tactile feedback.
+  3. **Volume Gating & Anti-Stacking**: Keystrokes are throttled to a minimum 22ms delta and calibrated to a gentle background level (`~0.045`) that complements narration without masking speech.
+  4. **Day 05 Segments Sync**: All 15 practice questions in `questionSolutionMap['day05']` upgraded to Whisper-aligned keyword `segments`.
+* **Files Updated**:
+  - [`public/Version-3/mano-engine.js`](file:///d:/Learn%20Python%20in%2060days/Manodemy_Web_V2/public/Version-3/mano-engine.js): Added `playTypingSound(char)` and updated `rafLoop()` in `startAudioSyncedTypewriter()`.
+
 ### 🗓️ Entry: 2026-08-21 — Single Question Isolation during Interview Q&A Narration
 * **Target Scope**: All interview Q&A blocks (`.interview-box > div`, e.g., `#iqReferentialIntegrity`, `#iqSqlVsNosql`, `#iqCompositePk`).
 * **Behavior & Resolution**:

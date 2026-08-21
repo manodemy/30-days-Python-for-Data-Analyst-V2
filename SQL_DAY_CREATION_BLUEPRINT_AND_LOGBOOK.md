@@ -136,7 +136,14 @@ Before considering any day complete, run this verification checklist:
 - **Access Control**: Updated `loadDayContent()` threshold to unlock Day 05 for all learners.
 - **Narration Engine Rollout**: Generated all 53 MP3 voice files via Microsoft `en-US-AndrewNeural` (`public/Version-3/Day05/`).
 - **Track & Sync Wiring**: Registered `day05Tracks`, exact durations array in `day05Durations`, `questionAudioMap['day05']`, and multi-line formatted typewriter sync in `questionSolutionMap['day05']`.
-- **Deployment**: Verified via `npm run build` and deployed to Vercel (`e78d1cf`).
+### 🔹 Practice Question Narration & Typing Syncing Inspector — 2026-08-21
+- **Tooling Architecture**: Built `scripts/inspect_solution_sync.py` powered by `openai-whisper` for automated word-level speech-to-code alignment.
+- **Precision Synchronization**:
+  - Automatically breaks multi-line SQL solutions into clauses and column expressions.
+  - Matches spoken keywords (e.g. `SELECT`, `column_name`, `AS alias`, `FROM`, `WHERE`, `GROUP BY`, `ORDER BY`) to speech timestamps.
+  - Dynamically calculates `charInterval` (ms per character) so typing completes right as speech ends.
+  - Detects execution keywords (*"run"*, *"execute"*, *"output"*) to set exact `scrollAt` timestamps.
+- **Skill Registration**: Added to `.agents/skills/practice-question-audio-sync/scripts/inspect_solution_sync.py` and updated `SKILL.md`.
 
 ---
 

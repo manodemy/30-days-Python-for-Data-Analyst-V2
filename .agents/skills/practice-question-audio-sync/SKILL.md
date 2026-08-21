@@ -52,32 +52,22 @@ ORDER BY profit DESC;
 
 ## Standard Workflow
 
-### Step 1: Measure Audio Durations
-Run `ffprobe` on both the Question audio and Solution audio files to get exact durations:
+### Step 1: Run the Automated Narration & Typing Syncing Inspector
+Instead of manual timestamp calculation, run the built-in **Narration & Typing Syncing Inspector** to automatically transcribe the solution audio, extract word-level Whisper ASR timestamps, align multi-line SQL clauses to spoken keywords, and generate the production `segments` object:
 
-```powershell
-ffprobe -i public/Version-3/Day02/New_Day2Question05.mp3 -show_entries format=duration -v quiet -of csv="p=0"
-ffprobe -i public/Version-3/Day02/New_Day2Question05sol.mp3 -show_entries format=duration -v quiet -of csv="p=0"
+```bash
+# Inspect a single question solution audio:
+python scripts/inspect_solution_sync.py --audio "public/Version-3/Day05/New_Day5Question01sol.mp3" --code "SELECT SUM(salary) AS total_payroll, AVG(salary) AS avg_salary, MIN(salary) AS min_salary, MAX(salary) AS max_salary FROM employees;" --q 1
+
+# Or inspect all practice questions for a day:
+python scripts/inspect_solution_sync.py --day 5
 ```
 
-### Step 2: Extract Word-Level Timestamps with Whisper ASR
-Write a scratch Python script to extract exact word-level timestamps using `openai-whisper` (`tiny.en` model):
-
-```python
-import whisper
-
-model = whisper.load_model("tiny.en")
-result = model.transcribe("public/Version-3/Day02/New_Day2Question05sol.mp3", word_timestamps=True)
-
-print("=== WORD-LEVEL TIMESTAMPS ===")
-for segment in result["segments"]:
-    for word in segment.get("words", []):
-        print(f"  {word['start']:6.3f}s - {word['end']:6.3f}s : {word['word']}")
-```
-
-Execute the script via `run_command`.
+The inspector generates structured multi-line SQL formatting with 7-space column alignment, aligns keyword timestamps, and outputs the exact JavaScript configuration ready for `questionSolutionMap`.
 
 ---
+
+### Step 2: Extract Word-Level Timestamps with Whisper ASR (Manual / Verification)
 
 ### Step 3: Map Spoken Words to Structured Code Segments
 Match the spoken words from the Whisper output to the multi-line SQL code lines:

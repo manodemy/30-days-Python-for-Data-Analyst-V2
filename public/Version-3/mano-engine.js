@@ -9916,6 +9916,24 @@ function hideSchemaPeekTooltip() {
   }
 }
 
+function insertSqlSnippet(snippet, cursorOffset = 0) {
+  const isTest = document.getElementById('testOverlay')?.classList.contains('open');
+  const targetEditor = (isTest && testEditor) ? testEditor : mainEditor;
+  if (!targetEditor) return;
+
+  const doc = targetEditor.getDoc();
+  const cursor = doc.getCursor();
+  doc.replaceRange(snippet, cursor);
+  
+  const newPos = {
+    line: cursor.line,
+    ch: cursor.ch + snippet.length + cursorOffset
+  };
+  doc.setCursor(newPos);
+  targetEditor.focus();
+}
+window.insertSqlSnippet = insertSqlSnippet;
+
 function handleColumnChipClick(colName, event) {
   if (event) event.stopPropagation();
   insertSqlSnippet(colName + ' ', 0);
@@ -9934,6 +9952,7 @@ function handleColumnChipClick(colName, event) {
     }, 250);
   }
 }
+window.handleColumnChipClick = handleColumnChipClick;
 
 function showSchemaPeekTooltip(tableName, anchorEl, isClick = false) {
   cancelHideSchemaPeekTooltip();

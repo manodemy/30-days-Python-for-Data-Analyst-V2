@@ -5247,15 +5247,20 @@ function setupTimelineDragging() {
     if (tooltip) {
       tooltip.classList.add('active');
 
+      const svgTheory = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:-1px;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>';
+      const svgPractice = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:-1px;"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>';
+      const svgSolution = '<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style="margin-right:4px; vertical-align:-1px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>';
+      const svgMilestone = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:-1px;"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H7"/><path d="M14 14.66V17c0 .55.45 1 1 1h2"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>';
+
       let badgeHtml = '';
       if (trackType === 'Theory') {
-        badgeHtml = '<span class="tt-badge tt-badge--theory">?? Theory</span>';
+        badgeHtml = '<span class="tt-badge tt-badge--theory">' + svgTheory + 'THEORY</span>';
       } else if (trackType === 'Practice') {
-        badgeHtml = '<span class="tt-badge tt-badge--practice">?? Practice</span>';
+        badgeHtml = '<span class="tt-badge tt-badge--practice">' + svgPractice + 'PRACTICE</span>';
       } else if (trackType === 'Solution') {
-        badgeHtml = '<span class="tt-badge tt-badge--solution">? Solution</span>';
+        badgeHtml = '<span class="tt-badge tt-badge--solution">' + svgSolution + 'SOLUTION</span>';
       } else {
-        badgeHtml = '<span class="tt-badge tt-badge--milestone">?? Milestone</span>';
+        badgeHtml = '<span class="tt-badge tt-badge--milestone">' + svgMilestone + 'MILESTONE</span>';
       }
 
       tooltip.innerHTML = `

@@ -7167,14 +7167,12 @@ select:focus:not(:focus-visible) {
 }
 
 .narration-spotlight-active {
-  position: relative !important;
-  border-left: 4px solid #818cf8 !important;
-  padding-left: 12px !important;
-  border-radius: 0 8px 8px 0 !important;
-  background: linear-gradient(90deg, rgba(124, 58, 237, 0.12) 0%, rgba(124, 58, 237, 0.02) 100%) !important;
-  box-shadow: 0 4px 20px rgba(124, 58, 237, 0.16), inset 0 0 0 1px rgba(167, 139, 250, 0.25) !important;
-  transform: translateX(3px) scale(1.005) !important;
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  background: none !important;
+  border: none !important;
+  border-left: none !important;
+  box-shadow: none !important;
+  padding-left: 0 !important;
+  transform: none !important;
 }
 
 /* 3. Narration Caption Active Voice Glow */

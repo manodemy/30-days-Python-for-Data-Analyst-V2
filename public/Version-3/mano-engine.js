@@ -3002,6 +3002,23 @@ const questionAudioMap = {
     10: 'Day04/New_Day4Question10.mp3',
     11: 'Day04/New_Day4Question11.mp3',
     12: 'Day04/New_Day4Question12.mp3'
+  },
+  'day05': {
+    1: 'Day05/New_Day5Question01.mp3',
+    2: 'Day05/New_Day5Question02.mp3',
+    3: 'Day05/New_Day5Question03.mp3',
+    4: 'Day05/New_Day5Question04.mp3',
+    5: 'Day05/New_Day5Question05.mp3',
+    6: 'Day05/New_Day5Question06.mp3',
+    7: 'Day05/New_Day5Question07.mp3',
+    8: 'Day05/New_Day5Question08.mp3',
+    9: 'Day05/New_Day5Question09.mp3',
+    10: 'Day05/New_Day5Question10.mp3',
+    11: 'Day05/New_Day5Question11.mp3',
+    12: 'Day05/New_Day5Question12.mp3',
+    13: 'Day05/New_Day5Question13.mp3',
+    14: 'Day05/New_Day5Question14.mp3',
+    15: 'Day05/New_Day5Question15.mp3'
   }
 };
 
@@ -3147,6 +3164,113 @@ const questionSolutionMap = {
     10: { src: 'Day04/New_Day4Question10sol.mp3', code: 'SELECT first_name, salary FROM employees WHERE salary > (SELECT MIN(salary) FROM employees WHERE department_id = 30);', startAt: 1.5, charInterval: 70 },
     11: { src: 'Day04/New_Day4Question11sol.mp3', code: 'SELECT product_id, name FROM products WHERE product_id % 2 = 0;', startAt: 1.5, charInterval: 70 },
     12: { src: 'Day04/New_Day4Question12sol.mp3', code: 'SELECT name, stock_qty * cost_price AS stock_value FROM products WHERE stock_qty * cost_price > 100000;', startAt: 1.5, charInterval: 70 }
+  },
+  'day05': {
+    1: {
+      src: 'Day05/New_Day5Question01sol.mp3',
+      code: 'SELECT SUM(salary) AS total_payroll,\n       AVG(salary) AS avg_salary,\n       MIN(salary) AS min_salary,\n       MAX(salary) AS max_salary\nFROM   employees;',
+      startAt: 1.2,
+      charInterval: 65,
+      scrollAt: 12.0
+    },
+    2: {
+      src: 'Day05/New_Day5Question02sol.mp3',
+      code: 'SELECT COUNT(*) AS active_employees\nFROM   employees\nWHERE  is_active = 1;',
+      startAt: 1.0,
+      charInterval: 60,
+      scrollAt: 6.5
+    },
+    3: {
+      src: 'Day05/New_Day5Question03sol.mp3',
+      code: 'SELECT MIN(unit_price) AS cheapest,\n       MAX(unit_price) AS most_expensive\nFROM   products;',
+      startAt: 1.2,
+      charInterval: 65,
+      scrollAt: 8.0
+    },
+    4: {
+      src: 'Day05/New_Day5Question04sol.mp3',
+      code: 'SELECT COUNT(*) AS total,\n       COUNT(commission) AS has_commission,\n       COUNT(*) - COUNT(commission) AS no_commission\nFROM   employees;',
+      startAt: 1.2,
+      charInterval: 65,
+      scrollAt: 9.5
+    },
+    5: {
+      src: 'Day05/New_Day5Question05sol.mp3',
+      code: "SELECT SUM(total_amount) AS shipped_revenue\nFROM   orders\nWHERE  status = 'Shipped';",
+      startAt: 1.0,
+      charInterval: 60,
+      scrollAt: 6.0
+    },
+    6: {
+      src: 'Day05/New_Day5Question06sol.mp3',
+      code: 'SELECT COUNT(DISTINCT department_id) AS num_departments\nFROM   employees;',
+      startAt: 1.0,
+      charInterval: 60,
+      scrollAt: 6.5
+    },
+    7: {
+      src: 'Day05/New_Day5Question07sol.mp3',
+      code: 'SELECT SUM(stock_qty * unit_price) AS inventory_value\nFROM   products;',
+      startAt: 1.2,
+      charInterval: 60,
+      scrollAt: 7.0
+    },
+    8: {
+      src: 'Day05/New_Day5Question08sol.mp3',
+      code: 'SELECT AVG(commission) AS avg_non_null,\n       AVG(COALESCE(commission, 0)) AS avg_all\nFROM   employees;',
+      startAt: 1.2,
+      charInterval: 65,
+      scrollAt: 9.5
+    },
+    9: {
+      src: 'Day05/New_Day5Question09sol.mp3',
+      code: 'SELECT COUNT(*) AS premium_count\nFROM   products\nWHERE  unit_price > 5000;',
+      startAt: 1.0,
+      charInterval: 60,
+      scrollAt: 6.5
+    },
+    10: {
+      src: 'Day05/New_Day5Question10sol.mp3',
+      code: 'SELECT COALESCE(AVG(salary), 0) AS avg_salary\nFROM   employees\nWHERE  department_id = 99;',
+      startAt: 1.2,
+      charInterval: 65,
+      scrollAt: 8.5
+    },
+    11: {
+      src: 'Day05/New_Day5Question11sol.mp3',
+      code: 'SELECT MAX(total_amount) AS largest_order\nFROM   orders;',
+      startAt: 1.0,
+      charInterval: 55,
+      scrollAt: 4.8
+    },
+    12: {
+      src: 'Day05/New_Day5Question12sol.mp3',
+      code: 'SELECT COUNT(DISTINCT region) AS num_regions\nFROM   customers;',
+      startAt: 1.0,
+      charInterval: 55,
+      scrollAt: 5.0
+    },
+    13: {
+      src: 'Day05/New_Day5Question13sol.mp3',
+      code: "SELECT SUM(CASE WHEN status = 'Shipped' THEN total_amount ELSE 0 END) AS shipped_rev,\n       SUM(CASE WHEN status = 'Processing' THEN total_amount ELSE 0 END) AS processing_rev\nFROM   orders;",
+      startAt: 1.4,
+      charInterval: 60,
+      scrollAt: 16.0
+    },
+    14: {
+      src: 'Day05/New_Day5Question14sol.mp3',
+      code: 'SELECT ROUND(SUM(unit_price * qty * 1.0) / SUM(qty), 2) AS weighted_avg_price\nFROM   order_items;',
+      startAt: 1.2,
+      charInterval: 60,
+      scrollAt: 11.5
+    },
+    15: {
+      src: 'Day05/New_Day5Question15sol.mp3',
+      code: "SELECT GROUP_CONCAT(first_name, ', ') AS all_names\nFROM   employees;",
+      startAt: 1.0,
+      charInterval: 60,
+      scrollAt: 6.5
+    }
   }
 };
 
@@ -4992,6 +5116,79 @@ const day04Tracks = [
   { src: 'Day04/New_Day4Question12sol.mp3', target: '#questionBar', title: 'Q12 Solution: Stock Value', type: 'solution', qId: 12 }
 ];
 
+const day05Durations = [20.2, 23.5, 18.8, 20.0, 20.1, 14.5, 17.3, 19.4, 21.1, 16.5, 21.3, 24.2, 16.5, 15.6, 23.6, 14.7, 20.9, 19.8, 13.7, 24.4, 20.0, 17.7, 20.2, 10.4, 15.5, 6.0, 8.0, 6.0, 9.8, 9.3, 11.5, 6.5, 7.8, 7.0, 7.4, 8.7, 8.0, 11.5, 11.2, 5.7, 8.2, 10.1, 10.8, 5.6, 6.2, 6.0, 6.2, 10.6, 18.0, 8.3, 13.5, 8.7, 8.1];
+
+const day05Tracks = [
+  // ── Section 1: Why Aggregation Matters ──
+  { src: 'Day05/New_Day5Part1audio01.mp3', target: '#day05Intro', title: '01. Why Aggregation Matters' },
+  { src: 'Day05/New_Day5Part1audio02.mp3', target: '#day05IntroSummary', title: 'The Big 5 Aggregates' },
+  { src: 'Day05/New_Day5Part1audio03.mp3', target: '#day05IntroProTip', title: '💡 Engine-Specific Aggregates' },
+
+  // ── Section 2: COUNT Variations ──
+  { src: 'Day05/New_Day5Part1audio04.mp3', target: '#day05Count', title: '02. COUNT Variations' },
+  { src: 'Day05/New_Day5Part1audio05.mp3', target: '#day05CountExamples', title: 'COUNT in Action' },
+  { src: 'Day05/New_Day5Part1audio06.mp3', target: '#day05CountWarn', title: '⚠️ COUNT(*) vs COUNT(col)' },
+
+  // ── Section 3: SUM & AVG ──
+  { src: 'Day05/New_Day5Part1audio07.mp3', target: '#day05SumAvg', title: '03. SUM & AVG' },
+  { src: 'Day05/New_Day5Part1audio08.mp3', target: '#day05SumAvgExamples', title: 'SUM & AVG Examples' },
+  { src: 'Day05/New_Day5Part1audio09.mp3', target: '#day05SumAvgWarn', title: '⚠️ The AVG & NULL Trap' },
+
+  // ── Section 4: COALESCE Safety Net ──
+  { src: 'Day05/New_Day5Part1audio10.mp3', target: '#day05Coalesce', title: '04. COALESCE Safety Net' },
+  { src: 'Day05/New_Day5Part1audio11.mp3', target: '#day05CoalesceExamples', title: 'COALESCE in Action' },
+  { src: 'Day05/New_Day5Part1audio12.mp3', target: '#day05CoalesceInfo', title: 'ℹ️ Inside vs Outside COALESCE' },
+
+  // ── Section 5: MIN & MAX Beyond Numbers ──
+  { src: 'Day05/New_Day5Part1audio13.mp3', target: '#day05MinMax', title: '05. MIN & MAX Beyond Numbers' },
+  { src: 'Day05/New_Day5Part1audio14.mp3', target: '#day05MinMaxExamples', title: 'MIN & MAX Examples' },
+  { src: 'Day05/New_Day5Part1audio15.mp3', target: '#day05MinMaxInfo', title: 'ℹ️ Lexicographic Ordering' },
+
+  // ── Section 6: Multi-Aggregate Dashboards ──
+  { src: 'Day05/New_Day5Part1audio16.mp3', target: '#day05Dashboard', title: '06. Multi-Aggregate Dashboards' },
+  { src: 'Day05/New_Day5Part1audio17.mp3', target: '#day05DashboardExamples', title: 'Data Quality Dashboard' },
+  { src: 'Day05/New_Day5Part1audio18.mp3', target: '#day05DashboardTip', title: '💡 Aggregates on Expressions' },
+
+  // ── Section 7: NULL Behavior & Auditing ──
+  { src: 'Day05/New_Day5Part1audio19.mp3', target: '#day05NullAudit', title: '07. NULL Behavior & Auditing' },
+  { src: 'Day05/New_Day5Part1audio20.mp3', target: '#day05NullTable', title: 'NULL Behavior Reference' },
+  { src: 'Day05/New_Day5Part1audio21.mp3', target: '#day05LiveDemo', title: 'Live Aggregation Demo' },
+  { src: 'Day05/New_Day5Part1audio22.mp3', target: '#day05NullAuditTip', title: '💡 Pro Tip: Missing Value Audit' },
+  { src: 'Day05/New_Day5Part1audio23.mp3', target: '#day05DistinctWarn', title: '⚠️ DISTINCT Inside Aggregates' },
+
+  // ── 15 Practice Questions & Solutions ──
+  { src: 'Day05/New_Day5Question01.mp3', target: '#questionBar', title: 'Q1: Payroll Summary', type: 'question', qId: 1 },
+  { src: 'Day05/New_Day5Question01sol.mp3', target: '#questionBar', title: 'Q1 Solution: Payroll Summary', type: 'solution', qId: 1 },
+  { src: 'Day05/New_Day5Question02.mp3', target: '#questionBar', title: 'Q2: Active Employees', type: 'question', qId: 2 },
+  { src: 'Day05/New_Day5Question02sol.mp3', target: '#questionBar', title: 'Q2 Solution: Active Employees', type: 'solution', qId: 2 },
+  { src: 'Day05/New_Day5Question03.mp3', target: '#questionBar', title: 'Q3: Product Price Range', type: 'question', qId: 3 },
+  { src: 'Day05/New_Day5Question03sol.mp3', target: '#questionBar', title: 'Q3 Solution: Product Price Range', type: 'solution', qId: 3 },
+  { src: 'Day05/New_Day5Question04.mp3', target: '#questionBar', title: 'Q4: Commission Coverage Audit', type: 'question', qId: 4 },
+  { src: 'Day05/New_Day5Question04sol.mp3', target: '#questionBar', title: 'Q4 Solution: Commission Coverage Audit', type: 'solution', qId: 4 },
+  { src: 'Day05/New_Day5Question05.mp3', target: '#questionBar', title: 'Q5: Shipped Revenue Total', type: 'question', qId: 5 },
+  { src: 'Day05/New_Day5Question05sol.mp3', target: '#questionBar', title: 'Q5 Solution: Shipped Revenue Total', type: 'solution', qId: 5 },
+  { src: 'Day05/New_Day5Question06.mp3', target: '#questionBar', title: 'Q6: Distinct Department Count', type: 'question', qId: 6 },
+  { src: 'Day05/New_Day5Question06sol.mp3', target: '#questionBar', title: 'Q6 Solution: Distinct Department Count', type: 'solution', qId: 6 },
+  { src: 'Day05/New_Day5Question07.mp3', target: '#questionBar', title: 'Q7: Total Inventory Valuation', type: 'question', qId: 7 },
+  { src: 'Day05/New_Day5Question07sol.mp3', target: '#questionBar', title: 'Q7 Solution: Total Inventory Valuation', type: 'solution', qId: 7 },
+  { src: 'Day05/New_Day5Question08.mp3', target: '#questionBar', title: 'Q8: Dual Commission Averages', type: 'question', qId: 8 },
+  { src: 'Day05/New_Day5Question08sol.mp3', target: '#questionBar', title: 'Q8 Solution: Dual Commission Averages', type: 'solution', qId: 8 },
+  { src: 'Day05/New_Day5Question09.mp3', target: '#questionBar', title: 'Q9: Premium Product Inventory Count', type: 'question', qId: 9 },
+  { src: 'Day05/New_Day5Question09sol.mp3', target: '#questionBar', title: 'Q9 Solution: Premium Product Inventory Count', type: 'solution', qId: 9 },
+  { src: 'Day05/New_Day5Question10.mp3', target: '#questionBar', title: 'Q10: Safe Empty-Set Aggregation', type: 'question', qId: 10 },
+  { src: 'Day05/New_Day5Question10sol.mp3', target: '#questionBar', title: 'Q10 Solution: Safe Empty-Set Aggregation', type: 'solution', qId: 10 },
+  { src: 'Day05/New_Day5Question11.mp3', target: '#questionBar', title: 'Q11: Maximum Order Value', type: 'question', qId: 11 },
+  { src: 'Day05/New_Day5Question11sol.mp3', target: '#questionBar', title: 'Q11 Solution: Maximum Order Value', type: 'solution', qId: 11 },
+  { src: 'Day05/New_Day5Question12.mp3', target: '#questionBar', title: 'Q12: Unique Customer Regions', type: 'question', qId: 12 },
+  { src: 'Day05/New_Day5Question12sol.mp3', target: '#questionBar', title: 'Q12 Solution: Unique Customer Regions', type: 'solution', qId: 12 },
+  { src: 'Day05/New_Day5Question13.mp3', target: '#questionBar', title: 'Q13: Conditional Status Revenue Pivot', type: 'question', qId: 13 },
+  { src: 'Day05/New_Day5Question13sol.mp3', target: '#questionBar', title: 'Q13 Solution: Conditional Status Revenue Pivot', type: 'solution', qId: 13 },
+  { src: 'Day05/New_Day5Question14.mp3', target: '#questionBar', title: 'Q14: Weighted Average Item Price', type: 'question', qId: 14 },
+  { src: 'Day05/New_Day5Question14sol.mp3', target: '#questionBar', title: 'Q14 Solution: Weighted Average Item Price', type: 'solution', qId: 14 },
+  { src: 'Day05/New_Day5Question15.mp3', target: '#questionBar', title: 'Q15: Employee Name Roster String', type: 'question', qId: 15 },
+  { src: 'Day05/New_Day5Question15sol.mp3', target: '#questionBar', title: 'Q15 Solution: Employee Name Roster String', type: 'solution', qId: 15 }
+];
+
 const slideTrackMap = {
   'day01': {
     0: { tracks: topic01Tracks, durations: topic01Durations },
@@ -5005,6 +5202,9 @@ const slideTrackMap = {
   },
   'day04': {
     0: { tracks: day04Tracks, durations: day04Durations }
+  },
+  'day05': {
+    0: { tracks: day05Tracks, durations: day05Durations }
   }
 };
 

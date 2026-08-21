@@ -3025,7 +3025,15 @@ const questionAudioMap = {
 // Map per day → question id → { src, code, startAt (seconds), charInterval (ms) }
 const questionSolutionMap = {
   'day01': {
-    1: { src: 'New_Day1Part1Question02.mp3', code: 'SELECT * FROM employees;', startAt: 1.5, charInterval: 110 }
+    1: {
+      src: 'New_Day1Part1Question02.mp3',
+      code: 'SELECT *\nFROM   employees;',
+      segments: [
+        { text: "SELECT *\n", startAt: 1.16, charInterval: 58 },
+        { text: "FROM   employees;", startAt: 2.38, charInterval: 47 }
+      ],
+      scrollAt: 4.0
+    }
   },
   'day02': {
     1: {

@@ -337,7 +337,7 @@ function initMainEditor() {
   Object.keys(schema).forEach(t => { hintTables[t] = schema[t]; });
 
   mainEditor = CodeMirror(document.getElementById('mainEditorWrap'), {
-    value: '-- Write your SQL query here\n',
+    value: '',
     mode: 'text/x-sql',
     theme: 'dracula',
     lineNumbers: true,
@@ -379,7 +379,7 @@ function initTestEditor() {
   Object.keys(schema).forEach(t => { hintTables[t] = schema[t]; });
 
   testEditor = CodeMirror(document.getElementById('testEditorWrap'), {
-    value: '-- Write your answer here\n',
+    value: '',
     mode: 'text/x-sql',
     theme: 'dracula',
     lineNumbers: true,
@@ -4031,13 +4031,13 @@ function loadSavedPracticeAnswer() {
 
   if (window.ProgressManager) {
     const dp = ProgressManager.getDayProgress(currentDay);
-    const saved = dp.practiceAnswers[q.id];
-    if (saved) {
+    const saved = dp && dp.practiceAnswers ? dp.practiceAnswers[q.id] : null;
+    if (saved && saved.trim() && !saved.startsWith('-- Write your SQL query here') && !saved.startsWith('-- Write your answer here')) {
       mainEditor.setValue(saved);
       return;
     }
   }
-  mainEditor.setValue('-- Write your SQL query here\n');
+  mainEditor.setValue('');
 }
 
 function formatGradingDiff(diff) {
@@ -4594,9 +4594,12 @@ function loadDayContent(dayId) {
       testTitleEl.textContent = `📝 Day ${dayStr} — SQL Interview Test`;
     }
 
-    // Clear editor and terminal
+    // Clear editor and terminal on fresh load
     clearOutputSection();
-    loadSavedPracticeAnswer();
+    if (mainEditor) {
+      mainEditor.setValue('');
+      mainEditor.clearHistory();
+    }
 
     // Re-init autocomplete with new schema columns
     if (mainEditor) {

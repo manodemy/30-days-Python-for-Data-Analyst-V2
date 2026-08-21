@@ -8515,18 +8515,18 @@ code.schema-peek-trigger:hover {
 }
 
 /* ═════════════════════════════════════════════════════════════════
-   DAY 01 TOPIC 02: STORAGE BULLET HIGHLIGHTS & ZOOM ANIMATIONS
+   DAY 01 TOPIC 02: ZERO-SHIFT FIXED HIGHLIGHTS & COMPACT PIPELINE
    ═════════════════════════════════════════════════════════════════ */
 .bullet-highlight {
   color: #38bdf8 !important;
   font-weight: 700 !important;
   background: rgba(56, 189, 248, 0.16) !important;
   border-radius: 4px;
-  padding: 1px 4px;
+  padding: 1px 6px;
   box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
-  transform: translateX(3px);
+  transform: none !important; /* Zero shift */
   display: inline-block;
-  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .bullet-highlight .bullet-dot {
@@ -8534,185 +8534,203 @@ code.schema-peek-trigger:hover {
   box-shadow: 0 0 8px #38bdf8 !important;
 }
 
-/* ═════════════════════════════════════════════════════════════════
-   DAY 01 TOPIC 02: INNOVATIVE COMPACT SINGLE-FRAME PROJECTION PIPELINE
-   ═════════════════════════════════════════════════════════════════ */
+/* Fixed, unified single-frame pipeline container */
 .compact-projection-pipeline {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  width: 100%;
-  max-width: 440px;
-  margin: 6px auto;
-  padding: 12px 14px;
-  background: rgba(15, 23, 42, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
-  backdrop-filter: blur(12px);
-  transition: all 0.3s ease;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  max-width: 480px !important;
+  margin: 10px auto !important;
+  padding: 14px 16px !important;
+  background: rgba(15, 23, 42, 0.75) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 14px !important;
+  backdrop-filter: blur(14px) !important;
+  box-sizing: border-box !important;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease !important;
 }
 
-.diagram-overview-glow {
+.compact-projection-pipeline.diagram-overview-glow {
   border-color: rgba(56, 189, 248, 0.6) !important;
-  box-shadow: 0 0 25px rgba(56, 189, 248, 0.3) !important;
+  box-shadow: 0 0 25px rgba(56, 189, 248, 0.25) !important;
 }
 
-.pipeline-card {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  padding: 7px 12px;
-  background: rgba(30, 41, 59, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+/* Exact uniform horizontal layout for all 3 cards */
+.compact-projection-pipeline .pipeline-card {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 12px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 10px 14px !important;
+  background: rgba(30, 41, 59, 0.85) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-left: 4px solid #38bdf8 !important;
+  border-radius: 10px !important;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease !important;
+  transform: none !important; /* Zero transform / no movement */
 }
 
-.pipeline-badge {
-  font-size: 0.65rem;
-  font-weight: 800;
-  color: #94a3b8;
-  background: rgba(255, 255, 255, 0.06);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-family: var(--mono, monospace);
+.compact-projection-pipeline .pipeline-card#projectionFilter {
+  border-left-color: #00e6f6 !important;
 }
 
-.pipeline-badge--green {
-  color: #34d399;
-  background: rgba(16, 185, 129, 0.15);
+.compact-projection-pipeline .pipeline-card#projectionResultSet {
+  border-left-color: #10b981 !important;
 }
 
-.pipeline-icon-circle {
-  font-size: 1.1rem;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(56, 189, 248, 0.12);
-  border-radius: 8px;
-  flex-shrink: 0;
+.compact-projection-pipeline .pipeline-badge {
+  font-size: 0.68rem !important;
+  font-weight: 800 !important;
+  color: #94a3b8 !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  padding: 3px 7px !important;
+  border-radius: 4px !important;
+  font-family: var(--mono, monospace) !important;
+  flex-shrink: 0 !important;
 }
 
-.pipeline-icon-circle--cyan {
-  background: rgba(6, 182, 212, 0.15);
+.compact-projection-pipeline .pipeline-badge--green {
+  color: #34d399 !important;
+  background: rgba(16, 185, 129, 0.15) !important;
 }
 
-.pipeline-icon-circle--green {
-  background: rgba(16, 185, 129, 0.15);
+.compact-projection-pipeline .pipeline-icon-circle {
+  font-size: 1.15rem !important;
+  width: 34px !important;
+  height: 34px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(56, 189, 248, 0.12) !important;
+  border-radius: 8px !important;
+  flex-shrink: 0 !important;
 }
 
-.pipeline-content {
-  flex: 1;
-  overflow: hidden;
+.compact-projection-pipeline .pipeline-icon-circle--cyan {
+  background: rgba(6, 182, 212, 0.15) !important;
 }
 
-.pipeline-title {
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: #f8fafc;
-  line-height: 1.2;
+.compact-projection-pipeline .pipeline-icon-circle--green {
+  background: rgba(16, 185, 129, 0.15) !important;
 }
 
-.pipeline-desc {
-  font-size: 0.7rem;
-  color: #94a3b8;
-  margin-top: 1px;
+.compact-projection-pipeline .pipeline-content {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  overflow: hidden !important;
 }
 
-.pipeline-attributes {
-  display: flex;
-  gap: 4px;
-  flex-wrap: wrap;
-  margin-top: 3px;
+.compact-projection-pipeline .pipeline-title {
+  font-size: 0.84rem !important;
+  font-weight: 700 !important;
+  color: #f8fafc !important;
+  line-height: 1.25 !important;
+  margin: 0 !important;
 }
 
-.attr-tag {
-  font-size: 0.68rem;
-  font-family: var(--mono, monospace);
-  padding: 1px 5px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 4px;
-  color: #cbd5e1;
-  transition: all 0.2s ease;
+.compact-projection-pipeline .pipeline-desc {
+  font-size: 0.72rem !important;
+  color: #94a3b8 !important;
+  margin-top: 2px !important;
 }
 
-.attr-tag--selected {
-  background: rgba(16, 185, 129, 0.2);
-  color: #34d399;
-  font-weight: 700;
-  border-color: rgba(16, 185, 129, 0.4);
+.compact-projection-pipeline .pipeline-attributes {
+  display: flex !important;
+  gap: 5px !important;
+  flex-wrap: wrap !important;
+  margin-top: 3px !important;
 }
 
-.attr-tag-pulse {
+.compact-projection-pipeline .attr-tag {
+  font-size: 0.68rem !important;
+  font-family: var(--mono, monospace) !important;
+  padding: 1px 6px !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 4px !important;
+  color: #cbd5e1 !important;
+  transition: all 0.2s ease !important;
+}
+
+.compact-projection-pipeline .attr-tag--selected {
+  background: rgba(16, 185, 129, 0.2) !important;
+  color: #34d399 !important;
+  font-weight: 700 !important;
+  border-color: rgba(16, 185, 129, 0.4) !important;
+}
+
+.compact-projection-pipeline .attr-tag-pulse {
   border-color: #38bdf8 !important;
   color: #38bdf8 !important;
-  background: rgba(56, 189, 248, 0.2) !important;
+  background: rgba(56, 189, 248, 0.25) !important;
   box-shadow: 0 0 8px rgba(56, 189, 248, 0.5) !important;
-  transform: scale(1.05);
 }
 
-.pipeline-flow-connector {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  color: #64748b;
-  margin: -1px 0;
-  transition: all 0.25s ease;
+.compact-projection-pipeline .pipeline-flow-connector {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  color: #64748b !important;
+  margin: 0 !important;
+  transition: all 0.25s ease !important;
 }
 
-.flow-pill {
-  font-size: 0.6rem;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: rgba(56, 189, 248, 0.12);
-  color: #38bdf8;
-  border: 1px solid rgba(56, 189, 248, 0.3);
-  transition: all 0.25s ease;
+.compact-projection-pipeline .flow-pill {
+  font-size: 0.62rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.06em !important;
+  padding: 2px 10px !important;
+  border-radius: 999px !important;
+  background: rgba(56, 189, 248, 0.12) !important;
+  color: #38bdf8 !important;
+  border: 1px solid rgba(56, 189, 248, 0.3) !important;
+  transition: all 0.25s ease !important;
+  transform: none !important;
 }
 
-.flow-pill--green {
-  background: rgba(16, 185, 129, 0.12);
-  color: #34d399;
-  border-color: rgba(16, 185, 129, 0.3);
+.compact-projection-pipeline .flow-pill--green {
+  background: rgba(16, 185, 129, 0.12) !important;
+  color: #34d399 !important;
+  border-color: rgba(16, 185, 129, 0.3) !important;
 }
 
-.diagram-node-active {
-  transform: scale(1.03) !important;
+/* ZERO-SHIFT HIGHLIGHTS */
+.compact-projection-pipeline .diagram-node-active {
   border-color: #38bdf8 !important;
-  box-shadow: 0 0 20px rgba(56, 189, 248, 0.45) !important;
-  background: rgba(30, 41, 59, 0.95) !important;
-  z-index: 5;
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.45), inset 0 0 10px rgba(56, 189, 248, 0.15) !important;
+  background: rgba(30, 41, 59, 0.98) !important;
+  transform: none !important; /* Zero movement */
 }
 
-.diagram-filter-active {
+.compact-projection-pipeline .diagram-filter-active {
   border-color: #00e6f6 !important;
-  box-shadow: 0 0 22px rgba(0, 230, 246, 0.55) !important;
+  box-shadow: 0 0 22px rgba(0, 230, 246, 0.55), inset 0 0 10px rgba(0, 230, 246, 0.15) !important;
+  transform: none !important;
 }
 
-.diagram-result-active {
+.compact-projection-pipeline .diagram-result-active {
   border-color: #10b981 !important;
-  box-shadow: 0 0 22px rgba(16, 185, 129, 0.55) !important;
+  box-shadow: 0 0 22px rgba(16, 185, 129, 0.55), inset 0 0 10px rgba(16, 185, 129, 0.15) !important;
+  transform: none !important;
 }
 
-.connector-active-pulse .flow-pill {
+.compact-projection-pipeline .connector-active-pulse .flow-pill {
   box-shadow: 0 0 14px #38bdf8 !important;
-  transform: scale(1.1) !important;
   border-color: #38bdf8 !important;
+  background: rgba(56, 189, 248, 0.25) !important;
+  transform: none !important;
 }
 
-.connector-active-pulse .flow-arrow {
-  stroke: #38bdf8 !important;
-  filter: drop-shadow(0 0 4px #38bdf8);
-}
 
 

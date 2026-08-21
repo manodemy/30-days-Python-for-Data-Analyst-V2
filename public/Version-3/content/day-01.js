@@ -41,24 +41,31 @@ window.COURSE_CONTENT['day01'] = {
       {
         "id": 1,
         "prompt": "Write a query to retrieve all columns and all rows from the <code>employees</code> table.",
-        "referenceSql": "SELECT * FROM employees;"
+        "referenceSql": "SELECT * FROM employees;",
+        "questionAudio": "New_Day1Part1Question01.mp3",
+        "solutionAudio": "New_Day1Part1Question02.mp3"
       },
       {
         "id": 2,
         "prompt": "Write a query to retrieve all columns and rows from the system table <code>sqlite_master</code> to inspect the database structure.",
-        "referenceSql": "SELECT * FROM sqlite_master;"
+        "referenceSql": "SELECT * FROM sqlite_master;",
+        "questionAudio": "New_Day1Part1Question03.mp3"
       }
     ],
     "1": [
       {
         "id": 1,
         "prompt": "Write a query to retrieve only the <code>name</code> and <code>department</code> columns from the <code>employees</code> table.",
-        "referenceSql": "SELECT name, department FROM employees;"
+        "referenceSql": "SELECT name, department FROM employees;",
+        "questionAudio": "Day01topic2/New_Day1Part2Question01.mp3",
+        "solutionAudio": "Day01topic2/New_Day1Part2Question01.mp3"
       },
       {
         "id": 2,
         "prompt": "Write a query to project the columns <code>id</code>, <code>name</code>, and <code>salary</code> in that specific order from the <code>employees</code> table.",
-        "referenceSql": "SELECT id, name, salary FROM employees;"
+        "referenceSql": "SELECT id, name, salary FROM employees;",
+        "questionAudio": "Day01topic2/New_Day1Part2Question02.mp3",
+        "solutionAudio": "Day01topic2/New_Day1Part2Question02.mp3"
       }
     ]
   },

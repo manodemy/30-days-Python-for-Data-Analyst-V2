@@ -3266,13 +3266,15 @@ function loadQuestionsForDay(day) {
 // Mapping of question id → audio file (for Day 01)
 const questionAudioMap = {
   'day01': {
-    0: {
-      1: 'New_Day1Part1Question01.mp3',
-      2: 'New_Day1Part1Question03.mp3'
-    },
-    1: {
-      1: 'Day01topic2/New_Day1Part2Question01.mp3',
-      2: 'Day01topic2/New_Day1Part2Question02.mp3'
+    topics: {
+      0: {
+        1: 'New_Day1Part1Question01.mp3',
+        2: 'New_Day1Part1Question03.mp3'
+      },
+      1: {
+        1: 'Day01topic2/New_Day1Part2Question01.mp3',
+        2: 'Day01topic2/New_Day1Part2Question02.mp3'
+      }
     },
     1: 'New_Day1Part1Question01.mp3',
     2: 'New_Day1Part1Question03.mp3'
@@ -3332,7 +3334,10 @@ function getSolutionEntry(qId, topicIdx) {
   const tIdx = typeof topicIdx === 'number' ? topicIdx : (typeof currentSlide !== 'undefined' ? currentSlide : 0);
   const daySolMap = typeof questionSolutionMap !== 'undefined' ? (questionSolutionMap[currentDay] || questionSolutionMap['day01']) : null;
   if (!daySolMap) return null;
-  if (daySolMap[tIdx] && daySolMap[tIdx][qId]) {
+  if (daySolMap.topics && daySolMap.topics[tIdx] && daySolMap.topics[tIdx][qId]) {
+    return daySolMap.topics[tIdx][qId];
+  }
+  if (daySolMap[tIdx] && typeof daySolMap[tIdx] === 'object' && daySolMap[tIdx][qId]) {
     return daySolMap[tIdx][qId];
   }
   if (daySolMap[qId]) {
@@ -3345,7 +3350,10 @@ function getQuestionAudioSrc(qId, topicIdx) {
   const tIdx = typeof topicIdx === 'number' ? topicIdx : (typeof currentSlide !== 'undefined' ? currentSlide : 0);
   const dayAudioMap = typeof questionAudioMap !== 'undefined' ? (questionAudioMap[currentDay] || questionAudioMap['day01']) : null;
   if (!dayAudioMap) return null;
-  if (dayAudioMap[tIdx] && dayAudioMap[tIdx][qId]) {
+  if (dayAudioMap.topics && dayAudioMap.topics[tIdx] && dayAudioMap.topics[tIdx][qId]) {
+    return dayAudioMap.topics[tIdx][qId];
+  }
+  if (dayAudioMap[tIdx] && typeof dayAudioMap[tIdx] === 'object' && dayAudioMap[tIdx][qId]) {
     return dayAudioMap[tIdx][qId];
   }
   if (dayAudioMap[qId]) {
@@ -3356,39 +3364,41 @@ function getQuestionAudioSrc(qId, topicIdx) {
 
 const questionSolutionMap = {
   'day01': {
-    0: {
-      1: {
-        src: 'New_Day1Part1Question02.mp3',
-        code: 'SELECT *\nFROM employees;',
-        segments: [
-          { text: "SELECT *\n", startAt: 1.16, charInterval: 58 },
-          { text: "FROM employees;", startAt: 2.38, charInterval: 47 }
-        ],
-        scrollAt: 4.0
-      }
-    },
-    1: {
-      1: {
-        src: 'Day01topic2/New_Day1Part2Question01.mp3',
-        code: 'SELECT name,\n       department\nFROM   employees;',
-        segments: [
-          { text: "SELECT ", startAt: 12.48, charInterval: 45 },
-          { text: "name,\n", startAt: 12.80, charInterval: 45 },
-          { text: "       department\n", startAt: 13.50, charInterval: 20 },
-          { text: "FROM   employees;", startAt: 13.86, charInterval: 40 }
-        ],
-        scrollAt: 15.2
+    topics: {
+      0: {
+        1: {
+          src: 'New_Day1Part1Question02.mp3',
+          code: 'SELECT *\nFROM employees;',
+          segments: [
+            { text: "SELECT *\n", startAt: 1.16, charInterval: 58 },
+            { text: "FROM employees;", startAt: 2.38, charInterval: 47 }
+          ],
+          scrollAt: 4.0
+        }
       },
-      2: {
-        src: 'Day01topic2/New_Day1Part2Question02.mp3',
-        code: 'SELECT id,\n       name,\n       salary\nFROM   employees;',
-        segments: [
-          { text: "SELECT id,\n", startAt: 5.20, charInterval: 45 },
-          { text: "       name,\n", startAt: 6.34, charInterval: 25 },
-          { text: "       salary\n", startAt: 6.70, charInterval: 25 },
-          { text: "FROM   employees;", startAt: 8.44, charInterval: 40 }
-        ],
-        scrollAt: 11.5
+      1: {
+        1: {
+          src: 'Day01topic2/New_Day1Part2Question01.mp3',
+          code: 'SELECT name,\n       department\nFROM   employees;',
+          segments: [
+            { text: "SELECT ", startAt: 12.48, charInterval: 45 },
+            { text: "name,\n", startAt: 12.80, charInterval: 45 },
+            { text: "       department\n", startAt: 13.50, charInterval: 20 },
+            { text: "FROM   employees;", startAt: 13.86, charInterval: 40 }
+          ],
+          scrollAt: 15.2
+        },
+        2: {
+          src: 'Day01topic2/New_Day1Part2Question02.mp3',
+          code: 'SELECT id,\n       name,\n       salary\nFROM   employees;',
+          segments: [
+            { text: "SELECT id,\n", startAt: 5.20, charInterval: 45 },
+            { text: "       name,\n", startAt: 6.34, charInterval: 25 },
+            { text: "       salary\n", startAt: 6.70, charInterval: 25 },
+            { text: "FROM   employees;", startAt: 8.44, charInterval: 40 }
+          ],
+          scrollAt: 11.5
+        }
       }
     },
     1: {

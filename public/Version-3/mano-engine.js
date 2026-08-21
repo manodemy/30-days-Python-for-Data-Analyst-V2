@@ -278,6 +278,8 @@ function runSQL(query) {
 
 function getSchemaInfo() {
   const info = {};
+  
+  // 1. From COURSE_CONFIG schema definitions
   if (COURSE_CONFIG && COURSE_CONFIG.schema && COURSE_CONFIG.schema.tables) {
     COURSE_CONFIG.schema.tables.forEach(t => {
       if (t && t.name && t.columns) {
@@ -285,6 +287,31 @@ function getSchemaInfo() {
       }
     });
   }
+
+  // 2. Always register SQLite system master schema
+  info['sqlite_master'] = ['type', 'name', 'tbl_name', 'rootpage', 'sql'];
+  info['sqlite_schema'] = ['type', 'name', 'tbl_name', 'rootpage', 'sql'];
+
+  // 3. Introspect live SQLite database if initialized
+  if (typeof db !== 'undefined' && db) {
+    try {
+      const res = db.exec("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'");
+      if (res && res[0] && res[0].values) {
+        res[0].values.forEach(row => {
+          const tName = row[0];
+          if (!info[tName]) {
+            try {
+              const colRes = db.exec(`PRAGMA table_info(${tName})`);
+              if (colRes && colRes[0] && colRes[0].values) {
+                info[tName] = colRes[0].values.map(cRow => cRow[1]);
+              }
+            } catch (e) {}
+          }
+        });
+      }
+    } catch (e) {}
+  }
+
   return info;
 }
 
@@ -439,24 +466,32 @@ function analyzeQueryError(query, rawError) {
   const qTrim = query.trim();
   const allColumns = [];
   const allTables = [];
-  if (COURSE_CONFIG && COURSE_CONFIG.schema && COURSE_CONFIG.schema.tables) {
-    COURSE_CONFIG.schema.tables.forEach(t => {
-      allTables.push(t.name);
-      if (t.columns) t.columns.forEach(c => allColumns.push({ table: t.name, name: c.name }));
-    });
+  
+  const schema = getSchemaInfo();
+  Object.keys(schema).forEach(tName => {
+    allTables.push(tName);
+    schema[tName].forEach(col => allColumns.push({ table: tName, name: col }));
+  });
+
+  // Dynamically resolve target table from the active practice or test question
+  let preferredTable = allTables.length > 0 ? allTables[0] : 'employees';
+  if (COURSE_CONFIG && COURSE_CONFIG.practiceQuestions && COURSE_CONFIG.practiceQuestions[currentPracticeQ]) {
+    const currentQ = COURSE_CONFIG.practiceQuestions[currentPracticeQ];
+    const targetRef = currentQ.referenceSql || currentQ.ref || currentQ.prompt || '';
+    const fromMatch = targetRef.match(/FROM\s+([a-zA-Z0-9_]+)/i) || targetRef.match(/<code>([a-zA-Z0-9_]+)<\/code>/i);
+    if (fromMatch && allTables.includes(fromMatch[1])) {
+      preferredTable = fromMatch[1];
+    }
   }
 
-  // Active table context for day01 topic01
-  const preferredTable = allTables.length > 0 ? allTables[0] : 'employees';
-
-  // 1. INCOMPLETE INPUT & MISSING CLAUSE DETECTION (Fixes Screenshot 1 Issue!)
+  // 1. INCOMPLETE INPUT & MISSING CLAUSE DETECTION
   if (msg.includes('incomplete input') || msg.includes('syntax error') || msg.includes('near')) {
     // A. Query ends with FROM (e.g. "SELECT * FROM")
     if (/FROM\s*$/i.test(qTrim)) {
       return {
         type: 'missing_table',
         header: 'Incomplete FROM Clause',
-        hint: `You opened a <code>FROM</code> clause but haven't specified which table to query. Which table do you want to select from?`,
+        hint: `You opened a <code>FROM</code> clause but haven't specified which table to query. What table do you want to select from?`,
         suggestedFix: preferredTable + ';',
         actionLabel: `Add '${preferredTable};'`
       };
@@ -467,7 +502,7 @@ function analyzeQueryError(query, rawError) {
       return {
         type: 'missing_columns',
         header: 'Incomplete SELECT Statement',
-        hint: `Specify what columns you want to retrieve. Use <code>*</code> for all columns, or specify column names like <code>name, salary</code>, followed by <code>FROM ${preferredTable};</code>`,
+        hint: `Specify what columns you want to retrieve. Use <code>*</code> for all columns, or list specific columns like <code>id, name</code>, followed by <code>FROM ${preferredTable};</code>`,
         suggestedFix: `* FROM ${preferredTable};`,
         actionLabel: `Add '* FROM ${preferredTable};'`
       };
@@ -478,8 +513,8 @@ function analyzeQueryError(query, rawError) {
       return {
         type: 'incomplete_where',
         header: 'Incomplete WHERE Filter',
-        hint: `You added a <code>WHERE</code> clause but haven't provided a filter condition yet (e.g. <code>WHERE department = 'Sales';</code> or <code>WHERE salary > 50000;</code>).`,
-        suggestedFix: `department = 'Sales';`,
+        hint: `You added a <code>WHERE</code> clause but haven't provided a filter condition yet (e.g. <code>WHERE salary > 50000;</code> or <code>WHERE type = 'table';</code>).`,
+        suggestedFix: `type = 'table';`,
         actionLabel: `Add sample condition`
       };
     }
@@ -490,8 +525,8 @@ function analyzeQueryError(query, rawError) {
         type: 'incomplete_order_by',
         header: 'Incomplete ORDER BY Clause',
         hint: `Specify which column you want to sort by (e.g. <code>ORDER BY salary DESC;</code> or <code>ORDER BY name ASC;</code>).`,
-        suggestedFix: `salary DESC;`,
-        actionLabel: `Add 'salary DESC;'`
+        suggestedFix: `name ASC;`,
+        actionLabel: `Add 'name ASC;'`
       };
     }
 
@@ -506,19 +541,53 @@ function analyzeQueryError(query, rawError) {
       };
     }
 
-    // F. Unclosed single quote (odd number of ')
+    // F. Ends with HAVING
+    if (/HAVING\s*$/i.test(qTrim)) {
+      return {
+        type: 'incomplete_having',
+        header: 'Incomplete HAVING Clause',
+        hint: `Specify the aggregate condition for your group (e.g. <code>HAVING COUNT(*) > 2;</code>).`,
+        suggestedFix: `COUNT(*) > 1;`,
+        actionLabel: `Add 'COUNT(*) > 1;'`
+      };
+    }
+
+    // G. Ends with LIMIT
+    if (/LIMIT\s*$/i.test(qTrim)) {
+      return {
+        type: 'incomplete_limit',
+        header: 'Incomplete LIMIT Clause',
+        hint: `Specify how many rows to restrict the result set to (e.g. <code>LIMIT 5;</code>).`,
+        suggestedFix: `5;`,
+        actionLabel: `Add '5;'`
+      };
+    }
+
+    // H. Trailing comma before FROM (e.g. SELECT id, name, FROM employees;)
+    const trailingCommaMatch = query.match(/,\s+FROM/i);
+    if (trailingCommaMatch) {
+      return {
+        type: 'trailing_comma',
+        header: 'Trailing Comma in SELECT',
+        hint: `Syntax Error: You have an extra comma <code>,</code> before the <code>FROM</code> keyword. Remove the comma after your last column.`,
+        actionReplace: { from: ', FROM', to: ' FROM' },
+        actionLabel: `Remove extra comma`
+      };
+    }
+
+    // I. Unclosed single quote (odd number of ')
     const singleQuotes = (query.match(/'/g) || []).length;
     if (singleQuotes % 2 !== 0) {
       return {
         type: 'unclosed_quote',
         header: 'Unclosed String Literal',
-        hint: `You opened a text string with a single quote ( <code>'</code> ) but forgot to close it. Every text literal must start and end with a single quote.`,
+        hint: `You opened a text string with a single quote ( <code>'</code> ) but forgot to close it. Every text literal in SQL must start and end with single quotes.`,
         suggestedFix: `';`,
         actionLabel: `Add closing quote & semicolon`
       };
     }
 
-    // G. Unmatched opening parenthesis
+    // J. Unmatched opening parenthesis
     const openParens = (query.match(/\(/g) || []).length;
     const closeParens = (query.match(/\)/g) || []).length;
     if (openParens > closeParens) {
@@ -530,18 +599,33 @@ function analyzeQueryError(query, rawError) {
         actionLabel: `Add closing ')'`
       };
     }
+
+    // K. Multiple statements / premature semicolon
+    if (/;\s*SELECT|;\s*FROM/i.test(query)) {
+      return {
+        type: 'premature_semicolon',
+        header: 'Premature Semicolon',
+        hint: `A semicolon <code>;</code> ends the entire SQL statement. Remove the semicolon from the middle of your query.`,
+        actionReplace: { from: ';', to: '' },
+        actionLabel: `Remove premature semicolon`
+      };
+    }
   }
 
-  // 2. KEYWORD TYPOS (e.g. FORM -> FROM, SELEST -> SELECT, WHER -> WHERE)
+  // 2. KEYWORD TYPOS (Comprehensive list)
   const keywordTypos = [
     { typo: /\bFORM\b/i, wrong: 'FORM', correct: 'FROM' },
-    { typo: /\bSELEC\b|\bSELEST\b|\bSELCT\b/i, wrong: 'SELEST', correct: 'SELECT' },
+    { typo: /\bSELEC\b|\bSELEST\b|\bSELCT\b|\bSLCT\b/i, wrong: 'SELEST', correct: 'SELECT' },
     { typo: /\bWHER\b|\bWHRE\b|\bWHR\b/i, wrong: 'WHER', correct: 'WHERE' },
-    { typo: /\bGRUP\s+BY\b|\bGROUPBY\b/i, wrong: 'GRUP BY', correct: 'GROUP BY' },
-    { typo: /\bORDERBY\b/i, wrong: 'ORDERBY', correct: 'ORDER BY' },
-    { typo: /\bHAVNG\b/i, wrong: 'HAVNG', correct: 'HAVING' },
-    { typo: /\bDISTINCTT\b|\bDISTINT\b/i, wrong: 'DISTINT', correct: 'DISTINCT' },
-    { typo: /\bINER\s+JOIN\b/i, wrong: 'INER JOIN', correct: 'INNER JOIN' }
+    { typo: /\bGRUP\s+BY\b|\bGROUPBY\b|\bGROP\s+BY\b/i, wrong: 'GRUP BY', correct: 'GROUP BY' },
+    { typo: /\bORDERBY\b|\bODER\s+BY\b/i, wrong: 'ORDERBY', correct: 'ORDER BY' },
+    { typo: /\bHAVNG\b|\bHAVIN\b/i, wrong: 'HAVNG', correct: 'HAVING' },
+    { typo: /\bDISTINCTT\b|\bDISTINT\b|\bDISTICNT\b/i, wrong: 'DISTINT', correct: 'DISTINCT' },
+    { typo: /\bINER\s+JOIN\b|\bINNERJOIN\b/i, wrong: 'INER JOIN', correct: 'INNER JOIN' },
+    { typo: /\bLEFTJOIN\b/i, wrong: 'LEFTJOIN', correct: 'LEFT JOIN' },
+    { typo: /\bLIMITT\b|\bLIMT\b/i, wrong: 'LIMITT', correct: 'LIMIT' },
+    { typo: /\bCONUNT\b|\bCUONT\b|\bCOUTN\b/i, wrong: 'COUNT', correct: 'COUNT' },
+    { typo: /\bAVERG\b|\bAVRG\b/i, wrong: 'AVG', correct: 'AVG' }
   ];
 
   for (const kt of keywordTypos) {
@@ -558,17 +642,29 @@ function analyzeQueryError(query, rawError) {
     }
   }
 
-  // 3. UNQUOTED STRING LITERAL IN WHERE CLAUSE (e.g. WHERE department = Sales)
-  const whereMatch = query.match(/WHERE\s+\w+\s*=\s*([a-zA-Z_]\w*)/i);
+  // 3. EQUALITY COMPARISON WITH NULL (e.g. WHERE salary = NULL)
+  if (/=\s*NULL\b/i.test(query)) {
+    return {
+      type: 'null_equality',
+      header: 'Incorrect NULL Comparison',
+      hint: `In SQL, you cannot use <code>= NULL</code> because NULL represents an unknown value. Use <strong>IS NULL</strong> or <strong>IS NOT NULL</strong> instead.`,
+      actionReplace: { from: '= NULL', to: 'IS NULL' },
+      actionLabel: `Change '= NULL' ➔ 'IS NULL'`
+    };
+  }
+
+  // 4. UNQUOTED STRING LITERAL IN WHERE CLAUSE (e.g. WHERE department = Sales)
+  const whereMatch = query.match(/WHERE\s+([a-zA-Z0-9_]+)\s*=\s*([a-zA-Z_][a-zA-Z0-9_]*)/i);
   if (whereMatch) {
-    const val = whereMatch[1];
+    const colName = whereMatch[1];
+    const val = whereMatch[2];
     const isCol = allColumns.some(c => c.name.toLowerCase() === val.toLowerCase());
     const isTbl = allTables.some(t => t.toLowerCase() === val.toLowerCase());
     if (!isCol && !isTbl && !['TRUE', 'FALSE', 'NULL'].includes(val.toUpperCase())) {
       return {
         type: 'missing_quotes',
         header: 'Unquoted Text Literal',
-        hint: `Text values in SQL must be enclosed in single quotes. Try wrapping <code>'${escHtml(val)}'</code> in quotes: <code>WHERE ${whereMatch[0].split('=')[0].trim()} = '${val}'</code>.`,
+        hint: `Text values in SQL must be enclosed in single quotes. Without quotes, SQLite looks for a column named <code>${val}</code>. Try: <code>${colName} = '${val}'</code>.`,
         suggestedFix: `'${val}'`,
         actionReplace: { from: `= ${val}`, to: `= '${val}'` },
         actionLabel: `Wrap '${val}' in quotes`
@@ -576,7 +672,7 @@ function analyzeQueryError(query, rawError) {
     }
   }
 
-  // 4. COLUMN TYPO (FUZZY LEVENSHTEIN MATCHING)
+  // 5. COLUMN TYPO (FUZZY LEVENSHTEIN MATCHING)
   const noSuchCol = msg.match(/no such column:\s*([a-zA-Z0-9_]+)/i);
   if (noSuchCol) {
     const typo = noSuchCol[1];
@@ -601,7 +697,7 @@ function analyzeQueryError(query, rawError) {
     }
   }
 
-  // 5. TABLE TYPO (FUZZY LEVENSHTEIN MATCHING)
+  // 6. TABLE TYPO (FUZZY LEVENSHTEIN MATCHING)
   const noSuchTable = msg.match(/no such table:\s*([a-zA-Z0-9_]+)/i);
   if (noSuchTable) {
     const typo = noSuchTable[1];
@@ -626,7 +722,7 @@ function analyzeQueryError(query, rawError) {
     }
   }
 
-  // 6. MISSING FROM CLAUSE ENTIRELY
+  // 7. MISSING FROM CLAUSE ENTIRELY
   if (/SELECT/i.test(query) && !/FROM/i.test(query) && /no such column/i.test(msg)) {
     return {
       type: 'missing_from',
@@ -637,7 +733,7 @@ function analyzeQueryError(query, rawError) {
     };
   }
 
-  // 7. MISSING SEMICOLON (ONLY IF QUERY IS OTHERWISE COMPLETE)
+  // 8. MISSING SEMICOLON (ONLY IF QUERY IS OTHERWISE COMPLETE)
   if (!query.trim().endsWith(';') && /SELECT.+FROM/i.test(query)) {
     return {
       type: 'missing_semicolon',
@@ -3882,10 +3978,10 @@ function removeYourTurnBanner() {
 }
 
 function renderPracticeQuestion() {
-  setTimeout(() => { if (typeof initSchemaCodePeeking === 'function') initSchemaCodePeeking(); }, 50);
   const q = COURSE_CONFIG.practiceQuestions[currentPracticeQ];
   if (q) {
     document.getElementById('questionPrompt').innerHTML = `Q${q.id}. ${q.prompt}`;
+    setTimeout(() => { if (typeof initSchemaCodePeeking === 'function') initSchemaCodePeeking(); }, 20);
     document.getElementById('qCounter').textContent = `Question-${String(q.id).padStart(2, '0')}`;
 
     // Update question audio button based on the question id
@@ -10011,7 +10107,7 @@ function showSchemaPeekTooltip(tableName, anchorEl, isClick = false) {
 }
 
 function initSchemaCodePeeking() {
-  const codeTags = document.querySelectorAll('#questionBar code, #slideBodyText code, #testQuestionPrompt code, .test-question-prompt code, .question-prompt code');
+  const codeTags = document.querySelectorAll('#questionBar code, #questionPrompt code, #slideBodyText code, #testQuestionPrompt code, .test-question-prompt code, .question-prompt code');
   const schema = getSchemaInfo();
   const tableNames = Object.keys(schema);
 

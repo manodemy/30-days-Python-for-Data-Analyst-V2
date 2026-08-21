@@ -15,6 +15,15 @@ It ensures a tight 1:1 synchronization between:
 
 ## 📜 Session Change Log
 
+### 🗓️ Entry: 2026-08-21 — Single Question Isolation during Interview Q&A Narration
+* **Target Scope**: All interview Q&A blocks (`.interview-box > div`, e.g., `#iqReferentialIntegrity`, `#iqSqlVsNosql`, `#iqCompositePk`).
+* **Behavior & Resolution**:
+  1. **Single Question Visible**: When an interview question track plays, `updateSlidePlaybackVisibility` dynamically hides all other sibling question cards inside `.interview-box`, displaying **ONLY the currently spoken question & answer**.
+  2. **Zero-Scroll Box Stability**: `scrollToTarget` automatically anchors the `.interview-box` cleanly at `top: 0` without scrolling between sequential questions.
+  3. **Full Restoration on Pause**: When playback is paused or completed, `clearSlidePlaybackVisibility` restores all questions in the box so students can read the complete Q&A set freely.
+* **Files Updated**:
+  - [`public/Version-3/mano-engine.js`](file:///d:/Learn%20Python%20in%2060days/Manodemy_Web_V2/public/Version-3/mano-engine.js): Updated `updateSlidePlaybackVisibility`, `clearSlidePlaybackVisibility`, and `scrollToTarget`.
+
 ### 🗓️ Entry: 2026-08-21 — Day 01 SQL Sub-Languages Table Stationary & Keyword Row Spotlight Sync
 * **Target Audio**: `New_Day1Part1audio16.mp3` through `New_Day1Part1audio21.mp3` (`#sqlSubLanguages`, `#subLangDql`, `#subLangDml`, `#subLangDdl`, `#subLangTcl`, `#subLangDcl`).
 * **Target Container**: `#sqlSubLanguagesTable` (`.sub-languages-table`)

@@ -8493,9 +8493,22 @@ function scrollToTarget(selector, isSeek = true) {
     return;
   }
 
+  // For Interview Q&A Cards: Keep box at top and bypass individual question scrolling
+  if (selector.startsWith('#iq')) {
+    const container = document.getElementById('slideContent') || document.getElementById('slideBodyText');
+    if (container) {
+      container.scrollTo({ top: 0, behavior: isSeek ? 'auto' : 'smooth' });
+    }
+    return;
+  }
+
   const container = document.getElementById('slideContent');
   const targetEl = container ? container.querySelector(selector) : null;
   if (targetEl && container) {
+    if (targetEl.closest('.interview-box')) {
+      container.scrollTo({ top: 0, behavior: isSeek ? 'auto' : 'smooth' });
+      return;
+    }
     const blockToScroll = typeof getVisibilityBlock === 'function' ? getVisibilityBlock(targetEl, container) : targetEl;
     const containerRect = container.getBoundingClientRect();
     const targetRect = blockToScroll.getBoundingClientRect();
@@ -9072,6 +9085,11 @@ function clearSlidePlaybackVisibility() {
       el.style.display = '';
       el.style.opacity = '';
     });
+    // Ensure all interview question cards are restored to visible when paused
+    container.querySelectorAll('.interview-box > div').forEach(card => {
+      card.classList.remove('vis-target-hidden');
+      card.style.display = '';
+    });
   });
 
   if (typeof updateDay01CoreEntitiesHighlights === 'function') {
@@ -9163,7 +9181,32 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
     const h2 = container.querySelector('h2');
     if (h2) h2.classList.remove('section-hidden', 'vis-target-hidden');
 
-    // 5. Highlight active target row / card / Q&A block without shifting layout
+    // 5. If target is inside an .interview-box, show ONLY the active question card and hide all other sibling cards
+    const interviewBox = targetEl.closest('.interview-box');
+    if (interviewBox) {
+      const activeQCard = targetEl.closest('.interview-box > div') || targetEl;
+      interviewBox.querySelectorAll('.interview-box > div').forEach(card => {
+        if (card === activeQCard) {
+          card.classList.remove('vis-target-hidden');
+          card.style.display = '';
+        } else {
+          card.classList.add('vis-target-hidden');
+          card.style.display = 'none';
+        }
+      });
+      const h4 = interviewBox.querySelector('h4');
+      if (h4) {
+        h4.classList.remove('vis-target-hidden');
+        h4.style.display = '';
+      }
+    } else {
+      activeSection.querySelectorAll('.interview-box > div').forEach(card => {
+        card.classList.remove('vis-target-hidden');
+        card.style.display = '';
+      });
+    }
+
+    // 6. Highlight active target row / card / Q&A block without shifting layout
     const targetRow = targetEl.closest('tr');
     const targetCard = targetEl.closest('.vs-card, .info-card');
     const targetIQ = targetEl.closest('#iqReferentialIntegrity, #iqSqlVsNosql, #iqCompositePk, #parentTableDept');
@@ -9178,7 +9221,7 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
       targetEl.classList.add('narration-spotlight-active');
     }
 
-    // 6. Trigger specific audio visual sync handlers
+    // 7. Trigger specific audio visual sync handlers
     if (typeof updateDay01CoreEntitiesHighlights === 'function') {
       updateDay01CoreEntitiesHighlights(targetSelector, true);
     }

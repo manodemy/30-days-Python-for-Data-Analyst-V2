@@ -136,6 +136,25 @@ Before considering any day complete, run this verification checklist:
 - **Access Control**: Updated `loadDayContent()` threshold to unlock Day 05 for all learners.
 - **Narration Engine Rollout**: Generated all 53 MP3 voice files via Microsoft `en-US-AndrewNeural` (`public/Version-3/Day05/`).
 - **Track & Sync Wiring**: Registered `day05Tracks`, exact durations array in `day05Durations`, `questionAudioMap['day05']`, and multi-line formatted typewriter sync in `questionSolutionMap['day05']`.
+### 🔹 Day 01 Topic 01 (100% Rich SQL Coach & Interactive Schema Peeking Suite) — 2026-08-21
+- **100% Rich SQL Coach Guidance System**:
+  - Implemented comprehensive context-aware diagnostic engine in `analyzeQueryError()` and `renderError()`.
+  - Accurately detects and coaches across incomplete queries:
+    - Incomplete `FROM` (e.g. `SELECT * FROM`) ➔ *"You opened a FROM clause but haven't specified which table to query."* with one-click fix `⚡ Add 'employees;'`.
+    - Incomplete `SELECT` ➔ *"Specify what columns you want to retrieve. Use `*` or list column names..."* with one-click fix `⚡ Add '* FROM employees;'`.
+    - Incomplete `WHERE`, `ORDER BY`, and `GROUP BY` clauses with sample contextual completions.
+    - Unclosed single quotes `'` and unmatched parentheses `()`.
+    - Keyword typos (`FORM` ➔ `FROM`, `SELEST` ➔ `SELECT`, `WHER` ➔ `WHERE`, `GRUP BY` ➔ `GROUP BY`) with one-click auto-replace button (`replaceTypoInEditor`).
+    - Schema fuzzy matching via Levenshtein distance for misspelled columns and tables.
+- **Interactive Schema Hover-to-Peek & Tap-to-Insert (Web & Mobile)**:
+  - Any table name in `<code>` tags (e.g. `<code>employees</code>`, `<code>sqlite_master</code>`) in theory slides, practice questions, and test questions triggers an interactive glassmorphic popover.
+  - Implemented safe debounced hover bridge (`scheduleHideSchemaPeekTooltip` / `cancelHideSchemaPeekTooltip`) so moving the mouse from the trigger code tag to the popover card never dismisses it prematurely.
+  - Mobile & desktop click/tap locks the popover open until dismissed.
+  - Clicking any column chip or table name inside the popover instantly pastes it into the active CodeMirror editor at the current cursor position with emerald green visual feedback.
+  - Column `<code>` tags in problem prompts are also directly clickable to insert into the editor.
+  - Eliminated all `??` character artifacts by replacing emojis with pure inline SVGs.
+- **Mobile SQL Quick-Syntax Toolbar**: Added horizontal scrollable syntax chips above the code editor on mobile viewports for effortless symbol and keyword insertion.
+
 ### 🔹 Practice Question Narration & Typing Syncing Inspector — 2026-08-21
 - **Tooling Architecture**: Built `scripts/inspect_solution_sync.py` powered by `openai-whisper` for automated word-level speech-to-code alignment.
 - **Precision Synchronization**:

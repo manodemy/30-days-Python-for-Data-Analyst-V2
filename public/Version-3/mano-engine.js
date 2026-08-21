@@ -435,7 +435,8 @@ function initTestEditor() {
 // ═══════════════════════════════════════════════════════════════
 
 function analyzeQueryError(query, rawError) {
-  const msg = rawError.message || String(rawError);
+  const msg = (rawError.message || String(rawError)).trim();
+  const qTrim = query.trim();
   const allColumns = [];
   const allTables = [];
   if (COURSE_CONFIG && COURSE_CONFIG.schema && COURSE_CONFIG.schema.tables) {
@@ -445,28 +446,119 @@ function analyzeQueryError(query, rawError) {
     });
   }
 
-  // 1. Keyword Typo Detection (e.g., FORM -> FROM, SELEST -> SELECT, WHER -> WHERE)
-  const keywordTypos = [
-    { typo: /\bFORM\b/i, correct: 'FROM' },
-    { typo: /\bSELEC\b|\bSELEST\b|\bSELCT\b/i, correct: 'SELECT' },
-    { typo: /\bWHER\b|\bWHRE\b|\bWHR\b/i, correct: 'WHERE' },
-    { typo: /\bGRUP\s+BY\b|\bGROUPBY\b/i, correct: 'GROUP BY' },
-    { typo: /\bORDERBY\b/i, correct: 'ORDER BY' },
-    { typo: /\bHAVNG\b/i, correct: 'HAVING' },
-    { typo: /\bDISTINCTT\b|\bDISTINT\b/i, correct: 'DISTINCT' },
-    { typo: /\bINER\s+JOIN\b/i, correct: 'INNER JOIN' }
-  ];
+  // Active table context for day01 topic01
+  const preferredTable = allTables.length > 0 ? allTables[0] : 'employees';
 
-  for (const kt of keywordTypos) {
-    if (kt.typo.test(query)) {
+  // 1. INCOMPLETE INPUT & MISSING CLAUSE DETECTION (Fixes Screenshot 1 Issue!)
+  if (msg.includes('incomplete input') || msg.includes('syntax error') || msg.includes('near')) {
+    // A. Query ends with FROM (e.g. "SELECT * FROM")
+    if (/FROM\s*$/i.test(qTrim)) {
       return {
-        type: 'keyword_typo',
-        hint: `Looks like a keyword typo! Did you mean <strong>${kt.correct}</strong>?`
+        type: 'missing_table',
+        header: 'Incomplete FROM Clause',
+        hint: `You opened a <code>FROM</code> clause but haven't specified which table to query. Which table do you want to select from?`,
+        suggestedFix: preferredTable + ';',
+        actionLabel: `Add '${preferredTable};'`
+      };
+    }
+
+    // B. Just SELECT or query ends with SELECT
+    if (/SELECT\s*$/i.test(qTrim) || qTrim === 'SELECT') {
+      return {
+        type: 'missing_columns',
+        header: 'Incomplete SELECT Statement',
+        hint: `Specify what columns you want to retrieve. Use <code>*</code> for all columns, or specify column names like <code>name, salary</code>, followed by <code>FROM ${preferredTable};</code>`,
+        suggestedFix: `* FROM ${preferredTable};`,
+        actionLabel: `Add '* FROM ${preferredTable};'`
+      };
+    }
+
+    // C. Ends with WHERE
+    if (/WHERE\s*$/i.test(qTrim)) {
+      return {
+        type: 'incomplete_where',
+        header: 'Incomplete WHERE Filter',
+        hint: `You added a <code>WHERE</code> clause but haven't provided a filter condition yet (e.g. <code>WHERE department = 'Sales';</code> or <code>WHERE salary > 50000;</code>).`,
+        suggestedFix: `department = 'Sales';`,
+        actionLabel: `Add sample condition`
+      };
+    }
+
+    // D. Ends with ORDER BY
+    if (/ORDER\s+BY\s*$/i.test(qTrim)) {
+      return {
+        type: 'incomplete_order_by',
+        header: 'Incomplete ORDER BY Clause',
+        hint: `Specify which column you want to sort by (e.g. <code>ORDER BY salary DESC;</code> or <code>ORDER BY name ASC;</code>).`,
+        suggestedFix: `salary DESC;`,
+        actionLabel: `Add 'salary DESC;'`
+      };
+    }
+
+    // E. Ends with GROUP BY
+    if (/GROUP\s+BY\s*$/i.test(qTrim)) {
+      return {
+        type: 'incomplete_group_by',
+        header: 'Incomplete GROUP BY Clause',
+        hint: `Specify which column you want to group rows by (e.g. <code>GROUP BY department;</code>).`,
+        suggestedFix: `department;`,
+        actionLabel: `Add 'department;'`
+      };
+    }
+
+    // F. Unclosed single quote (odd number of ')
+    const singleQuotes = (query.match(/'/g) || []).length;
+    if (singleQuotes % 2 !== 0) {
+      return {
+        type: 'unclosed_quote',
+        header: 'Unclosed String Literal',
+        hint: `You opened a text string with a single quote ( <code>'</code> ) but forgot to close it. Every text literal must start and end with a single quote.`,
+        suggestedFix: `';`,
+        actionLabel: `Add closing quote & semicolon`
+      };
+    }
+
+    // G. Unmatched opening parenthesis
+    const openParens = (query.match(/\(/g) || []).length;
+    const closeParens = (query.match(/\)/g) || []).length;
+    if (openParens > closeParens) {
+      return {
+        type: 'unclosed_paren',
+        header: 'Mismatched Parentheses',
+        hint: `You opened a parenthesis <code>(</code> but haven't closed it. Make sure every opening parenthesis has a matching <code>)</code>.`,
+        suggestedFix: `);`,
+        actionLabel: `Add closing ')'`
       };
     }
   }
 
-  // 2. Unquoted string literal in WHERE clause
+  // 2. KEYWORD TYPOS (e.g. FORM -> FROM, SELEST -> SELECT, WHER -> WHERE)
+  const keywordTypos = [
+    { typo: /\bFORM\b/i, wrong: 'FORM', correct: 'FROM' },
+    { typo: /\bSELEC\b|\bSELEST\b|\bSELCT\b/i, wrong: 'SELEST', correct: 'SELECT' },
+    { typo: /\bWHER\b|\bWHRE\b|\bWHR\b/i, wrong: 'WHER', correct: 'WHERE' },
+    { typo: /\bGRUP\s+BY\b|\bGROUPBY\b/i, wrong: 'GRUP BY', correct: 'GROUP BY' },
+    { typo: /\bORDERBY\b/i, wrong: 'ORDERBY', correct: 'ORDER BY' },
+    { typo: /\bHAVNG\b/i, wrong: 'HAVNG', correct: 'HAVING' },
+    { typo: /\bDISTINCTT\b|\bDISTINT\b/i, wrong: 'DISTINT', correct: 'DISTINCT' },
+    { typo: /\bINER\s+JOIN\b/i, wrong: 'INER JOIN', correct: 'INNER JOIN' }
+  ];
+
+  for (const kt of keywordTypos) {
+    if (kt.typo.test(query)) {
+      const matchWord = query.match(kt.typo)[0];
+      return {
+        type: 'keyword_typo',
+        header: 'Keyword Typo Detected',
+        hint: `Looks like a typo in your SQL keyword: <code>${escHtml(matchWord)}</code>. Did you mean <strong>${kt.correct}</strong>?`,
+        suggestedFix: kt.correct,
+        actionReplace: { from: matchWord, to: kt.correct },
+        actionLabel: `Fix '${matchWord}' ➔ '${kt.correct}'`
+      };
+    }
+  }
+
+  // 3. UNQUOTED STRING LITERAL IN WHERE CLAUSE (e.g. WHERE department = Sales)
   const whereMatch = query.match(/WHERE\s+\w+\s*=\s*([a-zA-Z_]\w*)/i);
   if (whereMatch) {
     const val = whereMatch[1];
@@ -475,12 +567,16 @@ function analyzeQueryError(query, rawError) {
     if (!isCol && !isTbl && !['TRUE', 'FALSE', 'NULL'].includes(val.toUpperCase())) {
       return {
         type: 'missing_quotes',
-        hint: `Text values in SQL must be enclosed in single quotes. Try wrapping <code>'${escHtml(val)}'</code> in quotes.`
+        header: 'Unquoted Text Literal',
+        hint: `Text values in SQL must be enclosed in single quotes. Try wrapping <code>'${escHtml(val)}'</code> in quotes: <code>WHERE ${whereMatch[0].split('=')[0].trim()} = '${val}'</code>.`,
+        suggestedFix: `'${val}'`,
+        actionReplace: { from: `= ${val}`, to: `= '${val}'` },
+        actionLabel: `Wrap '${val}' in quotes`
       };
     }
   }
 
-  // 3. Column Name Typo Detection via Levenshtein Distance
+  // 4. COLUMN TYPO (FUZZY LEVENSHTEIN MATCHING)
   const noSuchCol = msg.match(/no such column:\s*([a-zA-Z0-9_]+)/i);
   if (noSuchCol) {
     const typo = noSuchCol[1];
@@ -496,12 +592,16 @@ function analyzeQueryError(query, rawError) {
     if (bestMatch) {
       return {
         type: 'column_typo',
-        hint: `Column <code>${escHtml(typo)}</code> doesn't exist. Did you mean <strong><code>${escHtml(bestMatch.name)}</code></strong> (in table <em>${escHtml(bestMatch.table)}</em>)?`
+        header: 'Column Name Typo',
+        hint: `Column <code>${escHtml(typo)}</code> does not exist in the database. Did you mean <strong><code>${escHtml(bestMatch.name)}</code></strong> (in table <em>${escHtml(bestMatch.table)}</em>)?`,
+        suggestedFix: bestMatch.name,
+        actionReplace: { from: typo, to: bestMatch.name },
+        actionLabel: `Fix '${typo}' ➔ '${bestMatch.name}'`
       };
     }
   }
 
-  // 4. Table Name Typo Detection
+  // 5. TABLE TYPO (FUZZY LEVENSHTEIN MATCHING)
   const noSuchTable = msg.match(/no such table:\s*([a-zA-Z0-9_]+)/i);
   if (noSuchTable) {
     const typo = noSuchTable[1];
@@ -517,24 +617,34 @@ function analyzeQueryError(query, rawError) {
     if (bestMatch) {
       return {
         type: 'table_typo',
-        hint: `Table <code>${escHtml(typo)}</code> doesn't exist. Did you mean <strong><code>${escHtml(bestMatch)}</code></strong>?`
+        header: 'Table Name Typo',
+        hint: `Table <code>${escHtml(typo)}</code> does not exist in the database. Did you mean <strong><code>${escHtml(bestMatch)}</code></strong>?`,
+        suggestedFix: bestMatch,
+        actionReplace: { from: typo, to: bestMatch },
+        actionLabel: `Fix '${typo}' ➔ '${bestMatch}'`
       };
     }
   }
 
-  // 5. Missing FROM clause
+  // 6. MISSING FROM CLAUSE ENTIRELY
   if (/SELECT/i.test(query) && !/FROM/i.test(query) && /no such column/i.test(msg)) {
     return {
       type: 'missing_from',
-      hint: `Your query is missing a <strong>FROM</strong> clause. Specify which table you want to query.`
+      header: 'Missing FROM Clause',
+      hint: `Your query is missing a <strong>FROM</strong> clause. Specify which table you want to query (e.g. <code>FROM ${preferredTable};</code>).`,
+      suggestedFix: ` FROM ${preferredTable};`,
+      actionLabel: `Add 'FROM ${preferredTable};'`
     };
   }
 
-  // 6. Missing Semicolon Warning
-  if (!query.trim().endsWith(';')) {
+  // 7. MISSING SEMICOLON (ONLY IF QUERY IS OTHERWISE COMPLETE)
+  if (!query.trim().endsWith(';') && /SELECT.+FROM/i.test(query)) {
     return {
       type: 'missing_semicolon',
-      hint: `Pro-Tip: SQL statements should cleanly end with a semicolon ( <strong>;</strong> ).`
+      header: 'Missing Semicolon ( ; )',
+      hint: `Pro-Tip: SQL queries should cleanly end with a semicolon ( <strong>;</strong> ).`,
+      suggestedFix: ';',
+      actionLabel: `Add ';'`
     };
   }
 
@@ -9779,68 +9889,158 @@ document.addEventListener('keydown', (e) => {
 
 
 
-// ??? UX Upgrade: Schema Hover-to-Peek on Code Tags ?????????????????????????
-function initSchemaCodePeeking() {
-  const codeTags = document.querySelectorAll('#questionBar code, #slideBodyText code, #testQuestionPrompt code');
-  const schema = getSchemaInfo();
-  const tableNames = Object.keys(schema);
 
-  codeTags.forEach(tag => {
-    const text = tag.textContent.trim().toLowerCase();
-    if (tableNames.includes(text) && !tag.classList.contains('schema-peek-trigger')) {
-      tag.classList.add('schema-peek-trigger');
-      tag.title = 'Click or hover to inspect table schema';
-      
-      tag.addEventListener('mouseenter', (e) => {
-        showSchemaPeekTooltip(text, e);
-      });
-      tag.addEventListener('mouseleave', () => {
-        hideSchemaPeekTooltip();
-      });
-      tag.addEventListener('click', (e) => {
-        e.stopPropagation();
-        insertSqlSnippet(text + ' ');
-      });
-    }
-  });
+// ??? UX Upgrade: Schema Hover-to-Peek & Tap-to-Insert (Desktop & Mobile) ???????
+let activePeekTooltip = null;
+let peekHideTimer = null;
+
+function cancelHideSchemaPeekTooltip() {
+  if (peekHideTimer) {
+    clearTimeout(peekHideTimer);
+    peekHideTimer = null;
+  }
 }
 
-let activePeekTooltip = null;
-
-function showSchemaPeekTooltip(tableName, event) {
-  hideSchemaPeekTooltip();
-  const schema = getSchemaInfo();
-  const cols = schema[tableName] || [];
-  if (cols.length === 0) return;
-
-  const tooltip = document.createElement('div');
-  tooltip.className = 'schema-peek-tooltip';
-  tooltip.id = 'schemaPeekTooltip';
-
-  const colsHtml = cols.map(c => `<span class="schema-peek-col" onclick="insertSqlSnippet('${c} ', 0)" title="Click to insert '${c}'">${c}</span>`).join('');
-
-  tooltip.innerHTML = `
-    <div class="schema-peek-header">
-      <strong>?? ${tableName}</strong>
-      <span style="font-size:0.65rem; color:#94a3b8;">${cols.length} columns</span>
-    </div>
-    <div class="schema-peek-cols">${colsHtml}</div>
-    <div class="schema-peek-preview">?? Tip: Click any column to insert into editor</div>
-  `;
-
-  document.body.appendChild(tooltip);
-  activePeekTooltip = tooltip;
-
-  const rect = event.target.getBoundingClientRect();
-  const top = Math.max(10, rect.bottom + 8);
-  const left = Math.max(10, Math.min(window.innerWidth - 300, rect.left));
-  tooltip.style.top = `${top}px`;
-  tooltip.style.left = `${left}px`;
+function scheduleHideSchemaPeekTooltip() {
+  cancelHideSchemaPeekTooltip();
+  peekHideTimer = setTimeout(() => {
+    hideSchemaPeekTooltip();
+  }, 250);
 }
 
 function hideSchemaPeekTooltip() {
+  cancelHideSchemaPeekTooltip();
   if (activePeekTooltip) {
     activePeekTooltip.remove();
     activePeekTooltip = null;
   }
 }
+
+function handleColumnChipClick(colName, event) {
+  if (event) event.stopPropagation();
+  insertSqlSnippet(colName + ' ', 0);
+  
+  // Instant visual feedback on chip
+  const chip = event ? event.currentTarget : null;
+  if (chip) {
+    const prevBg = chip.style.background;
+    chip.style.background = '#10b981';
+    chip.style.color = '#fff';
+    setTimeout(() => {
+      if (chip) {
+        chip.style.background = prevBg;
+        chip.style.color = '';
+      }
+    }, 250);
+  }
+}
+
+function showSchemaPeekTooltip(tableName, anchorEl, isClick = false) {
+  cancelHideSchemaPeekTooltip();
+  const schema = getSchemaInfo();
+  const cols = schema[tableName] || [];
+  if (cols.length === 0) return;
+
+  if (activePeekTooltip && activePeekTooltip.dataset.table === tableName && isClick) {
+    hideSchemaPeekTooltip();
+    return;
+  }
+
+  hideSchemaPeekTooltip();
+
+  const tooltip = document.createElement('div');
+  tooltip.className = 'schema-peek-tooltip';
+  tooltip.id = 'schemaPeekTooltip';
+  tooltip.dataset.table = tableName;
+
+  const svgTable = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:-1px;"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/></svg>';
+  const svgBulb = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:-1px;"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15 2a6 6 0 0 0-6 6c0 2 1 3.5 2 4.5V15h2v-2.5c1-1 2-2.5 2-4.5a6 6 0 0 0-6-6z"/></svg>';
+
+  const colsHtml = cols.map(c => `
+    <span class="schema-peek-col" onclick="handleColumnChipClick('${c}', event)" title="Click to insert '${c}' into code cell">
+      ${c}
+    </span>
+  `).join('');
+
+  tooltip.innerHTML = `
+    <div class="schema-peek-header">
+      <div style="display:flex; align-items:center;">
+        ${svgTable}
+        <strong style="cursor:pointer;" onclick="handleColumnChipClick('${tableName}', event)" title="Click to insert '${tableName}'">${tableName}</strong>
+      </div>
+      <div style="display:flex; align-items:center; gap:6px;">
+        <span style="font-size:0.68rem; color:#94a3b8;">${cols.length} columns</span>
+        <button class="peek-close-mini" onclick="hideSchemaPeekTooltip()" title="Close" style="background:transparent; border:none; color:#94a3b8; cursor:pointer; font-size:0.75rem; padding:0 4px;">?</button>
+      </div>
+    </div>
+    <div class="schema-peek-cols">${colsHtml}</div>
+    <div class="schema-peek-preview">${svgBulb} Click any column or table name to paste into code cell</div>
+  `;
+
+  // Bridge hover between anchor and tooltip
+  tooltip.addEventListener('mouseenter', cancelHideSchemaPeekTooltip);
+  tooltip.addEventListener('mouseleave', scheduleHideSchemaPeekTooltip);
+
+  document.body.appendChild(tooltip);
+  activePeekTooltip = tooltip;
+
+  const rect = anchorEl.getBoundingClientRect();
+  const top = Math.max(10, rect.bottom + 6);
+  const left = Math.max(10, Math.min(window.innerWidth - 300, rect.left));
+  tooltip.style.top = `${top}px`;
+  tooltip.style.left = `${left}px`;
+}
+
+function initSchemaCodePeeking() {
+  const codeTags = document.querySelectorAll('#questionBar code, #slideBodyText code, #testQuestionPrompt code, .test-question-prompt code, .question-prompt code');
+  const schema = getSchemaInfo();
+  const tableNames = Object.keys(schema);
+
+  // Collect all column names across all schema tables
+  const allColumns = [];
+  tableNames.forEach(t => {
+    if (schema[t]) schema[t].forEach(c => allColumns.push(c));
+  });
+
+  codeTags.forEach(tag => {
+    if (tag.dataset.peekInit) return;
+    tag.dataset.peekInit = 'true';
+
+    const text = tag.textContent.trim().toLowerCase();
+    
+    // If tag matches a table name
+    if (tableNames.includes(text)) {
+      tag.classList.add('schema-peek-trigger');
+      tag.title = `Table '${text}' ? Hover or tap to view columns and insert`;
+      
+      tag.addEventListener('mouseenter', (e) => {
+        showSchemaPeekTooltip(text, tag, false);
+      });
+      tag.addEventListener('mouseleave', () => {
+        scheduleHideSchemaPeekTooltip();
+      });
+      tag.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showSchemaPeekTooltip(text, tag, true);
+      });
+    } else if (allColumns.includes(text)) {
+      // If tag is a column name, make it click-to-insert directly
+      tag.classList.add('schema-peek-trigger');
+      tag.title = `Column '${text}' ? Click to insert into code cell`;
+      tag.addEventListener('click', (e) => {
+        e.stopPropagation();
+        insertSqlSnippet(text + ' ', 0);
+        const prevColor = tag.style.color;
+        tag.style.color = '#10b981';
+        setTimeout(() => { tag.style.color = prevColor; }, 300);
+      });
+    }
+  });
+}
+
+// Global outside click listener to dismiss peek popover
+document.addEventListener('click', (e) => {
+  if (activePeekTooltip && !activePeekTooltip.contains(e.target) && !e.target.closest('.schema-peek-trigger')) {
+    hideSchemaPeekTooltip();
+  }
+});

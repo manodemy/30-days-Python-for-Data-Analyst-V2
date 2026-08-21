@@ -3003,22 +3003,352 @@ const questionAudioMap = {
     11: 'Day04/New_Day4Question11.mp3',
     12: 'Day04/New_Day4Question12.mp3'
   },
-  'day05': {
-    1: 'Day05/New_Day5Question01.mp3',
-    2: 'Day05/New_Day5Question02.mp3',
-    3: 'Day05/New_Day5Question03.mp3',
-    4: 'Day05/New_Day5Question04.mp3',
-    5: 'Day05/New_Day5Question05.mp3',
-    6: 'Day05/New_Day5Question06.mp3',
-    7: 'Day05/New_Day5Question07.mp3',
-    8: 'Day05/New_Day5Question08.mp3',
-    9: 'Day05/New_Day5Question09.mp3',
-    10: 'Day05/New_Day5Question10.mp3',
-    11: 'Day05/New_Day5Question11.mp3',
-    12: 'Day05/New_Day5Question12.mp3',
-    13: 'Day05/New_Day5Question13.mp3',
-    14: 'Day05/New_Day5Question14.mp3',
-    15: 'Day05/New_Day5Question15.mp3'
+    'day05': {
+    1: {
+      src: 'Day05/New_Day5Question01sol.mp3',
+      code: "SELECT SUM(salary) AS total_payroll,\n       AVG(salary) AS avg_salary,\n       MIN(salary) AS min_salary,\n       MAX(salary) AS max_salary\nFROM   employees;",
+      segments: [
+        {
+                "text": "SELECT SUM(salary) AS total_payroll,\n",
+                "startAt": 1.76,
+                "charInterval": 55
+        },
+        {
+                "text": "       AVG(salary) AS avg_salary,\n",
+                "startAt": 5.2,
+                "charInterval": 85
+        },
+        {
+                "text": "       MIN(salary) AS min_salary,\n",
+                "startAt": 8.48,
+                "charInterval": 45
+        },
+        {
+                "text": "       MAX(salary) AS max_salary\n",
+                "startAt": 11.46,
+                "charInterval": 45
+        },
+        {
+                "text": "FROM   employees;",
+                "startAt": 14.32,
+                "charInterval": 39
+        }
+],
+      scrollAt: 15.8
+    },
+    2: {
+      src: 'Day05/New_Day5Question02sol.mp3',
+      code: "SELECT COUNT(*) AS active_employees\nFROM   employees\nWHERE  is_active = 1;",
+      segments: [
+        {
+                "text": "SELECT COUNT(*) AS active_employees\n",
+                "startAt": 1.56,
+                "charInterval": 53
+        },
+        {
+                "text": "FROM   employees\n",
+                "startAt": 4.4,
+                "charInterval": 55
+        },
+        {
+                "text": "WHERE  ",
+                "startAt": 5.68,
+                "charInterval": 57
+        },
+        {
+                "text": "is_active = 1;",
+                "startAt": 5.88,
+                "charInterval": 29
+        }
+],
+      scrollAt: 7.1
+    },
+    3: {
+      src: 'Day05/New_Day5Question03sol.mp3',
+      code: "SELECT MIN(unit_price) AS cheapest,\n       MAX(unit_price) AS most_expensive\nFROM   products;",
+      segments: [
+        {
+                "text": "SELECT MIN(unit_price) AS cheapest,\n",
+                "startAt": 1.68,
+                "charInterval": 78
+        },
+        {
+                "text": "       MAX(unit_price) AS most_expensive\n",
+                "startAt": 4.92,
+                "charInterval": 60
+        },
+        {
+                "text": "FROM   products;",
+                "startAt": 8.78,
+                "charInterval": 30
+        }
+],
+      scrollAt: 10.1
+    },
+    4: {
+      src: 'Day05/New_Day5Question04sol.mp3',
+      code: "SELECT COUNT(*) AS total,\n       COUNT(commission) AS has_commission,\n       COUNT(*) - COUNT(commission) AS no_commission\nFROM   employees;",
+      segments: [
+        {
+                "text": "SELECT COUNT(*) AS total,\n",
+                "startAt": 1.8,
+                "charInterval": 85
+        },
+        {
+                "text": "       COUNT(commission) AS has_commission,\n",
+                "startAt": 6.56,
+                "charInterval": 75
+        },
+        {
+                "text": "       COUNT(*) - COUNT(commission) AS no_commission\n",
+                "startAt": 8.36,
+                "charInterval": 50
+        },
+        {
+                "text": "FROM   employees;",
+                "startAt": 10.38,
+                "charInterval": 36
+        }
+],
+      scrollAt: 11.8
+    },
+    5: {
+      src: 'Day05/New_Day5Question05sol.mp3',
+      code: "SELECT SUM(total_amount) AS shipped_revenue\nFROM   orders\nWHERE  status = 'Shipped';",
+      segments: [
+        {
+                "text": "SELECT SUM(total_amount) AS shipped_revenue\n",
+                "startAt": 1.64,
+                "charInterval": 64
+        },
+        {
+                "text": "FROM   orders\n",
+                "startAt": 5.24,
+                "charInterval": 39
+        },
+        {
+                "text": "WHERE  ",
+                "startAt": 5.78,
+                "charInterval": 80
+        },
+        {
+                "text": "status = 'Shipped';",
+                "startAt": 6.34,
+                "charInterval": 60
+        }
+],
+      scrollAt: 8.3
+    },
+    6: {
+      src: 'Day05/New_Day5Question06sol.mp3',
+      code: "SELECT COUNT(DISTINCT department_id) AS num_departments\nFROM   employees;",
+      segments: [
+        {
+                "text": "SELECT COUNT(DISTINCT department_id) AS num_departments\n",
+                "startAt": 1.5,
+                "charInterval": 80
+        },
+        {
+                "text": "FROM   employees;",
+                "startAt": 6,
+                "charInterval": 58
+        }
+],
+      scrollAt: 7.8
+    },
+    7: {
+      src: 'Day05/New_Day5Question07sol.mp3',
+      code: "SELECT SUM(stock_qty * unit_price) AS inventory_value\nFROM   products;",
+      segments: [
+        {
+                "text": "SELECT SUM(stock_qty * unit_price) AS inventory_value\n",
+                "startAt": 1.54,
+                "charInterval": 81
+        },
+        {
+                "text": "FROM   products;",
+                "startAt": 6.9,
+                "charInterval": 41
+        }
+],
+      scrollAt: 8.4
+    },
+    8: {
+      src: 'Day05/New_Day5Question08sol.mp3',
+      code: "SELECT AVG(commission) AS avg_non_null,\n       AVG(COALESCE(commission, 0)) AS avg_all\nFROM   employees;",
+      segments: [
+        {
+                "text": "SELECT AVG(commission) AS avg_non_null,\n",
+                "startAt": 1.58,
+                "charInterval": 85
+        },
+        {
+                "text": "       AVG(COALESCE(commission, 0)) AS avg_all\n",
+                "startAt": 5.82,
+                "charInterval": 63
+        },
+        {
+                "text": "FROM   employees;",
+                "startAt": 10.08,
+                "charInterval": 36
+        }
+],
+      scrollAt: 11.5
+    },
+    9: {
+      src: 'Day05/New_Day5Question09sol.mp3',
+      code: "SELECT COUNT(*) AS premium_count\nFROM   products\nWHERE  unit_price > 5000;",
+      segments: [
+        {
+                "text": "SELECT COUNT(*) AS premium_count\n",
+                "startAt": 1.38,
+                "charInterval": 60
+        },
+        {
+                "text": "FROM   products\n",
+                "startAt": 4.16,
+                "charInterval": 35
+        },
+        {
+                "text": "WHERE  ",
+                "startAt": 4.72,
+                "charInterval": 57
+        },
+        {
+                "text": "unit_price > 5000;",
+                "startAt": 5.06,
+                "charInterval": 85
+        }
+],
+      scrollAt: 7.4
+    },
+    10: {
+      src: 'Day05/New_Day5Question10sol.mp3',
+      code: "SELECT COALESCE(AVG(salary), 0) AS avg_salary\nFROM   employees\nWHERE  department_id = 99;",
+      segments: [
+        {
+                "text": "SELECT COALESCE(AVG(salary), 0) AS avg_salary\n",
+                "startAt": 2,
+                "charInterval": 85
+        },
+        {
+                "text": "FROM   employees\n",
+                "startAt": 6.8,
+                "charInterval": 51
+        },
+        {
+                "text": "WHERE  ",
+                "startAt": 7.66,
+                "charInterval": 69
+        },
+        {
+                "text": "department_id = 99;",
+                "startAt": 8.14,
+                "charInterval": 85
+        }
+],
+      scrollAt: 10.6
+    },
+    11: {
+      src: 'Day05/New_Day5Question11sol.mp3',
+      code: "SELECT MAX(total_amount) AS largest_order\nFROM   orders;",
+      segments: [
+        {
+                "text": "SELECT MAX(total_amount) AS largest_order\n",
+                "startAt": 1.56,
+                "charInterval": 71
+        },
+        {
+                "text": "FROM   orders;",
+                "startAt": 5.24,
+                "charInterval": 40
+        }
+],
+      scrollAt: 6.6
+    },
+    12: {
+      src: 'Day05/New_Day5Question12sol.mp3',
+      code: "SELECT COUNT(DISTINCT region) AS num_regions\nFROM   customers;",
+      segments: [
+        {
+                "text": "SELECT COUNT(DISTINCT region) AS num_regions\n",
+                "startAt": 1.5,
+                "charInterval": 78
+        },
+        {
+                "text": "FROM   customers;",
+                "startAt": 5.02,
+                "charInterval": 40
+        }
+],
+      scrollAt: 6.5
+    },
+    13: {
+      src: 'Day05/New_Day5Question13sol.mp3',
+      code: "SELECT SUM(CASE WHEN status = 'Shipped' THEN total_amount ELSE 0 END) AS shipped_rev,\n       SUM(CASE WHEN status = 'Processing' THEN total_amount ELSE 0 END) AS processing_rev\nFROM   orders;",
+      segments: [
+        {
+                "text": "SELECT SUM(CASE WHEN status = 'Shipped' THEN total_amount ELSE 0 END) AS shipped_rev,\n",
+                "startAt": 2.62,
+                "charInterval": 71
+        },
+        {
+                "text": "       SUM(CASE WHEN status = 'Processing' THEN total_amount ELSE 0 END) AS processing_rev\n",
+                "startAt": 9.8,
+                "charInterval": 69
+        },
+        {
+                "text": "FROM   orders;",
+                "startAt": 17.08,
+                "charInterval": 29
+        }
+],
+      scrollAt: 18.3
+    },
+    14: {
+      src: 'Day05/New_Day5Question14sol.mp3',
+      code: "SELECT ROUND(SUM(stock_qty * unit_price) * 1.0 / NULLIF(SUM(stock_qty), 0), 2) AS weighted_avg_price\nFROM   products;",
+      segments: [
+        {
+                "text": "SELECT ROUND(SUM(stock_qty * unit_price) * 1.0 / NULLIF(SUM(stock_qty), 0), 2) AS weighted_avg_price\n",
+                "startAt": 2.36,
+                "charInterval": 72
+        },
+        {
+                "text": "FROM   products;",
+                "startAt": 11.72,
+                "charInterval": 25
+        }
+],
+      scrollAt: 12.9
+    },
+    15: {
+      src: 'Day05/New_Day5Question15sol.mp3',
+      code: "SELECT GROUP_CONCAT(name, ', ') AS engineering_team\nFROM   employees\nWHERE  department_id = 10;",
+      segments: [
+        {
+                "text": "SELECT GROUP_CONCAT(name, ', ') AS engineering_team\n",
+                "startAt": 1.5,
+                "charInterval": 81
+        },
+        {
+                "text": "FROM   employees\n",
+                "startAt": 6.86,
+                "charInterval": 49
+        },
+        {
+                "text": "WHERE  ",
+                "startAt": 8.66,
+                "charInterval": 57
+        },
+        {
+                "text": "department_id = 10;",
+                "startAt": 10.46,
+                "charInterval": 50
+        }
+],
+      scrollAt: 12.2
+    }
   }
 };
 

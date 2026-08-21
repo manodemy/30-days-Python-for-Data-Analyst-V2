@@ -4399,6 +4399,69 @@ function persistSolvedQuestions() {
 }
 
 function updateOverallScoreUI() {
+  // 1. Ensure badge exists in .header-right
+  const headerRight = document.querySelector('.header-right');
+  if (headerRight && !document.getElementById('headerOverallScoreBadge')) {
+    const scoreBtn = document.getElementById('scoreBtn') || headerRight.querySelector('.hdr-btn--score');
+    const badge = document.createElement('div');
+    badge.className = 'header-overall-score';
+    badge.id = 'headerOverallScoreBadge';
+    badge.title = 'View Overall Course Score & Certificate Status';
+    badge.onclick = () => window.location.href = '/home.html';
+    badge.innerHTML = `
+      <div class="overall-score-icon">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+      </div>
+      <div class="overall-score-content">
+        <span class="overall-score-label">TOTAL SCORE</span>
+        <div class="overall-score-val">
+          <span class="overall-score-num" id="headerOverallScore">0</span>
+          <span class="overall-score-max">/ 1500</span>
+        </div>
+      </div>
+      <div class="overall-score-bar">
+        <div class="overall-score-bar-fill" id="overallScoreBarFill" style="width: 0%"></div>
+      </div>
+    `;
+    if (scoreBtn && scoreBtn.nextSibling) {
+      headerRight.insertBefore(badge, scoreBtn.nextSibling);
+    } else {
+      headerRight.appendChild(badge);
+    }
+  }
+
+  // 2. Ensure badge exists in test-header-right
+  const testHeaderRight = document.querySelector('.test-header-right');
+  if (testHeaderRight && !document.getElementById('testHeaderOverallScoreBadge')) {
+    const testScoreBtn = document.getElementById('testScoreBtn') || testHeaderRight.querySelector('.hdr-btn--score');
+    const testBadge = document.createElement('div');
+    testBadge.className = 'header-overall-score';
+    testBadge.id = 'testHeaderOverallScoreBadge';
+    testBadge.title = 'View Overall Course Score & Certificate Status';
+    testBadge.onclick = () => window.location.href = '/home.html';
+    testBadge.innerHTML = `
+      <div class="overall-score-icon">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+      </div>
+      <div class="overall-score-content">
+        <span class="overall-score-label">TOTAL SCORE</span>
+        <div class="overall-score-val">
+          <span class="overall-score-num" id="testHeaderOverallScore">0</span>
+          <span class="overall-score-max">/ 1500</span>
+        </div>
+      </div>
+      <div class="overall-score-bar">
+        <div class="overall-score-bar-fill" id="testOverallScoreBarFill" style="width: 0%"></div>
+      </div>
+    `;
+    if (testScoreBtn && testScoreBtn.nextSibling) {
+      testHeaderRight.insertBefore(testBadge, testScoreBtn.nextSibling);
+    } else {
+      testHeaderRight.appendChild(testBadge);
+    }
+  }
+
+  // 3. Compute score and update values
   let totalScore = 0;
   if (window.ProgressManager) {
     const overall = window.ProgressManager.getOverallScore();
@@ -4429,6 +4492,7 @@ function updateOverallScoreUI() {
   });
 }
 window.updateOverallScoreUI = updateOverallScoreUI;
+
 
 function updatePracticeStats() {
   let solved = 0;
@@ -10194,3 +10258,6 @@ document.addEventListener('click', (e) => {
     hideSchemaPeekTooltip();
   }
 });
+
+
+document.addEventListener('DOMContentLoaded', () => { setTimeout(() => { updateOverallScoreUI(); }, 50); });

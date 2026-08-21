@@ -36,6 +36,32 @@ window.COURSE_CONTENT['day01'] = {
       }
     ]
   },
+  "topicPracticeQuestions": {
+    "0": [
+      {
+        "id": 1,
+        "prompt": "Write a query to retrieve all columns and all rows from the <code>employees</code> table.",
+        "referenceSql": "SELECT * FROM employees;"
+      },
+      {
+        "id": 2,
+        "prompt": "Write a query to retrieve all columns and rows from the system table <code>sqlite_master</code> to inspect the database structure.",
+        "referenceSql": "SELECT * FROM sqlite_master;"
+      }
+    ],
+    "1": [
+      {
+        "id": 1,
+        "prompt": "Write a query to retrieve only the <code>name</code> and <code>department</code> columns from the <code>employees</code> table.",
+        "referenceSql": "SELECT name, department FROM employees;"
+      },
+      {
+        "id": 2,
+        "prompt": "Write a query to project the columns <code>id</code>, <code>name</code>, and <code>salary</code> in that specific order from the <code>employees</code> table.",
+        "referenceSql": "SELECT id, name, salary FROM employees;"
+      }
+    ]
+  },
   "practiceQuestions": [
     {
       "id": 1,

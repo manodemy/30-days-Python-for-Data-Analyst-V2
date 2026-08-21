@@ -3245,7 +3245,14 @@ let currentDay = 'day01';
 
 function loadQuestionsForDay(day) {
   currentDay = day;
-  const questions = COURSE_CONFIG.allPracticeQuestions[day] || COURSE_CONFIG.allPracticeQuestions.day01;
+  let questions = null;
+  if (COURSE_CONFIG.topicPracticeQuestions && COURSE_CONFIG.topicPracticeQuestions[currentSlide]) {
+    questions = COURSE_CONFIG.topicPracticeQuestions[currentSlide];
+  } else if (COURSE_CONFIG.allPracticeQuestions && COURSE_CONFIG.allPracticeQuestions[day]) {
+    questions = COURSE_CONFIG.allPracticeQuestions[day];
+  } else {
+    questions = COURSE_CONFIG.practiceQuestions || [];
+  }
   COURSE_CONFIG.practiceQuestions = questions;
   currentPracticeQ = 0;
   renderPracticeQuestion();
@@ -3255,6 +3262,14 @@ function loadQuestionsForDay(day) {
 // Mapping of question id → audio file (for Day 01)
 const questionAudioMap = {
   'day01': {
+    0: {
+      1: 'New_Day1Part1Question01.mp3',
+      2: 'New_Day1Part1Question03.mp3'
+    },
+    1: {
+      1: 'Day01topic2/New_Day1Part2Question01.mp3',
+      2: 'Day01topic2/New_Day1Part2Question02.mp3'
+    },
     1: 'New_Day1Part1Question01.mp3',
     2: 'New_Day1Part1Question03.mp3'
   },
@@ -3310,6 +3325,37 @@ const questionAudioMap = {
 // Map per day → question id → { src, code, startAt (seconds), charInterval (ms) }
 const questionSolutionMap = {
   'day01': {
+    0: {
+      1: {
+        src: 'New_Day1Part1Question02.mp3',
+        code: 'SELECT *\nFROM employees;',
+        segments: [
+          { text: "SELECT *\n", startAt: 1.16, charInterval: 58 },
+          { text: "FROM employees;", startAt: 2.38, charInterval: 47 }
+        ],
+        scrollAt: 4.0
+      }
+    },
+    1: {
+      1: {
+        src: 'Day01topic2/New_Day1Part2Question01.mp3',
+        code: 'SELECT name, department\nFROM employees;',
+        segments: [
+          { text: "SELECT name, department\n", startAt: 12.48, charInterval: 45 },
+          { text: "FROM employees;", startAt: 13.86, charInterval: 45 }
+        ],
+        scrollAt: 16.0
+      },
+      2: {
+        src: 'Day01topic2/New_Day1Part2Question02.mp3',
+        code: 'SELECT id, name, salary\nFROM employees;',
+        segments: [
+          { text: "SELECT id, name, salary\n", startAt: 5.40, charInterval: 50 },
+          { text: "FROM employees;", startAt: 8.44, charInterval: 50 }
+        ],
+        scrollAt: 14.0
+      }
+    },
     1: {
       src: 'New_Day1Part1Question02.mp3',
       code: 'SELECT *\nFROM employees;',
@@ -3984,10 +4030,17 @@ function renderPracticeQuestion() {
     setTimeout(() => { if (typeof initSchemaCodePeeking === 'function') initSchemaCodePeeking(); }, 20);
     document.getElementById('qCounter').textContent = `Question-${String(q.id).padStart(2, '0')}`;
 
-    // Update question audio button based on the question id
+    // Update question audio button based on the question id & active topic slide
     const btn = document.getElementById('questionAudioBtn');
-    const audioMap = questionAudioMap[currentDay] || questionAudioMap['day04'] || questionAudioMap['day01'];
-    const audioSrc = q.questionAudio || (audioMap ? audioMap[q.id] : null);
+    const dayAudioMap = questionAudioMap[currentDay] || questionAudioMap['day01'];
+    let audioSrc = q.questionAudio;
+    if (!audioSrc && dayAudioMap) {
+      if (dayAudioMap[currentSlide] && dayAudioMap[currentSlide][q.id]) {
+        audioSrc = dayAudioMap[currentSlide][q.id];
+      } else if (dayAudioMap[q.id]) {
+        audioSrc = dayAudioMap[q.id];
+      }
+    }
     if (btn) {
       if (audioSrc) {
         btn.style.display = 'inline-flex';
@@ -4000,10 +4053,16 @@ function renderPracticeQuestion() {
     // Show/hide solution audio button based on whether this question has a solution audio
     const solBtn = document.getElementById('solutionAudioBtn');
     if (solBtn) {
-      const solMap = questionSolutionMap[currentDay] || questionSolutionMap['day04'] || questionSolutionMap['day01'];
-      const hasSolution = q.solutionAudio || (solMap && solMap[q.id]);
-      solBtn.style.display = hasSolution ? 'inline-flex' : 'none';
-      // Reset icon on question change
+      const daySolMap = questionSolutionMap[currentDay] || questionSolutionMap['day01'];
+      let solEntry = (q && q.solutionAudio) ? { src: q.solutionAudio, code: q.referenceSql, startAt: 1.5, charInterval: 70 } : null;
+      if (!solEntry && daySolMap) {
+        if (daySolMap[currentSlide] && daySolMap[currentSlide][q.id]) {
+          solEntry = daySolMap[currentSlide][q.id];
+        } else if (daySolMap[q.id]) {
+          solEntry = daySolMap[q.id];
+        }
+      }
+      solBtn.style.display = solEntry ? 'inline-flex' : 'none';
       solBtn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
       solBtn.classList.remove('playing');
     }
@@ -10024,7 +10083,7 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
     // 6. Highlight active target row / card / Q&A block without shifting layout
     const targetRow = targetEl.closest('tr');
     const targetCard = targetEl.closest('.vs-card, .info-card');
-    const targetIQ = targetEl.closest('#iqReferentialIntegrity, #iqSqlVsNosql, #iqCompositePk, #parentTableDept');
+    const targetIQ = targetEl.closest('#iqReferentialIntegrity, #iqSqlVsNosql, #iqCompositePk, #parentTableDept, #iqIndexOnlyScan, #iqSelectStarCosts, #iqHeapScanVsIndexScan');
 
     if (targetRow) {
       targetRow.classList.add('row-active-spotlight');
@@ -10042,6 +10101,9 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
     }
     if (typeof updateDay01SqlSubLanguagesHighlights === 'function') {
       updateDay01SqlSubLanguagesHighlights(targetSelector, true);
+    }
+    if (typeof updateDay01Topic02Spotlights === 'function') {
+      updateDay01Topic02Spotlights(targetSelector, true);
     }
   });
 }
@@ -10272,3 +10334,59 @@ document.addEventListener('click', (e) => {
 
 
 document.addEventListener('DOMContentLoaded', () => { setTimeout(() => { updateOverallScoreUI(); }, 50); });
+
+
+// Visual highlight synchronizer for Day 01 Topic 02 (Column Projection & Performance)
+function updateDay01Topic02Spotlights(activeTarget, isPlaying) {
+  if (currentDay !== 'day01' || currentSlide !== 1) return;
+
+  const containers = [
+    document.getElementById('slideBodyText'),
+    document.getElementById('presentSlideContent')
+  ].filter(Boolean);
+
+  containers.forEach(container => {
+    // 1. Clear previous diagram highlights
+    container.querySelectorAll('#projectionDiskPage, #projectionLoads, #projectionFilter, #projectionResultSet, .relation-node, .relation-link').forEach(el => {
+      el.classList.remove('diagram-step-active', 'diagram-step-pulse');
+    });
+
+    if (!isPlaying || !activeTarget) return;
+
+    // 2. Relational Projection Diagram Step Highlight
+    if (activeTarget === '#projectionDiagram') {
+      const diag = container.querySelector('#projectionDiagram');
+      if (diag) diag.classList.add('diagram-step-active');
+    } else if (activeTarget === '#projectionDiskPage' || activeTarget === '#cardPagesBlocks') {
+      const node = container.querySelector('#projectionDiskPage');
+      if (node) node.classList.add('diagram-step-pulse');
+    } else if (activeTarget === '#projectionLoads') {
+      const link = container.querySelector('#projectionLoads');
+      if (link) link.classList.add('diagram-step-pulse');
+    } else if (activeTarget === '#projectionFilter') {
+      const filterNode = container.querySelector('#projectionFilter');
+      if (filterNode) filterNode.classList.add('diagram-step-pulse');
+    } else if (activeTarget === '#projectionResultSet') {
+      const resNode = container.querySelector('#projectionResultSet');
+      if (resNode) resNode.classList.add('diagram-step-pulse');
+    }
+
+    // 3. Performance Costs Highlight
+    if (['#costExcessDiskIO', '#costBufferPool', '#costNetworkOverhead', '#costDefeatedIndex'].includes(activeTarget)) {
+      const targetCard = container.querySelector(activeTarget);
+      if (targetCard) targetCard.classList.add('card-active-spotlight');
+    }
+
+    // 4. Index-Only Scans vs Heap Lookup
+    if (['#heapLookupRequired', '#indexOnlyScanGood'].includes(activeTarget)) {
+      const vsCard = container.querySelector(activeTarget);
+      if (vsCard) vsCard.classList.add('card-active-spotlight');
+    }
+
+    // 5. Column-Oriented DB cards
+    if (['#cardZeroOverhead', '#cardBilledPerByte', '#cardCompression'].includes(activeTarget)) {
+      const colCard = container.querySelector(activeTarget);
+      if (colCard) colCard.classList.add('card-active-spotlight');
+    }
+  });
+}

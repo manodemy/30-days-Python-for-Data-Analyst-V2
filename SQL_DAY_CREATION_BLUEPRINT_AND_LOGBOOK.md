@@ -139,21 +139,23 @@ Before considering any day complete, run this verification checklist:
 ### 🔹 Day 01 Topic 01 (100% Rich SQL Coach & Interactive Schema Peeking Suite) — 2026-08-21
 - **100% Rich SQL Coach Guidance System**:
   - Implemented comprehensive context-aware diagnostic engine in `analyzeQueryError()` and `renderError()`.
-  - Accurately detects and coaches across incomplete queries:
-    - Incomplete `FROM` (e.g. `SELECT * FROM`) ➔ *"You opened a FROM clause but haven't specified which table to query."* with one-click fix `⚡ Add 'employees;'`.
-    - Incomplete `SELECT` ➔ *"Specify what columns you want to retrieve. Use `*` or list column names..."* with one-click fix `⚡ Add '* FROM employees;'`.
-    - Incomplete `WHERE`, `ORDER BY`, and `GROUP BY` clauses with sample contextual completions.
-    - Unclosed single quotes `'` and unmatched parentheses `()`.
-    - Keyword typos (`FORM` ➔ `FROM`, `SELEST` ➔ `SELECT`, `WHER` ➔ `WHERE`, `GRUP BY` ➔ `GROUP BY`) with one-click auto-replace button (`replaceTypoInEditor`).
-    - Schema fuzzy matching via Levenshtein distance for misspelled columns and tables.
+  - Accurately detects and coaches across incomplete queries with one-click actionable fixes.
 - **Interactive Schema Hover-to-Peek & Tap-to-Insert (Web & Mobile)**:
-  - Any table name in `<code>` tags (e.g. `<code>employees</code>`, `<code>sqlite_master</code>`) in theory slides, practice questions, and test questions triggers an interactive glassmorphic popover.
-  - Implemented safe debounced hover bridge (`scheduleHideSchemaPeekTooltip` / `cancelHideSchemaPeekTooltip`) so moving the mouse from the trigger code tag to the popover card never dismisses it prematurely.
-  - Mobile & desktop click/tap locks the popover open until dismissed.
-  - Clicking any column chip or table name inside the popover instantly pastes it into the active CodeMirror editor at the current cursor position with emerald green visual feedback.
-  - Column `<code>` tags in problem prompts are also directly clickable to insert into the editor.
-  - Eliminated all `??` character artifacts by replacing emojis with pure inline SVGs.
-- **Mobile SQL Quick-Syntax Toolbar**: Added horizontal scrollable syntax chips above the code editor on mobile viewports for effortless symbol and keyword insertion.
+  - Table name `<code>` tags trigger interactive schema popovers with clickable column chips.
+- **Mobile SQL Quick-Syntax Toolbar**: Added horizontal scrollable syntax chips above the code editor on mobile viewports.
+
+### 🔹 Day 01 Topic 02 (Column Projection & Diagram Sync Suite) — 2026-08-21
+- **Relational Projection Pipeline Diagram Step Sync**:
+  - Implemented `updateDay01Topic02Spotlights()` to sequentially highlight `#projectionDiskPage` ➔ `#projectionLoads` ➔ `#projectionFilter` ➔ `#projectionResultSet` during speech narration.
+- **Performance Costs & Comparison Cards Focus**:
+  - Synchronized spotlight borders for `#cardPagesBlocks`, `#cardRowOriented`, `#cardFullPageLoad`, `#costExcessDiskIO`, `#costBufferPool`, `#costNetworkOverhead`, `#costDefeatedIndex`, `#heapLookupRequired`, and `#indexOnlyScanGood`.
+- **Single-Card Interview Q&A Spotlight**:
+  - Applied single-card isolation to `#iqIndexOnlyScan`, `#iqSelectStarCosts`, and `#iqHeapScanVsIndexScan`, hiding sibling questions during audio playback and restoring on pause/stop.
+- **Topic-Aware Practice Question Switcher & Typewriter Sync**:
+  - Added `topicPracticeQuestions` for Topic 02 (Q1: `SELECT name, department FROM employees;`, Q2: `SELECT id, name, salary FROM employees;`).
+  - Extracted word-level Whisper ASR timestamps for `New_Day1Part2Question01.mp3` and `New_Day1Part2Question02.mp3` to drive real-time typewriter code animation, query execution, and smooth table scrolling.
+- **Column Projection SQL Coach Diagnostics**:
+  - Added specialized hints detecting `SELECT *` when explicit projections are required with one-click `⚡ Change '*' ➔ 'name, department'` fix buttons.
 
 ### 🔹 Practice Question Narration & Typing Syncing Inspector — 2026-08-21
 - **Tooling Architecture**: Built `scripts/inspect_solution_sync.py` powered by `openai-whisper` for automated word-level speech-to-code alignment.

@@ -3522,8 +3522,8 @@ const questionSolutionMap = {
   }
 };
 
-let typewriterTimers = []; // pending typewriter timeouts for cancellation
-let typewriterRafId = null; // requestAnimationFrame id for audio-synced typewriter
+let typewriterTimers = [];
+let typewriterRafId = null;
 let currentTableScrollInterval = null;
 
 function cancelTypewriter() {
@@ -3539,7 +3539,107 @@ function cancelTypewriter() {
   }
 }
 
-// ─── Unified Audio-Synced Typewriter Engine (Supports scrubbing/seeking/resuming) ───
+// ????????????????????????????????????????????????????????????????????????????????
+// ?? Professional Web Audio API Mechanical Keyboard Sound Synthesizer
+// ????????????????????????????????????????????????????????????????????????????????
+let typingAudioCtx = null;
+let lastTypingSoundTime = 0;
+
+function getTypingAudioContext() {
+  if (!typingAudioCtx) {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (AudioCtx) {
+      typingAudioCtx = new AudioCtx();
+    }
+  }
+  if (typingAudioCtx && typingAudioCtx.state === 'suspended') {
+    typingAudioCtx.resume().catch(() => {});
+  }
+  return typingAudioCtx;
+}
+
+// Ensure AudioContext is unlocked on ANY document click / key / touch
+if (typeof document !== 'undefined') {
+  const unlockAudio = () => {
+    getTypingAudioContext();
+  };
+  document.addEventListener('click', unlockAudio, { passive: true });
+  document.addEventListener('keydown', unlockAudio, { passive: true });
+  document.addEventListener('touchstart', unlockAudio, { passive: true });
+}
+
+function playTypingSound(char = 'a') {
+  try {
+    const ctx = getTypingAudioContext();
+    if (!ctx) return;
+
+    if (ctx.state === 'suspended') {
+      ctx.resume().catch(() => {});
+    }
+
+    const now = ctx.currentTime;
+    if (now - lastTypingSoundTime < 0.015) return;
+    lastTypingSoundTime = now;
+
+    // Clear, rich audible level
+    const baseVol = 0.35;
+
+    const isSpaceOrEnter = (char === ' ' || char === '\n');
+    const isEnter = (char === '\n');
+
+    const pitchJitter = 0.92 + Math.random() * 0.16;
+    const clickFreq = (isSpaceOrEnter ? 3000 : 4400) * pitchJitter;
+    const bodyFreq = (isEnter ? 130 : (isSpaceOrEnter ? 160 : 240)) * pitchJitter;
+
+    // ?? 1. High-Frequency Tactile Click (Noise burst through Bandpass Filter) ??
+    const bufferSize = Math.max(1, Math.floor(ctx.sampleRate * 0.015));
+    const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const output = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      output[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.003));
+    }
+
+    const whiteNoise = ctx.createBufferSource();
+    whiteNoise.buffer = noiseBuffer;
+
+    const bandpass = ctx.createBiquadFilter();
+    bandpass.type = 'bandpass';
+    bandpass.frequency.setValueAtTime(clickFreq, now);
+    bandpass.Q.setValueAtTime(isSpaceOrEnter ? 3.0 : 5.0, now);
+
+    const clickGain = ctx.createGain();
+    clickGain.gain.setValueAtTime(baseVol * 1.5, now);
+    clickGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.020);
+
+    whiteNoise.connect(bandpass);
+    bandpass.connect(clickGain);
+    clickGain.connect(ctx.destination);
+
+    whiteNoise.start(now);
+    whiteNoise.stop(now + 0.022);
+
+    // ?? 2. Low-Frequency Keycap Bottom-Out Thud (Damped Sine Wave) ??
+    const osc = ctx.createOscillator();
+    const bodyGain = ctx.createGain();
+
+    osc.type = isEnter ? 'triangle' : 'sine';
+    osc.frequency.setValueAtTime(bodyFreq, now);
+    osc.frequency.exponentialRampToValueAtTime(bodyFreq * 0.35, now + 0.035);
+
+    bodyGain.gain.setValueAtTime(baseVol * (isSpaceOrEnter ? 1.8 : 1.2), now);
+    bodyGain.gain.exponentialRampToValueAtTime(0.0001, now + (isEnter ? 0.045 : 0.035));
+
+    osc.connect(bodyGain);
+    bodyGain.connect(ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.050);
+  } catch (err) {
+    // Ignore audio context errors gracefully
+  }
+}
+
+// ??? Unified Audio-Synced Typewriter Engine (Supports scrubbing/seeking/resuming) ???
 function startAudioSyncedTypewriter(audioObj, solEntry) {
   cancelTypewriter();
   if (!audioObj || !solEntry) return;
@@ -3601,7 +3701,7 @@ function startAudioSyncedTypewriter(audioObj, solEntry) {
     if (outputEl) outputEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
-  function rafLoop() {
+    function rafLoop() {
     if (!audioObj || audioObj.paused || audioObj.ended) {
       typewriterRafId = null;
       return;
@@ -3625,14 +3725,22 @@ function startAudioSyncedTypewriter(audioObj, solEntry) {
       }
     }
 
+    let hasTypedThisFrame = false;
+    let typedChar = 'a';
     while (nextEvtIdx < syncEvents.length && ct >= syncEvents[nextEvtIdx].atSec) {
       const ev = syncEvents[nextEvtIdx];
       if (mainEditor) {
         mainEditor.setValue(ev.text);
         const lastLine = mainEditor.lastLine();
         mainEditor.setCursor({ line: lastLine, ch: mainEditor.getLine(lastLine).length });
+        hasTypedThisFrame = true;
+        typedChar = ev.char || 'a';
       }
       nextEvtIdx++;
+    }
+
+    if (hasTypedThisFrame) {
+      playTypingSound(typedChar);
     }
 
     if (!qFired && nextEvtIdx >= syncEvents.length && syncEvents.length > 0) {

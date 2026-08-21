@@ -8472,6 +8472,27 @@ function scrollToTarget(selector, isSeek = true) {
     if (typeof clearSlidePlaybackVisibility === 'function') clearSlidePlaybackVisibility();
   }
 
+  const subLangTracks = ['#sqlSubLanguages', '#subLangDql', '#subLangDml', '#subLangDdl', '#subLangTcl', '#subLangDcl'];
+  const coreEntitiesTracks = ['#coreEntities', '#entityDatabase', '#entityTable', '#entityColumn', '#entityRow'];
+
+  // For Sub-Languages Table: Keep table 100% stationary and fixed in place during narration!
+  if (subLangTracks.includes(selector)) {
+    const container = document.getElementById('slideContent') || document.getElementById('slideBodyText');
+    if (selector === '#sqlSubLanguages' && container) {
+      container.scrollTo({ top: 0, behavior: isSeek ? 'auto' : 'smooth' });
+    }
+    return;
+  }
+
+  // For Core Entities Table: Keep table 100% stationary and fixed in place during narration!
+  if (coreEntitiesTracks.includes(selector)) {
+    const container = document.getElementById('slideContent') || document.getElementById('slideBodyText');
+    if (selector === '#coreEntities' && container) {
+      container.scrollTo({ top: 0, behavior: isSeek ? 'auto' : 'smooth' });
+    }
+    return;
+  }
+
   const container = document.getElementById('slideContent');
   const targetEl = container ? container.querySelector(selector) : null;
   if (targetEl && container) {
@@ -9011,7 +9032,10 @@ function pauseCombinedPlayback() {
   // Scroll back to the active block instantly so the viewport doesn't jump to the top of the slide
   if (typeof combinedTrackIndex !== 'undefined' && typeof combinedTracks !== 'undefined' && combinedTracks[combinedTrackIndex]) {
     const activeTrack = combinedTracks[combinedTrackIndex];
-    if (activeTrack && activeTrack.target) {
+    const subLangTracks = ['#sqlSubLanguages', '#subLangDql', '#subLangDml', '#subLangDdl', '#subLangTcl', '#subLangDcl'];
+    const coreEntitiesTracks = ['#coreEntities', '#entityDatabase', '#entityTable', '#entityColumn', '#entityRow'];
+
+    if (activeTrack && activeTrack.target && !subLangTracks.includes(activeTrack.target) && !coreEntitiesTracks.includes(activeTrack.target)) {
       const container = document.getElementById('slideContent');
       const targetEl = container ? container.querySelector(activeTrack.target) : null;
       if (targetEl && container) {

@@ -3902,6 +3902,15 @@ let typewriterTimers = [];
 let typewriterRafId = null;
 let currentTableScrollInterval = null;
 
+// ???????????????????????????????????????????????????????????????
+// UNIFIED AUDIO-SYNCED TYPEWRITER ENGINE (Robust & Resilient)
+// ???????????????????????????????????????????????????????????????
+
+let typewriterAttachedAudio = null;
+let typewriterPlayHandler = null;
+let typewriterTimeupdateHandler = null;
+let typewriterEndedHandler = null;
+
 function cancelTypewriter() {
   removeYourTurnBanner();
   typewriterTimers.forEach(t => clearTimeout(t));
@@ -3914,9 +3923,23 @@ function cancelTypewriter() {
     clearInterval(currentTableScrollInterval);
     currentTableScrollInterval = null;
   }
+  if (typewriterAttachedAudio) {
+    try {
+      if (typewriterPlayHandler) {
+        typewriterAttachedAudio.removeEventListener('play', typewriterPlayHandler);
+        typewriterAttachedAudio.removeEventListener('playing', typewriterPlayHandler);
+      }
+      if (typewriterTimeupdateHandler) {
+        typewriterAttachedAudio.removeEventListener('timeupdate', typewriterTimeupdateHandler);
+      }
+      if (typewriterEndedHandler) {
+        typewriterAttachedAudio.removeEventListener('ended', typewriterEndedHandler);
+      }
+    } catch (e) {}
+    typewriterAttachedAudio = null;
+  }
 }
 
-// ??? Unified Audio-Synced Typewriter Engine (Supports scrubbing/seeking/resuming) ???
 function startAudioSyncedTypewriter(audioObj, solEntry) {
   cancelTypewriter();
   if (!audioObj || !solEntry) return;
@@ -3948,7 +3971,7 @@ function startAudioSyncedTypewriter(audioObj, solEntry) {
   syncEvents.sort((a, b) => a.atSec - b.atSec);
 
   const scrollAtSec = (solEntry.scrollAt || 13.5) / speed;
-  const initialTime = audioObj.currentTime || 0;
+  const initialTime = (audioObj && typeof audioObj.currentTime === 'number') ? audioObj.currentTime : 0;
 
   // Fast-forward editor state to initialTime if seeked into middle of track
   let nextEvtIdx = 0;
@@ -3978,12 +4001,12 @@ function startAudioSyncedTypewriter(audioObj, solEntry) {
     if (outputEl) outputEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
-    function rafLoop() {
-    if (!audioObj || audioObj.paused || audioObj.ended) {
+  function step() {
+    if (!audioObj || audioObj.ended) {
       typewriterRafId = null;
       return;
     }
-    const ct = audioObj.currentTime;
+    const ct = audioObj.currentTime || 0;
 
     // Handle backward seek/scrubbing seamlessly
     if (nextEvtIdx > 0 && ct < syncEvents[nextEvtIdx - 1].atSec) {
@@ -4036,75 +4059,35 @@ function startAudioSyncedTypewriter(audioObj, solEntry) {
       }
     }
 
-    typewriterRafId = requestAnimationFrame(rafLoop);
+    if (!audioObj.paused && !audioObj.ended) {
+      typewriterRafId = requestAnimationFrame(step);
+    } else {
+      typewriterRafId = null;
+    }
   }
 
-  typewriterRafId = requestAnimationFrame(rafLoop);
-
-  audioObj.addEventListener('ended', () => {
-    if (currentTableScrollInterval) {
-      clearInterval(currentTableScrollInterval);
-      currentTableScrollInterval = null;
+  function ensureRunning() {
+    if (!typewriterRafId) {
+      typewriterRafId = requestAnimationFrame(step);
     }
-    cancelTypewriter();
-  }, { once: true });
-}
-
-
-function showYourTurnBanner(qId) {
-  removeYourTurnBanner();
-  const toolbar = document.querySelector('.editor-toolbar');
-  if (toolbar) {
-    const banner = document.createElement('div');
-    banner.className = 'your-turn-banner';
-    banner.id = 'yourTurnBanner';
-    banner.innerHTML = `? <strong>Your Turn!</strong> Write & Run query before solution plays!`;
-    toolbar.appendChild(banner);
   }
-}
 
-function removeYourTurnBanner() {
-  const existing = document.getElementById('yourTurnBanner');
-  if (existing) existing.remove();
-}
+  // Bind lifecycle listeners if audioObj is an EventTarget
+  if (typeof audioObj.addEventListener === 'function') {
+    typewriterAttachedAudio = audioObj;
+    typewriterPlayHandler = ensureRunning;
+    typewriterTimeupdateHandler = step;
+    typewriterEndedHandler = () => cancelTypewriter();
 
-function renderPracticeQuestion() {
-  const q = COURSE_CONFIG.practiceQuestions[currentPracticeQ];
-  if (q) {
-    document.getElementById('questionPrompt').innerHTML = `Q${q.id}. ${q.prompt}`;
-    setTimeout(() => { if (typeof initSchemaCodePeeking === 'function') initSchemaCodePeeking(); }, 20);
-    document.getElementById('qCounter').textContent = `Question-${String(q.id).padStart(2, '0')}`;
-
-    // Update question audio button based on the question id & active topic slide
-    const btn = document.getElementById('questionAudioBtn');
-    let audioSrc = q.questionAudio || getQuestionAudioSrc(q.id);
-    if (btn) {
-      if (audioSrc) {
-        btn.style.display = 'inline-flex';
-        btn.onclick = () => playQuestionAudio(btn, audioSrc);
-      } else {
-        btn.style.display = 'none';
-      }
-    }
-
-    // Show/hide solution audio button based on whether this question has a solution audio
-    const solBtn = document.getElementById('solutionAudioBtn');
-    if (solBtn) {
-      let solEntry = (q && q.solutionAudio) ? { src: q.solutionAudio, code: q.referenceSql, startAt: 1.5, charInterval: 70 } : getSolutionEntry(q.id);
-      solBtn.style.display = solEntry ? 'inline-flex' : 'none';
-      solBtn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
-      solBtn.classList.remove('playing');
-    }
-
-    // Remove highlight when question changes
-    const bar = document.getElementById('questionBar');
-    if (bar) bar.classList.remove('question-playing');
+    audioObj.addEventListener('play', typewriterPlayHandler);
+    audioObj.addEventListener('playing', typewriterPlayHandler);
+    audioObj.addEventListener('timeupdate', typewriterTimeupdateHandler);
+    audioObj.addEventListener('ended', typewriterEndedHandler, { once: true });
   }
+
+  ensureRunning();
+  step();
 }
-
-// P2 #14: syncCombinedToTrack() was removed (dead code — use seekCombinedPlayback() instead)
-
-
 
 function playQuestionAudio(btn, audioSrc) {
   if (IS_GUEST_REEL || (!isPaidUser() && !isAdminUser() && currentDay !== 'day01' && currentDay !== 'day02')) {
@@ -4210,8 +4193,8 @@ function playSolutionAudio(solutionEntry, triggerBtn) {
     return;
   }
   if (!solutionEntry) return;
-  const { src, code, startAt, charInterval } = solutionEntry;
-  const fullSrc = `/Version-3/${src}`;
+  const { src, code } = solutionEntry;
+  const fullSrc = src.startsWith('http') || src.startsWith('/') ? src : `/Version-3/${src}`;
   const btn = triggerBtn || document.getElementById('solutionAudioBtn');
 
   // Stop any currently playing audio cleanly
@@ -4246,124 +4229,22 @@ function playSolutionAudio(solutionEntry, triggerBtn) {
     btn.classList.add('playing');
   }
 
+  // If this audio contains both question (0..9s) and solution (9s..24s), and the user explicitly clicked "Solution", seek to where solution explanation starts!
+  if (src.includes('New_Day1Part2Question01.mp3')) {
+    audio.currentTime = 9.0;
+  }
+
   audio.play().catch(e => console.log('Solution audio play error:', e));
+  startAudioSyncedTypewriter(audio, solutionEntry);
 
-  // ─── Audio-currentTime-driven typewriter (frame-perfect sync) ───────────────
-  // Build flat sorted event list: { atSec, text } where text is cumulative code
-  let syncEvents = [];
-
-  if (solutionEntry.segments && Array.isArray(solutionEntry.segments)) {
-    let currentCode = '';
-    solutionEntry.segments.forEach(seg => {
-      const chars = seg.text.split('');
-      chars.forEach((ch, idx) => {
-        currentCode += ch;
-        syncEvents.push({ atSec: seg.startAt + idx * (seg.charInterval || 70) / 1000, text: currentCode });
-      });
-    });
-  } else {
-    const chars = (code || '').split('');
-    let currentCode = '';
-    chars.forEach((ch, idx) => {
-      currentCode += ch;
-      syncEvents.push({ atSec: (startAt || 1.5) + idx * (charInterval || 70) / 1000, text: currentCode });
-    });
-  }
-
-  syncEvents.sort((a, b) => a.atSec - b.atSec);
-  let nextEventIdx = 0;
-  let queryFired = false;
-  let scrollFired = false;
-  const scrollAtSec = solutionEntry.scrollAt || 13.5;
-  let tableScrollInterval = null;
-
-  function rafTypewriterLoop() {
-    if (!audio || audio.paused || audio.ended) {
-      typewriterRafId = null;
-      return;
-    }
-    const t = audio.currentTime;
-
-    // Type all pending characters whose timestamp has passed
-    while (nextEventIdx < syncEvents.length && t >= syncEvents[nextEventIdx].atSec) {
-      const evt = syncEvents[nextEventIdx];
-      if (mainEditor) {
-        mainEditor.setValue(evt.text);
-        const lastLine = mainEditor.lastLine();
-        mainEditor.setCursor({ line: lastLine, ch: mainEditor.getLine(lastLine).length });
-      }
-      nextEventIdx++;
-    }
-
-    // Run query once all typing is done
-    if (!queryFired && nextEventIdx >= syncEvents.length && syncEvents.length > 0) {
-      queryFired = true;
-      runCurrentQuery();
-      setTimeout(() => {
-        const outputEl = document.getElementById('mainOutput');
-        if (outputEl) outputEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }, 350);
-    }
-
-    // Start table scroll at scrollAt timestamp
-    if (!scrollFired && t >= scrollAtSec) {
-      scrollFired = true;
-      const outputEl = document.getElementById('mainOutput');
-      if (outputEl) {
-        tableScrollInterval = setInterval(() => {
-          if (outputEl.scrollTop + outputEl.clientHeight >= outputEl.scrollHeight - 2) {
-            clearInterval(tableScrollInterval);
-          } else {
-            outputEl.scrollTop += 1;
-          }
-        }, 40);
-      }
-    }
-
-    typewriterRafId = requestAnimationFrame(rafTypewriterLoop);
-  }
-
-  typewriterRafId = requestAnimationFrame(rafTypewriterLoop);
-
-  audio.onended = () => {
-    if (tableScrollInterval) clearInterval(tableScrollInterval);
-    cancelTypewriter(); // also cancels RAF loop
+  audio.addEventListener('ended', () => {
     if (btn) {
       btn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
       btn.classList.remove('playing');
     }
     currentPlayingAudio = null;
     currentPlayingBtn = null;
-
-    // ── Auto-chain: advance to next practice question after solution ends ──
-    const qs = COURSE_CONFIG.practiceQuestions;
-    if (qs && currentPracticeQ < qs.length - 1) {
-      setTimeout(() => {
-        currentPracticeQ++;
-        renderPracticeQuestion();
-        updatePracticeStats();
-        // Scroll practice panel to top
-        const slideContent = document.getElementById('slideContent');
-        if (slideContent) slideContent.scrollTo({ top: 0, behavior: 'smooth' });
-        // Play next question audio automatically
-        const nextQ = qs[currentPracticeQ];
-        const qMap = questionAudioMap[currentDay] || questionAudioMap['day01'];
-        const nextSrc = qMap ? qMap[nextQ.id] : null;
-        if (nextSrc) {
-          const nextBtn = document.querySelector(`[data-qaudio-id="${nextQ.id}"]`);
-          setTimeout(() => playQuestionAudio(nextSrc, nextBtn), 300);
-        }
-      }, 600);
-    } else {
-      // ── Last question solution ended! Auto-chain to final completion narration ──
-      const completionIdx = combinedTracks.findIndex(t => t.type === 'completion');
-      if (completionIdx !== -1) {
-        setTimeout(() => {
-          loadAndPlayTrack(completionIdx);
-        }, 600);
-      }
-    }
-  };
+  }, { once: true });
 }
 
 function playSolutionAudioFromBtn(btn) {

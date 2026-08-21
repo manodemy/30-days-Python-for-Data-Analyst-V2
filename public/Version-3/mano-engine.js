@@ -8981,6 +8981,12 @@ function loadAndPlayTrack(index, targetTime = 0) {
     const slideContent = document.getElementById('slideContent');
     if (slideContent) slideContent.scrollTo({ top: 0, behavior: 'smooth' });
     setMobileTab('practice');
+
+    // Auto-trigger typewriter if question narration includes solution typing (e.g. Topic 02)
+    const solEntry = getSolutionEntry(track.qId);
+    if (solEntry && (track.src.includes(solEntry.src) || solEntry.src.includes(track.src))) {
+      startAudioSyncedTypewriter(audio, solEntry);
+    }
   } else if (track.type === 'solution') {
     removeYourTurnBanner();
     isNarrationActive = false;

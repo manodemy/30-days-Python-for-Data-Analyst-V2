@@ -3027,10 +3027,10 @@ const questionSolutionMap = {
   'day01': {
     1: {
       src: 'New_Day1Part1Question02.mp3',
-      code: 'SELECT *\nFROM   employees;',
+      code: 'SELECT *\nFROM employees;',
       segments: [
         { text: "SELECT *\n", startAt: 1.16, charInterval: 58 },
-        { text: "FROM   employees;", startAt: 2.38, charInterval: 47 }
+        { text: "FROM employees;", startAt: 2.38, charInterval: 47 }
       ],
       scrollAt: 4.0
     }
@@ -3038,7 +3038,7 @@ const questionSolutionMap = {
   'day02': {
     1: {
       src: 'Day02/New_Day2Question01sol.mp3',
-      code: 'SELECT name, unit_price, stock_qty\nFROM   products\nORDER BY unit_price DESC;',
+      code: 'SELECT name, unit_price, stock_qty\nFROM products\nORDER BY unit_price DESC;',
       // Segments aligned to exact Whisper word timestamps from narration:
       // 3.14s "select" → 3.42s "name," → 4.48s "unit [_price]" → 6.06s "stock [_qty]"
       // 11.18s "from products" → 15.16s "order" → 15.60s "unit [_price DESC]"
@@ -3047,7 +3047,7 @@ const questionSolutionMap = {
         { text: "name, ", startAt: 3.42, charInterval: 60 },
         { text: "unit_price, ", startAt: 4.48, charInterval: 50 },
         { text: "stock_qty\n", startAt: 6.06, charInterval: 55 },
-        { text: "FROM   products\n", startAt: 11.18, charInterval: 55 },
+        { text: "FROM products\n", startAt: 11.18, charInterval: 55 },
         { text: "ORDER BY ", startAt: 15.16, charInterval: 50 },
         { text: "unit_price DESC;", startAt: 15.60, charInterval: 45 }
       ],
@@ -3055,13 +3055,13 @@ const questionSolutionMap = {
     },
     2: {
       src: 'Day02/New_Day2Question02sol.mp3',
-      code: 'SELECT first_name, last_name, salary\nFROM   employees\nORDER BY salary DESC\nLIMIT 5;',
+      code: 'SELECT first_name, last_name, salary\nFROM employees\nORDER BY salary DESC\nLIMIT 5;',
       segments: [
         { text: "SELECT ", startAt: 2.64, charInterval: 80 },
         { text: "first_name, ", startAt: 3.06, charInterval: 50 },
         { text: "last_name, ", startAt: 4.02, charInterval: 50 },
         { text: "salary\n", startAt: 4.88, charInterval: 55 },
-        { text: "FROM   employees\n", startAt: 5.22, charInterval: 55 },
+        { text: "FROM employees\n", startAt: 5.22, charInterval: 55 },
         { text: "ORDER BY ", startAt: 11.48, charInterval: 50 },
         { text: "salary DESC\n", startAt: 12.04, charInterval: 50 },
         { text: "LIMIT 5;", startAt: 16.70, charInterval: 50 }
@@ -3070,25 +3070,25 @@ const questionSolutionMap = {
     },
     3: {
       src: 'Day02/New_Day2Question03sol.mp3',
-      code: 'SELECT DISTINCT region\nFROM   customers;',
+      code: 'SELECT DISTINCT region\nFROM customers;',
       segments: [
         // "SELECT DISTINCT " — merged to avoid RAF overlap (4.62→5.08s = 28ms/char)
         { text: "SELECT DISTINCT ", startAt: 4.62, charInterval: 28 },
         { text: "region\n", startAt: 5.08, charInterval: 55 },
-        { text: "FROM   ", startAt: 9.20, charInterval: 30 },
+        { text: "FROM ", startAt: 9.20, charInterval: 30 },
         { text: "customers;", startAt: 9.42, charInterval: 45 }
       ],
       scrollAt: 13.5
     },
     4: {
       src: 'Day02/New_Day2Question04sol.mp3',
-      code: 'SELECT first_name, salary AS annual_salary\nFROM   employees\nORDER BY first_name ASC;',
+      code: 'SELECT first_name, salary AS annual_salary\nFROM employees\nORDER BY first_name ASC;',
       segments: [
         { text: "SELECT ", startAt: 2.74, charInterval: 60 },
         { text: "first_name, ", startAt: 3.30, charInterval: 45 },
         { text: "salary AS ", startAt: 5.50, charInterval: 45 },
         { text: "annual_salary\n", startAt: 6.68, charInterval: 50 },
-        { text: "FROM   employees\n", startAt: 13.50, charInterval: 50 },
+        { text: "FROM employees\n", startAt: 13.50, charInterval: 50 },
         { text: "ORDER BY ", startAt: 18.62, charInterval: 45 },
         { text: "first_name ASC;", startAt: 19.36, charInterval: 45 }
       ],
@@ -3096,17 +3096,17 @@ const questionSolutionMap = {
     },
     5: {
       src: 'Day02/New_Day2Question05sol.mp3',
-      code: 'SELECT *\nFROM   customers\nLIMIT 5;',
+      code: 'SELECT *\nFROM customers\nLIMIT 5;',
       segments: [
         { text: "SELECT *\n", startAt: 2.36, charInterval: 60 },
-        { text: "FROM   customers\n", startAt: 6.88, charInterval: 50 },
+        { text: "FROM customers\n", startAt: 6.88, charInterval: 50 },
         { text: "LIMIT 5;", startAt: 8.94, charInterval: 50 }
       ],
       scrollAt: 9.8
     },
     6: {
       src: 'Day02/New_Day2Question06sol.mp3',
-      code: 'SELECT name,\n       unit_price,\n       cost_price,\n       unit_price - cost_price AS profit\nFROM   products\nORDER BY profit DESC;',
+      code: 'SELECT name,\n       unit_price,\n       cost_price,\n       unit_price - cost_price AS profit\nFROM products\nORDER BY profit DESC;',
       // Whisper word timestamps from New_Day2Question06sol.mp3 (24.1s)
       // Formatted in structured multi-line order matching reference image:
       segments: [
@@ -3115,7 +3115,7 @@ const questionSolutionMap = {
         { text: "       cost_price,\n", startAt: 5.32, charInterval: 45 },
         { text: "       unit_price - cost_price ", startAt: 10.78, charInterval: 40 },
         { text: "AS profit\n", startAt: 14.36, charInterval: 45 },
-        { text: "FROM   products\n", startAt: 17.58, charInterval: 45 },
+        { text: "FROM products\n", startAt: 17.58, charInterval: 45 },
         { text: "ORDER BY profit DESC;", startAt: 22.56, charInterval: 40 }
       ],
       scrollAt: 23.9
@@ -3124,37 +3124,37 @@ const questionSolutionMap = {
   'day03': {
     1: {
       src: 'Day03/New_Day3Question01sol.mp3',
-      code: 'SELECT name,\n       unit_price\nFROM   products\nWHERE  unit_price > 10000\nORDER BY unit_price DESC;',
+      code: 'SELECT name,\n       unit_price\nFROM products\nWHERE unit_price > 10000\nORDER BY unit_price DESC;',
       startAt: 1.5,
       charInterval: 70
     },
     2: {
       src: 'Day03/New_Day3Question02sol.mp3',
-      code: 'SELECT first_name,\n       last_name,\n       region\nFROM   customers\nWHERE  region IN (\'North\', \'East\');',
+      code: 'SELECT first_name,\n       last_name,\n       region\nFROM customers\nWHERE region IN (\'North\', \'East\');',
       startAt: 1.5,
       charInterval: 70
     },
     3: {
       src: 'Day03/New_Day3Question03sol.mp3',
-      code: 'SELECT first_name,\n       last_name,\n       salary\nFROM   employees\nWHERE  salary BETWEEN 60000 AND 100000;',
+      code: 'SELECT first_name,\n       last_name,\n       salary\nFROM employees\nWHERE salary BETWEEN 60000 AND 100000;',
       startAt: 1.5,
       charInterval: 70
     },
     4: {
       src: 'Day03/New_Day3Question04sol.mp3',
-      code: 'SELECT first_name,\n       last_name,\n       salary\nFROM   employees\nWHERE  first_name LIKE \'S%\';',
+      code: 'SELECT first_name,\n       last_name,\n       salary\nFROM employees\nWHERE first_name LIKE \'S%\';',
       startAt: 1.5,
       charInterval: 70
     },
     5: {
       src: 'Day03/New_Day3Question05sol.mp3',
-      code: 'SELECT first_name,\n       department_id,\n       salary\nFROM   employees\nWHERE  is_active = 1\n  AND  department_id = 20;',
+      code: 'SELECT first_name,\n       department_id,\n       salary\nFROM employees\nWHERE is_active = 1\n  AND  department_id = 20;',
       startAt: 1.5,
       charInterval: 70
     },
     6: {
       src: 'Day03/New_Day3Question06sol.mp3',
-      code: 'SELECT first_name,\n       last_name,\n       commission\nFROM   employees\nWHERE  commission IS NULL;',
+      code: 'SELECT first_name,\n       last_name,\n       commission\nFROM employees\nWHERE commission IS NULL;',
       startAt: 1.5,
       charInterval: 70
     }
@@ -3176,7 +3176,7 @@ const questionSolutionMap = {
   'day05': {
       "1": {
           "src": "Day05/New_Day5Question01sol.mp3",
-          "code": "SELECT SUM(salary) AS total_payroll,\n       AVG(salary) AS avg_salary,\n       MIN(salary) AS min_salary,\n       MAX(salary) AS max_salary\nFROM   employees;",
+          "code": "SELECT SUM(salary) AS total_payroll,\n       AVG(salary) AS avg_salary,\n       MIN(salary) AS min_salary,\n       MAX(salary) AS max_salary\nFROM employees;",
           "segments": [
               {
                   "text": "SELECT SUM(salary) AS total_payroll,\n",
@@ -3199,7 +3199,7 @@ const questionSolutionMap = {
                   "charInterval": 45
               },
               {
-                  "text": "FROM   employees;",
+                  "text": "FROM employees;",
                   "startAt": 14.32,
                   "charInterval": 39
               }
@@ -3208,7 +3208,7 @@ const questionSolutionMap = {
       },
       "2": {
           "src": "Day05/New_Day5Question02sol.mp3",
-          "code": "SELECT COUNT(*) AS active_employees\nFROM   employees\nWHERE  is_active = 1;",
+          "code": "SELECT COUNT(*) AS active_employees\nFROM employees\nWHERE is_active = 1;",
           "segments": [
               {
                   "text": "SELECT COUNT(*) AS active_employees\n",
@@ -3216,12 +3216,12 @@ const questionSolutionMap = {
                   "charInterval": 53
               },
               {
-                  "text": "FROM   employees\n",
+                  "text": "FROM employees\n",
                   "startAt": 4.4,
                   "charInterval": 55
               },
               {
-                  "text": "WHERE  ",
+                  "text": "WHERE ",
                   "startAt": 5.68,
                   "charInterval": 57
               },
@@ -3235,7 +3235,7 @@ const questionSolutionMap = {
       },
       "3": {
           "src": "Day05/New_Day5Question03sol.mp3",
-          "code": "SELECT MIN(unit_price) AS cheapest,\n       MAX(unit_price) AS most_expensive\nFROM   products;",
+          "code": "SELECT MIN(unit_price) AS cheapest,\n       MAX(unit_price) AS most_expensive\nFROM products;",
           "segments": [
               {
                   "text": "SELECT MIN(unit_price) AS cheapest,\n",
@@ -3248,7 +3248,7 @@ const questionSolutionMap = {
                   "charInterval": 60
               },
               {
-                  "text": "FROM   products;",
+                  "text": "FROM products;",
                   "startAt": 8.78,
                   "charInterval": 30
               }
@@ -3257,7 +3257,7 @@ const questionSolutionMap = {
       },
       "4": {
           "src": "Day05/New_Day5Question04sol.mp3",
-          "code": "SELECT COUNT(*) AS total,\n       COUNT(commission) AS has_commission,\n       COUNT(*) - COUNT(commission) AS no_commission\nFROM   employees;",
+          "code": "SELECT COUNT(*) AS total,\n       COUNT(commission) AS has_commission,\n       COUNT(*) - COUNT(commission) AS no_commission\nFROM employees;",
           "segments": [
               {
                   "text": "SELECT COUNT(*) AS total,\n",
@@ -3275,7 +3275,7 @@ const questionSolutionMap = {
                   "charInterval": 50
               },
               {
-                  "text": "FROM   employees;",
+                  "text": "FROM employees;",
                   "startAt": 10.38,
                   "charInterval": 36
               }
@@ -3284,7 +3284,7 @@ const questionSolutionMap = {
       },
       "5": {
           "src": "Day05/New_Day5Question05sol.mp3",
-          "code": "SELECT SUM(total_amount) AS shipped_revenue\nFROM   orders\nWHERE  status = 'Shipped';",
+          "code": "SELECT SUM(total_amount) AS shipped_revenue\nFROM orders\nWHERE status = 'Shipped';",
           "segments": [
               {
                   "text": "SELECT SUM(total_amount) AS shipped_revenue\n",
@@ -3292,12 +3292,12 @@ const questionSolutionMap = {
                   "charInterval": 64
               },
               {
-                  "text": "FROM   orders\n",
+                  "text": "FROM orders\n",
                   "startAt": 5.24,
                   "charInterval": 39
               },
               {
-                  "text": "WHERE  ",
+                  "text": "WHERE ",
                   "startAt": 5.78,
                   "charInterval": 80
               },
@@ -3311,7 +3311,7 @@ const questionSolutionMap = {
       },
       "6": {
           "src": "Day05/New_Day5Question06sol.mp3",
-          "code": "SELECT COUNT(DISTINCT department_id) AS num_departments\nFROM   employees;",
+          "code": "SELECT COUNT(DISTINCT department_id) AS num_departments\nFROM employees;",
           "segments": [
               {
                   "text": "SELECT COUNT(DISTINCT department_id) AS num_departments\n",
@@ -3319,7 +3319,7 @@ const questionSolutionMap = {
                   "charInterval": 80
               },
               {
-                  "text": "FROM   employees;",
+                  "text": "FROM employees;",
                   "startAt": 6,
                   "charInterval": 58
               }
@@ -3328,7 +3328,7 @@ const questionSolutionMap = {
       },
       "7": {
           "src": "Day05/New_Day5Question07sol.mp3",
-          "code": "SELECT SUM(stock_qty * unit_price) AS inventory_value\nFROM   products;",
+          "code": "SELECT SUM(stock_qty * unit_price) AS inventory_value\nFROM products;",
           "segments": [
               {
                   "text": "SELECT SUM(stock_qty * unit_price) AS inventory_value\n",
@@ -3336,7 +3336,7 @@ const questionSolutionMap = {
                   "charInterval": 81
               },
               {
-                  "text": "FROM   products;",
+                  "text": "FROM products;",
                   "startAt": 6.9,
                   "charInterval": 41
               }
@@ -3345,7 +3345,7 @@ const questionSolutionMap = {
       },
       "8": {
           "src": "Day05/New_Day5Question08sol.mp3",
-          "code": "SELECT AVG(commission) AS avg_non_null,\n       AVG(COALESCE(commission, 0)) AS avg_all\nFROM   employees;",
+          "code": "SELECT AVG(commission) AS avg_non_null,\n       AVG(COALESCE(commission, 0)) AS avg_all\nFROM employees;",
           "segments": [
               {
                   "text": "SELECT AVG(commission) AS avg_non_null,\n",
@@ -3358,7 +3358,7 @@ const questionSolutionMap = {
                   "charInterval": 63
               },
               {
-                  "text": "FROM   employees;",
+                  "text": "FROM employees;",
                   "startAt": 10.08,
                   "charInterval": 36
               }
@@ -3367,7 +3367,7 @@ const questionSolutionMap = {
       },
       "9": {
           "src": "Day05/New_Day5Question09sol.mp3",
-          "code": "SELECT COUNT(*) AS premium_count\nFROM   products\nWHERE  unit_price > 5000;",
+          "code": "SELECT COUNT(*) AS premium_count\nFROM products\nWHERE unit_price > 5000;",
           "segments": [
               {
                   "text": "SELECT COUNT(*) AS premium_count\n",
@@ -3375,12 +3375,12 @@ const questionSolutionMap = {
                   "charInterval": 60
               },
               {
-                  "text": "FROM   products\n",
+                  "text": "FROM products\n",
                   "startAt": 4.16,
                   "charInterval": 35
               },
               {
-                  "text": "WHERE  ",
+                  "text": "WHERE ",
                   "startAt": 4.72,
                   "charInterval": 57
               },
@@ -3394,7 +3394,7 @@ const questionSolutionMap = {
       },
       "10": {
           "src": "Day05/New_Day5Question10sol.mp3",
-          "code": "SELECT COALESCE(AVG(salary), 0) AS avg_salary\nFROM   employees\nWHERE  department_id = 99;",
+          "code": "SELECT COALESCE(AVG(salary), 0) AS avg_salary\nFROM employees\nWHERE department_id = 99;",
           "segments": [
               {
                   "text": "SELECT COALESCE(AVG(salary), 0) AS avg_salary\n",
@@ -3402,12 +3402,12 @@ const questionSolutionMap = {
                   "charInterval": 85
               },
               {
-                  "text": "FROM   employees\n",
+                  "text": "FROM employees\n",
                   "startAt": 6.8,
                   "charInterval": 51
               },
               {
-                  "text": "WHERE  ",
+                  "text": "WHERE ",
                   "startAt": 7.66,
                   "charInterval": 69
               },
@@ -3421,7 +3421,7 @@ const questionSolutionMap = {
       },
       "11": {
           "src": "Day05/New_Day5Question11sol.mp3",
-          "code": "SELECT MAX(total_amount) AS largest_order\nFROM   orders;",
+          "code": "SELECT MAX(total_amount) AS largest_order\nFROM orders;",
           "segments": [
               {
                   "text": "SELECT MAX(total_amount) AS largest_order\n",
@@ -3429,7 +3429,7 @@ const questionSolutionMap = {
                   "charInterval": 71
               },
               {
-                  "text": "FROM   orders;",
+                  "text": "FROM orders;",
                   "startAt": 5.24,
                   "charInterval": 40
               }
@@ -3438,7 +3438,7 @@ const questionSolutionMap = {
       },
       "12": {
           "src": "Day05/New_Day5Question12sol.mp3",
-          "code": "SELECT COUNT(DISTINCT region) AS num_regions\nFROM   customers;",
+          "code": "SELECT COUNT(DISTINCT region) AS num_regions\nFROM customers;",
           "segments": [
               {
                   "text": "SELECT COUNT(DISTINCT region) AS num_regions\n",
@@ -3446,7 +3446,7 @@ const questionSolutionMap = {
                   "charInterval": 78
               },
               {
-                  "text": "FROM   customers;",
+                  "text": "FROM customers;",
                   "startAt": 5.02,
                   "charInterval": 40
               }
@@ -3455,7 +3455,7 @@ const questionSolutionMap = {
       },
       "13": {
           "src": "Day05/New_Day5Question13sol.mp3",
-          "code": "SELECT SUM(CASE WHEN status = 'Shipped' THEN total_amount ELSE 0 END) AS shipped_rev,\n       SUM(CASE WHEN status = 'Processing' THEN total_amount ELSE 0 END) AS processing_rev\nFROM   orders;",
+          "code": "SELECT SUM(CASE WHEN status = 'Shipped' THEN total_amount ELSE 0 END) AS shipped_rev,\n       SUM(CASE WHEN status = 'Processing' THEN total_amount ELSE 0 END) AS processing_rev\nFROM orders;",
           "segments": [
               {
                   "text": "SELECT SUM(CASE WHEN status = 'Shipped' THEN total_amount ELSE 0 END) AS shipped_rev,\n",
@@ -3468,7 +3468,7 @@ const questionSolutionMap = {
                   "charInterval": 69
               },
               {
-                  "text": "FROM   orders;",
+                  "text": "FROM orders;",
                   "startAt": 17.08,
                   "charInterval": 29
               }
@@ -3477,7 +3477,7 @@ const questionSolutionMap = {
       },
       "14": {
           "src": "Day05/New_Day5Question14sol.mp3",
-          "code": "SELECT ROUND(SUM(stock_qty * unit_price) * 1.0 / NULLIF(SUM(stock_qty), 0), 2) AS weighted_avg_price\nFROM   products;",
+          "code": "SELECT ROUND(SUM(stock_qty * unit_price) * 1.0 / NULLIF(SUM(stock_qty), 0), 2) AS weighted_avg_price\nFROM products;",
           "segments": [
               {
                   "text": "SELECT ROUND(SUM(stock_qty * unit_price) * 1.0 / NULLIF(SUM(stock_qty), 0), 2) AS weighted_avg_price\n",
@@ -3485,7 +3485,7 @@ const questionSolutionMap = {
                   "charInterval": 72
               },
               {
-                  "text": "FROM   products;",
+                  "text": "FROM products;",
                   "startAt": 11.72,
                   "charInterval": 25
               }
@@ -3494,7 +3494,7 @@ const questionSolutionMap = {
       },
       "15": {
           "src": "Day05/New_Day5Question15sol.mp3",
-          "code": "SELECT GROUP_CONCAT(name, ', ') AS engineering_team\nFROM   employees\nWHERE  department_id = 10;",
+          "code": "SELECT GROUP_CONCAT(name, ', ') AS engineering_team\nFROM employees\nWHERE department_id = 10;",
           "segments": [
               {
                   "text": "SELECT GROUP_CONCAT(name, ', ') AS engineering_team\n",
@@ -3502,12 +3502,12 @@ const questionSolutionMap = {
                   "charInterval": 81
               },
               {
-                  "text": "FROM   employees\n",
+                  "text": "FROM employees\n",
                   "startAt": 6.86,
                   "charInterval": 49
               },
               {
-                  "text": "WHERE  ",
+                  "text": "WHERE ",
                   "startAt": 8.66,
                   "charInterval": 57
               },

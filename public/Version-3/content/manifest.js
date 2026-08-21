@@ -9,12 +9,12 @@
   };
 
   const MANIFEST_60 = [
-    // 🗄️ SQL Track (Days 01–18) — Days 01–04 Active & Playable; Days 05–18 Coming Soon
+    // 🗄️ SQL Track (Days 01–18) — Days 01–05 Active & Playable; Days 06–18 Coming Soon
     { globalDay: 1, track: 'sql', id: 'day01', trackDay: 1, title: 'Introduction to SQL & Databases', emoji: '🗄️', url: '/sql/day01.html', free: true, prepared: true, comingSoon: false },
     { globalDay: 2, track: 'sql', id: 'day02', trackDay: 2, title: 'Basic Retrieval: SELECT, DISTINCT, ORDER BY & LIMIT', emoji: '💾', url: '/sql/day02.html', free: true, prepared: true, comingSoon: false },
     { globalDay: 3, track: 'sql', id: 'day03', trackDay: 3, title: 'Filtering Data (WHERE, LIKE, IN, BETWEEN)', emoji: '🔍', url: '/sql/day03.html', free: false, prepared: true, comingSoon: false },
     { globalDay: 4, track: 'sql', id: 'day04', trackDay: 4, title: 'Operators & Expressions', emoji: '⚙️', url: '/sql/day04.html', free: false, prepared: true, comingSoon: false },
-    { globalDay: 5, track: 'sql', id: 'day05', trackDay: 5, title: 'Aggregate Functions (COUNT, SUM, AVG, MIN, MAX)', emoji: '📊', url: '/sql/day05.html', free: false, prepared: false, comingSoon: true },
+    { globalDay: 5, track: 'sql', id: 'day05', trackDay: 5, title: 'Aggregate Functions (COUNT, SUM, AVG, MIN, MAX)', emoji: '📊', url: '/sql/day05.html', free: false, prepared: true, comingSoon: false },
     { globalDay: 6, track: 'sql', id: 'day06', trackDay: 6, title: 'GROUP BY & HAVING Clauses', emoji: '🗃️', url: '/sql/day06.html', free: false, prepared: false, comingSoon: true },
     { globalDay: 7, track: 'sql', id: 'day07', trackDay: 7, title: 'Single-Row & Scalar Functions', emoji: '🧵', url: '/sql/day07.html', free: false, prepared: false, comingSoon: true },
     { globalDay: 8, track: 'sql', id: 'day08', trackDay: 8, title: 'Date & Time Manipulation Functions', emoji: '📅', url: '/sql/day08.html', free: false, prepared: false, comingSoon: true },

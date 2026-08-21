@@ -15,6 +15,26 @@ It ensures a tight 1:1 synchronization between:
 
 ## 📜 Session Change Log
 
+### 🗓️ Entry: 2026-08-21 — Day 01 Audio 03 Three Problems Sequential Card Spotlight & Zoom Sync
+* **Target Audio**: `New_Day1Part1audio03.mp3` (Duration: 20.0s)
+* **Target Container**: `#rdbmsProblems` (`.info-columns`)
+* **Spoken Narration**:
+  > *"First, it eliminates data redundancy by ensuring facts are stored only once across related tables. Second, it maintains data integrity, preventing bad or broken data. And third, it handles concurrent access, letting multiple users read and write data at the exact same time without conflicting with or corrupting each other's transactions."*
+* **Implementation Deliverables**:
+  1. **Phase 1 (`0.00s – 5.80s`)**:
+     - **Active Spotlight**: Card 1 (`#cardRedundancy` - Green) zooms slightly (`scale: 1.05`, `translateY(-4px)`) with emerald halo glow (`box-shadow: 0 14px 28px rgba(16, 185, 129, 0.3), 0 0 0 2px #10b981`).
+     - **Siblings**: Cards 2 & 3 softly dimmed (`opacity: 0.55; transform: scale(0.97); filter: grayscale(20%)`).
+  2. **Phase 2 (`5.80s – 10.60s`)**:
+     - **Active Spotlight**: Card 2 (`#cardIntegrity` - Blue) zooms in (`scale: 1.05`, `translateY(-4px)`) with sapphire blue halo glow (`box-shadow: 0 14px 28px rgba(37, 99, 235, 0.3), 0 0 0 2px #2563eb`).
+     - **Siblings**: Cards 1 & 3 softly dimmed.
+  3. **Phase 3 (`10.60s – 20.00s`)**:
+     - **Active Spotlight**: Card 3 (`#cardConcurrent` - Orange) zooms in (`scale: 1.05`, `translateY(-4px)`) with warm amber halo glow (`box-shadow: 0 14px 28px rgba(234, 88, 12, 0.3), 0 0 0 2px #ea580c`).
+     - **Siblings**: Cards 1 & 2 softly dimmed.
+  4. **Files Updated**:
+     - [`public/Version-3/content/day-01.js`](file:///d:/Learn%20Python%20in%2060days/Manodemy_Web_V2/public/Version-3/content/day-01.js): Added `#cardRedundancy`, `#cardIntegrity`, `#cardConcurrent`.
+     - [`public/Version-3/styles.css`](file:///d:/Learn%20Python%20in%2060days/Manodemy_Web_V2/public/Version-3/styles.css): Added `.card-narration-active` with customized color halos and `.has-narration-active` dimming.
+     - [`public/Version-3/mano-engine.js`](file:///d:/Learn%20Python%20in%2060days/Manodemy_Web_V2/public/Version-3/mano-engine.js): Implemented `updateDay01Audio03Highlights(currentTime, isPlaying)`.
+
 ### 🗓️ Entry: 2026-08-21 — Day 01 Audio 01 Two-Phase Zoom & Keyword Sync Implementation
 * **Target Audio**: `New_Day1Part1audio01.mp3` (Duration: 23.4s)
 * **Spoken Narration**:

@@ -7811,6 +7811,41 @@ function updateDay01Audio01Highlights(currentTime, isPlaying) {
   }
 }
 
+function updateDay01Audio03Highlights(currentTime, isPlaying) {
+  const container = document.getElementById('rdbmsProblems');
+  if (!container) return;
+
+  const cardRedundancy = document.getElementById('cardRedundancy') || container.querySelector('.info-card--green');
+  const cardIntegrity = document.getElementById('cardIntegrity') || container.querySelector('.info-card--blue');
+  const cardConcurrent = document.getElementById('cardConcurrent') || container.querySelector('.info-card--orange');
+  const infoColumns = container.querySelector('.info-columns');
+
+  if (!cardRedundancy || !cardIntegrity || !cardConcurrent) return;
+
+  if (!isPlaying) {
+    if (infoColumns) infoColumns.classList.remove('has-narration-active');
+    cardRedundancy.classList.remove('card-narration-active');
+    cardIntegrity.classList.remove('card-narration-active');
+    cardConcurrent.classList.remove('card-narration-active');
+    return;
+  }
+
+  if (infoColumns) infoColumns.classList.add('has-narration-active');
+
+  // Whisper ASR Timestamps for New_Day1Part1audio03.mp3:
+  // 0.00s - 5.80s: Card 1 (Redundancy) - "First, it eliminates data redundancy..."
+  // 5.80s - 10.60s: Card 2 (Integrity) - "Second, it maintains data integrity..."
+  // 10.60s - 22.00s: Card 3 (Concurrent Access) - "And third, it handles concurrent access..."
+
+  const isCard1 = (currentTime >= 0 && currentTime < 5.80);
+  const isCard2 = (currentTime >= 5.80 && currentTime < 10.60);
+  const isCard3 = (currentTime >= 10.60 && currentTime <= 22.00);
+
+  cardRedundancy.classList.toggle('card-narration-active', isCard1);
+  cardIntegrity.classList.toggle('card-narration-active', isCard2);
+  cardConcurrent.classList.toggle('card-narration-active', isCard3);
+}
+
 // ════════════════════════════════════════════════════════════════════════════════
 
 function loadAndPlayTrack(index, targetTime = 0) {
@@ -7924,6 +7959,7 @@ function loadAndPlayTrack(index, targetTime = 0) {
   audio.addEventListener('ended', () => {
     if (myGeneration !== currentGeneration) return;
     if (track.src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(0, false);
+    if (track.src.includes('New_Day1Part1audio03.mp3')) updateDay01Audio03Highlights(0, false);
     if (track.src.includes('New_Day3Part1audio05.mp3')) updateTableHighlights(0, false);
     if (track.src.includes('New_Day3Part1audio07.mp3')) updateIntroHighlight(0, false);
     if (track.src.includes('New_Day3Part1audio08.mp3')) updateNotCardHighlight(0, false);
@@ -7936,6 +7972,7 @@ function loadAndPlayTrack(index, targetTime = 0) {
   audio.addEventListener('pause', () => {
     if (myGeneration !== currentGeneration) return;
     if (track.src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(0, false);
+    if (track.src.includes('New_Day1Part1audio03.mp3')) updateDay01Audio03Highlights(0, false);
     if (track.src.includes('New_Day3Part1audio05.mp3')) updateTableHighlights(0, false);
     if (track.src.includes('New_Day3Part1audio07.mp3')) updateIntroHighlight(0, false);
     if (track.src.includes('New_Day3Part1audio08.mp3')) updateNotCardHighlight(0, false);
@@ -7947,6 +7984,7 @@ function loadAndPlayTrack(index, targetTime = 0) {
   audio.addEventListener('timeupdate', () => {
     if (myGeneration !== currentGeneration) return;
     if (track.src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(audio.currentTime, !audio.paused);
+    if (track.src.includes('New_Day1Part1audio03.mp3')) updateDay01Audio03Highlights(audio.currentTime, !audio.paused);
     if (track.src.includes('New_Day3Part1audio05.mp3')) updateTableHighlights(audio.currentTime, !audio.paused);
     if (track.src.includes('New_Day3Part1audio07.mp3')) updateIntroHighlight(audio.currentTime, !audio.paused);
     if (track.src.includes('New_Day3Part1audio08.mp3')) updateNotCardHighlight(audio.currentTime, !audio.paused);
@@ -8375,9 +8413,11 @@ function playAudio(src, btn) {
       }
       currentPlayingAudio.ontimeupdate = () => {
         if (src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(currentPlayingAudio.currentTime, !currentPlayingAudio.paused);
+        if (src.includes('New_Day1Part1audio03.mp3')) updateDay01Audio03Highlights(currentPlayingAudio.currentTime, !currentPlayingAudio.paused);
       };
       currentPlayingAudio.onpause = () => {
         if (src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(0, false);
+        if (src.includes('New_Day1Part1audio03.mp3')) updateDay01Audio03Highlights(0, false);
       };
       currentPlayingBtn = btn;
       currentPlayingAudio.play();
@@ -8385,6 +8425,7 @@ function playAudio(src, btn) {
       btn.classList.add('playing');
       currentPlayingAudio.onended = () => {
         if (src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(0, false);
+        if (src.includes('New_Day1Part1audio03.mp3')) updateDay01Audio03Highlights(0, false);
         btn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
         btn.classList.remove('playing');
         currentPlayingAudio = null;

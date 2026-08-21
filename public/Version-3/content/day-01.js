@@ -219,7 +219,7 @@ window.COURSE_CONTENT['day01'] = {
               </button>
             </div>
             <div class="info-columns">
-              <div class="info-card info-card--green">
+              <div class="info-card info-card--green" id="cardRedundancy">
                 <div class="info-card-header">DATA REDUNDANCY</div>
                 <div class="info-card-illustration">
                   <img src="/Version-3/data_redundancy_icon.png" alt="Data Redundancy" />
@@ -230,7 +230,7 @@ window.COURSE_CONTENT['day01'] = {
                   <li><span class="bullet-dot"></span>UPDATES OCCUR IN ONE ROW, NOT HUNDREDS</li>
                 </ul>
               </div>
-              <div class="info-card info-card--blue">
+              <div class="info-card info-card--blue" id="cardIntegrity">
                 <div class="info-card-header">DATA INTEGRITY</div>
                 <div class="info-card-illustration">
                   <img src="/Version-3/data_integrity_icon.png" alt="Data Integrity" />
@@ -241,7 +241,7 @@ window.COURSE_CONTENT['day01'] = {
                   <li><span class="bullet-dot"></span>PREVENTS ORPHANED RECORDS &amp; INVALID STATES</li>
                 </ul>
               </div>
-              <div class="info-card info-card--orange">
+              <div class="info-card info-card--orange" id="cardConcurrent">
                 <div class="info-card-header">CONCURRENT ACCESS</div>
                 <div class="info-card-illustration">
                   <img src="/Version-3/concurrent_access_icon.png" alt="Concurrent Access" />

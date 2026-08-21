@@ -4222,11 +4222,10 @@ function playQuestionAudio(btn, audioSrc) {
     currentPlayingAudio = null;
     currentPlayingBtn = null;
 
-    // Auto-chain: play the solution audio after question narration ends
-    const solMap = questionSolutionMap[currentDay] || questionSolutionMap['day04'] || questionSolutionMap['day01'];
-    const q = COURSE_CONFIG.practiceQuestions[currentPracticeQ];
-    const solEntry = (q && q.solutionAudio) ? { src: q.solutionAudio, code: q.referenceSql, startAt: 1.5, charInterval: 70 } : (q && solMap ? solMap[q.id] : null);
-    if (solEntry) {
+    // Auto-chain: play the solution audio after question narration ends (if separate solution audio)
+    const q = COURSE_CONFIG.practiceQuestions ? COURSE_CONFIG.practiceQuestions[currentPracticeQ] : null;
+    const solEntry = q ? getSolutionEntry(q.id) : null;
+    if (solEntry && !src.includes(solEntry.src) && !solEntry.src.includes(src)) {
       setTimeout(() => playSolutionAudio(solEntry), 400);
     }
   };
@@ -4300,9 +4299,8 @@ function playSolutionAudio(solutionEntry, triggerBtn) {
 }
 
 function playSolutionAudioFromBtn(btn) {
-  const solMap = questionSolutionMap[currentDay] || questionSolutionMap['day01'];
-  const q = COURSE_CONFIG.practiceQuestions[currentPracticeQ];
-  const solEntry = q && solMap ? solMap[q.id] : null;
+  const q = COURSE_CONFIG.practiceQuestions ? COURSE_CONFIG.practiceQuestions[currentPracticeQ] : null;
+  const solEntry = q ? getSolutionEntry(q.id) : null;
   if (!solEntry) return;
 
   // Toggle pause/resume if same audio is already playing
@@ -9861,10 +9859,9 @@ function playCombinedPlayback() {
             const bar = document.getElementById('questionBar');
             if (bar) bar.classList.add('question-playing');
 
-            if (activeTrack.type === 'solution') {
-              const solMap = questionSolutionMap[currentDay] || questionSolutionMap['day01'];
-              const solEntry = solMap ? solMap[activeTrack.qId] : null;
-              if (solEntry) {
+            if (activeTrack.type === 'solution' || activeTrack.type === 'question') {
+              const solEntry = getSolutionEntry(activeTrack.qId);
+              if (solEntry && (activeTrack.type === 'solution' || activeTrack.src.includes(solEntry.src) || solEntry.src.includes(activeTrack.src))) {
                 startAudioSyncedTypewriter(activeAudioInstance, solEntry);
               }
             }

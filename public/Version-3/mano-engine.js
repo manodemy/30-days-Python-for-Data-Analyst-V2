@@ -901,6 +901,7 @@ function prevSlide() {
 function renderCurrentSlide() {
   renderPresentSlide();
   renderSideSlide();
+  loadQuestionsForDay(currentDay || 'day01');
 }
 
 function formatHeadingBoxes(container) {
@@ -3244,14 +3245,17 @@ let currentPracticeQ = 0;
 let currentDay = 'day01';
 
 function loadQuestionsForDay(day) {
-  currentDay = day;
+  currentDay = day || currentDay || 'day01';
   let questions = null;
-  if (COURSE_CONFIG.topicPracticeQuestions && COURSE_CONFIG.topicPracticeQuestions[currentSlide]) {
-    questions = COURSE_CONFIG.topicPracticeQuestions[currentSlide];
-  } else if (COURSE_CONFIG.allPracticeQuestions && COURSE_CONFIG.allPracticeQuestions[day]) {
-    questions = COURSE_CONFIG.allPracticeQuestions[day];
+  const dayContent = (window.COURSE_CONTENT && window.COURSE_CONTENT[currentDay]) || COURSE_CONFIG;
+  const tpq = (COURSE_CONFIG && COURSE_CONFIG.topicPracticeQuestions) || (dayContent && dayContent.topicPracticeQuestions);
+
+  if (tpq && (tpq[currentSlide] || tpq[String(currentSlide)])) {
+    questions = tpq[currentSlide] || tpq[String(currentSlide)];
+  } else if (COURSE_CONFIG.allPracticeQuestions && COURSE_CONFIG.allPracticeQuestions[currentDay]) {
+    questions = COURSE_CONFIG.allPracticeQuestions[currentDay];
   } else {
-    questions = COURSE_CONFIG.practiceQuestions || [];
+    questions = (dayContent && dayContent.practiceQuestions) || COURSE_CONFIG.practiceQuestions || [];
   }
   COURSE_CONFIG.practiceQuestions = questions;
   currentPracticeQ = 0;
@@ -4955,6 +4959,11 @@ function loadDayContent(dayId) {
     if (dayContent.slides && dayContent.slides.length > 0) {
       COURSE_CONFIG.slides = dayContent.slides;
     }
+    if (dayContent.topicPracticeQuestions) {
+      COURSE_CONFIG.topicPracticeQuestions = dayContent.topicPracticeQuestions;
+    } else {
+      delete COURSE_CONFIG.topicPracticeQuestions;
+    }
     if (dayContent.practiceQuestions) {
       COURSE_CONFIG.practiceQuestions = dayContent.practiceQuestions;
       // Also update allPracticeQuestions map
@@ -5032,9 +5041,8 @@ function loadDayContent(dayId) {
 
     renderSideSlide();
     clearDrawCanvas();
-    renderPracticeQuestion();
+    loadQuestionsForDay(dayId);
     renderSchemaCards();
-    updatePracticeStats();
 
     // Rebuild topicSelect
     const topicSel = document.getElementById('topicSelect');

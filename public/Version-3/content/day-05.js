@@ -409,105 +409,105 @@ FROM   employees;</code></pre>
   "practiceQuestions": [
     {
       "id": 1,
-      "prompt": "<strong>Task: Payroll Summary</strong><br/>Find the total payroll (<code>SUM</code>), average salary (<code>AVG</code>), minimum, and maximum salary from the <code>employees</code> table.",
+      "prompt": "<strong>[Easy] Company Payroll Overview</strong><br/>HR leadership is conducting an annual budget review. Write a query from <code>employees</code> to calculate the total payroll spend (<code>total_payroll</code>), average salary (<code>avg_salary</code>), lowest salary (<code>min_salary</code>), and highest salary (<code>max_salary</code>).",
       "referenceSql": "SELECT SUM(salary) AS total_payroll, AVG(salary) AS avg_salary, MIN(salary) AS min_salary, MAX(salary) AS max_salary FROM employees;",
       "questionAudio": "Day05/New_Day5Question01.mp3",
       "solutionAudio": "Day05/New_Day5Question01sol.mp3"
     },
     {
       "id": 2,
-      "prompt": "<strong>Task: Active Employee Count</strong><br/>Count how many employees are currently active (<code>is_active = 1</code>).",
+      "prompt": "<strong>[Easy] Active Workforce Headcount</strong><br/>To audit organizational capacity, determine how many employees are currently active (<code>is_active = 1</code>). Return the count aliased as <code>active_employees</code>.",
       "referenceSql": "SELECT COUNT(*) AS active_employees FROM employees WHERE is_active = 1;",
       "questionAudio": "Day05/New_Day5Question02.mp3",
       "solutionAudio": "Day05/New_Day5Question02sol.mp3"
     },
     {
       "id": 3,
-      "prompt": "<strong>Task: Product Price Range</strong><br/>Find the cheapest (<code>MIN</code>) and most expensive (<code>MAX</code>) <code>unit_price</code> from the <code>products</code> table.",
+      "prompt": "<strong>[Easy] Catalog Price Extremes</strong><br/>The merchandising team needs to identify the price boundaries of the catalog. From <code>products</code>, return the lowest unit price as <code>cheapest</code> and the highest unit price as <code>most_expensive</code>.",
       "referenceSql": "SELECT MIN(unit_price) AS cheapest, MAX(unit_price) AS most_expensive FROM products;",
       "questionAudio": "Day05/New_Day5Question03.mp3",
       "solutionAudio": "Day05/New_Day5Question03sol.mp3"
     },
     {
       "id": 4,
-      "prompt": "<strong>Task: Commission Coverage</strong><br/>How many employees have a commission assigned? How many do NOT? Use <code>COUNT(*)</code> and <code>COUNT(commission)</code> in one query.",
+      "prompt": "<strong>[Medium] Commission Data Quality Audit</strong><br/>Perform a data completeness check on employee compensation. In a single query from <code>employees</code>, return <code>total</code> (all employees), <code>has_commission</code> (employees with non-NULL commissions), and <code>no_commission</code> (employees missing commission data).",
       "referenceSql": "SELECT COUNT(*) AS total, COUNT(commission) AS has_commission, COUNT(*) - COUNT(commission) AS no_commission FROM employees;",
       "questionAudio": "Day05/New_Day5Question04.mp3",
       "solutionAudio": "Day05/New_Day5Question04sol.mp3"
     },
     {
       "id": 5,
-      "prompt": "<strong>Task: Shipped Revenue</strong><br/>Calculate the total <code>total_amount</code> from orders where status = 'Shipped'.",
+      "prompt": "<strong>[Easy] Realized Shipped Revenue</strong><br/>Finance only recognizes revenue once orders have been dispatched. Calculate the total monetary value from <code>orders</code> where <code>status = 'Shipped'</code>, aliased as <code>shipped_revenue</code>.",
       "referenceSql": "SELECT SUM(total_amount) AS shipped_revenue FROM orders WHERE status = 'Shipped';",
       "questionAudio": "Day05/New_Day5Question05.mp3",
       "solutionAudio": "Day05/New_Day5Question05sol.mp3"
     },
     {
       "id": 6,
-      "prompt": "<strong>Task: Distinct Department Count</strong><br/>Count how many distinct <code>department_id</code> values appear in the <code>employees</code> table.",
+      "prompt": "<strong>[Easy] Active Department Representation</strong><br/>Management wants to know how many distinct departments currently have staff assigned. Count the number of unique <code>department_id</code> values in <code>employees</code>, aliased as <code>num_departments</code>.",
       "referenceSql": "SELECT COUNT(DISTINCT department_id) AS num_departments FROM employees;",
       "questionAudio": "Day05/New_Day5Question06.mp3",
       "solutionAudio": "Day05/New_Day5Question06sol.mp3"
     },
     {
       "id": 7,
-      "prompt": "<strong>Task: Inventory Value</strong><br/>Compute the total inventory value as <code>SUM(stock_qty * unit_price)</code> across all products.",
+      "prompt": "<strong>[Medium] Total Warehouse Valuation</strong><br/>Supply chain requires a balance-sheet asset valuation of all physical inventory. Compute the total inventory value as <code>SUM(stock_qty * unit_price)</code> across all items in <code>products</code>, aliased as <code>inventory_value</code>.",
       "referenceSql": "SELECT SUM(stock_qty * unit_price) AS inventory_value FROM products;",
       "questionAudio": "Day05/New_Day5Question07.mp3",
       "solutionAudio": "Day05/New_Day5Question07sol.mp3"
     },
     {
       "id": 8,
-      "prompt": "<strong>Task: Average Commission Two Ways</strong><br/>Show both <code>AVG(commission)</code> (over non-NULL only) and <code>AVG(COALESCE(commission, 0))</code> (treating NULL as 0) side by side.",
+      "prompt": "<strong>[Medium] Commission Averages: Earners vs Company-Wide</strong><br/>Compensation analysis requires two views of commission. From <code>employees</code>, compute <code>avg_non_null</code> (average among staff who earned commission) and <code>avg_all</code> (average across all employees, treating NULL as 0 via <code>COALESCE</code>).",
       "referenceSql": "SELECT AVG(commission) AS avg_non_null, AVG(COALESCE(commission, 0)) AS avg_all FROM employees;",
       "questionAudio": "Day05/New_Day5Question08.mp3",
       "solutionAudio": "Day05/New_Day5Question08sol.mp3"
     },
     {
       "id": 9,
-      "prompt": "<strong>Task: Premium Product Count</strong><br/>Count how many products have <code>unit_price &gt; 5000</code>.",
+      "prompt": "<strong>[Easy] Luxury Product Tier Count</strong><br/>Marketing is planning a luxury goods campaign. Count how many items in <code>products</code> have a <code>unit_price</code> strictly greater than 5000, aliased as <code>premium_count</code>.",
       "referenceSql": "SELECT COUNT(*) AS premium_count FROM products WHERE unit_price > 5000;",
       "questionAudio": "Day05/New_Day5Question09.mp3",
       "solutionAudio": "Day05/New_Day5Question09sol.mp3"
     },
     {
       "id": 10,
-      "prompt": "<strong>Task: Safe Average Over Empty Set</strong><br/>Compute <code>AVG(salary)</code> for employees in <code>department_id = 99</code> (which is empty), wrapping the result with COALESCE to show 0 instead of NULL.",
+      "prompt": "<strong>[Medium] Safe Average on Unmatched Filters</strong><br/>Write a fault-tolerant query to calculate <code>avg_salary</code> for <code>department_id = 99</code> (a non-existent department). Use <code>COALESCE</code> to ensure the query returns <code>0</code> instead of a blank <code>NULL</code> when no rows match.",
       "referenceSql": "SELECT COALESCE(AVG(salary), 0) AS avg_salary FROM employees WHERE department_id = 99;",
       "questionAudio": "Day05/New_Day5Question10.mp3",
       "solutionAudio": "Day05/New_Day5Question10sol.mp3"
     },
     {
       "id": 11,
-      "prompt": "<strong>Task: Highest Order Total</strong><br/>Find the maximum <code>total_amount</code> across all orders.",
+      "prompt": "<strong>[Easy] Peak Transaction Value</strong><br/>Risk management needs to monitor large transaction thresholds. Find the single largest order amount across all records in <code>orders</code>, aliased as <code>largest_order</code>.",
       "referenceSql": "SELECT MAX(total_amount) AS largest_order FROM orders;",
       "questionAudio": "Day05/New_Day5Question11.mp3",
       "solutionAudio": "Day05/New_Day5Question11sol.mp3"
     },
     {
       "id": 12,
-      "prompt": "<strong>Task: Distinct Regions</strong><br/>Count how many distinct <code>region</code> values exist in the <code>customers</code> table.",
+      "prompt": "<strong>[Easy] Geographic Reach Metric</strong><br/>Determine the geographic footprint of our customer base. From <code>customers</code>, count the number of unique regions represented, aliased as <code>num_regions</code>.",
       "referenceSql": "SELECT COUNT(DISTINCT region) AS num_regions FROM customers;",
       "questionAudio": "Day05/New_Day5Question12.mp3",
       "solutionAudio": "Day05/New_Day5Question12sol.mp3"
     },
     {
       "id": 13,
-      "prompt": "<strong>Task: Conditional Revenue Split</strong><br/>In a single query, compute the total revenue for Shipped orders and the total revenue for Processing orders using <code>SUM(CASE WHEN...)</code>.",
+      "prompt": "<strong>[Hard] Single-Pass Revenue Segmentation</strong><br/>Without using GROUP BY or multiple queries, write a conditional aggregation from <code>orders</code> returning <code>shipped_rev</code> (total for 'Shipped' orders) and <code>processing_rev</code> (total for 'Processing' orders) using <code>SUM(CASE WHEN...)</code>.",
       "referenceSql": "SELECT SUM(CASE WHEN status = 'Shipped' THEN total_amount ELSE 0 END) AS shipped_rev, SUM(CASE WHEN status = 'Processing' THEN total_amount ELSE 0 END) AS processing_rev FROM orders;",
       "questionAudio": "Day05/New_Day5Question13.mp3",
       "solutionAudio": "Day05/New_Day5Question13sol.mp3"
     },
     {
       "id": 14,
-      "prompt": "<strong>Task: Weighted Average Price</strong><br/>Compute the weighted average unit price across all order items, where the weight is the quantity ordered: <code>SUM(unit_price * qty) * 1.0 / SUM(qty)</code>.",
+      "prompt": "<strong>[Hard] Volume-Weighted Average Price (WASP)</strong><br/>Calculate the volume-weighted average price across all ordered items: <code>SUM(unit_price * qty) * 1.0 / SUM(qty)</code>. Round the final result to 2 decimal places and alias as <code>weighted_avg_price</code>.",
       "referenceSql": "SELECT ROUND(SUM(unit_price * qty) * 1.0 / SUM(qty), 2) AS weighted_avg_price FROM order_items;",
       "questionAudio": "Day05/New_Day5Question14.mp3",
       "solutionAudio": "Day05/New_Day5Question14sol.mp3"
     },
     {
       "id": 15,
-      "prompt": "<strong>Task: Employee Names Concatenated</strong><br/>Use <code>GROUP_CONCAT</code> to produce a single comma-separated string of all employee <code>first_name</code> values from the <code>employees</code> table.",
+      "prompt": "<strong>[Medium] Department Staff Concatenation</strong><br/>Data reporting requires a single concatenated list of employee names. Use <code>GROUP_CONCAT</code> on <code>first_name</code> with a comma separator (<code>', '</code>) from <code>employees</code>, aliased as <code>all_names</code>.",
       "referenceSql": "SELECT GROUP_CONCAT(first_name, ', ') AS all_names FROM employees;",
       "questionAudio": "Day05/New_Day5Question15.mp3",
       "solutionAudio": "Day05/New_Day5Question15sol.mp3"

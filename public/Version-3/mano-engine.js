@@ -5659,30 +5659,35 @@ function setupTimelineDragging() {
   const timelineRow = document.getElementById('playbackTimelineRow');
   if (!seekBar || !timelineRow) return;
 
-  // Real-time hover preview tooltip showing Scene Title + Time
+  if (timelineRow.dataset.timelineDragBound) return;
+  timelineRow.dataset.timelineDragBound = 'true';
+
+  // Real-time hover preview tooltip showing Scene Title + Time + Category Badge
   timelineRow.addEventListener('mousemove', (e) => {
     const rect = seekBar.getBoundingClientRect();
     const mouseX = Math.max(0, Math.min(rect.width, e.clientX - rect.left));
     const pos = rect.width > 0 ? (mouseX / rect.width) : 0;
-    const targetTime = pos * totalCombinedDuration;
+    const targetTime = pos * (totalCombinedDuration || 100);
 
     // Resolve track at this hover position
     let elapsed = 0;
     let trackTitle = '';
     let trackType = 'Theory';
-    for (let i = 0; i < combinedTrackDurations.length; i++) {
-      const dur = combinedTrackDurations[i];
-      if (targetTime < elapsed + dur || i === combinedTrackDurations.length - 1) {
-        const t = combinedTracks[i];
-        if (t) {
-          trackTitle = t.title || t.src || '';
-          if (t.type === 'question') trackType = 'Practice';
-          else if (t.type === 'solution') trackType = 'Solution';
-          else if (t.type === 'completion') trackType = 'Milestone';
+    if (typeof combinedTrackDurations !== 'undefined' && typeof combinedTracks !== 'undefined') {
+      for (let i = 0; i < combinedTrackDurations.length; i++) {
+        const dur = combinedTrackDurations[i];
+        if (targetTime < elapsed + dur || i === combinedTrackDurations.length - 1) {
+          const t = combinedTracks[i];
+          if (t) {
+            trackTitle = t.title || t.src || '';
+            if (t.type === 'question') trackType = 'Practice';
+            else if (t.type === 'solution') trackType = 'Solution';
+            else if (t.type === 'completion') trackType = 'Milestone';
+          }
+          break;
         }
-        break;
+        elapsed += dur;
       }
-      elapsed += dur;
     }
 
     if (tooltip) {
@@ -5708,7 +5713,7 @@ function setupTimelineDragging() {
         <span class="tt-time">${formatTime(targetTime)}</span>
         <span class="tt-divider"></span>
         ${badgeHtml}
-        <span class="tt-title">${escHtml(trackTitle)}</span>
+        <span class="tt-title">${typeof escHtml === 'function' ? escHtml(trackTitle) : trackTitle}</span>
       `;
 
       // Smart Edge Clamping: Ensure tooltip is NEVER cropped at left or right window boundary
@@ -5728,6 +5733,22 @@ function setupTimelineDragging() {
 
   timelineRow.addEventListener('mouseleave', () => {
     if (tooltip) tooltip.classList.remove('active');
+  });
+
+  // Direct click on timeline row to seek instantly
+  timelineRow.addEventListener('click', async (e) => {
+    const rect = seekBar.getBoundingClientRect();
+    if (rect.width <= 0) return;
+    const clickX = Math.max(0, Math.min(rect.width, e.clientX - rect.left));
+    const pos = rect.width > 0 ? (clickX / rect.width) : 0;
+    const targetTime = pos * (totalCombinedDuration || 100);
+    const sb = document.getElementById('seekBar');
+    if (sb) {
+      sb.value = targetTime;
+      const fillPct = Math.max(0, Math.min(100, pos * 100));
+      sb.style.background = `linear-gradient(to right, #ef4444 0%, #ff4d4d ${fillPct}%, rgba(255, 255, 255, 0.15) ${fillPct}%)`;
+    }
+    seekCombinedPlayback(targetTime);
   });
 
   // Smooth live scrubbing
@@ -9856,44 +9877,7 @@ function initSlideNarration() {
     }
   }
 
-  const timelineRow = document.querySelector('.playback-timeline-row');
-  if (timelineRow && !timelineRow.dataset.clickBound) {
-    timelineRow.dataset.clickBound = 'true';
-    const tooltip = document.getElementById('timelineHoverTooltip');
-
-    timelineRow.addEventListener('mousemove', (e) => {
-      const rect = timelineRow.getBoundingClientRect();
-      if (rect.width <= 0) return;
-      const clickX = e.clientX - rect.left;
-      const pct = Math.max(0, Math.min(1, clickX / rect.width));
-      const hoverTime = pct * (totalCombinedDuration || 100);
-      if (tooltip) {
-        tooltip.textContent = formatTime(hoverTime);
-        tooltip.style.left = `${clickX}px`;
-        tooltip.classList.add('active');
-      }
-    });
-
-    timelineRow.addEventListener('mouseleave', () => {
-      if (tooltip) tooltip.classList.remove('active');
-    });
-
-    timelineRow.addEventListener('click', async (e) => {
-      const rect = timelineRow.getBoundingClientRect();
-      if (rect.width <= 0) return;
-      const clickX = e.clientX - rect.left;
-      const pct = Math.max(0, Math.min(1, clickX / rect.width));
-      const targetTime = pct * (totalCombinedDuration || 100);
-      const sb = document.getElementById('seekBar');
-      if (sb) {
-        sb.value = targetTime;
-        const fillPct = Math.max(0, Math.min(100, pct * 100));
-        sb.style.background = `linear-gradient(to right, #ef4444 0%, #ff4d4d ${fillPct}%, rgba(255, 255, 255, 0.15) ${fillPct}%)`;
-      }
-      seekCombinedPlayback(targetTime);
-    });
-  }
-
+  setupTimelineDragging();
   updateProgressUI();
 }
 

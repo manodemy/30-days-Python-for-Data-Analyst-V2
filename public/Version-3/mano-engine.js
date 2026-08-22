@@ -8556,6 +8556,83 @@ function updatePrecedenceNoteHighlight(currentTime, isPlaying) {
   if (cards.or) cards.or.classList.toggle('narration-highlight', currentTime >= 5.5 && currentTime < 6.5);
 }
 
+function updateWhereCodeHighlights(currentTime, isPlaying) {
+  const block1 = document.getElementById('whereCodeSyntax');
+  const block2 = document.getElementById('whereCodeExample');
+  if (!block1 || !block2) return;
+
+  if (!isPlaying) {
+    block1.classList.remove('narration-highlight', 'code-active-spotlight');
+    block2.classList.remove('narration-highlight', 'code-active-spotlight');
+    return;
+  }
+
+  // Whisper ASR timestamps for New_Day3Part1audio02.mp3 (13.82s):
+  // 0.00s - 9.94s : "First, write SELECT... Then FROM... Finally WHERE..." -> Syntax Skeleton
+  // 9.94s - 13.82s: "For example, WHERE salary is greater than eighty thousand." -> Concrete Example
+  const isB1 = currentTime >= 0.00 && currentTime < 9.94;
+  const isB2 = currentTime >= 9.94 && currentTime < 14.00;
+
+  block1.classList.toggle('narration-highlight', isB1);
+  block1.classList.toggle('code-active-spotlight', isB1);
+  block2.classList.toggle('narration-highlight', isB2);
+  block2.classList.toggle('code-active-spotlight', isB2);
+}
+
+function updateCompCodeHighlights(currentTime, isPlaying) {
+  const q1 = document.getElementById('compCodeQuery1');
+  const q2 = document.getElementById('compCodeQuery2');
+  const q3 = document.getElementById('compCodeQuery3');
+  if (!q1 || !q2 || !q3) return;
+
+  if (!isPlaying) {
+    [q1, q2, q3].forEach(el => el.classList.remove('narration-highlight', 'code-active-spotlight'));
+    return;
+  }
+
+  // Whisper ASR timestamps for New_Day3Part1audio06.mp3 (14.33s):
+  // 2.46s - 6.48s : "The first query retrieves employees earning more than 60,000." -> Query 1
+  // 6.48s - 10.64s: "The second finds products where stock quantity is zero or less." -> Query 2
+  // 10.64s - 14.33s: "The third uses not equal to exclude a specific department." -> Query 3
+  const isQ1 = currentTime >= 2.46 && currentTime < 6.48;
+  const isQ2 = currentTime >= 6.48 && currentTime < 10.64;
+  const isQ3 = currentTime >= 10.64 && currentTime < 14.50;
+
+  q1.classList.toggle('narration-highlight', isQ1);
+  q1.classList.toggle('code-active-spotlight', isQ1);
+  q2.classList.toggle('narration-highlight', isQ2);
+  q2.classList.toggle('code-active-spotlight', isQ2);
+  q3.classList.toggle('narration-highlight', isQ3);
+  q3.classList.toggle('code-active-spotlight', isQ3);
+}
+
+function updateLogicCodeHighlights(currentTime, isPlaying) {
+  const q1 = document.getElementById('logicCodeQuery1');
+  const q2 = document.getElementById('logicCodeQuery2');
+  const q3 = document.getElementById('logicCodeQuery3');
+  if (!q1 || !q2 || !q3) return;
+
+  if (!isPlaying) {
+    [q1, q2, q3].forEach(el => el.classList.remove('narration-highlight', 'code-active-spotlight'));
+    return;
+  }
+
+  // Whisper ASR timestamps for New_Day3Part1audio12.mp3 (14.62s):
+  // 2.58s - 7.18s : "The first query uses AND to find active employees in department 20." -> Query 1
+  // 7.18s - 11.34s: "The second uses OR to find customers in the North or South region." -> Query 2
+  // 11.34s - 14.62s: "The third uses NOT with LIKE to exclude a naming pattern." -> Query 3
+  const isQ1 = currentTime >= 2.58 && currentTime < 7.18;
+  const isQ2 = currentTime >= 7.18 && currentTime < 11.34;
+  const isQ3 = currentTime >= 11.34 && currentTime < 14.80;
+
+  q1.classList.toggle('narration-highlight', isQ1);
+  q1.classList.toggle('code-active-spotlight', isQ1);
+  q2.classList.toggle('narration-highlight', isQ2);
+  q2.classList.toggle('code-active-spotlight', isQ2);
+  q3.classList.toggle('narration-highlight', isQ3);
+  q3.classList.toggle('code-active-spotlight', isQ3);
+}
+
 function updateDay01Audio01Highlights(currentTime, isPlaying) {
   const section = document.getElementById('rdbmsIntro');
   const tableCard = document.getElementById('rdbmsTableCard');
@@ -8887,12 +8964,15 @@ function loadAndPlayTrack(index, targetTime = 0) {
         track.src.includes('New_Day1Part1audio19.mp3') || 
         track.src.includes('New_Day1Part1audio20.mp3') || 
         track.src.includes('New_Day1Part1audio21.mp3')) updateDay01SqlSubLanguagesHighlights(null, false);
+    if (track.src.includes('New_Day3Part1audio02.mp3')) updateWhereCodeHighlights(0, false);
     if (track.src.includes('New_Day3Part1audio05.mp3')) updateTableHighlights(0, false);
+    if (track.src.includes('New_Day3Part1audio06.mp3')) updateCompCodeHighlights(0, false);
     if (track.src.includes('New_Day3Part1audio07.mp3')) updateIntroHighlight(0, false);
     if (track.src.includes('New_Day3Part1audio08.mp3')) updateNotCardHighlight(0, false);
     if (track.src.includes('New_Day3Part1audio09.mp3')) updateAndCardHighlight(0, false);
     if (track.src.includes('New_Day3Part1audio10.mp3')) updateOrCardHighlight(0, false);
     if (track.src.includes('New_Day3Part1audio11.mp3')) updatePrecedenceNoteHighlight(0, false);
+    if (track.src.includes('New_Day3Part1audio12.mp3')) updateLogicCodeHighlights(0, false);
     onNarrationSegmentEnded(index, trackEvents);
   });
 
@@ -8935,12 +9015,15 @@ function loadAndPlayTrack(index, targetTime = 0) {
     if (track.src.includes('New_Day1Part2audio17.mp3')) updateDay01Topic02ColumnarCards(audio.currentTime, !audio.paused, 'audio17');
     if (track.src.includes('New_Day1Part2audio18(new).mp3')) updateDay01Topic02ColumnarCards(audio.currentTime, !audio.paused, 'audio18new');
     if (track.src.includes('New_Day1Part2audio18.mp3')) updateDay01Topic02ColumnarCards(audio.currentTime, !audio.paused, 'audio18');
+    if (track.src.includes('New_Day3Part1audio02.mp3')) updateWhereCodeHighlights(audio.currentTime, !audio.paused);
     if (track.src.includes('New_Day3Part1audio05.mp3')) updateTableHighlights(audio.currentTime, !audio.paused);
+    if (track.src.includes('New_Day3Part1audio06.mp3')) updateCompCodeHighlights(audio.currentTime, !audio.paused);
     if (track.src.includes('New_Day3Part1audio07.mp3')) updateIntroHighlight(audio.currentTime, !audio.paused);
     if (track.src.includes('New_Day3Part1audio08.mp3')) updateNotCardHighlight(audio.currentTime, !audio.paused);
     if (track.src.includes('New_Day3Part1audio09.mp3')) updateAndCardHighlight(audio.currentTime, !audio.paused);
     if (track.src.includes('New_Day3Part1audio10.mp3')) updateOrCardHighlight(audio.currentTime, !audio.paused);
     if (track.src.includes('New_Day3Part1audio11.mp3')) updatePrecedenceNoteHighlight(audio.currentTime, !audio.paused);
+    if (track.src.includes('New_Day3Part1audio12.mp3')) updateLogicCodeHighlights(audio.currentTime, !audio.paused);
 
     let elapsed = 0;
     for (let i = 0; i < combinedTrackIndex; i++) {
@@ -9368,49 +9451,32 @@ function scrollToTarget(selector, isSeek = true) {
     if (typeof clearSlidePlaybackVisibility === 'function') clearSlidePlaybackVisibility();
   }
 
+  const container = document.getElementById('slideContent') || document.getElementById('slideBodyText');
+  if (!container) return;
+
+  // When narration playback is active, the active section is isolated cleanly at the top of the container.
+  // Scroll container to top: 0 to ensure headings, audio buttons, and cards are never cropped under the sticky slide header!
+  if (typeof isCombinedPlaying !== 'undefined' && isCombinedPlaying) {
+    container.scrollTo({ top: 0, behavior: isSeek ? 'auto' : 'smooth' });
+    return;
+  }
+
   const subLangTracks = ['#sqlSubLanguages', '#subLangDql', '#subLangDml', '#subLangDdl', '#subLangTcl', '#subLangDcl'];
   const coreEntitiesTracks = ['#coreEntities', '#entityDatabase', '#entityTable', '#entityColumn', '#entityRow'];
 
-  // For Sub-Languages Table: Keep table 100% stationary and fixed in place during narration!
-  if (subLangTracks.includes(selector)) {
-    const container = document.getElementById('slideContent') || document.getElementById('slideBodyText');
-    if (selector === '#sqlSubLanguages' && container) {
-      container.scrollTo({ top: 0, behavior: isSeek ? 'auto' : 'smooth' });
-    }
+  if (subLangTracks.includes(selector) || coreEntitiesTracks.includes(selector) || selector.startsWith('#iq')) {
+    container.scrollTo({ top: 0, behavior: isSeek ? 'auto' : 'smooth' });
     return;
   }
 
-  // For Core Entities Table: Keep table 100% stationary and fixed in place during narration!
-  if (coreEntitiesTracks.includes(selector)) {
-    const container = document.getElementById('slideContent') || document.getElementById('slideBodyText');
-    if (selector === '#coreEntities' && container) {
-      container.scrollTo({ top: 0, behavior: isSeek ? 'auto' : 'smooth' });
-    }
-    return;
-  }
-
-  // For Interview Q&A Cards: Keep box at top and bypass individual question scrolling
-  if (selector.startsWith('#iq')) {
-    const container = document.getElementById('slideContent') || document.getElementById('slideBodyText');
-    if (container) {
-      container.scrollTo({ top: 0, behavior: isSeek ? 'auto' : 'smooth' });
-    }
-    return;
-  }
-
-  const container = document.getElementById('slideContent');
-  const targetEl = container ? container.querySelector(selector) : null;
-  if (targetEl && container) {
-    if (targetEl.closest('.interview-box')) {
-      container.scrollTo({ top: 0, behavior: isSeek ? 'auto' : 'smooth' });
-      return;
-    }
-    const blockToScroll = typeof getVisibilityBlock === 'function' ? getVisibilityBlock(targetEl, container) : targetEl;
+  const targetEl = container.querySelector(selector);
+  if (targetEl) {
+    const blockToScroll = targetEl.closest('.slide-section') || targetEl;
     const containerRect = container.getBoundingClientRect();
     const targetRect = blockToScroll.getBoundingClientRect();
     const relativeTop = targetRect.top - containerRect.top + container.scrollTop;
     container.scrollTo({
-      top: relativeTop - 15,
+      top: Math.max(0, relativeTop - 12),
       behavior: isSeek ? 'auto' : 'smooth'
     });
   }

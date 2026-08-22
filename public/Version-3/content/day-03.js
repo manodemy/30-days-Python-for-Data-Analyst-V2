@@ -29,17 +29,21 @@ window.COURSE_CONTENT['day03'] = {
               <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
             </button>
           </div>
-          <pre id="day03WhereCode"><code>-- Syntax skeleton
-SELECT column1, column2
-FROM   table_name
-WHERE  condition;
+          <div class="code-block-container" id="day03WhereCode">
+            <div class="code-subblock" id="whereCodeSyntax">
+              <pre><code><span class="code-comment">-- 1. Syntax Skeleton</span>
+<span class="kw">SELECT</span> column1, column2
+<span class="kw">FROM</span>   table_name
+<span class="kw">WHERE</span>  condition;</code></pre>
+            </div>
 
--- Concrete example: only employees earning above ₹80 000
-SELECT first_name,
-       last_name,
-       salary
-FROM   employees
-WHERE  salary > 80000;</code></pre>
+            <div class="code-subblock" id="whereCodeExample">
+              <pre><code><span class="code-comment">-- 2. Concrete Example: High salary filter</span>
+<span class="kw">SELECT</span> first_name, last_name, salary
+<span class="kw">FROM</span>   employees
+<span class="kw">WHERE</span>  salary > 80000;</code></pre>
+            </div>
+          </div>
         </div>
 
         <div class="slide-section" id="day03WhereInfoSection">
@@ -320,26 +324,28 @@ WHERE  salary > 80000;</code></pre>
               <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
             </button>
           </div>
-          <pre id="day03CompCode"><code>-- Equal: fetch only the Engineering department
-SELECT first_name, department_id
-FROM   employees
-WHERE  department_id = 10;
+          <div class="code-block-container" id="day03CompCode">
+            <div class="code-subblock" id="compCodeQuery1">
+              <pre><code><span class="code-comment">-- 1. Earning more than ₹60,000</span>
+<span class="kw">SELECT</span> first_name, salary
+<span class="kw">FROM</span>   employees
+<span class="kw">WHERE</span>  salary > 60000;</code></pre>
+            </div>
 
--- Not equal: orders that haven't shipped
-SELECT order_id, status
-FROM   orders
-WHERE  status <> 'Shipped';
+            <div class="code-subblock" id="compCodeQuery2">
+              <pre><code><span class="code-comment">-- 2. Products where stock quantity is zero or less</span>
+<span class="kw">SELECT</span> name, stock_qty
+<span class="kw">FROM</span>   products
+<span class="kw">WHERE</span>  stock_qty <= 0;</code></pre>
+            </div>
 
--- Range: products that cost more than ₹5 000
-SELECT name, unit_price
-FROM   products
-WHERE  unit_price > 5000;
-
--- Combined: cheap items still in stock
-SELECT name, unit_price, stock_qty
-FROM   products
-WHERE  unit_price <= 1000
-  AND  stock_qty  >= 50;</code></pre>
+            <div class="code-subblock" id="compCodeQuery3">
+              <pre><code><span class="code-comment">-- 3. Exclude a specific department with not-equal</span>
+<span class="kw">SELECT</span> first_name, department_id
+<span class="kw">FROM</span>   employees
+<span class="kw">WHERE</span>  department_id <> 10;</code></pre>
+            </div>
+          </div>
         </div>
 
         <div class="slide-section">
@@ -700,28 +706,30 @@ WHERE  unit_price <= 1000
               <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
             </button>
           </div>
-          <pre id="day03LogicCode"><code>-- AND: every condition must be TRUE
-SELECT first_name, department_id, salary
-FROM   employees
-WHERE  department_id = 20
-  AND  salary > 70000;
+          <div class="code-block-container" id="day03LogicCode">
+            <div class="code-subblock" id="logicCodeQuery1">
+              <pre><code><span class="code-comment">-- 1. AND: Active employees in department 20</span>
+<span class="kw">SELECT</span> first_name, department_id, salary
+<span class="kw">FROM</span>   employees
+<span class="kw">WHERE</span>  is_active = 1
+  <span class="kw">AND</span>  department_id = 20;</code></pre>
+            </div>
 
--- OR: at least one condition must be TRUE
-SELECT first_name, department_id
-FROM   employees
-WHERE  department_id = 10
-  OR   department_id = 20;
+            <div class="code-subblock" id="logicCodeQuery2">
+              <pre><code><span class="code-comment">-- 2. OR: Customers in the North or South region</span>
+<span class="kw">SELECT</span> first_name, region
+<span class="kw">FROM</span>   customers
+<span class="kw">WHERE</span>  region = 'North'
+   <span class="kw">OR</span>  region = 'South';</code></pre>
+            </div>
 
--- NOT: negates the condition
-SELECT first_name, is_active
-FROM   employees
-WHERE  NOT is_active = 1;
-
--- Parentheses clarify mixed AND + OR
-SELECT first_name, department_id, salary
-FROM   employees
-WHERE  (department_id = 10 OR department_id = 20)
-  AND  salary > 60000;</code></pre>
+            <div class="code-subblock" id="logicCodeQuery3">
+              <pre><code><span class="code-comment">-- 3. NOT with LIKE: Exclude a naming pattern</span>
+<span class="kw">SELECT</span> customer_id, email
+<span class="kw">FROM</span>   customers
+<span class="kw">WHERE</span>  email <span class="kw">NOT LIKE</span> '%@gmail.com';</code></pre>
+            </div>
+          </div>
         </div>
 
         <div class="slide-section" id="day03LogicWarnSection">

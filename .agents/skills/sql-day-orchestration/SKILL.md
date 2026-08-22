@@ -227,6 +227,16 @@ Statement: Dual-Mode Visual Scoping, Positioning & Viewport Parity: The Sync Age
 Added: Day03 — user mandated that Sync agent ensure proper visual framing and viewport positioning across both timeline and individual playback modes.
 Supersedes: none
 
+[SYNC-007] [STATUS: active] [SCOPE: Sync]
+Statement: Progressive Code Block Narration Alignment: Whenever multiple SQL queries or syntax examples are explained in a single narration track, code presentation MUST use .code-block-container and .code-subblock elements with distinct IDs. The Sync Agent must extract Whisper ASR timestamps to progressively illuminate the active query with glowing active-spotlight styles (.code-active-spotlight, .narration-highlight) matching speech pacing.
+Added: Day03 — monolithic code blocks left students uncertain which query was being explained; progressive illumination provides clear UX across timeline and individual play.
+Supersedes: none
+
+[SYNC-008] [STATUS: active] [SCOPE: Sync]
+Statement: Anti-Cropping Top-Alignment Protocol: During narration playback or isolated card presentation, container scroll MUST strictly reset to top: 0 (or scroll relative to the parent .slide-section rather than internal child elements). Scrolling to child elements clips the card heading, audio buttons, and top border behind the sticky header bar.
+Added: Day03 — scrolling to inner <pre> elements caused comparison examples heading to be cropped under #slideHeader.
+Supersedes: none
+
 [VOICE-001] [STATUS: active] [SCOPE: Voice]
 Statement: Voice must ALWAYS create narrations/day-XX.json BEFORE running the TTS build. The JSON is the source of truth — if it doesn't exist, build-audio.js will error and produce no files. Never run build-audio.js before the JSON is written and validated.
 Added: Day03 — discovered that Day03 had 13 theory MP3s on disk but no narrations/day-03.json, and zero question/solution MP3s because the JSON was never authored.

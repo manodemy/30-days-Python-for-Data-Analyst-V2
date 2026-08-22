@@ -9975,8 +9975,8 @@ function clearSlidePlaybackVisibility() {
 
   containers.forEach(container => {
     container.classList.remove('playback-active');
-    container.querySelectorAll('.section-hidden, .vis-target-hidden, .vis-target-dimmed, .narration-spotlight-active, .active-section-mounted, .stunning-section-entry, .instant-display, .row-active-spotlight, .card-active-spotlight, .block-active-spotlight').forEach(el => {
-      el.classList.remove('section-hidden', 'vis-target-hidden', 'vis-target-dimmed', 'narration-spotlight-active', 'active-section-mounted', 'stunning-section-entry', 'instant-display', 'row-active-spotlight', 'card-active-spotlight', 'block-active-spotlight');
+    container.querySelectorAll('.section-hidden, .vis-target-hidden, .vis-target-dimmed, .narration-spotlight-active, .active-section-mounted, .stunning-section-entry, .instant-display, .row-active-spotlight, .card-active-spotlight, .block-active-spotlight, .narration-highlight').forEach(el => {
+      el.classList.remove('section-hidden', 'vis-target-hidden', 'vis-target-dimmed', 'narration-spotlight-active', 'active-section-mounted', 'stunning-section-entry', 'instant-display', 'row-active-spotlight', 'card-active-spotlight', 'block-active-spotlight', 'narration-highlight');
       // Also clear any legacy inline styles from previous runs
       el.style.display = '';
       el.style.opacity = '';
@@ -9998,6 +9998,9 @@ function clearSlidePlaybackVisibility() {
   }
   if (typeof updateDay01SqlSubLanguagesHighlights === 'function') {
     updateDay01SqlSubLanguagesHighlights(null, false);
+  }
+  if (typeof clearDay03LogicSpotlights === 'function') {
+    clearDay03LogicSpotlights();
   }
 }
 
@@ -10030,8 +10033,8 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
     container.classList.add('playback-active');
 
     // 1. Clear previous sub-element spotlight highlights
-    container.querySelectorAll('.narration-spotlight-active, .row-active-spotlight, .card-active-spotlight, .block-active-spotlight').forEach(el => {
-      el.classList.remove('narration-spotlight-active', 'row-active-spotlight', 'card-active-spotlight', 'block-active-spotlight');
+    container.querySelectorAll('.narration-spotlight-active, .row-active-spotlight, .card-active-spotlight, .block-active-spotlight, .narration-highlight').forEach(el => {
+      el.classList.remove('narration-spotlight-active', 'row-active-spotlight', 'card-active-spotlight', 'block-active-spotlight', 'narration-highlight');
     });
 
     // 2. Find the target element inside this container
@@ -10109,13 +10112,14 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
 
     // 6. Highlight active target row / card / Q&A block without shifting layout
     const targetRow = targetEl.closest('tr');
-    const targetCard = targetEl.closest('.vs-card, .info-card');
+    const targetCard = targetEl.closest('.vs-card, .info-card, .prec-card');
     const targetIQ = targetEl.closest('#iqReferentialIntegrity, #iqSqlVsNosql, #iqCompositePk, #parentTableDept, #iqIndexOnlyScan, #iqSelectStarCosts, #iqHeapScanVsIndexScan');
 
     if (targetRow) {
       targetRow.classList.add('row-active-spotlight');
     } else if (targetCard) {
       targetCard.classList.add('card-active-spotlight');
+      targetCard.classList.add('narration-highlight');
     } else if (targetIQ) {
       targetIQ.classList.add('block-active-spotlight');
     } else if (targetEl) {
@@ -10132,9 +10136,48 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
     if (typeof updateDay01Topic02Spotlights === 'function') {
       updateDay01Topic02Spotlights(targetSelector, true);
     }
+    if (typeof updateDay03LogicSpotlights === 'function') {
+      updateDay03LogicSpotlights(targetSelector, true);
+    }
   });
 }
 
+// Day 03 — Logical Operators prec-card spotlight handler
+// Handles .prec-card--not, .prec-card--and, .prec-card--or narration highlighting.
+// Mirrors the Day 01 updateDay01CoreEntitiesHighlights pattern.
+function updateDay03LogicSpotlights(activeTarget, isPlaying) {
+  const wrap = document.getElementById('day03PrecWrap');
+  if (!wrap) return;
+
+  const cardNot = wrap.querySelector('.prec-card--not');
+  const cardAnd = wrap.querySelector('.prec-card--and');
+  const cardOr  = wrap.querySelector('.prec-card--or');
+
+  // Clear all spotlights first
+  [cardNot, cardAnd, cardOr].forEach(c => {
+    if (c) c.classList.remove('narration-highlight', 'card-active-spotlight');
+  });
+
+  if (!isPlaying) return;
+
+  // Light up the card matching the active target selector
+  if (activeTarget === '.prec-card--not' && cardNot) {
+    cardNot.classList.add('narration-highlight', 'card-active-spotlight');
+  } else if (activeTarget === '.prec-card--and' && cardAnd) {
+    cardAnd.classList.add('narration-highlight', 'card-active-spotlight');
+  } else if (activeTarget === '.prec-card--or' && cardOr) {
+    cardOr.classList.add('narration-highlight', 'card-active-spotlight');
+  }
+}
+
+// Day 03 — clear logic spotlights on pause/stop
+function clearDay03LogicSpotlights() {
+  const wrap = document.getElementById('day03PrecWrap');
+  if (!wrap) return;
+  wrap.querySelectorAll('.prec-card').forEach(c => {
+    c.classList.remove('narration-highlight', 'card-active-spotlight');
+  });
+}
 
 // P2 #20: Scoped keyboard shortcuts — Space only fires from player region
 document.addEventListener('keydown', (e) => {

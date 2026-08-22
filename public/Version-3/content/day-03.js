@@ -349,15 +349,8 @@ WHERE  unit_price <= 1000
               #day03PrecWrap .prec-card{background:rgba(9,15,28,0.92);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px;animation:precReveal 0.45s ease both;transition:opacity 0.45s ease, transform 0.45s ease, border-color 0.25s ease, box-shadow 0.25s ease;overflow:hidden;position:relative}
               #day03PrecWrap .prec-card:hover{transform:translateY(-2px);border-color:rgba(255,255,255,0.12)}
 
-              /* When narration is controlling reveals, cancel the automatic animation */
-              #day03PrecWrap.narration-active .prec-card {
-                animation: none !important;
-                opacity: 0;
-                transform: translateY(14px);
-                pointer-events: none;
-              }
-
-              #day03PrecWrap.narration-active .prec-card.revealed {
+              /* Smooth card transitions matching Day 01 standard */
+              #day03PrecWrap .prec-card {
                 opacity: 1;
                 transform: translateY(0);
                 pointer-events: auto;

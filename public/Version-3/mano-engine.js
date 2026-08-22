@@ -5273,6 +5273,18 @@ function initKeyboardShortcuts() {
   });
 }
 
+function restorePlayerPreferences() {
+  try {
+    const savedSpeed = localStorage.getItem('manodemy_playback_speed');
+    if (savedSpeed) {
+      const speedNum = parseFloat(savedSpeed);
+      if (!isNaN(speedNum) && typeof selectSpeedOption === 'function') {
+        selectSpeedOption(speedNum, `${speedNum}x`);
+      }
+    }
+  } catch (e) {}
+}
+
 window.addEventListener('DOMContentLoaded', async () => {
   try {
     // Initialize progress manager
@@ -5502,6 +5514,32 @@ function updateTimelineView() {
 
 function updateTimelinePlayhead() {
   // Stub: visual timeline features removed
+}
+
+function updatePlayButtonStates(isPlaying) {
+  try {
+    const playBtn = document.getElementById('playPauseBtn') || document.querySelector('.play-btn-red-pill');
+    if (playBtn) {
+      const label = playBtn.querySelector('.play-btn-label') || playBtn;
+      if (isPlaying) {
+        label.textContent = 'Pause Lesson';
+      } else {
+        label.textContent = 'Play Lesson';
+      }
+    }
+  } catch (e) {}
+}
+
+function updateProgressUI() {
+  try {
+    if (typeof updateTimelinePlayhead === 'function') {
+      updateTimelinePlayhead();
+    }
+  } catch (e) {}
+}
+
+function initSlideNarration() {
+  // Stub: slide narration initialized via timeline
 }
 
 function getSlideDurationString(idx) {

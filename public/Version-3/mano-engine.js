@@ -9094,14 +9094,14 @@ function narrationScrollToSubblock(el) {
   if (!container) return;
 
   const section = el.closest('.slide-section') || el.closest('.code-block-container') || el.parentElement;
-  const heading = section ? (section.querySelector('h3, h4, .heading-with-audio') || section) : null;
+  const heading = section ? (section.querySelector('h2, h3, h4, .heading-with-audio') || section) : null;
 
   const containerRect = container.getBoundingClientRect();
   const elRect = el.getBoundingClientRect();
   const headingRect = heading ? heading.getBoundingClientRect() : null;
 
-  const topPadding = 12;
-  const bottomPadding = 24;
+  const topPadding = 26; // Generous 26px headroom so heading is never cropped or touching top
+  const bottomPadding = 32;
 
   // 1. If heading is above container top (e.g. pushed under sticky header), ALWAYS pull heading back into view!
   if (headingRect && headingRect.top < containerRect.top + topPadding) {
@@ -9117,7 +9117,7 @@ function narrationScrollToSubblock(el) {
   // 2. If this is the 1st subblock in the block/section, make sure the heading + 1st block are at the top
   const isFirstChild = !el.previousElementSibling || el.id.endsWith('1') || el.id.endsWith('Query1') || el.id.endsWith('Syntax');
   if (isFirstChild) {
-    if (headingRect && headingRect.top > containerRect.top + topPadding + 40) {
+    if (headingRect && Math.abs(headingRect.top - (containerRect.top + topPadding)) > 4) {
       const scrollDiff = headingRect.top - (containerRect.top + topPadding);
       const tid = setTimeout(() => {
         container.scrollBy({ top: scrollDiff, behavior: 'smooth' });
@@ -10142,7 +10142,7 @@ function scrollToTarget(selector, isSeek = true) {
     const targetRect = blockToScroll.getBoundingClientRect();
     const relativeTop = targetRect.top - containerRect.top + container.scrollTop;
     container.scrollTo({
-      top: relativeTop - 15,
+      top: Math.max(0, relativeTop - 26),
       behavior: isSeek ? 'auto' : 'smooth'
     });
   }
@@ -10685,7 +10685,7 @@ function pauseCombinedPlayback() {
         const targetRect = blockToScroll.getBoundingClientRect();
         const relativeTop = targetRect.top - containerRect.top + container.scrollTop;
         container.scrollTo({
-          top: relativeTop - 15,
+          top: Math.max(0, relativeTop - 26),
           behavior: 'auto'
         });
       }
@@ -10734,13 +10734,17 @@ function clearSlidePlaybackVisibility() {
  * e.g. a <div id="entityDatabase"> inside a <td> should hide the entire <tr>.
  */
 function getVisibilityBlock(targetElement, sectionBoundary) {
+  // If targetElement is within a .slide-section, return that section so headings are never cropped
+  const section = targetElement.closest('.slide-section');
+  if (section && (!sectionBoundary || sectionBoundary.contains(section))) return section;
+
   // If the target is inside a table row, hide the whole row
   const tr = targetElement.closest('tr');
-  if (tr && sectionBoundary.contains(tr)) return tr;
+  if (tr && (!sectionBoundary || sectionBoundary.contains(tr))) return tr;
 
   // If the target is inside a comparison card (.vs-card), hide the whole card
   const vsCard = targetElement.closest('.vs-card');
-  if (vsCard && sectionBoundary.contains(vsCard)) return vsCard;
+  if (vsCard && (!sectionBoundary || sectionBoundary.contains(vsCard))) return vsCard;
 
   // For standalone blocks, return the element itself
   return targetElement;

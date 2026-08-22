@@ -7982,7 +7982,7 @@ select:focus:not(:focus-visible) {
 /* ─── Slide Section Spacing Rhythm ─── */
 .slide-section {
   margin-bottom: 26px !important;
-  scroll-margin-top: 16px !important;
+  scroll-margin-top: 36px !important;
 }
 .slide-section:last-child {
   margin-bottom: 0 !important;
@@ -7991,7 +7991,8 @@ select:focus:not(:focus-visible) {
 .heading-with-audio,
 .slide-section h3,
 .slide-section h4 {
-  scroll-margin-top: 16px !important;
+  scroll-margin-top: 36px !important;
+  padding-top: 4px !important;
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -8002,9 +8003,9 @@ select:focus:not(:focus-visible) {
   flex-direction: column;
   gap: 12px;
   width: 100%;
-  margin-top: 6px !important;
+  margin-top: 8px !important;
   margin-bottom: 22px !important;
-  scroll-margin-top: 24px !important;
+  scroll-margin-top: 36px !important;
 }
 
 .code-subblock {

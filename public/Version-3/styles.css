@@ -7302,7 +7302,7 @@ select:focus:not(:focus-visible) {
   color: #c4b5fd !important;
 }
 
-/* 4. Stunning Section Entry Animation (Fires only on 1st Narration Opener!) */
+/* 4. Stunning Section Entry Animation (Fires on Day 01 1st Narration Opener!) */
 .stunning-section-entry {
   animation: stunningSectionPop 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
   will-change: opacity, transform !important;
@@ -7322,6 +7322,25 @@ select:focus:not(:focus-visible) {
   100% {
     opacity: 1;
     transform: translateY(0) scale(1);
+    filter: blur(0px);
+  }
+}
+
+/* Day 03 Slide Entry: Smooth scroll up from down into position */
+.day03-slide-entry {
+  animation: day03SlideFromDown 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  will-change: opacity, transform !important;
+}
+
+@keyframes day03SlideFromDown {
+  0% {
+    opacity: 0;
+    transform: translateY(36px);
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
     filter: blur(0px);
   }
 }

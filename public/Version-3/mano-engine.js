@@ -9534,8 +9534,28 @@ function playAudio(src, btn) {
   const idx = combinedTracks.findIndex(t => t.src === src || t.src.endsWith(src) || src.endsWith(t.src));
 
   if (idx !== -1) {
-    if (combinedTrackIndex === idx && isCombinedPlaying) {
-      pauseCombinedPlayback();
+    if (combinedTrackIndex === idx) {
+      if (isCombinedPlaying) {
+        pauseCombinedPlayback();
+      } else {
+        playbackMode = 'single';
+        currentPlayingBtn = btn;
+        if (activeAudioInstance && activeAudioInstance.src && !activeAudioInstance.ended) {
+          isCombinedPlaying = true;
+          activeAudioInstance.play().then(() => {
+            updatePlayButtonStates(true);
+          }).catch(() => {
+            playCombinedPlayback();
+          });
+        } else {
+          let elapsedBefore = 0;
+          for (let i = 0; i < idx; i++) {
+            elapsedBefore += combinedTrackDurations[i] || 0;
+          }
+          seekCombinedPlayback(elapsedBefore, true);
+          updatePlayButtonStates(true);
+        }
+      }
     } else {
       playbackMode = 'single';
       currentPlayingBtn = btn;
@@ -9544,23 +9564,31 @@ function playAudio(src, btn) {
         elapsedBefore += combinedTrackDurations[i] || 0;
       }
       seekCombinedPlayback(elapsedBefore, true);
-      updateAllPlayButtonStates(true, btn);
+      updatePlayButtonStates(true);
     }
     return;
   }
 
   // Fallback for standalone audio not found in manifest
   const audioSrc = src.startsWith('http') || src.startsWith('/') ? src : `/Version-3/${src}`;
-  if (currentPlayingAudio) currentPlayingAudio.pause();
+  if (currentPlayingAudio) {
+    if (!currentPlayingAudio.paused && currentPlayingBtn === btn) {
+      currentPlayingAudio.pause();
+      updatePlayButtonStates(false);
+      return;
+    }
+    currentPlayingAudio.pause();
+  }
   pauseCombinedPlayback();
   currentPlayingAudio = new Audio(audioSrc);
   if (typeof currentPlaybackSpeed !== 'undefined') currentPlayingAudio.playbackRate = currentPlaybackSpeed;
   if (typeof currentPlaybackVolume !== 'undefined') currentPlayingAudio.volume = currentPlaybackVolume;
   currentPlayingBtn = btn;
-  currentPlayingAudio.play();
-  updateAllPlayButtonStates(true, btn);
+  currentPlayingAudio.play().then(() => {
+    updatePlayButtonStates(true);
+  }).catch(() => {});
   currentPlayingAudio.onended = () => {
-    updateAllPlayButtonStates(false);
+    updatePlayButtonStates(false);
     currentPlayingAudio = null;
     currentPlayingBtn = null;
   };
@@ -10198,12 +10226,18 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
         section.style.display = '';
         section.classList.add('active-section-mounted');
         
-        // Zoom appearance ONLY on 1st Narration! For remaining tracks: clean instant display without zoom pop
+        // Entrance appearance: Day 01 uses zoom-pop (stunning-section-entry). Day 03 uses smooth slide from down (day03-slide-entry).
+        const isDay03 = typeof currentDay !== 'undefined' && currentDay === 'day03';
         if (isFirstNarration && !isSeek) {
-          section.classList.add('stunning-section-entry');
-          section.classList.remove('instant-display');
+          if (isDay03) {
+            section.classList.add('day03-slide-entry');
+            section.classList.remove('stunning-section-entry', 'instant-display');
+          } else {
+            section.classList.add('stunning-section-entry');
+            section.classList.remove('day03-slide-entry', 'instant-display');
+          }
         } else {
-          section.classList.remove('stunning-section-entry');
+          section.classList.remove('stunning-section-entry', 'day03-slide-entry');
           section.classList.add('instant-display');
         }
       }

@@ -10076,11 +10076,16 @@ function updatePlayButtonStates(isPlaying) {
     if (isPlaying) {
       navBtn.innerHTML = `${equalizerHtml} <span class="btn-icon" aria-hidden="true" style="display:inline-flex;align-items:center;">${standardPauseSvg}</span> <span class="btn-text">Pause Lesson</span>`;
       navBtn.classList.add('playing');
+      navBtn.classList.remove('p11-play-radar-pulse'); // stop pulse while playing
       navBtn.setAttribute('aria-label', 'Pause Lesson');
       navBtn.setAttribute('aria-pressed', 'true');
     } else {
       navBtn.innerHTML = `<span class="btn-icon" aria-hidden="true" style="display:inline-flex;align-items:center;">${standardPlaySvg}</span> <span class="btn-text">Play Lesson</span>`;
       navBtn.classList.remove('playing');
+      // Restore pulse only on days that have the animation style defined (day03+)
+      if (typeof currentDay !== 'undefined' && currentDay !== 'day01' && currentDay !== 'day02') {
+        navBtn.classList.add('p11-play-radar-pulse');
+      }
       navBtn.setAttribute('aria-label', 'Play Lesson');
       navBtn.setAttribute('aria-pressed', 'false');
     }

@@ -8830,8 +8830,6 @@ function loadAndPlayTrack(index, targetTime = 0) {
 
   if (activeAudioInstance) {
     activeAudioInstance.pause();
-    activeAudioInstance.src = "";
-    activeAudioInstance.load();
     activeAudioInstance = null;
   }
 
@@ -8980,6 +8978,7 @@ function loadAndPlayTrack(index, targetTime = 0) {
     if (myGeneration !== currentGeneration) return;
     isCombinedPlaying = false;
     updatePlayButtonStates(false);
+    if (typeof clearSlidePlaybackVisibility === 'function') clearSlidePlaybackVisibility();
     if (track.src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(0, false);
     if (track.src.includes('New_Day1Part1audio03.mp3')) updateDay01Audio03Highlights(0, false);
     if (track.src.includes('New_Day1Part1audio04.mp3') || 
@@ -8993,12 +8992,15 @@ function loadAndPlayTrack(index, targetTime = 0) {
         track.src.includes('New_Day1Part1audio19.mp3') || 
         track.src.includes('New_Day1Part1audio20.mp3') || 
         track.src.includes('New_Day1Part1audio21.mp3')) updateDay01SqlSubLanguagesHighlights(null, false);
+    if (track.src.includes('New_Day3Part1audio02.mp3')) updateWhereCodeHighlights(0, false);
     if (track.src.includes('New_Day3Part1audio05.mp3')) updateTableHighlights(0, false);
+    if (track.src.includes('New_Day3Part1audio06.mp3')) updateCompCodeHighlights(0, false);
     if (track.src.includes('New_Day3Part1audio07.mp3')) updateIntroHighlight(0, false);
     if (track.src.includes('New_Day3Part1audio08.mp3')) updateNotCardHighlight(0, false);
     if (track.src.includes('New_Day3Part1audio09.mp3')) updateAndCardHighlight(0, false);
     if (track.src.includes('New_Day3Part1audio10.mp3')) updateOrCardHighlight(0, false);
     if (track.src.includes('New_Day3Part1audio11.mp3')) updatePrecedenceNoteHighlight(0, false);
+    if (track.src.includes('New_Day3Part1audio12.mp3')) updateLogicCodeHighlights(0, false);
   });
 
   audio.addEventListener('timeupdate', () => {
@@ -10061,21 +10063,22 @@ function pauseCombinedPlayback() {
 function clearSlidePlaybackVisibility() {
   const containers = [
     document.getElementById('slideBodyText'),
+    document.getElementById('slideContent'),
     document.getElementById('presentSlideContent')
   ].filter(Boolean);
 
   containers.forEach(container => {
     container.classList.remove('playback-active');
-    container.querySelectorAll('.section-hidden, .vis-target-hidden, .vis-target-dimmed, .narration-spotlight-active, .active-section-mounted, .stunning-section-entry, .instant-display, .row-active-spotlight, .card-active-spotlight, .block-active-spotlight, .narration-highlight').forEach(el => {
-      el.classList.remove('section-hidden', 'vis-target-hidden', 'vis-target-dimmed', 'narration-spotlight-active', 'active-section-mounted', 'stunning-section-entry', 'instant-display', 'row-active-spotlight', 'card-active-spotlight', 'block-active-spotlight', 'narration-highlight');
-      // Also clear any legacy inline styles from previous runs
+    container.querySelectorAll('.section-hidden, .vis-target-hidden, .vis-target-dimmed, .narration-spotlight-active, .active-section-mounted, .stunning-section-entry, .instant-display, .row-active-spotlight, .card-active-spotlight, .block-active-spotlight, .narration-highlight, .code-active-spotlight').forEach(el => {
+      el.classList.remove('section-hidden', 'vis-target-hidden', 'vis-target-dimmed', 'narration-spotlight-active', 'active-section-mounted', 'stunning-section-entry', 'instant-display', 'row-active-spotlight', 'card-active-spotlight', 'block-active-spotlight', 'narration-highlight', 'code-active-spotlight');
       el.style.display = '';
       el.style.opacity = '';
     });
-    // Sweep remaining inline styles left by older runs
-    container.querySelectorAll('[style]').forEach(el => {
-      el.style.display = '';
-      el.style.opacity = '';
+    // Ensure all discrete slide sections are restored to full visibility for scrolling
+    container.querySelectorAll('.slide-section').forEach(sec => {
+      sec.classList.remove('section-hidden', 'active-section-mounted', 'stunning-section-entry');
+      sec.style.display = '';
+      sec.style.opacity = '';
     });
     // Ensure all interview question cards are restored to visible when paused
     container.querySelectorAll('.interview-box > div').forEach(card => {

@@ -247,6 +247,16 @@ Statement: Discrete Section Granularity for Multi-Track Concepts: When a theoret
 Added: Day03 — compound section containing both Venn diagrams and Precedence note caused Venn diagrams to be clipped when Precedence note played.
 Supersedes: none
 
+[SYNC-011] [STATUS: active] [SCOPE: Sync]
+Statement: Immediate Pause-State Full-Document Scrollability: Whenever narration playback pauses or finishes (via timeline pause, single track inline button pause, or segment completion), the engine MUST execute clearSlidePlaybackVisibility() to unhide all .slide-section elements across all container DOM elements. The student must be free to read and scroll the complete lesson document whenever audio is not actively playing.
+Added: Day03 — pausing narration previously left other sections hidden (.section-hidden), preventing users from freely scrolling through the full theory document.
+Supersedes: none
+
+[SYNC-012] [STATUS: active] [SCOPE: Sync]
+Statement: Real-Time Zero-Latency Audio Triggering: Audio playback initiation must start synchronously within the user gesture event handler, avoiding destructive audio instance reset (activeAudioInstance.src = "") or blocking manifest fetches, so audio starts instantly without lag when Play is clicked.
+Added: Day03 — destructive audio unloading caused a delay between click and playback.
+Supersedes: none
+
 [VOICE-001] [STATUS: active] [SCOPE: Voice]
 Statement: Voice must ALWAYS create narrations/day-XX.json BEFORE running the TTS build. The JSON is the source of truth — if it doesn't exist, build-audio.js will error and produce no files. Never run build-audio.js before the JSON is written and validated.
 Added: Day03 — discovered that Day03 had 13 theory MP3s on disk but no narrations/day-03.json, and zero question/solution MP3s because the JSON was never authored.

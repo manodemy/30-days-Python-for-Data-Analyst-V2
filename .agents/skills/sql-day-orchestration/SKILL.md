@@ -165,7 +165,10 @@ GATE-3 (Voice + Sentry/outbound):
   ✓ Audio play buttons wired in both the theory slide HTML AND practiceQuestions[] objects
 
 GATE-4 (Sync — Full-Spectrum Sync Inspection):
-  ✓ Theory Visual Elements: 100% of narrated rows, comparison cards, Venn diagrams, and timeline steps have verified Whisper ASR millisecond timestamps.
+  ✓ Visual Scoping & Isolation: Every theory narration track mounts ONLY its intended visual presentation card/section.
+  ✓ Viewport Positioning: Active cards/elements are centered with clean vertical visibility without clipping or awkward overflow.
+  ✓ Dual-Mode Parity: Visual isolation and animations behave identically whether triggered via Master Timeline "Play Lesson", Individual ▶ buttons, or Scrubbing/Seeking.
+  ✓ Sub-Element Highlights: 100% of narrated rows, comparison cards, Venn diagrams, and timeline steps have verified Whisper ASR millisecond timestamps.
   ✓ Zero stale hardcoded animation intervals in mano-engine.js.
   ✓ Multi-column queries formatted with 7-space column alignment directly under SELECT.
   ✓ Typewriter charInterval finishes within ±150ms of audio end.
@@ -180,12 +183,13 @@ GATE-5 (Timekeeper):
 
 GATE-6 (Maestro Live Checks):
   6.1 Master Timeline: Progress bar duration == total calculated audio duration.
-  6.2 Timeline Seeking: Dragging scrubber instantly updates UI question card, editor, and active tab.
-  6.3 Theory Sync: Visual rows, cards, and diagrams light up in exact synchrony with the narrator's voice.
-  6.4 Typewriter Sync: Code character typing matches narrator speech pacing in real time.
-  6.5 Single-Play Isolation: Individual play on Question/Solution pauses cleanly at end without advancing to next slide.
-  6.6 SVG Icon State: Standard SVGs only; Navbar, Timeline, and Card buttons toggle cleanly between Play (▶) and Pause (⏸).
-  6.7 Grading & Execution: Query submission triggers correct SQLite execution and score banner updates.
+  6.2 Timeline Seeking: Dragging scrubber instantly updates UI question card, editor, and active tab with zero latency.
+  6.3 Visual Scoping & Positioning: Active card is isolated, correctly centered, and non-active cards are hidden.
+  6.4 Theory Sync: Visual rows, cards, and diagrams light up in exact synchrony with the narrator's voice.
+  6.5 Typewriter Sync: Code character typing matches narrator speech pacing in real time.
+  6.6 Single-Play Isolation: Individual play on Question/Solution pauses cleanly at end without advancing to next slide.
+  6.7 SVG Icon State: Standard SVGs only; Navbar, Timeline, and Card buttons toggle cleanly between Play (▶) and Pause (⏸).
+  6.8 Grading & Execution: Query submission triggers correct SQLite execution and score banner updates.
 ```
 
 ---
@@ -216,6 +220,11 @@ Supersedes: none
 [SYNC-005] [STATUS: active] [SCOPE: Sync]
 Statement: Zero Stale Hardcoded Timestamps: Whenever narration audio is regenerated or revised via Voice TTS, Sync MUST immediately rerun Whisper ASR to recalibrate visual animation timings against actual audio length.
 Added: Day03 — changing audio file duration broke hardcoded row highlight intervals.
+Supersedes: none
+
+[SYNC-006] [STATUS: active] [SCOPE: Sync]
+Statement: Dual-Mode Visual Scoping, Positioning & Viewport Parity: The Sync Agent must ensure that whenever a narration track plays (whether sequentially through the master timeline, individually via section play button, or when seeking/scrubbing), the exact visual element / section being explained is isolated, positioned cleanly, and auto-scrolled to center viewport. Non-active sections must be hidden (.section-hidden), and on pause/stop, full visibility must be cleanly restored.
+Added: Day03 — user mandated that Sync agent ensure proper visual framing and viewport positioning across both timeline and individual playback modes.
 Supersedes: none
 
 [VOICE-001] [STATUS: active] [SCOPE: Voice]

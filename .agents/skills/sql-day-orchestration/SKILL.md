@@ -336,4 +336,9 @@ Supersedes: none
 Statement: Practice question audio paths must be namespaced with 'DayXX/' directory prefix in single-topic mode (e.g., 'Day03/New_Day3Question01.mp3').
 Added: Day02 — root-level audio lookups failed 404 on Vercel deployment.
 Supersedes: none
+
+[ORCH-001] [STATUS: active] [SCOPE: Orchestration]
+Statement: Complete DOM Audio Play Button & Topic Coverage Audit: Prior to signing off any Day in the learning engine, the Orchestrator/Sync Agent MUST scan the complete HTML of content/day-XX.js and verify that 100% of <button class="audio-play-btn"> elements have: (1) an existing, non-empty (>10KB) audio file on disk, (2) an authored script in narrations/day-XX.json, and (3) a registered track in mano-engine.js. No topic, subtopic, or interview question may have missing or legacy orphaned audio references.
+Added: Day03 — audit previously verified registered engine tracks against disk but failed to parse the full HTML, missing that Topics 04–07 had orphaned 404 audio buttons.
+Supersedes: none
 ```

@@ -5871,26 +5871,46 @@ const day02Tracks = [
 ];
 
 const day03Durations = [
-  // Theory narrations (audio01–13)
+  // Theory narrations (audio01–31)
   17.4, 16.5, 17.1, 6.4, 19.5, 15.1, 7.6, 10.5, 10.0, 7.8, 16.2, 15.2, 20.4,
+  15.4, 17.6, 13.3, 20.3, 16.1, 15.8, 21.3, 12.3, 17.2, 19.1, 13.2, 18.5,
+  16.7, 16.5, 13.9, 23.1, 24.5, 18.7,
   // Practice Q & Solution narrations (Q01–Q06 + sols)
   9.5, 18.1, 9.2, 16.3, 10.4, 20.8, 8.9, 18.4, 11.4, 20.6, 8.4, 20.1
 ];
 
 const day03Tracks = [
-  { src: 'Day03/New_Day3Part1audio01.mp3', target: '#day03Where', title: 'The WHERE Clause' },
+  { src: 'Day03/New_Day3Part1audio01.mp3', target: '#day03Where', title: '01. The WHERE Clause' },
   { src: 'Day03/New_Day3Part1audio02.mp3', target: '#day03WhereCode', title: 'WHERE Clause Syntax & Examples' },
   { src: 'Day03/New_Day3Part1audio03.mp3', target: '#day03WhereInfo', title: 'Execution Order' },
-  { src: 'Day03/New_Day3Part1audio04.mp3', target: '#day03CompOps', title: 'Comparison Operators' },
+  { src: 'Day03/New_Day3Part1audio04.mp3', target: '#day03CompOps', title: '02. Comparison Operators' },
   { src: 'Day03/New_Day3Part1audio05.mp3', target: '#day03OpsTable', title: 'Comparison Operator Reference' },
   { src: 'Day03/New_Day3Part1audio06.mp3', target: '#day03CompCode', title: 'Comparison Operator Examples' },
-  { src: 'Day03/New_Day3Part1audio07.mp3', target: '#day03LogicOps', title: 'Logical Operators Intro' },
+  { src: 'Day03/New_Day3Part1audio07.mp3', target: '#day03LogicOps', title: '03. Logical Operators' },
   { src: 'Day03/New_Day3Part1audio08.mp3', target: '.prec-card--not', title: 'Logical Operator — NOT' },
   { src: 'Day03/New_Day3Part1audio09.mp3', target: '.prec-card--and', title: 'Logical Operator — AND' },
   { src: 'Day03/New_Day3Part1audio10.mp3', target: '.prec-card--or', title: 'Logical Operator — OR' },
   { src: 'Day03/New_Day3Part1audio11.mp3', target: '#day03PrecedenceNote', title: 'Operator Precedence Rules' },
   { src: 'Day03/New_Day3Part1audio12.mp3', target: '#day03LogicCode', title: 'AND / OR / NOT Examples' },
   { src: 'Day03/New_Day3Part1audio13.mp3', target: '#day03LogicWarn', title: 'Precedence Trap Warning' },
+  { src: 'Day03/New_Day3Part1audio14.mp3', target: '#day03Between', title: '04. The BETWEEN Operator' },
+  { src: 'Day03/New_Day3Part1audio15.mp3', target: '#day03BetweenCode', title: 'BETWEEN Code Examples' },
+  { src: 'Day03/New_Day3Part1audio16.mp3', target: '#day03BetweenOk', title: 'BETWEEN — Correct Usage' },
+  { src: 'Day03/New_Day3Part1audio17.mp3', target: '#day03BetweenDateTip', title: 'BETWEEN — Date Precision Gotcha' },
+  { src: 'Day03/New_Day3Part1audio18.mp3', target: '#day03In', title: '05. The IN Operator' },
+  { src: 'Day03/New_Day3Part1audio19.mp3', target: '#day03InCode', title: 'IN / NOT IN Examples' },
+  { src: 'Day03/New_Day3Part1audio20.mp3', target: '#day03InWarn', title: 'NOT IN with NULLs Warning' },
+  { src: 'Day03/New_Day3Part1audio21.mp3', target: '#day03Like', title: '06. The LIKE Operator' },
+  { src: 'Day03/New_Day3Part1audio22.mp3', target: '#day03LikePercent', title: 'LIKE — % Wildcard' },
+  { src: 'Day03/New_Day3Part1audio23.mp3', target: '#day03LikeUnderscore', title: 'LIKE — _ Wildcard' },
+  { src: 'Day03/New_Day3Part1audio24.mp3', target: '#day03LikeCode', title: 'LIKE in Context Examples' },
+  { src: 'Day03/New_Day3Part1audio25.mp3', target: '#day03LikeTip', title: 'LIKE Case Sensitivity Note' },
+  { src: 'Day03/New_Day3Part1audio26.mp3', target: '#day03Null', title: '07. IS NULL & IS NOT NULL' },
+  { src: 'Day03/New_Day3Part1audio27.mp3', target: '#day03NullCode', title: 'IS NULL Code Examples' },
+  { src: 'Day03/New_Day3Part1audio28.mp3', target: '#day03NullVs', title: 'Wrong = NULL vs. Correct IS NULL' },
+  { src: 'Day03/New_Day3Part1audio29.mp3', target: '#day03QANull', title: 'Interview Q1: WHERE commission = NULL' },
+  { src: 'Day03/New_Day3Part1audio30.mp3', target: '#day03QANotIn', title: 'Interview Q2: NOT IN Subquery with NULL' },
+  { src: 'Day03/New_Day3Part1audio31.mp3', target: '#day03QALike', title: 'Interview Q3: Leading % Wildcard Performance' },
   // ── 6 Practice Questions & Solutions ──
   { src: 'Day03/New_Day3Question01.mp3',    target: '#questionBar', title: 'Q1: High-Value Products',       type: 'question', qId: 1 },
   { src: 'Day03/New_Day3Question01sol.mp3', target: '#questionBar', title: 'Q1 Solution: High-Value Products', type: 'solution', qId: 1 },

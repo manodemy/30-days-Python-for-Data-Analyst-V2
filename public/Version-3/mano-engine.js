@@ -5275,6 +5275,16 @@ function initKeyboardShortcuts() {
 
 window.addEventListener('DOMContentLoaded', async () => {
   try {
+    // ── IMMEDIATE REDIRECT: If on index.html?day=X, redirect to /sql/dayXX.html
+    // BEFORE any expensive work (WASM, DB init, etc.) so navigation is instant ──
+    const __earlyPath = window.location.pathname;
+    const __earlyQp = new URLSearchParams(window.location.search).get('day');
+    if (__earlyQp && (__earlyPath.includes('/Version-3/index.html') || __earlyPath.endsWith('/Version-3/') || __earlyPath.endsWith('/Version-3'))) {
+      const __earlyDay = `day${__earlyQp.padStart(2, '0')}`;
+      window.location.replace(`/sql/${__earlyDay}.html`);
+      return; // Stop all further initialization — we're navigating away
+    }
+
     // Initialize progress manager
     if (window.ProgressManager) {
       window.ProgressManager.load();
@@ -5305,10 +5315,6 @@ window.addEventListener('DOMContentLoaded', async () => {
       defaultDay = `day${__pathMatch[1].padStart(2, '0')}`;
     } else if (__qp) {
       defaultDay = `day${__qp.padStart(2, '0')}`;
-      if (__path.includes('/Version-3/index.html') || __path.endsWith('/Version-3/') || __path.endsWith('/Version-3')) {
-        window.location.replace(`/sql/${defaultDay}.html`);
-        return;
-      }
     }
 
     // Load initial day content (lazy-loads matching module script if needed)

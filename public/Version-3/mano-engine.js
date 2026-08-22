@@ -5299,11 +5299,16 @@ window.addEventListener('DOMContentLoaded', async () => {
     let defaultDay = 'day01';
     const __path = window.location.pathname;
     const __pathMatch = __path.match(/(?:sql-day|excel-day|day)(\d{1,2})/i);
+    const __qp = new URLSearchParams(window.location.search).get('day');
+
     if (__pathMatch) {
       defaultDay = `day${__pathMatch[1].padStart(2, '0')}`;
-    } else {
-      const __qp = new URLSearchParams(window.location.search).get('day');
-      if (__qp) defaultDay = `day${__qp.padStart(2, '0')}`;
+    } else if (__qp) {
+      defaultDay = `day${__qp.padStart(2, '0')}`;
+      if (__path.includes('/Version-3/index.html') || __path.endsWith('/Version-3/') || __path.endsWith('/Version-3')) {
+        window.location.replace(`/sql/${defaultDay}.html`);
+        return;
+      }
     }
 
     // Load initial day content (lazy-loads matching module script if needed)
@@ -5340,6 +5345,15 @@ window.addEventListener('DOMContentLoaded', async () => {
     // Handle daySelect change
     document.getElementById('daySelect')?.addEventListener('change', function () {
       const selectedDay = this.value;
+      const __navNum = (selectedDay.match(/\d+/) || ['01'])[0].padStart(2, '0');
+      const targetPage = `/sql/day${__navNum}.html`;
+      
+      // If we are on dedicated sql page or index.html, navigate cleanly
+      if (window.location.pathname !== targetPage) {
+        window.location.href = targetPage;
+        return;
+      }
+
       // Animate transition
       const ws = document.getElementById('workspaceContainer');
       if (ws) {

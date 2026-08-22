@@ -8825,25 +8825,25 @@ function updateTableHighlights(currentTime, isPlaying) {
     return;
   }
 
-  // Whisper ASR word-level timestamps for New_Day3Part1audio05.mp3 (19.46s):
-  // 0.00s - 2.80s  : "The equals operator checks for an exact match." -> Row 0 (=)
-  // 2.80s - 8.80s  : "Not equal. Written as less than greater than or exclamation equals. Test for inequality." -> Row 1 (<>, !=)
-  // 8.80s - 10.20s : "Greater than..." -> Row 2 (>)
-  // 10.20s - 12.80s: "...and less than test numerical and date boundaries." -> Row 4 (<)
-  // 12.80s - 14.80s: "Greater than or equal..." -> Row 3 (>=)
-  // 14.80s - 19.50s: "...and less than or equal include the boundary value itself in your results." -> Row 5 (<=)
+  // Exact Whisper ASR word-level timestamps for New_Day3Part1audio05.mp3 (20.88s):
+  // 0.00s - 3.20s  : "The equals operator checks for an exact match." -> Row 0 (=)
+  // 3.20s - 8.80s  : "Not equal. Written as less than greater than or exclamation equals. Test for inequality." -> Row 1 (<>, !=)
+  // 8.80s - 10.40s : "Greater than..." -> Row 2 (>)
+  // 10.40s - 13.00s: "...and less than test numerical and date boundaries." -> Row 4 (<)
+  // 13.00s - 16.50s: "Greater than or equal..." -> Row 3 (>=)
+  // 16.50s - 20.88s: "...and less than or equal include the boundary value itself in your results." -> Row 5 (<=)
   let activeIndex = -1;
-  if (currentTime >= 0.00 && currentTime < 2.80) {
+  if (currentTime >= 0.00 && currentTime < 3.20) {
     activeIndex = 0; // = Equal to
-  } else if (currentTime >= 2.80 && currentTime < 8.80) {
+  } else if (currentTime >= 3.20 && currentTime < 8.80) {
     activeIndex = 1; // <> or != Not equal
-  } else if (currentTime >= 8.80 && currentTime < 10.20) {
+  } else if (currentTime >= 8.80 && currentTime < 10.40) {
     activeIndex = 2; // > Greater than
-  } else if (currentTime >= 10.20 && currentTime < 12.80) {
+  } else if (currentTime >= 10.40 && currentTime < 13.00) {
     activeIndex = 4; // < Less than
-  } else if (currentTime >= 12.80 && currentTime < 14.80) {
+  } else if (currentTime >= 13.00 && currentTime < 16.50) {
     activeIndex = 3; // >= Greater than or equal
-  } else if (currentTime >= 14.80 && currentTime <= 19.50) {
+  } else if (currentTime >= 16.50 && currentTime <= 21.00) {
     activeIndex = 5; // <= Less than or equal
   }
 
@@ -8968,22 +8968,30 @@ function updatePrecedenceNoteHighlight(currentTime, isPlaying) {
     and: document.querySelector('#day03PrecWrap .prec-card--and'),
     or: document.querySelector('#day03PrecWrap .prec-card--or')
   };
-  if (note) note.classList.toggle('narration-highlight', isPlaying);
 
   if (!isPlaying) {
+    if (note) note.classList.remove('narration-highlight');
     if (cards.not) cards.not.classList.remove('narration-highlight');
     if (cards.and) cards.and.classList.remove('narration-highlight');
     if (cards.or) cards.or.classList.remove('narration-highlight');
     return;
   }
 
-  // Multi-pass highlight during audio11 (Whisper ASR timestamps):
-  // 3.32s - 5.00s: NOT card ("not evaluates first")
-  // 5.00s - 6.20s: AND card ("followed by and")
-  // 6.20s - 7.40s: OR card ("and then, or")
-  if (cards.not) cards.not.classList.toggle('narration-highlight', currentTime >= 3.32 && currentTime < 5.00);
-  if (cards.and) cards.and.classList.toggle('narration-highlight', currentTime >= 5.00 && currentTime < 6.20);
-  if (cards.or) cards.or.classList.toggle('narration-highlight', currentTime >= 6.20 && currentTime < 7.40);
+  // Exact Whisper ASR word-level timestamps for New_Day3Part1audio11.mp3 (15.78s):
+  // 0.00s - 3.56s : Intro to precedence -> Note highlight
+  // 3.56s - 5.22s : NOT card ("not evaluates first") -> NOT card highlight
+  // 5.22s - 6.42s : AND card ("followed by and") -> AND card highlight
+  // 6.42s - 7.84s : OR card ("and then, or") -> OR card highlight
+  // 7.84s - 15.78s: "Because and binds before or, always use parentheses..." -> Note highlight
+  const isNot = currentTime >= 3.56 && currentTime < 5.22;
+  const isAnd = currentTime >= 5.22 && currentTime < 6.42;
+  const isOr = currentTime >= 6.42 && currentTime < 7.84;
+  const isNote = (currentTime >= 0.00 && currentTime < 3.56) || (currentTime >= 7.84 && currentTime <= 16.00);
+
+  if (cards.not) cards.not.classList.toggle('narration-highlight', isNot);
+  if (cards.and) cards.and.classList.toggle('narration-highlight', isAnd);
+  if (cards.or) cards.or.classList.toggle('narration-highlight', isOr);
+  if (note) note.classList.toggle('narration-highlight', isNote);
 }
 
 function updateWhereCodeHighlights(currentTime, isPlaying) {
@@ -9022,13 +9030,13 @@ function updateCompCodeHighlights(currentTime, isPlaying) {
     return;
   }
 
-  // Whisper ASR timestamps for New_Day3Part1audio06.mp3 (15.10s):
-  // 2.40s - 6.80s : "The first query retrieves employees with a salary exceeding 60,000." -> Query 1
-  // 6.80s - 10.80s: "The second finds products where stock quantity is zero or less." -> Query 2
-  // 10.80s - 15.10s: "The third uses not equal to filter out a specific department." -> Query 3
-  const isQ1 = currentTime >= 2.40 && currentTime < 6.80;
-  const isQ2 = currentTime >= 6.80 && currentTime < 10.80;
-  const isQ3 = currentTime >= 10.80 && currentTime <= 15.20;
+  // Exact Whisper ASR timestamps for New_Day3Part1audio06.mp3 (17.88s):
+  // 2.50s - 8.14s : "The first query retrieves employees with a salary exceeding 60,000..." -> Query 1
+  // 8.14s - 13.70s: "The second finds products where stock quantity is zero or less..." -> Query 2
+  // 13.70s - 17.88s: "The third uses not equal to filter out a specific department." -> Query 3
+  const isQ1 = currentTime >= 2.50 && currentTime < 8.14;
+  const isQ2 = currentTime >= 8.14 && currentTime < 13.70;
+  const isQ3 = currentTime >= 13.70 && currentTime <= 18.00;
 
   q1.classList.toggle('narration-highlight', isQ1);
   q1.classList.toggle('code-active-spotlight', isQ1);
@@ -9052,13 +9060,13 @@ function updateLogicCodeHighlights(currentTime, isPlaying) {
     return;
   }
 
-  // Whisper ASR timestamps for New_Day3Part1audio12.mp3 (15.19s):
-  // 2.40s - 6.80s : "The first query uses and defined active employees in department 20." -> Query 1
-  // 6.80s - 11.00s: "The second uses or defined customers in the North or South region." -> Query 2
-  // 11.00s - 15.20s: "The third uses not with like to exclude a specific name pattern." -> Query 3
-  const isQ1 = currentTime >= 2.40 && currentTime < 6.80;
-  const isQ2 = currentTime >= 6.80 && currentTime < 11.00;
-  const isQ3 = currentTime >= 11.00 && currentTime <= 15.20;
+  // Exact Whisper ASR timestamps for New_Day3Part1audio12.mp3 (16.90s):
+  // 2.66s - 7.84s : Query 1 (AND active employees in department 20)
+  // 7.84s - 12.52s: Query 2 (OR customers in North or South region)
+  // 12.52s - 16.90s: Query 3 (NOT with LIKE to exclude specific name pattern)
+  const isQ1 = currentTime >= 2.66 && currentTime < 7.84;
+  const isQ2 = currentTime >= 7.84 && currentTime < 12.52;
+  const isQ3 = currentTime >= 12.52 && currentTime <= 17.00;
 
   q1.classList.toggle('narration-highlight', isQ1);
   q1.classList.toggle('code-active-spotlight', isQ1);

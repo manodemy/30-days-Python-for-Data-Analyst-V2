@@ -338,7 +338,7 @@ window.COURSE_CONTENT['day03'] = {
           <div id="day03PrecWrap" style="width:100%;margin:14px 0 16px">
             <style>
               #day03PrecWrap .prec-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:8px}
-              #day03PrecWrap .prec-card{background:rgba(9,15,28,0.92);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px;animation:precReveal 0.45s ease both;transition:opacity 0.45s ease, transform 0.45s ease, border-color 0.25s ease, box-shadow 0.25s ease;overflow:hidden;position:relative}
+              #day03PrecWrap .prec-card{background:rgba(9,15,28,0.94)!important;color:#f8fafc!important;border:1px solid rgba(255,255,255,0.08)!important;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px;animation:precReveal 0.45s ease both;transition:opacity 0.45s ease, transform 0.45s ease, border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;overflow:hidden;position:relative}
               #day03PrecWrap .prec-card:hover{transform:translateY(-2px);border-color:rgba(255,255,255,0.12)}
 
               /* Smooth card transitions matching Day 01 standard */
@@ -348,16 +348,19 @@ window.COURSE_CONTENT['day03'] = {
                 pointer-events: auto;
               }
               
-              #day03PrecWrap .prec-card--not{border-top:3px solid #ef4444; --highlight-color: #ef4444; --highlight-color-rgb: 239, 68, 68;}
-              #day03PrecWrap .prec-card--and{border-top:3px solid #f59e0b; --highlight-color: #f59e0b; --highlight-color-rgb: 245, 158, 11;}
-              #day03PrecWrap .prec-card--or{border-top:3px solid #10b981; --highlight-color: #10b981; --highlight-color-rgb: 16, 185, 129;}
+              #day03PrecWrap .prec-card--not{border-top:3px solid #ef4444!important; --highlight-color: #ef4444; --highlight-color-rgb: 239, 68, 68;}
+              #day03PrecWrap .prec-card--and{border-top:3px solid #f59e0b!important; --highlight-color: #f59e0b; --highlight-color-rgb: 245, 158, 11;}
+              #day03PrecWrap .prec-card--or{border-top:3px solid #10b981!important; --highlight-color: #10b981; --highlight-color-rgb: 16, 185, 129;}
 
               #day03PrecWrap .prec-card.narration-highlight {
                 border-color: var(--highlight-color) !important;
-                box-shadow: 0 0 20px rgba(var(--highlight-color-rgb), 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+                box-shadow: 0 12px 28px -6px rgba(var(--highlight-color-rgb), 0.4), 0 0 20px rgba(var(--highlight-color-rgb), 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
                 transform: translateY(-4px) scale(1.02);
                 z-index: 10;
               }
+              #day03PrecWrap .prec-card--not.narration-highlight { background: #170e14 !important; }
+              #day03PrecWrap .prec-card--and.narration-highlight { background: #181308 !important; }
+              #day03PrecWrap .prec-card--or.narration-highlight { background: #081712 !important; }
 
 
 

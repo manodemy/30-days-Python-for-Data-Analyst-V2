@@ -5835,7 +5835,7 @@ const day02Tracks = [
 
 const day03Durations = [
   // Theory narrations (audio01–13)
-  41.7, 29.8, 17.3, 19.8, 53.3, 30.1, 5.3, 4.5, 3.9, 4.3, 11.4, 31.2, 40.4,
+  17.4, 13.8, 15.9, 6.0, 16.0, 14.3, 7.0, 9.6, 8.4, 6.9, 15.5, 14.6, 20.8,
   // Practice Q & Solution narrations (Q01–Q06 + sols)
   9.2, 19.9, 9.8, 18.5, 9.7, 21.4, 8.5, 19.5, 12.1, 21.1, 8.4, 21.0
 ];
@@ -8381,30 +8381,39 @@ function updateTableHighlights(currentTime, isPlaying) {
   if (!rows.length) return;
 
   if (!isPlaying) {
-    rows.forEach(row => row.classList.remove('narration-highlight'));
+    rows.forEach(row => {
+      row.classList.remove('narration-highlight', 'row-active-spotlight');
+    });
     return;
   }
 
+  // Whisper ASR word-level timestamps for New_Day3Part1audio05.mp3 (16.01s):
+  // 0.00s - 2.66s : "The equals sign checks for exact match." -> Row 0 (=)
+  // 2.66s - 6.94s : "Not equal, written as less-than greater-than, checks inequality." -> Row 1 (<>)
+  // 6.94s - 7.82s : "Greater-than..." -> Row 2 (>)
+  // 7.82s - 10.72s: "...and less-than work as expected for numeric ranges." -> Row 4 (<)
+  // 10.72s - 11.92s: "Greater-than-or-equal..." -> Row 3 (>=)
+  // 11.92s - 16.05s: "...and less-than-or-equal include the boundary value in the result set." -> Row 5 (<=)
   let activeIndex = -1;
-  if (currentTime >= 9.16 && currentTime < 15.68) {
-    activeIndex = 0;
-  } else if (currentTime >= 15.68 && currentTime < 21.34) {
-    activeIndex = 1;
-  } else if (currentTime >= 21.34 && currentTime < 26.86) {
-    activeIndex = 2;
-  } else if (currentTime >= 26.86 && currentTime < 35.80) {
-    activeIndex = 3;
-  } else if (currentTime >= 35.80 && currentTime < 42.62) {
-    activeIndex = 4;
-  } else if (currentTime >= 42.62 && currentTime < 51.26) {
-    activeIndex = 5;
+  if (currentTime >= 0.00 && currentTime < 2.66) {
+    activeIndex = 0; // = Equal to
+  } else if (currentTime >= 2.66 && currentTime < 6.94) {
+    activeIndex = 1; // <> or != Not equal
+  } else if (currentTime >= 6.94 && currentTime < 7.82) {
+    activeIndex = 2; // > Greater than
+  } else if (currentTime >= 7.82 && currentTime < 10.72) {
+    activeIndex = 4; // < Less than
+  } else if (currentTime >= 10.72 && currentTime < 11.92) {
+    activeIndex = 3; // >= Greater than or equal
+  } else if (currentTime >= 11.92 && currentTime < 16.05) {
+    activeIndex = 5; // <= Less than or equal
   }
 
   rows.forEach((row, idx) => {
     if (idx === activeIndex) {
-      row.classList.add('narration-highlight');
+      row.classList.add('narration-highlight', 'row-active-spotlight');
     } else {
-      row.classList.remove('narration-highlight');
+      row.classList.remove('narration-highlight', 'row-active-spotlight');
     }
   });
 }
@@ -8538,13 +8547,13 @@ function updatePrecedenceNoteHighlight(currentTime, isPlaying) {
     return;
   }
 
-  // Multi-pass highlight during audio11:
-  // 4.8s - 6.1s: NOT card
-  // 6.5s - 7.5s: AND card
-  // 7.9s - 8.6s: OR card
-  if (cards.not) cards.not.classList.toggle('narration-highlight', currentTime >= 4.8 && currentTime < 6.1);
-  if (cards.and) cards.and.classList.toggle('narration-highlight', currentTime >= 6.5 && currentTime < 7.5);
-  if (cards.or) cards.or.classList.toggle('narration-highlight', currentTime >= 7.9 && currentTime < 8.6);
+  // Multi-pass highlight during audio11 (Whisper ASR timestamps):
+  // 3.3s - 4.4s: NOT card ("not by its tightest")
+  // 4.5s - 5.4s: AND card ("then, and")
+  // 5.5s - 6.5s: OR card ("then, or")
+  if (cards.not) cards.not.classList.toggle('narration-highlight', currentTime >= 3.3 && currentTime < 4.4);
+  if (cards.and) cards.and.classList.toggle('narration-highlight', currentTime >= 4.5 && currentTime < 5.4);
+  if (cards.or) cards.or.classList.toggle('narration-highlight', currentTime >= 5.5 && currentTime < 6.5);
 }
 
 function updateDay01Audio01Highlights(currentTime, isPlaying) {

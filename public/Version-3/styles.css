@@ -7899,6 +7899,47 @@ select:focus:not(:focus-visible) {
   border-bottom-right-radius: 6px;
 }
 
+/* Day 03 Comparison Operator Table Row Spotlight (Dark Theme) */
+#day03OpsTable tr {
+  transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease !important;
+}
+
+#day03OpsTable tr.row-active-spotlight,
+#day03OpsTable tr.narration-highlight {
+  background: rgba(59, 130, 246, 0.18) !important;
+  box-shadow: 0 0 16px rgba(59, 130, 246, 0.28), inset 0 0 10px rgba(59, 130, 246, 0.12) !important;
+  position: relative;
+  z-index: 5;
+}
+
+#day03OpsTable tr.row-active-spotlight td,
+#day03OpsTable tr.narration-highlight td {
+  color: #ffffff !important;
+  border-top: 1.5px solid #3b82f6 !important;
+  border-bottom: 1.5px solid #3b82f6 !important;
+}
+
+#day03OpsTable tr.row-active-spotlight td:first-child,
+#day03OpsTable tr.narration-highlight td:first-child {
+  border-left: 3.5px solid #60a5fa !important;
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+}
+
+#day03OpsTable tr.row-active-spotlight td:last-child,
+#day03OpsTable tr.narration-highlight td:last-child {
+  border-right: 1.5px solid #3b82f6 !important;
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+#day03OpsTable tr.row-active-spotlight td code,
+#day03OpsTable tr.narration-highlight td code {
+  color: #93c5fd !important;
+  background: rgba(15, 23, 42, 0.7) !important;
+  border-color: rgba(96, 165, 250, 0.5) !important;
+}
+
 /* VS Comparison Cards Spotlight */
 .vs-card {
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease !important;

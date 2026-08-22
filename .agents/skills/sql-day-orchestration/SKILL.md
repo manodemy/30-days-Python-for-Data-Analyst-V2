@@ -1,10 +1,10 @@
 ---
 name: sql-day-orchestration
-description: Multi-agent orchestration protocol and quality gate specification (Maestro v3.0) for producing, synchronizing, and validating Day 03 through Day 18 in the SQL learning engine with 100% parity to Day 01 & Day 02.
+description: Multi-agent orchestration protocol and quality gate specification (Maestro v3.2) for producing, synchronizing, and validating Day 03 through Day 18 in the SQL learning engine with 100% parity to Day 01 & Day 02.
 ---
 
 # Maestro — Head Inspector & Pipeline Orchestrator
-### Master System Specification (v3.1 — Evolved Production Grade)
+### Master System Specification (v3.2 — Full-Spectrum Sync & Continuous Evolution)
 
 This skill governs the end-to-end production assembly line, role responsibilities, data contracts, and quality gating across **Day 03 to Day 18**.
 
@@ -19,7 +19,7 @@ This skill governs the end-to-end production assembly line, role responsibilitie
 | **Theorist** | Theory Slide Authoring | Topic Spec & Asset paths | `COURSE_CONTENT['dayXX'].slides` HTML |
 | **Quizzer** | Practice & Interview Questions | DB Schema & Difficulty Arc | `COURSE_CONTENT['dayXX'].practiceQuestions` |
 | **Voice** | Narration Script & Audio Production | Slide content & Solution SQL | Normalized MP3 files in `public/Version-3/DayXX/` |
-| **Sync** | ASR & Typewriter Sync | Solution MP3s + Solution SQL | `solutionEvents` JSON with 7-space layout |
+| **Sync** *(Upgraded)* | **Full-Spectrum Narration & Visual Syncing + Pattern Evolution** | Theory & Solution MP3s + Slide HTML + Solution SQL | 1) Whisper ASR sub-second Theory Visual Sync handlers (`updateTableHighlights`, card spotlights, timeline progressions)<br>2) `solutionEvents` JSON with 7-space layout<br>3) Codified sync patterns for future day evolution |
 | **Timekeeper** | Timeline Stitching & Engine Wiring | Audio durations + Track list | `mano-engine.js` registry, Cache-busters |
 | **Maestro** | **Head Inspector & Orchestrator** | Gate metrics & Subagent reports | Green-light deployment sign-off & Skill evolution |
 
@@ -44,8 +44,10 @@ flowchart TD
         Sentry_Out["Sentry (Outbound Asset Name Validation)"]
     end
 
-    subgraph STAGE_4 ["Stage 4: Speech & Typing Alignment"]
-        Sync["Sync (Whisper ASR + 7-Space SQL Layout + Timing Math)"]
+    subgraph STAGE_4 ["Stage 4: Full-Spectrum Narration & Visual Syncing (Sync Agent)"]
+        Sync_Theory["Sync (Whisper ASR → Theory Visual Animation & Sub-Element Highlights)"]
+        Sync_Practice["Sync (Whisper ASR → 7-Space SQL Layout + Typewriter Math + scrollAt)"]
+        Sync_Evolve["Sync (Codify Visual & Narration Sync Patterns for Future Days)"]
     end
 
     subgraph STAGE_5 ["Stage 5: Engine Registration & Linking"]
@@ -105,11 +107,27 @@ interface NarrationScriptContract {
 
 **Voice writing rules (enforced):**
 - Lecture scripts: 1–3 sentences per audio file. Spoken at natural pace (~130 WPM). Matches exactly what the slide displays.
-- Question scripts: Start with an engaging hook ("Ready to filter?", "Time to test..."). State the task clearly. End with the question ("What's your query?") — NO.  Just state the task directly without trailing prompts.
-- Solution scripts: Read out the query verbatim in spoken form (not code). Say column names as words. Say SQL keywords aloud ("SELECT first underscore name, salary... FROM employees... WHERE salary BETWEEN sixty thousand AND one hundred thousand").
+- Question scripts: State the task clearly and directly.
+- Solution scripts: Read out the query verbatim in spoken form (not code). Say column names as words. Say SQL keywords aloud.
 - Never include code formatting in narration text — write as spoken words only.
 
-### C. Stage 4 Contract (`Sync` → `solutionEvents`)
+### C. Stage 4 Contracts (`Sync` → Full-Spectrum Visual & Audio Alignment)
+
+#### 1. Theory Visual Sync Handlers (`Sync` → `mano-engine.js`)
+```typescript
+interface TheoryVisualSyncContract {
+  trackSrc: string;        // "DayXX/New_DayXPart1audioNN.mp3"
+  visualContainer: string; // DOM ID (e.g., "#day03OpsTable", "#day03PrecWrap")
+  elements: Array<{
+    selector: string;      // "tbody tr:nth-child(1)", ".prec-card--not", etc.
+    activeClass: string;   // "narration-highlight", "row-active-spotlight", etc.
+    start: number;         // Whisper ASR word start timestamp (seconds)
+    end: number;           // Whisper ASR word end timestamp (seconds)
+  }>;
+}
+```
+
+#### 2. Solution Typewriter Sync (`Sync` → `solutionEvents`)
 ```typescript
 interface SolutionEventsContract {
   code: string; // Formatted with \n and 7-space column indents under SELECT
@@ -146,10 +164,13 @@ GATE-3 (Voice + Sentry/outbound):
   ✓ Every practiceQuestion[].questionAudio and .solutionAudio has a corresponding file on disk
   ✓ Audio play buttons wired in both the theory slide HTML AND practiceQuestions[] objects
 
-GATE-4 (Sync):
-  ✓ Multi-column queries formatted with 7-space column alignment
-  ✓ Typewriter charInterval finishes within ±150ms of audio end
-  ✓ scrollAt timestamp occurs after all code typing segments complete
+GATE-4 (Sync — Full-Spectrum Sync Inspection):
+  ✓ Theory Visual Elements: 100% of narrated rows, comparison cards, Venn diagrams, and timeline steps have verified Whisper ASR millisecond timestamps.
+  ✓ Zero stale hardcoded animation intervals in mano-engine.js.
+  ✓ Multi-column queries formatted with 7-space column alignment directly under SELECT.
+  ✓ Typewriter charInterval finishes within ±150ms of audio end.
+  ✓ scrollAt timestamp occurs after all code typing segments complete.
+  ✓ Newly developed theory sync patterns are codified into the Active Rule Registry for future day reuse.
 
 GATE-5 (Timekeeper):
   ✓ node -c passes with zero syntax errors on mano-engine.js and day-XX.js
@@ -160,10 +181,11 @@ GATE-5 (Timekeeper):
 GATE-6 (Maestro Live Checks):
   6.1 Master Timeline: Progress bar duration == total calculated audio duration.
   6.2 Timeline Seeking: Dragging scrubber instantly updates UI question card, editor, and active tab.
-  6.3 Typewriter Sync: Code character typing matches narrator speech pacing in real time.
-  6.4 Single-Play Isolation: Individual play on Question/Solution pauses cleanly at end without advancing to next slide.
-  6.5 SVG Icon State: Standard SVGs only; Navbar, Timeline, and Card buttons toggle cleanly between Play (▶) and Pause (⏸).
-  6.6 Grading & Execution: Query submission triggers correct SQLite execution and score banner updates.
+  6.3 Theory Sync: Visual rows, cards, and diagrams light up in exact synchrony with the narrator's voice.
+  6.4 Typewriter Sync: Code character typing matches narrator speech pacing in real time.
+  6.5 Single-Play Isolation: Individual play on Question/Solution pauses cleanly at end without advancing to next slide.
+  6.6 SVG Icon State: Standard SVGs only; Navbar, Timeline, and Card buttons toggle cleanly between Play (▶) and Pause (⏸).
+  6.7 Grading & Execution: Query submission triggers correct SQLite execution and score banner updates.
 ```
 
 ---
@@ -171,21 +193,6 @@ GATE-6 (Maestro Live Checks):
 ## 🧬 5. Active Rule Registry (Learned Baseline)
 
 ```
-[TIMEKEEPER-001] [STATUS: active] [SCOPE: Timekeeper]
-Statement: Play/Pause button innerHTML must use inline standard SVGs (<svg class="play-icon"...> and <svg class="pause-icon"...>), never raw unicode characters or '?' literals.
-Added: Day01 — encoding mismatch caused browsers to render '?' square boxes.
-Supersedes: none
-
-[TIMEKEEPER-002] [STATUS: active] [SCOPE: Timekeeper]
-Statement: onNarrationSegmentEnded must check if (playbackMode === 'single') and cleanly execute activeAudioInstance.pause(), activeAudioInstance = null, updatePlayButtonStates(false), and return immediately without advancing track index.
-Added: Day01 — single question playback was falling through and re-playing Question 02 in an infinite loop.
-Supersedes: none
-
-[TIMEKEEPER-003] [STATUS: active] [SCOPE: Timekeeper]
-Statement: All programmatic CodeMirror setValue operations during typewriter playback must be wrapped in isProgrammaticTyping = true lock guards to prevent accidental user change event firing.
-Added: Day01 — editor focus and change events were overriding narration typing.
-Supersedes: none
-
 [SYNC-001] [STATUS: active] [SCOPE: Sync]
 Statement: All multi-column SQL queries in solutionEvents.code must be formatted multi-line with 7-space column alignment directly under SELECT.
 Added: Day02 — single-line queries exceeded code viewport and caused poor student readability.
@@ -196,14 +203,19 @@ Statement: Spoken keywords uttered within <50ms of each other must be grouped in
 Added: Day02 — rapid 'SELECT DISTINCT' words caused jittery typewriter pauses.
 Supersedes: none
 
-[QUIZZER-001] [STATUS: active] [SCOPE: Quizzer]
-Statement: Every practice question must provide an executable expectedQuery and a non-empty starterCode comment block.
-Added: Day01 — grading engine threw null reference when grading questions without expectedQuery.
+[SYNC-003] [STATUS: active] [SCOPE: Sync]
+Statement: Theory Visual Synchronization Protocol: Every animated visual element (table row, card, Venn diagram, lifecycle node) referenced in theory narration MUST have sub-second Whisper ASR timestamps extracted and wired in mano-engine.js timeupdate dispatch.
+Added: Day03 — hardcoded legacy timestamps caused table rows to desync completely from narration.
 Supersedes: none
 
-[SENTRY-001] [STATUS: active] [SCOPE: Sentry]
-Statement: Practice question audio paths must be namespaced with 'DayXX/' directory prefix in single-topic mode (e.g., 'Day03/New_Day3Question01.mp3').
-Added: Day02 — root-level audio lookups failed 404 on Vercel deployment.
+[SYNC-004] [STATUS: active] [SCOPE: Sync]
+Statement: Theory Sync Evolution & Pattern Porting: Any newly established theory visual sync pattern (e.g., table row multi-segment highlight, multi-card precedence highlight, execution order timeline step progression) must be abstracted and documented as a reusable pattern for all future days.
+Added: Day03 — user mandated that Sync agent take complete ownership of theory visual syncing and evolve patterns for subsequent days.
+Supersedes: none
+
+[SYNC-005] [STATUS: active] [SCOPE: Sync]
+Statement: Zero Stale Hardcoded Timestamps: Whenever narration audio is regenerated or revised via Voice TTS, Sync MUST immediately rerun Whisper ASR to recalibrate visual animation timings against actual audio length.
+Added: Day03 — changing audio file duration broke hardcoded row highlight intervals.
 Supersedes: none
 
 [VOICE-001] [STATUS: active] [SCOPE: Voice]
@@ -229,5 +241,30 @@ Supersedes: none
 [THEORIST-002] [STATUS: active] [SCOPE: Theorist]
 Statement: No inline CSS inside a .slide-section may set opacity:0 on child elements without a paired .revealed or .narration-highlight class escape hatch. Opacity:0 applied globally during playback causes cards to permanently disappear.
 Added: Day03 — #day03PrecWrap.narration-active .prec-card { opacity:0 } broke NOT/AND/OR card visibility during narration.
+Supersedes: none
+
+[TIMEKEEPER-001] [STATUS: active] [SCOPE: Timekeeper]
+Statement: Play/Pause button innerHTML must use inline standard SVGs (<svg class="play-icon"...> and <svg class="pause-icon"...>), never raw unicode characters or '?' literals.
+Added: Day01 — encoding mismatch caused browsers to render '?' square boxes.
+Supersedes: none
+
+[TIMEKEEPER-002] [STATUS: active] [SCOPE: Timekeeper]
+Statement: onNarrationSegmentEnded must check if (playbackMode === 'single') and cleanly execute activeAudioInstance.pause(), activeAudioInstance = null, updatePlayButtonStates(false), and return immediately without advancing track index.
+Added: Day01 — single question playback was falling through and re-playing Question 02 in an infinite loop.
+Supersedes: none
+
+[TIMEKEEPER-003] [STATUS: active] [SCOPE: Timekeeper]
+Statement: All programmatic CodeMirror setValue operations during typewriter playback must be wrapped in isProgrammaticTyping = true lock guards to prevent accidental user change event firing.
+Added: Day01 — editor focus and change events were overriding narration typing.
+Supersedes: none
+
+[QUIZZER-001] [STATUS: active] [SCOPE: Quizzer]
+Statement: Every practice question must provide an executable expectedQuery and a non-empty starterCode comment block.
+Added: Day01 — grading engine threw null reference when grading questions without expectedQuery.
+Supersedes: none
+
+[SENTRY-001] [STATUS: active] [SCOPE: Sentry]
+Statement: Practice question audio paths must be namespaced with 'DayXX/' directory prefix in single-topic mode (e.g., 'Day03/New_Day3Question01.mp3').
+Added: Day02 — root-level audio lookups failed 404 on Vercel deployment.
 Supersedes: none
 ```

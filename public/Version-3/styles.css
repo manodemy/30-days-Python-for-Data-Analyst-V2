@@ -8100,16 +8100,18 @@ select:focus:not(:focus-visible) {
 }
 
 /* Interview Q&A and Parent/Child Block Spotlight */
-#iqReferentialIntegrity, #iqSqlVsNosql, #iqCompositePk, #parentTableDept {
-  transition: background 0.3s ease, padding 0.3s ease, border-radius 0.3s ease, box-shadow 0.3s ease !important;
+#iqReferentialIntegrity, #iqSqlVsNosql, #iqCompositePk, #parentTableDept, #day03QANull, #day03QANotIn, #day03QALike, .interview-box > div {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .block-active-spotlight {
-  background: rgba(59, 130, 246, 0.06) !important;
-  border-left: 3.5px solid #3b82f6 !important;
-  border-radius: 6px !important;
-  padding: 8px 12px !important;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.08) !important;
+  background: #ffffff !important;
+  border: 1.5px solid #7c3aed !important;
+  border-left: 4.5px solid #7c3aed !important;
+  border-radius: 10px !important;
+  padding: 14px 16px !important;
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.14) !important;
+  transform: translateY(-1px) !important;
 }
 
 /* ═════════════════════════════════════════════════════════════════

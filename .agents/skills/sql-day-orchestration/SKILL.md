@@ -376,4 +376,13 @@ Supersedes: none
 Statement: Play Lesson Button Visual Identity Standard for Day03+: Every day HTML file from Day03 onwards MUST include: (1) the `@keyframes playBtnRadarPulse` CSS animation and `.p11-play-radar-pulse` class in a `<style>` block in the `<head>`, (2) the `.p11-play-radar-pulse` class applied directly to `#navPlayBtn` in the HTML (not inline opacity or pointer-events), and (3) NO `opacity` or `pointer-events` inline styles on `#navPlayBtn` that would make it appear disabled. The `updatePlayButtonStates()` function in mano-engine.js automatically manages the radar pulse class: it removes it when playing (equalizer takes over) and restores it when paused (for days where currentDay !== 'day01' && currentDay !== 'day02'). Day01.html is exempt as it uses its own inline radar pulse CSS. Day02.html is also exempt (no radar pulse). All future days (Day04+) must copy the `<style>` block pattern from day03.html exactly.
 Added: Day03 — Play Lesson button had `opacity: 0.6` inline style (stale scaffolding artifact) making it look permanently disabled. Also missing radar pulse CSS entirely, making the button feel dead on page load.
 Supersedes: none
+[SYNC-021] [STATUS: active] [SCOPE: Sync]
+Statement: Interview Question Card Presentation & Single-Card Isolation Standard:
+Every Day from Day 01 through Day 18 MUST format Interview Q&A cards following the unified container architecture:
+  (1) Markup: Wrap the entire Q&A block in `<div class="slide-section" id="dayXXQASection"><div class="interview-box"><h4 id="dayXXQAHeading">🎓 Interview Insights &amp; Q&amp;A</h4> ... </div></div>`.
+  (2) Card Rows: Each question MUST be a direct child `<div>` with a unique ID (e.g., `#day03QANull`, `#day03QANotIn`), separated by `<hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />`.
+  (3) Single-Card Narration Isolation: During playback of an interview track, `updateSlidePlaybackVisibility(targetSelector)` MUST isolate and display ONLY the active question card (`display: ''` with `.block-active-spotlight`), while hiding all sibling cards (`display: 'none'`, `.vis-target-hidden`) and all non-interview slide sections.
+  (4) Pause / Free Reading Restore: On pause or lesson completion, `clearSlidePlaybackVisibility()` MUST immediately restore all Q&A cards in `.interview-box > div` to `display: ''` so students can freely scroll and read all questions.
+Added: Day03 — replicated Day 01 interview card isolation standard to ensure focused, single-card display during interview audio narration and complete multi-card restoration on pause.
+Supersedes: none
 ```

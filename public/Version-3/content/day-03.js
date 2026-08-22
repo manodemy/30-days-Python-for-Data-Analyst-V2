@@ -971,35 +971,27 @@ WHERE commission IS NOT NULL -- ✅</code></pre>
         </div>
 
         <!-- ── Interview Q&A Consolidated Section ── -->
-        <div class="slide-section">
+        <div class="slide-section" id="day03QASection">
           <div class="interview-box">
-            <h4 id="day03QAHeading">🎯 Interview Insights &amp; Q&amp;A</h4>
+            <h4 id="day03QAHeading">🎓 Interview Insights &amp; Q&amp;A</h4>
 
-            <div style="margin-bottom: 14px;" id="day03QANull">
-              <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; width: 100%;">
-                <div style="flex: 1;">
-                  <p><strong>Q: Why does <code>WHERE commission = NULL</code> return no rows, even when commission is NULL for several employees?</strong></p>
-                  <p style="margin-bottom: 0;"><em>A: In SQL, NULL represents an <strong>unknown value</strong>. Any comparison involving NULL — including <code>= NULL</code>, <code>!= NULL</code>, or arithmetic — returns a third truth value called <strong>UNKNOWN</strong> (not TRUE, not FALSE). The WHERE clause only retains rows that evaluate to TRUE, so UNKNOWN rows are silently discarded. The correct syntax is <code>WHERE commission IS NULL</code>, which is a special predicate designed specifically to detect the absence of a value.</em></p>
-                </div>
-              </div>
+            <div id="day03QANull">
+              <p><strong>Q: Why does <code>WHERE commission = NULL</code> return no rows, even when commission is NULL for several employees?</strong></p>
+              <p><em>A: In SQL, NULL represents an <strong>unknown value</strong>. Any comparison involving NULL — including <code>= NULL</code>, <code>!= NULL</code>, or arithmetic — returns a third truth value called <strong>UNKNOWN</strong> (not TRUE, not FALSE). The WHERE clause only retains rows that evaluate to TRUE, so UNKNOWN rows are silently discarded. The correct syntax is <code>WHERE commission IS NULL</code>, which is a special predicate designed specifically to detect the absence of a value.</em></p>
             </div>
 
-            <div style="margin-bottom: 14px;" id="day03QANotIn">
-              <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; width: 100%;">
-                <div style="flex: 1;">
-                  <p><strong>Q: You write <code>WHERE department_id NOT IN (SELECT dept_id FROM inactive_depts)</code> and get zero rows back — but you know there are valid employees. What is the likely cause?</strong></p>
-                  <p style="margin-bottom: 0;"><em>A: The subquery is almost certainly returning at least one <code>NULL</code> value. When <code>NOT IN</code> is evaluated, SQL internally expands it into a chain of <code>AND column != val1 AND column != val2 ...</code>. Any comparison of a column against <code>NULL</code> produces <code>UNKNOWN</code>, which makes the entire AND-chain UNKNOWN — causing every row to be filtered out. The fix is to add <code>WHERE dept_id IS NOT NULL</code> to the subquery, or to rewrite with <code>NOT EXISTS</code> which handles NULLs correctly.</em></p>
-                </div>
-              </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day03QANotIn">
+              <p><strong>Q: You write <code>WHERE department_id NOT IN (SELECT dept_id FROM inactive_depts)</code> and get zero rows back — but you know there are valid employees. What is the likely cause?</strong></p>
+              <p><em>A: The subquery is almost certainly returning at least one <code>NULL</code> value. When <code>NOT IN</code> is evaluated, SQL internally expands it into a chain of <code>AND column != val1 AND column != val2 ...</code>. Any comparison of a column against <code>NULL</code> produces <code>UNKNOWN</code>, which makes the entire AND-chain UNKNOWN — causing every row to be filtered out. The fix is to add <code>WHERE dept_id IS NOT NULL</code> to the subquery, or to rewrite with <code>NOT EXISTS</code> which handles NULLs correctly.</em></p>
             </div>
+
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
 
             <div id="day03QALike">
-              <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; width: 100%;">
-                <div style="flex: 1;">
-                  <p><strong>Q: What is the performance impact of leading-wildcard LIKE patterns such as <code>WHERE name LIKE '%Manager%'</code>?</strong></p>
-                  <p style="margin-bottom: 0;"><em>A: A leading <code>%</code> wildcard forces a <strong>full table scan</strong> — the database engine cannot use a B-tree index on the <code>name</code> column because the index is ordered by the start of the string, not by what's in the middle. This is one of the most common performance anti-patterns in SQL. For large tables, the solution is a <strong>Full-Text Search index</strong> (e.g., <code>FULLTEXT</code> in MySQL, <code>tsvector</code> in PostgreSQL, or <code>CONTAINS</code> in SQL Server) which is optimised for substring and keyword lookups. If you can anchor the pattern to the start (e.g., <code>LIKE 'Manager%'</code>), the index can be used.</em></p>
-                </div>
-              </div>
+              <p><strong>Q: What is the performance impact of leading-wildcard LIKE patterns such as <code>WHERE name LIKE '%Manager%'</code>?</strong></p>
+              <p><em>A: A leading <code>%</code> wildcard forces a <strong>full table scan</strong> — the database engine cannot use a B-tree index on the <code>name</code> column because the index is ordered by the start of the string, not by what's in the middle. This is one of the most common performance anti-patterns in SQL. For large tables, the solution is a <strong>Full-Text Search index</strong> (e.g., <code>FULLTEXT</code> in MySQL, <code>tsvector</code> in PostgreSQL, or <code>CONTAINS</code> in SQL Server) which is optimised for substring and keyword lookups. If you can anchor the pattern to the start (e.g., <code>LIKE 'Manager%'</code>), the index can be used.</em></p>
             </div>
           </div>
         </div>

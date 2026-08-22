@@ -10460,7 +10460,7 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
     // 6. Highlight active target row / card / Q&A block without shifting layout
     const targetRow = targetEl.closest('tr');
     const targetCard = targetEl.closest('.vs-card, .info-card, .prec-card');
-    const targetIQ = targetEl.closest('#iqReferentialIntegrity, #iqSqlVsNosql, #iqCompositePk, #parentTableDept, #iqIndexOnlyScan, #iqSelectStarCosts, #iqHeapScanVsIndexScan');
+    const targetIQ = targetEl.closest('.interview-box > div, #iqReferentialIntegrity, #iqSqlVsNosql, #iqCompositePk, #parentTableDept, #iqIndexOnlyScan, #iqSelectStarCosts, #iqHeapScanVsIndexScan, #day03QANull, #day03QANotIn, #day03QALike');
 
     if (targetRow) {
       targetRow.classList.add('row-active-spotlight');

@@ -257,6 +257,11 @@ Statement: Real-Time Zero-Latency Audio Triggering: Audio playback initiation mu
 Added: Day03 — destructive audio unloading caused a delay between click and playback.
 Supersedes: none
 
+[SYNC-013] [STATUS: active] [SCOPE: Sync]
+Statement: First-Narration Hero Zoom vs. Remaining-Tracks Document Scrolling: Hero zoom entrance and section isolation (.section-hidden, .stunning-section-entry) MUST apply ONLY to the 1st narration track (Track 01 / lesson opener). For all remaining narration tracks (Track 02 onwards), the engine MUST keep all slide sections visible in the DOM and use smooth, natural viewport scrolling (scrollParent.scrollTo({ top: relativeTop - 16, behavior: 'smooth' })) to position the active section cleanly without jarring zoom-pop transitions.
+Added: Day03 — user mandated that zoom appearance be reserved exclusively for the 1st narration, while remaining tracks use smooth scrolling and precise viewport positioning.
+Supersedes: none
+
 [VOICE-001] [STATUS: active] [SCOPE: Voice]
 Statement: Voice must ALWAYS create narrations/day-XX.json BEFORE running the TTS build. The JSON is the source of truth — if it doesn't exist, build-audio.js will error and produce no files. Never run build-audio.js before the JSON is written and validated.
 Added: Day03 — discovered that Day03 had 13 theory MP3s on disk but no narrations/day-03.json, and zero question/solution MP3s because the JSON was never authored.

@@ -9456,9 +9456,8 @@ function scrollToTarget(selector, isSeek = true) {
   const container = document.getElementById('slideContent') || document.getElementById('slideBodyText');
   if (!container) return;
 
-  // When narration playback is active, the active section is isolated cleanly at the top of the container.
-  // Scroll container to top: 0 to ensure headings, audio buttons, and cards are never cropped under the sticky slide header!
-  if (typeof isCombinedPlaying !== 'undefined' && isCombinedPlaying) {
+  const isFirstNarration = selector === '#day03Where' || (typeof combinedTrackIndex !== 'undefined' && combinedTrackIndex === 0);
+  if (isFirstNarration) {
     container.scrollTo({ top: 0, behavior: isSeek ? 'auto' : 'smooth' });
     return;
   }
@@ -9478,7 +9477,7 @@ function scrollToTarget(selector, isSeek = true) {
     const targetRect = blockToScroll.getBoundingClientRect();
     const relativeTop = targetRect.top - containerRect.top + container.scrollTop;
     container.scrollTo({
-      top: Math.max(0, relativeTop - 12),
+      top: Math.max(0, relativeTop - 16),
       behavior: isSeek ? 'auto' : 'smooth'
     });
   }
@@ -10120,64 +10119,67 @@ function getVisibilityBlock(targetElement, sectionBoundary) {
 function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
   const containers = [
     document.getElementById('slideBodyText'),
+    document.getElementById('slideContent'),
     document.getElementById('presentSlideContent')
   ].filter(Boolean);
+
+  const isFirstNarration = targetSelector === '#day03Where' || (typeof combinedTrackIndex !== 'undefined' && combinedTrackIndex === 0);
 
   containers.forEach(container => {
     container.classList.add('playback-active');
 
     // 1. Clear previous sub-element spotlight highlights
-    container.querySelectorAll('.narration-spotlight-active, .row-active-spotlight, .card-active-spotlight, .block-active-spotlight, .narration-highlight').forEach(el => {
-      el.classList.remove('narration-spotlight-active', 'row-active-spotlight', 'card-active-spotlight', 'block-active-spotlight', 'narration-highlight');
+    container.querySelectorAll('.narration-spotlight-active, .row-active-spotlight, .card-active-spotlight, .block-active-spotlight, .narration-highlight, .code-active-spotlight').forEach(el => {
+      el.classList.remove('narration-spotlight-active', 'row-active-spotlight', 'card-active-spotlight', 'block-active-spotlight', 'narration-highlight', 'code-active-spotlight');
     });
 
     // 2. Find the target element inside this container
     const targetEl = container.querySelector(targetSelector);
     if (!targetEl) return;
 
-    // 3. Find the active section wrapper (.slide-section) that contains targetEl
-    const activeSection = targetEl.closest('.slide-section');
-    if (!activeSection) {
-      container.querySelectorAll('.slide-section').forEach(s => s.classList.remove('section-hidden'));
-      return;
-    }
-
-    // 4. Check if activeSection is ALREADY active and mounted
-    const isAlreadyActiveSection = !activeSection.classList.contains('section-hidden') && 
-                                   activeSection.classList.contains('active-section-mounted');
-
-    if (!isAlreadyActiveSection) {
-      // Hide all non-active slide-sections and remove mounted flag
-      container.querySelectorAll('.slide-section').forEach(section => {
-        if (section !== activeSection) {
-          section.classList.add('section-hidden');
-          section.classList.remove('stunning-section-entry', 'active-section-mounted', 'instant-display');
-        } else {
-          section.classList.remove('section-hidden');
-          section.classList.add('active-section-mounted');
-          if (isSeek) {
-            section.classList.add('instant-display');
-            section.classList.remove('stunning-section-entry');
+    if (isFirstNarration) {
+      // 1st Narration ONLY: Hero Zoom Entrance with Section Isolation
+      const activeSection = targetEl.closest('.slide-section');
+      if (activeSection) {
+        container.querySelectorAll('.slide-section').forEach(section => {
+          if (section !== activeSection) {
+            section.classList.add('section-hidden');
+            section.classList.remove('stunning-section-entry', 'active-section-mounted', 'instant-display');
           } else {
-            section.classList.remove('instant-display');
-            section.classList.add('stunning-section-entry');
+            section.classList.remove('section-hidden');
+            section.classList.add('active-section-mounted');
+            if (isSeek) {
+              section.classList.add('instant-display');
+              section.classList.remove('stunning-section-entry');
+            } else {
+              section.classList.remove('instant-display');
+              section.classList.add('stunning-section-entry');
+            }
           }
-        }
-      });
-
-      // Ensure all elements inside activeSection are fully visible
-      activeSection.querySelectorAll('.vis-target-hidden').forEach(el => {
-        el.classList.remove('vis-target-hidden');
-        el.style.display = '';
-      });
-
-      // Reset container scroll position to top ONLY when entering a NEW section!
+        });
+      }
       container.scrollTop = 0;
-    }
+    } else {
+      // Remaining Tracks (Track 2 onwards): Smooth natural document scrolling without zoom pop
+      container.querySelectorAll('.slide-section').forEach(section => {
+        section.classList.remove('section-hidden', 'stunning-section-entry', 'active-section-mounted');
+        section.style.display = '';
+        section.style.opacity = '';
+      });
 
-    // Keep H2 at the top always visible
-    const h2 = container.querySelector('h2');
-    if (h2) h2.classList.remove('section-hidden', 'vis-target-hidden');
+      // Smoothly scroll and position the target section in view
+      const blockToScroll = targetEl.closest('.slide-section') || targetEl;
+      const scrollParent = document.getElementById('slideContent') || container;
+      if (scrollParent && blockToScroll) {
+        const parentRect = scrollParent.getBoundingClientRect();
+        const targetRect = blockToScroll.getBoundingClientRect();
+        const relativeTop = targetRect.top - parentRect.top + scrollParent.scrollTop;
+        scrollParent.scrollTo({
+          top: Math.max(0, relativeTop - 16),
+          behavior: isSeek ? 'auto' : 'smooth'
+        });
+      }
+    }
 
     // 5. If target is inside an .interview-box, show ONLY the active question card and hide all other sibling cards
     const interviewBox = targetEl.closest('.interview-box');
@@ -10197,11 +10199,6 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
         h4.classList.remove('vis-target-hidden');
         h4.style.display = '';
       }
-    } else {
-      activeSection.querySelectorAll('.interview-box > div').forEach(card => {
-        card.classList.remove('vis-target-hidden');
-        card.style.display = '';
-      });
     }
 
     // 6. Highlight active target row / card / Q&A block without shifting layout

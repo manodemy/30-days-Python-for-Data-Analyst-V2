@@ -33,6 +33,7 @@ let COURSE_CONFIG = {
 
 function isAdminUser() {
   try {
+    if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) return true;
     const cachedEmail = (localStorage.getItem('manodemy_user_email') || '').toLowerCase();
     if (cachedEmail === 'manodamy25@gmail.com' || cachedEmail.includes('manodemy') || cachedEmail.includes('manodamy')) return true;
     const supaData = localStorage.getItem('sb-erqoyvbuhmkyvcqgwcbz-auth-token');
@@ -5013,7 +5014,7 @@ function loadDayContent(dayId) {
 
     // Lazy-load the content script
     const script = document.createElement('script');
-    script.src = `/Version-3/content/day-${String(dayNum).padStart(2, '0')}.js?v=14.37`;
+    script.src = `/Version-3/content/day-${String(dayNum).padStart(2, '0')}.js?v=${Date.now()}`;
     script.onload = () => {
       // Re-run now that module is loaded
       loadDayContent(dayId);

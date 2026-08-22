@@ -684,18 +684,20 @@ window.COURSE_CONTENT['day03'] = {
                 </ul>
               </div>
             </div>
+          </div>
+        </div>
 
-            <div class="precedence-note" id="day03PrecedenceNote" style="margin-top: 14px; padding: 12px; background: rgba(255,255,255,0.02); border-left: 3px solid #3b82f6; border-top: 1px solid rgba(255,255,255,0.05); border-right: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05); border-radius: 4px 8px 8px 4px;">
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                <span style="color: #60a5fa; font-weight: 700; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 4px;">⚠️ Precedence Rule</span>
-                <button class="audio-play-btn" onclick="playAudio('Day03/New_Day3Part1audio11.mp3', this)" title="Play narration" style="flex-shrink: 0;">
-                  <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                </button>
-              </div>
-              <p style="margin: 0; font-size: 0.72rem; line-height: 1.5; color: #94a3b8;">
-                SQL evaluates them in <strong>operator precedence</strong> order: <code>NOT</code> binds tightest → then <code>AND</code> → then <code>OR</code>. Mixing <code>AND</code> and <code>OR</code> without parentheses is a classic bug source — always use brackets to make your intent explicit.
-              </p>
+        <div class="slide-section" id="day03PrecedenceSection">
+          <div class="precedence-note" id="day03PrecedenceNote" style="margin: 0; padding: 16px; background: rgba(59, 130, 246, 0.08); border-left: 4px solid #3b82f6; border-top: 1px solid rgba(255,255,255,0.08); border-right: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.08); border-radius: 8px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+              <span style="color: #60a5fa; font-weight: 700; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 6px;">⚠️ Operator Precedence Rule</span>
+              <button class="audio-play-btn" onclick="playAudio('Day03/New_Day3Part1audio11.mp3', this)" title="Play narration" style="flex-shrink: 0;">
+                <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              </button>
             </div>
+            <p style="margin: 0; font-size: 0.80rem; line-height: 1.6; color: #cbd5e1;">
+              SQL evaluates them in <strong>operator precedence</strong> order: <code>NOT</code> binds tightest → then <code>AND</code> → then <code>OR</code>. Mixing <code>AND</code> and <code>OR</code> without parentheses is a classic bug source — always use brackets to make your intent explicit.
+            </p>
           </div>
         </div>
 

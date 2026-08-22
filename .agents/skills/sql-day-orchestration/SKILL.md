@@ -237,6 +237,16 @@ Statement: Anti-Cropping Top-Alignment Protocol: During narration playback or is
 Added: Day03 — scrolling to inner <pre> elements caused comparison examples heading to be cropped under #slideHeader.
 Supersedes: none
 
+[SYNC-009] [STATUS: active] [SCOPE: Sync]
+Statement: High-Contrast Code Illumination: Active code highlights (.code-active-spotlight, .narration-highlight) must maintain deep dark IDE background (linear-gradient #091329 to #0d1b3a) with a crisp neon left border beacon (4.5px solid #38bdf8) and luminous syntax tokens (#ffffff text, #38bdf8 keywords, #7dd3fc comments). Never apply milky, semi-transparent light blue fills that wash out keyword contrast.
+Added: Day03 — washed out light blue fill made code keywords low-contrast during Audio 02 narration.
+Supersedes: none
+
+[SYNC-010] [STATUS: active] [SCOPE: Sync]
+Statement: Discrete Section Granularity for Multi-Track Concepts: When a theoretical topic has multiple sub-narration tracks (e.g. Venn diagrams vs. Operator Precedence rule notes), each sub-track must reside in its own dedicated .slide-section container so that neither card exceeds standard viewport height (max 400px) or causes top/bottom clipping during narration.
+Added: Day03 — compound section containing both Venn diagrams and Precedence note caused Venn diagrams to be clipped when Precedence note played.
+Supersedes: none
+
 [VOICE-001] [STATUS: active] [SCOPE: Voice]
 Statement: Voice must ALWAYS create narrations/day-XX.json BEFORE running the TTS build. The JSON is the source of truth — if it doesn't exist, build-audio.js will error and produce no files. Never run build-audio.js before the JSON is written and validated.
 Added: Day03 — discovered that Day03 had 13 theory MP3s on disk but no narrations/day-03.json, and zero question/solution MP3s because the JSON was never authored.

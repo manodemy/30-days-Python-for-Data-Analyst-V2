@@ -58,12 +58,14 @@ export default async function NotebookPage({
   // Check for Guest Challenge Pass (e.g. ?q=1 or ?guest=true)
   const isGuestPass = searchParams?.guest === 'true' || searchParams?.q !== undefined || searchParams?.question !== undefined;
 
-  // ── SQL Course Routes: Redirect to unified Interactive SQL Sandbox (/Version-3/index.html) ──
+  // ── SQL Course Routes: Redirect to the correct SQL page ──
   if (cleanDayId.startsWith('sql-day')) {
     const dayNum = parseInt(cleanDayId.replace('sql-day', ''), 10) || 1;
+    const formattedDay = dayNum.toString().padStart(2, '0');
     const qParam = searchParams?.q ? `&q=${searchParams.q}` : (searchParams?.question ? `&q=${searchParams.question}` : '');
     const guestParam = isGuestPass ? '&guest=true' : '';
-    redirect(`/Version-3/index.html?day=${dayNum}${qParam}${guestParam}`);
+    // Redirect directly to the dedicated static SQL page to avoid redirect loops
+    redirect(`/sql/day${formattedDay}.html?${qParam}${guestParam}`);
   }
 
   // ── Input Validation: block path traversal & invalid dayId formats ──────────

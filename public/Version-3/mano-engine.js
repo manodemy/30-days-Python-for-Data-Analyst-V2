@@ -9080,32 +9080,79 @@ function updateLogicCodeHighlights(currentTime, isPlaying) {
 }
 
 /* ─────────────────────────────────────────────────────────────────
-   [SYNC-020] Narration Subblock Smooth-Scroll Protocol (Enhanced)
-   Gently scrolls active code sub-blocks into prime center viewing
-   position whenever a container holds 2+ cards and subsequent cards
-   (e.g. Card 2, 3, or 4) are reached or near viewport edges.
-   Safe-zone check prevents cards from being occluded by the fixed
-   bottom playback bar (window.innerHeight - 110px).
+   [SYNC-020] Narration Subblock Smart Heading-Preserving Scroll
+   Ensures that section titles/headings NEVER get pushed offscreen or
+   hidden underneath the top header bar when code blocks or sub-cards
+   are highlighted during narration.
    ───────────────────────────────────────────────────────────────── */
 const _narScrollTimers = new WeakMap();
 function narrationScrollToSubblock(el) {
   if (!el) return;
-  if (_narScrollTimers.has(el)) return; // already queued for this card
-  
-  const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 600;
-  const topSafeLimit = 60; // Top header safe threshold
-  const bottomSafeLimit = viewportHeight - 110; // Bottom playback bar clearance (60px bar + 50px buffer)
-  
-  const rect = el.getBoundingClientRect();
-  const fullyInSafeZone = rect.top >= topSafeLimit && rect.bottom <= bottomSafeLimit;
-  if (fullyInSafeZone) return; // fully visible inside safe viewport — no scroll needed
+  if (_narScrollTimers.has(el)) return;
 
-  const tid = setTimeout(() => {
-    // Scroll card smoothly to center position with generous breathing room
-    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    setTimeout(() => _narScrollTimers.delete(el), 500);
-  }, 60); // fast transition responsiveness
-  _narScrollTimers.set(el, tid);
+  const container = document.getElementById('slideContent') || el.closest('.slide-content');
+  if (!container) return;
+
+  const section = el.closest('.slide-section') || el.closest('.code-block-container') || el.parentElement;
+  const heading = section ? (section.querySelector('h3, h4, .heading-with-audio') || section) : null;
+
+  const containerRect = container.getBoundingClientRect();
+  const elRect = el.getBoundingClientRect();
+  const headingRect = heading ? heading.getBoundingClientRect() : null;
+
+  const topPadding = 12;
+  const bottomPadding = 24;
+
+  // 1. If heading is above container top (e.g. pushed under sticky header), ALWAYS pull heading back into view!
+  if (headingRect && headingRect.top < containerRect.top + topPadding) {
+    const scrollUpNeeded = (containerRect.top + topPadding) - headingRect.top;
+    const tid = setTimeout(() => {
+      container.scrollBy({ top: -scrollUpNeeded, behavior: 'smooth' });
+      setTimeout(() => _narScrollTimers.delete(el), 350);
+    }, 40);
+    _narScrollTimers.set(el, tid);
+    return;
+  }
+
+  // 2. If this is the 1st subblock in the block/section, make sure the heading + 1st block are at the top
+  const isFirstChild = !el.previousElementSibling || el.id.endsWith('1') || el.id.endsWith('Query1') || el.id.endsWith('Syntax');
+  if (isFirstChild) {
+    if (headingRect && headingRect.top > containerRect.top + topPadding + 40) {
+      const scrollDiff = headingRect.top - (containerRect.top + topPadding);
+      const tid = setTimeout(() => {
+        container.scrollBy({ top: scrollDiff, behavior: 'smooth' });
+        setTimeout(() => _narScrollTimers.delete(el), 350);
+      }, 40);
+      _narScrollTimers.set(el, tid);
+      return;
+    }
+  }
+
+  // 3. If element is already completely visible within the container viewport, do not scroll!
+  if (elRect.top >= containerRect.top + topPadding && elRect.bottom <= containerRect.bottom - bottomPadding) {
+    return;
+  }
+
+  // 4. If element extends below bottom of container, scroll down just enough to reveal it
+  if (elRect.bottom > containerRect.bottom - bottomPadding) {
+    const scrollDownNeeded = elRect.bottom - (containerRect.bottom - bottomPadding);
+    const tid = setTimeout(() => {
+      container.scrollBy({ top: scrollDownNeeded, behavior: 'smooth' });
+      setTimeout(() => _narScrollTimers.delete(el), 350);
+    }, 40);
+    _narScrollTimers.set(el, tid);
+    return;
+  }
+
+  // 5. If element is above the top (e.g. after scrubbing backwards), scroll up to reveal it
+  if (elRect.top < containerRect.top + topPadding) {
+    const scrollUpNeeded = (containerRect.top + topPadding) - elRect.top;
+    const tid = setTimeout(() => {
+      container.scrollBy({ top: -scrollUpNeeded, behavior: 'smooth' });
+      setTimeout(() => _narScrollTimers.delete(el), 350);
+    }, 40);
+    _narScrollTimers.set(el, tid);
+  }
 }
 
 function updateBetweenCodeHighlights(currentTime, isPlaying) {

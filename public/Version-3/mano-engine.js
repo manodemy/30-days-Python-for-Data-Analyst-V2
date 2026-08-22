@@ -9655,6 +9655,7 @@ function loadAndPlayTrack(index, targetTime = 0) {
   // Trigger audio.play() synchronously inside gesture stack before async ticks
   audio.play()
     .then(() => {
+      if (myGeneration !== currentGeneration) return;
       hasCompletedFirstGestureBoundPlay = true;
       isCombinedPlaying = true;
       updatePlayButtonStates(true);
@@ -9666,6 +9667,7 @@ function loadAndPlayTrack(index, targetTime = 0) {
       }
     })
     .catch((err) => {
+      if (myGeneration !== currentGeneration) return;
       console.log('Play rejected:', err);
       if (err.name === 'AbortError') {
         // Interrupted by new seek or track swap — normal browser behavior
@@ -9800,27 +9802,6 @@ function loadAndPlayTrack(index, targetTime = 0) {
       }
     });
   }
-
-  audio.play()
-    .then(() => {
-      hasCompletedFirstGestureBoundPlay = true;
-      isCombinedPlaying = true;
-      updatePlayButtonStates(true);
-      if (track.type !== 'question' && track.type !== 'solution') {
-        isNarrationActive = true;
-        if (track.target) {
-          updateSlidePlaybackVisibility(track.target);
-        }
-      }
-    })
-    .catch((err) => {
-      console.log('Play rejected:', err);
-      if (audio.error) {
-        retryOrShowError(index, myGeneration, 'network');
-      } else {
-        showTapToPlayFallback(index);
-      }
-    });
 }
 
 function maybePrefetchNext(audio, currentIndex) {
@@ -9964,21 +9945,46 @@ function onNarrationSegmentEnded(index, events) {
 
   const endedTrack = combinedTracks[index];
 
+  // In 'single' playback mode (e.g. user clicked individual Q or solution play button), stop cleanly without cascading
+  if (playbackMode === 'single') {
+    currentGeneration++; // Immediately invalidate any pending retries or error events
+    if (activeAudioInstance) {
+      const a = activeAudioInstance;
+      activeAudioInstance = null;
+      try { a.pause(); } catch (e) { }
+      a.src = "";
+    }
+    isCombinedPlaying = false;
+    isNarrationActive = false;
+    playbackMode = 'master';
+    updatePlayButtonStates(false);
+    if (typeof updateAllPlayButtonStates === 'function') updateAllPlayButtonStates(false);
+    cancelTypewriter();
+    if (typeof clearSlidePlaybackVisibility === 'function') clearSlidePlaybackVisibility();
+    const bar = document.getElementById('questionBar');
+    if (bar) bar.classList.remove('question-playing');
+    return;
+  }
+
   if (combinedTrackIndex < combinedTracks.length - 1) {
     combinedTrackIndex++;
     loadAndPlayTrack(combinedTrackIndex);
   } else {
-    // All tracks complete — reset
+    // All tracks complete across Day 01 through Day 18 — clean stop, zero infinite loop!
+    currentGeneration++; // Immediately invalidate any pending retries or error events
     if (activeAudioInstance) {
-      try { activeAudioInstance.pause(); } catch (e) { }
-      activeAudioInstance.src = "";
+      const a = activeAudioInstance;
       activeAudioInstance = null;
+      try { a.pause(); } catch (e) { }
+      a.src = "";
     }
     isCombinedPlaying = false;
     isNarrationActive = false;
+    playbackMode = 'master';
     combinedTrackIndex = 0;
     currentCombinedTime = 0;
     updatePlayButtonStates(false);
+    if (typeof updateAllPlayButtonStates === 'function') updateAllPlayButtonStates(false);
     updateProgressUI();
     cancelTypewriter();
     if (typeof clearSlidePlaybackVisibility === 'function') clearSlidePlaybackVisibility();

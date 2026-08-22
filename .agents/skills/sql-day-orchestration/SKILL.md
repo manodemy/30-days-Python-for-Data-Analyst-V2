@@ -389,5 +389,13 @@ Every Day from Day 01 through Day 18 MUST format Interview Q&A cards following t
   (3) Single-Card Narration Isolation: During playback of an interview track, `updateSlidePlaybackVisibility(targetSelector)` MUST isolate and display ONLY the active question card (`display: ''` with `.block-active-spotlight`), while hiding all sibling cards (`display: 'none'`, `.vis-target-hidden`) and all non-interview slide sections.
   (4) Pause / Free Reading Restore: On pause or lesson completion, `clearSlidePlaybackVisibility()` MUST immediately restore all Q&A cards in `.interview-box > div` to `display: ''` so students can freely scroll and read all questions.
 Added: Day03 — replicated Day 01 interview card isolation standard to ensure focused, single-card display during interview audio narration and complete multi-card restoration on pause.
+[TIMEKEEPER-006] [STATUS: active] [SCOPE: Timekeeper]
+Statement: Lesson Completion Full Timeline Reset & Stop Contract:
+Upon completion of the final audio narration track in the master timeline (`combinedTrackIndex === combinedTracks.length - 1`):
+  (1) Audio Cleanup: The engine MUST immediately pause, clear `activeAudioInstance.src = ""`, and set `activeAudioInstance = null`.
+  (2) Timeline Clock Reset: `combinedTrackIndex` and `currentCombinedTime` MUST be reset to `0` (and `pendingAudioStartTime = 0`), resetting the seekbar fill to 0% and time counter to `0:00 / TotalTime`.
+  (3) State Machine: `isCombinedPlaying` and `isNarrationActive` MUST be set to `false`, and `updatePlayButtonStates(false)` called so all buttons render the standard Play (▶) icon.
+  (4) Visual & Viewport Restoration: `clearSlidePlaybackVisibility()` MUST restore all slide sections and interview cards, the active question bar highlight MUST be cleared, and `#slideContent` smoothly scrolled back to the top (`0, 0`).
+Added: Day03 — user requested that once all narrations finish playing, the timeline must automatically return to starting position (0:00) and stop cleanly.
 Supersedes: none
 ```

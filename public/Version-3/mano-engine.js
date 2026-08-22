@@ -9588,7 +9588,7 @@ function onNarrationSegmentEnded(index, events) {
     combinedTrackIndex++;
     loadAndPlayTrack(combinedTrackIndex);
   } else {
-    // All tracks complete — reset
+    // All tracks complete — reset timeline to starting position and stop playback cleanly
     if (activeAudioInstance) {
       try { activeAudioInstance.pause(); } catch (e) { }
       activeAudioInstance.src = "";
@@ -9596,15 +9596,25 @@ function onNarrationSegmentEnded(index, events) {
     }
     isCombinedPlaying = false;
     isNarrationActive = false;
+    playbackMode = 'full';
     combinedTrackIndex = 0;
     currentCombinedTime = 0;
+    pendingAudioStartTime = 0;
     updatePlayButtonStates(false);
     updateProgressUI();
     cancelTypewriter();
     if (typeof clearSlidePlaybackVisibility === 'function') clearSlidePlaybackVisibility();
-    // Remove question bar highlight
+    
+    // Remove question bar active highlight
     const bar = document.getElementById('questionBar');
     if (bar) bar.classList.remove('question-playing');
+
+    // Smoothly scroll slide content back to starting position (top)
+    const slideContent = document.getElementById('slideContent');
+    if (slideContent) slideContent.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Switch mobile view back to theory start
+    if (typeof setMobileTab === 'function') setMobileTab('theory');
 
     // If the last track was the completion track, hold final frame for 1s before teardown + blink Take Test
     if (endedTrack && endedTrack.type === 'completion') {

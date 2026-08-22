@@ -47,6 +47,14 @@ export async function middleware(request: NextRequest) {
   const path = url.pathname;
   const lowerPath = path.toLowerCase();
 
+  // ── Layer -1: LOCALHOST BYPASS ──────────────────────────────────────────────
+  // Skip ALL paywall/auth/redirect logic during local development so pages
+  // like /sql/day04.html render instantly without hitting Supabase auth.
+  const host = request.headers.get('host') || '';
+  if (host.startsWith('localhost') || host.startsWith('127.0.0.1')) {
+    return NextResponse.next();
+  }
+
   let visitorId = request.cookies.get('manodemy_visitor_id')?.value;
   if (!visitorId) {
     visitorId = 'vis_' + Math.random().toString(36).substring(2, 11) + Date.now().toString(36);

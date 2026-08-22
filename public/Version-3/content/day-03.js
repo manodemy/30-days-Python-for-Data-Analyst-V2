@@ -765,23 +765,28 @@ window.COURSE_CONTENT['day03'] = {
               <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
             </button>
           </div>
-          <pre id="day03BetweenCode"><code>-- Numeric: salary range (inclusive on both ends)
-SELECT first_name, last_name, salary
-FROM   employees
-WHERE  salary BETWEEN 50000 AND 90000;
+          <div class="code-block-container" id="day03BetweenCode">
+            <div class="code-subblock" id="betweenCodeQuery1">
+              <pre><code><span class="code-comment">-- 1. Numeric: salary range (inclusive on both ends)</span>
+<span class="kw">SELECT</span> first_name, last_name, salary
+<span class="kw">FROM</span>   employees
+<span class="kw">WHERE</span>  salary <span class="kw">BETWEEN</span> 50000 <span class="kw">AND</span> 90000;</code></pre>
+            </div>
 
--- Equivalent using explicit operators:
--- WHERE salary >= 50000 AND salary <= 90000
+            <div class="code-subblock" id="betweenCodeQuery2">
+              <pre><code><span class="code-comment">-- 2. Date range: all orders placed in 2024</span>
+<span class="kw">SELECT</span> order_id, order_date, total_amount
+<span class="kw">FROM</span>   orders
+<span class="kw">WHERE</span>  order_date <span class="kw">BETWEEN</span> '2024-01-01' <span class="kw">AND</span> '2024-12-31';</code></pre>
+            </div>
 
--- Date range: all orders placed in 2024
-SELECT order_id, order_date, total_amount
-FROM   orders
-WHERE  order_date BETWEEN '2024-01-01' AND '2024-12-31';
-
--- NOT BETWEEN: products outside a price band
-SELECT name, unit_price
-FROM   products
-WHERE  unit_price NOT BETWEEN 1000 AND 5000;</code></pre>
+            <div class="code-subblock" id="betweenCodeQuery3">
+              <pre><code><span class="code-comment">-- 3. NOT BETWEEN: products outside a price band</span>
+<span class="kw">SELECT</span> name, unit_price
+<span class="kw">FROM</span>   products
+<span class="kw">WHERE</span>  unit_price <span class="kw">NOT BETWEEN</span> 1000 <span class="kw">AND</span> 5000;</code></pre>
+            </div>
+          </div>
         </div>
 
         <div class="slide-section" id="day03BetweenVsSection">
@@ -832,25 +837,28 @@ WHERE  unit_price NOT BETWEEN 1000 AND 5000;</code></pre>
               <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
             </button>
           </div>
-          <pre id="day03InCode"><code>-- IN with numbers (equivalent to OR conditions)
-SELECT first_name, department_id
-FROM   employees
-WHERE  department_id IN (10, 20, 30);
+          <div class="code-block-container" id="day03InCode">
+            <div class="code-subblock" id="inCodeQuery1">
+              <pre><code><span class="code-comment">-- 1. IN with numbers (equivalent to OR conditions)</span>
+<span class="kw">SELECT</span> first_name, department_id
+<span class="kw">FROM</span>   employees
+<span class="kw">WHERE</span>  department_id <span class="kw">IN</span> (10, 20, 30);</code></pre>
+            </div>
 
--- Same result as:
--- WHERE department_id = 10
---    OR department_id = 20
---    OR department_id = 30
+            <div class="code-subblock" id="inCodeQuery2">
+              <pre><code><span class="code-comment">-- 2. IN with strings</span>
+<span class="kw">SELECT</span> customer_id, first_name, region
+<span class="kw">FROM</span>   customers
+<span class="kw">WHERE</span>  region <span class="kw">IN</span> ('North', 'South', 'East');</code></pre>
+            </div>
 
--- IN with strings
-SELECT customer_id, first_name, region
-FROM   customers
-WHERE  region IN ('North', 'South', 'East');
-
--- NOT IN: exclude specified departments
-SELECT first_name, department_id
-FROM   employees
-WHERE  department_id NOT IN (10, 20);</code></pre>
+            <div class="code-subblock" id="inCodeQuery3">
+              <pre><code><span class="code-comment">-- 3. NOT IN: exclude specified departments</span>
+<span class="kw">SELECT</span> first_name, department_id
+<span class="kw">FROM</span>   employees
+<span class="kw">WHERE</span>  department_id <span class="kw">NOT IN</span> (10, 20);</code></pre>
+            </div>
+          </div>
         </div>
 
         <div class="slide-section" id="day03InWarnSection">
@@ -927,20 +935,28 @@ WHERE name LIKE '_oo%'  -- 2nd/3rd = 'oo'</code></pre>
               <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
             </button>
           </div>
-          <pre id="day03LikeCode"><code>-- Employees whose first name starts with 'S'
-SELECT first_name, last_name
-FROM   employees
-WHERE  first_name LIKE 'S%';
+          <div class="code-block-container" id="day03LikeCode">
+            <div class="code-subblock" id="likeCodeQuery1">
+              <pre><code><span class="code-comment">-- 1. Employees whose first name starts with 'S'</span>
+<span class="kw">SELECT</span> first_name, last_name
+<span class="kw">FROM</span>   employees
+<span class="kw">WHERE</span>  first_name <span class="kw">LIKE</span> 'S%';</code></pre>
+            </div>
 
--- Products whose name contains 'Mouse'
-SELECT name, unit_price
-FROM   products
-WHERE  name LIKE '%Mouse%';
+            <div class="code-subblock" id="likeCodeQuery2">
+              <pre><code><span class="code-comment">-- 2. Products whose name contains 'Mouse'</span>
+<span class="kw">SELECT</span> name, unit_price
+<span class="kw">FROM</span>   products
+<span class="kw">WHERE</span>  name <span class="kw">LIKE</span> '%Mouse%';</code></pre>
+            </div>
 
--- Exclude all Gmail addresses
-SELECT customer_id, email
-FROM   customers
-WHERE  email NOT LIKE '%@gmail.com';</code></pre>
+            <div class="code-subblock" id="likeCodeQuery3">
+              <pre><code><span class="code-comment">-- 3. Exclude all Gmail addresses</span>
+<span class="kw">SELECT</span> customer_id, email
+<span class="kw">FROM</span>   customers
+<span class="kw">WHERE</span>  email <span class="kw">NOT LIKE</span> '%@gmail.com';</code></pre>
+            </div>
+          </div>
         </div>
 
         <div class="slide-section" id="day03LikeTipSection">
@@ -974,26 +990,36 @@ WHERE  email NOT LIKE '%@gmail.com';</code></pre>
               <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
             </button>
           </div>
-          <pre id="day03NullCode"><code>-- Top-level employees (no manager)
-SELECT first_name, manager_id
-FROM   employees
-WHERE  manager_id IS NULL;
+          <div class="code-block-container" id="day03NullCode">
+            <div class="code-subblock" id="nullCodeQuery1">
+              <pre><code><span class="code-comment">-- 1. Top-level employees (no manager)</span>
+<span class="kw">SELECT</span> first_name, manager_id
+<span class="kw">FROM</span>   employees
+<span class="kw">WHERE</span>  manager_id <span class="kw">IS NULL</span>;</code></pre>
+            </div>
 
--- Employees who report to someone
-SELECT first_name, manager_id
-FROM   employees
-WHERE  manager_id IS NOT NULL;
+            <div class="code-subblock" id="nullCodeQuery2">
+              <pre><code><span class="code-comment">-- 2. Employees who report to someone</span>
+<span class="kw">SELECT</span> first_name, manager_id
+<span class="kw">FROM</span>   employees
+<span class="kw">WHERE</span>  manager_id <span class="kw">IS NOT NULL</span>;</code></pre>
+            </div>
 
--- Employees with no commission assigned
-SELECT first_name, last_name, commission
-FROM   employees
-WHERE  commission IS NULL;
+            <div class="code-subblock" id="nullCodeQuery3">
+              <pre><code><span class="code-comment">-- 3. Employees with no commission assigned</span>
+<span class="kw">SELECT</span> first_name, last_name, commission
+<span class="kw">FROM</span>   employees
+<span class="kw">WHERE</span>  commission <span class="kw">IS NULL</span>;</code></pre>
+            </div>
 
--- Active employees who have a commission
-SELECT first_name, commission
-FROM   employees
-WHERE  is_active = 1
-  AND  commission IS NOT NULL;</code></pre>
+            <div class="code-subblock" id="nullCodeQuery4">
+              <pre><code><span class="code-comment">-- 4. Active employees who have a commission</span>
+<span class="kw">SELECT</span> first_name, commission
+<span class="kw">FROM</span>   employees
+<span class="kw">WHERE</span>  is_active = 1
+  <span class="kw">AND</span>  commission <span class="kw">IS NOT NULL</span>;</code></pre>
+            </div>
+          </div>
         </div>
 
         <div class="slide-section" id="day03NullVsSection">

@@ -287,6 +287,11 @@ Statement: Horizontal Stacked Cards Zoom-In Entrance Protocol: For all sections 
 Added: Day03 — user mandated that horizontal stacked cards must use Zoom-In animation at start, with zero scrolling during narration.
 Supersedes: none
 
+[SYNC-019] [STATUS: active] [SCOPE: Sync]
+Statement: Multi-Query Code Card Sub-Block Spotlight Overlay Protocol: When a single slide section card presents multiple SQL queries or code examples (e.g. BETWEEN, IN, LIKE, IS NULL, Comparison examples), the card MUST NOT be split into separate cards. Instead, the card MUST remain unified as a single container (.code-block-container) with each query encapsulated in its own distinct .code-subblock with a unique ID. During narration playback, the Sync Agent MUST drive a dynamic highlight box (.code-active-spotlight / .narration-highlight) that highlights the exact dimensions of the active query in sync with Whisper ASR word timestamps, maintaining visual continuity while guiding the learner's focus across each query block in place.
+Added: Day03 — user mandated that multi-code examples within one visual card must use highlight box spotlights positioned on top of the relevant content without splitting the card.
+Supersedes: none
+
 [VOICE-001] [STATUS: active] [SCOPE: Voice]
 Statement: Voice must ALWAYS create narrations/day-XX.json BEFORE running the TTS build. The JSON is the source of truth — if it doesn't exist, build-audio.js will error and produce no files. Never run build-audio.js before the JSON is written and validated.
 Added: Day03 — discovered that Day03 had 13 theory MP3s on disk but no narrations/day-03.json, and zero question/solution MP3s because the JSON was never authored.

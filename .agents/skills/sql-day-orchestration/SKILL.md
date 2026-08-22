@@ -4,7 +4,7 @@ description: Multi-agent orchestration protocol and quality gate specification (
 ---
 
 # Maestro — Head Inspector & Pipeline Orchestrator
-### Master System Specification (v3.0 — Production Grade)
+### Master System Specification (v3.1 — Evolved Production Grade)
 
 This skill governs the end-to-end production assembly line, role responsibilities, data contracts, and quality gating across **Day 03 to Day 18**.
 
@@ -18,7 +18,7 @@ This skill governs the end-to-end production assembly line, role responsibilitie
 | **Compass** | Curriculum & Schema Mapping | SQL Syllabus & Seed DBs | Topic Spec, DB Schema Map, Target Tables |
 | **Theorist** | Theory Slide Authoring | Topic Spec & Asset paths | `COURSE_CONTENT['dayXX'].slides` HTML |
 | **Quizzer** | Practice & Interview Questions | DB Schema & Difficulty Arc | `COURSE_CONTENT['dayXX'].practiceQuestions` |
-| **Voice** | Narration Script & Audio Production | Slide content & Solution SQL | Normalized 44.1kHz MP3 files |
+| **Voice** | Narration Script & Audio Production | Slide content & Solution SQL | Normalized MP3 files in `public/Version-3/DayXX/` |
 | **Sync** | ASR & Typewriter Sync | Solution MP3s + Solution SQL | `solutionEvents` JSON with 7-space layout |
 | **Timekeeper** | Timeline Stitching & Engine Wiring | Audio durations + Track list | `mano-engine.js` registry, Cache-busters |
 | **Maestro** | **Head Inspector & Orchestrator** | Gate metrics & Subagent reports | Green-light deployment sign-off & Skill evolution |
@@ -40,7 +40,7 @@ flowchart TD
     end
 
     subgraph STAGE_3 ["Stage 3: Audio Production"]
-        Voice["Voice (Narration & TTS Production)"]
+        Voice["Voice (Narration Script → narrations/day-XX.json → TTS Build)"]
         Sentry_Out["Sentry (Outbound Asset Name Validation)"]
     end
 
@@ -67,7 +67,7 @@ flowchart TD
 
 ## 📦 3. Strict Artifact Data Contracts
 
-### A. Stage 2 Contract (`Theorist` + `Quizzer` $\rightarrow$ `public/Version-3/content/day-XX.js`)
+### A. Stage 2 Contract (`Theorist` + `Quizzer` → `public/Version-3/content/day-XX.js`)
 ```typescript
 interface DayContentContract {
   day: number;
@@ -93,7 +93,23 @@ interface DayContentContract {
 }
 ```
 
-### B. Stage 4 Contract (`Sync` $\rightarrow$ `solutionEvents`)
+### B. Stage 3 Contract (`Voice` → `narrations/day-XX.json`)
+```typescript
+interface NarrationScriptContract {
+  day: number;
+  title: string;
+  lecture: Record<string, string>;   // "New_DayXPart1audioNN.mp3" → narration text
+  questions: Record<string, string>; // "New_DayXQuestionNN.mp3" & "...sol.mp3" → narration text
+}
+```
+
+**Voice writing rules (enforced):**
+- Lecture scripts: 1–3 sentences per audio file. Spoken at natural pace (~130 WPM). Matches exactly what the slide displays.
+- Question scripts: Start with an engaging hook ("Ready to filter?", "Time to test..."). State the task clearly. End with the question ("What's your query?") — NO.  Just state the task directly without trailing prompts.
+- Solution scripts: Read out the query verbatim in spoken form (not code). Say column names as words. Say SQL keywords aloud ("SELECT first underscore name, salary... FROM employees... WHERE salary BETWEEN sixty thousand AND one hundred thousand").
+- Never include code formatting in narration text — write as spoken words only.
+
+### C. Stage 4 Contract (`Sync` → `solutionEvents`)
 ```typescript
 interface SolutionEventsContract {
   code: string; // Formatted with \n and 7-space column indents under SELECT
@@ -123,9 +139,12 @@ GATE-2 (Theorist + Quizzer):
   ✓ Question count is 6–15, difficulty is monotonically non-decreasing
 
 GATE-3 (Voice + Sentry/outbound):
+  ✓ narrations/day-XX.json exists with lecture + questions sections
   ✓ Filenames strictly match: New_Day{D}Part1audio{NN}.mp3, New_Day{D}Question{NN}.mp3, New_Day{D}Question{NN}sol.mp3
-  ✓ Audio duration matches expected WPM speech range within ±5%
-  ✓ Zero mid-sentence silence gaps > 400ms
+  ✓ All MP3 file sizes > 10KB (non-empty, valid TTS output)
+  ✓ Zero duplicate question audio references in day-XX.js HTML
+  ✓ Every practiceQuestion[].questionAudio and .solutionAudio has a corresponding file on disk
+  ✓ Audio play buttons wired in both the theory slide HTML AND practiceQuestions[] objects
 
 GATE-4 (Sync):
   ✓ Multi-column queries formatted with 7-space column alignment
@@ -185,5 +204,30 @@ Supersedes: none
 [SENTRY-001] [STATUS: active] [SCOPE: Sentry]
 Statement: Practice question audio paths must be namespaced with 'DayXX/' directory prefix in single-topic mode (e.g., 'Day03/New_Day3Question01.mp3').
 Added: Day02 — root-level audio lookups failed 404 on Vercel deployment.
+Supersedes: none
+
+[VOICE-001] [STATUS: active] [SCOPE: Voice]
+Statement: Voice must ALWAYS create narrations/day-XX.json BEFORE running the TTS build. The JSON is the source of truth — if it doesn't exist, build-audio.js will error and produce no files. Never run build-audio.js before the JSON is written and validated.
+Added: Day03 — discovered that Day03 had 13 theory MP3s on disk but no narrations/day-03.json, and zero question/solution MP3s because the JSON was never authored.
+Supersedes: none
+
+[VOICE-002] [STATUS: active] [SCOPE: Voice]
+Statement: When a day already has existing theory MP3s on disk with matching cached hashes, Voice must only add the NEW entries (questions/solutions) to the JSON and run build-audio.js — the cache system will skip already-generated files automatically. Never delete existing MP3s before running the build.
+Added: Day03 — 13 theory MP3s existed and were valid; only the 12 question+solution files were missing.
+Supersedes: none
+
+[VOICE-003] [STATUS: active] [SCOPE: Voice]
+Statement: After TTS build completes, Voice must verify each generated MP3 is >10KB (non-empty, valid audio). Files <10KB indicate a TTS engine failure and must be regenerated with --force flag.
+Added: Day03 — edge-tts can silently produce 0-byte or corrupt files if the Python process is interrupted.
+Supersedes: none
+
+[THEORIST-001] [STATUS: active] [SCOPE: Theorist]
+Statement: Every .slide-section in the theory HTML must contain at least one unique ID target (e.g., #dayXXWhere, #dayXXCompOps) that exactly matches a corresponding target in day03Tracks in mano-engine.js.
+Added: Day03 — sections without matching track targets were never spotlighted during narration playback.
+Supersedes: none
+
+[THEORIST-002] [STATUS: active] [SCOPE: Theorist]
+Statement: No inline CSS inside a .slide-section may set opacity:0 on child elements without a paired .revealed or .narration-highlight class escape hatch. Opacity:0 applied globally during playback causes cards to permanently disappear.
+Added: Day03 — #day03PrecWrap.narration-active .prec-card { opacity:0 } broke NOT/AND/OR card visibility during narration.
 Supersedes: none
 ```

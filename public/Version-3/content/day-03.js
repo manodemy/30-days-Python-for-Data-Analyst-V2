@@ -1038,34 +1038,47 @@ WHERE commission IS NOT NULL -- ✅</code></pre>
     {
       "id": 1,
       "prompt": "<strong>Task: High-Value Products</strong><br/>Retrieve the <code>name</code> and <code>unit_price</code> of all products with a price greater than 10000. Sort by price descending.",
-      "referenceSql": "SELECT name,\n       unit_price\nFROM   products\nWHERE  unit_price > 10000\nORDER BY unit_price DESC;"
+      "referenceSql": "SELECT name,\n       unit_price\nFROM   products\nWHERE  unit_price > 10000\nORDER BY unit_price DESC;",
+      "questionAudio": "Day03/New_Day3Question01.mp3",
+      "solutionAudio": "Day03/New_Day3Question01sol.mp3"
     },
     {
       "id": 2,
       "prompt": "<strong>Task: Regional Customers</strong><br/>Retrieve <code>first_name</code>, <code>last_name</code>, and <code>region</code> for customers in the <code>'North'</code> or <code>'East'</code> region. Use the <code>IN</code> operator.",
-      "referenceSql": "SELECT first_name,\n       last_name,\n       region\nFROM   customers\nWHERE  region IN ('North', 'East');"
+      "referenceSql": "SELECT first_name,\n       last_name,\n       region\nFROM   customers\nWHERE  region IN ('North', 'East');",
+      "questionAudio": "Day03/New_Day3Question02.mp3",
+      "solutionAudio": "Day03/New_Day3Question02sol.mp3"
     },
     {
       "id": 3,
       "prompt": "<strong>Task: Mid-Range Salary Band</strong><br/>Find employees earning between 60000 and 100000 (inclusive). Retrieve <code>first_name</code>, <code>last_name</code>, and <code>salary</code>.",
-      "referenceSql": "SELECT first_name,\n       last_name,\n       salary\nFROM   employees\nWHERE  salary BETWEEN 60000 AND 100000;"
+      "referenceSql": "SELECT first_name,\n       last_name,\n       salary\nFROM   employees\nWHERE  salary BETWEEN 60000 AND 100000;",
+      "questionAudio": "Day03/New_Day3Question03.mp3",
+      "solutionAudio": "Day03/New_Day3Question03sol.mp3"
     },
     {
       "id": 4,
       "prompt": "<strong>Task: Name Pattern Search</strong><br/>Find all employees whose <code>first_name</code> starts with the letter <code>'S'</code>. Retrieve <code>first_name</code>, <code>last_name</code>, and <code>salary</code>.",
-      "referenceSql": "SELECT first_name,\n       last_name,\n       salary\nFROM   employees\nWHERE  first_name LIKE 'S%';"
+      "referenceSql": "SELECT first_name,\n       last_name,\n       salary\nFROM   employees\nWHERE  first_name LIKE 'S%';",
+      "questionAudio": "Day03/New_Day3Question04.mp3",
+      "solutionAudio": "Day03/New_Day3Question04sol.mp3"
     },
     {
       "id": 5,
       "prompt": "<strong>Task: Active Data Science Team</strong><br/>Find active employees (<code>is_active = 1</code>) in department 20. Retrieve <code>first_name</code>, <code>department_id</code>, and <code>salary</code>. Use <code>AND</code>.",
-      "referenceSql": "SELECT first_name,\n       department_id,\n       salary\nFROM   employees\nWHERE  is_active = 1\n  AND  department_id = 20;"
+      "referenceSql": "SELECT first_name,\n       department_id,\n       salary\nFROM   employees\nWHERE  is_active = 1\n  AND  department_id = 20;",
+      "questionAudio": "Day03/New_Day3Question05.mp3",
+      "solutionAudio": "Day03/New_Day3Question05sol.mp3"
     },
     {
       "id": 6,
       "prompt": "<strong>Task: Employees Without Commission</strong><br/>Find all employees who have no commission assigned (<code>commission IS NULL</code>). Retrieve <code>first_name</code>, <code>last_name</code>, and <code>commission</code>.",
-      "referenceSql": "SELECT first_name,\n       last_name,\n       commission\nFROM   employees\nWHERE  commission IS NULL;"
+      "referenceSql": "SELECT first_name,\n       last_name,\n       commission\nFROM   employees\nWHERE  commission IS NULL;",
+      "questionAudio": "Day03/New_Day3Question06.mp3",
+      "solutionAudio": "Day03/New_Day3Question06sol.mp3"
     }
   ],
+
   "testQuestions": [
     { "id": 1, "prompt": "Finance wants a high-earners list. From <code>employees</code>, retrieve all records where <code>salary</code> exceeds 80000.", "ref": "SELECT * FROM employees WHERE salary > 80000;" },
     { "id": 2, "prompt": "A budget filter is needed on the catalogue. From <code>products</code>, find all items where <code>unit_price</code> is ₹2000 or below.", "ref": "SELECT * FROM products WHERE unit_price <= 2000;" },

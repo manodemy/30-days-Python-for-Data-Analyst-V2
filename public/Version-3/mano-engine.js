@@ -9070,16 +9070,18 @@ function loadAndPlayTrack(index, targetTime = 0) {
     if (myGeneration === currentGeneration) toggleBufferingState(true);
   });
   audio.addEventListener('play', () => {
-    if (myGeneration === currentGeneration) {
-      isCombinedPlaying = true;
+    // Guard: if user clicked pause between play() call and this async event, do NOT override
+    if (myGeneration === currentGeneration && isCombinedPlaying) {
       updatePlayButtonStates(true);
     }
   });
   audio.addEventListener('playing', () => {
+    // Guard: same race-condition guard for 'playing' (fires after buffering completes)
     if (myGeneration === currentGeneration) {
-      isCombinedPlaying = true;
       toggleBufferingState(false);
-      updatePlayButtonStates(true);
+      if (isCombinedPlaying) {
+        updatePlayButtonStates(true);
+      }
     }
   });
   audio.addEventListener('canplay', () => {
@@ -9112,12 +9114,15 @@ function loadAndPlayTrack(index, targetTime = 0) {
   audio.play()
     .then(() => {
       hasCompletedFirstGestureBoundPlay = true;
-      isCombinedPlaying = true;
-      updatePlayButtonStates(true);
-      if (track.type !== 'question' && track.type !== 'solution') {
-        isNarrationActive = true;
-        if (track.target) {
-          updateSlidePlaybackVisibility(track.target);
+      // Guard: only set playing state if audio is actually still playing
+      // (user may have clicked pause between play() call and this async resolution)
+      if (!audio.paused && isCombinedPlaying) {
+        updatePlayButtonStates(true);
+        if (track.type !== 'question' && track.type !== 'solution') {
+          isNarrationActive = true;
+          if (track.target) {
+            updateSlidePlaybackVisibility(track.target);
+          }
         }
       }
     })
@@ -9250,7 +9255,9 @@ function loadAndPlayTrack(index, targetTime = 0) {
 
     currentCombinedTime = elapsed;
     updateProgressUI();
-    updatePlayButtonStates(!audio.paused && isCombinedPlaying);
+    // Use isCombinedPlaying as authoritative source — NOT audio.paused — to avoid the
+    // race where timeupdate fires after pause() call but before the browser 'pause' event.
+    updatePlayButtonStates(isCombinedPlaying);
     maybePrefetchNext(audio, index);
   });
 
@@ -9350,12 +9357,14 @@ function loadAndPlayTrack(index, targetTime = 0) {
   audio.play()
     .then(() => {
       hasCompletedFirstGestureBoundPlay = true;
-      isCombinedPlaying = true;
-      updatePlayButtonStates(true);
-      if (track.type !== 'question' && track.type !== 'solution') {
-        isNarrationActive = true;
-        if (track.target) {
-          updateSlidePlaybackVisibility(track.target);
+      // Guard: only confirm playing if user hasn't already paused during async resolution
+      if (!audio.paused && isCombinedPlaying) {
+        updatePlayButtonStates(true);
+        if (track.type !== 'question' && track.type !== 'solution') {
+          isNarrationActive = true;
+          if (track.target) {
+            updateSlidePlaybackVisibility(track.target);
+          }
         }
       }
     })

@@ -7843,12 +7843,6 @@ select:focus:not(:focus-visible) {
   filter: none !important;
 }
 
-.info-card--green.card-narration-active {
-  box-shadow: 0 14px 28px -4px rgba(16, 185, 129, 0.35), 0 0 0 2px #10b981 !important;
-}
-
-.info-card--blue.card-narration-active {
-  box-shadow: 0 14px 28px -4px rgba(37, 99, 235, 0.35), 0 0 0 2px #2563eb !important;
 }
 
 .info-card--purple.card-narration-active {
@@ -7918,22 +7912,23 @@ select:focus:not(:focus-visible) {
 
 #day03OpsTable tr.row-active-spotlight,
 #day03OpsTable tr.narration-highlight {
-  background: rgba(59, 130, 246, 0.18) !important;
-  box-shadow: 0 0 16px rgba(59, 130, 246, 0.28), inset 0 0 10px rgba(59, 130, 246, 0.12) !important;
+  background: rgba(37, 99, 235, 0.14) !important;
+  box-shadow: 0 2px 12px rgba(37, 99, 235, 0.2), inset 0 0 0 1px rgba(37, 99, 235, 0.35) !important;
   position: relative;
   z-index: 5;
 }
 
 #day03OpsTable tr.row-active-spotlight td,
 #day03OpsTable tr.narration-highlight td {
-  color: #ffffff !important;
+  color: #0f172a !important;
+  font-weight: 600 !important;
   border-top: 1.5px solid #3b82f6 !important;
   border-bottom: 1.5px solid #3b82f6 !important;
 }
 
 #day03OpsTable tr.row-active-spotlight td:first-child,
 #day03OpsTable tr.narration-highlight td:first-child {
-  border-left: 3.5px solid #60a5fa !important;
+  border-left: 4px solid #2563eb !important;
   border-top-left-radius: 6px;
   border-bottom-left-radius: 6px;
 }
@@ -7947,9 +7942,10 @@ select:focus:not(:focus-visible) {
 
 #day03OpsTable tr.row-active-spotlight td code,
 #day03OpsTable tr.narration-highlight td code {
-  color: #93c5fd !important;
-  background: rgba(15, 23, 42, 0.7) !important;
-  border-color: rgba(96, 165, 250, 0.5) !important;
+  color: #1e40af !important;
+  background: rgba(219, 234, 254, 0.95) !important;
+  border: 1px solid rgba(59, 130, 246, 0.5) !important;
+  font-weight: 700 !important;
 }
 
 /* ══════════════════════════════════════════════════════════════

@@ -272,6 +272,11 @@ Statement: Word-Level Whisper ASR Segmentation for All Practice Question Solutio
 Added: Day03 — practice solutions were previously using fallback linear typing instead of word-level segments, resulting in out-of-sync typewriter animation.
 Supersedes: none
 
+[SYNC-016] [STATUS: active] [SCOPE: Sync]
+Statement: Mandatory Word-Level Whisper ASR Re-Synchronization for Theory Sub-Elements: Whenever narration audio is generated or re-synthesized, the Sync Agent MUST extract word-level Whisper ASR timestamps for all theory audio files that contain progressive sub-element highlights (table rows, syntax skeleton vs example code blocks, multiple queries, and card sequences). Hardcoding estimated seconds is strictly forbidden. Sub-element highlight triggers in mano-engine.js (e.g., updateWhereCodeHighlights, updateTableHighlights, updateCompCodeHighlights, updateLogicCodeHighlights, updatePrecedenceNoteHighlight) MUST exactly reflect the actual spoken sentence boundaries with sub-second precision, ensuring visual spotlights follow the instructor's spoken focus in real time.
+Added: Day03 — user reported sub-element table rows and code blocks were out of sync after audio rebuild; enforced Whisper ASR extraction across all theory sub-elements.
+Supersedes: none
+
 [VOICE-001] [STATUS: active] [SCOPE: Voice]
 Statement: Voice must ALWAYS create narrations/day-XX.json BEFORE running the TTS build. The JSON is the source of truth — if it doesn't exist, build-audio.js will error and produce no files. Never run build-audio.js before the JSON is written and validated.
 Added: Day03 — discovered that Day03 had 13 theory MP3s on disk but no narrations/day-03.json, and zero question/solution MP3s because the JSON was never authored.

@@ -282,6 +282,11 @@ Statement: High-Contrast Spotlight Text Legibility Protocol: All table rows (.ro
 Added: Day03 — user reported Meaning column was invisible during narration due to #0f172a text on dark spotlight background.
 Supersedes: none
 
+[SYNC-018] [STATUS: active] [SCOPE: Sync]
+Statement: Horizontal Stacked Cards Zoom-In Entrance Protocol: For all sections containing horizontally stacked multi-column cards (.prec-grid, .prec-card, .vs-grid, .vs-card, .info-cards-grid, .storage-cards, .cards-grid, #day03PrecWrap, #coreEntities, #sqlSubLanguages), the section MUST apply the Zoom-In animation (.stunning-section-entry) exclusively at the start when the card grid first mounts. During narration playback across the individual cards (e.g. NOT -> AND -> OR), the entire card grid MUST remain stably mounted with .instant-display with zero scrolling or slide-up re-animation, seamlessly moving the active spotlight (.narration-highlight / .card-active-spotlight) in place across the horizontal row.
+Added: Day03 — user mandated that horizontal stacked cards must use Zoom-In animation at start, with zero scrolling during narration.
+Supersedes: none
+
 [VOICE-001] [STATUS: active] [SCOPE: Voice]
 Statement: Voice must ALWAYS create narrations/day-XX.json BEFORE running the TTS build. The JSON is the source of truth — if it doesn't exist, build-audio.js will error and produce no files. Never run build-audio.js before the JSON is written and validated.
 Added: Day03 — discovered that Day03 had 13 theory MP3s on disk but no narrations/day-03.json, and zero question/solution MP3s because the JSON was never authored.

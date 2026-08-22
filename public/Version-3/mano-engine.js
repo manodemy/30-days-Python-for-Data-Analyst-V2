@@ -10217,6 +10217,9 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
 
     // 4. Strictly hide ALL other slide sections so ONLY the active relevant concept is visible!
     const isDay03 = typeof currentDay !== 'undefined' && currentDay === 'day03';
+    const hasHorizontalCards = Boolean(
+      activeSection.querySelector('.prec-grid, .prec-card, .vs-grid, .vs-card, .info-cards-grid, .storage-cards, .cards-grid, #day03PrecWrap, #coreEntities, #sqlSubLanguages, .horizontal-cards, .comparison-grid')
+    );
 
     container.querySelectorAll('.slide-section').forEach(section => {
       if (section !== activeSection) {
@@ -10229,17 +10232,27 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
         section.style.display = '';
         section.classList.add('active-section-mounted');
         
-        // Entrance appearance: Day 03 smoothly slides up from down on every section mount!
-        if (isDay03 && !isSeek) {
-          if (isNewMount) {
-            section.classList.remove('instant-display', 'stunning-section-entry', 'day03-slide-entry');
-            void section.offsetWidth; // trigger reflow for smooth animation restart
+        if (isNewMount && !isSeek) {
+          if (hasHorizontalCards) {
+            // For Horizontal Stacked Cards: Apply Zoom-In Animation (.stunning-section-entry) exclusively at section start!
+            section.classList.remove('instant-display', 'day03-slide-entry');
+            void section.offsetWidth;
+            section.classList.add('stunning-section-entry');
+          } else if (isDay03) {
+            // For regular Day 03 vertical content: Smooth slide-from-down entrance
+            section.classList.remove('instant-display', 'stunning-section-entry');
+            void section.offsetWidth;
             section.classList.add('day03-slide-entry');
+          } else if (isFirstNarration) {
+            section.classList.remove('day03-slide-entry', 'instant-display');
+            void section.offsetWidth;
+            section.classList.add('stunning-section-entry');
+          } else {
+            section.classList.remove('stunning-section-entry', 'day03-slide-entry');
+            section.classList.add('instant-display');
           }
-        } else if (isFirstNarration && !isSeek) {
-          section.classList.add('stunning-section-entry');
-          section.classList.remove('day03-slide-entry', 'instant-display');
         } else {
+          // If already mounted (transitioning between cards inside the same section): instant display with zero movement
           section.classList.remove('stunning-section-entry', 'day03-slide-entry');
           section.classList.add('instant-display');
         }

@@ -277,6 +277,11 @@ Statement: Mandatory Word-Level Whisper ASR Re-Synchronization for Theory Sub-El
 Added: Day03 — user reported sub-element table rows and code blocks were out of sync after audio rebuild; enforced Whisper ASR extraction across all theory sub-elements.
 Supersedes: none
 
+[SYNC-017] [STATUS: active] [SCOPE: Sync]
+Statement: High-Contrast Spotlight Text Legibility Protocol: All table rows (.row-active-spotlight), cards (.card-active-spotlight), and sub-element code blocks (.code-active-spotlight) MUST maintain WCAG AAA contrast ratio across active spotlight states. Under dark spotlight backgrounds (e.g., #09101f, linear gradients, or navy glows), text color MUST be explicitly set to crisp luminous white (#ffffff / #f8fafc) and code text to high-contrast cyan/blue (#93c5fd), NEVER near-black (#0f172a / #1e293b), ensuring 100% legibility of all table columns (including Meaning and description cells) while active.
+Added: Day03 — user reported Meaning column was invisible during narration due to #0f172a text on dark spotlight background.
+Supersedes: none
+
 [VOICE-001] [STATUS: active] [SCOPE: Voice]
 Statement: Voice must ALWAYS create narrations/day-XX.json BEFORE running the TTS build. The JSON is the source of truth — if it doesn't exist, build-audio.js will error and produce no files. Never run build-audio.js before the JSON is written and validated.
 Added: Day03 — discovered that Day03 had 13 theory MP3s on disk but no narrations/day-03.json, and zero question/solution MP3s because the JSON was never authored.

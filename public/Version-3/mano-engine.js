@@ -9505,16 +9505,8 @@ function scrollToTarget(selector, isSeek = true) {
   const container = document.getElementById('slideContent') || document.getElementById('slideBodyText');
   if (!container) return;
 
-  const isFirstNarration = selector === '#day03Where' || (typeof combinedTrackIndex !== 'undefined' && combinedTrackIndex === 0);
+  const isFirstNarration = selector === '#day03Where' || selector === '#rdbmsIntro' || (typeof combinedTrackIndex !== 'undefined' && combinedTrackIndex === 0);
   if (isFirstNarration) {
-    container.scrollTo({ top: 0, behavior: isSeek ? 'auto' : 'smooth' });
-    return;
-  }
-
-  const subLangTracks = ['#sqlSubLanguages', '#subLangDql', '#subLangDml', '#subLangDdl', '#subLangTcl', '#subLangDcl'];
-  const coreEntitiesTracks = ['#coreEntities', '#entityDatabase', '#entityTable', '#entityColumn', '#entityRow'];
-
-  if (subLangTracks.includes(selector) || coreEntitiesTracks.includes(selector) || selector.startsWith('#iq')) {
     container.scrollTo({ top: 0, behavior: isSeek ? 'auto' : 'smooth' });
     return;
   }
@@ -9526,7 +9518,7 @@ function scrollToTarget(selector, isSeek = true) {
     const targetRect = blockToScroll.getBoundingClientRect();
     const relativeTop = targetRect.top - containerRect.top + container.scrollTop;
     container.scrollTo({
-      top: Math.max(0, relativeTop - 16),
+      top: Math.max(0, relativeTop - 24),
       behavior: isSeek ? 'auto' : 'smooth'
     });
   }
@@ -10191,20 +10183,17 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
     if (!activeSection) {
       container.querySelectorAll('.slide-section').forEach(s => {
         s.classList.remove('section-hidden');
-        s.style.display = '';
       });
       return;
     }
 
-    // 4. Hide ALL other slide sections so ONLY the relevant concept is shown!
+    // 4. Focus active slide section and gently dim inactive sections
     container.querySelectorAll('.slide-section').forEach(section => {
       if (section !== activeSection) {
         section.classList.add('section-hidden');
         section.classList.remove('stunning-section-entry', 'active-section-mounted', 'instant-display');
-        section.style.display = 'none';
       } else {
         section.classList.remove('section-hidden');
-        section.style.display = '';
         section.classList.add('active-section-mounted');
         
         // Zoom appearance ONLY on 1st Narration! For remaining tracks: clean instant display without zoom pop
@@ -10218,13 +10207,21 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
       }
     });
 
-    // Reset container scroll to top: 0 so active section starts cleanly with heading visible
+    // Smoothly scroll the container to position the target section / element cleanly in view!
     const scrollParent = document.getElementById('slideContent') || container;
     if (scrollParent) {
-      scrollParent.scrollTo({
-        top: 0,
-        behavior: isSeek ? 'auto' : 'smooth'
-      });
+      if (isFirstNarration) {
+        scrollParent.scrollTo({ top: 0, behavior: isSeek ? 'auto' : 'smooth' });
+      } else {
+        const containerRect = scrollParent.getBoundingClientRect();
+        const blockToScroll = targetEl.closest('.slide-section') || targetEl;
+        const targetRect = blockToScroll.getBoundingClientRect();
+        const relativeTop = targetRect.top - containerRect.top + scrollParent.scrollTop;
+        scrollParent.scrollTo({
+          top: Math.max(0, relativeTop - 24),
+          behavior: isSeek ? 'auto' : 'smooth'
+        });
+      }
     }
 
     // 5. If target is inside an .interview-box, show ONLY the active question card and hide all other sibling cards

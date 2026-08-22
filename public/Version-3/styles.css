@@ -6868,7 +6868,7 @@ span.sql-identifier {
 
 
 /* ─── P2 #15: Class-based visibility helpers ─────────────────────── */
-.section-hidden    { display: none !important; }
+.section-hidden    { opacity: 0.22; }
 .vis-target-hidden { opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
 .vis-target-dimmed { opacity: 0.25; transition: opacity 0.3s ease; }
 .vis-target-active { opacity: 1; transition: opacity 0.3s ease; }
@@ -7262,21 +7262,20 @@ select:focus:not(:focus-visible) {
 }
 
 .playback-active .slide-section {
-  transition: opacity 0.35s ease, filter 0.35s ease, transform 0.35s ease !important;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .playback-active .slide-section:not(.section-hidden) {
-  margin-top: 0 !important;
-}
-
-.playback-active .slide-section:not(.section-hidden) > h3:first-child,
-.playback-active .slide-section:not(.section-hidden) > .heading-box-wrap:first-child {
-  margin-top: 0 !important;
+  opacity: 1 !important;
+  filter: none !important;
+  pointer-events: auto !important;
 }
 
 .playback-active .slide-section.section-hidden {
-  opacity: 0.35 !important;
-  filter: blur(0.5px) grayscale(25%) !important;
+  opacity: 0.18 !important;
+  filter: blur(0.4px) grayscale(40%) !important;
+  pointer-events: none !important;
+  display: block !important;
 }
 
 .narration-spotlight-active {
@@ -7296,7 +7295,7 @@ select:focus:not(:focus-visible) {
   color: #c4b5fd !important;
 }
 
-/* 4. Stunning Section Entry Animation (Fires only on new topic entry!) */
+/* 4. Stunning Section Entry Animation (Fires only on 1st Narration Opener!) */
 .stunning-section-entry {
   animation: stunningSectionPop 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
   will-change: opacity, transform !important;
@@ -7340,7 +7339,7 @@ select:focus:not(:focus-visible) {
 }
 
 .section-hidden {
-  display: none !important;
+  display: block;
 }
 
 /* ═══════════════════════════════════════════════════════════════

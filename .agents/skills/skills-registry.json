@@ -29,13 +29,6 @@
       "status": "ready",
       "path": ".agents/skills/day-curriculum-builder/SKILL.md",
       "description": "Step-by-step creation of Days 05 to 60 with SQLite sandbox, multi-table exercises, and solution rubrics."
-    },
-    {
-      "id": "sql-day-orchestration",
-      "name": "SQL Day Orchestration (Maestro v3.0)",
-      "status": "active",
-      "path": ".agents/skills/sql-day-orchestration/SKILL.md",
-      "description": "Multi-agent orchestration protocol and quality gate specification for producing and validating Days 03-18 with 100% Day 01/02 parity."
     }
   ]
 }

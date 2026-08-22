@@ -79,6 +79,13 @@ h1, h2, h3, h4, h5, h6,
   letter-spacing: 0.005em !important;
   color: #1e293b !important; /* Premium dark slate reading color */
 }
+.slide-content h4,
+.slide-section h4,
+.heading-with-audio h4 {
+  color: #0f172a !important; /* Ultra-high contrast Slate-900 heading color (WCAG AAA 16:1) */
+  font-weight: 800 !important;
+  letter-spacing: -0.015em !important;
+}
 pre, code, kbd, samp, .CodeMirror {
   font-family: var(--font-mono) !important;
   font-variant-ligatures: common-ligatures !important;

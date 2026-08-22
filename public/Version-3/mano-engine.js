@@ -8647,6 +8647,8 @@ function updateWhereCodeHighlights(currentTime, isPlaying) {
   block1.classList.toggle('code-active-spotlight', isB1);
   block2.classList.toggle('narration-highlight', isB2);
   block2.classList.toggle('code-active-spotlight', isB2);
+  if (isB1) narrationScrollToSubblock(block1);
+  if (isB2) narrationScrollToSubblock(block2);
 }
 
 function updateCompCodeHighlights(currentTime, isPlaying) {
@@ -8710,24 +8712,31 @@ function updateLogicCodeHighlights(currentTime, isPlaying) {
 }
 
 /* ─────────────────────────────────────────────────────────────────
-   [SYNC-020] Narration Subblock Smooth-Scroll Protocol
-   Gently scrolls the newly-active code sub-block into the nearest
-   visible viewport position during narration. Uses a per-element
-   350ms debounce so it fires only once per card transition, never
-   on every timeupdate tick. block:'nearest' ensures minimal scroll —
-   it will not move the page at all if the card is already visible.
+   [SYNC-020] Narration Subblock Smooth-Scroll Protocol (Enhanced)
+   Gently scrolls active code sub-blocks into prime center viewing
+   position whenever a container holds 2+ cards and subsequent cards
+   (e.g. Card 2, 3, or 4) are reached or near viewport edges.
+   Safe-zone check prevents cards from being occluded by the fixed
+   bottom playback bar (window.innerHeight - 110px).
    ───────────────────────────────────────────────────────────────── */
 const _narScrollTimers = new WeakMap();
 function narrationScrollToSubblock(el) {
   if (!el) return;
   if (_narScrollTimers.has(el)) return; // already queued for this card
+  
+  const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 600;
+  const topSafeLimit = 60; // Top header safe threshold
+  const bottomSafeLimit = viewportHeight - 110; // Bottom playback bar clearance (60px bar + 50px buffer)
+  
   const rect = el.getBoundingClientRect();
-  const inView = rect.top >= 0 && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight);
-  if (inView) return; // fully visible — no scroll needed
+  const fullyInSafeZone = rect.top >= topSafeLimit && rect.bottom <= bottomSafeLimit;
+  if (fullyInSafeZone) return; // fully visible inside safe viewport — no scroll needed
+
   const tid = setTimeout(() => {
-    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    setTimeout(() => _narScrollTimers.delete(el), 600);
-  }, 80); // slight delay so highlight transition renders first
+    // Scroll card smoothly to center position with generous breathing room
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => _narScrollTimers.delete(el), 500);
+  }, 60); // fast transition responsiveness
   _narScrollTimers.set(el, tid);
 }
 

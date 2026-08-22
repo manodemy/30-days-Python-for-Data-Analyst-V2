@@ -358,8 +358,13 @@ Added: Day03 — audit previously verified registered engine tracks against disk
 Supersedes: none
 
 [SYNC-020] [STATUS: active] [SCOPE: Sync]
-Statement: Narration Subblock Smooth-Scroll Protocol: Whenever a .code-block-container holds 3 or more .code-subblock cards (i.e., any multi-query code block where cards can extend beyond the viewport), the Sync Agent MUST wire a `narrationScrollToSubblock(el)` call alongside every highlight toggle so the newly-activated card gently scrolls into the nearest visible viewport position during narration. The helper (defined once globally in mano-engine.js) uses `scrollIntoView({ behavior: 'smooth', block: 'nearest' })` guarded by: (1) a WeakMap-based per-element 350ms debounce to avoid continuous re-firing on every timeupdate tick, and (2) a `getBoundingClientRect` in-view check that skips the scroll entirely if the card is already fully visible. This pattern MUST be applied to ALL future `updateXxxCodeHighlights` functions that spotlight 3+ code sub-blocks — including updateCompCodeHighlights, updateLogicCodeHighlights, updateBetweenCodeHighlights, updateInCodeHighlights, updateLikeCodeHighlights, and updateNullCodeHighlights. No layout changes, column splits, or card visibility toggling are allowed — only a smooth, minimal scroll to bring the active card cleanly into view.
-Added: Day03 — user reported that cards 3 and 4 in IS NULL and other 3-4 card code block containers were hidden below the viewport during narration. The WeakMap debounce + in-view guard ensures zero-jitter smooth scrolling with no performance impact.
+Statement: Narration Subblock Smooth-Scroll Protocol (2+ Card Safe-Zone Standard):
+Whenever a `.code-block-container` holds 2 or more `.code-subblock` cards (i.e., any multi-query code block where cards extend down the viewport), the Sync Agent MUST wire `narrationScrollToSubblock(el)` alongside every highlight toggle so newly-activated cards smoothly scroll into prime center view during narration.
+  (1) Scroll Threshold: Active for all containers with 2+ cards whenever Card 2, 3, or 4 is reached.
+  (2) Safe-Zone Guard: Calculates `topSafeLimit = 60px` and `bottomSafeLimit = viewportHeight - 110px` to prevent the card from being occluded or cropped by the fixed bottom playback bar.
+  (3) Alignment: Uses `el.scrollIntoView({ behavior: 'smooth', block: 'center' })` to guarantee the active query is cleanly positioned in the central viewport with generous upper and lower breathing room.
+  (4) Performance: Uses a WeakMap-based per-element debounce so scrolling only fires once per card activation transition.
+Added: Day03 — user reported that Card 3 was getting cropped behind the bottom player bar when scrolling. Updated threshold to 2+ cards with center alignment and bottom bar clearance offset.
 Supersedes: none
 
 [TIMEKEEPER-004] [STATUS: active] [SCOPE: Timekeeper]

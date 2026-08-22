@@ -8015,10 +8015,33 @@ select:focus:not(:focus-visible) {
   border-radius: 8px !important;
   padding: 12px 16px !important;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4) !important;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition: max-height 0.45s cubic-bezier(0.16, 1, 0.3, 1), 
+              opacity 0.35s ease, 
+              transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              margin 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              padding 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.25s ease !important;
   position: relative;
   overflow: hidden;
+  max-height: 400px;
   scroll-margin-top: 48px !important;
+}
+
+/* Progressive Card Windowing: Smoothly collapses previous card when bottom card is hidden */
+.code-subblock.subblock-scrolled-out {
+  max-height: 0 !important;
+  opacity: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  border-top-width: 0 !important;
+  border-bottom-width: 0 !important;
+  border-left-width: 0 !important;
+  border-right-width: 0 !important;
+  transform: translateY(-16px) scale(0.96) !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
 }
 
 .code-subblock pre {

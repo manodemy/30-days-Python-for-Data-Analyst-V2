@@ -9080,10 +9080,12 @@ function updateLogicCodeHighlights(currentTime, isPlaying) {
 }
 
 /* ─────────────────────────────────────────────────────────────────
-   [SYNC-020] Narration Subblock Smart Heading-Preserving Scroll
+   [SYNC-020] Narration Subblock Smart Heading-Preserving Card Windowing
    Ensures that section titles/headings NEVER get pushed offscreen or
-   hidden underneath the top header bar when code blocks or sub-cards
-   are highlighted during narration.
+   hidden underneath the top header bar when code blocks are highlighted.
+   When the 3rd or 4th card is active / extending past the bottom safe zone,
+   earlier cards (card 1, card 2) smoothly disappear/collapse, causing the
+   remaining cards to smoothly glide up into place below the fixed heading!
    ───────────────────────────────────────────────────────────────── */
 const _narScrollTimers = new WeakMap();
 function narrationScrollToSubblock(el) {
@@ -9095,63 +9097,50 @@ function narrationScrollToSubblock(el) {
 
   const section = el.closest('.slide-section') || el.closest('.code-block-container') || el.parentElement;
   const heading = section ? (section.querySelector('h2, h3, h4, .heading-with-audio') || section) : null;
+  const cardContainer = el.closest('.code-block-container') || (section ? section.querySelector('.code-block-container') : null);
 
   const containerRect = container.getBoundingClientRect();
   const elRect = el.getBoundingClientRect();
   const headingRect = heading ? heading.getBoundingClientRect() : null;
 
   const topPadding = 26; // Generous 26px headroom so heading is never cropped or touching top
-  const bottomPadding = 32;
 
-  // 1. If heading is above container top (e.g. pushed under sticky header), ALWAYS pull heading back into view!
-  if (headingRect && headingRect.top < containerRect.top + topPadding) {
-    const scrollUpNeeded = (containerRect.top + topPadding) - headingRect.top;
-    const tid = setTimeout(() => {
-      container.scrollBy({ top: -scrollUpNeeded, behavior: 'smooth' });
-      setTimeout(() => _narScrollTimers.delete(el), 350);
-    }, 40);
-    _narScrollTimers.set(el, tid);
-    return;
+  // 1. Keep heading pinned in view at top of container
+  if (headingRect && Math.abs(headingRect.top - (containerRect.top + topPadding)) > 6) {
+    const scrollDiff = headingRect.top - (containerRect.top + topPadding);
+    container.scrollBy({ top: scrollDiff, behavior: 'smooth' });
   }
 
-  // 2. If this is the 1st subblock in the block/section, make sure the heading + 1st block are at the top
-  const isFirstChild = !el.previousElementSibling || el.id.endsWith('1') || el.id.endsWith('Query1') || el.id.endsWith('Syntax');
-  if (isFirstChild) {
-    if (headingRect && Math.abs(headingRect.top - (containerRect.top + topPadding)) > 4) {
-      const scrollDiff = headingRect.top - (containerRect.top + topPadding);
-      const tid = setTimeout(() => {
-        container.scrollBy({ top: scrollDiff, behavior: 'smooth' });
-        setTimeout(() => _narScrollTimers.delete(el), 350);
-      }, 40);
-      _narScrollTimers.set(el, tid);
+  // 2. Card Windowing: If we are in a multi-card container (.code-block-container)
+  if (cardContainer) {
+    const allCards = Array.from(cardContainer.querySelectorAll('.code-subblock'));
+    const activeIdx = allCards.indexOf(el);
+
+    if (activeIdx <= 0) {
+      // Restore all cards when 1st query/card is active
+      allCards.forEach(c => c.classList.remove('subblock-scrolled-out'));
       return;
     }
-  }
 
-  // 3. If element is already completely visible within the container viewport, do not scroll!
-  if (elRect.top >= containerRect.top + topPadding && elRect.bottom <= containerRect.bottom - bottomPadding) {
-    return;
-  }
+    // Check if active element bottom extends near or past the container bottom safe zone
+    const isBottomCutoff = elRect.bottom > containerRect.bottom - 20;
 
-  // 4. If element extends below bottom of container, scroll down just enough to reveal it
-  if (elRect.bottom > containerRect.bottom - bottomPadding) {
-    const scrollDownNeeded = elRect.bottom - (containerRect.bottom - bottomPadding);
-    const tid = setTimeout(() => {
-      container.scrollBy({ top: scrollDownNeeded, behavior: 'smooth' });
-      setTimeout(() => _narScrollTimers.delete(el), 350);
-    }, 40);
-    _narScrollTimers.set(el, tid);
-    return;
-  }
-
-  // 5. If element is above the top (e.g. after scrubbing backwards), scroll up to reveal it
-  if (elRect.top < containerRect.top + topPadding) {
-    const scrollUpNeeded = (containerRect.top + topPadding) - elRect.top;
-    const tid = setTimeout(() => {
-      container.scrollBy({ top: -scrollUpNeeded, behavior: 'smooth' });
-      setTimeout(() => _narScrollTimers.delete(el), 350);
-    }, 40);
-    _narScrollTimers.set(el, tid);
+    if (activeIdx >= 2 || isBottomCutoff) {
+      // Collapse earlier cards so active card glides smoothly into view below heading
+      // For card 3 (index 2): collapse card 1 (index 0)
+      // For card 4 (index 3): collapse card 1 and card 2 (index 0 and 1)
+      const cardsToCollapse = activeIdx - 1;
+      for (let i = 0; i < allCards.length; i++) {
+        if (i < cardsToCollapse) {
+          allCards[i].classList.add('subblock-scrolled-out');
+        } else {
+          allCards[i].classList.remove('subblock-scrolled-out');
+        }
+      }
+    } else {
+      // For activeIdx 1 (2nd card), if it fits, keep earlier cards visible
+      allCards.forEach(c => c.classList.remove('subblock-scrolled-out'));
+    }
   }
 }
 
@@ -10702,8 +10691,8 @@ function clearSlidePlaybackVisibility() {
 
   containers.forEach(container => {
     container.classList.remove('playback-active');
-    container.querySelectorAll('.section-hidden, .vis-target-hidden, .vis-target-dimmed, .narration-spotlight-active, .active-section-mounted, .stunning-section-entry, .instant-display, .row-active-spotlight, .card-active-spotlight, .block-active-spotlight').forEach(el => {
-      el.classList.remove('section-hidden', 'vis-target-hidden', 'vis-target-dimmed', 'narration-spotlight-active', 'active-section-mounted', 'stunning-section-entry', 'instant-display', 'row-active-spotlight', 'card-active-spotlight', 'block-active-spotlight');
+    container.querySelectorAll('.section-hidden, .vis-target-hidden, .vis-target-dimmed, .narration-spotlight-active, .active-section-mounted, .stunning-section-entry, .instant-display, .row-active-spotlight, .card-active-spotlight, .block-active-spotlight, .subblock-scrolled-out').forEach(el => {
+      el.classList.remove('section-hidden', 'vis-target-hidden', 'vis-target-dimmed', 'narration-spotlight-active', 'active-section-mounted', 'stunning-section-entry', 'instant-display', 'row-active-spotlight', 'card-active-spotlight', 'block-active-spotlight', 'subblock-scrolled-out');
       // Also clear any legacy inline styles from previous runs
       el.style.display = '';
       el.style.opacity = '';
@@ -10760,9 +10749,9 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
   containers.forEach(container => {
     container.classList.add('playback-active');
 
-    // 1. Clear previous sub-element spotlight highlights
-    container.querySelectorAll('.narration-spotlight-active, .row-active-spotlight, .card-active-spotlight, .block-active-spotlight').forEach(el => {
-      el.classList.remove('narration-spotlight-active', 'row-active-spotlight', 'card-active-spotlight', 'block-active-spotlight');
+    // 1. Clear previous sub-element spotlight highlights and scrolled-out cards
+    container.querySelectorAll('.narration-spotlight-active, .row-active-spotlight, .card-active-spotlight, .block-active-spotlight, .subblock-scrolled-out').forEach(el => {
+      el.classList.remove('narration-spotlight-active', 'row-active-spotlight', 'card-active-spotlight', 'block-active-spotlight', 'subblock-scrolled-out');
     });
 
     // 2. Find the target element inside this container

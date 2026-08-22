@@ -48,8 +48,8 @@ window.COURSE_CONTENT['day03'] = {
 
         <div class="slide-section" id="day03WhereInfoSection">
           <div class="info-box" id="day03WhereInfo">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; width: 100%;">
-              <strong style="color: #0f766e;">ℹ️ Execution Order:</strong>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; width: 100%;">
+              <strong style="color: #0f766e; flex: 1;">ℹ️ Execution Order:</strong>
               <button class="audio-play-btn" onclick="playAudio('Day03/New_Day3Part1audio03.mp3', this)" title="Play narration" style="flex-shrink: 0;">
                 <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
               </button>
@@ -297,7 +297,7 @@ window.COURSE_CONTENT['day03'] = {
 
         <div class="slide-section" id="day03OpsTableSection">
           <div class="db-mock-table-wrap" id="day03OpsTable">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; padding: 0 4px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; padding: 0 4px;">
               <h4 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: #cbd5e1; flex: 1;">Comparison Operator Reference</h4>
               <button class="audio-play-btn" onclick="playAudio('Day03/New_Day3Part1audio05.mp3', this)" title="Play narration" style="flex-shrink: 0;">
                 <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
@@ -847,8 +847,8 @@ FROM   employees
 WHERE  department_id NOT IN (10, 20);</code></pre>
 
           <div class="warn-box" id="day03InWarn">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; width: 100%;">
-              <strong style="color: #b91c1c;">⚠️ NOT IN with NULLs — Silent Data Loss:</strong>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; width: 100%;">
+              <strong style="color: #b91c1c; flex: 1;">⚠️ NOT IN with NULLs — Silent Data Loss:</strong>
               <button class="audio-play-btn" onclick="playAudio('Day03/Day3audio16.mp3', this)" title="Play narration" style="flex-shrink: 0;">
                 <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
               </button>

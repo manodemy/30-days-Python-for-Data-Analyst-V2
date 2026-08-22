@@ -262,6 +262,11 @@ Statement: Irrelevant Content Hiding with 1st-Narration Hero Zoom: During narrat
 Added: Day03 — user mandated that irrelevant content must always be hidden during playback, but zoom scale animation should be reserved exclusively for Track 01.
 Supersedes: none
 
+[SYNC-014] [STATUS: active] [SCOPE: Sync]
+Statement: Zero-Shift UI & Play Button Dimensional Lock: All play/pause buttons (.audio-play-btn) and their parent header flex containers MUST have strict dimensional locks (width/height: 24px, margin: 0, padding: 0, flex-shrink: 0) across both idle (▶) and active (⏸) states. All card header rows MUST use display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; with flex: 1 on title labels, guaranteeing zero layout shift or alignment jumping between idle and narration playback states.
+Added: Day03 — inconsistent header justify-content and button margins caused visual alignment jumps between idle and playing states.
+Supersedes: none
+
 [VOICE-001] [STATUS: active] [SCOPE: Voice]
 Statement: Voice must ALWAYS create narrations/day-XX.json BEFORE running the TTS build. The JSON is the source of truth — if it doesn't exist, build-audio.js will error and produce no files. Never run build-audio.js before the JSON is written and validated.
 Added: Day03 — discovered that Day03 had 13 theory MP3s on disk but no narrations/day-03.json, and zero question/solution MP3s because the JSON was never authored.

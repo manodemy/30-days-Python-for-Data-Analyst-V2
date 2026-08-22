@@ -5149,7 +5149,8 @@ function populateDaySelector() {
     return;
   }
   sel.innerHTML = manifest.map((d, i) => {
-    const dayStr = String(d.day).padStart(2, '0');
+    const dayNum = d.day || d.globalDay || (i + 1);
+    const dayStr = String(dayNum).padStart(2, '0');
     const emoji = d.emoji || '';
     const selected = i === 0 ? ' selected' : '';
     return `<option value="${d.id}"${selected}>${emoji} Day ${dayStr}: ${d.title}</option>`;
@@ -6362,45 +6363,45 @@ const day04Tracks = [
   { src: 'Day04/New_Day4Question12sol.mp3', target: '#questionBar', title: 'Q12 Solution: Stock Value', type: 'solution', qId: 12 }
 ];
 
-const day05Durations = [20.2, 23.5, 18.8, 20.0, 20.1, 14.5, 17.3, 19.4, 21.1, 16.5, 21.3, 24.2, 16.5, 15.6, 23.6, 14.7, 20.9, 19.8, 13.7, 24.4, 20.0, 17.7, 20.2, 10.4, 15.5, 6.0, 8.0, 6.0, 9.8, 9.3, 11.5, 6.5, 7.8, 7.0, 7.4, 8.7, 8.0, 11.5, 11.2, 5.7, 8.2, 10.1, 10.8, 5.6, 6.2, 6.0, 6.2, 10.6, 18.0, 8.3, 13.5, 8.7, 8.1];
+const day05Durations = [17.6, 30.9, 9.0, 25.0, 27.2, 10.0, 19.1, 25.9, 12.6, 11.0, 20.3, 15.5, 20.7, 17.6, 10.9, 12.6, 15.3, 11.5, 10.8, 30.3, 11.9, 9.1, 10.4, 14.0, 14.3, 8.3, 7.5, 8.7, 9.0, 10.0, 10.6, 7.6, 7.3, 9.0, 7.1, 10.0, 9.3, 8.4, 10.3, 8.6, 7.9, 8.0, 10.1, 7.6, 5.9, 8.2, 5.9, 7.1, 16.5, 7.8, 12.2, 8.3, 8.6];
 
 const day05Tracks = [
   // ── Section 1: Why Aggregation Matters ──
-  { src: 'Day05/New_Day5Part1audio01.mp3', target: '#day05Intro', title: '01. Why Aggregation Matters' },
-  { src: 'Day05/New_Day5Part1audio02.mp3', target: '#day05IntroSummary', title: 'The Big 5 Aggregates' },
-  { src: 'Day05/New_Day5Part1audio03.mp3', target: '#day05IntroProTip', title: '💡 Engine-Specific Aggregates' },
+  { src: 'Day05/New_Day5Part1audio01.mp3', target: '#day05WhyAgg', title: '01. Why Aggregation Matters' },
+  { src: 'Day05/New_Day5Part1audio02.mp3', target: '#day05AggRefTable', title: 'The Big 5 Aggregates' },
+  { src: 'Day05/New_Day5Part1audio03.mp3', target: '#day05FiveAggs', title: '💡 Core Rule of Thumb' },
 
   // ── Section 2: COUNT Variations ──
   { src: 'Day05/New_Day5Part1audio04.mp3', target: '#day05Count', title: '02. COUNT Variations' },
   { src: 'Day05/New_Day5Part1audio05.mp3', target: '#day05CountExamples', title: 'COUNT in Action' },
-  { src: 'Day05/New_Day5Part1audio06.mp3', target: '#day05CountWarn', title: '⚠️ COUNT(*) vs COUNT(col)' },
+  { src: 'Day05/New_Day5Part1audio06.mp3', target: '#day05CountInfo', title: '📊 Data Quality Formula' },
 
   // ── Section 3: SUM & AVG ──
   { src: 'Day05/New_Day5Part1audio07.mp3', target: '#day05SumAvg', title: '03. SUM & AVG' },
-  { src: 'Day05/New_Day5Part1audio08.mp3', target: '#day05SumAvgExamples', title: 'SUM & AVG Examples' },
-  { src: 'Day05/New_Day5Part1audio09.mp3', target: '#day05SumAvgWarn', title: '⚠️ The AVG & NULL Trap' },
+  { src: 'Day05/New_Day5Part1audio08.mp3', target: '#day05SumAvgCode', title: 'SUM & AVG Examples' },
+  { src: 'Day05/New_Day5Part1audio09.mp3', target: '#day05AvgNullWarn', title: '⚠️ The AVG & NULL Trap' },
 
   // ── Section 4: COALESCE Safety Net ──
   { src: 'Day05/New_Day5Part1audio10.mp3', target: '#day05Coalesce', title: '04. COALESCE Safety Net' },
-  { src: 'Day05/New_Day5Part1audio11.mp3', target: '#day05CoalesceExamples', title: 'COALESCE in Action' },
-  { src: 'Day05/New_Day5Part1audio12.mp3', target: '#day05CoalesceInfo', title: 'ℹ️ Inside vs Outside COALESCE' },
+  { src: 'Day05/New_Day5Part1audio11.mp3', target: '#day05CoalesceCode', title: 'COALESCE in Action' },
+  { src: 'Day05/New_Day5Part1audio12.mp3', target: '#day05CoalesceTip', title: '💡 Inside vs Outside COALESCE' },
 
   // ── Section 5: MIN & MAX Beyond Numbers ──
   { src: 'Day05/New_Day5Part1audio13.mp3', target: '#day05MinMax', title: '05. MIN & MAX Beyond Numbers' },
-  { src: 'Day05/New_Day5Part1audio14.mp3', target: '#day05MinMaxExamples', title: 'MIN & MAX Examples' },
-  { src: 'Day05/New_Day5Part1audio15.mp3', target: '#day05MinMaxInfo', title: 'ℹ️ Lexicographic Ordering' },
+  { src: 'Day05/New_Day5Part1audio14.mp3', target: '#day05MinMaxCode', title: 'MIN & MAX Examples' },
+  { src: 'Day05/New_Day5Part1audio15.mp3', target: '#day05MinMaxTip', title: '💡 ISO-8601 Date Standard' },
 
   // ── Section 6: Multi-Aggregate Dashboards ──
-  { src: 'Day05/New_Day5Part1audio16.mp3', target: '#day05Dashboard', title: '06. Multi-Aggregate Dashboards' },
-  { src: 'Day05/New_Day5Part1audio17.mp3', target: '#day05DashboardExamples', title: 'Data Quality Dashboard' },
-  { src: 'Day05/New_Day5Part1audio18.mp3', target: '#day05DashboardTip', title: '💡 Aggregates on Expressions' },
+  { src: 'Day05/New_Day5Part1audio16.mp3', target: '#day05Stacking', title: '06. Stacking Aggregates' },
+  { src: 'Day05/New_Day5Part1audio17.mp3', target: '#day05StackCode', title: 'Executive KPI Dashboard' },
+  { src: 'Day05/New_Day5Part1audio18.mp3', target: '#day05StackInfo', title: '💡 Row-Level Expression' },
 
   // ── Section 7: NULL Behavior & Auditing ──
-  { src: 'Day05/New_Day5Part1audio19.mp3', target: '#day05NullAudit', title: '07. NULL Behavior & Auditing' },
-  { src: 'Day05/New_Day5Part1audio20.mp3', target: '#day05NullTable', title: 'NULL Behavior Reference' },
-  { src: 'Day05/New_Day5Part1audio21.mp3', target: '#day05LiveDemo', title: 'Live Aggregation Demo' },
-  { src: 'Day05/New_Day5Part1audio22.mp3', target: '#day05NullAuditTip', title: '💡 Pro Tip: Missing Value Audit' },
-  { src: 'Day05/New_Day5Part1audio23.mp3', target: '#day05DistinctWarn', title: '⚠️ DISTINCT Inside Aggregates' },
+  { src: 'Day05/New_Day5Part1audio19.mp3', target: '#day05NullDeep', title: '07. NULL Deep Dive' },
+  { src: 'Day05/New_Day5Part1audio20.mp3', target: '#day05NullBehavTable', title: 'NULL Behavior Reference' },
+  { src: 'Day05/New_Day5Part1audio21.mp3', target: '#day05NullDemoCode', title: 'Live Aggregation Demo' },
+  { src: 'Day05/New_Day5Part1audio22.mp3', target: '#day05NullTip', title: '💡 Pro-Tip: Missing Value Audit' },
+  { src: 'Day05/New_Day5Part1audio23.mp3', target: '#day05DistinctWarn', title: '⚠️ Caution with SUM(DISTINCT)' },
 
   // ── 15 Practice Questions & Solutions ──
   { src: 'Day05/New_Day5Question01.mp3', target: '#questionBar', title: 'Q1: Payroll Summary', type: 'question', qId: 1 },
@@ -6419,20 +6420,20 @@ const day05Tracks = [
   { src: 'Day05/New_Day5Question07sol.mp3', target: '#questionBar', title: 'Q7 Solution: Total Inventory Valuation', type: 'solution', qId: 7 },
   { src: 'Day05/New_Day5Question08.mp3', target: '#questionBar', title: 'Q8: Dual Commission Averages', type: 'question', qId: 8 },
   { src: 'Day05/New_Day5Question08sol.mp3', target: '#questionBar', title: 'Q8 Solution: Dual Commission Averages', type: 'solution', qId: 8 },
-  { src: 'Day05/New_Day5Question09.mp3', target: '#questionBar', title: 'Q9: Premium Product Inventory Count', type: 'question', qId: 9 },
-  { src: 'Day05/New_Day5Question09sol.mp3', target: '#questionBar', title: 'Q9 Solution: Premium Product Inventory Count', type: 'solution', qId: 9 },
-  { src: 'Day05/New_Day5Question10.mp3', target: '#questionBar', title: 'Q10: Safe Empty-Set Aggregation', type: 'question', qId: 10 },
-  { src: 'Day05/New_Day5Question10sol.mp3', target: '#questionBar', title: 'Q10 Solution: Safe Empty-Set Aggregation', type: 'solution', qId: 10 },
-  { src: 'Day05/New_Day5Question11.mp3', target: '#questionBar', title: 'Q11: Maximum Order Value', type: 'question', qId: 11 },
-  { src: 'Day05/New_Day5Question11sol.mp3', target: '#questionBar', title: 'Q11 Solution: Maximum Order Value', type: 'solution', qId: 11 },
-  { src: 'Day05/New_Day5Question12.mp3', target: '#questionBar', title: 'Q12: Unique Customer Regions', type: 'question', qId: 12 },
-  { src: 'Day05/New_Day5Question12sol.mp3', target: '#questionBar', title: 'Q12 Solution: Unique Customer Regions', type: 'solution', qId: 12 },
-  { src: 'Day05/New_Day5Question13.mp3', target: '#questionBar', title: 'Q13: Conditional Status Revenue Pivot', type: 'question', qId: 13 },
-  { src: 'Day05/New_Day5Question13sol.mp3', target: '#questionBar', title: 'Q13 Solution: Conditional Status Revenue Pivot', type: 'solution', qId: 13 },
-  { src: 'Day05/New_Day5Question14.mp3', target: '#questionBar', title: 'Q14: Weighted Average Item Price', type: 'question', qId: 14 },
-  { src: 'Day05/New_Day5Question14sol.mp3', target: '#questionBar', title: 'Q14 Solution: Weighted Average Item Price', type: 'solution', qId: 14 },
-  { src: 'Day05/New_Day5Question15.mp3', target: '#questionBar', title: 'Q15: Employee Name Roster String', type: 'question', qId: 15 },
-  { src: 'Day05/New_Day5Question15sol.mp3', target: '#questionBar', title: 'Q15 Solution: Employee Name Roster String', type: 'solution', qId: 15 }
+  { src: 'Day05/New_Day5Question09.mp3', target: '#questionBar', title: 'Q9: Premium Product Count', type: 'question', qId: 9 },
+  { src: 'Day05/New_Day5Question09sol.mp3', target: '#questionBar', title: 'Q9 Solution: Premium Product Count', type: 'solution', qId: 9 },
+  { src: 'Day05/New_Day5Question10.mp3', target: '#questionBar', title: 'Q10: Safe Average on Unmatched', type: 'question', qId: 10 },
+  { src: 'Day05/New_Day5Question10sol.mp3', target: '#questionBar', title: 'Q10 Solution: Safe Average on Unmatched', type: 'solution', qId: 10 },
+  { src: 'Day05/New_Day5Question11.mp3', target: '#questionBar', title: 'Q11: Peak Transaction Value', type: 'question', qId: 11 },
+  { src: 'Day05/New_Day5Question11sol.mp3', target: '#questionBar', title: 'Q11 Solution: Peak Transaction Value', type: 'solution', qId: 11 },
+  { src: 'Day05/New_Day5Question12.mp3', target: '#questionBar', title: 'Q12: Geographic Reach Metric', type: 'question', qId: 12 },
+  { src: 'Day05/New_Day5Question12sol.mp3', target: '#questionBar', title: 'Q12 Solution: Geographic Reach Metric', type: 'solution', qId: 12 },
+  { src: 'Day05/New_Day5Question13.mp3', target: '#questionBar', title: 'Q13: Single-Pass Revenue Segmentation', type: 'question', qId: 13 },
+  { src: 'Day05/New_Day5Question13sol.mp3', target: '#questionBar', title: 'Q13 Solution: Single-Pass Revenue Segmentation', type: 'solution', qId: 13 },
+  { src: 'Day05/New_Day5Question14.mp3', target: '#questionBar', title: 'Q14: Weighted Average Price', type: 'question', qId: 14 },
+  { src: 'Day05/New_Day5Question14sol.mp3', target: '#questionBar', title: 'Q14 Solution: Weighted Average Price', type: 'solution', qId: 14 },
+  { src: 'Day05/New_Day5Question15.mp3', target: '#questionBar', title: 'Q15: Department Staff String', type: 'question', qId: 15 },
+  { src: 'Day05/New_Day5Question15sol.mp3', target: '#questionBar', title: 'Q15 Solution: Department Staff String', type: 'solution', qId: 15 }
 ];
 
 const slideTrackMap = {
@@ -8814,6 +8815,631 @@ function launchCompletionAnimation(audioObj, targetTime = 0) {
   });
 }
 
+
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ║  DAY 01 & SCHEMA PEEKING VISUAL HIGHLIGHT & CODE TOOLTIP SYSTEM          ║
+// ═══════════════════════════════════════════════════════════════════════════════
+
+let activePeekTooltip = null;
+let peekHideTimer = null;
+
+function cancelHideSchemaPeekTooltip() {
+  if (peekHideTimer) {
+    clearTimeout(peekHideTimer);
+    peekHideTimer = null;
+  }
+}
+
+function scheduleHideSchemaPeekTooltip() {
+  cancelHideSchemaPeekTooltip();
+  peekHideTimer = setTimeout(() => {
+    hideSchemaPeekTooltip();
+  }, 250);
+}
+
+function hideSchemaPeekTooltip() {
+  cancelHideSchemaPeekTooltip();
+  if (activePeekTooltip) {
+    activePeekTooltip.remove();
+    activePeekTooltip = null;
+  }
+}
+
+function insertSqlSnippet(snippet, cursorOffset = 0) {
+  const isTest = document.getElementById('testOverlay')?.classList.contains('open');
+  const targetEditor = (isTest && testEditor) ? testEditor : mainEditor;
+  if (!targetEditor) return;
+
+  const doc = targetEditor.getDoc();
+  const cursor = doc.getCursor();
+  doc.replaceRange(snippet, cursor);
+  
+  const newPos = {
+    line: cursor.line,
+    ch: cursor.ch + snippet.length + cursorOffset
+  };
+  doc.setCursor(newPos);
+  targetEditor.focus();
+}
+window.insertSqlSnippet = insertSqlSnippet;
+
+function handleColumnChipClick(colName, event) {
+  if (event) event.stopPropagation();
+  insertSqlSnippet(colName + ' ', 0);
+  
+  // Instant visual feedback on chip
+  const chip = event ? event.currentTarget : null;
+  if (chip) {
+    const prevBg = chip.style.background;
+    chip.style.background = '#10b981';
+    chip.style.color = '#fff';
+    setTimeout(() => {
+      if (chip) {
+        chip.style.background = prevBg;
+        chip.style.color = '';
+      }
+    }, 250);
+  }
+}
+window.handleColumnChipClick = handleColumnChipClick;
+
+function showSchemaPeekTooltip(tableName, anchorEl, isClick = false) {
+  cancelHideSchemaPeekTooltip();
+  const schema = getSchemaInfo();
+  const cols = schema[tableName] || [];
+  if (cols.length === 0) return;
+
+  if (activePeekTooltip && activePeekTooltip.dataset.table === tableName && isClick) {
+    hideSchemaPeekTooltip();
+    return;
+  }
+
+  hideSchemaPeekTooltip();
+
+  const tooltip = document.createElement('div');
+  tooltip.className = 'schema-peek-tooltip';
+  tooltip.id = 'schemaPeekTooltip';
+  tooltip.dataset.table = tableName;
+
+  const svgTable = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:-1px;"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/></svg>';
+  const svgBulb = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px; vertical-align:-1px;"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15 2a6 6 0 0 0-6 6c0 2 1 3.5 2 4.5V15h2v-2.5c1-1 2-2.5 2-4.5a6 6 0 0 0-6-6z"/></svg>';
+
+  const colsHtml = cols.map(c => `
+    <span class="schema-peek-col" onclick="handleColumnChipClick('${c}', event)" title="Click to insert '${c}' into code cell">
+      ${c}
+    </span>
+  `).join('');
+
+  tooltip.innerHTML = `
+    <div class="schema-peek-header">
+      <div style="display:flex; align-items:center;">
+        ${svgTable}
+        <strong style="cursor:pointer;" onclick="handleColumnChipClick('${tableName}', event)" title="Click to insert '${tableName}'">${tableName}</strong>
+      </div>
+      <div style="display:flex; align-items:center; gap:6px;">
+        <span style="font-size:0.68rem; color:#94a3b8;">${cols.length} columns</span>
+        <button class="peek-close-mini" onclick="hideSchemaPeekTooltip()" title="Close" style="background:transparent; border:none; color:#94a3b8; cursor:pointer; font-size:0.75rem; padding:0 4px;">&times;</button>
+      </div>
+    </div>
+    <div class="schema-peek-cols">${colsHtml}</div>
+    <div class="schema-peek-preview">${svgBulb} Click any column or table name to paste into code cell</div>
+  `;
+
+  // Bridge hover between anchor and tooltip
+  tooltip.addEventListener('mouseenter', cancelHideSchemaPeekTooltip);
+  tooltip.addEventListener('mouseleave', scheduleHideSchemaPeekTooltip);
+
+  document.body.appendChild(tooltip);
+  activePeekTooltip = tooltip;
+
+  const rect = anchorEl.getBoundingClientRect();
+  const top = Math.max(10, rect.bottom + 6);
+  const left = Math.max(10, Math.min(window.innerWidth - 300, rect.left));
+  tooltip.style.top = `${top}px`;
+  tooltip.style.left = `${left}px`;
+}
+
+function initSchemaCodePeeking() {
+  const codeTags = document.querySelectorAll('#questionBar code, #questionPrompt code, #slideBodyText code, #testQuestionPrompt code, .test-question-prompt code, .question-prompt code');
+  const schema = getSchemaInfo();
+  const tableNames = Object.keys(schema);
+
+  // Collect all column names across all schema tables
+  const allColumns = [];
+  tableNames.forEach(t => {
+    if (schema[t]) schema[t].forEach(c => allColumns.push(c));
+  });
+
+  codeTags.forEach(tag => {
+    if (tag.dataset.peekInit) return;
+    tag.dataset.peekInit = 'true';
+
+    const text = tag.textContent.trim().toLowerCase();
+    
+    // If tag matches a table name
+    if (tableNames.includes(text)) {
+      tag.classList.add('schema-peek-trigger');
+      tag.title = `Table '${text}' ? Hover or tap to view columns and insert`;
+      
+      tag.addEventListener('mouseenter', (e) => {
+        showSchemaPeekTooltip(text, tag, false);
+      });
+      tag.addEventListener('mouseleave', () => {
+        scheduleHideSchemaPeekTooltip();
+      });
+      tag.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showSchemaPeekTooltip(text, tag, true);
+      });
+    } else if (allColumns.includes(text)) {
+      // If tag is a column name, make it click-to-insert directly
+      tag.classList.add('schema-peek-trigger');
+      tag.title = `Column '${text}' ? Click to insert into code cell`;
+      tag.addEventListener('click', (e) => {
+        e.stopPropagation();
+        insertSqlSnippet(text + ' ', 0);
+        const prevColor = tag.style.color;
+        tag.style.color = '#10b981';
+        setTimeout(() => { tag.style.color = prevColor; }, 300);
+      });
+    }
+  });
+}
+
+// Global outside click listener to dismiss peek popover
+document.addEventListener('click', (e) => {
+  if (activePeekTooltip && !activePeekTooltip.contains(e.target) && !e.target.closest('.schema-peek-trigger')) {
+    hideSchemaPeekTooltip();
+  }
+});
+
+
+document.addEventListener('DOMContentLoaded', () => { setTimeout(() => { updateOverallScoreUI(); }, 50); });
+
+
+// Visual highlight synchronizer for Day 01 Topic 02 (Column Projection & Performance)
+
+
+function updateDay01Audio01Highlights(currentTime, isPlaying) {
+  const section = document.getElementById('rdbmsIntro');
+  const tableCard = document.getElementById('rdbmsTableCard');
+  const table = document.getElementById('rdbmsMockTable');
+
+  if (!section) return;
+
+  if (!isPlaying) {
+    section.classList.remove('narration-zoomed');
+    if (tableCard) {
+      tableCard.classList.remove('narration-hidden', 'narration-revealed');
+    }
+    if (table) {
+      table.querySelectorAll('.column-narration-active').forEach(el => el.classList.remove('column-narration-active'));
+      const row2 = table.querySelector('tbody tr.highlighted-row');
+      if (row2) row2.classList.remove('narration-row-pulse');
+    }
+    return;
+  }
+
+  // Active playing:
+  // 1. Zoom in on narration start
+  section.classList.add('narration-zoomed');
+
+  // 2. Control Table Card appearance (Second Image) at 13.94s
+  if (tableCard) {
+    if (currentTime < 13.94) {
+      tableCard.classList.add('narration-hidden');
+      tableCard.classList.remove('narration-revealed');
+    } else {
+      tableCard.classList.remove('narration-hidden');
+      tableCard.classList.add('narration-revealed');
+    }
+  }
+
+  // 3. Keyword column highlighting in table
+  if (table) {
+    let activeCol = -1; // 0: ID, 1: Name, 2: Role, 3: Salary
+    let highlightRows = false;
+
+    if (currentTime >= 17.86 && currentTime < 18.88) {
+      activeCol = 0; // "ID"
+    } else if (currentTime >= 18.88 && currentTime < 19.78) {
+      activeCol = 1; // "employee name"
+    } else if (currentTime >= 19.78 && currentTime < 20.12) {
+      activeCol = 2; // "role"
+    } else if (currentTime >= 20.12 && currentTime < 20.88) {
+      activeCol = 3; // "salary"
+    } else if (currentTime >= 20.88 && currentTime <= 23.40) {
+      highlightRows = true; // "while the rows represent individual records."
+    }
+
+    // Apply column active class to headers and cells of matching index
+    const ths = table.querySelectorAll('thead th');
+    const rows = table.querySelectorAll('tbody tr');
+
+    ths.forEach((th, idx) => {
+      th.classList.toggle('column-narration-active', idx === activeCol);
+    });
+
+    rows.forEach(tr => {
+      const tds = tr.querySelectorAll('td');
+      tds.forEach((td, idx) => {
+        td.classList.toggle('column-narration-active', idx === activeCol);
+      });
+      if (tr.classList.contains('highlighted-row')) {
+        tr.classList.toggle('narration-row-pulse', highlightRows);
+      }
+    });
+  }
+}
+
+
+function updateDay01Audio03Highlights(currentTime, isPlaying) {
+  const container = document.getElementById('rdbmsProblems');
+  if (!container) return;
+
+  const cardRedundancy = document.getElementById('cardRedundancy') || container.querySelector('.info-card--green');
+  const cardIntegrity = document.getElementById('cardIntegrity') || container.querySelector('.info-card--blue');
+  const cardConcurrent = document.getElementById('cardConcurrent') || container.querySelector('.info-card--orange');
+  const infoColumns = container.querySelector('.info-columns');
+
+  if (!cardRedundancy || !cardIntegrity || !cardConcurrent) return;
+
+  if (!isPlaying) {
+    if (infoColumns) infoColumns.classList.remove('has-narration-active');
+    cardRedundancy.classList.remove('card-narration-active');
+    cardIntegrity.classList.remove('card-narration-active');
+    cardConcurrent.classList.remove('card-narration-active');
+    return;
+  }
+
+  if (infoColumns) infoColumns.classList.add('has-narration-active');
+
+  // Whisper ASR Timestamps for New_Day1Part1audio03.mp3:
+  // 0.00s - 5.80s: Card 1 (Redundancy) - "First, it eliminates data redundancy..."
+  // 5.80s - 10.60s: Card 2 (Integrity) - "Second, it maintains data integrity..."
+  // 10.60s - 22.00s: Card 3 (Concurrent Access) - "And third, it handles concurrent access..."
+
+  const isCard1 = (currentTime >= 0 && currentTime < 5.80);
+  const isCard2 = (currentTime >= 5.80 && currentTime < 10.60);
+  const isCard3 = (currentTime >= 10.60 && currentTime <= 22.00);
+
+  cardRedundancy.classList.toggle('card-narration-active', isCard1);
+  cardIntegrity.classList.toggle('card-narration-active', isCard2);
+  cardConcurrent.classList.toggle('card-narration-active', isCard3);
+}
+
+
+function updateDay01CoreEntitiesHighlights(activeTarget, isPlaying) {
+  const tableWrap = document.getElementById('coreEntitiesTableWrap');
+  if (!tableWrap) return;
+
+  const rows = {
+    database: document.getElementById('rowDatabase'),
+    table: document.getElementById('rowTable'),
+    column: document.getElementById('rowColumn'),
+    row: document.getElementById('rowRow')
+  };
+
+  const allRows = [rows.database, rows.table, rows.column, rows.row].filter(Boolean);
+
+  // Always keep all rows and their child contents fully visible in the DOM
+  allRows.forEach(r => {
+    r.classList.remove('vis-target-hidden');
+    r.style.display = '';
+    r.querySelectorAll('*').forEach(c => {
+      c.classList.remove('vis-target-hidden');
+      c.style.display = '';
+    });
+  });
+
+  if (!isPlaying || !activeTarget) {
+    allRows.forEach(r => r.classList.remove('row-active-spotlight'));
+    return;
+  }
+
+  let highlightedRow = null;
+
+  if (activeTarget.includes('entityDatabase') || activeTarget.includes('New_Day1Part1audio07')) {
+    highlightedRow = rows.database;
+  } else if (activeTarget.includes('entityTable') || activeTarget.includes('New_Day1Part1audio06')) {
+    highlightedRow = rows.table;
+  } else if (activeTarget.includes('entityColumn') || activeTarget.includes('New_Day1Part1audio05')) {
+    highlightedRow = rows.column;
+  } else if (activeTarget.includes('entityRow') || activeTarget.includes('New_Day1Part1audio08')) {
+    highlightedRow = rows.row;
+  }
+
+  allRows.forEach(r => {
+    r.classList.toggle('row-active-spotlight', r === highlightedRow);
+  });
+}
+
+
+function updateDay01SqlSubLanguagesHighlights(activeTarget, isPlaying) {
+  const table = document.getElementById('sqlSubLanguagesTable');
+  if (!table) return;
+
+  const rows = {
+    dql: document.getElementById('subLangDql'),
+    dml: document.getElementById('subLangDml'),
+    ddl: document.getElementById('subLangDdl'),
+    tcl: document.getElementById('subLangTcl'),
+    dcl: document.getElementById('subLangDcl')
+  };
+
+  const allRows = [rows.dql, rows.dml, rows.ddl, rows.tcl, rows.dcl].filter(Boolean);
+
+  if (!isPlaying || !activeTarget) {
+    allRows.forEach(r => r.classList.remove('row-active-spotlight'));
+    return;
+  }
+
+  let highlightedRow = null;
+
+  if (activeTarget.includes('subLangDql') || activeTarget.includes('New_Day1Part1audio17')) {
+    highlightedRow = rows.dql;
+  } else if (activeTarget.includes('subLangDml') || activeTarget.includes('New_Day1Part1audio18')) {
+    highlightedRow = rows.dml;
+  } else if (activeTarget.includes('subLangDdl') || activeTarget.includes('New_Day1Part1audio19')) {
+    highlightedRow = rows.ddl;
+  } else if (activeTarget.includes('subLangTcl') || activeTarget.includes('New_Day1Part1audio20')) {
+    highlightedRow = rows.tcl;
+  } else if (activeTarget.includes('subLangDcl') || activeTarget.includes('New_Day1Part1audio21')) {
+    highlightedRow = rows.dcl;
+  }
+
+  allRows.forEach(r => {
+    r.classList.toggle('row-active-spotlight', r === highlightedRow);
+  });
+}
+
+
+function updateDay01Topic02Spotlights(activeTarget, isPlaying) {
+  if (currentDay !== 'day01' || currentSlide !== 1) return;
+
+  const containers = [
+    document.getElementById('slideBodyText'),
+    document.getElementById('presentSlideContent')
+  ].filter(Boolean);
+
+  containers.forEach(container => {
+    // 1. Clear previous diagram highlights
+    container.querySelectorAll('#projectionDiskPage, #projectionLoads, #projectionFilter, #projectionResultSet, .relation-node, .relation-link').forEach(el => {
+      el.classList.remove('diagram-step-active', 'diagram-step-pulse');
+    });
+
+    if (!isPlaying || !activeTarget) return;
+
+    // 2. Relational Projection Diagram Step Highlight
+    if (activeTarget === '#projectionDiagram') {
+      const diag = container.querySelector('#projectionDiagram');
+      if (diag) diag.classList.add('diagram-step-active');
+    } else if (activeTarget === '#projectionDiskPage' || activeTarget === '#cardPagesBlocks') {
+      const node = container.querySelector('#projectionDiskPage');
+      if (node) node.classList.add('diagram-step-pulse');
+    } else if (activeTarget === '#projectionLoads') {
+      const link = container.querySelector('#projectionLoads');
+      if (link) link.classList.add('diagram-step-pulse');
+    } else if (activeTarget === '#projectionFilter') {
+      const filterNode = container.querySelector('#projectionFilter');
+      if (filterNode) filterNode.classList.add('diagram-step-pulse');
+    } else if (activeTarget === '#projectionResultSet') {
+      const resNode = container.querySelector('#projectionResultSet');
+      if (resNode) resNode.classList.add('diagram-step-pulse');
+    }
+
+    // 3. Performance Costs Highlight
+    if (['#costExcessDiskIO', '#costBufferPool', '#costNetworkOverhead', '#costDefeatedIndex'].includes(activeTarget)) {
+      const targetCard = container.querySelector(activeTarget);
+      if (targetCard) targetCard.classList.add('card-active-spotlight');
+    }
+
+    // 4. Index-Only Scans vs Heap Lookup
+    if (['#heapLookupRequired', '#indexOnlyScanGood'].includes(activeTarget)) {
+      const vsCard = container.querySelector(activeTarget);
+      if (vsCard) vsCard.classList.add('card-active-spotlight');
+    }
+
+    // 5. Column-Oriented DB cards
+    if (['#cardZeroOverhead', '#cardBilledPerByte', '#cardCompression'].includes(activeTarget)) {
+      const colCard = container.querySelector(activeTarget);
+      if (colCard) colCard.classList.add('card-active-spotlight');
+    }
+  });
+}
+
+
+function updateDay01Topic02StorageCards(currentTime, isPlaying, trackKey) {
+  const container = document.getElementById('storageConceptsBlock');
+  if (!container) return;
+
+  const cardPages = document.getElementById('cardPagesBlocks');
+  const cardRow = document.getElementById('cardRowOriented');
+  const cardFull = document.getElementById('cardFullPageLoad');
+
+  if (!cardPages || !cardRow || !cardFull) return;
+
+  if (!isPlaying) {
+    cardPages.classList.remove('card-narration-active');
+    cardRow.classList.remove('card-narration-active');
+    cardFull.classList.remove('card-narration-active');
+    container.querySelectorAll('.bullet-highlight').forEach(el => el.classList.remove('bullet-highlight'));
+    return;
+  }
+
+  // Clear previous active bullets
+  container.querySelectorAll('.bullet-highlight').forEach(el => el.classList.remove('bullet-highlight'));
+
+  if (trackKey === 'audio02') {
+    cardPages.classList.add('card-narration-active');
+    cardRow.classList.remove('card-narration-active');
+    cardFull.classList.remove('card-narration-active');
+
+    const b1 = document.getElementById('bulletPages1');
+    const b2 = document.getElementById('bulletPages2');
+    const b3 = document.getElementById('bulletPages3');
+    if (currentTime >= 7.92 && currentTime < 18.58) {
+      if (b1) b1.classList.add('bullet-highlight');
+    } else if (currentTime >= 18.58) {
+      if (b2) b2.classList.add('bullet-highlight');
+      if (b3) b3.classList.add('bullet-highlight');
+    }
+  } else if (trackKey === 'audio03') {
+    cardPages.classList.remove('card-narration-active');
+    cardRow.classList.add('card-narration-active');
+    cardFull.classList.remove('card-narration-active');
+
+    const b1 = document.getElementById('bulletRow1');
+    const b2 = document.getElementById('bulletRow2');
+    const b3 = document.getElementById('bulletRow3');
+    if (currentTime >= 0 && currentTime < 5.90) {
+      if (b1) b1.classList.add('bullet-highlight');
+    } else if (currentTime >= 5.90 && currentTime < 9.86) {
+      if (b2) b2.classList.add('bullet-highlight');
+    } else if (currentTime >= 9.86) {
+      if (b3) b3.classList.add('bullet-highlight');
+    }
+  } else if (trackKey === 'audio03new') {
+    cardPages.classList.remove('card-narration-active');
+    cardRow.classList.remove('card-narration-active');
+    cardFull.classList.add('card-narration-active');
+
+    const b1 = document.getElementById('bulletFull1');
+    const b2 = document.getElementById('bulletFull2');
+    const b3 = document.getElementById('bulletFull3');
+    if (currentTime >= 0 && currentTime < 6.94) {
+      if (b1) b1.classList.add('bullet-highlight');
+    } else if (currentTime >= 6.94 && currentTime < 12.28) {
+      if (b2) b2.classList.add('bullet-highlight');
+    } else if (currentTime >= 12.28) {
+      if (b3) b3.classList.add('bullet-highlight');
+    }
+  }
+}
+
+
+function updateDay01Topic02Pipeline(currentTime, isPlaying, trackKey) {
+  const diag = document.getElementById('projectionDiagram');
+  if (!diag) return;
+
+  const nodeDisk = document.getElementById('projectionDiskPage');
+  const connLoads = document.getElementById('projectionLoads');
+  const nodeFilter = document.getElementById('projectionFilter');
+  const connReturns = document.getElementById('projectionReturns');
+  const nodeResult = document.getElementById('projectionResultSet');
+
+  if (!isPlaying) {
+    diag.classList.remove('diagram-overview-glow');
+    if (nodeDisk) nodeDisk.classList.remove('diagram-node-active');
+    if (connLoads) connLoads.classList.remove('connector-active-pulse');
+    if (nodeFilter) nodeFilter.classList.remove('diagram-node-active', 'diagram-filter-active');
+    if (connReturns) connReturns.classList.remove('connector-active-pulse');
+    if (nodeResult) nodeResult.classList.remove('diagram-node-active', 'diagram-result-active');
+    diag.querySelectorAll('.attr-tag-pulse').forEach(el => el.classList.remove('attr-tag-pulse'));
+    return;
+  }
+
+  // Clear all states before applying active track
+  diag.classList.remove('diagram-overview-glow');
+  if (nodeDisk) nodeDisk.classList.remove('diagram-node-active');
+  if (connLoads) connLoads.classList.remove('connector-active-pulse');
+  if (nodeFilter) nodeFilter.classList.remove('diagram-node-active', 'diagram-filter-active');
+  if (connReturns) connReturns.classList.remove('connector-active-pulse');
+  if (nodeResult) nodeResult.classList.remove('diagram-node-active', 'diagram-result-active');
+  diag.querySelectorAll('.attr-tag-pulse').forEach(el => el.classList.remove('attr-tag-pulse'));
+
+  if (trackKey === 'audio04') {
+    if (currentTime < 2.64) {
+      diag.classList.add('diagram-overview-glow');
+    } else {
+      if (nodeDisk) nodeDisk.classList.add('diagram-node-active');
+      diag.querySelectorAll('#attrId, #attrName, #attrDept, #attrSalary').forEach(el => el.classList.add('attr-tag-pulse'));
+    }
+  } else if (trackKey === 'audio05') {
+    if (nodeDisk) nodeDisk.classList.add('diagram-node-active');
+    if (connLoads) connLoads.classList.add('connector-active-pulse');
+  } else if (trackKey === 'audio06') {
+    if (nodeFilter) nodeFilter.classList.add('diagram-node-active', 'diagram-filter-active');
+  } else if (trackKey === 'audio07') {
+    if (connReturns) connReturns.classList.add('connector-active-pulse');
+    if (nodeResult) nodeResult.classList.add('diagram-node-active', 'diagram-result-active');
+  }
+}
+
+
+function updateDay01Topic02ColumnarCards(currentTime, isPlaying, trackKey) {
+  const container = document.getElementById('columnarConceptsBlock');
+  if (!container) return;
+
+  const cardZero = document.getElementById('cardZeroOverhead');
+  const cardBilled = document.getElementById('cardBilledPerByte');
+  const cardComp = document.getElementById('cardCompression');
+
+  if (!cardZero || !cardBilled || !cardComp) return;
+
+  if (!isPlaying) {
+    cardZero.classList.remove('card-narration-active');
+    cardBilled.classList.remove('card-narration-active');
+    cardComp.classList.remove('card-narration-active');
+    container.querySelectorAll('.bullet-highlight').forEach(el => el.classList.remove('bullet-highlight'));
+    return;
+  }
+
+  // Clear previous active bullets
+  container.querySelectorAll('.bullet-highlight').forEach(el => el.classList.remove('bullet-highlight'));
+
+  if (trackKey === 'audio17') {
+    cardZero.classList.add('card-narration-active');
+    cardBilled.classList.remove('card-narration-active');
+    cardComp.classList.remove('card-narration-active');
+
+    const b1 = document.getElementById('bulletZero1');
+    const b2 = document.getElementById('bulletZero2');
+    const b3 = document.getElementById('bulletZero3');
+    if (currentTime >= 2.58 && currentTime < 6.18) {
+      if (b1) b1.classList.add('bullet-highlight');
+    } else if (currentTime >= 6.18 && currentTime < 9.52) {
+      if (b2) b2.classList.add('bullet-highlight');
+    } else if (currentTime >= 9.52) {
+      if (b3) b3.classList.add('bullet-highlight');
+    }
+  } else if (trackKey === 'audio18new') {
+    cardZero.classList.remove('card-narration-active');
+    cardBilled.classList.add('card-narration-active');
+    cardComp.classList.remove('card-narration-active');
+
+    const b1 = document.getElementById('bulletBilled1');
+    const b2 = document.getElementById('bulletBilled2');
+    const b3 = document.getElementById('bulletBilled3');
+    if (currentTime >= 1.90 && currentTime < 5.38) {
+      if (b1) b1.classList.add('bullet-highlight');
+    } else if (currentTime >= 5.38 && currentTime < 12.74) {
+      if (b2) b2.classList.add('bullet-highlight');
+    } else if (currentTime >= 12.74) {
+      if (b3) b3.classList.add('bullet-highlight');
+    }
+  } else if (trackKey === 'audio18') {
+    cardZero.classList.remove('card-narration-active');
+    cardBilled.classList.remove('card-narration-active');
+    cardComp.classList.add('card-narration-active');
+
+    const b1 = document.getElementById('bulletComp1');
+    const b2 = document.getElementById('bulletComp2');
+    const b3 = document.getElementById('bulletComp3');
+    if (currentTime >= 2.52 && currentTime < 5.78) {
+      if (b1) b1.classList.add('bullet-highlight');
+    } else if (currentTime >= 5.78 && currentTime < 9.02) {
+      if (b2) b2.classList.add('bullet-highlight');
+    } else if (currentTime >= 9.02) {
+      if (b3) b3.classList.add('bullet-highlight');
+    }
+  }
+}
+
+
+
+
 function updateTableHighlights(currentTime, isPlaying) {
   const rows = document.querySelectorAll('#day03OpsTable tbody tr');
   if (!rows.length) return;
@@ -9512,6 +10138,236 @@ function updateDay04NotInTrapCodeHighlights(currentTime, isPlaying) {
 
 
 
+
+// ══════════════════════════════════════════════════════════════════════
+// DAY 05: AGGREGATE FUNCTIONS PROGRESSIVE NARRATION HIGHLIGHTS
+// ══════════════════════════════════════════════════════════════════════
+
+function updateDay05AggTableHighlights(currentTime, isPlaying) {
+  const rows = {
+    r1: document.getElementById('day05AggRow1'),
+    r2: document.getElementById('day05AggRow2'),
+    r3: document.getElementById('day05AggRow3'),
+    r4: document.getElementById('day05AggRow4'),
+    r5: document.getElementById('day05AggRow5')
+  };
+
+  if (!isPlaying) {
+    Object.values(rows).forEach(r => {
+      if (r) r.classList.remove('row-active-spotlight', 'narration-highlight');
+    });
+    return;
+  }
+
+  // Whisper ASR timestamps for New_Day5Part1audio02.mp3 (30.50s):
+  // 3.10s - 8.92s : COUNT(*)
+  // 8.92s - 14.50s: COUNT(col)
+  // 14.50s - 18.98s: SUM(col)
+  // 18.98s - 24.40s: AVG(col)
+  // 24.40s - 30.50s: MIN/MAX(col)
+  if (rows.r1) rows.r1.classList.toggle('row-active-spotlight', currentTime >= 3.10 && currentTime < 8.92);
+  if (rows.r2) rows.r2.classList.toggle('row-active-spotlight', currentTime >= 8.92 && currentTime < 14.50);
+  if (rows.r3) rows.r3.classList.toggle('row-active-spotlight', currentTime >= 14.50 && currentTime < 18.98);
+  if (rows.r4) rows.r4.classList.toggle('row-active-spotlight', currentTime >= 18.98 && currentTime < 24.40);
+  if (rows.r5) rows.r5.classList.toggle('row-active-spotlight', currentTime >= 24.40 && currentTime <= 30.50);
+}
+
+function updateDay05CountListHighlights(currentTime, isPlaying) {
+  const items = {
+    i1: document.getElementById('day05CountLi1'),
+    i2: document.getElementById('day05CountLi2'),
+    i3: document.getElementById('day05CountLi3')
+  };
+
+  if (!isPlaying) {
+    Object.values(items).forEach(i => {
+      if (i) i.classList.remove('narration-highlight');
+    });
+    return;
+  }
+
+  // Whisper ASR timestamps for New_Day5Part1audio04.mp3 (24.42s):
+  // 8.12s - 12.72s : Volume: COUNT(*)
+  // 12.72s - 18.08s: Completeness: COUNT(col)
+  // 18.08s - 24.42s: Unique Entities: COUNT(DISTINCT col)
+  if (items.i1) items.i1.classList.toggle('narration-highlight', currentTime >= 8.12 && currentTime < 12.72);
+  if (items.i2) items.i2.classList.toggle('narration-highlight', currentTime >= 12.72 && currentTime < 18.08);
+  if (items.i3) items.i3.classList.toggle('narration-highlight', currentTime >= 18.08 && currentTime <= 24.42);
+}
+
+function updateDay05CountCodeHighlights(currentTime, isPlaying) {
+  const q1 = document.getElementById('day05CountQuery1');
+  const q2 = document.getElementById('day05CountQuery2');
+  const q3 = document.getElementById('day05CountQuery3');
+  if (!q1 || !q2 || !q3) return;
+
+  if (!isPlaying) {
+    [q1, q2, q3].forEach(el => el.classList.remove('narration-highlight', 'code-active-spotlight'));
+    return;
+  }
+
+  // Whisper ASR timestamps for New_Day5Part1audio05.mp3 (26.78s):
+  // 0.00s - 10.72s: Query 1 (Total headcount)
+  // 10.72s - 19.60s: Query 2 (Staff with commissions)
+  // 19.60s - 26.78s: Query 3 (Unique departments)
+  const isQ1 = currentTime >= 0.00 && currentTime < 10.72;
+  const isQ2 = currentTime >= 10.72 && currentTime < 19.60;
+  const isQ3 = currentTime >= 19.60 && currentTime <= 26.80;
+
+  q1.classList.toggle('narration-highlight', isQ1);
+  q1.classList.toggle('code-active-spotlight', isQ1);
+  q2.classList.toggle('narration-highlight', isQ2);
+  q2.classList.toggle('code-active-spotlight', isQ2);
+  q3.classList.toggle('narration-highlight', isQ3);
+  q3.classList.toggle('code-active-spotlight', isQ3);
+
+  if (isQ1) narrationScrollToSubblock(q1);
+  if (isQ2) narrationScrollToSubblock(q2);
+  if (isQ3) narrationScrollToSubblock(q3);
+}
+
+function updateDay05SumAvgCodeHighlights(currentTime, isPlaying) {
+  const q1 = document.getElementById('day05SumAvgQuery1');
+  const q2 = document.getElementById('day05SumAvgQuery2');
+  const q3 = document.getElementById('day05SumAvgQuery3');
+  if (!q1 || !q2 || !q3) return;
+
+  if (!isPlaying) {
+    [q1, q2, q3].forEach(el => el.classList.remove('narration-highlight', 'code-active-spotlight'));
+    return;
+  }
+
+  // Whisper ASR timestamps for New_Day5Part1audio08.mp3 (25.42s):
+  // 0.00s - 10.04s: Query 1 (Full summary stats)
+  // 10.04s - 17.28s: Query 2 (Commission earners only)
+  // 17.28s - 25.42s: Query 3 (All staff with COALESCE)
+  const isQ1 = currentTime >= 0.00 && currentTime < 10.04;
+  const isQ2 = currentTime >= 10.04 && currentTime < 17.28;
+  const isQ3 = currentTime >= 17.28 && currentTime <= 25.50;
+
+  q1.classList.toggle('narration-highlight', isQ1);
+  q1.classList.toggle('code-active-spotlight', isQ1);
+  q2.classList.toggle('narration-highlight', isQ2);
+  q2.classList.toggle('code-active-spotlight', isQ2);
+  q3.classList.toggle('narration-highlight', isQ3);
+  q3.classList.toggle('code-active-spotlight', isQ3);
+
+  if (isQ1) narrationScrollToSubblock(q1);
+  if (isQ2) narrationScrollToSubblock(q2);
+  if (isQ3) narrationScrollToSubblock(q3);
+}
+
+function updateDay05CoalesceCodeHighlights(currentTime, isPlaying) {
+  const q1 = document.getElementById('day05CoalesceQuery1');
+  const q2 = document.getElementById('day05CoalesceQuery2');
+  if (!q1 || !q2) return;
+
+  if (!isPlaying) {
+    [q1, q2].forEach(el => el.classList.remove('narration-highlight', 'code-active-spotlight'));
+    return;
+  }
+
+  // Whisper ASR timestamps for New_Day5Part1audio11.mp3 (19.72s):
+  // 0.00s - 10.40s: Query 1 (Pattern A Inside)
+  // 10.40s - 19.72s: Query 2 (Pattern B Outside)
+  const isQ1 = currentTime >= 0.00 && currentTime < 10.40;
+  const isQ2 = currentTime >= 10.40 && currentTime <= 19.80;
+
+  q1.classList.toggle('narration-highlight', isQ1);
+  q1.classList.toggle('code-active-spotlight', isQ1);
+  q2.classList.toggle('narration-highlight', isQ2);
+  q2.classList.toggle('code-active-spotlight', isQ2);
+
+  if (isQ1) narrationScrollToSubblock(q1);
+  if (isQ2) narrationScrollToSubblock(q2);
+}
+
+function updateDay05MinMaxListHighlights(currentTime, isPlaying) {
+  const items = {
+    i1: document.getElementById('day05MinMaxLi1'),
+    i2: document.getElementById('day05MinMaxLi2'),
+    i3: document.getElementById('day05MinMaxLi3')
+  };
+
+  if (!isPlaying) {
+    Object.values(items).forEach(i => {
+      if (i) i.classList.remove('narration-highlight');
+    });
+    return;
+  }
+
+  // Whisper ASR timestamps for New_Day5Part1audio13.mp3 (20.06s):
+  // 9.34s - 12.82s : Numbers (smallest/largest)
+  // 12.82s - 17.56s: Dates (earliest/latest)
+  // 17.56s - 20.06s: Strings (alphabetical first/last)
+  if (items.i1) items.i1.classList.toggle('narration-highlight', currentTime >= 9.34 && currentTime < 12.82);
+  if (items.i2) items.i2.classList.toggle('narration-highlight', currentTime >= 12.82 && currentTime < 17.56);
+  if (items.i3) items.i3.classList.toggle('narration-highlight', currentTime >= 17.56 && currentTime <= 20.10);
+}
+
+function updateDay05MinMaxCodeHighlights(currentTime, isPlaying) {
+  const q1 = document.getElementById('day05MinMaxQuery1');
+  const q2 = document.getElementById('day05MinMaxQuery2');
+  const q3 = document.getElementById('day05MinMaxQuery3');
+  if (!q1 || !q2 || !q3) return;
+
+  if (!isPlaying) {
+    [q1, q2, q3].forEach(el => el.classList.remove('narration-highlight', 'code-active-spotlight'));
+    return;
+  }
+
+  // Whisper ASR timestamps for New_Day5Part1audio14.mp3 (17.14s):
+  // 0.00s - 6.46s : Query 1 (Price boundaries)
+  // 6.46s - 11.86s: Query 2 (Tenure range)
+  // 11.86s - 17.14s: Query 3 (Alphabetical boundaries)
+  const isQ1 = currentTime >= 0.00 && currentTime < 6.46;
+  const isQ2 = currentTime >= 6.46 && currentTime < 11.86;
+  const isQ3 = currentTime >= 11.86 && currentTime <= 17.20;
+
+  q1.classList.toggle('narration-highlight', isQ1);
+  q1.classList.toggle('code-active-spotlight', isQ1);
+  q2.classList.toggle('narration-highlight', isQ2);
+  q2.classList.toggle('code-active-spotlight', isQ2);
+  q3.classList.toggle('narration-highlight', isQ3);
+  q3.classList.toggle('code-active-spotlight', isQ3);
+
+  if (isQ1) narrationScrollToSubblock(q1);
+  if (isQ2) narrationScrollToSubblock(q2);
+  if (isQ3) narrationScrollToSubblock(q3);
+}
+
+function updateDay05NullTableHighlights(currentTime, isPlaying) {
+  const rows = {
+    r1: document.getElementById('day05NullRow1'),
+    r2: document.getElementById('day05NullRow2'),
+    r3: document.getElementById('day05NullRow3'),
+    r4: document.getElementById('day05NullRow4'),
+    r5: document.getElementById('day05NullRow5'),
+    r6: document.getElementById('day05NullRow6')
+  };
+
+  if (!isPlaying) {
+    Object.values(rows).forEach(r => {
+      if (r) r.classList.remove('row-active-spotlight', 'narration-highlight');
+    });
+    return;
+  }
+
+  // Whisper ASR timestamps for New_Day5Part1audio20.mp3 (29.82s):
+  // 2.94s - 7.98s : Row 1 (15 rows, 4 NULLs -> COUNT(*) = 15)
+  // 7.98s - 11.20s: Row 2 (15 rows, 4 NULLs -> COUNT(col) = 11)
+  // 11.20s - 16.04s: Row 3 (15 rows, 4 NULLs -> AVG = SUM / 11)
+  // 16.04s - 21.20s: Row 4 (All NULLs -> SUM/AVG = NULL)
+  // 21.20s - 25.62s: Row 5 (0 rows -> COUNT(*) = 0)
+  // 25.62s - 29.82s: Row 6 (0 rows -> SUM/AVG = NULL)
+  if (rows.r1) rows.r1.classList.toggle('row-active-spotlight', currentTime >= 2.94 && currentTime < 7.98);
+  if (rows.r2) rows.r2.classList.toggle('row-active-spotlight', currentTime >= 7.98 && currentTime < 11.20);
+  if (rows.r3) rows.r3.classList.toggle('row-active-spotlight', currentTime >= 11.20 && currentTime < 16.04);
+  if (rows.r4) rows.r4.classList.toggle('row-active-spotlight', currentTime >= 16.04 && currentTime < 21.20);
+  if (rows.r5) rows.r5.classList.toggle('row-active-spotlight', currentTime >= 21.20 && currentTime < 25.62);
+  if (rows.r6) rows.r6.classList.toggle('row-active-spotlight', currentTime >= 25.62 && currentTime <= 29.90);
+}
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // ║  GLOBAL TRACK VISUAL HIGHLIGHTS DISPATCHER                               ║
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -9536,6 +10392,25 @@ function dispatchTrackVisualHighlights(track, currentTime, isPlaying) {
       src.includes('New_Day1Part1audio19.mp3') || 
       src.includes('New_Day1Part1audio20.mp3') || 
       src.includes('New_Day1Part1audio21.mp3'))) updateDay01SqlSubLanguagesHighlights(isPlaying ? track.target : null, isPlaying);
+
+  // Day 01 Topic 02 Spotlights & Animations
+  if (typeof updateDay01Topic02Spotlights === 'function') updateDay01Topic02Spotlights(isPlaying ? track.target : null, isPlaying);
+  if (typeof updateDay01Topic02StorageCards === 'function') {
+    if (src.includes('New_Day1Part2audio02.mp3')) updateDay01Topic02StorageCards(currentTime, isPlaying, 'audio02');
+    if (src.includes('New_Day1Part2audio03.mp3')) updateDay01Topic02StorageCards(currentTime, isPlaying, 'audio03');
+    if (src.includes('New_Day1Part2audio03(new).mp3')) updateDay01Topic02StorageCards(currentTime, isPlaying, 'audio03new');
+  }
+  if (typeof updateDay01Topic02Pipeline === 'function') {
+    if (src.includes('New_Day1Part2audio04.mp3')) updateDay01Topic02Pipeline(currentTime, isPlaying, 'audio04');
+    if (src.includes('New_Day1Part2audio05.mp3')) updateDay01Topic02Pipeline(currentTime, isPlaying, 'audio05');
+    if (src.includes('New_Day1Part2audio06.mp3')) updateDay01Topic02Pipeline(currentTime, isPlaying, 'audio06');
+    if (src.includes('New_Day1Part2audio07.mp3')) updateDay01Topic02Pipeline(currentTime, isPlaying, 'audio07');
+  }
+  if (typeof updateDay01Topic02ColumnarCards === 'function') {
+    if (src.includes('New_Day1Part2audio17.mp3')) updateDay01Topic02ColumnarCards(currentTime, isPlaying, 'audio17');
+    if (src.includes('New_Day1Part2audio18(new).mp3')) updateDay01Topic02ColumnarCards(currentTime, isPlaying, 'audio18new');
+    if (src.includes('New_Day1Part2audio18.mp3')) updateDay01Topic02ColumnarCards(currentTime, isPlaying, 'audio18');
+  }
 
   // Day 03 Highlights
   if (typeof updateWhereCodeHighlights === 'function' && src.includes('New_Day3Part1audio02.mp3')) updateWhereCodeHighlights(currentTime, isPlaying);
@@ -9563,6 +10438,16 @@ function dispatchTrackVisualHighlights(track, currentTime, isPlaying) {
   if (typeof updateDay04NullCodeHighlights === 'function' && src.includes('New_Day4Part1audio18.mp3')) updateDay04NullCodeHighlights(currentTime, isPlaying);
   if (typeof updateDay04ThreeValTableHighlights === 'function' && src.includes('New_Day4Part1audio21.mp3')) updateDay04ThreeValTableHighlights(currentTime, isPlaying);
   if (typeof updateDay04NotInTrapCodeHighlights === 'function' && src.includes('New_Day4Part1audio22.mp3')) updateDay04NotInTrapCodeHighlights(currentTime, isPlaying);
+
+  // Day 05 Highlights
+  if (typeof updateDay05AggTableHighlights === 'function' && src.includes('New_Day5Part1audio02.mp3')) updateDay05AggTableHighlights(currentTime, isPlaying);
+  if (typeof updateDay05CountListHighlights === 'function' && src.includes('New_Day5Part1audio04.mp3')) updateDay05CountListHighlights(currentTime, isPlaying);
+  if (typeof updateDay05CountCodeHighlights === 'function' && src.includes('New_Day5Part1audio05.mp3')) updateDay05CountCodeHighlights(currentTime, isPlaying);
+  if (typeof updateDay05SumAvgCodeHighlights === 'function' && src.includes('New_Day5Part1audio08.mp3')) updateDay05SumAvgCodeHighlights(currentTime, isPlaying);
+  if (typeof updateDay05CoalesceCodeHighlights === 'function' && src.includes('New_Day5Part1audio11.mp3')) updateDay05CoalesceCodeHighlights(currentTime, isPlaying);
+  if (typeof updateDay05MinMaxListHighlights === 'function' && src.includes('New_Day5Part1audio13.mp3')) updateDay05MinMaxListHighlights(currentTime, isPlaying);
+  if (typeof updateDay05MinMaxCodeHighlights === 'function' && src.includes('New_Day5Part1audio14.mp3')) updateDay05MinMaxCodeHighlights(currentTime, isPlaying);
+  if (typeof updateDay05NullTableHighlights === 'function' && src.includes('New_Day5Part1audio20.mp3')) updateDay05NullTableHighlights(currentTime, isPlaying);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════

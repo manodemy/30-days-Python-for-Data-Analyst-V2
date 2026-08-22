@@ -10224,6 +10224,8 @@ function playCombinedPlayback() {
     }
     activeAudioInstance.play()
       .then(() => {
+        // Guard: do NOT update UI if user paused between play() call and this async resolution
+        if (!activeAudioInstance || !isCombinedPlaying) return;
         updatePlayButtonStates(true);
         const activeTrack = combinedTracks[combinedTrackIndex];
         if (activeTrack) {

@@ -10216,26 +10216,29 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
     }
 
     // 4. Strictly hide ALL other slide sections so ONLY the active relevant concept is visible!
+    const isDay03 = typeof currentDay !== 'undefined' && currentDay === 'day03';
+
     container.querySelectorAll('.slide-section').forEach(section => {
       if (section !== activeSection) {
         section.classList.add('section-hidden');
-        section.classList.remove('stunning-section-entry', 'active-section-mounted', 'instant-display');
+        section.classList.remove('stunning-section-entry', 'day03-slide-entry', 'active-section-mounted', 'instant-display');
         section.style.display = 'none';
       } else {
+        const isNewMount = !section.classList.contains('active-section-mounted') || section.style.display === 'none';
         section.classList.remove('section-hidden');
         section.style.display = '';
         section.classList.add('active-section-mounted');
         
-        // Entrance appearance: Day 01 uses zoom-pop (stunning-section-entry). Day 03 uses smooth slide from down (day03-slide-entry).
-        const isDay03 = typeof currentDay !== 'undefined' && currentDay === 'day03';
-        if (isFirstNarration && !isSeek) {
-          if (isDay03) {
+        // Entrance appearance: Day 03 smoothly slides up from down on every section mount!
+        if (isDay03 && !isSeek) {
+          if (isNewMount) {
+            section.classList.remove('instant-display', 'stunning-section-entry', 'day03-slide-entry');
+            void section.offsetWidth; // trigger reflow for smooth animation restart
             section.classList.add('day03-slide-entry');
-            section.classList.remove('stunning-section-entry', 'instant-display');
-          } else {
-            section.classList.add('stunning-section-entry');
-            section.classList.remove('day03-slide-entry', 'instant-display');
           }
+        } else if (isFirstNarration && !isSeek) {
+          section.classList.add('stunning-section-entry');
+          section.classList.remove('day03-slide-entry', 'instant-display');
         } else {
           section.classList.remove('stunning-section-entry', 'day03-slide-entry');
           section.classList.add('instant-display');
@@ -10243,13 +10246,10 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
       }
     });
 
-    // Reset container scroll to top: 0 so active section starts cleanly with heading visible
+    // Instant zero-scroll lock so active section is anchored cleanly at top without scroll fall
     const scrollParent = document.getElementById('slideContent') || container;
     if (scrollParent) {
-      scrollParent.scrollTo({
-        top: 0,
-        behavior: isSeek ? 'auto' : 'smooth'
-      });
+      scrollParent.scrollTop = 0;
     }
 
     // 5. If target is inside an .interview-box, show ONLY the active question card and hide all other sibling cards

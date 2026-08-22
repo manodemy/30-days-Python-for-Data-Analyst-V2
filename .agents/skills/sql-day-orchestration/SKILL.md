@@ -267,6 +267,11 @@ Statement: Zero-Shift UI & Play Button Dimensional Lock: All play/pause buttons 
 Added: Day03 — inconsistent header justify-content and button margins caused visual alignment jumps between idle and playing states.
 Supersedes: none
 
+[SYNC-015] [STATUS: active] [SCOPE: Sync]
+Statement: Word-Level Whisper ASR Segmentation for All Practice Question Solutions: Linear fallback typing (startAt: 1.5, charInterval: 70) is strictly prohibited for practice question solutions. Every practice solution MUST have word-level Whisper ASR timestamps extracted into a discrete segments array (with startAt, charInterval per SQL clause line with 7-space indentation) and a precise scrollAt mapped to the query execution spoken keyword, ensuring the code types in real time word-by-word as each column, table, and condition is spoken.
+Added: Day03 — practice solutions were previously using fallback linear typing instead of word-level segments, resulting in out-of-sync typewriter animation.
+Supersedes: none
+
 [VOICE-001] [STATUS: active] [SCOPE: Voice]
 Statement: Voice must ALWAYS create narrations/day-XX.json BEFORE running the TTS build. The JSON is the source of truth — if it doesn't exist, build-audio.js will error and produce no files. Never run build-audio.js before the JSON is written and validated.
 Added: Day03 — discovered that Day03 had 13 theory MP3s on disk but no narrations/day-03.json, and zero question/solution MP3s because the JSON was never authored.

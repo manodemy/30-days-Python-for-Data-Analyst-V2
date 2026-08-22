@@ -9386,63 +9386,69 @@ function loadAndPlayTrack(index, targetTime = 0) {
   let trackEvents = null;
   loadTrackEvents(trackId).then(ev => { trackEvents = ev; }).catch(() => {});
 
+function dispatchTrackVisualHighlights(track, currentTime, isPlaying) {
+  if (!track || !track.src) return;
+  const src = track.src;
+
+  // Day 01 Highlights
+  if (typeof updateDay01Audio01Highlights === 'function' && src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(currentTime, isPlaying);
+  if (typeof updateDay01Audio03Highlights === 'function' && src.includes('New_Day1Part1audio03.mp3')) updateDay01Audio03Highlights(currentTime, isPlaying);
+  if (typeof updateDay01CoreEntitiesHighlights === 'function' && (
+      src.includes('New_Day1Part1audio04.mp3') || 
+      src.includes('New_Day1Part1audio07.mp3') || 
+      src.includes('New_Day1Part1audio06.mp3') || 
+      src.includes('New_Day1Part1audio05.mp3') || 
+      src.includes('New_Day1Part1audio08.mp3'))) updateDay01CoreEntitiesHighlights(isPlaying ? track.target : null, isPlaying);
+  if (typeof updateDay01SqlSubLanguagesHighlights === 'function' && (
+      src.includes('New_Day1Part1audio16.mp3') || 
+      src.includes('New_Day1Part1audio17.mp3') || 
+      src.includes('New_Day1Part1audio18.mp3') || 
+      src.includes('New_Day1Part1audio19.mp3') || 
+      src.includes('New_Day1Part1audio20.mp3') || 
+      src.includes('New_Day1Part1audio21.mp3'))) updateDay01SqlSubLanguagesHighlights(isPlaying ? track.target : null, isPlaying);
+
+  // Day 03 Highlights
+  if (typeof updateWhereCodeHighlights === 'function' && src.includes('New_Day3Part1audio04.mp3')) updateWhereCodeHighlights(currentTime, isPlaying);
+  if (typeof updateTableHighlights === 'function' && src.includes('New_Day3Part1audio05.mp3')) updateTableHighlights(currentTime, isPlaying);
+  if (typeof updateCompCodeHighlights === 'function' && src.includes('New_Day3Part1audio06.mp3')) updateCompCodeHighlights(currentTime, isPlaying);
+  if (typeof updateIntroHighlight === 'function' && src.includes('New_Day3Part1audio07.mp3')) updateIntroHighlight(currentTime, isPlaying);
+  if (typeof updateLogicCodeHighlights === 'function' && src.includes('New_Day3Part1audio07.mp3')) updateLogicCodeHighlights(currentTime, isPlaying);
+  if (typeof updateNotCardHighlight === 'function' && src.includes('New_Day3Part1audio08.mp3')) updateNotCardHighlight(currentTime, isPlaying);
+  if (typeof updateAndCardHighlight === 'function' && src.includes('New_Day3Part1audio09.mp3')) updateAndCardHighlight(currentTime, isPlaying);
+  if (typeof updateOrCardHighlight === 'function' && src.includes('New_Day3Part1audio10.mp3')) updateOrCardHighlight(currentTime, isPlaying);
+  if (typeof updatePrecedenceNoteHighlight === 'function' && src.includes('New_Day3Part1audio11.mp3')) updatePrecedenceNoteHighlight(currentTime, isPlaying);
+  if (typeof updateBetweenCodeHighlights === 'function' && src.includes('New_Day3Part1audio12.mp3')) updateBetweenCodeHighlights(currentTime, isPlaying);
+  if (typeof updateInCodeHighlights === 'function' && src.includes('New_Day3Part1audio13.mp3')) updateInCodeHighlights(currentTime, isPlaying);
+  if (typeof updateLikeCodeHighlights === 'function' && src.includes('New_Day3Part1audio14.mp3')) updateLikeCodeHighlights(currentTime, isPlaying);
+  if (typeof updateNullCodeHighlights === 'function' && src.includes('New_Day3Part1audio15.mp3')) updateNullCodeHighlights(currentTime, isPlaying);
+
+  // Day 04 Highlights
+  if (typeof updateDay04ArithTableHighlights === 'function' && src.includes('New_Day4Part1audio02.mp3')) updateDay04ArithTableHighlights(currentTime, isPlaying);
+  if (typeof updateDay04ArithCodeHighlights === 'function' && src.includes('New_Day4Part1audio03.mp3')) updateDay04ArithCodeHighlights(currentTime, isPlaying);
+  if (typeof updateDay04PrecedenceTableHighlights === 'function' && src.includes('New_Day4Part1audio06.mp3')) updateDay04PrecedenceTableHighlights(currentTime, isPlaying);
+  if (typeof updateDay04PrecedenceCodeHighlights === 'function' && src.includes('New_Day4Part1audio07.mp3')) updateDay04PrecedenceCodeHighlights(currentTime, isPlaying);
+  if (typeof updateDay04AnyCardHighlight === 'function' && src.includes('New_Day4Part1audio10.mp3')) updateDay04AnyCardHighlight(isPlaying);
+  if (typeof updateDay04AllCardHighlight === 'function' && src.includes('New_Day4Part1audio11.mp3')) updateDay04AllCardHighlight(isPlaying);
+  if (typeof updateDay04EscapeCodeHighlights === 'function' && src.includes('New_Day4Part1audio15.mp3')) updateDay04EscapeCodeHighlights(currentTime, isPlaying);
+  if (typeof updateDay04NullCodeHighlights === 'function' && src.includes('New_Day4Part1audio18.mp3')) updateDay04NullCodeHighlights(currentTime, isPlaying);
+  if (typeof updateDay04ThreeValTableHighlights === 'function' && src.includes('New_Day4Part1audio21.mp3')) updateDay04ThreeValTableHighlights(currentTime, isPlaying);
+  if (typeof updateDay04NotInTrapCodeHighlights === 'function' && src.includes('New_Day4Part1audio22.mp3')) updateDay04NotInTrapCodeHighlights(currentTime, isPlaying);
+}
+
   audio.addEventListener('ended', () => {
     if (myGeneration !== currentGeneration) return;
-    if (track.src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(0, false);
-    if (track.src.includes('New_Day1Part1audio03.mp3')) updateDay01Audio03Highlights(0, false);
-    if (track.src.includes('New_Day1Part1audio04.mp3') || 
-        track.src.includes('New_Day1Part1audio07.mp3') || 
-        track.src.includes('New_Day1Part1audio06.mp3') || 
-        track.src.includes('New_Day1Part1audio05.mp3') || 
-        track.src.includes('New_Day1Part1audio08.mp3')) updateDay01CoreEntitiesHighlights(null, false);
-    if (track.src.includes('New_Day1Part1audio16.mp3') || 
-        track.src.includes('New_Day1Part1audio17.mp3') || 
-        track.src.includes('New_Day1Part1audio18.mp3') || 
-        track.src.includes('New_Day1Part1audio19.mp3') || 
-        track.src.includes('New_Day1Part1audio20.mp3') || 
-        track.src.includes('New_Day1Part1audio21.mp3')) updateDay01SqlSubLanguagesHighlights(null, false);
-    if (track.src.includes('New_Day3Part1audio05.mp3')) updateTableHighlights(0, false);
-    if (track.src.includes('New_Day3Part1audio07.mp3')) updateIntroHighlight(0, false);
-    if (track.src.includes('New_Day3Part1audio08.mp3')) updateNotCardHighlight(0, false);
-    if (track.src.includes('New_Day3Part1audio09.mp3')) updateAndCardHighlight(0, false);
-    if (track.src.includes('New_Day3Part1audio10.mp3')) updateOrCardHighlight(0, false);
-    if (track.src.includes('New_Day3Part1audio11.mp3')) updatePrecedenceNoteHighlight(0, false);
+    dispatchTrackVisualHighlights(track, 0, false);
     onNarrationSegmentEnded(index, trackEvents);
   });
 
   audio.addEventListener('pause', () => {
     if (myGeneration !== currentGeneration) return;
-    if (track.src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(0, false);
-    if (track.src.includes('New_Day1Part1audio03.mp3')) updateDay01Audio03Highlights(0, false);
-    if (track.src.includes('New_Day1Part1audio04.mp3') || 
-        track.src.includes('New_Day1Part1audio07.mp3') || 
-        track.src.includes('New_Day1Part1audio06.mp3') || 
-        track.src.includes('New_Day1Part1audio05.mp3') || 
-        track.src.includes('New_Day1Part1audio08.mp3')) updateDay01CoreEntitiesHighlights(null, false);
-    if (track.src.includes('New_Day1Part1audio16.mp3') || 
-        track.src.includes('New_Day1Part1audio17.mp3') || 
-        track.src.includes('New_Day1Part1audio18.mp3') || 
-        track.src.includes('New_Day1Part1audio19.mp3') || 
-        track.src.includes('New_Day1Part1audio20.mp3') || 
-        track.src.includes('New_Day1Part1audio21.mp3')) updateDay01SqlSubLanguagesHighlights(null, false);
-    if (track.src.includes('New_Day3Part1audio05.mp3')) updateTableHighlights(0, false);
-    if (track.src.includes('New_Day3Part1audio07.mp3')) updateIntroHighlight(0, false);
-    if (track.src.includes('New_Day3Part1audio08.mp3')) updateNotCardHighlight(0, false);
-    if (track.src.includes('New_Day3Part1audio09.mp3')) updateAndCardHighlight(0, false);
-    if (track.src.includes('New_Day3Part1audio10.mp3')) updateOrCardHighlight(0, false);
-    if (track.src.includes('New_Day3Part1audio11.mp3')) updatePrecedenceNoteHighlight(0, false);
+    dispatchTrackVisualHighlights(track, 0, false);
   });
 
   audio.addEventListener('timeupdate', () => {
     if (myGeneration !== currentGeneration) return;
-    if (track.src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(audio.currentTime, !audio.paused);
-    if (track.src.includes('New_Day1Part1audio03.mp3')) updateDay01Audio03Highlights(audio.currentTime, !audio.paused);
-    if (track.src.includes('New_Day3Part1audio05.mp3')) updateTableHighlights(audio.currentTime, !audio.paused);
-    if (track.src.includes('New_Day3Part1audio07.mp3')) updateIntroHighlight(audio.currentTime, !audio.paused);
-    if (track.src.includes('New_Day3Part1audio08.mp3')) updateNotCardHighlight(audio.currentTime, !audio.paused);
-    if (track.src.includes('New_Day3Part1audio09.mp3')) updateAndCardHighlight(audio.currentTime, !audio.paused);
-    if (track.src.includes('New_Day3Part1audio10.mp3')) updateOrCardHighlight(audio.currentTime, !audio.paused);
-    if (track.src.includes('New_Day3Part1audio11.mp3')) updatePrecedenceNoteHighlight(audio.currentTime, !audio.paused);
+    dispatchTrackVisualHighlights(track, audio.currentTime, !audio.paused);
 
     let elapsed = 0;
     for (let i = 0; i < combinedTrackIndex; i++) {
@@ -9488,8 +9494,8 @@ function loadAndPlayTrack(index, targetTime = 0) {
     }
     const bar = document.getElementById('questionBar');
     if (bar) bar.classList.add('question-playing');
-    const solMap = questionSolutionMap[currentDay] || questionSolutionMap['day01'];
-    const solEntry = solMap ? solMap[track.qId] : null;
+    const solEntry = (typeof getSolutionEntry === 'function' ? getSolutionEntry(track.qId) : null) ||
+                     (questionSolutionMap && questionSolutionMap[currentDay] ? questionSolutionMap[currentDay][track.qId] : null);
     if (solEntry) {
       startAudioSyncedTypewriter(audio, solEntry);
     }

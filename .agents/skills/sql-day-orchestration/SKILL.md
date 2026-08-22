@@ -288,8 +288,8 @@ Added: Day03 — user mandated that horizontal stacked cards must use Zoom-In an
 Supersedes: none
 
 [SYNC-019] [STATUS: active] [SCOPE: Sync]
-Statement: Multi-Query Code Card Sub-Block Spotlight Overlay Protocol: When a single slide section card presents multiple SQL queries or code examples (e.g. BETWEEN, IN, LIKE, IS NULL, Comparison examples), the card MUST NOT be split into separate cards. Instead, the card MUST remain unified as a single container (.code-block-container) with each query encapsulated in its own distinct .code-subblock with a unique ID. During narration playback, the Sync Agent MUST drive a dynamic highlight box (.code-active-spotlight / .narration-highlight) that highlights the exact dimensions of the active query in sync with Whisper ASR word timestamps, maintaining visual continuity while guiding the learner's focus across each query block in place.
-Added: Day03 — user mandated that multi-code examples within one visual card must use highlight box spotlights positioned on top of the relevant content without splitting the card.
+Statement: Multi-Query Code Block In-Card Dynamic Spotlight Protocol: When a code presentation topic contains multiple code queries or examples (e.g. Syntax Skeleton vs Concrete Example, or 3 separate query variations), the queries MUST remain consolidated inside ONE single card (.code-block-container in a single .slide-section) rather than splitting them across multiple cards. Each discrete query must be wrapped in a .code-subblock with a unique ID. During narration playback, the Sync Agent MUST extract word-level Whisper ASR timestamps and attach timeupdate spotlight handlers that dynamically position and illuminate the active highlight box (.code-active-spotlight / .narration-highlight with exact dimensions, 4.5px left border, and luminous cyan glow) on top of the relevant sub-query in real time.
+Added: Day03 — user instructed to keep multi-query code in a single card while creating a precise highlight box positioned on top of the relevant sub-query matching narration.
 Supersedes: none
 
 [VOICE-001] [STATUS: active] [SCOPE: Voice]

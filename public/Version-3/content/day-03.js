@@ -770,7 +770,10 @@ window.COURSE_CONTENT['day03'] = {
               <pre><code><span class="code-comment">-- 1. Numeric: salary range (inclusive on both ends)</span>
 <span class="kw">SELECT</span> first_name, last_name, salary
 <span class="kw">FROM</span>   employees
-<span class="kw">WHERE</span>  salary <span class="kw">BETWEEN</span> 50000 <span class="kw">AND</span> 90000;</code></pre>
+<span class="kw">WHERE</span>  salary <span class="kw">BETWEEN</span> 50000 <span class="kw">AND</span> 90000;
+
+<span class="code-comment">-- Equivalent using explicit operators:</span>
+<span class="code-comment">-- WHERE salary &gt;= 50000 AND salary &lt;= 90000</span></code></pre>
             </div>
 
             <div class="code-subblock" id="betweenCodeQuery2">
@@ -839,14 +842,14 @@ window.COURSE_CONTENT['day03'] = {
           </div>
           <div class="code-block-container" id="day03InCode">
             <div class="code-subblock" id="inCodeQuery1">
-              <pre><code><span class="code-comment">-- 1. IN with numbers (equivalent to OR conditions)</span>
+              <pre><code><span class="code-comment">-- 1. IN with numbers (equivalent to chained OR conditions)</span>
 <span class="kw">SELECT</span> first_name, department_id
 <span class="kw">FROM</span>   employees
 <span class="kw">WHERE</span>  department_id <span class="kw">IN</span> (10, 20, 30);</code></pre>
             </div>
 
             <div class="code-subblock" id="inCodeQuery2">
-              <pre><code><span class="code-comment">-- 2. IN with strings</span>
+              <pre><code><span class="code-comment">-- 2. IN with strings: customers in targeted sales regions</span>
 <span class="kw">SELECT</span> customer_id, first_name, region
 <span class="kw">FROM</span>   customers
 <span class="kw">WHERE</span>  region <span class="kw">IN</span> ('North', 'South', 'East');</code></pre>
@@ -937,21 +940,21 @@ WHERE name LIKE '_oo%'  -- 2nd/3rd = 'oo'</code></pre>
           </div>
           <div class="code-block-container" id="day03LikeCode">
             <div class="code-subblock" id="likeCodeQuery1">
-              <pre><code><span class="code-comment">-- 1. Employees whose first name starts with 'S'</span>
+              <pre><code><span class="code-comment">-- 1. First name starts with 'S' (% matches remaining chars)</span>
 <span class="kw">SELECT</span> first_name, last_name
 <span class="kw">FROM</span>   employees
 <span class="kw">WHERE</span>  first_name <span class="kw">LIKE</span> 'S%';</code></pre>
             </div>
 
             <div class="code-subblock" id="likeCodeQuery2">
-              <pre><code><span class="code-comment">-- 2. Products whose name contains 'Mouse'</span>
+              <pre><code><span class="code-comment">-- 2. Products whose name contains 'Mouse' anywhere (%...%)</span>
 <span class="kw">SELECT</span> name, unit_price
 <span class="kw">FROM</span>   products
 <span class="kw">WHERE</span>  name <span class="kw">LIKE</span> '%Mouse%';</code></pre>
             </div>
 
             <div class="code-subblock" id="likeCodeQuery3">
-              <pre><code><span class="code-comment">-- 3. Exclude all Gmail addresses</span>
+              <pre><code><span class="code-comment">-- 3. NOT LIKE: exclude all Gmail addresses</span>
 <span class="kw">SELECT</span> customer_id, email
 <span class="kw">FROM</span>   customers
 <span class="kw">WHERE</span>  email <span class="kw">NOT LIKE</span> '%@gmail.com';</code></pre>
@@ -992,14 +995,14 @@ WHERE name LIKE '_oo%'  -- 2nd/3rd = 'oo'</code></pre>
           </div>
           <div class="code-block-container" id="day03NullCode">
             <div class="code-subblock" id="nullCodeQuery1">
-              <pre><code><span class="code-comment">-- 1. Top-level employees (no manager)</span>
+              <pre><code><span class="code-comment">-- 1. Top-level employees (no manager assigned)</span>
 <span class="kw">SELECT</span> first_name, manager_id
 <span class="kw">FROM</span>   employees
 <span class="kw">WHERE</span>  manager_id <span class="kw">IS NULL</span>;</code></pre>
             </div>
 
             <div class="code-subblock" id="nullCodeQuery2">
-              <pre><code><span class="code-comment">-- 2. Employees who report to someone</span>
+              <pre><code><span class="code-comment">-- 2. Employees who report to someone (manager is present)</span>
 <span class="kw">SELECT</span> first_name, manager_id
 <span class="kw">FROM</span>   employees
 <span class="kw">WHERE</span>  manager_id <span class="kw">IS NOT NULL</span>;</code></pre>
@@ -1013,7 +1016,7 @@ WHERE name LIKE '_oo%'  -- 2nd/3rd = 'oo'</code></pre>
             </div>
 
             <div class="code-subblock" id="nullCodeQuery4">
-              <pre><code><span class="code-comment">-- 4. Active employees who have a commission</span>
+              <pre><code><span class="code-comment">-- 4. Active employees who do earn a commission</span>
 <span class="kw">SELECT</span> first_name, commission
 <span class="kw">FROM</span>   employees
 <span class="kw">WHERE</span>  is_active = 1

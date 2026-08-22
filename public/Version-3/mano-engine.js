@@ -3301,19 +3301,456 @@ const questionAudioMap = {
     6: 'Day03/New_Day3Question06.mp3'
   },
   'day04': {
-    1: 'Day04/New_Day4Question01.mp3',
-    2: 'Day04/New_Day4Question02.mp3',
-    3: 'Day04/New_Day4Question03.mp3',
-    4: 'Day04/New_Day4Question04.mp3',
-    5: 'Day04/New_Day4Question05.mp3',
-    6: 'Day04/New_Day4Question06.mp3',
-    7: 'Day04/New_Day4Question07.mp3',
-    8: 'Day04/New_Day4Question08.mp3',
-    9: 'Day04/New_Day4Question09.mp3',
-    10: 'Day04/New_Day4Question10.mp3',
-    11: 'Day04/New_Day4Question11.mp3',
-    12: 'Day04/New_Day4Question12.mp3'
-  },
+    "1": {
+        "src": "Day04/New_Day4Question01sol.mp3",
+        "code": "SELECT first_name,
+       salary,
+       salary / 12.0 AS monthly_salary
+FROM   employees;",
+        "segments": [
+            {
+                "text": "SELECT first_name,
+",
+                "startAt": 1.7,
+                "charInterval": 55
+            },
+            {
+                "text": "       salary,
+",
+                "startAt": 3.4,
+                "charInterval": 60
+            },
+            {
+                "text": "       salary / 12.0 AS monthly_salary
+",
+                "startAt": 5.4,
+                "charInterval": 65
+            },
+            {
+                "text": "FROM   employees;",
+                "startAt": 10.3,
+                "charInterval": 45
+            }
+        ],
+        "scrollAt": 10.8
+    },
+    "2": {
+        "src": "Day04/New_Day4Question02sol.mp3",
+        "code": "SELECT name,
+       unit_price,
+       cost_price,
+       unit_price - cost_price AS gross_profit
+FROM   products
+ORDER BY gross_profit DESC;",
+        "segments": [
+            {
+                "text": "SELECT name,
+",
+                "startAt": 1.7,
+                "charInterval": 55
+            },
+            {
+                "text": "       unit_price,
+",
+                "startAt": 3.0,
+                "charInterval": 60
+            },
+            {
+                "text": "       cost_price,
+",
+                "startAt": 4.6,
+                "charInterval": 60
+            },
+            {
+                "text": "       unit_price - cost_price AS gross_profit
+",
+                "startAt": 6.8,
+                "charInterval": 65
+            },
+            {
+                "text": "FROM   products
+",
+                "startAt": 11.5,
+                "charInterval": 45
+            },
+            {
+                "text": "ORDER BY gross_profit DESC;",
+                "startAt": 12.6,
+                "charInterval": 50
+            }
+        ],
+        "scrollAt": 13.5
+    },
+    "3": {
+        "src": "Day04/New_Day4Question03sol.mp3",
+        "code": "SELECT first_name,
+       salary,
+       commission,
+       salary + COALESCE(commission, 0) AS total_comp
+FROM   employees;",
+        "segments": [
+            {
+                "text": "SELECT first_name,
+",
+                "startAt": 1.7,
+                "charInterval": 55
+            },
+            {
+                "text": "       salary,
+",
+                "startAt": 3.4,
+                "charInterval": 60
+            },
+            {
+                "text": "       commission,
+",
+                "startAt": 4.5,
+                "charInterval": 60
+            },
+            {
+                "text": "       salary + COALESCE(commission, 0) AS total_comp
+",
+                "startAt": 6.2,
+                "charInterval": 70
+            },
+            {
+                "text": "FROM   employees;",
+                "startAt": 10.3,
+                "charInterval": 45
+            }
+        ],
+        "scrollAt": 10.8
+    },
+    "4": {
+        "src": "Day04/New_Day4Question04sol.mp3",
+        "code": "SELECT *
+FROM   employees
+WHERE  (department_id = 10 OR department_id = 20)
+  AND  salary > 70000;",
+        "segments": [
+            {
+                "text": "SELECT *
+",
+                "startAt": 2.2,
+                "charInterval": 50
+            },
+            {
+                "text": "FROM   employees
+",
+                "startAt": 3.4,
+                "charInterval": 50
+            },
+            {
+                "text": "WHERE  (department_id = 10 OR department_id = 20)
+",
+                "startAt": 4.8,
+                "charInterval": 75
+            },
+            {
+                "text": "  AND  salary > 70000;",
+                "startAt": 11.2,
+                "charInterval": 55
+            }
+        ],
+        "scrollAt": 12.0
+    },
+    "5": {
+        "src": "Day04/New_Day4Question05sol.mp3",
+        "code": "SELECT first_name,
+       salary
+FROM   employees
+WHERE  salary > (
+  SELECT MAX(salary)
+  FROM   employees
+  WHERE  department_id = 40
+);",
+        "segments": [
+            {
+                "text": "SELECT first_name,
+",
+                "startAt": 1.7,
+                "charInterval": 55
+            },
+            {
+                "text": "       salary
+",
+                "startAt": 3.4,
+                "charInterval": 55
+            },
+            {
+                "text": "FROM   employees
+",
+                "startAt": 4.5,
+                "charInterval": 50
+            },
+            {
+                "text": "WHERE  salary > (
+",
+                "startAt": 5.8,
+                "charInterval": 60
+            },
+            {
+                "text": "  SELECT MAX(salary)
+",
+                "startAt": 7.8,
+                "charInterval": 60
+            },
+            {
+                "text": "  FROM   employees
+",
+                "startAt": 9.1,
+                "charInterval": 50
+            },
+            {
+                "text": "  WHERE  department_id = 40
+);",
+                "startAt": 10.4,
+                "charInterval": 65
+            }
+        ],
+        "scrollAt": 12.5
+    },
+    "6": {
+        "src": "Day04/New_Day4Question06sol.mp3",
+        "code": "SELECT name,
+       unit_price * 1.18 AS markup_price
+FROM   products;",
+        "segments": [
+            {
+                "text": "SELECT name,
+",
+                "startAt": 1.4,
+                "charInterval": 50
+            },
+            {
+                "text": "       unit_price * 1.18 AS markup_price
+",
+                "startAt": 2.5,
+                "charInterval": 75
+            },
+            {
+                "text": "FROM   products;",
+                "startAt": 7.5,
+                "charInterval": 45
+            }
+        ],
+        "scrollAt": 8.0
+    },
+    "7": {
+        "src": "Day04/New_Day4Question07sol.mp3",
+        "code": "SELECT first_name,
+       commission
+FROM   employees
+WHERE  commission > 5000
+   OR  commission IS NULL;",
+        "segments": [
+            {
+                "text": "SELECT first_name,
+",
+                "startAt": 1.7,
+                "charInterval": 55
+            },
+            {
+                "text": "       commission
+",
+                "startAt": 3.4,
+                "charInterval": 55
+            },
+            {
+                "text": "FROM   employees
+",
+                "startAt": 4.2,
+                "charInterval": 50
+            },
+            {
+                "text": "WHERE  commission > 5000
+",
+                "startAt": 5.3,
+                "charInterval": 65
+            },
+            {
+                "text": "   OR  commission IS NULL;",
+                "startAt": 8.1,
+                "charInterval": 60
+            }
+        ],
+        "scrollAt": 9.2
+    },
+    "8": {
+        "src": "Day04/New_Day4Question08sol.mp3",
+        "code": "SELECT name,
+       (unit_price - cost_price) * 1.0 / NULLIF(unit_price, 0) AS margin
+FROM   products;",
+        "segments": [
+            {
+                "text": "SELECT name,
+",
+                "startAt": 1.8,
+                "charInterval": 50
+            },
+            {
+                "text": "       (unit_price - cost_price) * 1.0 / NULLIF(unit_price, 0) AS margin
+",
+                "startAt": 2.8,
+                "charInterval": 85
+            },
+            {
+                "text": "FROM   products;",
+                "startAt": 13.0,
+                "charInterval": 45
+            }
+        ],
+        "scrollAt": 13.5
+    },
+    "9": {
+        "src": "Day04/New_Day4Question09sol.mp3",
+        "code": "SELECT name,
+       ROUND((unit_price - cost_price) * 100.0 / unit_price, 2) AS profit_pct
+FROM   products;",
+        "segments": [
+            {
+                "text": "SELECT name,
+",
+                "startAt": 2.2,
+                "charInterval": 50
+            },
+            {
+                "text": "       ROUND((unit_price - cost_price) * 100.0 / unit_price, 2) AS profit_pct
+",
+                "startAt": 3.1,
+                "charInterval": 95
+            },
+            {
+                "text": "FROM   products;",
+                "startAt": 14.4,
+                "charInterval": 45
+            }
+        ],
+        "scrollAt": 14.8
+    },
+    "10": {
+        "src": "Day04/New_Day4Question10sol.mp3",
+        "code": "SELECT first_name,
+       salary
+FROM   employees
+WHERE  salary > (
+  SELECT MIN(salary)
+  FROM   employees
+  WHERE  department_id = 30
+);",
+        "segments": [
+            {
+                "text": "SELECT first_name,
+",
+                "startAt": 2.4,
+                "charInterval": 55
+            },
+            {
+                "text": "       salary
+",
+                "startAt": 4.2,
+                "charInterval": 55
+            },
+            {
+                "text": "FROM   employees
+",
+                "startAt": 4.9,
+                "charInterval": 50
+            },
+            {
+                "text": "WHERE  salary > (
+",
+                "startAt": 6.0,
+                "charInterval": 60
+            },
+            {
+                "text": "  SELECT MIN(salary)
+",
+                "startAt": 8.6,
+                "charInterval": 60
+            },
+            {
+                "text": "  FROM   employees
+",
+                "startAt": 9.7,
+                "charInterval": 50
+            },
+            {
+                "text": "  WHERE  department_id = 30
+);",
+                "startAt": 11.0,
+                "charInterval": 65
+            }
+        ],
+        "scrollAt": 13.0
+    },
+    "11": {
+        "src": "Day04/New_Day4Question11sol.mp3",
+        "code": "SELECT product_id,
+       name
+FROM   products
+WHERE  product_id % 2 = 0;",
+        "segments": [
+            {
+                "text": "SELECT product_id,
+",
+                "startAt": 2.3,
+                "charInterval": 55
+            },
+            {
+                "text": "       name
+",
+                "startAt": 4.3,
+                "charInterval": 50
+            },
+            {
+                "text": "FROM   products
+",
+                "startAt": 4.7,
+                "charInterval": 50
+            },
+            {
+                "text": "WHERE  product_id % 2 = 0;",
+                "startAt": 5.6,
+                "charInterval": 65
+            }
+        ],
+        "scrollAt": 8.5
+    },
+    "12": {
+        "src": "Day04/New_Day4Question12sol.mp3",
+        "code": "SELECT name,
+       stock_qty * cost_price AS stock_value
+FROM   products
+WHERE  stock_qty * cost_price > 100000;",
+        "segments": [
+            {
+                "text": "SELECT name,
+",
+                "startAt": 1.8,
+                "charInterval": 50
+            },
+            {
+                "text": "       stock_qty * cost_price AS stock_value
+",
+                "startAt": 2.7,
+                "charInterval": 75
+            },
+            {
+                "text": "FROM   products
+",
+                "startAt": 7.1,
+                "charInterval": 50
+            },
+            {
+                "text": "WHERE  stock_qty * cost_price > 100000;",
+                "startAt": 8.2,
+                "charInterval": 75
+            }
+        ],
+        "scrollAt": 12.0
+    }
+},
   'day05': {
     1: 'Day05/New_Day5Question01.mp3',
     2: 'Day05/New_Day5Question02.mp3',
@@ -3578,19 +4015,456 @@ const questionSolutionMap = {
     }
   },
   'day04': {
-    1: { src: 'Day04/New_Day4Question01sol.mp3', code: 'SELECT first_name, salary, salary / 12.0 AS monthly_salary FROM employees;', startAt: 1.5, charInterval: 70 },
-    2: { src: 'Day04/New_Day4Question02sol.mp3', code: 'SELECT name, unit_price, cost_price, unit_price - cost_price AS gross_profit FROM products ORDER BY gross_profit DESC;', startAt: 1.5, charInterval: 70 },
-    3: { src: 'Day04/New_Day4Question03sol.mp3', code: 'SELECT first_name, salary, commission, salary + COALESCE(commission, 0) AS total_comp FROM employees;', startAt: 1.5, charInterval: 70 },
-    4: { src: 'Day04/New_Day4Question04sol.mp3', code: 'SELECT * FROM employees WHERE (department_id = 10 OR department_id = 20) AND salary > 70000;', startAt: 1.5, charInterval: 70 },
-    5: { src: 'Day04/New_Day4Question05sol.mp3', code: 'SELECT first_name, salary FROM employees WHERE salary > (SELECT MAX(salary) FROM employees WHERE department_id = 40);', startAt: 1.5, charInterval: 70 },
-    6: { src: 'Day04/New_Day4Question06sol.mp3', code: 'SELECT name, unit_price * 1.18 AS markup_price FROM products;', startAt: 1.5, charInterval: 70 },
-    7: { src: 'Day04/New_Day4Question07sol.mp3', code: 'SELECT first_name, commission FROM employees WHERE commission > 5000 OR commission IS NULL;', startAt: 1.5, charInterval: 70 },
-    8: { src: 'Day04/New_Day4Question08sol.mp3', code: 'SELECT name, (unit_price - cost_price) * 1.0 / NULLIF(unit_price, 0) AS margin FROM products;', startAt: 1.5, charInterval: 70 },
-    9: { src: 'Day04/New_Day4Question09sol.mp3', code: 'SELECT name, ROUND((unit_price - cost_price) * 100.0 / unit_price, 2) AS profit_pct FROM products;', startAt: 1.5, charInterval: 70 },
-    10: { src: 'Day04/New_Day4Question10sol.mp3', code: 'SELECT first_name, salary FROM employees WHERE salary > (SELECT MIN(salary) FROM employees WHERE department_id = 30);', startAt: 1.5, charInterval: 70 },
-    11: { src: 'Day04/New_Day4Question11sol.mp3', code: 'SELECT product_id, name FROM products WHERE product_id % 2 = 0;', startAt: 1.5, charInterval: 70 },
-    12: { src: 'Day04/New_Day4Question12sol.mp3', code: 'SELECT name, stock_qty * cost_price AS stock_value FROM products WHERE stock_qty * cost_price > 100000;', startAt: 1.5, charInterval: 70 }
-  },
+    "1": {
+        "src": "Day04/New_Day4Question01sol.mp3",
+        "code": "SELECT first_name,
+       salary,
+       salary / 12.0 AS monthly_salary
+FROM   employees;",
+        "segments": [
+            {
+                "text": "SELECT first_name,
+",
+                "startAt": 1.7,
+                "charInterval": 55
+            },
+            {
+                "text": "       salary,
+",
+                "startAt": 3.4,
+                "charInterval": 60
+            },
+            {
+                "text": "       salary / 12.0 AS monthly_salary
+",
+                "startAt": 5.4,
+                "charInterval": 65
+            },
+            {
+                "text": "FROM   employees;",
+                "startAt": 10.3,
+                "charInterval": 45
+            }
+        ],
+        "scrollAt": 10.8
+    },
+    "2": {
+        "src": "Day04/New_Day4Question02sol.mp3",
+        "code": "SELECT name,
+       unit_price,
+       cost_price,
+       unit_price - cost_price AS gross_profit
+FROM   products
+ORDER BY gross_profit DESC;",
+        "segments": [
+            {
+                "text": "SELECT name,
+",
+                "startAt": 1.7,
+                "charInterval": 55
+            },
+            {
+                "text": "       unit_price,
+",
+                "startAt": 3.0,
+                "charInterval": 60
+            },
+            {
+                "text": "       cost_price,
+",
+                "startAt": 4.6,
+                "charInterval": 60
+            },
+            {
+                "text": "       unit_price - cost_price AS gross_profit
+",
+                "startAt": 6.8,
+                "charInterval": 65
+            },
+            {
+                "text": "FROM   products
+",
+                "startAt": 11.5,
+                "charInterval": 45
+            },
+            {
+                "text": "ORDER BY gross_profit DESC;",
+                "startAt": 12.6,
+                "charInterval": 50
+            }
+        ],
+        "scrollAt": 13.5
+    },
+    "3": {
+        "src": "Day04/New_Day4Question03sol.mp3",
+        "code": "SELECT first_name,
+       salary,
+       commission,
+       salary + COALESCE(commission, 0) AS total_comp
+FROM   employees;",
+        "segments": [
+            {
+                "text": "SELECT first_name,
+",
+                "startAt": 1.7,
+                "charInterval": 55
+            },
+            {
+                "text": "       salary,
+",
+                "startAt": 3.4,
+                "charInterval": 60
+            },
+            {
+                "text": "       commission,
+",
+                "startAt": 4.5,
+                "charInterval": 60
+            },
+            {
+                "text": "       salary + COALESCE(commission, 0) AS total_comp
+",
+                "startAt": 6.2,
+                "charInterval": 70
+            },
+            {
+                "text": "FROM   employees;",
+                "startAt": 10.3,
+                "charInterval": 45
+            }
+        ],
+        "scrollAt": 10.8
+    },
+    "4": {
+        "src": "Day04/New_Day4Question04sol.mp3",
+        "code": "SELECT *
+FROM   employees
+WHERE  (department_id = 10 OR department_id = 20)
+  AND  salary > 70000;",
+        "segments": [
+            {
+                "text": "SELECT *
+",
+                "startAt": 2.2,
+                "charInterval": 50
+            },
+            {
+                "text": "FROM   employees
+",
+                "startAt": 3.4,
+                "charInterval": 50
+            },
+            {
+                "text": "WHERE  (department_id = 10 OR department_id = 20)
+",
+                "startAt": 4.8,
+                "charInterval": 75
+            },
+            {
+                "text": "  AND  salary > 70000;",
+                "startAt": 11.2,
+                "charInterval": 55
+            }
+        ],
+        "scrollAt": 12.0
+    },
+    "5": {
+        "src": "Day04/New_Day4Question05sol.mp3",
+        "code": "SELECT first_name,
+       salary
+FROM   employees
+WHERE  salary > (
+  SELECT MAX(salary)
+  FROM   employees
+  WHERE  department_id = 40
+);",
+        "segments": [
+            {
+                "text": "SELECT first_name,
+",
+                "startAt": 1.7,
+                "charInterval": 55
+            },
+            {
+                "text": "       salary
+",
+                "startAt": 3.4,
+                "charInterval": 55
+            },
+            {
+                "text": "FROM   employees
+",
+                "startAt": 4.5,
+                "charInterval": 50
+            },
+            {
+                "text": "WHERE  salary > (
+",
+                "startAt": 5.8,
+                "charInterval": 60
+            },
+            {
+                "text": "  SELECT MAX(salary)
+",
+                "startAt": 7.8,
+                "charInterval": 60
+            },
+            {
+                "text": "  FROM   employees
+",
+                "startAt": 9.1,
+                "charInterval": 50
+            },
+            {
+                "text": "  WHERE  department_id = 40
+);",
+                "startAt": 10.4,
+                "charInterval": 65
+            }
+        ],
+        "scrollAt": 12.5
+    },
+    "6": {
+        "src": "Day04/New_Day4Question06sol.mp3",
+        "code": "SELECT name,
+       unit_price * 1.18 AS markup_price
+FROM   products;",
+        "segments": [
+            {
+                "text": "SELECT name,
+",
+                "startAt": 1.4,
+                "charInterval": 50
+            },
+            {
+                "text": "       unit_price * 1.18 AS markup_price
+",
+                "startAt": 2.5,
+                "charInterval": 75
+            },
+            {
+                "text": "FROM   products;",
+                "startAt": 7.5,
+                "charInterval": 45
+            }
+        ],
+        "scrollAt": 8.0
+    },
+    "7": {
+        "src": "Day04/New_Day4Question07sol.mp3",
+        "code": "SELECT first_name,
+       commission
+FROM   employees
+WHERE  commission > 5000
+   OR  commission IS NULL;",
+        "segments": [
+            {
+                "text": "SELECT first_name,
+",
+                "startAt": 1.7,
+                "charInterval": 55
+            },
+            {
+                "text": "       commission
+",
+                "startAt": 3.4,
+                "charInterval": 55
+            },
+            {
+                "text": "FROM   employees
+",
+                "startAt": 4.2,
+                "charInterval": 50
+            },
+            {
+                "text": "WHERE  commission > 5000
+",
+                "startAt": 5.3,
+                "charInterval": 65
+            },
+            {
+                "text": "   OR  commission IS NULL;",
+                "startAt": 8.1,
+                "charInterval": 60
+            }
+        ],
+        "scrollAt": 9.2
+    },
+    "8": {
+        "src": "Day04/New_Day4Question08sol.mp3",
+        "code": "SELECT name,
+       (unit_price - cost_price) * 1.0 / NULLIF(unit_price, 0) AS margin
+FROM   products;",
+        "segments": [
+            {
+                "text": "SELECT name,
+",
+                "startAt": 1.8,
+                "charInterval": 50
+            },
+            {
+                "text": "       (unit_price - cost_price) * 1.0 / NULLIF(unit_price, 0) AS margin
+",
+                "startAt": 2.8,
+                "charInterval": 85
+            },
+            {
+                "text": "FROM   products;",
+                "startAt": 13.0,
+                "charInterval": 45
+            }
+        ],
+        "scrollAt": 13.5
+    },
+    "9": {
+        "src": "Day04/New_Day4Question09sol.mp3",
+        "code": "SELECT name,
+       ROUND((unit_price - cost_price) * 100.0 / unit_price, 2) AS profit_pct
+FROM   products;",
+        "segments": [
+            {
+                "text": "SELECT name,
+",
+                "startAt": 2.2,
+                "charInterval": 50
+            },
+            {
+                "text": "       ROUND((unit_price - cost_price) * 100.0 / unit_price, 2) AS profit_pct
+",
+                "startAt": 3.1,
+                "charInterval": 95
+            },
+            {
+                "text": "FROM   products;",
+                "startAt": 14.4,
+                "charInterval": 45
+            }
+        ],
+        "scrollAt": 14.8
+    },
+    "10": {
+        "src": "Day04/New_Day4Question10sol.mp3",
+        "code": "SELECT first_name,
+       salary
+FROM   employees
+WHERE  salary > (
+  SELECT MIN(salary)
+  FROM   employees
+  WHERE  department_id = 30
+);",
+        "segments": [
+            {
+                "text": "SELECT first_name,
+",
+                "startAt": 2.4,
+                "charInterval": 55
+            },
+            {
+                "text": "       salary
+",
+                "startAt": 4.2,
+                "charInterval": 55
+            },
+            {
+                "text": "FROM   employees
+",
+                "startAt": 4.9,
+                "charInterval": 50
+            },
+            {
+                "text": "WHERE  salary > (
+",
+                "startAt": 6.0,
+                "charInterval": 60
+            },
+            {
+                "text": "  SELECT MIN(salary)
+",
+                "startAt": 8.6,
+                "charInterval": 60
+            },
+            {
+                "text": "  FROM   employees
+",
+                "startAt": 9.7,
+                "charInterval": 50
+            },
+            {
+                "text": "  WHERE  department_id = 30
+);",
+                "startAt": 11.0,
+                "charInterval": 65
+            }
+        ],
+        "scrollAt": 13.0
+    },
+    "11": {
+        "src": "Day04/New_Day4Question11sol.mp3",
+        "code": "SELECT product_id,
+       name
+FROM   products
+WHERE  product_id % 2 = 0;",
+        "segments": [
+            {
+                "text": "SELECT product_id,
+",
+                "startAt": 2.3,
+                "charInterval": 55
+            },
+            {
+                "text": "       name
+",
+                "startAt": 4.3,
+                "charInterval": 50
+            },
+            {
+                "text": "FROM   products
+",
+                "startAt": 4.7,
+                "charInterval": 50
+            },
+            {
+                "text": "WHERE  product_id % 2 = 0;",
+                "startAt": 5.6,
+                "charInterval": 65
+            }
+        ],
+        "scrollAt": 8.5
+    },
+    "12": {
+        "src": "Day04/New_Day4Question12sol.mp3",
+        "code": "SELECT name,
+       stock_qty * cost_price AS stock_value
+FROM   products
+WHERE  stock_qty * cost_price > 100000;",
+        "segments": [
+            {
+                "text": "SELECT name,
+",
+                "startAt": 1.8,
+                "charInterval": 50
+            },
+            {
+                "text": "       stock_qty * cost_price AS stock_value
+",
+                "startAt": 2.7,
+                "charInterval": 75
+            },
+            {
+                "text": "FROM   products
+",
+                "startAt": 7.1,
+                "charInterval": 50
+            },
+            {
+                "text": "WHERE  stock_qty * cost_price > 100000;",
+                "startAt": 8.2,
+                "charInterval": 75
+            }
+        ],
+        "scrollAt": 12.0
+    }
+},
   'day05': {
       "1": {
           "src": "Day05/New_Day5Question01sol.mp3",
@@ -5948,8 +6822,8 @@ const day03Tracks = [
 ];
 
 const day04Durations = [
-  3.0, 3.0, 3.5, 3.5, 3.0, 4.0, 4.5, 2.5, 2.0, 3.0, 2.8, 3.2, 3.0, 2.5, 2.5, 3.0, 3.0, 2.8, 3.6, 3.4, 3.3, 2.9, 2.8,
-  3.8, 3.4, 4.8, 4.9, 3.9, 4.8, 4.7, 4.9, 4.6, 4.7, 4.6, 4.7, 4.6, 4.7, 4.6, 4.7, 4.6, 4.7, 4.6, 4.7, 4.6, 4.7, 4.6
+  9.91, 33.58, 16.44, 14.04, 10.66, 13.82, 15.29, 9.72, 7.92, 9.36, 9.0, 13.78, 12.07, 9.07, 11.64, 11.33, 10.51, 14.21, 11.95, 9.84, 11.26, 10.97, 9.74,
+  9.6, 11.35, 10.66, 14.52, 10.01, 11.4, 10.92, 13.37, 9.79, 13.8, 8.45, 8.74, 7.85, 10.01, 10.99, 14.23, 7.01, 15.53, 9.34, 14.42, 7.13, 9.31, 10.42, 13.44
 ];
 
 const day04Tracks = [
@@ -6087,8 +6961,456 @@ const slideTrackMap = {
     0: { tracks: day03Tracks, durations: day03Durations }
   },
   'day04': {
-    0: { tracks: day04Tracks, durations: day04Durations }
-  },
+    "1": {
+        "src": "Day04/New_Day4Question01sol.mp3",
+        "code": "SELECT first_name,
+       salary,
+       salary / 12.0 AS monthly_salary
+FROM   employees;",
+        "segments": [
+            {
+                "text": "SELECT first_name,
+",
+                "startAt": 1.7,
+                "charInterval": 55
+            },
+            {
+                "text": "       salary,
+",
+                "startAt": 3.4,
+                "charInterval": 60
+            },
+            {
+                "text": "       salary / 12.0 AS monthly_salary
+",
+                "startAt": 5.4,
+                "charInterval": 65
+            },
+            {
+                "text": "FROM   employees;",
+                "startAt": 10.3,
+                "charInterval": 45
+            }
+        ],
+        "scrollAt": 10.8
+    },
+    "2": {
+        "src": "Day04/New_Day4Question02sol.mp3",
+        "code": "SELECT name,
+       unit_price,
+       cost_price,
+       unit_price - cost_price AS gross_profit
+FROM   products
+ORDER BY gross_profit DESC;",
+        "segments": [
+            {
+                "text": "SELECT name,
+",
+                "startAt": 1.7,
+                "charInterval": 55
+            },
+            {
+                "text": "       unit_price,
+",
+                "startAt": 3.0,
+                "charInterval": 60
+            },
+            {
+                "text": "       cost_price,
+",
+                "startAt": 4.6,
+                "charInterval": 60
+            },
+            {
+                "text": "       unit_price - cost_price AS gross_profit
+",
+                "startAt": 6.8,
+                "charInterval": 65
+            },
+            {
+                "text": "FROM   products
+",
+                "startAt": 11.5,
+                "charInterval": 45
+            },
+            {
+                "text": "ORDER BY gross_profit DESC;",
+                "startAt": 12.6,
+                "charInterval": 50
+            }
+        ],
+        "scrollAt": 13.5
+    },
+    "3": {
+        "src": "Day04/New_Day4Question03sol.mp3",
+        "code": "SELECT first_name,
+       salary,
+       commission,
+       salary + COALESCE(commission, 0) AS total_comp
+FROM   employees;",
+        "segments": [
+            {
+                "text": "SELECT first_name,
+",
+                "startAt": 1.7,
+                "charInterval": 55
+            },
+            {
+                "text": "       salary,
+",
+                "startAt": 3.4,
+                "charInterval": 60
+            },
+            {
+                "text": "       commission,
+",
+                "startAt": 4.5,
+                "charInterval": 60
+            },
+            {
+                "text": "       salary + COALESCE(commission, 0) AS total_comp
+",
+                "startAt": 6.2,
+                "charInterval": 70
+            },
+            {
+                "text": "FROM   employees;",
+                "startAt": 10.3,
+                "charInterval": 45
+            }
+        ],
+        "scrollAt": 10.8
+    },
+    "4": {
+        "src": "Day04/New_Day4Question04sol.mp3",
+        "code": "SELECT *
+FROM   employees
+WHERE  (department_id = 10 OR department_id = 20)
+  AND  salary > 70000;",
+        "segments": [
+            {
+                "text": "SELECT *
+",
+                "startAt": 2.2,
+                "charInterval": 50
+            },
+            {
+                "text": "FROM   employees
+",
+                "startAt": 3.4,
+                "charInterval": 50
+            },
+            {
+                "text": "WHERE  (department_id = 10 OR department_id = 20)
+",
+                "startAt": 4.8,
+                "charInterval": 75
+            },
+            {
+                "text": "  AND  salary > 70000;",
+                "startAt": 11.2,
+                "charInterval": 55
+            }
+        ],
+        "scrollAt": 12.0
+    },
+    "5": {
+        "src": "Day04/New_Day4Question05sol.mp3",
+        "code": "SELECT first_name,
+       salary
+FROM   employees
+WHERE  salary > (
+  SELECT MAX(salary)
+  FROM   employees
+  WHERE  department_id = 40
+);",
+        "segments": [
+            {
+                "text": "SELECT first_name,
+",
+                "startAt": 1.7,
+                "charInterval": 55
+            },
+            {
+                "text": "       salary
+",
+                "startAt": 3.4,
+                "charInterval": 55
+            },
+            {
+                "text": "FROM   employees
+",
+                "startAt": 4.5,
+                "charInterval": 50
+            },
+            {
+                "text": "WHERE  salary > (
+",
+                "startAt": 5.8,
+                "charInterval": 60
+            },
+            {
+                "text": "  SELECT MAX(salary)
+",
+                "startAt": 7.8,
+                "charInterval": 60
+            },
+            {
+                "text": "  FROM   employees
+",
+                "startAt": 9.1,
+                "charInterval": 50
+            },
+            {
+                "text": "  WHERE  department_id = 40
+);",
+                "startAt": 10.4,
+                "charInterval": 65
+            }
+        ],
+        "scrollAt": 12.5
+    },
+    "6": {
+        "src": "Day04/New_Day4Question06sol.mp3",
+        "code": "SELECT name,
+       unit_price * 1.18 AS markup_price
+FROM   products;",
+        "segments": [
+            {
+                "text": "SELECT name,
+",
+                "startAt": 1.4,
+                "charInterval": 50
+            },
+            {
+                "text": "       unit_price * 1.18 AS markup_price
+",
+                "startAt": 2.5,
+                "charInterval": 75
+            },
+            {
+                "text": "FROM   products;",
+                "startAt": 7.5,
+                "charInterval": 45
+            }
+        ],
+        "scrollAt": 8.0
+    },
+    "7": {
+        "src": "Day04/New_Day4Question07sol.mp3",
+        "code": "SELECT first_name,
+       commission
+FROM   employees
+WHERE  commission > 5000
+   OR  commission IS NULL;",
+        "segments": [
+            {
+                "text": "SELECT first_name,
+",
+                "startAt": 1.7,
+                "charInterval": 55
+            },
+            {
+                "text": "       commission
+",
+                "startAt": 3.4,
+                "charInterval": 55
+            },
+            {
+                "text": "FROM   employees
+",
+                "startAt": 4.2,
+                "charInterval": 50
+            },
+            {
+                "text": "WHERE  commission > 5000
+",
+                "startAt": 5.3,
+                "charInterval": 65
+            },
+            {
+                "text": "   OR  commission IS NULL;",
+                "startAt": 8.1,
+                "charInterval": 60
+            }
+        ],
+        "scrollAt": 9.2
+    },
+    "8": {
+        "src": "Day04/New_Day4Question08sol.mp3",
+        "code": "SELECT name,
+       (unit_price - cost_price) * 1.0 / NULLIF(unit_price, 0) AS margin
+FROM   products;",
+        "segments": [
+            {
+                "text": "SELECT name,
+",
+                "startAt": 1.8,
+                "charInterval": 50
+            },
+            {
+                "text": "       (unit_price - cost_price) * 1.0 / NULLIF(unit_price, 0) AS margin
+",
+                "startAt": 2.8,
+                "charInterval": 85
+            },
+            {
+                "text": "FROM   products;",
+                "startAt": 13.0,
+                "charInterval": 45
+            }
+        ],
+        "scrollAt": 13.5
+    },
+    "9": {
+        "src": "Day04/New_Day4Question09sol.mp3",
+        "code": "SELECT name,
+       ROUND((unit_price - cost_price) * 100.0 / unit_price, 2) AS profit_pct
+FROM   products;",
+        "segments": [
+            {
+                "text": "SELECT name,
+",
+                "startAt": 2.2,
+                "charInterval": 50
+            },
+            {
+                "text": "       ROUND((unit_price - cost_price) * 100.0 / unit_price, 2) AS profit_pct
+",
+                "startAt": 3.1,
+                "charInterval": 95
+            },
+            {
+                "text": "FROM   products;",
+                "startAt": 14.4,
+                "charInterval": 45
+            }
+        ],
+        "scrollAt": 14.8
+    },
+    "10": {
+        "src": "Day04/New_Day4Question10sol.mp3",
+        "code": "SELECT first_name,
+       salary
+FROM   employees
+WHERE  salary > (
+  SELECT MIN(salary)
+  FROM   employees
+  WHERE  department_id = 30
+);",
+        "segments": [
+            {
+                "text": "SELECT first_name,
+",
+                "startAt": 2.4,
+                "charInterval": 55
+            },
+            {
+                "text": "       salary
+",
+                "startAt": 4.2,
+                "charInterval": 55
+            },
+            {
+                "text": "FROM   employees
+",
+                "startAt": 4.9,
+                "charInterval": 50
+            },
+            {
+                "text": "WHERE  salary > (
+",
+                "startAt": 6.0,
+                "charInterval": 60
+            },
+            {
+                "text": "  SELECT MIN(salary)
+",
+                "startAt": 8.6,
+                "charInterval": 60
+            },
+            {
+                "text": "  FROM   employees
+",
+                "startAt": 9.7,
+                "charInterval": 50
+            },
+            {
+                "text": "  WHERE  department_id = 30
+);",
+                "startAt": 11.0,
+                "charInterval": 65
+            }
+        ],
+        "scrollAt": 13.0
+    },
+    "11": {
+        "src": "Day04/New_Day4Question11sol.mp3",
+        "code": "SELECT product_id,
+       name
+FROM   products
+WHERE  product_id % 2 = 0;",
+        "segments": [
+            {
+                "text": "SELECT product_id,
+",
+                "startAt": 2.3,
+                "charInterval": 55
+            },
+            {
+                "text": "       name
+",
+                "startAt": 4.3,
+                "charInterval": 50
+            },
+            {
+                "text": "FROM   products
+",
+                "startAt": 4.7,
+                "charInterval": 50
+            },
+            {
+                "text": "WHERE  product_id % 2 = 0;",
+                "startAt": 5.6,
+                "charInterval": 65
+            }
+        ],
+        "scrollAt": 8.5
+    },
+    "12": {
+        "src": "Day04/New_Day4Question12sol.mp3",
+        "code": "SELECT name,
+       stock_qty * cost_price AS stock_value
+FROM   products
+WHERE  stock_qty * cost_price > 100000;",
+        "segments": [
+            {
+                "text": "SELECT name,
+",
+                "startAt": 1.8,
+                "charInterval": 50
+            },
+            {
+                "text": "       stock_qty * cost_price AS stock_value
+",
+                "startAt": 2.7,
+                "charInterval": 75
+            },
+            {
+                "text": "FROM   products
+",
+                "startAt": 7.1,
+                "charInterval": 50
+            },
+            {
+                "text": "WHERE  stock_qty * cost_price > 100000;",
+                "startAt": 8.2,
+                "charInterval": 75
+            }
+        ],
+        "scrollAt": 12.0
+    }
+},
   'day05': {
     0: { tracks: day05Tracks, durations: day05Durations }
   }
@@ -8866,6 +10188,154 @@ function updateNullCodeHighlights(currentTime, isPlaying) {
   if (isQ4) narrationScrollToSubblock(q4);
 }
 
+// ══════════════════════════════════════════════════════════════════════
+// DAY 04: OPERATORS & EXPRESSIONS PROGRESSIVE NARRATION HIGHLIGHTS
+// ══════════════════════════════════════════════════════════════════════
+
+function updateDay04ArithTableHighlights(currentTime, isPlaying) {
+  const rows = {
+    add: document.getElementById('arithOpAdd'),
+    sub: document.getElementById('arithOpSub'),
+    mul: document.getElementById('arithOpMul'),
+    div: document.getElementById('arithOpDiv'),
+    mod: document.getElementById('arithOpMod')
+  };
+
+  if (!isPlaying) {
+    Object.values(rows).forEach(r => {
+      if (r) r.classList.remove('row-active-spotlight', 'narration-highlight');
+    });
+    return;
+  }
+
+  // Whisper ASR timestamps for New_Day4Part1audio02.mp3 (33.58s):
+  // 2.00s - 7.50s : Plus sign addition
+  // 7.50s - 13.00s: Minus sign subtraction
+  // 13.00s - 19.50s: Asterisk multiplication
+  // 19.50s - 26.50s: Forward slash division
+  // 26.50s - 33.58s: Percent sign modulo
+  if (rows.add) rows.add.classList.toggle('row-active-spotlight', currentTime >= 2.00 && currentTime < 7.50);
+  if (rows.sub) rows.sub.classList.toggle('row-active-spotlight', currentTime >= 7.50 && currentTime < 13.00);
+  if (rows.mul) rows.mul.classList.toggle('row-active-spotlight', currentTime >= 13.00 && currentTime < 19.50);
+  if (rows.div) rows.div.classList.toggle('row-active-spotlight', currentTime >= 19.50 && currentTime < 26.50);
+  if (rows.mod) rows.mod.classList.toggle('row-active-spotlight', currentTime >= 26.50 && currentTime <= 33.60);
+}
+
+function updateDay04ArithCodeHighlights(currentTime, isPlaying) {
+  const q1 = document.getElementById('arithCodeQuery1');
+  const q2 = document.getElementById('arithCodeQuery2');
+  if (!q1 || !q2) return;
+
+  if (!isPlaying) {
+    [q1, q2].forEach(el => el.classList.remove('narration-highlight', 'code-active-spotlight'));
+    return;
+  }
+
+  const isQ1 = currentTime >= 0.00 && currentTime < 9.50;
+  const isQ2 = currentTime >= 9.50 && currentTime <= 16.50;
+
+  q1.classList.toggle('narration-highlight', isQ1);
+  q1.classList.toggle('code-active-spotlight', isQ1);
+  q2.classList.toggle('narration-highlight', isQ2);
+  q2.classList.toggle('code-active-spotlight', isQ2);
+
+  if (isQ1) narrationScrollToSubblock(q1);
+  if (isQ2) narrationScrollToSubblock(q2);
+}
+
+function updateDay04PrecedenceCodeHighlights(currentTime, isPlaying) {
+  const q1 = document.getElementById('precCodeQuery1');
+  const q2 = document.getElementById('precCodeQuery2');
+  if (!q1 || !q2) return;
+
+  if (!isPlaying) {
+    [q1, q2].forEach(el => el.classList.remove('narration-highlight', 'code-active-spotlight'));
+    return;
+  }
+
+  const isQ1 = currentTime >= 0.00 && currentTime < 7.50;
+  const isQ2 = currentTime >= 7.50 && currentTime <= 15.30;
+
+  q1.classList.toggle('narration-highlight', isQ1);
+  q1.classList.toggle('code-active-spotlight', isQ1);
+  q2.classList.toggle('narration-highlight', isQ2);
+  q2.classList.toggle('code-active-spotlight', isQ2);
+
+  if (isQ1) narrationScrollToSubblock(q1);
+  if (isQ2) narrationScrollToSubblock(q2);
+}
+
+function updateDay04EscapeCodeHighlights(currentTime, isPlaying) {
+  const q1 = document.getElementById('escapeCodeQuery1');
+  const q2 = document.getElementById('escapeCodeQuery2');
+  const q3 = document.getElementById('escapeCodeQuery3');
+  if (!q1 || !q2 || !q3) return;
+
+  if (!isPlaying) {
+    [q1, q2, q3].forEach(el => el.classList.remove('narration-highlight', 'code-active-spotlight'));
+    return;
+  }
+
+  const isQ1 = currentTime >= 0.00 && currentTime < 6.50;
+  const isQ2 = currentTime >= 6.50 && currentTime < 9.50;
+  const isQ3 = currentTime >= 9.50 && currentTime <= 11.70;
+
+  q1.classList.toggle('narration-highlight', isQ1);
+  q1.classList.toggle('code-active-spotlight', isQ1);
+  q2.classList.toggle('narration-highlight', isQ2);
+  q2.classList.toggle('code-active-spotlight', isQ2);
+  q3.classList.toggle('narration-highlight', isQ3);
+  q3.classList.toggle('code-active-spotlight', isQ3);
+
+  if (isQ1) narrationScrollToSubblock(q1);
+  if (isQ2) narrationScrollToSubblock(q2);
+  if (isQ3) narrationScrollToSubblock(q3);
+}
+
+function updateDay04NullCodeHighlights(currentTime, isPlaying) {
+  const q1 = document.getElementById('nullCodeQuery1');
+  const q2 = document.getElementById('nullCodeQuery2');
+  if (!q1 || !q2) return;
+
+  if (!isPlaying) {
+    [q1, q2].forEach(el => el.classList.remove('narration-highlight', 'code-active-spotlight'));
+    return;
+  }
+
+  const isQ1 = currentTime >= 0.00 && currentTime < 8.50;
+  const isQ2 = currentTime >= 8.50 && currentTime <= 14.30;
+
+  q1.classList.toggle('narration-highlight', isQ1);
+  q1.classList.toggle('code-active-spotlight', isQ1);
+  q2.classList.toggle('narration-highlight', isQ2);
+  q2.classList.toggle('code-active-spotlight', isQ2);
+
+  if (isQ1) narrationScrollToSubblock(q1);
+  if (isQ2) narrationScrollToSubblock(q2);
+}
+
+function updateDay04NotInTrapCodeHighlights(currentTime, isPlaying) {
+  const q1 = document.getElementById('notInTrapQuery1');
+  const q2 = document.getElementById('notInTrapQuery2');
+  if (!q1 || !q2) return;
+
+  if (!isPlaying) {
+    [q1, q2].forEach(el => el.classList.remove('narration-highlight', 'code-active-spotlight'));
+    return;
+  }
+
+  const isQ1 = currentTime >= 0.00 && currentTime < 5.50;
+  const isQ2 = currentTime >= 5.50 && currentTime <= 11.00;
+
+  q1.classList.toggle('narration-highlight', isQ1);
+  q1.classList.toggle('code-active-spotlight', isQ1);
+  q2.classList.toggle('narration-highlight', isQ2);
+  q2.classList.toggle('code-active-spotlight', isQ2);
+
+  if (isQ1) narrationScrollToSubblock(q1);
+  if (isQ2) narrationScrollToSubblock(q2);
+}
+
 function updateDay01Audio01Highlights(currentTime, isPlaying) {
   const section = document.getElementById('rdbmsIntro');
   const tableCard = document.getElementById('rdbmsTableCard');
@@ -9220,6 +10690,12 @@ function loadAndPlayTrack(index, targetTime = 0) {
     if (track.src.includes('New_Day3Part1audio19.mp3')) updateInCodeHighlights(0, false);
     if (track.src.includes('New_Day3Part1audio24.mp3')) updateLikeCodeHighlights(0, false);
     if (track.src.includes('New_Day3Part1audio27.mp3')) updateNullCodeHighlights(0, false);
+    if (track.src.includes('New_Day4Part1audio02.mp3')) updateDay04ArithTableHighlights(0, false);
+    if (track.src.includes('New_Day4Part1audio03.mp3')) updateDay04ArithCodeHighlights(0, false);
+    if (track.src.includes('New_Day4Part1audio07.mp3')) updateDay04PrecedenceCodeHighlights(0, false);
+    if (track.src.includes('New_Day4Part1audio15.mp3')) updateDay04EscapeCodeHighlights(0, false);
+    if (track.src.includes('New_Day4Part1audio18.mp3')) updateDay04NullCodeHighlights(0, false);
+    if (track.src.includes('New_Day4Part1audio22.mp3')) updateDay04NotInTrapCodeHighlights(0, false);
     onNarrationSegmentEnded(index, trackEvents);
   });
 
@@ -9255,6 +10731,12 @@ function loadAndPlayTrack(index, targetTime = 0) {
     if (track.src.includes('New_Day3Part1audio19.mp3')) updateInCodeHighlights(0, false);
     if (track.src.includes('New_Day3Part1audio24.mp3')) updateLikeCodeHighlights(0, false);
     if (track.src.includes('New_Day3Part1audio27.mp3')) updateNullCodeHighlights(0, false);
+    if (track.src.includes('New_Day4Part1audio02.mp3')) updateDay04ArithTableHighlights(0, false);
+    if (track.src.includes('New_Day4Part1audio03.mp3')) updateDay04ArithCodeHighlights(0, false);
+    if (track.src.includes('New_Day4Part1audio07.mp3')) updateDay04PrecedenceCodeHighlights(0, false);
+    if (track.src.includes('New_Day4Part1audio15.mp3')) updateDay04EscapeCodeHighlights(0, false);
+    if (track.src.includes('New_Day4Part1audio18.mp3')) updateDay04NullCodeHighlights(0, false);
+    if (track.src.includes('New_Day4Part1audio22.mp3')) updateDay04NotInTrapCodeHighlights(0, false);
   });
 
   audio.addEventListener('timeupdate', () => {
@@ -9284,6 +10766,12 @@ function loadAndPlayTrack(index, targetTime = 0) {
     if (track.src.includes('New_Day3Part1audio19.mp3')) updateInCodeHighlights(audio.currentTime, !audio.paused);
     if (track.src.includes('New_Day3Part1audio24.mp3')) updateLikeCodeHighlights(audio.currentTime, !audio.paused);
     if (track.src.includes('New_Day3Part1audio27.mp3')) updateNullCodeHighlights(audio.currentTime, !audio.paused);
+    if (track.src.includes('New_Day4Part1audio02.mp3')) updateDay04ArithTableHighlights(audio.currentTime, !audio.paused);
+    if (track.src.includes('New_Day4Part1audio03.mp3')) updateDay04ArithCodeHighlights(audio.currentTime, !audio.paused);
+    if (track.src.includes('New_Day4Part1audio07.mp3')) updateDay04PrecedenceCodeHighlights(audio.currentTime, !audio.paused);
+    if (track.src.includes('New_Day4Part1audio15.mp3')) updateDay04EscapeCodeHighlights(audio.currentTime, !audio.paused);
+    if (track.src.includes('New_Day4Part1audio18.mp3')) updateDay04NullCodeHighlights(audio.currentTime, !audio.paused);
+    if (track.src.includes('New_Day4Part1audio22.mp3')) updateDay04NotInTrapCodeHighlights(audio.currentTime, !audio.paused);
 
     let elapsed = 0;
     for (let i = 0; i < combinedTrackIndex; i++) {

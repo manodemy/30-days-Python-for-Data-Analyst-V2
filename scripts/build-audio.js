@@ -57,7 +57,15 @@ function hashText(text) {
  * Generate speech file using Python edge-tts
  */
 function generateSpeech(text, outputFile) {
-  const cleanText = text.replace(/["'\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
+  let cleanText = text.replace(/["'\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
+  // Phonetic normalization for SQL keywords that TTS synthesizers might spell out as acronyms
+  cleanText = cleanText
+    .replace(/\bIN\b/g, 'in')
+    .replace(/\bIS\b/g, 'is')
+    .replace(/\bAS\b/g, 'as')
+    .replace(/\bNULL\b/g, 'null')
+    .replace(/\bNULLs\b/g, 'nulls');
+
   const voice = 'en-US-AndrewNeural'; // Clear, professional educational narrator
   
   const pyText = cleanText.replace(/\\/g, '\\\\').replace(/'/g, "\\'");

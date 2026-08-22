@@ -308,8 +308,8 @@ Added: Day03 — user requested removing literal "underscore" pronunciations for
 Supersedes: none
 
 [VOICE-007] [STATUS: active] [SCOPE: Voice]
-Statement: Acronym Safety & Keyword Cadence: Acronyms like "SQL" MUST be structured naturally in scripts to avoid phonetic bugs (e.g. avoid "SQL's" which TTS pronounces as "SQL s"; write "in SQL", "the SQL engine", or "of SQL"). SQL keywords (WHERE, AND, OR, NOT, BETWEEN, IN, LIKE, IS NULL) must be surrounded by natural punctuation and cadence so the neural voice enunciates them with distinct instructional emphasis.
-Added: Day03 — user requested fixing "SQL s" pronunciation and adding stress/emphasis to SQL operators.
+Statement: Acronym Safety & Short SQL Keyword Phonetic Normalization: Acronyms like "SQL" MUST be structured naturally in scripts to avoid phonetic bugs (e.g. avoid "SQL's" which TTS pronounces as "SQL s"; write "in SQL", "the SQL engine", or "of SQL"). Crucially, short uppercase 2-letter SQL keywords ("IN", "IS", "AS", "NULL") MUST be written in lowercase/natural phonetic casing ("in", "is", "as", "null", or "the in operator", "is null", "not in") in narrations/day-XX.json and automatically normalized in build-audio.js so neural TTS synthesizers pronounce them naturally as words ("in" / "is"), NEVER spelling them out letter-by-letter as acronyms ("I-N" / "I-S").
+Added: Day03 — user reported "IN" and "IS" were being spelled out as letters; enforced natural word pronunciation across narration scripts and TTS pipeline.
 Supersedes: none
 
 [THEORIST-001] [STATUS: active] [SCOPE: Theorist]

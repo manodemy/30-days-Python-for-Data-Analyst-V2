@@ -10137,48 +10137,45 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
     const targetEl = container.querySelector(targetSelector);
     if (!targetEl) return;
 
-    if (isFirstNarration) {
-      // 1st Narration ONLY: Hero Zoom Entrance with Section Isolation
-      const activeSection = targetEl.closest('.slide-section');
-      if (activeSection) {
-        container.querySelectorAll('.slide-section').forEach(section => {
-          if (section !== activeSection) {
-            section.classList.add('section-hidden');
-            section.classList.remove('stunning-section-entry', 'active-section-mounted', 'instant-display');
-          } else {
-            section.classList.remove('section-hidden');
-            section.classList.add('active-section-mounted');
-            if (isSeek) {
-              section.classList.add('instant-display');
-              section.classList.remove('stunning-section-entry');
-            } else {
-              section.classList.remove('instant-display');
-              section.classList.add('stunning-section-entry');
-            }
-          }
-        });
-      }
-      container.scrollTop = 0;
-    } else {
-      // Remaining Tracks (Track 2 onwards): Smooth natural document scrolling without zoom pop
-      container.querySelectorAll('.slide-section').forEach(section => {
-        section.classList.remove('section-hidden', 'stunning-section-entry', 'active-section-mounted');
-        section.style.display = '';
-        section.style.opacity = '';
+    // 3. Find the active section wrapper (.slide-section) that contains targetEl
+    const activeSection = targetEl.closest('.slide-section');
+    if (!activeSection) {
+      container.querySelectorAll('.slide-section').forEach(s => {
+        s.classList.remove('section-hidden');
+        s.style.display = '';
       });
+      return;
+    }
 
-      // Smoothly scroll and position the target section in view
-      const blockToScroll = targetEl.closest('.slide-section') || targetEl;
-      const scrollParent = document.getElementById('slideContent') || container;
-      if (scrollParent && blockToScroll) {
-        const parentRect = scrollParent.getBoundingClientRect();
-        const targetRect = blockToScroll.getBoundingClientRect();
-        const relativeTop = targetRect.top - parentRect.top + scrollParent.scrollTop;
-        scrollParent.scrollTo({
-          top: Math.max(0, relativeTop - 16),
-          behavior: isSeek ? 'auto' : 'smooth'
-        });
+    // 4. Hide ALL other slide sections so ONLY the relevant concept is shown!
+    container.querySelectorAll('.slide-section').forEach(section => {
+      if (section !== activeSection) {
+        section.classList.add('section-hidden');
+        section.classList.remove('stunning-section-entry', 'active-section-mounted', 'instant-display');
+        section.style.display = 'none';
+      } else {
+        section.classList.remove('section-hidden');
+        section.style.display = '';
+        section.classList.add('active-section-mounted');
+        
+        // Zoom appearance ONLY on 1st Narration! For remaining tracks: clean instant display without zoom pop
+        if (isFirstNarration && !isSeek) {
+          section.classList.add('stunning-section-entry');
+          section.classList.remove('instant-display');
+        } else {
+          section.classList.remove('stunning-section-entry');
+          section.classList.add('instant-display');
+        }
       }
+    });
+
+    // Reset container scroll to top: 0 so active section starts cleanly with heading visible
+    const scrollParent = document.getElementById('slideContent') || container;
+    if (scrollParent) {
+      scrollParent.scrollTo({
+        top: 0,
+        behavior: isSeek ? 'auto' : 'smooth'
+      });
     }
 
     // 5. If target is inside an .interview-box, show ONLY the active question card and hide all other sibling cards

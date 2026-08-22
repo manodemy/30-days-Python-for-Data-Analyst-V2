@@ -7327,8 +7327,7 @@ select:focus:not(:focus-visible) {
 }
 
 .section-hidden {
-  opacity: 0.45 !important;
-  transition: opacity 0.3s ease !important;
+  display: none !important;
 }
 
 /* ═══════════════════════════════════════════════════════════════

@@ -258,8 +258,8 @@ Added: Day03 — destructive audio unloading caused a delay between click and pl
 Supersedes: none
 
 [SYNC-013] [STATUS: active] [SCOPE: Sync]
-Statement: First-Narration Hero Zoom vs. Remaining-Tracks Document Scrolling: Hero zoom entrance and section isolation (.section-hidden, .stunning-section-entry) MUST apply ONLY to the 1st narration track (Track 01 / lesson opener). For all remaining narration tracks (Track 02 onwards), the engine MUST keep all slide sections visible in the DOM and use smooth, natural viewport scrolling (scrollParent.scrollTo({ top: relativeTop - 16, behavior: 'smooth' })) to position the active section cleanly without jarring zoom-pop transitions.
-Added: Day03 — user mandated that zoom appearance be reserved exclusively for the 1st narration, while remaining tracks use smooth scrolling and precise viewport positioning.
+Statement: Irrelevant Content Hiding with 1st-Narration Hero Zoom: During narration playback of ANY track, all non-active slide sections MUST be strictly hidden (display: none !important via .section-hidden) so the student focuses exclusively on the active concept without distraction. The zoom entrance animation (.stunning-section-entry with scale-pop) applies ONLY to Track 01 (lesson opener). For Track 02 onwards, the active section mounts cleanly without zoom-pop (.instant-display) at top: 0. On pause/stop, clearSlidePlaybackVisibility() instantly restores full visibility of all sections for complete document scrollability.
+Added: Day03 — user mandated that irrelevant content must always be hidden during playback, but zoom scale animation should be reserved exclusively for Track 01.
 Supersedes: none
 
 [VOICE-001] [STATUS: active] [SCOPE: Voice]

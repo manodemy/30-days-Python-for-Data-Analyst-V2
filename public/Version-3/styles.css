@@ -7979,6 +7979,14 @@ select:focus:not(:focus-visible) {
   font-weight: 700 !important;
 }
 
+/* ─── Slide Section Spacing Rhythm ─── */
+.slide-section {
+  margin-bottom: 26px !important;
+}
+.slide-section:last-child {
+  margin-bottom: 0 !important;
+}
+
 /* ══════════════════════════════════════════════════════════════
    Interactive Code Subblocks (Progressive Narration Highlights)
    ══════════════════════════════════════════════════════════════ */
@@ -7987,6 +7995,8 @@ select:focus:not(:focus-visible) {
   flex-direction: column;
   gap: 12px;
   width: 100%;
+  margin-top: 6px !important;
+  margin-bottom: 22px !important;
 }
 
 .code-subblock {

@@ -5872,11 +5872,11 @@ const day02Tracks = [
 
 const day03Durations = [
   // Theory narrations (audio01–31)
-  17.4, 16.5, 17.1, 6.4, 19.5, 15.1, 7.6, 10.5, 10.0, 7.8, 16.2, 15.2, 20.9,
-  15.4, 17.6, 13.3, 20.3, 17.1, 15.6, 20.8, 12.3, 17.2, 19.1, 13.2, 18.5,
-  18.0, 16.2, 13.3, 23.3, 23.9, 18.7,
+  17.4, 16.5, 17.1, 6.4, 21.3, 18.3, 7.6, 10.5, 10.0, 7.8, 16.2, 17.3, 20.4,
+  15.4, 19.8, 13.8, 21.0, 17.1, 18.0, 21.8, 13.1, 18.4, 20.4, 14.7, 20.3,
+  16.8, 20.3, 14.6, 23.3, 24.4, 19.9,
   // Practice Q & Solution narrations (Q01–Q06 + sols)
-  9.5, 18.1, 9.0, 15.8, 10.4, 20.8, 8.9, 18.4, 11.4, 20.6, 8.4, 19.2
+  9.5, 18.1, 9.0, 15.8, 10.4, 21.1, 8.9, 18.4, 12.1, 21.4, 8.4, 20.5
 ];
 
 const day03Tracks = [
@@ -8693,13 +8693,13 @@ function updateBetweenCodeHighlights(currentTime, isPlaying) {
     return;
   }
 
-  // Whisper ASR timestamps for New_Day3Part1audio15.mp3 (17.57s):
-  // 0.00s - 6.80s : "The first query filters employees earning between 50,000 and 90,000." -> Query 1
-  // 6.80s - 12.00s: "The second retrieves all orders placed in 2024 using date boundaries." -> Query 2
-  // 12.00s - 17.60s: "And the third uses not between to cleanly select products outside a given price band." -> Query 3
-  const isQ1 = currentTime >= 0.00 && currentTime < 6.80;
-  const isQ2 = currentTime >= 6.80 && currentTime < 12.00;
-  const isQ3 = currentTime >= 12.00 && currentTime <= 17.60;
+  // Whisper ASR timestamps for New_Day3Part1audio15.mp3 (19.46s):
+  // 0.00s - 8.40s : "The first query filters employees earning between 50k and 90k using the between operator." -> Query 1
+  // 8.40s - 13.50s: "The second retrieves all orders placed in 2024 using date boundaries." -> Query 2
+  // 13.50s - 19.50s: "And the third uses the not between operator to cleanly select products outside a given price band." -> Query 3
+  const isQ1 = currentTime >= 0.00 && currentTime < 8.40;
+  const isQ2 = currentTime >= 8.40 && currentTime < 13.50;
+  const isQ3 = currentTime >= 13.50 && currentTime <= 19.50;
 
   q1.classList.toggle('narration-highlight', isQ1);
   q1.classList.toggle('code-active-spotlight', isQ1);
@@ -8720,13 +8720,13 @@ function updateInCodeHighlights(currentTime, isPlaying) {
     return;
   }
 
-  // Whisper ASR timestamps for New_Day3Part1audio19.mp3 (15.58s):
-  // 0.00s - 6.50s : "The first query checks if department ID is 10, 20, or 30." -> Query 1
-  // 6.50s - 11.10s: "The second finds customers located in North, South, or East regions." -> Query 2
-  // 11.10s - 15.60s: "And the third uses not in to exclude specific department IDs." -> Query 3
-  const isQ1 = currentTime >= 0.00 && currentTime < 6.50;
-  const isQ2 = currentTime >= 6.50 && currentTime < 11.10;
-  const isQ3 = currentTime >= 11.10 && currentTime <= 15.60;
+  // Whisper ASR timestamps for New_Day3Part1audio19.mp3 (17.46s):
+  // 0.00s - 8.20s : "The first query checks if department ID is in 10, 20, or 30 using the in operator." -> Query 1
+  // 8.20s - 12.80s: "The second finds customers located in north, south, or east regions." -> Query 2
+  // 12.80s - 17.50s: "And the third uses the not in operator to exclude specific department IDs." -> Query 3
+  const isQ1 = currentTime >= 0.00 && currentTime < 8.20;
+  const isQ2 = currentTime >= 8.20 && currentTime < 12.80;
+  const isQ3 = currentTime >= 12.80 && currentTime <= 17.50;
 
   q1.classList.toggle('narration-highlight', isQ1);
   q1.classList.toggle('code-active-spotlight', isQ1);
@@ -8747,13 +8747,13 @@ function updateLikeCodeHighlights(currentTime, isPlaying) {
     return;
   }
 
-  // Whisper ASR timestamps for New_Day3Part1audio24.mp3 (13.25s):
-  // 0.00s - 5.80s : "The first retrieves employees whose first name begins with S." -> Query 1
-  // 5.80s - 8.90s : "The second finds products containing the word mouse." -> Query 2
-  // 8.90s - 13.30s: "And the third uses not like to exclude all Gmail addresses." -> Query 3
-  const isQ1 = currentTime >= 0.00 && currentTime < 5.80;
-  const isQ2 = currentTime >= 5.80 && currentTime < 8.90;
-  const isQ3 = currentTime >= 8.90 && currentTime <= 13.30;
+  // Whisper ASR timestamps for New_Day3Part1audio24.mp3 (14.09s):
+  // 0.00s - 6.60s : "The first retrieves employees whose first name begins with S." -> Query 1
+  // 6.60s - 9.70s : "The second finds products containing the word mouse." -> Query 2
+  // 9.70s - 14.10s: "And the third uses the not like operator to exclude all Gmail addresses." -> Query 3
+  const isQ1 = currentTime >= 0.00 && currentTime < 6.60;
+  const isQ2 = currentTime >= 6.60 && currentTime < 9.70;
+  const isQ3 = currentTime >= 9.70 && currentTime <= 14.10;
 
   q1.classList.toggle('narration-highlight', isQ1);
   q1.classList.toggle('code-active-spotlight', isQ1);
@@ -8775,15 +8775,15 @@ function updateNullCodeHighlights(currentTime, isPlaying) {
     return;
   }
 
-  // Whisper ASR timestamps for New_Day3Part1audio27.mp3 (16.18s):
-  // 0.00s - 5.50s : "The first finds top level employees who have no manager." -> Query 1
-  // 5.50s - 10.10s: "The second finds employees who report to a manager using is not null." -> Query 2
-  // 10.10s - 12.50s: "The third finds staff with no commission." -> Query 3
-  // 12.50s - 16.20s: "And the fourth retrieves active employees who do earn a commission." -> Query 4
-  const isQ1 = currentTime >= 0.00 && currentTime < 5.50;
-  const isQ2 = currentTime >= 5.50 && currentTime < 10.10;
-  const isQ3 = currentTime >= 10.10 && currentTime < 12.50;
-  const isQ4 = currentTime >= 12.50 && currentTime <= 16.20;
+  // Whisper ASR timestamps for New_Day3Part1audio27.mp3 (19.92s):
+  // 0.00s - 7.00s : "The first finds top level employees who have no manager using the is null predicate." -> Query 1
+  // 7.00s - 12.00s: "The second finds employees who report to a manager using the is not null predicate." -> Query 2
+  // 12.00s - 15.30s: "The third finds staff with no commission using is null." -> Query 3
+  // 15.30s - 20.00s: "And the fourth retrieves active employees who do earn a commission using is not null." -> Query 4
+  const isQ1 = currentTime >= 0.00 && currentTime < 7.00;
+  const isQ2 = currentTime >= 7.00 && currentTime < 12.00;
+  const isQ3 = currentTime >= 12.00 && currentTime < 15.30;
+  const isQ4 = currentTime >= 15.30 && currentTime <= 20.00;
 
   q1.classList.toggle('narration-highlight', isQ1);
   q1.classList.toggle('code-active-spotlight', isQ1);

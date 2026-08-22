@@ -32,8 +32,8 @@ let COURSE_CONFIG = {
 // ═══════════════════════════════════════════════════════════════
 
 function isAdminUser() {
+  if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) return true;
   try {
-    if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) return true;
     const cachedEmail = (localStorage.getItem('manodemy_user_email') || '').toLowerCase();
     if (cachedEmail === 'manodamy25@gmail.com' || cachedEmail.includes('manodemy') || cachedEmail.includes('manodamy')) return true;
     const supaData = localStorage.getItem('sb-erqoyvbuhmkyvcqgwcbz-auth-token');
@@ -5014,7 +5014,7 @@ function loadDayContent(dayId) {
 
     // Lazy-load the content script
     const script = document.createElement('script');
-    script.src = `/Version-3/content/day-${String(dayNum).padStart(2, '0')}.js?v=${Date.now()}`;
+    script.src = `/Version-3/content/day-${String(dayNum).padStart(2, '0')}.js?v=14.37`;
     script.onload = () => {
       // Re-run now that module is loaded
       loadDayContent(dayId);
@@ -5275,16 +5275,6 @@ function initKeyboardShortcuts() {
 
 window.addEventListener('DOMContentLoaded', async () => {
   try {
-    // ── IMMEDIATE REDIRECT: If on index.html?day=X, redirect to /sql/dayXX.html
-    // BEFORE any expensive work (WASM, DB init, etc.) so navigation is instant ──
-    const __earlyPath = window.location.pathname;
-    const __earlyQp = new URLSearchParams(window.location.search).get('day');
-    if (__earlyQp && (__earlyPath.includes('/Version-3/index.html') || __earlyPath.endsWith('/Version-3/') || __earlyPath.endsWith('/Version-3'))) {
-      const __earlyDay = `day${__earlyQp.padStart(2, '0')}`;
-      window.location.replace(`/sql/${__earlyDay}.html`);
-      return; // Stop all further initialization — we're navigating away
-    }
-
     // Initialize progress manager
     if (window.ProgressManager) {
       window.ProgressManager.load();
@@ -5309,12 +5299,11 @@ window.addEventListener('DOMContentLoaded', async () => {
     let defaultDay = 'day01';
     const __path = window.location.pathname;
     const __pathMatch = __path.match(/(?:sql-day|excel-day|day)(\d{1,2})/i);
-    const __qp = new URLSearchParams(window.location.search).get('day');
-
     if (__pathMatch) {
       defaultDay = `day${__pathMatch[1].padStart(2, '0')}`;
-    } else if (__qp) {
-      defaultDay = `day${__qp.padStart(2, '0')}`;
+    } else {
+      const __qp = new URLSearchParams(window.location.search).get('day');
+      if (__qp) defaultDay = `day${__qp.padStart(2, '0')}`;
     }
 
     // Load initial day content (lazy-loads matching module script if needed)
@@ -5351,15 +5340,6 @@ window.addEventListener('DOMContentLoaded', async () => {
     // Handle daySelect change
     document.getElementById('daySelect')?.addEventListener('change', function () {
       const selectedDay = this.value;
-      const __navNum = (selectedDay.match(/\d+/) || ['01'])[0].padStart(2, '0');
-      const targetPage = `/sql/day${__navNum}.html`;
-      
-      // If we are on dedicated sql page or index.html, navigate cleanly
-      if (window.location.pathname !== targetPage) {
-        window.location.href = targetPage;
-        return;
-      }
-
       // Animate transition
       const ws = document.getElementById('workspaceContainer');
       if (ws) {

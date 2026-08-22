@@ -3507,74 +3507,74 @@ const questionSolutionMap = {
       src: 'Day03/New_Day3Question01sol.mp3',
       code: 'SELECT name,\n       unit_price\nFROM   products\nWHERE  unit_price > 10000\nORDER BY unit_price DESC;',
       segments: [
-        { text: "SELECT name,\n", startAt: 1.66, charInterval: 45 },
-        { text: "       unit_price\n", startAt: 2.58, charInterval: 50 },
-        { text: "FROM   products\n", startAt: 4.30, charInterval: 40 },
-        { text: "WHERE  unit_price > 10000\n", startAt: 5.44, charInterval: 70 },
-        { text: "ORDER BY unit_price DESC;", startAt: 8.98, charInterval: 50 }
+        { text: "SELECT name,\n", startAt: 1.68, charInterval: 45 },
+        { text: "       unit_price\n", startAt: 2.58, charInterval: 45 },
+        { text: "FROM   products\n", startAt: 3.54, charInterval: 40 },
+        { text: "WHERE  unit_price > 10000\n", startAt: 4.66, charInterval: 65 },
+        { text: "ORDER BY unit_price DESC;", startAt: 7.64, charInterval: 50 }
       ],
-      scrollAt: 11.2
+      scrollAt: 9.5
     },
     2: {
       src: 'Day03/New_Day3Question02sol.mp3',
       code: 'SELECT first_name,\n       last_name,\n       region\nFROM   customers\nWHERE  region IN (\'North\', \'East\');',
       segments: [
-        { text: "SELECT first_name,\n", startAt: 1.48, charInterval: 50 },
-        { text: "       last_name,\n", startAt: 3.26, charInterval: 50 },
-        { text: "       region\n", startAt: 4.52, charInterval: 45 },
-        { text: "FROM   customers\n", startAt: 5.26, charInterval: 40 },
-        { text: "WHERE  region IN ('North', 'East');", startAt: 6.40, charInterval: 70 }
+        { text: "SELECT first_name,\n", startAt: 1.46, charInterval: 45 },
+        { text: "       last_name,\n", startAt: 2.74, charInterval: 45 },
+        { text: "       region\n", startAt: 3.54, charInterval: 45 },
+        { text: "FROM   customers\n", startAt: 3.98, charInterval: 40 },
+        { text: "WHERE  region IN ('North', 'East');", startAt: 5.52, charInterval: 65 }
       ],
-      scrollAt: 10.2
+      scrollAt: 8.2
     },
     3: {
       src: 'Day03/New_Day3Question03sol.mp3',
       code: 'SELECT first_name,\n       last_name,\n       salary\nFROM   employees\nWHERE  salary BETWEEN 60000 AND 100000;',
       segments: [
-        { text: "SELECT first_name,\n", startAt: 1.54, charInterval: 50 },
-        { text: "       last_name,\n", startAt: 3.24, charInterval: 50 },
-        { text: "       salary\n", startAt: 4.56, charInterval: 45 },
-        { text: "FROM   employees\n", startAt: 5.32, charInterval: 45 },
-        { text: "WHERE  salary BETWEEN 60000 AND 100000;", startAt: 6.60, charInterval: 60 }
+        { text: "SELECT first_name,\n", startAt: 1.50, charInterval: 45 },
+        { text: "       last_name,\n", startAt: 2.70, charInterval: 45 },
+        { text: "       salary\n", startAt: 3.42, charInterval: 40 },
+        { text: "FROM   employees\n", startAt: 4.46, charInterval: 40 },
+        { text: "WHERE  salary BETWEEN 60000 AND 100000;", startAt: 5.72, charInterval: 60 }
       ],
-      scrollAt: 11.0
+      scrollAt: 9.5
     },
     4: {
       src: 'Day03/New_Day3Question04sol.mp3',
       code: 'SELECT first_name,\n       last_name,\n       salary\nFROM   employees\nWHERE  first_name LIKE \'S%\';',
       segments: [
-        { text: "SELECT first_name,\n", startAt: 1.72, charInterval: 50 },
-        { text: "       last_name,\n", startAt: 3.70, charInterval: 50 },
-        { text: "       salary\n", startAt: 5.00, charInterval: 45 },
-        { text: "FROM   employees\n", startAt: 5.74, charInterval: 45 },
-        { text: "WHERE  first_name LIKE 'S%';", startAt: 6.96, charInterval: 65 }
+        { text: "SELECT first_name,\n", startAt: 2.62, charInterval: 45 },
+        { text: "       last_name,\n", startAt: 3.86, charInterval: 45 },
+        { text: "       salary\n", startAt: 4.60, charInterval: 40 },
+        { text: "FROM   employees\n", startAt: 5.66, charInterval: 40 },
+        { text: "WHERE  first_name LIKE 'S%';", startAt: 6.78, charInterval: 65 }
       ],
-      scrollAt: 9.8
+      scrollAt: 9.6
     },
     5: {
       src: 'Day03/New_Day3Question05sol.mp3',
       code: 'SELECT first_name,\n       department_id,\n       salary\nFROM   employees\nWHERE  is_active = 1\n  AND  department_id = 20;',
       segments: [
-        { text: "SELECT first_name,\n", startAt: 1.32, charInterval: 50 },
-        { text: "       department_id,\n", startAt: 3.14, charInterval: 45 },
-        { text: "       salary\n", startAt: 4.72, charInterval: 40 },
-        { text: "FROM   employees\n", startAt: 5.46, charInterval: 45 },
-        { text: "WHERE  is_active = 1\n", startAt: 6.76, charInterval: 60 },
-        { text: "  AND  department_id = 20;", startAt: 8.94, charInterval: 65 }
+        { text: "SELECT first_name,\n", startAt: 1.32, charInterval: 45 },
+        { text: "       department_id,\n", startAt: 2.56, charInterval: 45 },
+        { text: "       salary\n", startAt: 3.54, charInterval: 40 },
+        { text: "FROM   employees\n", startAt: 4.66, charInterval: 40 },
+        { text: "WHERE  is_active = 1\n", startAt: 5.86, charInterval: 55 },
+        { text: "  AND  department_id = 20;", startAt: 7.68, charInterval: 60 }
       ],
-      scrollAt: 11.6
+      scrollAt: 9.8
     },
     6: {
       src: 'Day03/New_Day3Question06sol.mp3',
       code: 'SELECT first_name,\n       last_name,\n       commission\nFROM   employees\nWHERE  commission IS NULL;',
       segments: [
-        { text: "SELECT first_name,\n", startAt: 2.48, charInterval: 50 },
-        { text: "       last_name,\n", startAt: 4.24, charInterval: 50 },
-        { text: "       commission\n", startAt: 5.52, charInterval: 45 },
-        { text: "FROM   employees\n", startAt: 6.30, charInterval: 45 },
-        { text: "WHERE  commission IS NULL;", startAt: 7.58, charInterval: 65 }
+        { text: "SELECT first_name,\n", startAt: 2.46, charInterval: 45 },
+        { text: "       last_name,\n", startAt: 3.72, charInterval: 45 },
+        { text: "       commission\n", startAt: 4.46, charInterval: 45 },
+        { text: "FROM   employees\n", startAt: 5.60, charInterval: 40 },
+        { text: "WHERE  commission IS NULL;", startAt: 6.70, charInterval: 65 }
       ],
-      scrollAt: 9.4
+      scrollAt: 8.6
     }
   },
   'day04': {
@@ -5872,9 +5872,9 @@ const day02Tracks = [
 
 const day03Durations = [
   // Theory narrations (audio01–13)
-  17.4, 13.8, 15.9, 6.0, 16.0, 14.3, 7.0, 9.6, 8.4, 6.9, 15.5, 14.6, 20.8,
+  17.4, 16.5, 17.1, 6.4, 19.5, 15.1, 7.6, 10.5, 10.0, 7.8, 16.2, 15.2, 20.4,
   // Practice Q & Solution narrations (Q01–Q06 + sols)
-  9.2, 19.9, 9.8, 18.5, 9.7, 21.4, 8.5, 19.5, 12.1, 21.1, 8.4, 21.0
+  9.5, 18.1, 9.2, 16.3, 10.4, 20.8, 8.9, 18.4, 11.4, 20.6, 8.4, 20.1
 ];
 
 const day03Tracks = [

@@ -287,6 +287,16 @@ Statement: After TTS build completes, Voice must verify each generated MP3 is >1
 Added: Day03 — edge-tts can silently produce 0-byte or corrupt files if the Python process is interrupted.
 Supersedes: none
 
+[VOICE-006] [STATUS: active] [SCOPE: Voice]
+Statement: Natural Spoken Identifiers without Underscore: When writing narration scripts in narrations/day-XX.json, database identifiers and column names MUST NEVER be written with literal underscores (e.g., unit_price, first_name, department_id, is_active). They MUST be written in natural spoken English ("unit price", "first name", "department ID", "is active"). Neural TTS engines speak underscores literally as "underscore", degrading instructional immersion.
+Added: Day03 — user requested removing literal "underscore" pronunciations for natural, human-instructor voice delivery.
+Supersedes: none
+
+[VOICE-007] [STATUS: active] [SCOPE: Voice]
+Statement: Acronym Safety & Keyword Cadence: Acronyms like "SQL" MUST be structured naturally in scripts to avoid phonetic bugs (e.g. avoid "SQL's" which TTS pronounces as "SQL s"; write "in SQL", "the SQL engine", or "of SQL"). SQL keywords (WHERE, AND, OR, NOT, BETWEEN, IN, LIKE, IS NULL) must be surrounded by natural punctuation and cadence so the neural voice enunciates them with distinct instructional emphasis.
+Added: Day03 — user requested fixing "SQL s" pronunciation and adding stress/emphasis to SQL operators.
+Supersedes: none
+
 [THEORIST-001] [STATUS: active] [SCOPE: Theorist]
 Statement: Every .slide-section in the theory HTML must contain at least one unique ID target (e.g., #dayXXWhere, #dayXXCompOps) that exactly matches a corresponding target in day03Tracks in mano-engine.js.
 Added: Day03 — sections without matching track targets were never spotlighted during narration playback.

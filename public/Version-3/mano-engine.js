@@ -9272,3 +9272,1369 @@ function updateDay04NotInTrapCodeHighlights(currentTime, isPlaying) {
   if (isQ2) narrationScrollToSubblock(q2);
 }
 
+
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ║  AUDIO TIMELINE, SCRUBBING & PLAYBACK ENGINE (PORTED FROM PROVEN ENGINE)   ║
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function loadAndPlayTrack(index, targetTime = 0) {
+  const myGeneration = ++currentGeneration;
+
+  if (activeAudioInstance) {
+    activeAudioInstance.pause();
+    activeAudioInstance.src = "";
+    activeAudioInstance.load();
+    activeAudioInstance = null;
+  }
+
+  loadManifest().catch(() => { });
+
+  combinedTrackIndex = index;
+  let elapsedBefore = 0;
+  for (let i = 0; i < index; i++) {
+    elapsedBefore += combinedTrackDurations[i] || 0;
+  }
+  currentCombinedTime = elapsedBefore + targetTime;
+  updateProgressUI();
+  const track = combinedTracks[index];
+  if (!track) return;
+  const filename = track.src.split('/').pop().replace('.mp3', '');
+  const trackId = `${currentDay}_${filename}`;
+  const entry = manifest[trackId] || { audioPath: track.src };
+  const url = getAudioUrl(entry);
+
+  let audio;
+  if (nextTrackPrefetch && prefetchedForIndex === index && !prefetchFailed) {
+    audio = nextTrackPrefetch;
+  } else {
+    audio = new Audio(url);
+    audio.preload = "auto";
+  }
+  nextTrackPrefetch = null;
+  prefetchedForIndex = null;
+  prefetchFailed = false;
+  activeAudioInstance = audio;
+  audio.addEventListener('waiting', () => {
+    if (myGeneration === currentGeneration) toggleBufferingState(true);
+  });
+  audio.addEventListener('stalled', () => {
+    if (myGeneration === currentGeneration) toggleBufferingState(true);
+  });
+  audio.addEventListener('playing', () => {
+    if (myGeneration === currentGeneration) toggleBufferingState(false);
+  });
+  audio.addEventListener('canplay', () => {
+    if (myGeneration === currentGeneration) toggleBufferingState(false);
+  });
+  if (typeof currentPlaybackSpeed !== 'undefined') {
+    activeAudioInstance.playbackRate = currentPlaybackSpeed;
+  }
+  if (typeof currentPlaybackVolume !== 'undefined') {
+    activeAudioInstance.volume = currentPlaybackVolume;
+  }
+
+  if (targetTime > 0) {
+    const applyTargetTime = () => {
+      try {
+        if (Math.abs(audio.currentTime - targetTime) > 0.1) {
+          audio.currentTime = targetTime;
+        }
+      } catch (e) { }
+    };
+    if (audio.readyState >= 1) {
+      applyTargetTime();
+    } else {
+      audio.addEventListener('loadedmetadata', applyTargetTime, { once: true });
+      audio.addEventListener('canplay', applyTargetTime, { once: true });
+    }
+  }
+
+  // Trigger audio.play() synchronously inside gesture stack before async ticks
+  audio.play()
+    .then(() => {
+      hasCompletedFirstGestureBoundPlay = true;
+      isCombinedPlaying = true;
+      updatePlayButtonStates(true);
+      if (track.type !== 'question' && track.type !== 'solution') {
+        isNarrationActive = true;
+        if (track.target) {
+          updateSlidePlaybackVisibility(track.target);
+        }
+      }
+    })
+    .catch((err) => {
+      console.log('Play rejected:', err);
+      if (err.name === 'AbortError') {
+        // Interrupted by new seek or track swap — normal browser behavior
+        return;
+      }
+      if (audio.error) {
+        retryOrShowError(index, myGeneration, 'network');
+      } else if (!hasCompletedFirstGestureBoundPlay) {
+        showTapToPlayFallback(index);
+      } else {
+        setTimeout(() => {
+          if (myGeneration === currentGeneration && activeAudioInstance) {
+            activeAudioInstance.play().catch(e => console.log('Retry play failed:', e));
+          }
+        }, 150);
+      }
+    });
+
+  // Load events in background without blocking audio.play gesture context
+  let trackEvents = null;
+  loadTrackEvents(trackId).then(ev => { trackEvents = ev; }).catch(() => {});
+
+  audio.addEventListener('ended', () => {
+    if (myGeneration !== currentGeneration) return;
+    if (track.src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(0, false);
+    if (track.src.includes('New_Day1Part1audio03.mp3')) updateDay01Audio03Highlights(0, false);
+    if (track.src.includes('New_Day1Part1audio04.mp3') || 
+        track.src.includes('New_Day1Part1audio07.mp3') || 
+        track.src.includes('New_Day1Part1audio06.mp3') || 
+        track.src.includes('New_Day1Part1audio05.mp3') || 
+        track.src.includes('New_Day1Part1audio08.mp3')) updateDay01CoreEntitiesHighlights(null, false);
+    if (track.src.includes('New_Day1Part1audio16.mp3') || 
+        track.src.includes('New_Day1Part1audio17.mp3') || 
+        track.src.includes('New_Day1Part1audio18.mp3') || 
+        track.src.includes('New_Day1Part1audio19.mp3') || 
+        track.src.includes('New_Day1Part1audio20.mp3') || 
+        track.src.includes('New_Day1Part1audio21.mp3')) updateDay01SqlSubLanguagesHighlights(null, false);
+    if (track.src.includes('New_Day3Part1audio05.mp3')) updateTableHighlights(0, false);
+    if (track.src.includes('New_Day3Part1audio07.mp3')) updateIntroHighlight(0, false);
+    if (track.src.includes('New_Day3Part1audio08.mp3')) updateNotCardHighlight(0, false);
+    if (track.src.includes('New_Day3Part1audio09.mp3')) updateAndCardHighlight(0, false);
+    if (track.src.includes('New_Day3Part1audio10.mp3')) updateOrCardHighlight(0, false);
+    if (track.src.includes('New_Day3Part1audio11.mp3')) updatePrecedenceNoteHighlight(0, false);
+    onNarrationSegmentEnded(index, trackEvents);
+  });
+
+  audio.addEventListener('pause', () => {
+    if (myGeneration !== currentGeneration) return;
+    if (track.src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(0, false);
+    if (track.src.includes('New_Day1Part1audio03.mp3')) updateDay01Audio03Highlights(0, false);
+    if (track.src.includes('New_Day1Part1audio04.mp3') || 
+        track.src.includes('New_Day1Part1audio07.mp3') || 
+        track.src.includes('New_Day1Part1audio06.mp3') || 
+        track.src.includes('New_Day1Part1audio05.mp3') || 
+        track.src.includes('New_Day1Part1audio08.mp3')) updateDay01CoreEntitiesHighlights(null, false);
+    if (track.src.includes('New_Day1Part1audio16.mp3') || 
+        track.src.includes('New_Day1Part1audio17.mp3') || 
+        track.src.includes('New_Day1Part1audio18.mp3') || 
+        track.src.includes('New_Day1Part1audio19.mp3') || 
+        track.src.includes('New_Day1Part1audio20.mp3') || 
+        track.src.includes('New_Day1Part1audio21.mp3')) updateDay01SqlSubLanguagesHighlights(null, false);
+    if (track.src.includes('New_Day3Part1audio05.mp3')) updateTableHighlights(0, false);
+    if (track.src.includes('New_Day3Part1audio07.mp3')) updateIntroHighlight(0, false);
+    if (track.src.includes('New_Day3Part1audio08.mp3')) updateNotCardHighlight(0, false);
+    if (track.src.includes('New_Day3Part1audio09.mp3')) updateAndCardHighlight(0, false);
+    if (track.src.includes('New_Day3Part1audio10.mp3')) updateOrCardHighlight(0, false);
+    if (track.src.includes('New_Day3Part1audio11.mp3')) updatePrecedenceNoteHighlight(0, false);
+  });
+
+  audio.addEventListener('timeupdate', () => {
+    if (myGeneration !== currentGeneration) return;
+    if (track.src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(audio.currentTime, !audio.paused);
+    if (track.src.includes('New_Day1Part1audio03.mp3')) updateDay01Audio03Highlights(audio.currentTime, !audio.paused);
+    if (track.src.includes('New_Day3Part1audio05.mp3')) updateTableHighlights(audio.currentTime, !audio.paused);
+    if (track.src.includes('New_Day3Part1audio07.mp3')) updateIntroHighlight(audio.currentTime, !audio.paused);
+    if (track.src.includes('New_Day3Part1audio08.mp3')) updateNotCardHighlight(audio.currentTime, !audio.paused);
+    if (track.src.includes('New_Day3Part1audio09.mp3')) updateAndCardHighlight(audio.currentTime, !audio.paused);
+    if (track.src.includes('New_Day3Part1audio10.mp3')) updateOrCardHighlight(audio.currentTime, !audio.paused);
+    if (track.src.includes('New_Day3Part1audio11.mp3')) updatePrecedenceNoteHighlight(audio.currentTime, !audio.paused);
+
+    let elapsed = 0;
+    for (let i = 0; i < combinedTrackIndex; i++) {
+      elapsed += combinedTrackDurations[i] || 0;
+    }
+    elapsed += audio.currentTime;
+
+    currentCombinedTime = elapsed;
+    updateProgressUI();
+    maybePrefetchNext(audio, index);
+  });
+
+  audio.addEventListener('error', () => {
+    if (myGeneration !== currentGeneration) return;
+    retryOrShowError(index, myGeneration, 'network');
+  });
+
+  cancelTypewriter();
+
+  if (track.type === 'question') {
+    isNarrationActive = false;
+    if (typeof clearSlidePlaybackVisibility === 'function') clearSlidePlaybackVisibility();
+    const targetQIdx = COURSE_CONFIG.practiceQuestions.findIndex(q => q.id === track.qId);
+    if (targetQIdx !== -1) {
+      if (targetQIdx !== currentPracticeQ) clearOutputSection();
+      currentPracticeQ = targetQIdx;
+      renderPracticeQuestion();
+      updatePracticeStats();
+    }
+    const bar = document.getElementById('questionBar');
+    if (bar) bar.classList.add('question-playing');
+    const slideContent = document.getElementById('slideContent');
+    if (slideContent) slideContent.scrollTo({ top: 0, behavior: 'smooth' });
+    setMobileTab('practice');
+  } else if (track.type === 'solution') {
+    isNarrationActive = false;
+    if (typeof clearSlidePlaybackVisibility === 'function') clearSlidePlaybackVisibility();
+    const targetQIdx = COURSE_CONFIG.practiceQuestions.findIndex(q => q.id === track.qId);
+    if (targetQIdx !== -1) {
+      currentPracticeQ = targetQIdx;
+      renderPracticeQuestion();
+      updatePracticeStats();
+    }
+    const bar = document.getElementById('questionBar');
+    if (bar) bar.classList.add('question-playing');
+    const solMap = questionSolutionMap[currentDay] || questionSolutionMap['day01'];
+    const solEntry = solMap ? solMap[track.qId] : null;
+    if (solEntry) {
+      startAudioSyncedTypewriter(audio, solEntry);
+    }
+    setMobileTab('practice');
+  } else if (track.type === 'completion') {
+    isNarrationActive = false;
+    if (typeof clearSlidePlaybackVisibility === 'function') clearSlidePlaybackVisibility();
+    const bar = document.getElementById('questionBar');
+    if (bar) bar.classList.remove('question-playing');
+    setMobileTab('theory');
+    launchCompletionAnimation(audio, targetTime);
+  } else {
+    isNarrationActive = true;
+    const bar = document.getElementById('questionBar');
+    if (bar) bar.classList.remove('question-playing');
+    scrollToTarget(track.target);
+    setMobileTab('theory');
+  }
+
+  // Setup Media Session API
+  if ('mediaSession' in navigator) {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: track.title || 'Manodemy Slide Narration',
+      artist: 'Manodemy Narrator',
+      album: 'Day 01 Relational Databases'
+    });
+    navigator.mediaSession.setActionHandler('play', () => {
+      if (activeAudioInstance) {
+        activeAudioInstance.play();
+        updatePlayButtonStates(true);
+      }
+    });
+    navigator.mediaSession.setActionHandler('pause', () => {
+      if (activeAudioInstance) {
+        activeAudioInstance.pause();
+        updatePlayButtonStates(false);
+      }
+    });
+    navigator.mediaSession.setActionHandler('previoustrack', () => {
+      if (combinedTrackIndex > 0) {
+        loadAndPlayTrack(combinedTrackIndex - 1);
+      }
+    });
+    navigator.mediaSession.setActionHandler('nexttrack', () => {
+      if (combinedTrackIndex < combinedTracks.length - 1) {
+        loadAndPlayTrack(combinedTrackIndex + 1);
+      }
+    });
+  }
+
+  audio.play()
+    .then(() => {
+      hasCompletedFirstGestureBoundPlay = true;
+      isCombinedPlaying = true;
+      updatePlayButtonStates(true);
+      if (track.type !== 'question' && track.type !== 'solution') {
+        isNarrationActive = true;
+        if (track.target) {
+          updateSlidePlaybackVisibility(track.target);
+        }
+      }
+    })
+    .catch((err) => {
+      console.log('Play rejected:', err);
+      if (audio.error) {
+        retryOrShowError(index, myGeneration, 'network');
+      } else {
+        showTapToPlayFallback(index);
+      }
+    });
+}
+
+function maybePrefetchNext(audio, currentIndex) {
+  const remaining = audio.duration - audio.currentTime;
+  const hasNext = currentIndex < combinedTracks.length - 1;
+  if (hasNext && remaining < 5 && prefetchedForIndex !== currentIndex + 1) {
+    const nextTrack = combinedTracks[currentIndex + 1];
+    const filename = nextTrack.src.split('/').pop().replace('.mp3', '');
+    const trackId = `${currentDay}_${filename}`;
+    const nextEntry = manifest[trackId] || { audioPath: nextTrack.src };
+    const url = getAudioUrl(nextEntry);
+
+    const prefetch = new Audio(url);
+    prefetch.preload = "auto";
+
+    prefetch.addEventListener('error', () => {
+      if (prefetchedForIndex === currentIndex + 1) {
+        prefetchFailed = true;
+      }
+    });
+
+    nextTrackPrefetch = prefetch;
+    prefetchedForIndex = currentIndex + 1;
+    prefetchFailed = false;
+
+    // Prefetch events
+    loadTrackEvents(trackId);
+  }
+}
+
+// P0 #4: Error toast utility
+function showToast(message, type = 'error', durationMs = 4000) {
+  const existing = document.getElementById('audioErrorToast');
+  if (existing) existing.remove();
+
+  const toast = document.createElement('div');
+  toast.id = 'audioErrorToast';
+  toast.className = 'audio-error-toast';
+  toast.setAttribute('role', 'alert');
+  toast.setAttribute('aria-live', 'assertive');
+  const icon = type === 'error' ? '⚠️' : 'ℹ️';
+  toast.innerHTML = `<span>${icon}</span><span>${message}</span>`;
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add('fade-out');
+    setTimeout(() => toast.remove(), 450);
+  }, durationMs);
+}
+
+function retryOrShowError(index, generation, reason = 'network', attempt = 1) {
+  const MAX_ATTEMPTS = 3;
+  if (reason !== 'network' && !hasCompletedFirstGestureBoundPlay) {
+    showTapToPlayFallback(index);
+    return;
+  }
+  if (attempt > MAX_ATTEMPTS) {
+    const track = combinedTracks[index];
+    const name = track ? track.src.split('/').pop() : `track ${index}`;
+    showToast(`Audio failed to load: ${name}. Check your connection.`, 'error');
+    console.warn(`Audio loading failed after ${MAX_ATTEMPTS} retries for track ${index}.`);
+    return;
+  }
+
+  setTimeout(() => {
+    if (generation !== currentGeneration) return;
+    loadAndPlayTrack(index);
+  }, attempt * 800);
+}
+
+function showTapToPlayFallback(index) {
+  let overlay = document.getElementById('gestureFallbackOverlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'gestureFallbackOverlay';
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100vw';
+    overlay.style.height = '100vh';
+    overlay.style.background = 'rgba(6, 9, 19, 0.9)';
+    overlay.style.display = 'flex';
+    overlay.style.alignItems = 'center';
+    overlay.style.justifyContent = 'center';
+    overlay.style.zIndex = '9999';
+    overlay.innerHTML = `
+      <div style="background: #111424; border: 1px solid #2a2e45; border-radius: 12px; padding: 24px; text-align: center; max-width: 320px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+        <div style="font-size: 32px; margin-bottom: 12px;">🔊</div>
+        <h3 style="color: #fff; font-family: Inter, sans-serif; margin: 0 0 8px 0; font-size: 18px;">Narrator Audio Ready</h3>
+        <p style="color: #8c92ac; font-family: Inter, sans-serif; font-size: 13px; line-height: 1.5; margin: 0 0 20px 0;">Tap below to enable narration playback on this device.</p>
+        <button id="gestureFallbackBtn" style="background: #00e6f6; color: #060913; border: none; border-radius: 6px; padding: 10px 20px; font-family: Inter, sans-serif; font-weight: 600; font-size: 14px; cursor: pointer; width: 100%; transition: opacity 0.2s;">Enable Audio</button>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+  }
+  document.getElementById('gestureFallbackBtn').onclick = () => {
+    overlay.remove();
+    loadAndPlayTrack(index);
+  };
+}
+
+function toggleCombinedPlayback() {
+  if (IS_GUEST_REEL || (!isPaidUser() && !isAdminUser() && currentDay !== 'day01' && currentDay !== 'day02')) {
+    showGuestPaywallModal('video & voice narration');
+    return;
+  }
+  if (isCombinedPlaying) {
+    pauseCombinedPlayback();
+  } else {
+    playCombinedPlayback();
+  }
+}
+
+function updateProgressUI() {
+  const seekBar = document.getElementById('seekBar');
+  const playbackTime = document.getElementById('playbackTime');
+  const isDragging = typeof isScrubbing !== 'undefined' && isScrubbing;
+  const dur = totalCombinedDuration > 0 ? totalCombinedDuration : 100;
+  if (seekBar) {
+    seekBar.max = dur;
+    if (!isDragging) {
+      seekBar.value = currentCombinedTime;
+    }
+    const val = isDragging ? parseFloat(seekBar.value) : currentCombinedTime;
+    const fillPct = Math.max(0, Math.min(100, (val / dur) * 100));
+    seekBar.style.background = `linear-gradient(to right, #ef4444 0%, #ff4d4d ${fillPct}%, rgba(255, 255, 255, 0.15) ${fillPct}%)`;
+  }
+  if (playbackTime && !isDragging) {
+    playbackTime.textContent = `${formatTime(currentCombinedTime)} / ${formatTime(totalCombinedDuration)}`;
+  }
+}
+
+function formatTime(secs) {
+  const m = Math.floor(secs / 60);
+  const s = Math.floor(secs % 60);
+  return `${m}:${s < 10 ? '0' : ''}${s}`;
+}
+
+function onNarrationSegmentEnded(index, events) {
+  if (index !== combinedTrackIndex) return;
+
+  const endedTrack = combinedTracks[index];
+
+  if (combinedTrackIndex < combinedTracks.length - 1) {
+    combinedTrackIndex++;
+    loadAndPlayTrack(combinedTrackIndex);
+  } else {
+    // All tracks complete — reset
+    if (activeAudioInstance) {
+      try { activeAudioInstance.pause(); } catch (e) { }
+      activeAudioInstance.src = "";
+      activeAudioInstance = null;
+    }
+    isCombinedPlaying = false;
+    isNarrationActive = false;
+    combinedTrackIndex = 0;
+    currentCombinedTime = 0;
+    updatePlayButtonStates(false);
+    updateProgressUI();
+    cancelTypewriter();
+    if (typeof clearSlidePlaybackVisibility === 'function') clearSlidePlaybackVisibility();
+    // Remove question bar highlight
+    const bar = document.getElementById('questionBar');
+    if (bar) bar.classList.remove('question-playing');
+
+    // If the last track was the completion track, hold final frame for 1s before teardown + blink Take Test
+    if (endedTrack && endedTrack.type === 'completion') {
+      setTimeout(() => {
+        teardownCompletionAnimation();
+        activateTakeTestBlink();
+      }, 1000);
+    }
+  }
+}
+
+function seekCombinedPlayback(val, shouldPlay = true) {
+  const targetTime = parseFloat(val);
+  currentCombinedTime = targetTime;
+
+  // Find which track this targetTime belongs to
+  let elapsed = 0;
+  let trackIdx = 0;
+  let localOffset = targetTime;
+
+  for (let i = 0; i < combinedTrackDurations.length; i++) {
+    const dur = combinedTrackDurations[i];
+    if (targetTime < elapsed + dur) {
+      trackIdx = i;
+      localOffset = targetTime - elapsed;
+      break;
+    }
+    elapsed += dur;
+    if (i === combinedTrackDurations.length - 1) {
+      trackIdx = i;
+      localOffset = Math.max(0, dur - 0.1);
+    }
+  }
+
+  const track = combinedTracks[trackIdx];
+
+  // 1. INSTANT SYNCHRONOUS SCENE TRANSITION (Zero latency DOM visual directing)
+  if (track) {
+    if (track.type === 'question' || track.type === 'solution') {
+      teardownCompletionAnimation();
+      const targetQIdx = COURSE_CONFIG.practiceQuestions ? COURSE_CONFIG.practiceQuestions.findIndex(q => q.id === track.qId) : -1;
+      if (targetQIdx !== -1) {
+        currentPracticeQ = targetQIdx;
+        renderPracticeQuestion();
+        updatePracticeStats();
+      }
+      const bar = document.getElementById('questionBar');
+      if (bar) bar.classList.add('question-playing');
+      setMobileTab('practice');
+
+      if (track.type === 'solution') {
+        const solMap = questionSolutionMap[currentDay] || questionSolutionMap['day01'];
+        const solEntry = solMap ? solMap[track.qId] : null;
+        if (solEntry) {
+          startAudioSyncedTypewriter({ currentTime: localOffset, paused: !isCombinedPlaying }, solEntry);
+        }
+      }
+    } else if (track.type === 'completion') {
+      if (!completionOverlayDiv || !completionScene) {
+        launchCompletionAnimation();
+      }
+    } else {
+      teardownCompletionAnimation();
+      const bar = document.getElementById('questionBar');
+      if (bar) bar.classList.remove('question-playing');
+      setMobileTab('theory');
+      if (track.target) {
+        scrollToTarget(track.target, true);
+      }
+    }
+  }
+
+  // 2. AUDIO TRACK RESOLUTION & PLAYBACK
+  if (shouldPlay) {
+    if (combinedTrackIndex !== trackIdx || !activeAudioInstance) {
+      loadAndPlayTrack(trackIdx, localOffset);
+    } else {
+      try {
+        activeAudioInstance.currentTime = localOffset;
+      } catch (e) { }
+
+      if (track && track.type === 'solution') {
+        const solMap = questionSolutionMap[currentDay] || questionSolutionMap['day01'];
+        const solEntry = solMap ? solMap[track.qId] : null;
+        if (solEntry) {
+          startAudioSyncedTypewriter(activeAudioInstance, solEntry);
+        }
+      }
+
+      if (!isCombinedPlaying) {
+        activeAudioInstance.play().then(() => {
+          isCombinedPlaying = true;
+          updatePlayButtonStates(true);
+        }).catch(() => {});
+      }
+    }
+  }
+
+  updateProgressUI();
+  if (typeof updateChapterListActive === 'function') updateChapterListActive();
+}
+
+function scrollToTarget(selector, isSeek = true) {
+  if (typeof isCombinedPlaying !== 'undefined' && isCombinedPlaying) {
+    if (typeof updateSlidePlaybackVisibility === 'function') updateSlidePlaybackVisibility(selector, isSeek);
+  } else {
+    if (typeof clearSlidePlaybackVisibility === 'function') clearSlidePlaybackVisibility();
+  }
+
+  const subLangTracks = ['#sqlSubLanguages', '#subLangDql', '#subLangDml', '#subLangDdl', '#subLangTcl', '#subLangDcl'];
+  const coreEntitiesTracks = ['#coreEntities', '#entityDatabase', '#entityTable', '#entityColumn', '#entityRow'];
+
+  // For Sub-Languages Table: Keep table 100% stationary and fixed in place during narration!
+  if (subLangTracks.includes(selector)) {
+    const container = document.getElementById('slideContent') || document.getElementById('slideBodyText');
+    if (selector === '#sqlSubLanguages' && container) {
+      container.scrollTo({ top: 0, behavior: isSeek ? 'auto' : 'smooth' });
+    }
+    return;
+  }
+
+  // For Core Entities Table: Keep table 100% stationary and fixed in place during narration!
+  if (coreEntitiesTracks.includes(selector)) {
+    const container = document.getElementById('slideContent') || document.getElementById('slideBodyText');
+    if (selector === '#coreEntities' && container) {
+      container.scrollTo({ top: 0, behavior: isSeek ? 'auto' : 'smooth' });
+    }
+    return;
+  }
+
+  // For Interview Q&A Cards: Keep box at top and bypass individual question scrolling
+  if (selector.startsWith('#iq')) {
+    const container = document.getElementById('slideContent') || document.getElementById('slideBodyText');
+    if (container) {
+      container.scrollTo({ top: 0, behavior: isSeek ? 'auto' : 'smooth' });
+    }
+    return;
+  }
+
+  const container = document.getElementById('slideContent');
+  const targetEl = container ? container.querySelector(selector) : null;
+  if (targetEl && container) {
+    if (targetEl.closest('.interview-box')) {
+      container.scrollTo({ top: 0, behavior: isSeek ? 'auto' : 'smooth' });
+      return;
+    }
+    const blockToScroll = typeof getVisibilityBlock === 'function' ? getVisibilityBlock(targetEl, container) : targetEl;
+    const containerRect = container.getBoundingClientRect();
+    const targetRect = blockToScroll.getBoundingClientRect();
+    const relativeTop = targetRect.top - containerRect.top + container.scrollTop;
+    container.scrollTo({
+      top: relativeTop - 15,
+      behavior: isSeek ? 'auto' : 'smooth'
+    });
+  }
+}
+
+function playAudio(src, btn) {
+  // Find track index
+  const idx = combinedTracks.findIndex(t => t.src === src);
+  if (idx === -1) {
+    const audioSrc = src.startsWith('http') || src.startsWith('/') ? src : `/Version-3/${src}`;
+    if (currentPlayingAudio && currentPlayingAudio.src.endsWith(src)) {
+      if (currentPlayingAudio.paused) {
+        currentPlayingAudio.play();
+        btn.innerHTML = `<svg class="pause-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+        btn.classList.add('playing');
+      } else {
+        currentPlayingAudio.pause();
+        btn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+        btn.classList.remove('playing');
+      }
+    } else {
+      if (currentPlayingAudio) {
+        currentPlayingAudio.pause();
+        if (currentPlayingBtn) {
+          currentPlayingBtn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+          currentPlayingBtn.classList.remove('playing');
+        }
+      }
+      currentPlayingAudio = new Audio(audioSrc);
+      if (typeof currentPlaybackSpeed !== 'undefined') {
+        currentPlayingAudio.playbackRate = currentPlaybackSpeed;
+      }
+      if (typeof currentPlaybackVolume !== 'undefined') {
+        currentPlayingAudio.volume = currentPlaybackVolume;
+      }
+      currentPlayingAudio.ontimeupdate = () => {
+        if (src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(currentPlayingAudio.currentTime, !currentPlayingAudio.paused);
+        if (src.includes('New_Day1Part1audio03.mp3')) updateDay01Audio03Highlights(currentPlayingAudio.currentTime, !currentPlayingAudio.paused);
+        if (src.includes('New_Day1Part1audio04.mp3') || 
+            src.includes('New_Day1Part1audio07.mp3') || 
+            src.includes('New_Day1Part1audio06.mp3') || 
+            src.includes('New_Day1Part1audio05.mp3') || 
+            src.includes('New_Day1Part1audio08.mp3')) updateDay01CoreEntitiesHighlights(src, !currentPlayingAudio.paused);
+        if (src.includes('New_Day1Part1audio16.mp3') || 
+            src.includes('New_Day1Part1audio17.mp3') || 
+            src.includes('New_Day1Part1audio18.mp3') || 
+            src.includes('New_Day1Part1audio19.mp3') || 
+            src.includes('New_Day1Part1audio20.mp3') || 
+            src.includes('New_Day1Part1audio21.mp3')) updateDay01SqlSubLanguagesHighlights(src, !currentPlayingAudio.paused);
+      };
+      currentPlayingAudio.onpause = () => {
+        if (src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(0, false);
+        if (src.includes('New_Day1Part1audio03.mp3')) updateDay01Audio03Highlights(0, false);
+        if (src.includes('New_Day1Part1audio04.mp3') || 
+            src.includes('New_Day1Part1audio07.mp3') || 
+            src.includes('New_Day1Part1audio06.mp3') || 
+            src.includes('New_Day1Part1audio05.mp3') || 
+            src.includes('New_Day1Part1audio08.mp3')) updateDay01CoreEntitiesHighlights(null, false);
+        if (src.includes('New_Day1Part1audio16.mp3') || 
+            src.includes('New_Day1Part1audio17.mp3') || 
+            src.includes('New_Day1Part1audio18.mp3') || 
+            src.includes('New_Day1Part1audio19.mp3') || 
+            src.includes('New_Day1Part1audio20.mp3') || 
+            src.includes('New_Day1Part1audio21.mp3')) updateDay01SqlSubLanguagesHighlights(null, false);
+      };
+      currentPlayingBtn = btn;
+      currentPlayingAudio.play();
+      btn.innerHTML = `<svg class="pause-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+      btn.classList.add('playing');
+      currentPlayingAudio.onended = () => {
+        if (src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(0, false);
+        if (src.includes('New_Day1Part1audio03.mp3')) updateDay01Audio03Highlights(0, false);
+        if (src.includes('New_Day1Part1audio04.mp3') || 
+            src.includes('New_Day1Part1audio07.mp3') || 
+            src.includes('New_Day1Part1audio06.mp3') || 
+            src.includes('New_Day1Part1audio05.mp3') || 
+            src.includes('New_Day1Part1audio08.mp3')) updateDay01CoreEntitiesHighlights(null, false);
+        if (src.includes('New_Day1Part1audio16.mp3') || 
+            src.includes('New_Day1Part1audio17.mp3') || 
+            src.includes('New_Day1Part1audio18.mp3') || 
+            src.includes('New_Day1Part1audio19.mp3') || 
+            src.includes('New_Day1Part1audio20.mp3') || 
+            src.includes('New_Day1Part1audio21.mp3')) updateDay01SqlSubLanguagesHighlights(null, false);
+        btn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+        btn.classList.remove('playing');
+        currentPlayingAudio = null;
+        currentPlayingBtn = null;
+      };
+    }
+    return;
+  }
+
+  if (combinedTrackIndex === idx) {
+    toggleCombinedPlayback();
+  } else {
+    loadAndPlayTrack(idx);
+  }
+}
+
+function syncCombinedToTrack(srcFilename) {
+  const idx = combinedTracks.findIndex(t => t.src === srcFilename);
+  if (idx === -1) return null;
+  loadAndPlayTrack(idx);
+  return activeAudioInstance;
+}
+
+// Dynamic mobile tab toggle
+function setMobileTab(tab) {
+  const container = document.getElementById('workspaceContainer');
+  const btnTheory = document.getElementById('tabBtnTheory');
+  const btnPractice = document.getElementById('tabBtnPractice');
+
+  if (!container) return;
+
+  if (tab === 'theory') {
+    container.classList.remove('mobile-show-practice');
+    container.classList.add('mobile-show-theory');
+    if (btnTheory) { btnTheory.classList.add('active'); btnTheory.setAttribute('aria-selected', 'true'); }
+    if (btnPractice) { btnPractice.classList.remove('active'); btnPractice.setAttribute('aria-selected', 'false'); }
+  } else if (tab === 'practice') {
+    container.classList.remove('mobile-show-theory');
+    container.classList.add('mobile-show-practice');
+    if (btnPractice) { btnPractice.classList.add('active'); btnPractice.setAttribute('aria-selected', 'true'); }
+    if (btnTheory) { btnTheory.classList.remove('active'); btnTheory.setAttribute('aria-selected', 'false'); }
+
+    // Refresh CodeMirror when visual display toggles
+    setTimeout(() => {
+      if (typeof mainEditor !== 'undefined' && mainEditor) {
+        mainEditor.refresh();
+      }
+    }, 50);
+  }
+}
+
+// Missing audio orchestration functions
+function initSlideNarration() {
+  // Kick off a manifest load so loadAndPlayTrack() gets accurate paths/durations.
+  loadManifest().catch(() => { });
+
+  // Eagerly preload Three.js in background so 3D completion narration visuals load instantly
+  ensureThreeLoaded(() => { });
+
+  if (combinedTrackDurations && combinedTrackDurations.length > 0) {
+    recomputeTotalDuration();
+  }
+
+  combinedAudios = combinedTracks.map(track => {
+    const filename = track.src.split('/').pop().replace('.mp3', '');
+    const trackId = `${currentDay}_${filename}`;
+    const entry = manifest[trackId] || { audioPath: track.src };
+    const url = getAudioUrl(entry);
+    const audio = new Audio(url);
+    audio.preload = "none"; // lazy — don't pre-download all files on page load
+    return audio;
+  });
+
+  const seekBar = document.getElementById('seekBar');
+  if (seekBar) {
+    seekBar.max = totalCombinedDuration || 100;
+    if (!seekBar.dataset.scrubbingBound) {
+      seekBar.dataset.scrubbingBound = 'true';
+      seekBar.oninput = null;
+      seekBar.removeAttribute('oninput');
+      seekBar.addEventListener('mousedown', () => { isScrubbing = true; });
+      seekBar.addEventListener('touchstart', () => { isScrubbing = true; });
+      seekBar.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        const dur = totalCombinedDuration > 0 ? totalCombinedDuration : 100;
+        const fillPct = Math.max(0, Math.min(100, (val / dur) * 100));
+        seekBar.style.background = `linear-gradient(to right, #ef4444 0%, #ff4d4d ${fillPct}%, rgba(255, 255, 255, 0.15) ${fillPct}%)`;
+        const playbackTime = document.getElementById('playbackTime');
+        if (playbackTime) {
+          playbackTime.textContent = `${formatTime(val)} / ${formatTime(totalCombinedDuration)}`;
+        }
+      });
+      seekBar.addEventListener('change', async (e) => {
+        isScrubbing = false;
+        await seekCombinedPlayback(e.target.value);
+      });
+      seekBar.addEventListener('touchend', async (e) => {
+        isScrubbing = false;
+        await seekCombinedPlayback(e.target.value);
+      });
+    }
+  }
+
+  const timelineRow = document.querySelector('.playback-timeline-row');
+  if (timelineRow && !timelineRow.dataset.clickBound) {
+    timelineRow.dataset.clickBound = 'true';
+    const tooltip = document.getElementById('timelineHoverTooltip');
+
+    timelineRow.addEventListener('mousemove', (e) => {
+      const rect = timelineRow.getBoundingClientRect();
+      if (rect.width <= 0) return;
+      const clickX = e.clientX - rect.left;
+      const pct = Math.max(0, Math.min(1, clickX / rect.width));
+      const hoverTime = pct * (totalCombinedDuration || 100);
+      if (tooltip) {
+        tooltip.textContent = formatTime(hoverTime);
+        tooltip.style.left = `${clickX}px`;
+        tooltip.classList.add('active');
+      }
+    });
+
+    timelineRow.addEventListener('mouseleave', () => {
+      if (tooltip) tooltip.classList.remove('active');
+    });
+
+    timelineRow.addEventListener('click', async (e) => {
+      const rect = timelineRow.getBoundingClientRect();
+      if (rect.width <= 0) return;
+      const clickX = e.clientX - rect.left;
+      const pct = Math.max(0, Math.min(1, clickX / rect.width));
+      const targetTime = pct * (totalCombinedDuration || 100);
+      const sb = document.getElementById('seekBar');
+      if (sb) {
+        sb.value = targetTime;
+        const fillPct = Math.max(0, Math.min(100, pct * 100));
+        sb.style.background = `linear-gradient(to right, #ef4444 0%, #ff4d4d ${fillPct}%, rgba(255, 255, 255, 0.15) ${fillPct}%)`;
+      }
+      seekCombinedPlayback(targetTime);
+    });
+  }
+
+  updateProgressUI();
+}
+
+// ─── P1 #6: Skip ±N seconds ──────────────────────────────────────────────────
+function skipCombined(deltaSecs) {
+  if (!isCombinedPlaying && currentCombinedTime === 0) return;
+  const target = Math.max(0, Math.min(totalCombinedDuration, currentCombinedTime + deltaSecs));
+  seekCombinedPlayback(target);
+}
+
+// ─── P1 #7: Chapter list ─────────────────────────────────────────────────────
+function buildChapterList() {
+  const listEl = document.getElementById('chapterList');
+  if (!listEl) return;
+  const typeIcons = { narration: '▶', question: '❓', solution: '✅', completion: '🏆' };
+  let elapsed = 0;
+  listEl.innerHTML = '';
+  combinedTracks.forEach((track, idx) => {
+    const dur = combinedTrackDurations[idx] || 0;
+    const item = document.createElement('div');
+    item.className = 'chapter-item';
+    item.dataset.idx = idx;
+    item.setAttribute('role', 'option');
+    item.innerHTML = `
+      <span class="chapter-item__icon">${typeIcons[track.type] || '▶'}</span>
+      <span class="chapter-item__time">${formatTime(elapsed)}</span>
+      <span class="chapter-item__title">${track.title || track.src.split('/').pop().replace('.mp3', '')}</span>`;
+    item.addEventListener('click', (e) => {
+      e.stopPropagation();
+      seekCombinedPlayback(elapsed);
+      if (!isCombinedPlaying) playCombinedPlayback();
+      listEl.style.display = 'none';
+    });
+    listEl.appendChild(item);
+    elapsed += dur;
+  });
+}
+
+function updateChapterListActive() {
+  const listEl = document.getElementById('chapterList');
+  if (listEl) {
+    listEl.querySelectorAll('.chapter-item').forEach(item => {
+      item.classList.toggle('active', parseInt(item.dataset.idx, 10) === combinedTrackIndex);
+    });
+  }
+  const titleEl = document.getElementById('activeChapterTitle');
+  if (titleEl && typeof combinedTracks !== 'undefined' && combinedTracks[combinedTrackIndex]) {
+    titleEl.textContent = combinedTracks[combinedTrackIndex].title || 'In this lesson';
+  }
+}
+
+function toggleChapterList(e) {
+  if (e && e.stopPropagation) e.stopPropagation();
+  const listEl = document.getElementById('chapterList');
+  const btn = document.getElementById('chapterPillBtn') || document.getElementById('chaptersBtn');
+  if (!listEl) return;
+  const isOpen = listEl.style.display !== 'none';
+  if (isOpen) {
+    listEl.style.display = 'none';
+    if (btn) { btn.classList.remove('active'); btn.setAttribute('aria-expanded', 'false'); }
+  } else {
+    listEl.style.display = 'block';
+    buildChapterList();
+    updateChapterListActive();
+    if (btn) { btn.classList.add('active'); btn.setAttribute('aria-expanded', 'true'); }
+  }
+}
+
+// Global outside-click listener to close chapter list popover
+document.addEventListener('click', (e) => {
+  const listEl = document.getElementById('chapterList');
+  const pillBtn = document.getElementById('chapterPillBtn');
+  if (listEl && listEl.style.display !== 'none') {
+    if (!listEl.contains(e.target) && (!pillBtn || !pillBtn.contains(e.target))) {
+      listEl.style.display = 'none';
+    }
+  }
+});
+
+// ─── P1 #8: Captions toggle ──────────────────────────────────────────────────
+let captionsEnabled = false;
+
+function toggleCaptions() {
+  captionsEnabled = !captionsEnabled;
+  const btn = document.getElementById('captionsBtn');
+  const captionEl = document.getElementById('workspaceVpCaption');
+  if (btn) {
+    btn.classList.toggle('active', captionsEnabled);
+    btn.setAttribute('aria-pressed', captionsEnabled ? 'true' : 'false');
+  }
+  if (captionEl) captionEl.style.display = captionsEnabled ? '' : 'none';
+}
+
+// ─── P1 #9: Restore player preferences on load ───────────────────────────────
+function restorePlayerPreferences() {
+  if (typeof ProgressManager === 'undefined') return;
+  ProgressManager.load();
+  const prefs = ProgressManager.getPreferences();
+  if (prefs.speed && prefs.speed !== 1) {
+    const labelMap = { 1: '1.0x', 1.25: '1.25x', 1.5: '1.5x', 1.75: '1.75x', 2: '2.0x' };
+    selectSpeedOption(prefs.speed, labelMap[prefs.speed] || `${prefs.speed}x`);
+  }
+  if (typeof prefs.volume === 'number') {
+    const slider = document.getElementById('volumeSlider');
+    if (slider) slider.value = prefs.volume;
+    setPlaybackVolume(prefs.volume);
+  }
+}
+
+// ─── P2 #16: Pause audio when tab becomes hidden ─────────────────────────────
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && isCombinedPlaying) {
+    pauseCombinedPlayback();
+  }
+});
+
+// ─── P2 #17: getSlideTracks bridge ───────────────────────────────────────────
+function getSlideTracks() {
+  return combinedTracks;
+}
+
+function startProgressLoop() {
+  if (playProgressInterval) clearInterval(playProgressInterval);
+  playProgressInterval = setInterval(() => {
+    updateProgressUI();
+  }, 250);
+}
+
+function toggleBufferingState(isBuffering) {
+  const navBtn = document.getElementById('navPlayBtn');
+  const playPauseBtn = document.getElementById('playPauseBtn');
+  if (isBuffering) {
+    if (navBtn) {
+      navBtn.innerHTML = `<span class="btn-icon loading-spinner">⏳</span> <span class="btn-text">Buffering...</span>`;
+      navBtn.classList.add('buffering');
+    }
+    if (playPauseBtn) {
+      playPauseBtn.innerHTML = `<span class="loading-spinner" style="display:inline-block;animation:spin 1s linear infinite;">⏳</span>`;
+      playPauseBtn.classList.add('buffering');
+    }
+  } else {
+    if (navBtn) {
+      navBtn.classList.remove('buffering');
+    }
+    if (playPauseBtn) {
+      playPauseBtn.classList.remove('buffering');
+    }
+    updatePlayButtonStates(isCombinedPlaying);
+  }
+}
+
+function updatePlayButtonStates(isPlaying) {
+  const equalizerHtml = `<span class="audio-wave-equalizer" aria-hidden="true"><span></span><span></span><span></span></span>`;
+
+  const navBtn = document.getElementById('navPlayBtn');
+  if (navBtn) {
+    if (isPlaying) {
+      navBtn.innerHTML = `${equalizerHtml} <span class="btn-icon" aria-hidden="true">⏸</span> <span class="btn-text">Pause Lesson</span>`;
+      navBtn.classList.add('playing');
+      navBtn.setAttribute('aria-label', 'Pause Lesson');
+      navBtn.setAttribute('aria-pressed', 'true');
+    } else {
+      navBtn.innerHTML = `<span class="btn-icon" aria-hidden="true">▶</span> <span class="btn-text">Play Lesson</span>`;
+      navBtn.classList.remove('playing');
+      navBtn.setAttribute('aria-label', 'Play Lesson');
+      navBtn.setAttribute('aria-pressed', 'false');
+    }
+  }
+
+  const playPauseBtn = document.getElementById('playPauseBtn');
+  if (playPauseBtn) {
+    if (isPlaying) {
+      playPauseBtn.innerHTML = `${equalizerHtml} <span class="btn-icon" aria-hidden="true">⏸</span> <span class="btn-text">Pause Lesson</span>`;
+      playPauseBtn.classList.add('playing');
+      playPauseBtn.setAttribute('aria-label', 'Pause Lesson');
+      playPauseBtn.setAttribute('aria-pressed', 'true');
+    } else {
+      playPauseBtn.innerHTML = `<span class="btn-icon" aria-hidden="true">▶</span> <span class="btn-text">Play Lesson</span>`;
+      playPauseBtn.classList.remove('playing');
+      playPauseBtn.setAttribute('aria-label', 'Play Lesson');
+      playPauseBtn.setAttribute('aria-pressed', 'false');
+    }
+  }
+
+  const captionEl = document.getElementById('workspaceVpCaption');
+  if (captionEl) {
+    captionEl.classList.toggle('narration-active', isPlaying);
+  }
+
+  const activeTrack = combinedTracks[combinedTrackIndex];
+  const activeSrc = activeTrack ? activeTrack.src : '';
+
+  document.querySelectorAll('.audio-play-btn').forEach(btn => {
+    const onclickStr = btn.getAttribute('onclick') || '';
+
+    // For playAudio('filename.mp3', this)
+    if (onclickStr.includes('playAudio')) {
+      const match = onclickStr.match(/playAudio\(['"]([^'"]+)['"]/);
+      if (match) {
+        const btnSrc = match[1];
+        if (activeSrc && activeSrc === btnSrc && isPlaying) {
+          btn.innerHTML = `<svg class="pause-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+          btn.classList.add('playing');
+        } else {
+          btn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+          btn.classList.remove('playing');
+        }
+      }
+    }
+
+    // For playQuestionAudio(this)
+    if (onclickStr.includes('playQuestionAudio')) {
+      if (activeTrack && activeTrack.type === 'question' && isPlaying) {
+        btn.innerHTML = `<svg class="pause-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+        btn.classList.add('playing');
+      } else {
+        btn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+        btn.classList.remove('playing');
+      }
+    }
+
+    // For playSolutionAudioFromBtn(this)
+    if (onclickStr.includes('playSolutionAudioFromBtn')) {
+      if (activeTrack && activeTrack.type === 'solution' && isPlaying) {
+        btn.innerHTML = `<svg class="pause-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+        btn.classList.add('playing');
+      } else {
+        btn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+        btn.classList.remove('playing');
+      }
+    }
+  });
+}
+
+function playCombinedPlayback() {
+  isCombinedPlaying = true;
+  if (activeAudioInstance && activeAudioInstance.src && activeAudioInstance.src !== window.location.href) {
+    if (activeAudioInstance.ended || activeAudioInstance.currentTime >= (activeAudioInstance.duration || 26) - 0.5) {
+      try { activeAudioInstance.currentTime = 0; } catch (e) { }
+    }
+    activeAudioInstance.play()
+      .then(() => {
+        updatePlayButtonStates(true);
+        const activeTrack = combinedTracks[combinedTrackIndex];
+        if (activeTrack) {
+          if (activeTrack.type === 'question' || activeTrack.type === 'solution') {
+            teardownCompletionAnimation();
+            const targetQIdx = COURSE_CONFIG.practiceQuestions ? COURSE_CONFIG.practiceQuestions.findIndex(q => q.id === activeTrack.qId) : -1;
+            if (targetQIdx !== -1) {
+              currentPracticeQ = targetQIdx;
+              renderPracticeQuestion();
+              updatePracticeStats();
+            }
+            const bar = document.getElementById('questionBar');
+            if (bar) bar.classList.add('question-playing');
+
+            if (activeTrack.type === 'solution') {
+              const solMap = questionSolutionMap[currentDay] || questionSolutionMap['day01'];
+              const solEntry = solMap ? solMap[activeTrack.qId] : null;
+              if (solEntry) {
+                startAudioSyncedTypewriter(activeAudioInstance, solEntry);
+              }
+            }
+          } else if (activeTrack.type === 'completion') {
+            if (!completionOverlayDiv || !completionScene) {
+              launchCompletionAnimation(activeAudioInstance);
+            }
+          } else {
+            teardownCompletionAnimation();
+            if (isNarrationActive && activeTrack.target) {
+              scrollToTarget(activeTrack.target);
+            }
+          }
+        }
+      })
+      .catch(err => {
+        console.log('Combined play error, re-creating track:', err);
+        activeAudioInstance = null;
+        loadAndPlayTrack(combinedTrackIndex, pendingAudioStartTime);
+        pendingAudioStartTime = 0;
+      });
+  } else {
+    activeAudioInstance = null;
+    loadAndPlayTrack(combinedTrackIndex, pendingAudioStartTime);
+    pendingAudioStartTime = 0;
+  }
+}
+
+function pauseCombinedPlayback() {
+  isCombinedPlaying = false;
+  cancelTypewriter();
+  if (activeAudioInstance) {
+    activeAudioInstance.pause();
+  }
+  updatePlayButtonStates(false);
+
+  const activeTrack = combinedTracks[combinedTrackIndex];
+  if (activeTrack && activeTrack.type !== 'completion') {
+    teardownCompletionAnimation();
+  }
+  // Show all content when paused so user can read freely
+  if (typeof clearSlidePlaybackVisibility === 'function') clearSlidePlaybackVisibility();
+
+  // Scroll back to the active block instantly so the viewport doesn't jump to the top of the slide
+  if (typeof combinedTrackIndex !== 'undefined' && typeof combinedTracks !== 'undefined' && combinedTracks[combinedTrackIndex]) {
+    const activeTrack = combinedTracks[combinedTrackIndex];
+    const subLangTracks = ['#sqlSubLanguages', '#subLangDql', '#subLangDml', '#subLangDdl', '#subLangTcl', '#subLangDcl'];
+    const coreEntitiesTracks = ['#coreEntities', '#entityDatabase', '#entityTable', '#entityColumn', '#entityRow'];
+
+    if (activeTrack && activeTrack.target && !subLangTracks.includes(activeTrack.target) && !coreEntitiesTracks.includes(activeTrack.target)) {
+      const container = document.getElementById('slideContent');
+      const targetEl = container ? container.querySelector(activeTrack.target) : null;
+      if (targetEl && container) {
+        const blockToScroll = typeof getVisibilityBlock === 'function' ? getVisibilityBlock(targetEl, container) : targetEl;
+        const containerRect = container.getBoundingClientRect();
+        const targetRect = blockToScroll.getBoundingClientRect();
+        const relativeTop = targetRect.top - containerRect.top + container.scrollTop;
+        container.scrollTo({
+          top: relativeTop - 15,
+          behavior: 'auto'
+        });
+      }
+    }
+  }
+}
+
+// P2 #15: Class-based clearSlidePlaybackVisibility
+function clearSlidePlaybackVisibility() {
+  const containers = [
+    document.getElementById('slideBodyText'),
+    document.getElementById('presentSlideContent')
+  ].filter(Boolean);
+
+  containers.forEach(container => {
+    container.classList.remove('playback-active');
+    container.querySelectorAll('.section-hidden, .vis-target-hidden, .vis-target-dimmed, .narration-spotlight-active, .active-section-mounted, .stunning-section-entry, .instant-display, .row-active-spotlight, .card-active-spotlight, .block-active-spotlight').forEach(el => {
+      el.classList.remove('section-hidden', 'vis-target-hidden', 'vis-target-dimmed', 'narration-spotlight-active', 'active-section-mounted', 'stunning-section-entry', 'instant-display', 'row-active-spotlight', 'card-active-spotlight', 'block-active-spotlight');
+      // Also clear any legacy inline styles from previous runs
+      el.style.display = '';
+      el.style.opacity = '';
+    });
+    // Sweep remaining inline styles left by older runs
+    container.querySelectorAll('[style]').forEach(el => {
+      el.style.display = '';
+      el.style.opacity = '';
+    });
+    // Ensure all interview question cards are restored to visible when paused
+    container.querySelectorAll('.interview-box > div').forEach(card => {
+      card.classList.remove('vis-target-hidden');
+      card.style.display = '';
+    });
+  });
+
+  if (typeof updateDay01CoreEntitiesHighlights === 'function') {
+    updateDay01CoreEntitiesHighlights(null, false);
+  }
+  if (typeof updateDay01SqlSubLanguagesHighlights === 'function') {
+    updateDay01SqlSubLanguagesHighlights(null, false);
+  }
+}
+
+/**
+ * Given a target element (the element with the track's ID), walk UP the DOM
+ * to find the logical visual block that should be shown/hidden as a unit.
+ * e.g. a <div id="entityDatabase"> inside a <td> should hide the entire <tr>.
+ */
+function getVisibilityBlock(targetElement, sectionBoundary) {
+  // If the target is inside a table row, hide the whole row
+  const tr = targetElement.closest('tr');
+  if (tr && sectionBoundary.contains(tr)) return tr;
+
+  // If the target is inside a comparison card (.vs-card), hide the whole card
+  const vsCard = targetElement.closest('.vs-card');
+  if (vsCard && sectionBoundary.contains(vsCard)) return vsCard;
+
+  // For standalone blocks, return the element itself
+  return targetElement;
+}
+
+// P2 #15: Class-based updateSlidePlaybackVisibility
+function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
+  const containers = [
+    document.getElementById('slideBodyText'),
+    document.getElementById('presentSlideContent')
+  ].filter(Boolean);
+
+  containers.forEach(container => {
+    container.classList.add('playback-active');
+
+    // 1. Clear previous sub-element spotlight highlights
+    container.querySelectorAll('.narration-spotlight-active, .row-active-spotlight, .card-active-spotlight, .block-active-spotlight').forEach(el => {
+      el.classList.remove('narration-spotlight-active', 'row-active-spotlight', 'card-active-spotlight', 'block-active-spotlight');
+    });
+
+    // 2. Find the target element inside this container
+    const targetEl = container.querySelector(targetSelector);
+    if (!targetEl) return;
+
+    // 3. Find the active section wrapper (.slide-section) that contains targetEl
+    const activeSection = targetEl.closest('.slide-section');
+    if (!activeSection) {
+      container.querySelectorAll('.slide-section').forEach(s => s.classList.remove('section-hidden'));
+      return;
+    }
+
+    // 4. Check if activeSection is ALREADY active and mounted
+    const isAlreadyActiveSection = !activeSection.classList.contains('section-hidden') && 
+                                   activeSection.classList.contains('active-section-mounted');
+
+    if (!isAlreadyActiveSection) {
+      // Hide all non-active slide-sections and remove mounted flag
+      container.querySelectorAll('.slide-section').forEach(section => {
+        if (section !== activeSection) {
+          section.classList.add('section-hidden');
+          section.classList.remove('stunning-section-entry', 'active-section-mounted', 'instant-display');
+        } else {
+          section.classList.remove('section-hidden');
+          section.classList.add('active-section-mounted');
+          if (isSeek) {
+            section.classList.add('instant-display');
+            section.classList.remove('stunning-section-entry');
+          } else {
+            section.classList.remove('instant-display');
+            section.classList.add('stunning-section-entry');
+          }
+        }
+      });
+
+      // Ensure all elements inside activeSection are fully visible
+      activeSection.querySelectorAll('.vis-target-hidden').forEach(el => {
+        el.classList.remove('vis-target-hidden');
+        el.style.display = '';
+      });
+
+      // Reset container scroll position to top ONLY when entering a NEW section!
+      container.scrollTop = 0;
+    }
+
+    // Keep H2 at the top always visible
+    const h2 = container.querySelector('h2');
+    if (h2) h2.classList.remove('section-hidden', 'vis-target-hidden');
+
+    // 5. If target is inside an .interview-box, show ONLY the active question card and hide all other sibling cards
+    const interviewBox = targetEl.closest('.interview-box');
+    if (interviewBox) {
+      const activeQCard = targetEl.closest('.interview-box > div') || targetEl;
+      interviewBox.querySelectorAll('.interview-box > div').forEach(card => {
+        if (card === activeQCard) {
+          card.classList.remove('vis-target-hidden');
+          card.style.display = '';
+        } else {
+          card.classList.add('vis-target-hidden');
+          card.style.display = 'none';
+        }
+      });
+      const h4 = interviewBox.querySelector('h4');
+      if (h4) {
+        h4.classList.remove('vis-target-hidden');
+        h4.style.display = '';
+      }
+    } else {
+      activeSection.querySelectorAll('.interview-box > div').forEach(card => {
+        card.classList.remove('vis-target-hidden');
+        card.style.display = '';
+      });
+    }
+
+    // 6. Highlight active target row / card / Q&A block without shifting layout
+    const targetRow = targetEl.closest('tr');
+    const targetCard = targetEl.closest('.vs-card, .info-card');
+    const targetIQ = targetEl.closest('#iqReferentialIntegrity, #iqSqlVsNosql, #iqCompositePk, #parentTableDept');
+
+    if (targetRow) {
+      targetRow.classList.add('row-active-spotlight');
+    } else if (targetCard) {
+      targetCard.classList.add('card-active-spotlight');
+    } else if (targetIQ) {
+      targetIQ.classList.add('block-active-spotlight');
+    } else if (targetEl) {
+      targetEl.classList.add('narration-spotlight-active');
+    }
+
+    // 7. Trigger specific audio visual sync handlers
+    if (typeof updateDay01CoreEntitiesHighlights === 'function') {
+      updateDay01CoreEntitiesHighlights(targetSelector, true);
+    }
+    if (typeof updateDay01SqlSubLanguagesHighlights === 'function') {
+      updateDay01SqlSubLanguagesHighlights(targetSelector, true);
+    }
+  });
+}
+
+
+// P2 #20: Scoped keyboard shortcuts — Space only fires from player region
+document.addEventListener('keydown', (e) => {
+  if (!e.target) return;
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.closest('.CodeMirror')) return;
+
+  const inPlayer = e.target.closest('#playbackBar') ||
+                   e.target.closest('#navPlayBtn') ||
+                   e.target.id === 'seekBar' ||
+                   e.target.id === 'playPauseBtn' ||
+                   e.target.id === 'skipBackBtn' ||
+                   e.target.id === 'skipFwdBtn';
+
+  if (e.key === 'k' || (e.key === ' ' && inPlayer)) {
+    e.preventDefault();
+    toggleCombinedPlayback();
+  } else if (e.key === 'ArrowLeft' || e.key === 'j') {
+    if (e.target.closest('#playbackBar') || e.target.id === 'seekBar') {
+      e.preventDefault();
+      const target = Math.max(0, currentCombinedTime - 5);
+      seekCombinedPlayback(target);
+      const sb = document.getElementById('seekBar');
+      if (sb) sb.setAttribute('aria-valuenow', Math.round(target));
+    }
+  } else if (e.key === 'ArrowRight' || e.key === 'l') {
+    if (e.target.closest('#playbackBar') || e.target.id === 'seekBar') {
+      e.preventDefault();
+      const target = Math.min(totalCombinedDuration, currentCombinedTime + 5);
+      seekCombinedPlayback(target);
+      const sb = document.getElementById('seekBar');
+      if (sb) sb.setAttribute('aria-valuenow', Math.round(target));
+    }
+  } else if (e.key === '[') {
+    // P1 #6: skip back 10s
+    e.preventDefault();
+    skipCombined(-10);
+  } else if (e.key === ']') {
+    // P1 #6: skip forward 10s
+    e.preventDefault();
+    skipCombined(10);
+  } else if (e.key === 'c' || e.key === 'C') {
+    // P1 #8: toggle captions
+    e.preventDefault();
+    toggleCaptions();
+  }
+});

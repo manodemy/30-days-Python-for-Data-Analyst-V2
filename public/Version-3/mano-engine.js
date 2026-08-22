@@ -9408,19 +9408,19 @@ function dispatchTrackVisualHighlights(track, currentTime, isPlaying) {
       src.includes('New_Day1Part1audio21.mp3'))) updateDay01SqlSubLanguagesHighlights(isPlaying ? track.target : null, isPlaying);
 
   // Day 03 Highlights
-  if (typeof updateWhereCodeHighlights === 'function' && src.includes('New_Day3Part1audio04.mp3')) updateWhereCodeHighlights(currentTime, isPlaying);
+  if (typeof updateWhereCodeHighlights === 'function' && src.includes('New_Day3Part1audio02.mp3')) updateWhereCodeHighlights(currentTime, isPlaying);
   if (typeof updateTableHighlights === 'function' && src.includes('New_Day3Part1audio05.mp3')) updateTableHighlights(currentTime, isPlaying);
   if (typeof updateCompCodeHighlights === 'function' && src.includes('New_Day3Part1audio06.mp3')) updateCompCodeHighlights(currentTime, isPlaying);
   if (typeof updateIntroHighlight === 'function' && src.includes('New_Day3Part1audio07.mp3')) updateIntroHighlight(currentTime, isPlaying);
-  if (typeof updateLogicCodeHighlights === 'function' && src.includes('New_Day3Part1audio07.mp3')) updateLogicCodeHighlights(currentTime, isPlaying);
   if (typeof updateNotCardHighlight === 'function' && src.includes('New_Day3Part1audio08.mp3')) updateNotCardHighlight(currentTime, isPlaying);
   if (typeof updateAndCardHighlight === 'function' && src.includes('New_Day3Part1audio09.mp3')) updateAndCardHighlight(currentTime, isPlaying);
   if (typeof updateOrCardHighlight === 'function' && src.includes('New_Day3Part1audio10.mp3')) updateOrCardHighlight(currentTime, isPlaying);
   if (typeof updatePrecedenceNoteHighlight === 'function' && src.includes('New_Day3Part1audio11.mp3')) updatePrecedenceNoteHighlight(currentTime, isPlaying);
-  if (typeof updateBetweenCodeHighlights === 'function' && src.includes('New_Day3Part1audio12.mp3')) updateBetweenCodeHighlights(currentTime, isPlaying);
-  if (typeof updateInCodeHighlights === 'function' && src.includes('New_Day3Part1audio13.mp3')) updateInCodeHighlights(currentTime, isPlaying);
-  if (typeof updateLikeCodeHighlights === 'function' && src.includes('New_Day3Part1audio14.mp3')) updateLikeCodeHighlights(currentTime, isPlaying);
-  if (typeof updateNullCodeHighlights === 'function' && src.includes('New_Day3Part1audio15.mp3')) updateNullCodeHighlights(currentTime, isPlaying);
+  if (typeof updateLogicCodeHighlights === 'function' && src.includes('New_Day3Part1audio12.mp3')) updateLogicCodeHighlights(currentTime, isPlaying);
+  if (typeof updateBetweenCodeHighlights === 'function' && src.includes('New_Day3Part1audio15.mp3')) updateBetweenCodeHighlights(currentTime, isPlaying);
+  if (typeof updateInCodeHighlights === 'function' && src.includes('New_Day3Part1audio19.mp3')) updateInCodeHighlights(currentTime, isPlaying);
+  if (typeof updateLikeCodeHighlights === 'function' && src.includes('New_Day3Part1audio24.mp3')) updateLikeCodeHighlights(currentTime, isPlaying);
+  if (typeof updateNullCodeHighlights === 'function' && src.includes('New_Day3Part1audio27.mp3')) updateNullCodeHighlights(currentTime, isPlaying);
 
   // Day 04 Highlights
   if (typeof updateDay04ArithTableHighlights === 'function' && src.includes('New_Day4Part1audio02.mp3')) updateDay04ArithTableHighlights(currentTime, isPlaying);

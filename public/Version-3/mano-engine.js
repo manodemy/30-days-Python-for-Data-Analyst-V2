@@ -3294,28 +3294,222 @@ const questionAudioMap = {
     6: 'Day02/New_Day2Question06.mp3'
   },
   'day03': {
-    1: 'Day03/New_Day3Question01.mp3',
-    2: 'Day03/New_Day3Question02.mp3',
-    3: 'Day03/New_Day3Question03.mp3',
-    4: 'Day03/New_Day3Question04.mp3',
-    5: 'Day03/New_Day3Question05.mp3',
-    6: 'Day03/New_Day3Question06.mp3'
+    1: {
+      src: "Day03/New_Day3Question01sol.mp3",
+      code: "SELECT name,\n       unit_price\nFROM   products\nWHERE  unit_price > 10000\nORDER BY unit_price DESC;",
+      segments: [
+        { text: "SELECT name,\n", startAt: 1.98, charInterval: 45 },
+        { text: "       unit_price\n", startAt: 2.64, charInterval: 35 },
+        { text: "FROM   products\n", startAt: 3.8, charInterval: 35 },
+        { text: "WHERE  unit_price > 10000\n", startAt: 4.88, charInterval: 50 },
+        { text: "ORDER BY unit_price DESC;", startAt: 7.9, charInterval: 50 }
+      ],
+      scrollAt: 9.75
+    },
+    2: {
+      src: "Day03/New_Day3Question02sol.mp3",
+      code: "SELECT first_name,\n       last_name,\n       region\nFROM   customers\nWHERE  region IN ('North', 'East');",
+      segments: [
+        { text: "SELECT first_name,\n", startAt: 1.8, charInterval: 35 },
+        { text: "       last_name,\n", startAt: 2.78, charInterval: 35 },
+        { text: "       region\n", startAt: 3.82, charInterval: 35 },
+        { text: "FROM   customers\n", startAt: 4.58, charInterval: 36 },
+        { text: "WHERE  region IN ('North', 'East');", startAt: 5.74, charInterval: 52 }
+      ],
+      scrollAt: 8.16
+    },
+    3: {
+      src: "Day03/New_Day3Question03sol.mp3",
+      code: "SELECT first_name,\n       last_name,\n       salary\nFROM   employees\nWHERE  salary BETWEEN 60000 AND 100000;",
+      segments: [
+        { text: "SELECT first_name,\n", startAt: 1.8, charInterval: 35 },
+        { text: "       last_name,\n", startAt: 2.74, charInterval: 35 },
+        { text: "       salary\n", startAt: 3.82, charInterval: 35 },
+        { text: "FROM   employees\n", startAt: 4.68, charInterval: 41 },
+        { text: "WHERE  salary BETWEEN 60000 AND 100000;", startAt: 5.94, charInterval: 50 }
+      ],
+      scrollAt: 8.49
+    },
+    4: {
+      src: "Day03/New_Day3Question04sol.mp3",
+      code: "SELECT first_name,\n       last_name,\n       salary\nFROM   employees\nWHERE  first_name LIKE 'S%';",
+      segments: [
+        { text: "SELECT first_name,\n", startAt: 2.68, charInterval: 35 },
+        { text: "       last_name,\n", startAt: 3.92, charInterval: 35 },
+        { text: "       salary\n", startAt: 5.0, charInterval: 35 },
+        { text: "FROM   employees\n", startAt: 5.88, charInterval: 39 },
+        { text: "WHERE  first_name LIKE 'S%';", startAt: 7.1, charInterval: 54 }
+      ],
+      scrollAt: 9.21
+    },
+    5: {
+      src: "Day03/New_Day3Question05sol.mp3",
+      code: "SELECT first_name,\n       department_id,\n       salary\nFROM   employees\nWHERE  is_active = 1\n  AND  department_id = 20;",
+      segments: [
+        { text: "SELECT first_name,\n", startAt: 1.34, charInterval: 38 },
+        { text: "       department_id,\n", startAt: 2.68, charInterval: 35 },
+        { text: "       salary\n", startAt: 4.0, charInterval: 35 },
+        { text: "FROM   employees\n", startAt: 4.98, charInterval: 35 },
+        { text: "WHERE  is_active = 1\n", startAt: 6.08, charInterval: 75 },
+        { text: "  AND  department_id = 20;", startAt: 7.66, charInterval: 73 }
+      ],
+      scrollAt: 10.16
+    },
+    6: {
+      src: "Day03/New_Day3Question06sol.mp3",
+      code: "SELECT first_name,\n       last_name,\n       commission\nFROM   employees\nWHERE  commission IS NULL;",
+      segments: [
+        { text: "SELECT first_name,\n", startAt: 2.78, charInterval: 35 },
+        { text: "       last_name,\n", startAt: 4.04, charInterval: 35 },
+        { text: "       commission\n", startAt: 5.08, charInterval: 35 },
+        { text: "FROM   employees\n", startAt: 5.94, charInterval: 41 },
+        { text: "WHERE  commission IS NULL;", startAt: 7.2, charInterval: 42 }
+      ],
+      scrollAt: 8.89
+    }
   },
   'day04': {
-    1: 'Day04/New_Day4Question01.mp3',
-    2: 'Day04/New_Day4Question02.mp3',
-    3: 'Day04/New_Day4Question03.mp3',
-    4: 'Day04/New_Day4Question04.mp3',
-    5: 'Day04/New_Day4Question05.mp3',
-    6: 'Day04/New_Day4Question06.mp3',
-    7: 'Day04/New_Day4Question07.mp3',
-    8: 'Day04/New_Day4Question08.mp3',
-    9: 'Day04/New_Day4Question09.mp3',
-    10: 'Day04/New_Day4Question10.mp3',
-    11: 'Day04/New_Day4Question11.mp3',
-    12: 'Day04/New_Day4Question12.mp3'
+    1: {
+      src: "Day04/New_Day4Question01sol.mp3",
+      code: "SELECT first_name,\n       salary,\n       salary / 12.0 AS monthly_salary\nFROM   employees;",
+      segments: [
+        { text: "SELECT first_name,\n", startAt: 2.7, charInterval: 35 },
+        { text: "       salary,\n", startAt: 4.28, charInterval: 35 },
+        { text: "       salary / 12.0 AS monthly_salary\n", startAt: 5.74, charInterval: 80 },
+        { text: "FROM   employees;", startAt: 10.22, charInterval: 35 }
+      ],
+      scrollAt: 11.42
+    },
+    2: {
+      src: "Day04/New_Day4Question02sol.mp3",
+      code: "SELECT name,\n       unit_price,\n       cost_price,\n       unit_price - cost_price AS gross_profit\nFROM   products\nORDER BY gross_profit DESC;",
+      segments: [
+        { text: "SELECT name,\n", startAt: 1.88, charInterval: 38 },
+        { text: "       unit_price,\n", startAt: 2.66, charInterval: 35 },
+        { text: "       cost_price,\n", startAt: 4.06, charInterval: 35 },
+        { text: "       unit_price - cost_price AS gross_profit\n", startAt: 6.12, charInterval: 50 },
+        { text: "FROM   products\n", startAt: 11.1, charInterval: 45 },
+        { text: "ORDER BY gross_profit DESC;", startAt: 12.22, charInterval: 50 }
+      ],
+      scrollAt: 14.17
+    },
+    3: {
+      src: "Day04/New_Day4Question03sol.mp3",
+      code: "SELECT first_name,\n       salary,\n       commission,\n       salary + COALESCE(commission, 0) AS total_comp\nFROM   employees;",
+      segments: [
+        { text: "SELECT first_name,\n", startAt: 1.64, charInterval: 36 },
+        { text: "       salary,\n", startAt: 3.44, charInterval: 40 },
+        { text: "       commission,\n", startAt: 4.04, charInterval: 35 },
+        { text: "       salary + COALESCE(commission, 0) AS total_comp\n", startAt: 5.58, charInterval: 64 },
+        { text: "FROM   employees;", startAt: 10.02, charInterval: 56 }
+      ],
+      scrollAt: 11.57
+    },
+    4: {
+      src: "Day04/New_Day4Question04sol.mp3",
+      code: "SELECT *\nFROM   employees\nWHERE  (department_id = 10 OR department_id = 20)\n  AND  salary > 70000;",
+      segments: [
+        { text: "SELECT *\n", startAt: 2.62, charInterval: 44 },
+        { text: "FROM   employees\n", startAt: 3.28, charInterval: 56 },
+        { text: "WHERE  (department_id = 10 OR department_id = 20)\n", startAt: 4.66, charInterval: 50 },
+        { text: "  AND  salary > 70000;", startAt: 11.22, charInterval: 50 }
+      ],
+      scrollAt: 12.92
+    },
+    5: {
+      src: "Day04/New_Day4Question05sol.mp3",
+      code: "SELECT first_name,\n       salary\nFROM   employees\nWHERE  salary > (\n  SELECT MAX(salary)\n  FROM   employees\n  WHERE  department_id = 40\n);",
+      segments: [
+        { text: "SELECT first_name,\n", startAt: 1.78, charInterval: 37 },
+        { text: "       salary\n", startAt: 4.06, charInterval: 57 },
+        { text: "FROM   employees\n", startAt: 4.06, charInterval: 54 },
+        { text: "WHERE  salary > (\n", startAt: 5.44, charInterval: 35 },
+        { text: "  SELECT MAX(salary)\n", startAt: 8.1, charInterval: 50 },
+        { text: "  FROM   employees\n", startAt: 9.32, charInterval: 45 },
+        { text: "  WHERE  department_id = 40\n", startAt: 10.52, charInterval: 85 }
+      ],
+      scrollAt: 13.5
+    },
+    6: {
+      src: "Day04/New_Day4Question06sol.mp3",
+      code: "SELECT name,\n       unit_price * 1.18 AS markup_price\nFROM   products;",
+      segments: [
+        { text: "SELECT name,\n", startAt: 1.82, charInterval: 35 },
+        { text: "       unit_price * 1.18 AS markup_price\n", startAt: 2.64, charInterval: 91 },
+        { text: "FROM   products;", startAt: 7.46, charInterval: 51 }
+      ],
+      scrollAt: 8.88
+    },
+    7: {
+      src: "Day04/New_Day4Question07sol.mp3",
+      code: "SELECT first_name,\n       commission\nFROM   employees\nWHERE  commission > 5000\n   OR  commission IS NULL;",
+      segments: [
+        { text: "SELECT first_name,\n", startAt: 1.98, charInterval: 35 },
+        { text: "       commission\n", startAt: 3.64, charInterval: 35 },
+        { text: "FROM   employees\n", startAt: 3.92, charInterval: 68 },
+        { text: "WHERE  commission > 5000\n", startAt: 5.58, charInterval: 50 },
+        { text: "   OR  commission IS NULL;", startAt: 7.13, charInterval: 50 }
+      ],
+      scrollAt: 9.03
+    },
+    8: {
+      src: "Day04/New_Day4Question08sol.mp3",
+      code: "SELECT name,\n       (unit_price - cost_price) * 1.0 / NULLIF(unit_price, 0) AS margin\nFROM   products;",
+      segments: [
+        { text: "SELECT name,\n", startAt: 2.1, charInterval: 35 },
+        { text: "       (unit_price - cost_price) * 1.0 / NULLIF(unit_price, 0) AS margin\n", startAt: 3.6, charInterval: 50 },
+        { text: "FROM   products;", startAt: 13.2, charInterval: 35 }
+      ],
+      scrollAt: 14.36
+    },
+    9: {
+      src: "Day04/New_Day4Question09sol.mp3",
+      code: "SELECT name,\n       ROUND((unit_price - cost_price) * 100.0 / unit_price, 2) AS profit_pct\nFROM   products;",
+      segments: [
+        { text: "SELECT name,\n", startAt: 2.48, charInterval: 38 },
+        { text: "       ROUND((unit_price - cost_price) * 100.0 / unit_price, 2) AS profit_pct\n", startAt: 3.3, charInterval: 50 },
+        { text: "FROM   products;", startAt: 14.5, charInterval: 35 }
+      ],
+      scrollAt: 15.66
+    },
+    10: {
+      src: "Day04/New_Day4Question10sol.mp3",
+      code: "SELECT first_name,\n       salary\nFROM   employees\nWHERE  salary > (\n  SELECT MIN(salary)\n  FROM   employees\n  WHERE  department_id = 30\n);",
+      segments: [
+        { text: "SELECT first_name,\n", startAt: 2.72, charInterval: 35 },
+        { text: "       salary\n", startAt: 4.76, charInterval: 57 },
+        { text: "FROM   employees\n", startAt: 4.76, charInterval: 55 },
+        { text: "WHERE  salary > (\n", startAt: 6.14, charInterval: 35 },
+        { text: "  SELECT MIN(salary)\n", startAt: 8.82, charInterval: 50 },
+        { text: "  FROM   employees\n", startAt: 9.98, charInterval: 44 },
+        { text: "  WHERE  department_id = 30\n", startAt: 11.14, charInterval: 86 }
+      ],
+      scrollAt: 14.15
+    },
+    11: {
+      src: "Day04/New_Day4Question11sol.mp3",
+      code: "SELECT product_id,\n       name\nFROM   products\nWHERE  product_id % 2 = 0;",
+      segments: [
+        { text: "SELECT product_id,\n", startAt: 2.42, charInterval: 38 },
+        { text: "       name\n", startAt: 4.4, charInterval: 35 },
+        { text: "FROM   products\n", startAt: 4.7, charInterval: 44 },
+        { text: "WHERE  product_id % 2 = 0;", startAt: 5.84, charInterval: 50 }
+      ],
+      scrollAt: 7.74
+    },
+    12: {
+      src: "Day04/New_Day4Question12sol.mp3",
+      code: "SELECT name,\n       stock_qty * cost_price AS stock_value\nFROM   products\nWHERE  stock_qty * cost_price > 100000;",
+      segments: [
+        { text: "SELECT name,\n", startAt: 1.86, charInterval: 69 },
+        { text: "       stock_qty * cost_price AS stock_value\n", startAt: 2.9, charInterval: 35 },
+        { text: "FROM   products\n", startAt: 7.24, charInterval: 44 },
+        { text: "WHERE  stock_qty * cost_price > 100000;", startAt: 8.48, charInterval: 50 }
+      ],
+      scrollAt: 11.03
+    }
   },
-'day05': {
+  'day05': {
     1: 'Day05/New_Day5Question01.mp3',
     2: 'Day05/New_Day5Question02.mp3',
     3: 'Day05/New_Day5Question03.mp3',
@@ -9275,6 +9469,59 @@ function updateDay04NotInTrapCodeHighlights(currentTime, isPlaying) {
 
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// ║  GLOBAL TRACK VISUAL HIGHLIGHTS DISPATCHER                               ║
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function dispatchTrackVisualHighlights(track, currentTime, isPlaying) {
+  if (!track || !track.src) return;
+  const src = track.src;
+
+  // Day 01 Highlights
+  if (typeof updateDay01Audio01Highlights === 'function' && src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(currentTime, isPlaying);
+  if (typeof updateDay01Audio03Highlights === 'function' && src.includes('New_Day1Part1audio03.mp3')) updateDay01Audio03Highlights(currentTime, isPlaying);
+  if (typeof updateDay01CoreEntitiesHighlights === 'function' && (
+      src.includes('New_Day1Part1audio04.mp3') || 
+      src.includes('New_Day1Part1audio07.mp3') || 
+      src.includes('New_Day1Part1audio06.mp3') || 
+      src.includes('New_Day1Part1audio05.mp3') || 
+      src.includes('New_Day1Part1audio08.mp3'))) updateDay01CoreEntitiesHighlights(isPlaying ? track.target : null, isPlaying);
+  if (typeof updateDay01SqlSubLanguagesHighlights === 'function' && (
+      src.includes('New_Day1Part1audio16.mp3') || 
+      src.includes('New_Day1Part1audio17.mp3') || 
+      src.includes('New_Day1Part1audio18.mp3') || 
+      src.includes('New_Day1Part1audio19.mp3') || 
+      src.includes('New_Day1Part1audio20.mp3') || 
+      src.includes('New_Day1Part1audio21.mp3'))) updateDay01SqlSubLanguagesHighlights(isPlaying ? track.target : null, isPlaying);
+
+  // Day 03 Highlights
+  if (typeof updateWhereCodeHighlights === 'function' && src.includes('New_Day3Part1audio02.mp3')) updateWhereCodeHighlights(currentTime, isPlaying);
+  if (typeof updateTableHighlights === 'function' && src.includes('New_Day3Part1audio05.mp3')) updateTableHighlights(currentTime, isPlaying);
+  if (typeof updateCompCodeHighlights === 'function' && src.includes('New_Day3Part1audio06.mp3')) updateCompCodeHighlights(currentTime, isPlaying);
+  if (typeof updateIntroHighlight === 'function' && src.includes('New_Day3Part1audio07.mp3')) updateIntroHighlight(currentTime, isPlaying);
+  if (typeof updateNotCardHighlight === 'function' && src.includes('New_Day3Part1audio08.mp3')) updateNotCardHighlight(currentTime, isPlaying);
+  if (typeof updateAndCardHighlight === 'function' && src.includes('New_Day3Part1audio09.mp3')) updateAndCardHighlight(currentTime, isPlaying);
+  if (typeof updateOrCardHighlight === 'function' && src.includes('New_Day3Part1audio10.mp3')) updateOrCardHighlight(currentTime, isPlaying);
+  if (typeof updatePrecedenceNoteHighlight === 'function' && src.includes('New_Day3Part1audio11.mp3')) updatePrecedenceNoteHighlight(currentTime, isPlaying);
+  if (typeof updateLogicCodeHighlights === 'function' && src.includes('New_Day3Part1audio12.mp3')) updateLogicCodeHighlights(currentTime, isPlaying);
+  if (typeof updateBetweenCodeHighlights === 'function' && src.includes('New_Day3Part1audio15.mp3')) updateBetweenCodeHighlights(currentTime, isPlaying);
+  if (typeof updateInCodeHighlights === 'function' && src.includes('New_Day3Part1audio19.mp3')) updateInCodeHighlights(currentTime, isPlaying);
+  if (typeof updateLikeCodeHighlights === 'function' && src.includes('New_Day3Part1audio24.mp3')) updateLikeCodeHighlights(currentTime, isPlaying);
+  if (typeof updateNullCodeHighlights === 'function' && src.includes('New_Day3Part1audio27.mp3')) updateNullCodeHighlights(currentTime, isPlaying);
+
+  // Day 04 Highlights
+  if (typeof updateDay04ArithTableHighlights === 'function' && src.includes('New_Day4Part1audio02.mp3')) updateDay04ArithTableHighlights(currentTime, isPlaying);
+  if (typeof updateDay04ArithCodeHighlights === 'function' && src.includes('New_Day4Part1audio03.mp3')) updateDay04ArithCodeHighlights(currentTime, isPlaying);
+  if (typeof updateDay04PrecedenceTableHighlights === 'function' && src.includes('New_Day4Part1audio06.mp3')) updateDay04PrecedenceTableHighlights(currentTime, isPlaying);
+  if (typeof updateDay04PrecedenceCodeHighlights === 'function' && src.includes('New_Day4Part1audio07.mp3')) updateDay04PrecedenceCodeHighlights(currentTime, isPlaying);
+  if (typeof updateDay04AnyCardHighlight === 'function' && src.includes('New_Day4Part1audio10.mp3')) updateDay04AnyCardHighlight(isPlaying);
+  if (typeof updateDay04AllCardHighlight === 'function' && src.includes('New_Day4Part1audio11.mp3')) updateDay04AllCardHighlight(isPlaying);
+  if (typeof updateDay04EscapeCodeHighlights === 'function' && src.includes('New_Day4Part1audio15.mp3')) updateDay04EscapeCodeHighlights(currentTime, isPlaying);
+  if (typeof updateDay04NullCodeHighlights === 'function' && src.includes('New_Day4Part1audio18.mp3')) updateDay04NullCodeHighlights(currentTime, isPlaying);
+  if (typeof updateDay04ThreeValTableHighlights === 'function' && src.includes('New_Day4Part1audio21.mp3')) updateDay04ThreeValTableHighlights(currentTime, isPlaying);
+  if (typeof updateDay04NotInTrapCodeHighlights === 'function' && src.includes('New_Day4Part1audio22.mp3')) updateDay04NotInTrapCodeHighlights(currentTime, isPlaying);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // ║  AUDIO TIMELINE, SCRUBBING & PLAYBACK ENGINE (PORTED FROM PROVEN ENGINE)   ║
 // ═══════════════════════════════════════════════════════════════════════════════
 
@@ -9386,54 +9633,7 @@ function loadAndPlayTrack(index, targetTime = 0) {
   let trackEvents = null;
   loadTrackEvents(trackId).then(ev => { trackEvents = ev; }).catch(() => {});
 
-function dispatchTrackVisualHighlights(track, currentTime, isPlaying) {
-  if (!track || !track.src) return;
-  const src = track.src;
 
-  // Day 01 Highlights
-  if (typeof updateDay01Audio01Highlights === 'function' && src.includes('New_Day1Part1audio01.mp3')) updateDay01Audio01Highlights(currentTime, isPlaying);
-  if (typeof updateDay01Audio03Highlights === 'function' && src.includes('New_Day1Part1audio03.mp3')) updateDay01Audio03Highlights(currentTime, isPlaying);
-  if (typeof updateDay01CoreEntitiesHighlights === 'function' && (
-      src.includes('New_Day1Part1audio04.mp3') || 
-      src.includes('New_Day1Part1audio07.mp3') || 
-      src.includes('New_Day1Part1audio06.mp3') || 
-      src.includes('New_Day1Part1audio05.mp3') || 
-      src.includes('New_Day1Part1audio08.mp3'))) updateDay01CoreEntitiesHighlights(isPlaying ? track.target : null, isPlaying);
-  if (typeof updateDay01SqlSubLanguagesHighlights === 'function' && (
-      src.includes('New_Day1Part1audio16.mp3') || 
-      src.includes('New_Day1Part1audio17.mp3') || 
-      src.includes('New_Day1Part1audio18.mp3') || 
-      src.includes('New_Day1Part1audio19.mp3') || 
-      src.includes('New_Day1Part1audio20.mp3') || 
-      src.includes('New_Day1Part1audio21.mp3'))) updateDay01SqlSubLanguagesHighlights(isPlaying ? track.target : null, isPlaying);
-
-  // Day 03 Highlights
-  if (typeof updateWhereCodeHighlights === 'function' && src.includes('New_Day3Part1audio02.mp3')) updateWhereCodeHighlights(currentTime, isPlaying);
-  if (typeof updateTableHighlights === 'function' && src.includes('New_Day3Part1audio05.mp3')) updateTableHighlights(currentTime, isPlaying);
-  if (typeof updateCompCodeHighlights === 'function' && src.includes('New_Day3Part1audio06.mp3')) updateCompCodeHighlights(currentTime, isPlaying);
-  if (typeof updateIntroHighlight === 'function' && src.includes('New_Day3Part1audio07.mp3')) updateIntroHighlight(currentTime, isPlaying);
-  if (typeof updateNotCardHighlight === 'function' && src.includes('New_Day3Part1audio08.mp3')) updateNotCardHighlight(currentTime, isPlaying);
-  if (typeof updateAndCardHighlight === 'function' && src.includes('New_Day3Part1audio09.mp3')) updateAndCardHighlight(currentTime, isPlaying);
-  if (typeof updateOrCardHighlight === 'function' && src.includes('New_Day3Part1audio10.mp3')) updateOrCardHighlight(currentTime, isPlaying);
-  if (typeof updatePrecedenceNoteHighlight === 'function' && src.includes('New_Day3Part1audio11.mp3')) updatePrecedenceNoteHighlight(currentTime, isPlaying);
-  if (typeof updateLogicCodeHighlights === 'function' && src.includes('New_Day3Part1audio12.mp3')) updateLogicCodeHighlights(currentTime, isPlaying);
-  if (typeof updateBetweenCodeHighlights === 'function' && src.includes('New_Day3Part1audio15.mp3')) updateBetweenCodeHighlights(currentTime, isPlaying);
-  if (typeof updateInCodeHighlights === 'function' && src.includes('New_Day3Part1audio19.mp3')) updateInCodeHighlights(currentTime, isPlaying);
-  if (typeof updateLikeCodeHighlights === 'function' && src.includes('New_Day3Part1audio24.mp3')) updateLikeCodeHighlights(currentTime, isPlaying);
-  if (typeof updateNullCodeHighlights === 'function' && src.includes('New_Day3Part1audio27.mp3')) updateNullCodeHighlights(currentTime, isPlaying);
-
-  // Day 04 Highlights
-  if (typeof updateDay04ArithTableHighlights === 'function' && src.includes('New_Day4Part1audio02.mp3')) updateDay04ArithTableHighlights(currentTime, isPlaying);
-  if (typeof updateDay04ArithCodeHighlights === 'function' && src.includes('New_Day4Part1audio03.mp3')) updateDay04ArithCodeHighlights(currentTime, isPlaying);
-  if (typeof updateDay04PrecedenceTableHighlights === 'function' && src.includes('New_Day4Part1audio06.mp3')) updateDay04PrecedenceTableHighlights(currentTime, isPlaying);
-  if (typeof updateDay04PrecedenceCodeHighlights === 'function' && src.includes('New_Day4Part1audio07.mp3')) updateDay04PrecedenceCodeHighlights(currentTime, isPlaying);
-  if (typeof updateDay04AnyCardHighlight === 'function' && src.includes('New_Day4Part1audio10.mp3')) updateDay04AnyCardHighlight(isPlaying);
-  if (typeof updateDay04AllCardHighlight === 'function' && src.includes('New_Day4Part1audio11.mp3')) updateDay04AllCardHighlight(isPlaying);
-  if (typeof updateDay04EscapeCodeHighlights === 'function' && src.includes('New_Day4Part1audio15.mp3')) updateDay04EscapeCodeHighlights(currentTime, isPlaying);
-  if (typeof updateDay04NullCodeHighlights === 'function' && src.includes('New_Day4Part1audio18.mp3')) updateDay04NullCodeHighlights(currentTime, isPlaying);
-  if (typeof updateDay04ThreeValTableHighlights === 'function' && src.includes('New_Day4Part1audio21.mp3')) updateDay04ThreeValTableHighlights(currentTime, isPlaying);
-  if (typeof updateDay04NotInTrapCodeHighlights === 'function' && src.includes('New_Day4Part1audio22.mp3')) updateDay04NotInTrapCodeHighlights(currentTime, isPlaying);
-}
 
   audio.addEventListener('ended', () => {
     if (myGeneration !== currentGeneration) return;

@@ -290,6 +290,8 @@ def main():
         day_str = f"day{str(args.day).zfill(2)}"
         day_file = f"public/Version-3/content/{day_str}.js"
         if not os.path.exists(day_file):
+            day_file = f"public/Version-3/content/day-{str(args.day).zfill(2)}.js"
+        if not os.path.exists(day_file):
             print(f"Error: {day_file} not found")
             sys.exit(1)
             

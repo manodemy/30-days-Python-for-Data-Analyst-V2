@@ -5834,7 +5834,10 @@ const day02Tracks = [
 ];
 
 const day03Durations = [
-  41.7, 29.8, 17.3, 19.8, 53.3, 30.1, 5.3, 4.5, 3.9, 4.3, 11.4, 31.2, 40.4
+  // Theory narrations (audio01–13)
+  41.7, 29.8, 17.3, 19.8, 53.3, 30.1, 5.3, 4.5, 3.9, 4.3, 11.4, 31.2, 40.4,
+  // Practice Q & Solution narrations (Q01–Q06 + sols)
+  9.2, 19.9, 9.8, 18.5, 9.7, 21.4, 8.5, 19.5, 12.1, 21.1, 8.4, 21.0
 ];
 
 const day03Tracks = [
@@ -5850,7 +5853,20 @@ const day03Tracks = [
   { src: 'Day03/New_Day3Part1audio10.mp3', target: '.prec-card--or', title: 'Logical Operator — OR' },
   { src: 'Day03/New_Day3Part1audio11.mp3', target: '#day03PrecedenceNote', title: 'Operator Precedence Rules' },
   { src: 'Day03/New_Day3Part1audio12.mp3', target: '#day03LogicCode', title: 'AND / OR / NOT Examples' },
-  { src: 'Day03/New_Day3Part1audio13.mp3', target: '#day03LogicWarn', title: 'Precedence Trap Warning' }
+  { src: 'Day03/New_Day3Part1audio13.mp3', target: '#day03LogicWarn', title: 'Precedence Trap Warning' },
+  // ── 6 Practice Questions & Solutions ──
+  { src: 'Day03/New_Day3Question01.mp3',    target: '#questionBar', title: 'Q1: High-Value Products',       type: 'question', qId: 1 },
+  { src: 'Day03/New_Day3Question01sol.mp3', target: '#questionBar', title: 'Q1 Solution: High-Value Products', type: 'solution', qId: 1 },
+  { src: 'Day03/New_Day3Question02.mp3',    target: '#questionBar', title: 'Q2: Regional Customers',        type: 'question', qId: 2 },
+  { src: 'Day03/New_Day3Question02sol.mp3', target: '#questionBar', title: 'Q2 Solution: Regional Customers', type: 'solution', qId: 2 },
+  { src: 'Day03/New_Day3Question03.mp3',    target: '#questionBar', title: 'Q3: Mid-Range Salary Band',     type: 'question', qId: 3 },
+  { src: 'Day03/New_Day3Question03sol.mp3', target: '#questionBar', title: 'Q3 Solution: Mid-Range Salary Band', type: 'solution', qId: 3 },
+  { src: 'Day03/New_Day3Question04.mp3',    target: '#questionBar', title: 'Q4: Name Pattern Search',      type: 'question', qId: 4 },
+  { src: 'Day03/New_Day3Question04sol.mp3', target: '#questionBar', title: 'Q4 Solution: Name Pattern Search', type: 'solution', qId: 4 },
+  { src: 'Day03/New_Day3Question05.mp3',    target: '#questionBar', title: 'Q5: Active Data Science Team', type: 'question', qId: 5 },
+  { src: 'Day03/New_Day3Question05sol.mp3', target: '#questionBar', title: 'Q5 Solution: Active Data Science Team', type: 'solution', qId: 5 },
+  { src: 'Day03/New_Day3Question06.mp3',    target: '#questionBar', title: 'Q6: Employees Without Commission', type: 'question', qId: 6 },
+  { src: 'Day03/New_Day3Question06sol.mp3', target: '#questionBar', title: 'Q6 Solution: Employees Without Commission', type: 'solution', qId: 6 }
 ];
 
 const day04Durations = [

@@ -10218,7 +10218,7 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
     // 4. Strictly hide ALL other slide sections so ONLY the active relevant concept is visible!
     const isDay03 = typeof currentDay !== 'undefined' && currentDay === 'day03';
     const hasHorizontalCards = Boolean(
-      activeSection.querySelector('.prec-grid, .prec-card, .vs-grid, .vs-card, .info-cards-grid, .storage-cards, .cards-grid, #day03PrecWrap, #coreEntities, #sqlSubLanguages, .horizontal-cards, .comparison-grid')
+      activeSection.querySelector('.prec-grid, .prec-card, .vs-block, .vs-grid, .vs-card, .info-cards-grid, .storage-cards, .cards-grid, #day03PrecWrap, #coreEntities, #sqlSubLanguages, .horizontal-cards, .comparison-grid')
     );
 
     container.querySelectorAll('.slide-section').forEach(section => {

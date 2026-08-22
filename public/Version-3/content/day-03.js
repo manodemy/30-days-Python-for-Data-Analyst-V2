@@ -748,7 +748,7 @@ window.COURSE_CONTENT['day03'] = {
           </div>
         </div>
 
-        <div class="slide-section">
+        <div class="slide-section" id="day03BetweenSection">
           <h3 class="heading-with-audio" id="day03Between">
             04. BETWEEN — Inclusive Range Filter
             <button class="audio-play-btn" onclick="playAudio('Day03/New_Day3Part1audio14.mp3', this)" title="Play narration">
@@ -756,9 +756,11 @@ window.COURSE_CONTENT['day03'] = {
             </button>
           </h3>
           <p><code>BETWEEN low AND high</code> is a clean shorthand for <code>&gt;= low AND &lt;= high</code>. <strong>Both endpoints are inclusive.</strong> It works on numbers, dates, and text (lexicographic order for text).</p>
+        </div>
 
-          <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; margin-top: 14px;">
-            <small style="flex: 1; color: #64748b; font-size: 0.75rem;">BETWEEN — Numeric, Date, and NOT BETWEEN</small>
+        <div class="slide-section" id="day03BetweenCodeSection">
+          <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 4px;">
+            <h4 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: #cbd5e1; flex: 1;">BETWEEN — Numeric, Date, and NOT BETWEEN</h4>
             <button class="audio-play-btn" onclick="playAudio('Day03/New_Day3Part1audio15.mp3', this)" title="Play narration" style="flex-shrink: 0;">
               <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
             </button>
@@ -780,11 +782,13 @@ WHERE  order_date BETWEEN '2024-01-01' AND '2024-12-31';
 SELECT name, unit_price
 FROM   products
 WHERE  unit_price NOT BETWEEN 1000 AND 5000;</code></pre>
+        </div>
 
+        <div class="slide-section" id="day03BetweenVsSection">
           <div class="vs-block" id="day03BetweenVs">
             <div class="vs-card" id="day03BetweenOk">
               <h4 style="margin: 0 0 6px; display: flex; align-items: center; gap: 8px;">
-                <span>✅ BETWEEN — Correct Usage</span>
+                <span style="flex: 1;">✅ BETWEEN — Correct Usage</span>
                 <button class="audio-play-btn" onclick="playAudio('Day03/New_Day3Part1audio16.mp3', this)" title="Play narration" style="flex-shrink: 0;">
                   <svg class="play-icon" width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                 </button>
@@ -797,7 +801,7 @@ WHERE  unit_price NOT BETWEEN 1000 AND 5000;</code></pre>
             </div>
             <div class="vs-card" id="day03BetweenDateTip">
               <h4 style="margin: 0 0 6px; display: flex; align-items: center; gap: 8px;">
-                <span>⏰ Date Precision Gotcha</span>
+                <span style="flex: 1;">⏰ Date Precision Gotcha</span>
                 <button class="audio-play-btn" onclick="playAudio('Day03/New_Day3Part1audio17.mp3', this)" title="Play narration" style="flex-shrink: 0;">
                   <svg class="play-icon" width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                 </button>
@@ -811,7 +815,7 @@ WHERE  unit_price NOT BETWEEN 1000 AND 5000;</code></pre>
           </div>
         </div>
 
-        <div class="slide-section">
+        <div class="slide-section" id="day03InSection">
           <h3 class="heading-with-audio" id="day03In">
             05. IN — Matching a List of Values
             <button class="audio-play-btn" onclick="playAudio('Day03/New_Day3Part1audio18.mp3', this)" title="Play narration">
@@ -819,9 +823,11 @@ WHERE  unit_price NOT BETWEEN 1000 AND 5000;</code></pre>
             </button>
           </h3>
           <p><code>IN (...)</code> is a compact replacement for chained <code>OR</code> conditions. The engine checks whether a column's value exists in the provided list. <code>NOT IN</code> inverts that check — returning only rows whose value is absent from the list.</p>
+        </div>
 
-          <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; margin-top: 14px;">
-            <small style="flex: 1; color: #64748b; font-size: 0.75rem;">IN / NOT IN Examples</small>
+        <div class="slide-section" id="day03InCodeSection">
+          <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 4px;">
+            <h4 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: #cbd5e1; flex: 1;">IN / NOT IN Examples</h4>
             <button class="audio-play-btn" onclick="playAudio('Day03/New_Day3Part1audio19.mp3', this)" title="Play narration" style="flex-shrink: 0;">
               <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
             </button>
@@ -845,7 +851,9 @@ WHERE  region IN ('North', 'South', 'East');
 SELECT first_name, department_id
 FROM   employees
 WHERE  department_id NOT IN (10, 20);</code></pre>
+        </div>
 
+        <div class="slide-section" id="day03InWarnSection">
           <div class="warn-box" id="day03InWarn">
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; width: 100%;">
               <strong style="color: #b91c1c; flex: 1;">⚠️ NOT IN with NULLs — Silent Data Loss:</strong>
@@ -859,7 +867,7 @@ WHERE  department_id NOT IN (10, 20);</code></pre>
           </div>
         </div>
 
-        <div class="slide-section">
+        <div class="slide-section" id="day03LikeSection">
           <h3 class="heading-with-audio" id="day03Like">
             06. LIKE — Pattern Matching with Wildcards
             <button class="audio-play-btn" onclick="playAudio('Day03/New_Day3Part1audio21.mp3', this)" title="Play narration">
@@ -867,11 +875,13 @@ WHERE  department_id NOT IN (10, 20);</code></pre>
             </button>
           </h3>
           <p><code>LIKE</code> performs pattern-based string matching using two special wildcard characters. It is the go-to operator for partial text searches — such as finding all customers whose name starts with a letter or all emails from a specific domain.</p>
+        </div>
 
+        <div class="slide-section" id="day03LikeVsSection">
           <div class="vs-block" id="day03LikeVs">
             <div class="vs-card" id="day03LikePercent">
               <h4 style="margin: 0 0 6px; display: flex; align-items: center; gap: 8px;">
-                <span><code>%</code> — Zero or More Characters</span>
+                <span style="flex: 1;"><code>%</code> — Zero or More Characters</span>
                 <button class="audio-play-btn" onclick="playAudio('Day03/New_Day3Part1audio22.mp3', this)" title="Play narration" style="flex-shrink: 0;">
                   <svg class="play-icon" width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                 </button>
@@ -890,7 +900,7 @@ WHERE email LIKE '%@gmail.com'</code></pre>
             </div>
             <div class="vs-card" id="day03LikeUnderscore">
               <h4 style="margin: 0 0 6px; display: flex; align-items: center; gap: 8px;">
-                <span><code>_</code> — Exactly One Character</span>
+                <span style="flex: 1;"><code>_</code> — Exactly One Character</span>
                 <button class="audio-play-btn" onclick="playAudio('Day03/New_Day3Part1audio23.mp3', this)" title="Play narration" style="flex-shrink: 0;">
                   <svg class="play-icon" width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                 </button>
@@ -908,9 +918,11 @@ WHERE email NOT LIKE '%@gmail%'
 WHERE name LIKE '_oo%'  -- 2nd/3rd = 'oo'</code></pre>
             </div>
           </div>
+        </div>
 
-          <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; margin-top: 14px;">
-            <small style="flex: 1; color: #64748b; font-size: 0.75rem;">LIKE in Context — Full Query Examples</small>
+        <div class="slide-section" id="day03LikeCodeSection">
+          <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 4px;">
+            <h4 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: #cbd5e1; flex: 1;">LIKE in Context — Full Query Examples</h4>
             <button class="audio-play-btn" onclick="playAudio('Day03/New_Day3Part1audio24.mp3', this)" title="Play narration" style="flex-shrink: 0;">
               <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
             </button>
@@ -929,10 +941,12 @@ WHERE  name LIKE '%Mouse%';
 SELECT customer_id, email
 FROM   customers
 WHERE  email NOT LIKE '%@gmail.com';</code></pre>
+        </div>
 
+        <div class="slide-section" id="day03LikeTipSection">
           <div class="pro-tip-box" id="day03LikeTip">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; width: 100%;">
-              <strong style="color: #b45309;">💡 Case Sensitivity by Engine:</strong>
+              <strong style="color: #b45309; flex: 1;">💡 Case Sensitivity by Engine:</strong>
               <button class="audio-play-btn" onclick="playAudio('Day03/New_Day3Part1audio25.mp3', this)" title="Play narration" style="flex-shrink: 0;">
                 <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
               </button>
@@ -943,7 +957,7 @@ WHERE  email NOT LIKE '%@gmail.com';</code></pre>
           </div>
         </div>
 
-        <div class="slide-section">
+        <div class="slide-section" id="day03NullSection">
           <h3 class="heading-with-audio" id="day03Null">
             07. IS NULL &amp; IS NOT NULL — Handling Missing Values
             <button class="audio-play-btn" onclick="playAudio('Day03/New_Day3Part1audio26.mp3', this)" title="Play narration">
@@ -951,9 +965,11 @@ WHERE  email NOT LIKE '%@gmail.com';</code></pre>
             </button>
           </h3>
           <p><code>NULL</code> in SQL represents a <strong>missing, unknown, or inapplicable value</strong>. A column is <code>NULL</code> when no data was provided. The critical rule: <strong>you cannot test for NULL with <code>=</code></strong> — the result is always <code>UNKNOWN</code>, never <code>TRUE</code>. Always use <code>IS NULL</code> or <code>IS NOT NULL</code>.</p>
+        </div>
 
-          <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; margin-top: 14px;">
-            <small style="flex: 1; color: #64748b; font-size: 0.75rem;">IS NULL / IS NOT NULL Examples</small>
+        <div class="slide-section" id="day03NullCodeSection">
+          <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 4px;">
+            <h4 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: #cbd5e1; flex: 1;">IS NULL / IS NOT NULL Examples</h4>
             <button class="audio-play-btn" onclick="playAudio('Day03/New_Day3Part1audio27.mp3', this)" title="Play narration" style="flex-shrink: 0;">
               <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
             </button>
@@ -978,11 +994,13 @@ SELECT first_name, commission
 FROM   employees
 WHERE  is_active = 1
   AND  commission IS NOT NULL;</code></pre>
+        </div>
 
+        <div class="slide-section" id="day03NullVsSection">
           <div class="vs-block" id="day03NullVs">
             <div class="vs-card" id="day03NullWrong">
               <h4 style="margin: 0 0 6px; display: flex; align-items: center; gap: 8px;">
-                <span>❌ Wrong — Returns No Rows</span>
+                <span style="flex: 1;">❌ Wrong — Returns No Rows</span>
                 <button class="audio-play-btn" onclick="playAudio('Day03/New_Day3Part1audio28.mp3', this)" title="Play narration" style="flex-shrink: 0;">
                   <svg class="play-icon" width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                 </button>
@@ -996,7 +1014,7 @@ WHERE commission != NULL   -- ❌</code></pre>
             </div>
             <div class="vs-card" id="day03NullRight">
               <h4 style="margin: 0 0 6px; display: flex; align-items: center; gap: 8px;">
-                <span>✅ Correct — Use IS NULL</span>
+                <span style="flex: 1;">✅ Correct — Use IS NULL</span>
                 <button class="audio-play-btn" onclick="playAudio('Day03/New_Day3Part1audio28.mp3', this)" title="Play narration" style="flex-shrink: 0;">
                   <svg class="play-icon" width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                 </button>

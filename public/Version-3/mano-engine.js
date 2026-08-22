@@ -10187,13 +10187,15 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
       return;
     }
 
-    // 4. Focus active slide section and gently dim inactive sections
+    // 4. Strictly hide ALL other slide sections so ONLY the active relevant concept is visible!
     container.querySelectorAll('.slide-section').forEach(section => {
       if (section !== activeSection) {
         section.classList.add('section-hidden');
         section.classList.remove('stunning-section-entry', 'active-section-mounted', 'instant-display');
+        section.style.display = 'none';
       } else {
         section.classList.remove('section-hidden');
+        section.style.display = '';
         section.classList.add('active-section-mounted');
         
         // Zoom appearance ONLY on 1st Narration! For remaining tracks: clean instant display without zoom pop
@@ -10207,21 +10209,13 @@ function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
       }
     });
 
-    // Smoothly scroll the container to position the target section / element cleanly in view!
+    // Reset container scroll to top: 0 so active section starts cleanly with heading visible
     const scrollParent = document.getElementById('slideContent') || container;
     if (scrollParent) {
-      if (isFirstNarration) {
-        scrollParent.scrollTo({ top: 0, behavior: isSeek ? 'auto' : 'smooth' });
-      } else {
-        const containerRect = scrollParent.getBoundingClientRect();
-        const blockToScroll = targetEl.closest('.slide-section') || targetEl;
-        const targetRect = blockToScroll.getBoundingClientRect();
-        const relativeTop = targetRect.top - containerRect.top + scrollParent.scrollTop;
-        scrollParent.scrollTo({
-          top: Math.max(0, relativeTop - 24),
-          behavior: isSeek ? 'auto' : 'smooth'
-        });
-      }
+      scrollParent.scrollTo({
+        top: 0,
+        behavior: isSeek ? 'auto' : 'smooth'
+      });
     }
 
     // 5. If target is inside an .interview-box, show ONLY the active question card and hide all other sibling cards

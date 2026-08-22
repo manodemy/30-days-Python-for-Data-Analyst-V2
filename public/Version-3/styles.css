@@ -6868,7 +6868,7 @@ span.sql-identifier {
 
 
 /* ─── P2 #15: Class-based visibility helpers ─────────────────────── */
-.section-hidden    { opacity: 0.22; }
+.section-hidden    { display: none !important; }
 .vis-target-hidden { opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
 .vis-target-dimmed { opacity: 0.25; transition: opacity 0.3s ease; }
 .vis-target-active { opacity: 1; transition: opacity 0.3s ease; }
@@ -7272,10 +7272,17 @@ select:focus:not(:focus-visible) {
 }
 
 .playback-active .slide-section.section-hidden {
-  opacity: 0.18 !important;
-  filter: blur(0.4px) grayscale(40%) !important;
+  display: none !important;
+  opacity: 0 !important;
   pointer-events: none !important;
+}
+
+.playback-active .slide-section:not(.section-hidden) {
   display: block !important;
+  opacity: 1 !important;
+  filter: none !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
 }
 
 .narration-spotlight-active {
@@ -7339,7 +7346,7 @@ select:focus:not(:focus-visible) {
 }
 
 .section-hidden {
-  display: block;
+  display: none !important;
 }
 
 /* ═══════════════════════════════════════════════════════════════

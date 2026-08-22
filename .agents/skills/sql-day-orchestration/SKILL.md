@@ -258,8 +258,8 @@ Added: Day03 — destructive audio unloading caused a delay between click and pl
 Supersedes: none
 
 [SYNC-013] [STATUS: active] [SCOPE: Sync]
-Statement: Natural Presentation Scrolling & Focus Dimming Protocol: During narration playback, the full document height and element flow MUST be preserved (non-active sections are gently dimmed to 18-22% opacity with blur/grayscale, NEVER collapsed with display:none). Track 01 (lesson opener) mounts with the stunning hero zoom entrance at top: 0. From Track 02 onwards, the engine smoothly scrolls the container (behavior: 'smooth') to position the active section cleanly in the student's viewport (top: Math.max(0, relativeTop - 24)). This eliminates jarring top jumps, preserving a seamless, cinematic scrolling lecture experience. On pause/stop, clearSlidePlaybackVisibility() instantly restores 100% full opacity and interactivity to all sections.
-Added: Day03 — user noted that collapsing inactive sections with display:none forced every section to jump to top: 0; replaced with natural smooth scrolling and focus dimming.
+Statement: Complete Irrelevant Content Hiding (display: none) Protocol: During narration playback of ANY track, all non-active slide sections MUST be strictly and completely hidden (display: none !important via .section-hidden) — never blurred, dimmed, or partially visible. The student must see ONLY the active concept card in pristine isolation. The hero zoom entrance animation (.stunning-section-entry with scale-pop) applies ONLY to Track 01 (lesson opener) at top: 0. From Track 02 onwards, the active section mounts cleanly without zoom-pop (.instant-display) at top: 0 (scrollParent.scrollTop = 0). On pause/stop, clearSlidePlaybackVisibility() instantly restores full visibility (display: '') of all sections across the entire slide document for full scrollability.
+Added: Day03 — user strictly mandated that irrelevant content must be 100% hidden (display: none !important) and not blurred during narration playback.
 Supersedes: none
 
 [SYNC-014] [STATUS: active] [SCOPE: Sync]

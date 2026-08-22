@@ -10,9 +10,8 @@ window.COURSE_CONTENT['day03'] = {
       "title": "Filtering Data: WHERE, Operators & Pattern Matching",
       "duration": "4:53",
       "html": `
-        <h2>🔍 Filtering Data: WHERE, Operators &amp; Pattern Matching</h2>
-
         <div class="slide-section" id="day03WhereSection">
+          <h2>🔍 Filtering Data: WHERE, Operators &amp; Pattern Matching</h2>
           <h3 class="heading-with-audio" id="day03Where">
             01. The WHERE Clause — Row-Level Filtering
             <button class="audio-play-btn" onclick="playAudio('Day03/New_Day3Part1audio01.mp3', this)" title="Play narration">

@@ -9051,10 +9051,12 @@ function updateDay01SqlSubLanguagesHighlights(activeTarget, isPlaying) {
 
 function loadAndPlayTrack(index, targetTime = 0) {
   const myGeneration = ++currentGeneration;
+  isCombinedPlaying = true;
 
   if (activeAudioInstance) {
-    activeAudioInstance.pause();
+    const oldAudio = activeAudioInstance;
     activeAudioInstance = null;
+    try { oldAudio.pause(); } catch (e) { }
   }
 
   loadManifest().catch(() => { });
@@ -9091,17 +9093,23 @@ function loadAndPlayTrack(index, targetTime = 0) {
     if (myGeneration === currentGeneration) toggleBufferingState(true);
   });
   audio.addEventListener('play', () => {
-    // Guard: if user clicked pause between play() call and this async event, do NOT override
-    if (myGeneration === currentGeneration && isCombinedPlaying) {
+    if (myGeneration === currentGeneration) {
+      isCombinedPlaying = true;
       updatePlayButtonStates(true);
+      if (track.type !== 'question' && track.type !== 'solution' && track.target) {
+        isNarrationActive = true;
+        updateSlidePlaybackVisibility(track.target);
+      }
     }
   });
   audio.addEventListener('playing', () => {
-    // Guard: same race-condition guard for 'playing' (fires after buffering completes)
     if (myGeneration === currentGeneration) {
+      isCombinedPlaying = true;
       toggleBufferingState(false);
-      if (isCombinedPlaying) {
-        updatePlayButtonStates(true);
+      updatePlayButtonStates(true);
+      if (track.type !== 'question' && track.type !== 'solution' && track.target) {
+        isNarrationActive = true;
+        updateSlidePlaybackVisibility(track.target);
       }
     }
   });
@@ -9135,9 +9143,8 @@ function loadAndPlayTrack(index, targetTime = 0) {
   audio.play()
     .then(() => {
       hasCompletedFirstGestureBoundPlay = true;
-      // Guard: only set playing state if audio is actually still playing
-      // (user may have clicked pause between play() call and this async resolution)
-      if (!audio.paused && isCombinedPlaying) {
+      if (myGeneration === currentGeneration && !audio.paused) {
+        isCombinedPlaying = true;
         updatePlayButtonStates(true);
         if (track.type !== 'question' && track.type !== 'solution') {
           isNarrationActive = true;
@@ -9209,6 +9216,7 @@ function loadAndPlayTrack(index, targetTime = 0) {
 
   audio.addEventListener('pause', () => {
     if (myGeneration !== currentGeneration) return;
+    if (audio.ended) return; // Do NOT clear state if pause fired due to track completion (auto-advancing)
     isCombinedPlaying = false;
     updatePlayButtonStates(false);
     if (typeof clearSlidePlaybackVisibility === 'function') clearSlidePlaybackVisibility();
@@ -9276,9 +9284,7 @@ function loadAndPlayTrack(index, targetTime = 0) {
 
     currentCombinedTime = elapsed;
     updateProgressUI();
-    // Use isCombinedPlaying as authoritative source — NOT audio.paused — to avoid the
-    // race where timeupdate fires after pause() call but before the browser 'pause' event.
-    updatePlayButtonStates(isCombinedPlaying);
+    updatePlayButtonStates(!audio.paused && isCombinedPlaying);
     maybePrefetchNext(audio, index);
   });
 

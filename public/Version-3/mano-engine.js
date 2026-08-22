@@ -8653,6 +8653,9 @@ function updateCompCodeHighlights(currentTime, isPlaying) {
   q2.classList.toggle('code-active-spotlight', isQ2);
   q3.classList.toggle('narration-highlight', isQ3);
   q3.classList.toggle('code-active-spotlight', isQ3);
+  if (isQ1) narrationScrollToSubblock(q1);
+  if (isQ2) narrationScrollToSubblock(q2);
+  if (isQ3) narrationScrollToSubblock(q3);
 }
 
 function updateLogicCodeHighlights(currentTime, isPlaying) {
@@ -8680,6 +8683,31 @@ function updateLogicCodeHighlights(currentTime, isPlaying) {
   q2.classList.toggle('code-active-spotlight', isQ2);
   q3.classList.toggle('narration-highlight', isQ3);
   q3.classList.toggle('code-active-spotlight', isQ3);
+  if (isQ1) narrationScrollToSubblock(q1);
+  if (isQ2) narrationScrollToSubblock(q2);
+  if (isQ3) narrationScrollToSubblock(q3);
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   [SYNC-020] Narration Subblock Smooth-Scroll Protocol
+   Gently scrolls the newly-active code sub-block into the nearest
+   visible viewport position during narration. Uses a per-element
+   350ms debounce so it fires only once per card transition, never
+   on every timeupdate tick. block:'nearest' ensures minimal scroll —
+   it will not move the page at all if the card is already visible.
+   ───────────────────────────────────────────────────────────────── */
+const _narScrollTimers = new WeakMap();
+function narrationScrollToSubblock(el) {
+  if (!el) return;
+  if (_narScrollTimers.has(el)) return; // already queued for this card
+  const rect = el.getBoundingClientRect();
+  const inView = rect.top >= 0 && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight);
+  if (inView) return; // fully visible — no scroll needed
+  const tid = setTimeout(() => {
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    setTimeout(() => _narScrollTimers.delete(el), 600);
+  }, 80); // slight delay so highlight transition renders first
+  _narScrollTimers.set(el, tid);
 }
 
 function updateBetweenCodeHighlights(currentTime, isPlaying) {
@@ -8707,6 +8735,9 @@ function updateBetweenCodeHighlights(currentTime, isPlaying) {
   q2.classList.toggle('code-active-spotlight', isQ2);
   q3.classList.toggle('narration-highlight', isQ3);
   q3.classList.toggle('code-active-spotlight', isQ3);
+  if (isQ1) narrationScrollToSubblock(q1);
+  if (isQ2) narrationScrollToSubblock(q2);
+  if (isQ3) narrationScrollToSubblock(q3);
 }
 
 function updateInCodeHighlights(currentTime, isPlaying) {
@@ -8734,6 +8765,9 @@ function updateInCodeHighlights(currentTime, isPlaying) {
   q2.classList.toggle('code-active-spotlight', isQ2);
   q3.classList.toggle('narration-highlight', isQ3);
   q3.classList.toggle('code-active-spotlight', isQ3);
+  if (isQ1) narrationScrollToSubblock(q1);
+  if (isQ2) narrationScrollToSubblock(q2);
+  if (isQ3) narrationScrollToSubblock(q3);
 }
 
 function updateLikeCodeHighlights(currentTime, isPlaying) {
@@ -8761,6 +8795,9 @@ function updateLikeCodeHighlights(currentTime, isPlaying) {
   q2.classList.toggle('code-active-spotlight', isQ2);
   q3.classList.toggle('narration-highlight', isQ3);
   q3.classList.toggle('code-active-spotlight', isQ3);
+  if (isQ1) narrationScrollToSubblock(q1);
+  if (isQ2) narrationScrollToSubblock(q2);
+  if (isQ3) narrationScrollToSubblock(q3);
 }
 
 function updateNullCodeHighlights(currentTime, isPlaying) {
@@ -8793,6 +8830,10 @@ function updateNullCodeHighlights(currentTime, isPlaying) {
   q3.classList.toggle('code-active-spotlight', isQ3);
   q4.classList.toggle('narration-highlight', isQ4);
   q4.classList.toggle('code-active-spotlight', isQ4);
+  if (isQ1) narrationScrollToSubblock(q1);
+  if (isQ2) narrationScrollToSubblock(q2);
+  if (isQ3) narrationScrollToSubblock(q3);
+  if (isQ4) narrationScrollToSubblock(q4);
 }
 
 function updateDay01Audio01Highlights(currentTime, isPlaying) {

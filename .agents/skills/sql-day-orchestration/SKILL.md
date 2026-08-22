@@ -358,37 +358,17 @@ Added: Day03 — audit previously verified registered engine tracks against disk
 Supersedes: none
 
 [SYNC-020] [STATUS: active] [SCOPE: Sync]
-Statement: Narration Subblock Smooth-Scroll Protocol (2+ Card Safe-Zone Standard):
-Whenever a `.code-block-container` holds 2 or more `.code-subblock` cards (i.e., any multi-query code block where cards extend down the viewport), the Sync Agent MUST wire `narrationScrollToSubblock(el)` alongside every highlight toggle so newly-activated cards smoothly scroll into prime center view during narration.
-  (1) Scroll Threshold: Active for all containers with 2+ cards whenever Card 2, 3, or 4 is reached.
-  (2) Safe-Zone Guard: Calculates `topSafeLimit = 60px` and `bottomSafeLimit = viewportHeight - 110px` to prevent the card from being occluded or cropped by the fixed bottom playback bar.
-  (3) Alignment: Uses `el.scrollIntoView({ behavior: 'smooth', block: 'center' })` to guarantee the active query is cleanly positioned in the central viewport with generous upper and lower breathing room.
-  (4) Performance: Uses a WeakMap-based per-element debounce so scrolling only fires once per card activation transition.
-Added: Day03 — user reported that Card 3 was getting cropped behind the bottom player bar when scrolling. Updated threshold to 2+ cards with center alignment and bottom bar clearance offset.
-Supersedes: none
+Statement: Progressive Card Sliding Window & Stationary Heading Standard:
+Whenever a multi-query `.code-block-container` contains 2 or more `.code-subblock` cards (e.g. `IS NULL / IS NOT NULL`, `LIKE in Context`, `Comparison Operator Examples`, `Arithmetic Operator Examples`), the Sync Agent and Engine MUST maintain a stationary section heading and dynamic card windowing:
+  (1) Stationary Section Heading: The section title (`<h4>`, `<h3>`, `.heading-with-audio`) MUST remain 100% fixed and visible at the top of the container with dedicated 26px–30px headroom clearance (`topPadding = 26`) throughout all query animations.
+  (2) Progressive Card Sliding Window:
+      - When Query 1 is active: All cards are displayed in natural order beneath the heading.
+      - When Query 3 becomes active / approaches the bottom viewport cutoff: Card 1 smoothly collapses and disappears via `.subblock-scrolled-out` (`max-height: 0; opacity: 0; transform: translateY(-16px)` over 0.45s). Card 2 glides up into position 1 (right below the fixed heading), and Card 3 glides up into position 2 (fully visible in viewport).
+      - When Query 4 becomes active: Card 2 also collapses with `.subblock-scrolled-out`, Card 3 glides into position 1, and Card 4 glides into position 2.
+  (3) Auto-Restoration on Pause / Seek / Section Switch: On pause, backward scrub, or when switching slide sections, `clearSlidePlaybackVisibility()` and `updateSlidePlaybackVisibility()` MUST immediately remove `.subblock-scrolled-out` from all `.code-subblock` elements to restore full multi-card scrollability.
+Added: Day03/Day04 — scrolling the whole container down pushed headings offscreen, while locking headings without card windowing cut off bottom cards. The progressive card sliding window guarantees both a stationary heading and 100% visible active cards.
+Supersedes: center-scroll subblock behavior
 
-[TIMEKEEPER-004] [STATUS: active] [SCOPE: Timekeeper]
-Statement: Async Audio Play/Pause Race Condition Guard — The Golden Rule: ANY code path that calls `updatePlayButtonStates(true)` or sets `isCombinedPlaying = true` asynchronously (inside a `.then()`, `'play'` event, `'playing'` event, or `timeupdate` handler) MUST be guarded before execution. There are exactly 5 async entry points that can conflict with a user's pause click — all must follow this contract:
-  (1) `audio.play().then()` in `loadAndPlayTrack` — guard with `if (!audio.paused && isCombinedPlaying)` before any state mutation.
-  (2) `audio.play().then()` in `playCombinedPlayback` — guard with `if (!activeAudioInstance || !isCombinedPlaying) return`.
-  (3) `'play'` event listener — guard with `if (myGeneration === currentGeneration && isCombinedPlaying)`.
-  (4) `'playing'` event listener — wrap `updatePlayButtonStates(true)` in `if (isCombinedPlaying)`.
-  (5) `timeupdate` handler — use `updatePlayButtonStates(isCombinedPlaying)` NEVER `updatePlayButtonStates(!audio.paused && isCombinedPlaying)`. `isCombinedPlaying` is the SINGLE AUTHORITATIVE SOURCE of pause intent. `audio.paused` is a lagging browser signal and must never be used as a primary state gate. When adding any new audio integration for future days (Day04–Day18), any new `.then()`, event listener, or polling loop that touches play state MUST follow these guards or the pause button will become intermittently unreliable.
-Added: Day03 — user reported intermittent pause failure. Root cause: 5 async browser events fired in the window between user clicking pause and browser emitting the 'pause' event, each capable of flipping isCombinedPlaying back to true and overriding the pause. All 5 race points closed.
-Supersedes: none
-
-[TIMEKEEPER-005] [STATUS: active] [SCOPE: Timekeeper]
-Statement: Play Lesson Button Visual Identity Standard for Day03+: Every day HTML file from Day03 onwards MUST include: (1) the `@keyframes playBtnRadarPulse` CSS animation and `.p11-play-radar-pulse` class in a `<style>` block in the `<head>`, (2) the `.p11-play-radar-pulse` class applied directly to `#navPlayBtn` in the HTML (not inline opacity or pointer-events), and (3) NO `opacity` or `pointer-events` inline styles on `#navPlayBtn` that would make it appear disabled. The `updatePlayButtonStates()` function in mano-engine.js automatically manages the radar pulse class: it removes it when playing (equalizer takes over) and restores it when paused (for days where currentDay !== 'day01' && currentDay !== 'day02'). Day01.html is exempt as it uses its own inline radar pulse CSS. Day02.html is also exempt (no radar pulse). All future days (Day04+) must copy the `<style>` block pattern from day03.html exactly.
-Added: Day03 — Play Lesson button had `opacity: 0.6` inline style (stale scaffolding artifact) making it look permanently disabled. Also missing radar pulse CSS entirely, making the button feel dead on page load.
-Supersedes: none
-[SYNC-021] [STATUS: active] [SCOPE: Sync]
-Statement: Interview Question Card Presentation & Single-Card Isolation Standard:
-Every Day from Day 01 through Day 18 MUST format Interview Q&A cards following the unified container architecture:
-  (1) Markup: Wrap the entire Q&A block in `<div class="slide-section" id="dayXXQASection"><div class="interview-box"><h4 id="dayXXQAHeading">🎓 Interview Insights &amp; Q&amp;A</h4> ... </div></div>`.
-  (2) Card Rows: Each question MUST be a direct child `<div>` with a unique ID (e.g., `#day03QANull`, `#day03QANotIn`), separated by `<hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />`.
-  (3) Single-Card Narration Isolation: During playback of an interview track, `updateSlidePlaybackVisibility(targetSelector)` MUST isolate and display ONLY the active question card (`display: ''` with `.block-active-spotlight`), while hiding all sibling cards (`display: 'none'`, `.vis-target-hidden`) and all non-interview slide sections.
-  (4) Pause / Free Reading Restore: On pause or lesson completion, `clearSlidePlaybackVisibility()` MUST immediately restore all Q&A cards in `.interview-box > div` to `display: ''` so students can freely scroll and read all questions.
-Added: Day03 — replicated Day 01 interview card isolation standard to ensure focused, single-card display during interview audio narration and complete multi-card restoration on pause.
 [TIMEKEEPER-006] [STATUS: active] [SCOPE: Timekeeper]
 Statement: Lesson Completion Full Timeline Reset & Stop Contract:
 Upon completion of the final audio narration track in the master timeline (`combinedTrackIndex === combinedTracks.length - 1`):
@@ -397,5 +377,19 @@ Upon completion of the final audio narration track in the master timeline (`comb
   (3) State Machine: `isCombinedPlaying` and `isNarrationActive` MUST be set to `false`, and `updatePlayButtonStates(false)` called so all buttons render the standard Play (▶) icon.
   (4) Visual & Viewport Restoration: `clearSlidePlaybackVisibility()` MUST restore all slide sections and interview cards, the active question bar highlight MUST be cleared, and `#slideContent` smoothly scrolled back to the top (`0, 0`).
 Added: Day03 — user requested that once all narrations finish playing, the timeline must automatically return to starting position (0:00) and stop cleanly.
+Supersedes: none
+
+[TIMEKEEPER-007] [STATUS: active] [SCOPE: Timekeeper]
+Statement: End-of-Track Infinite Replay Loop Prevention & Generation Invalidation Contract:
+When any track completes playback in `onNarrationSegmentEnded` (both in single-play mode and on the final master timeline lesson track), the engine MUST execute `currentGeneration++` BEFORE tearing down or clearing `activeAudioInstance.src = ""`.
+  (1) Root Cause: Setting `audio.src = ""` immediately triggers a native browser `error` event. If `currentGeneration` is not incremented beforehand, the error event handler invokes `retryOrShowError`, which waits 800ms and replays the track in an infinite loop.
+  (2) Promise Lifecycle Guard: All `audio.play().then()` and `.catch()` callbacks MUST begin with `if (myGeneration !== currentGeneration) return;` to prevent lagging play promises from resurrecting `isCombinedPlaying = true` after a track has completed or paused.
+Added: Day03/Day04 — eliminated phantom audio error events and prevented infinite replay loops across all 18 days.
+Supersedes: none
+
+[THEORIST-003] [STATUS: active] [SCOPE: Theorist]
+Statement: Slide Section Headroom & Heading Typography Spacing Standard:
+Every `.slide-section` and section heading (`h3`, `h4`, `.heading-with-audio`) MUST be configured with `scroll-margin-top: 36px !important;` and `padding-top: 4px !important;` in `styles.css`. Multi-query code containers (`.code-block-container`) must be direct siblings below their section heading, allowing `getVisibilityBlock()` in `mano-engine.js` to resolve the parent section and maintain uniform ~30px breathing room beneath the sticky header bar across all viewports.
+Added: Day03/Day04 — prevented section titles from being clipped by sticky header borders during scroll and spotlight transitions.
 Supersedes: none
 ```

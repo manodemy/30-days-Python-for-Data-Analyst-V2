@@ -12,7 +12,7 @@ window.COURSE_CONTENT['day03'] = {
       "html": `
         <h2>🔍 Filtering Data: WHERE, Operators &amp; Pattern Matching</h2>
 
-        <div class="slide-section">
+        <div class="slide-section" id="day03WhereSection">
           <h3 class="heading-with-audio" id="day03Where">
             01. The WHERE Clause — Row-Level Filtering
             <button class="audio-play-btn" onclick="playAudio('Day03/New_Day3Part1audio01.mp3', this)" title="Play narration">
@@ -20,9 +20,11 @@ window.COURSE_CONTENT['day03'] = {
             </button>
           </h3>
           <p>The <code>WHERE</code> clause is SQL's <strong>horizontal row-level filter</strong>. The database engine evaluates the boolean expression in <code>WHERE</code> for every candidate row produced by <code>FROM</code>. Only rows that evaluate to <code>TRUE</code> pass through — rows that evaluate to <code>FALSE</code> <em>or</em> <code>NULL</code> are silently discarded.</p>
+        </div>
 
-          <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; margin-top: 14px;">
-            <small style="flex: 1; color: #64748b; font-size: 0.75rem;">WHERE Clause — Minimal Anatomy</small>
+        <div class="slide-section" id="day03WhereCodeSection">
+          <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 4px;">
+            <h4 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: #cbd5e1; flex: 1;">WHERE Clause — Minimal Anatomy</h4>
             <button class="audio-play-btn" onclick="playAudio('Day03/New_Day3Part1audio02.mp3', this)" title="Play narration" style="flex-shrink: 0;">
               <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
             </button>
@@ -38,7 +40,9 @@ SELECT first_name,
        salary
 FROM   employees
 WHERE  salary > 80000;</code></pre>
+        </div>
 
+        <div class="slide-section" id="day03WhereInfoSection">
           <div class="info-box" id="day03WhereInfo">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; width: 100%;">
               <strong style="color: #0f766e;">ℹ️ Execution Order:</strong>
@@ -277,7 +281,7 @@ WHERE  salary > 80000;</code></pre>
           </div>
         </div>
 
-        <div class="slide-section">
+        <div class="slide-section" id="day03CompOpsSection">
           <h3 class="heading-with-audio" id="day03CompOps">
             02. Comparison Operators — The Building Blocks
             <button class="audio-play-btn" onclick="playAudio('Day03/New_Day3Part1audio04.mp3', this)" title="Play narration">
@@ -285,10 +289,12 @@ WHERE  salary > 80000;</code></pre>
             </button>
           </h3>
           <p>Every <code>WHERE</code> predicate is built from comparison operators. Each one compares a column value to a literal, another column, or an expression and returns <code>TRUE</code>, <code>FALSE</code>, or <code>UNKNOWN</code> (when <code>NULL</code> is involved).</p>
+        </div>
 
+        <div class="slide-section" id="day03OpsTableSection">
           <div class="db-mock-table-wrap" id="day03OpsTable">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; padding: 0 4px;">
-              <small style="flex: 1; color: #64748b; font-size: 0.75rem; font-weight: 600;">Comparison Operator Reference</small>
+              <h4 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: #cbd5e1; flex: 1;">Comparison Operator Reference</h4>
               <button class="audio-play-btn" onclick="playAudio('Day03/New_Day3Part1audio05.mp3', this)" title="Play narration" style="flex-shrink: 0;">
                 <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
               </button>
@@ -305,9 +311,11 @@ WHERE  salary > 80000;</code></pre>
               </tbody>
             </table>
           </div>
+        </div>
 
-          <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; margin-top: 14px;">
-            <small style="flex: 1; color: #64748b; font-size: 0.75rem;">Comparison Operator Examples</small>
+        <div class="slide-section" id="day03CompCodeSection">
+          <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 4px;">
+            <h4 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: #cbd5e1; flex: 1;">Comparison Operator Examples</h4>
             <button class="audio-play-btn" onclick="playAudio('Day03/New_Day3Part1audio06.mp3', this)" title="Play narration" style="flex-shrink: 0;">
               <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
             </button>
@@ -683,9 +691,11 @@ WHERE  unit_price <= 1000
               </p>
             </div>
           </div>
+        </div>
 
-          <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; margin-top: 14px;">
-            <small style="flex: 1; color: #64748b; font-size: 0.75rem;">AND / OR / NOT Examples</small>
+        <div class="slide-section" id="day03LogicCodeSection">
+          <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 4px;">
+            <h4 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: #cbd5e1; flex: 1;">AND / OR / NOT Examples</h4>
             <button class="audio-play-btn" onclick="playAudio('Day03/New_Day3Part1audio12.mp3', this)" title="Play narration" style="flex-shrink: 0;">
               <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
             </button>
@@ -712,7 +722,9 @@ SELECT first_name, department_id, salary
 FROM   employees
 WHERE  (department_id = 10 OR department_id = 20)
   AND  salary > 60000;</code></pre>
+        </div>
 
+        <div class="slide-section" id="day03LogicWarnSection">
           <div class="warn-box" id="day03LogicWarn">
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; width: 100%;">
               <strong style="color: #b91c1c;">⚠️ Precedence Trap:</strong>

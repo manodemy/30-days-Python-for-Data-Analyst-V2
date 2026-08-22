@@ -87,13 +87,13 @@ window.COURSE_CONTENT['day04'] = {
             <table class="db-table-mock db-table-mock--compact">
               <thead><tr><th>Precedence</th><th>Operators</th><th>Description</th></tr></thead>
               <tbody>
-                <tr><td>1 (highest)</td><td><code>( )</code></td><td>Parentheses — explicitly group</td></tr>
-                <tr><td>2</td><td><code>* / %</code></td><td>Multiplication, Division, Modulo</td></tr>
-                <tr><td>3</td><td><code>+ -</code></td><td>Addition, Subtraction</td></tr>
-                <tr><td>4</td><td><code>= &lt;&gt; &lt; &gt; &lt;= &gt;=</code></td><td>Comparison operators</td></tr>
-                <tr><td>5</td><td><code>NOT</code></td><td>Logical NOT</td></tr>
-                <tr><td>6</td><td><code>AND</code></td><td>Logical AND</td></tr>
-                <tr><td>7 (lowest)</td><td><code>OR</code></td><td>Logical OR</td></tr>
+                <tr id="precRow1"><td>1 (highest)</td><td><code>( )</code></td><td>Parentheses — explicitly group</td></tr>
+                <tr id="precRow2"><td>2</td><td><code>* / %</code></td><td>Multiplication, Division, Modulo</td></tr>
+                <tr id="precRow3"><td>3</td><td><code>+ -</code></td><td>Addition, Subtraction</td></tr>
+                <tr id="precRow4"><td>4</td><td><code>= &lt;&gt; &lt; &gt; &lt;= &gt;=</code></td><td>Comparison operators</td></tr>
+                <tr id="precRow5"><td>5</td><td><code>NOT</code></td><td>Logical NOT</td></tr>
+                <tr id="precRow6"><td>6</td><td><code>AND</code></td><td>Logical AND</td></tr>
+                <tr id="precRow7"><td>7 (lowest)</td><td><code>OR</code></td><td>Logical OR</td></tr>
               </tbody>
             </table>
           </div>
@@ -285,12 +285,12 @@ window.COURSE_CONTENT['day04'] = {
             <table class="db-table-mock db-table-mock--compact">
               <thead><tr><th>Expression</th><th>Result</th><th>Why</th></tr></thead>
               <tbody>
-                <tr><td><code>5 = 5</code></td><td>TRUE</td><td>Equal values</td></tr>
-                <tr><td><code>5 = NULL</code></td><td>UNKNOWN</td><td>Comparison with NULL</td></tr>
-                <tr><td><code>NULL = NULL</code></td><td>UNKNOWN</td><td>Two unknowns</td></tr>
-                <tr><td><code>NOT UNKNOWN</code></td><td>UNKNOWN</td><td>NOT of unknown stays unknown</td></tr>
-                <tr><td><code>TRUE AND UNKNOWN</code></td><td>UNKNOWN</td><td>Unknown dominates</td></tr>
-                <tr><td><code>FALSE OR UNKNOWN</code></td><td>UNKNOWN</td><td>Not definitely true</td></tr>
+                <tr id="threeValRow1"><td><code>5 = 5</code></td><td>TRUE</td><td>Equal values</td></tr>
+                <tr id="threeValRow2"><td><code>5 = NULL</code></td><td>UNKNOWN</td><td>Comparison with NULL</td></tr>
+                <tr id="threeValRow3"><td><code>NULL = NULL</code></td><td>UNKNOWN</td><td>Two unknowns</td></tr>
+                <tr id="threeValRow4"><td><code>NOT UNKNOWN</code></td><td>UNKNOWN</td><td>NOT of unknown stays unknown</td></tr>
+                <tr id="threeValRow5"><td><code>TRUE AND UNKNOWN</code></td><td>UNKNOWN</td><td>Unknown dominates</td></tr>
+                <tr id="threeValRow6"><td><code>FALSE OR UNKNOWN</code></td><td>UNKNOWN</td><td>Not definitely true</td></tr>
               </tbody>
             </table>
           </div>

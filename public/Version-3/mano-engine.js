@@ -3429,8 +3429,8 @@ const REEL_CHALLENGES = {
         <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-01-R1', 'A')">⚡ Load Option A (Trap)</button>
         <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-01-R1', 'B')">⚡ Load Option B (Fix)</button>
       </div>`,
-    codeA: "SELECT *\nFROM employees\nWHERE department_id NOT IN (\n  SELECT department_id\n  FROM departments\n);",
-    codeB: "SELECT *\nFROM employees\nWHERE department_id NOT IN (\n  SELECT department_id\n  FROM departments\n  WHERE department_id IS NOT NULL\n);"
+    codeA: "SELECT *\nFROM employees\nWHERE department_id NOT IN (\n  SELECT manager_id\n  FROM departments\n);",
+    codeB: "SELECT *\nFROM employees\nWHERE department_id NOT IN (\n  SELECT manager_id\n  FROM departments\n  WHERE manager_id IS NOT NULL\n);"
   },
   'SQL-01-R2': {
     day: 'day04',

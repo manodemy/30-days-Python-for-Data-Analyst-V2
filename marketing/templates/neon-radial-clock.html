@@ -138,13 +138,13 @@
   /* ============ STEP 2: MULTI-LINE HOOK & CLEAN QUESTION PARAGRAPH ============ */
   .hook-stage-container{
     position: absolute;
-    top: 14.5cqw;
+    top: 11.6cqw;
     left: 4cqw;
     right: 4cqw;
     z-index: 10;
     display: flex;
     flex-direction: column;
-    gap: 1.8cqw;
+    gap: 0.8cqw;
     justify-content: center;
     align-items: center;
     text-align: center;
@@ -158,7 +158,7 @@
 
   .hook-title-line{
     font-weight: 900;
-    font-size: 5.4cqw;
+    font-size: 4.8cqw;
     line-height: 1.15;
     letter-spacing: -0.01em;
     text-transform: uppercase;
@@ -168,14 +168,14 @@
   .hook-question-text{
     font-family: 'Outfit', 'Plus Jakarta Sans', var(--font-hook);
     font-weight: 800;
-    font-size: 4.4cqw;
-    line-height: 1.30;
+    font-size: 3.7cqw;
+    line-height: 1.25;
     letter-spacing: -0.01em;
     color: #f8fafc;
     text-shadow: 0 3px 16px rgba(0, 0, 0, 0.95);
     text-align: center;
     text-wrap: balance;
-    max-width: 88cqw;
+    max-width: 86cqw;
     margin: 0 auto;
   }
 
@@ -259,23 +259,23 @@
     transform: translate(-50%, -50%) scale(2.0);
   }
 
-  /* ============ STEP 3: CHRONOGRAPH STOPWATCH ============ */
+  /* ============ STEP 3: CHRONOGRAPH STOPWATCH (90% Sizing) ============ */
   .clock-stage-container{
-    position:absolute;
-    top: 33.4cqw;
+    position: absolute;
+    top: 30.5cqw;
     left: 0;
     right: 0;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    z-index:10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
     transition: opacity 0.45s ease, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
   .chronograph-housing{
     position: relative;
-    width: 20.5cqw;
-    height: 20.5cqw;
+    width: 18.5cqw;
+    height: 18.5cqw;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -284,43 +284,43 @@
 
   .crown-main{
     position: absolute;
-    top: -2.2cqw;
+    top: -1.9cqw;
     left: 50%;
     transform: translateX(-50%);
-    width: 4.2cqw;
-    height: 2cqw;
+    width: 3.8cqw;
+    height: 1.8cqw;
     background: linear-gradient(90deg, #374151 0%, #9ca3af 35%, #f3f4f6 50%, #9ca3af 65%, #374151 100%);
-    border-radius: 0.5cqw 0.5cqw 0 0;
+    border-radius: 0.4cqw 0.4cqw 0 0;
     box-shadow: 0 -0.4cqw 0.8cqw rgba(0,0,0,0.6);
     z-index: 1;
   }
 
   .pusher-left{
     position: absolute;
-    top: 0.6cqw; left: 1cqw;
-    width: 1.8cqw; height: 3cqw;
+    top: 0.5cqw; left: 0.9cqw;
+    width: 1.6cqw; height: 2.6cqw;
     background: linear-gradient(135deg, #9ca3af, #374151);
-    border-radius: 0.4cqw;
+    border-radius: 0.3cqw;
     transform: rotate(-38deg);
     z-index: 1;
   }
   .pusher-right{
     position: absolute;
-    top: 0.6cqw; right: 1cqw;
-    width: 1.8cqw; height: 3cqw;
+    top: 0.5cqw; right: 0.9cqw;
+    width: 1.6cqw; height: 2.6cqw;
     background: linear-gradient(225deg, #9ca3af, #374151);
-    border-radius: 0.4cqw;
+    border-radius: 0.3cqw;
     transform: rotate(38deg);
     z-index: 1;
   }
 
   .bezel-outer-ring{
     position: relative;
-    width: 19.5cqw;
-    height: 19.5cqw;
+    width: 17.5cqw;
+    height: 17.5cqw;
     border-radius: 50%;
     background: conic-gradient(from 0deg, #2d3748, #4a5568, #1a202c, #4a5568, #2d3748);
-    border: 0.5cqw solid #1e293b;
+    border: 0.4cqw solid #1e293b;
     box-shadow: 
       0 2cqw 6cqw rgba(0, 0, 0, 0.95),
       0 0 0 0.3cqw rgba(255, 255, 255, 0.2),
@@ -333,8 +333,8 @@
 
   .bezel-inner-ring{
     position: relative;
-    width: 16.8cqw;
-    height: 16.8cqw;
+    width: 15.0cqw;
+    height: 15.0cqw;
     border-radius: 50%;
     background: #090c14;
     border: 0.3cqw solid #334155;
@@ -380,7 +380,7 @@
   .chronograph-needle{
     position: absolute;
     top: 50%; left: 50%;
-    width: 0.4cqw; height: 6.8cqw;
+    width: 0.4cqw; height: 6.0cqw;
     background: linear-gradient(180deg, var(--pink), #ff4770);
     border-radius: 2px;
     transform-origin: bottom center;
@@ -393,7 +393,7 @@
     position: absolute;
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    width: 1.8cqw; height: 1.8cqw;
+    width: 1.5cqw; height: 1.5cqw;
     border-radius: 50%;
     background: radial-gradient(circle, #ffffff 30%, #9ca3af 70%, #374151 100%);
     border: 0.3cqw solid var(--pink);
@@ -411,7 +411,7 @@
     margin-top: -0.8cqw;
   }
   .digital-time-num{
-    font-size: 6.8cqw;
+    font-size: 6.0cqw;
     font-weight: 900;
     line-height: 1;
     color: #ffffff;
@@ -420,7 +420,7 @@
   }
   .digital-time-num.hot{ text-shadow: 0 0 20px rgba(255, 0, 122, 0.95); }
   .digital-time-unit{
-    font-size: 1.5cqw;
+    font-size: 1.3cqw;
     font-weight: 800;
     letter-spacing: 0.18em;
     color: var(--cyan);
@@ -1972,8 +1972,8 @@ function computeOptionsAndClockStage(elapsedMs, cues){
   const optionsStage = document.getElementById('optionsStage');
   if(!optionsStage) return;
 
-  const topUpper = 33.4; // cqw (High Prominence & Perfect 3.0cqw Uniform Gap)
-  const topLower = 57.4; // cqw (Clearance below Stopwatch Dial)
+  const topUpper = 29.8; // cqw (Generous 3.8cqw clearance below Question text)
+  const topLower = 52.5; // cqw (Generous 3.5cqw clearance below 90% Stopwatch)
   const glideDuration = 450; // ms for buttery smooth glide transition
 
   // 1. Before Question is Narrated (0 -> t_line2_start): Code cells hidden below

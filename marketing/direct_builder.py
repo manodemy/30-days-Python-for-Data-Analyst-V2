@@ -271,8 +271,8 @@ REELS_CATALOG = {
         "badge": "SQL · Aggregations",
         "hook": "COUNT(*) VS COUNT(COL) 🔢\nWhich query counts all employees without dropping NULLs?",
         "hookLineObjects": [
-            {"text": "COUNT(*) VS COUNT(COL) 🔢", "font": "Plus Jakarta Sans", "size": 5.4},
-            {"text": "Which query counts all employees without dropping NULLs?", "font": "Outfit", "size": 4.4}
+            {"text": "COUNT(*) VS COUNT(COL) 🔢", "font": "Plus Jakarta Sans", "size": 4.8},
+            {"text": "Which query counts all employees without dropping NULLs?", "font": "Outfit", "size": 3.7}
         ],
         "hookHighlights": [
             {"text": "COUNT(*)", "color": "#facc15"},
@@ -297,8 +297,8 @@ REELS_CATALOG = {
         "badge": "SQL · Precedence",
         "hook": "SQL \"OR\" PRECEDENCE BUG 🐛\nWhich query returns strictly active employees in Dept 10 or 20?",
         "hookLineObjects": [
-            {"text": "SQL \"OR\" PRECEDENCE BUG 🐛", "font": "Plus Jakarta Sans", "size": 5.4},
-            {"text": "Which query returns strictly active employees in Dept 10 or 20?", "font": "Outfit", "size": 4.4}
+            {"text": "SQL \"OR\" PRECEDENCE BUG 🐛", "font": "Plus Jakarta Sans", "size": 4.8},
+            {"text": "Which query returns strictly active employees in Dept 10 or 20?", "font": "Outfit", "size": 3.7}
         ],
         "hookHighlights": [
             {"text": "PRECEDENCE BUG", "color": "#facc15"},

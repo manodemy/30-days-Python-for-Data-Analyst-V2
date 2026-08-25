@@ -1928,35 +1928,31 @@ function computeHookLine1Anim(elapsedMs){
   }
 }
 
-function computeHookLine2Anim(elapsedMs, t_line2_start){
+function computeHookLine2Anim(elapsedMs){
   const line2 = document.getElementById('hookLine_1');
   if(!line2) return;
 
-  if(elapsedMs < t_line2_start){
-    line2.style.opacity = '0';
-    line2.style.transform = 'translateY(4.5cqw) scale(0.90)';
-    line2.style.filter = 'blur(8px)';
-  } else if(elapsedMs >= t_line2_start && elapsedMs < t_line2_start + 550){
-    const t = (elapsedMs - t_line2_start) / 550.0;
+  if(elapsedMs < 600){
+    const t = Math.max(0, elapsedMs) / 600.0;
     let scale, ty, rot, op, blur;
     if(t < 0.40){
       const p = t / 0.40;
       const ease = Math.sin(p * Math.PI / 2);
       scale = 1.36 - (1.36 - 0.92) * ease;
-      ty = 4.5 + (-0.8 - 4.5) * p;
+      ty = 3.5 + (-0.6 - 3.5) * p;
       rot = 1.2 + (-0.5 - 1.2) * p;
       op = Math.min(1.0, p * 3.0);
       blur = Math.max(0, 8 * (1 - p));
     } else if(t < 0.70){
       const p = (t - 0.40) / 0.30;
       scale = 0.92 + (1.06 - 0.92) * p;
-      ty = -0.8 - (-0.8 - 0.3) * p;
+      ty = -0.6 - (-0.6 - 0.2) * p;
       rot = -0.5 - (-0.5 - 0.2) * p;
       op = 1.0; blur = 0;
     } else {
       const p = (t - 0.70) / 0.30;
       scale = 1.06 - (1.06 - 1.0) * p;
-      ty = 0.3 - 0.3 * p;
+      ty = 0.2 - 0.2 * p;
       rot = 0.2 - 0.2 * p;
       op = 1.0; blur = 0;
     }
@@ -1980,17 +1976,39 @@ function computeOptionsAndClockStage(elapsedMs, cues){
   const topLower = 57.4; // cqw (Clearance below Stopwatch Dial)
   const glideDuration = 450; // ms for buttery smooth glide transition
 
-  // 1. Before Clock Enters (0 -> t_clock_in)
-  if(elapsedMs < cues.t_clock_in){
+  // 1. Before Question is Narrated (0 -> t_line2_start): Code cells hidden below
+  if(elapsedMs < cues.t_line2_start){
     if(clockStage){
       clockStage.style.opacity = '0';
       clockStage.style.transform = 'scale(0.4) translateY(4cqw)';
       clockStage.style.pointerEvents = 'none';
     }
     optionsStage.style.top = `${topUpper.toFixed(2)}cqw`;
-    optionsStage.style.opacity = elapsedMs >= cues.t_line2_start ? '1' : '0';
+    optionsStage.style.opacity = '0';
+    optionsStage.style.transform = 'translateY(3.5cqw) scale(0.94)';
   }
-  // 2. Clock Entry Glide Down (t_clock_in -> t_clock_in + glideDuration)
+  // 2. Question Narration Begins (t_line2_start -> t_line2_start + glideDuration): Smooth spring reveal of code cells!
+  else if(elapsedMs >= cues.t_line2_start && elapsedMs < cues.t_line2_start + glideDuration && elapsedMs < cues.t_clock_in){
+    const p = (elapsedMs - cues.t_line2_start) / glideDuration;
+    const ease = Math.sin(p * Math.PI / 2);
+    const ty = 3.5 * (1 - ease);
+    const scale = 0.94 + (1.0 - 0.94) * ease;
+    optionsStage.style.top = `${topUpper.toFixed(2)}cqw`;
+    optionsStage.style.opacity = Math.min(1.0, p * 2.5).toFixed(2);
+    optionsStage.style.transform = `translateY(${ty.toFixed(2)}cqw) scale(${scale.toFixed(3)})`;
+  }
+  // 3. Steady State before clock enters (t_line2_start + glideDuration -> t_clock_in)
+  else if(elapsedMs >= cues.t_line2_start + glideDuration && elapsedMs < cues.t_clock_in){
+    if(clockStage){
+      clockStage.style.opacity = '0';
+      clockStage.style.transform = 'scale(0.4) translateY(4cqw)';
+      clockStage.style.pointerEvents = 'none';
+    }
+    optionsStage.style.top = `${topUpper.toFixed(2)}cqw`;
+    optionsStage.style.opacity = '1';
+    optionsStage.style.transform = 'translateY(0) scale(1)';
+  }
+  // 4. Clock Entry Glide Down (t_clock_in -> t_clock_in + glideDuration)
   else if(elapsedMs >= cues.t_clock_in && elapsedMs < cues.t_clock_in + glideDuration){
     const p = (elapsedMs - cues.t_clock_in) / glideDuration;
     // Smooth cubic bezier easeInOut: 3p^2 - 2p^3
@@ -1998,6 +2016,7 @@ function computeOptionsAndClockStage(elapsedMs, cues){
     const curTop = topUpper + (topLower - topUpper) * ease;
     optionsStage.style.top = `${curTop.toFixed(2)}cqw`;
     optionsStage.style.opacity = '1';
+    optionsStage.style.transform = 'translateY(0) scale(1)';
 
     if(clockStage){
       const scale = 0.4 + (1.0 - 0.4) * ease;
@@ -2007,10 +2026,11 @@ function computeOptionsAndClockStage(elapsedMs, cues){
       clockStage.style.pointerEvents = 'auto';
     }
   }
-  // 3. Clock Active Steady State (t_clock_in + glideDuration -> t_clock_out)
+  // 5. Clock Active Steady State (t_clock_in + glideDuration -> t_clock_out)
   else if(elapsedMs >= cues.t_clock_in + glideDuration && elapsedMs < cues.t_clock_out){
     optionsStage.style.top = `${topLower.toFixed(2)}cqw`;
     optionsStage.style.opacity = '1';
+    optionsStage.style.transform = 'translateY(0) scale(1)';
 
     if(clockStage){
       clockStage.style.opacity = '1';
@@ -2018,13 +2038,14 @@ function computeOptionsAndClockStage(elapsedMs, cues){
       clockStage.style.pointerEvents = 'auto';
     }
   }
-  // 4. Clock Exit Glide Up (t_clock_out -> t_clock_out + glideDuration)
+  // 6. Clock Exit Glide Up (t_clock_out -> t_clock_out + glideDuration)
   else if(elapsedMs >= cues.t_clock_out && elapsedMs < cues.t_clock_out + glideDuration){
     const p = (elapsedMs - cues.t_clock_out) / glideDuration;
     const ease = p * p * (3 - 2 * p);
     const curTop = topLower - (topLower - topUpper) * ease;
     optionsStage.style.top = `${curTop.toFixed(2)}cqw`;
     optionsStage.style.opacity = '1';
+    optionsStage.style.transform = 'translateY(0) scale(1)';
 
     if(clockStage){
       const scale = 1.0 - (1.0 - 0.4) * ease;
@@ -2034,10 +2055,11 @@ function computeOptionsAndClockStage(elapsedMs, cues){
       clockStage.style.pointerEvents = 'none';
     }
   }
-  // 5. Post-Clock Steady State (t_clock_out + glideDuration -> totalMs)
+  // 7. Post-Clock Steady State (t_clock_out + glideDuration -> totalMs)
   else {
     optionsStage.style.top = `${topUpper.toFixed(2)}cqw`;
     optionsStage.style.opacity = '1';
+    optionsStage.style.transform = 'translateY(0) scale(1)';
 
     if(clockStage){
       clockStage.style.opacity = '0';
@@ -2058,11 +2080,11 @@ function renderTimelineState(elapsedMs){
   // 1. Compute Deterministic Mathematical Frame Animations
   computeLogoFrameAnim(elapsedMs);
   computeHookLine1Anim(elapsedMs);
-  computeHookLine2Anim(elapsedMs, cues.t_line2_start);
+  computeHookLine2Anim(elapsedMs);
   computeOptionsAndClockStage(elapsedMs, cues);
 
   // ==========================================
-  // PHASE 1: 0ms -> t_line2_start (Hook 1 Title Only)
+  // PHASE 1: 0ms -> t_line2_start (Hook & Complete Question Card Entry)
   // ==========================================
   if(elapsedMs < cues.t_line2_start){
     // Explosive Hook Impact Trigger at 0.0s!

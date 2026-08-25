@@ -64,8 +64,8 @@ function isPaidUser() {
 const URL_PARAMS = new URLSearchParams(window.location.search);
 const REEL_QUESTION_PARAM = URL_PARAMS.get('q') || URL_PARAMS.get('question');
 const REEL_DAY_PARAM = parseInt(URL_PARAMS.get('day') || '1', 10);
-const IS_GUEST_REEL = Boolean(REEL_QUESTION_PARAM && !URL_PARAMS.has('admin_override'));
-const ALLOWED_GUEST_QUESTION_NUM = IS_GUEST_REEL ? parseInt(REEL_QUESTION_PARAM, 10) : null;
+const IS_GUEST_REEL = Boolean((REEL_QUESTION_PARAM || URL_PARAMS.get('challenge') || URL_PARAMS.get('reel') || URL_PARAMS.get('utm_campaign')) && !URL_PARAMS.has('admin_override'));
+const ALLOWED_GUEST_QUESTION_NUM = IS_GUEST_REEL ? parseInt(REEL_QUESTION_PARAM || '1', 10) : null;
 
 function showGuestPaywallModal(featureTitle = 'this feature') {
   let modal = document.getElementById('manodemyPaywallModal');
@@ -5268,11 +5268,30 @@ function loadDayContent(dayId) {
   }
 
   // 2. Days 03–30: Paywall check for non-paid users
+  const chalId = typeof getActiveChallengeId === 'function' ? getActiveChallengeId() : null;
+  const isGuestReelPass = IS_GUEST_REEL || Boolean(chalId) || Boolean(URL_PARAMS.get('challenge')) || Boolean(URL_PARAMS.get('reel')) || Boolean(URL_PARAMS.get('utm_campaign'));
+
   if (!isPaidUser() && !isAdminUser()) {
-    if (dayNum >= 3 && (!IS_GUEST_REEL || dayNum !== REEL_DAY_PARAM)) {
+    if (dayNum >= 3 && !isGuestReelPass) {
       showGuestPaywallModal(`Day ${String(dayNum).padStart(2, '0')}`);
       return;
     }
+  }
+
+  // Pre-render challenge question immediately if challenge param is active (0ms instant render)
+  if (chalId && REEL_CHALLENGES[chalId]) {
+    const chal = REEL_CHALLENGES[chalId];
+    COURSE_CONFIG.practiceQuestions = [{
+      id: 1,
+      isChallenge: true,
+      title: chal.title,
+      prompt: `<strong>${chal.task}</strong><br/>${chal.prompt}`,
+      referenceSql: chal.codeB,
+      codeA: chal.codeA
+    }];
+    currentPracticeQ = 0;
+    renderPracticeQuestion();
+    if (mainEditor) mainEditor.setValue(chal.codeA);
   }
 
   const dayContent = window.COURSE_CONTENT && window.COURSE_CONTENT[dayId];
@@ -5578,6 +5597,23 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     await initDatabase();
     initMainEditor();
+
+    // Instant 0ms render for reel challenge on initial DOMContentLoaded
+    const initialChal = typeof getActiveChallengeId === 'function' ? getActiveChallengeId() : null;
+    if (initialChal && REEL_CHALLENGES[initialChal]) {
+      const chal = REEL_CHALLENGES[initialChal];
+      COURSE_CONFIG.practiceQuestions = [{
+        id: 1,
+        isChallenge: true,
+        title: chal.title,
+        prompt: `<strong>${chal.task}</strong><br/>${chal.prompt}`,
+        referenceSql: chal.codeB,
+        codeA: chal.codeA
+      }];
+      currentPracticeQ = 0;
+      renderPracticeQuestion();
+      if (mainEditor) mainEditor.setValue(chal.codeA);
+    }
 
     // Eagerly load the manifest so accurate durations are available immediately
     loadManifest().catch(() => { }); // Non-blocking — fallback durations already set

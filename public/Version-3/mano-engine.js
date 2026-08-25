@@ -4953,14 +4953,25 @@ function runCurrentQuery() {
     logRecQueryExec(query, result);
 
     // Auto-grade current practice question
-    const q = COURSE_CONFIG.practiceQuestions[currentPracticeQ];
+    const chalId = typeof getActiveChallengeId === 'function' ? getActiveChallengeId() : null;
+    const chal = chalId ? REEL_CHALLENGES[chalId] : null;
+
+    let q = (COURSE_CONFIG.practiceQuestions && COURSE_CONFIG.practiceQuestions[currentPracticeQ]) || null;
+    if (chal) {
+      q = {
+        id: 1,
+        isChallenge: true,
+        title: chal.title,
+        prompt: `<strong>${chal.task}</strong><br/>${chal.prompt}`,
+        referenceSql: chal.codeB,
+        codeA: chal.codeA
+      };
+    }
+
     let correct = false;
     if (q) {
       const gradingResult = window.gradeSubmission(query, q, db);
       correct = gradingResult.passed;
-
-      const chalId = typeof getActiveChallengeId === 'function' ? getActiveChallengeId() : null;
-      const chal = chalId ? REEL_CHALLENGES[chalId] : null;
 
       if (correct) {
         const solvedKey = `${currentDay}-${q.id}`;
@@ -5355,7 +5366,7 @@ function loadDayContent(dayId) {
     } else {
       delete COURSE_CONFIG.topicPracticeQuestions;
     }
-    if (dayContent.practiceQuestions) {
+    if (!chalId && dayContent.practiceQuestions) {
       COURSE_CONFIG.practiceQuestions = dayContent.practiceQuestions;
       // Also update allPracticeQuestions map
       if (!COURSE_CONFIG.allPracticeQuestions) COURSE_CONFIG.allPracticeQuestions = {};

@@ -269,14 +269,14 @@ REELS_CATALOG = {
         "reelNo": "SQL-03-R1",
         "day": "DAY 04",
         "badge": "SQL · Aggregations",
-        "hook": "COUNT(*) VS COUNT(COL) 🔢\nCOUNT WITHOUT DROPPING NULLS ?",
+        "hook": "COUNT(*) VS COUNT(COL) 🔢\nWhich query counts all employees without dropping NULLs?",
         "hookLineObjects": [
-            {"text": "COUNT(*) VS COUNT(COL) 🔢", "font": "Plus Jakarta Sans", "size": 5.6},
-            {"text": "COUNT WITHOUT DROPPING NULLS ?", "font": "Outfit", "size": 4.9}
+            {"text": "COUNT(*) VS COUNT(COL) 🔢", "font": "Plus Jakarta Sans", "size": 5.2},
+            {"text": "Which query counts all employees without dropping NULLs?", "font": "Space Grotesk", "size": 3.4}
         ],
         "hookHighlights": [
             {"text": "COUNT(*)", "color": "#facc15"},
-            {"text": "DROPPING NULLS", "color": "#00f0ff"}
+            {"text": "without dropping NULLs", "color": "#00f0ff"}
         ],
         "lang": "sql",
         "codeA": "SELECT department_id,\n       COUNT(commission) AS total_emps\nFROM employees\nWHERE department_id = 20",
@@ -295,14 +295,14 @@ REELS_CATALOG = {
         "reelNo": "SQL-03-R2",
         "day": "DAY 04",
         "badge": "SQL · Precedence",
-        "hook": "SQL \"OR\" PRECEDENCE BUG 🐛\nSTRICTLY ACTIVE EMPLOYEES ?",
+        "hook": "SQL \"OR\" PRECEDENCE BUG 🐛\nWhich query returns strictly active employees in Dept 10 or 20?",
         "hookLineObjects": [
-            {"text": "SQL \"OR\" PRECEDENCE BUG 🐛", "font": "Plus Jakarta Sans", "size": 5.5},
-            {"text": "STRICTLY ACTIVE EMPLOYEES ?", "font": "Outfit", "size": 5.0}
+            {"text": "SQL \"OR\" PRECEDENCE BUG 🐛", "font": "Plus Jakarta Sans", "size": 5.2},
+            {"text": "Which query returns strictly active employees in Dept 10 or 20?", "font": "Space Grotesk", "size": 3.4}
         ],
         "hookHighlights": [
             {"text": "PRECEDENCE BUG", "color": "#facc15"},
-            {"text": "ACTIVE EMPLOYEES", "color": "#00f0ff"}
+            {"text": "strictly active employees", "color": "#00f0ff"}
         ],
         "lang": "sql",
         "codeA": "SELECT first_name, department_id, is_active\nFROM employees\nWHERE is_active = 1\n  AND department_id = 20\n   OR department_id = 10",
@@ -312,8 +312,8 @@ REELS_CATALOG = {
         "ccStyle": "hormozi",
         "ccEnabled": True,
         "voice": "en-US-AndrewNeural",
-        "voiceScript": "The sneakiest Boolean operator bug in SQL!\nWhich query returns strictly active employees?\nChoose your answer.\nOption A...\nor Option B?\nDrop your vote in the comments below.",
-        "caption": "SQL \"OR\" PRECEDENCE BUG 🐛\nWhich query returns strictly ACTIVE employees without pulling inactive rows?\n\nCan you spot the trap before checking the pinned comment? \n\nDrop your vote (A or B) below 👇\n\n\nPractice Data Skills \n👉 Day 1 & Day 2 are 100% FREE\n🔗 Link in bio / manodemy.com/q6\n\n#sql #sqlinterview #sqltips #dataanalytics #dataengineer #datascience #dataanalyst #sqlquery #faang #techinterview #codinginterview #learnsql #database #manodemy #dataanalysis",
+        "voiceScript": "The sneakiest Boolean operator bug in SQL!\nWhich query returns strictly active employees in department ten or twenty?\nChoose your answer.\nOption A...\nor Option B?\nDrop your vote in the comments below.",
+        "caption": "SQL \"OR\" PRECEDENCE BUG 🐛\nWhich query returns strictly ACTIVE employees in Dept 10 or 20?\n\nCan you spot the trap before checking the pinned comment? \n\nDrop your vote (A or B) below 👇\n\n\nPractice Data Skills \n👉 Day 1 & Day 2 are 100% FREE\n🔗 Link in bio / manodemy.com/q6\n\n#sql #sqlinterview #sqltips #dataanalytics #dataengineer #datascience #dataanalyst #sqlquery #faang #techinterview #codinginterview #learnsql #database #manodemy #dataanalysis",
         "pinnedAnswer": "Option A is the trap ❌ | Option B is correct ✅\n\nWhy Option A returns inactive employees:\nIn SQL operator precedence, `AND` takes priority over `OR` (`A AND B OR C` evaluates as `(A AND B) OR C`).\nBecause of this, ANY employee in Department 10 is returned — even if they are inactive (`is_active = 0`)!\n\nOption B uses parentheses `AND (dept = 20 OR dept = 10)` to strictly enforce active status on both departments.\n\n💡 Pro-tip: Always use parentheses when mixing AND and OR in WHERE clauses!\n\nBe honest — did you get this right? 👇",
         "link": "https://www.manodemy.com/q6"
     }

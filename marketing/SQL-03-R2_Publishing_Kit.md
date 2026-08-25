@@ -10,8 +10,8 @@
 > **Copy & paste this directly into your caption:**
 
 ```text
-SQL "OR" PRECEDENCE BUG 💀
-Which query returns strictly ACTIVE employees without pulling inactive rows?
+SQL "OR" PRECEDENCE BUG 🐛
+Which query returns strictly ACTIVE employees in Dept 10 or 20?
 
 Can you spot the trap before checking the pinned comment? 
 

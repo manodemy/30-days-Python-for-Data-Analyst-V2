@@ -10,7 +10,7 @@
 > **Copy & paste this directly into your caption:**
 
 ```text
-COUNT(*) VS COUNT(COL) 💀
+COUNT(*) VS COUNT(COL) 🔢
 Which query counts all employees without dropping NULLs?
 
 Can you spot the trap before checking the pinned comment? 

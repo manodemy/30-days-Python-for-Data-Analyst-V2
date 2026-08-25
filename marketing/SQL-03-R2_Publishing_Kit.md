@@ -10,7 +10,7 @@
 > **Copy & paste this directly into your caption:**
 
 ```text
-SQL "OR" PRECEDENCE BUG 🐛
+PRECEDENCE BUG 🐛
 Which query returns strictly ACTIVE employees in Dept 10 or 20?
 
 Can you spot the trap before checking the pinned comment? 

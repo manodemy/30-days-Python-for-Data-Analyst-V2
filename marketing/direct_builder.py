@@ -295,10 +295,10 @@ REELS_CATALOG = {
         "reelNo": "SQL-03-R2",
         "day": "DAY 04",
         "badge": "SQL · Precedence",
-        "hook": "SQL \"OR\" PRECEDENCE BUG 🐛\nWhich query returns strictly active employees in Dept 10 or 20?",
+        "hook": "PRECEDENCE BUG 🐛\nWhich query returns strictly active employees in Dept 10 or 20?",
         "hookLineObjects": [
-            {"text": "SQL \"OR\" PRECEDENCE BUG 🐛", "font": "Plus Jakarta Sans", "size": 4.8},
-            {"text": "Which query returns strictly active employees in Dept 10 or 20?", "font": "Outfit", "size": 3.7}
+            {"text": "PRECEDENCE BUG 🐛", "font": "Plus Jakarta Sans", "size": 4.8},
+            {"text": "Which query returns strictly active employees in Dept 10 or 20?", "font": "Outfit", "size": 3.6}
         ],
         "hookHighlights": [
             {"text": "PRECEDENCE BUG", "color": "#facc15"},
@@ -313,7 +313,7 @@ REELS_CATALOG = {
         "ccEnabled": True,
         "voice": "en-US-AndrewNeural",
         "voiceScript": "The sneakiest Boolean operator bug in SQL!\nWhich query returns strictly active employees in department ten or twenty?\nChoose your answer.\nOption A...\nor Option B?\nDrop your vote in the comments below.",
-        "caption": "SQL \"OR\" PRECEDENCE BUG 🐛\nWhich query returns strictly ACTIVE employees in Dept 10 or 20?\n\nCan you spot the trap before checking the pinned comment? \n\nDrop your vote (A or B) below 👇\n\n\nPractice Data Skills \n👉 Day 1 & Day 2 are 100% FREE\n🔗 Link in bio / manodemy.com/q6\n\n#sql #sqlinterview #sqltips #dataanalytics #dataengineer #datascience #dataanalyst #sqlquery #faang #techinterview #codinginterview #learnsql #database #manodemy #dataanalysis",
+        "caption": "PRECEDENCE BUG 🐛\nWhich query returns strictly ACTIVE employees in Dept 10 or 20?\n\nCan you spot the trap before checking the pinned comment? \n\nDrop your vote (A or B) below 👇\n\n\nPractice Data Skills \n👉 Day 1 & Day 2 are 100% FREE\n🔗 Link in bio / manodemy.com/q6\n\n#sql #sqlinterview #sqltips #dataanalytics #dataengineer #datascience #dataanalyst #sqlquery #faang #techinterview #codinginterview #learnsql #database #manodemy #dataanalysis",
         "pinnedAnswer": "Option A is the trap ❌ | Option B is correct ✅\n\nWhy Option A returns inactive employees:\nIn SQL operator precedence, `AND` takes priority over `OR` (`A AND B OR C` evaluates as `(A AND B) OR C`).\nBecause of this, ANY employee in Department 10 is returned — even if they are inactive (`is_active = 0`)!\n\nOption B uses parentheses `AND (dept = 20 OR dept = 10)` to strictly enforce active status on both departments.\n\n💡 Pro-tip: Always use parentheses when mixing AND and OR in WHERE clauses!\n\nBe honest — did you get this right? 👇",
         "link": "https://www.manodemy.com/q6"
     }
@@ -396,7 +396,7 @@ async def build_direct_video(reel=DEFAULT_REEL, is_4k=False, fps=30):
         audio_segments["optB"] +
         AudioSegment.silent(duration=tension_ms) +
         audio_segments["cta"] +
-        AudioSegment.silent(duration=300)
+        AudioSegment.silent(duration=1300)
     )
     narration_out = AUDIO_DIR / f"{reel_no}_narration.mp3"
     raw_narration.export(str(narration_out), format="mp3", bitrate="320k")
@@ -503,7 +503,7 @@ async def build_direct_video(reel=DEFAULT_REEL, is_4k=False, fps=30):
     all_words = p0_words + p1_words + p2_words + p3_words + p4_words + p5_words
     print(f"   ✓ Extracted {len(all_words)} word cues across {len(phrases)} perfectly aligned phrases", flush=True)
 
-    hold_ms = 1500  # 1.5-second hold after voiceover finishes for user reaction
+    hold_ms = 2500  # 2.5-second hold after voiceover finishes for user reaction and live link viewing
     total_ms = t_voice_end + hold_ms
     total_sec = total_ms / 1000.0
 

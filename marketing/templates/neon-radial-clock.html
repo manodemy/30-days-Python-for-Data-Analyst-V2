@@ -786,6 +786,42 @@
   .poll-btn-a .poll-btn-pill{ background: #00f59b; color: #02140b; }
   .poll-btn-b .poll-btn-pill{ background: #c084fc; color: #110222; }
 
+  /* ⚡ HYBRID LIVE SANDBOX CTA PILL */
+  .live-sandbox-pill{
+    margin-top: 1.6cqw;
+    padding: 1.1cqw 3.6cqw;
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(6, 9, 19, 0.95), rgba(15, 23, 42, 0.98));
+    border: 1.5px solid rgba(0, 240, 255, 0.65);
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.35), 0 8px 20px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.35);
+    display: inline-flex;
+    align-items: center;
+    gap: 1.4cqw;
+    font-family: var(--font-code);
+    animation: livePillGlowPulse 2.2s infinite ease-in-out;
+  }
+
+  .live-sandbox-pill .sandbox-label{
+    color: #94a3b8;
+    font-size: 2.3cqw;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  .live-sandbox-pill .sandbox-url{
+    background: linear-gradient(135deg, #00f0ff, #c084fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 900;
+    font-size: 2.8cqw;
+    letter-spacing: 0.04em;
+  }
+
+  @keyframes livePillGlowPulse{
+    0%, 100% { box-shadow: 0 0 16px rgba(0, 240, 255, 0.3), 0 8px 20px rgba(0,0,0,0.8); }
+    50% { box-shadow: 0 0 32px rgba(0, 240, 255, 0.75), 0 0 45px rgba(168, 85, 247, 0.45), 0 8px 20px rgba(0,0,0,0.8); }
+  }
+
   /* ============ STEP 6: VIRAL KINETIC CLOSED CAPTIONS (CC) STAGE ============ */
   .cc-stage-container{
     width: 100%;
@@ -1035,7 +1071,7 @@
       </div>
     </div>
 
-    <!-- STEP 5: POLL CTA (COMMENTS) -->
+    <!-- STEP 5: POLL CTA (COMMENTS + DIRECT FREE SANDBOX BRIDGE) -->
     <div class="poll-stage-container" id="pollStage">
       <div class="poll-cta-instruction" id="pollInstr">DROP YOUR VOTE IN COMMENTS 👇</div>
       <div class="poll-buttons-grid">
@@ -1047,6 +1083,10 @@
           <div class="poll-btn-pill">B</div>
           <span>VOTE B</span>
         </div>
+      </div>
+      <div class="live-sandbox-pill" id="liveSandboxPill">
+        <span class="sandbox-label">⚡ Test Live in 3s:</span>
+        <span class="sandbox-url" id="sandboxUrl">manodemy.com/q5</span>
       </div>
     </div>
 
@@ -2318,6 +2358,24 @@ function applyData(d){
   }
   if(d.ccEnabled !== undefined) currentData.ccEnabled = d.ccEnabled;
   if(d.ccStyle !== undefined) currentData.ccStyle = d.ccStyle;
+  
+  if(d.link !== undefined || d.simulatorLink !== undefined || d.reelNo !== undefined) {
+    const rawLink = d.link || d.simulatorLink || '';
+    let shortDisplay = 'manodemy.com';
+    const rNo = (d.reelNo || currentData.reelNo || '').toUpperCase();
+    if(rNo === 'SQL-01-R1') shortDisplay = 'manodemy.com/q1';
+    else if(rNo === 'SQL-01-R2') shortDisplay = 'manodemy.com/q2';
+    else if(rNo === 'SQL-02-R1') shortDisplay = 'manodemy.com/q3';
+    else if(rNo === 'SQL-02-R2') shortDisplay = 'manodemy.com/q4';
+    else if(rNo === 'SQL-03-R1') shortDisplay = 'manodemy.com/q5';
+    else if(rNo === 'SQL-03-R2') shortDisplay = 'manodemy.com/q6';
+    else if(rawLink) {
+      shortDisplay = rawLink.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
+    }
+    const sEl = document.getElementById('sandboxUrl');
+    if(sEl) sEl.textContent = shortDisplay;
+  }
+
   applyFonts();
   renderHook();
   renderCodeCards();

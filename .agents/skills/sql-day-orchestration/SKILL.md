@@ -18,6 +18,7 @@ This skill governs the end-to-end production assembly line, role responsibilitie
 | **Compass** | Curriculum & Schema Mapping | SQL Syllabus & Seed DBs | Topic Spec, DB Schema Map, Target Tables |
 | **Theorist** | Theory Slide Authoring | Topic Spec & Asset paths | `COURSE_CONTENT['dayXX'].slides` HTML |
 | **Quizzer** | Practice & Interview Questions | DB Schema & Difficulty Arc | `COURSE_CONTENT['dayXX'].practiceQuestions` |
+| **Coach** *(New & Evolving)* | **Cognitive Diagnostics & 1-Click Auto-Fix Engine** | Topic Spec + Practice Questions + DB Schema | 1) Topic-specific anti-pattern diagnostic rules<br>2) 1-click actionable auto-fixes (`applyCoachFix`)<br>3) Interactive Schema Peeking Tooltips<br>4) Codified error classifiers for continuous curriculum evolution |
 | **Voice** | Narration Script & Audio Production | Slide content & Solution SQL | Normalized MP3 files in `public/Version-3/DayXX/` |
 | **Sync** *(Upgraded)* | **Full-Spectrum Narration & Visual Syncing + Pattern Evolution** | Theory & Solution MP3s + Slide HTML + Solution SQL | 1) Whisper ASR sub-second Theory Visual Sync handlers (`updateTableHighlights`, card spotlights, timeline progressions)<br>2) `solutionEvents` JSON with 7-space layout<br>3) Codified sync patterns for future day evolution |
 | **Timekeeper** | Timeline Stitching & Engine Wiring | Audio durations + Track list | `mano-engine.js` registry, Cache-busters |
@@ -34,9 +35,10 @@ flowchart TD
         Compass["Compass (Curriculum & Schema Map)"]
     end
 
-    subgraph STAGE_2 ["Stage 2: Content & Question Drafting (Concurrent)"]
+    subgraph STAGE_2 ["Stage 2: Content, Question Drafting & Diagnostics (Concurrent)"]
         Theorist["Theorist (Slide HTML Authoring)"]
         Quizzer["Quizzer (Practice Questions + SQL Solutions)"]
+        Coach["Coach (Topic Error Taxonomy & 1-Click Auto-Fixes)"]
     end
 
     subgraph STAGE_3 ["Stage 3: Audio Production"]
@@ -51,11 +53,11 @@ flowchart TD
     end
 
     subgraph STAGE_5 ["Stage 5: Engine Registration & Linking"]
-        Timekeeper["Timekeeper (Track Durations, mano-engine.js, Cache-Busters)"]
+        Timekeeper["Timekeeper (Track Durations, Diagnostics, mano-engine.js, Cache-Busters)"]
     end
 
     subgraph STAGE_6 ["Stage 6: Pre-Flight Gate Inspection"]
-        Maestro["Maestro (6-Point Verification & Regression Check)"]
+        Maestro["Maestro (7-Point Verification & Regression Check)"]
     end
 
     STAGE_1 --> STAGE_2
@@ -175,6 +177,13 @@ GATE-4 (Sync — Full-Spectrum Sync Inspection):
   ✓ scrollAt timestamp occurs after all code typing segments complete.
   ✓ Newly developed theory sync patterns are codified into the Active Rule Registry for future day reuse.
 
+GATE-COACH (Coach — Cognitive Diagnostic & Remediation Gate):
+  ✓ Topic Error Coverage: 100% of day-specific cognitive pitfalls, syntax errors, and semantic traps are classified in analyzeQueryError().
+  ✓ Actionable 1-Click Fixes: Every detected typo or missing clause provides a valid, executable ⚡ Fix button (.diag-fix-btn).
+  ✓ Schema & Prefix Tolerance: 1-2 character table/column prefixes (e.g. 'em' ➔ 'employees', 'sal' ➔ 'salary') resolve accurately to valid database entities.
+  ✓ Schema Peeking Suite: All <code> tags referencing tables and columns have interactive hover/click tooltips (initSchemaCodePeeking) with 1-click column insertion.
+  ✓ Continuous Evolution: Newly discovered student error patterns are codified into the Active Coach Registry for future days.
+
 GATE-5 (Timekeeper):
   ✓ node -c passes with zero syntax errors on mano-engine.js and day-XX.js
   ✓ dayXXTracks registry contains theory + question + solution tracks
@@ -190,6 +199,7 @@ GATE-6 (Maestro Live Checks):
   6.6 Single-Play Isolation: Individual play on Question/Solution pauses cleanly at end without advancing to next slide.
   6.7 SVG Icon State: Standard SVGs only; Navbar, Timeline, and Card buttons toggle cleanly between Play (▶) and Pause (⏸).
   6.8 Grading & Execution: Query submission triggers correct SQLite execution and score banner updates.
+  6.9 SQL Coach Execution: Triggering deliberate syntax errors renders interactive auto-fix buttons and executes cleanly on click.
 ```
 
 ---
@@ -317,6 +327,18 @@ Statement: Acronym Safety & Short SQL Keyword Phonetic Normalization: Acronyms l
 Added: Day03 — user reported "IN" and "IS" were being spelled out as letters; enforced natural word pronunciation across narration scripts and TTS pipeline.
 Supersedes: none
 
+[VOICE-008] [STATUS: active] [SCOPE: Voice + Sync + Maestro]
+Statement: SQL Aggregate & Function Pronunciation Standardization:
+When authoring narration scripts in narrations/day-XX.json, aggregate and mathematical function names MUST be written in natural spoken English to prevent robotic letter-by-letter spelling:
+1. "AVG" MUST ALWAYS be written as "the average function of column" or "average function" / "average", NEVER as raw uppercase "AVG" (which TTS pronounces as "A-V-G").
+2. "MIN" MUST ALWAYS be written as "the min function of column" or "min function" / "minimum function", NEVER as raw uppercase "MIN" (which TTS pronounces as "M-I-N").
+3. "MAX" MUST ALWAYS be written as "the max function of column" or "max function" / "maximum function".
+4. "SUM" MUST ALWAYS be written as "sum of column" or "sum function".
+5. "COUNT" MUST ALWAYS be written as "count star" or "count of column" / "count distinct".
+Voice must author scripts adhering to these phonetics, Sync must calibrate Whisper ASR against them, and Maestro must enforce this across Day 05 and all future SQL curriculum days.
+Added: Day05 — user required AVG to be pronounced as "average function" and MIN as "min function".
+Supersedes: none
+
 [THEORIST-001] [STATUS: active] [SCOPE: Theorist]
 Statement: Every .slide-section in the theory HTML must contain at least one unique ID target (e.g., #dayXXWhere, #dayXXCompOps) that exactly matches a corresponding target in day03Tracks in mano-engine.js.
 Added: Day03 — sections without matching track targets were never spotlighted during narration playback.
@@ -391,5 +413,29 @@ Supersedes: none
 Statement: Slide Section Headroom & Heading Typography Spacing Standard:
 Every `.slide-section` and section heading (`h3`, `h4`, `.heading-with-audio`) MUST be configured with `scroll-margin-top: 36px !important;` and `padding-top: 4px !important;` in `styles.css`. Multi-query code containers (`.code-block-container`) must be direct siblings below their section heading, allowing `getVisibilityBlock()` in `mano-engine.js` to resolve the parent section and maintain uniform ~30px breathing room beneath the sticky header bar across all viewports.
 Added: Day03/Day04 — prevented section titles from being clipped by sticky header borders during scroll and spotlight transitions.
+Supersedes: none
+
+[COACH-001] [STATUS: active] [SCOPE: Coach]
+Statement: Empathetic & Educational Diagnostic Tone Standard:
+All SQL Coach error messages MUST be non-punitive, clear, and educational. They must explain WHY the query syntax or semantics failed in terms of the database execution model, rather than just repeating raw SQLite compiler errors.
+Added: Day01 — empowers students to understand the underlying mental model of SQL execution.
+Supersedes: none
+
+[COACH-002] [STATUS: active] [SCOPE: Coach]
+Statement: Mandatory 1-Click Actionable Auto-Remediation (`⚡ Fix ...`):
+Every diagnostic rule in `analyzeQueryError()` that identifies a definitive syntax fix, table typo, column typo, or keyword correction MUST provide an `actionLabel` and `actionReplace` or `suggestedFix`. The engine MUST render an interactive `.diag-fix-btn` that applies the change directly to the CodeMirror editor and re-executes the query on single click.
+Added: Day01/Day05 — removes repetitive re-typing friction and delivers instant learning reinforcement.
+Supersedes: none
+
+[COACH-003] [STATUS: active] [SCOPE: Coach]
+Statement: Priority Diagnostic Hierarchy & Semicolon Guard:
+Specific runtime database errors (e.g., `no such table`, `no such column`, keyword typos, unquoted string in WHERE) MUST ALWAYS take absolute priority over generic formatting suggestions (e.g. missing semicolon). A generic semicolon warning must ONLY be shown if the query contains no other syntactic or semantic errors.
+Added: Day05 — prevented generic semicolon hints from masking actionable table and column typo diagnostics.
+Supersedes: none
+
+[COACH-004] [STATUS: active] [SCOPE: Coach + Maestro]
+Statement: Continuous Diagnostic Evolution & Topic Expansion:
+For every new curriculum day, the Coach subagent MUST analyze the day's syllabus and practice questions to expand `analyzeQueryError()` with new topic-specific anti-patterns (e.g. Day 06 GROUP BY/HAVING rules, Day 07 JOIN ambiguities, Day 08 Window Partition traps). All newly codified diagnostics must pass `GATE-COACH` with zero regressions on previous days.
+Added: Day05 — established continuous diagnostic evolution protocol across all 60 curriculum days.
 Supersedes: none
 ```

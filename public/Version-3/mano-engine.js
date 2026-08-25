@@ -337,6 +337,8 @@ function renderResultTable(result, targetId) {
   el.innerHTML = html;
 }
 
+let currentActiveCoachFix = null;
+
 function renderError(msg, hintObj, targetId) {
   const el = document.getElementById(targetId);
   if (!el) return;
@@ -344,10 +346,30 @@ function renderError(msg, hintObj, targetId) {
   let hintHtml = '';
   if (hintObj) {
     const hintText = typeof hintObj === 'string' ? hintObj : hintObj.hint;
+    const headerText = (typeof hintObj === 'object' && hintObj.header) ? `💡 SQL Coach: ${escHtml(hintObj.header)}` : '💡 SQL Coach Hint';
+    
+    let actionBtnHtml = '';
+    if (typeof hintObj === 'object' && hintObj.actionLabel && (hintObj.suggestedFix || hintObj.actionReplace)) {
+      currentActiveCoachFix = {
+        targetId: targetId,
+        suggestedFix: hintObj.suggestedFix,
+        actionReplace: hintObj.actionReplace,
+        actionLabel: hintObj.actionLabel
+      };
+      actionBtnHtml = `
+        <div style="margin-top: 8px;">
+          <button type="button" class="diag-fix-btn" onclick="applyCoachFix('${targetId}')" title="Click to auto-apply this fix to your SQL query">
+            ⚡ ${escHtml(hintObj.actionLabel)}
+          </button>
+        </div>
+      `;
+    }
+
     hintHtml = `
       <div class="sql-diagnostic-card">
-        <div class="diag-header">💡 SQL Coach Hint</div>
+        <div class="diag-header">${headerText}</div>
         <div class="diag-body">${hintText}</div>
+        ${actionBtnHtml}
       </div>
     `;
   }
@@ -357,6 +379,66 @@ function renderError(msg, hintObj, targetId) {
     <div class="output-error" style="margin-top: 6px;">❌ SQLite Error: ${escHtml(msg)}</div>
     ${hintHtml}
   `;
+}
+
+function applyCoachFix(targetId) {
+  if (!currentActiveCoachFix) return;
+  const editor = (targetId === 'testOutput') ? testEditor : mainEditor;
+  if (!editor) return;
+
+  const currentCode = editor.getValue();
+  let newCode = currentCode;
+
+  if (currentActiveCoachFix.actionReplace) {
+    const fromStr = currentActiveCoachFix.actionReplace.from;
+    const toStr = currentActiveCoachFix.actionReplace.to;
+    if (typeof fromStr === 'string') {
+      newCode = currentCode.replace(fromStr, toStr);
+    } else if (fromStr instanceof RegExp) {
+      newCode = currentCode.replace(fromStr, toStr);
+    }
+  } else if (currentActiveCoachFix.suggestedFix) {
+    if (newCode.trim().length === 0) {
+      newCode = currentActiveCoachFix.suggestedFix;
+    } else {
+      newCode = newCode.trimEnd() + ' ' + currentActiveCoachFix.suggestedFix;
+    }
+  }
+
+  editor.setValue(newCode);
+  editor.focus();
+  
+  // Set cursor to end of code
+  const lastLine = editor.lineCount() - 1;
+  const lastCh = editor.getLine(lastLine).length;
+  editor.setCursor({ line: lastLine, ch: lastCh });
+
+  // Visual confirmation toast
+  showCoachToast(`Applied fix: ${currentActiveCoachFix.actionLabel}`);
+  
+  // Automatically re-run the query with the fix applied
+  setTimeout(() => {
+    if (targetId === 'testOutput') {
+      if (typeof runTestQuery === 'function') runTestQuery();
+    } else {
+      if (typeof runCurrentQuery === 'function') runCurrentQuery();
+    }
+  }, 120);
+}
+
+function showCoachToast(msg) {
+  let toast = document.getElementById('coachToast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'coachToast';
+    toast.className = 'coach-toast';
+    document.body.appendChild(toast);
+  }
+  toast.innerHTML = `💡 ${escHtml(msg)}`;
+  toast.classList.add('show');
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 2400);
 }
 
 function escHtml(s) {
@@ -476,7 +558,9 @@ function analyzeQueryError(query, rawError) {
   const schema = getSchemaInfo();
   Object.keys(schema).forEach(tName => {
     allTables.push(tName);
-    schema[tName].forEach(col => allColumns.push({ table: tName, name: col }));
+    if (schema[tName]) {
+      schema[tName].forEach(col => allColumns.push({ table: tName, name: col }));
+    }
   });
 
   // Dynamically resolve target table from the active practice or test question
@@ -490,135 +574,274 @@ function analyzeQueryError(query, rawError) {
     }
   }
 
-  // 1. INCOMPLETE INPUT & MISSING CLAUSE DETECTION
-  if (msg.includes('incomplete input') || msg.includes('syntax error') || msg.includes('near')) {
-    // A. Query ends with FROM (e.g. "SELECT * FROM")
-    if (/FROM\s*$/i.test(qTrim)) {
+  // ───────────────────────────────────────────────────────────────────────────
+  // SECTION 1: TOPIC-SPECIFIC SEMANTIC TRAPS & AGGREGATE MISUSE (DAY 03, 04, 05)
+  // ───────────────────────────────────────────────────────────────────────────
+
+  // 1.1 Aggregates in WHERE Clause (Day 05)
+  if (/misuse of aggregate/i.test(msg) || /WHERE\s+[a-zA-Z0-9_]*\s*(COUNT|SUM|AVG|MIN|MAX)\s*\(/i.test(query)) {
+    const aggMatch = query.match(/WHERE\s+([\s\S]*?\b(COUNT|SUM|AVG|MIN|MAX)\s*\([\s\S]*?\)\s*([><=]+|IS|BETWEEN|IN)\s*[^;\n]+)/i);
+    const aggCond = aggMatch ? aggMatch[1] : 'COUNT(*) > 1';
+    return {
+      type: 'aggregate_in_where',
+      header: 'Aggregate in WHERE Clause',
+      hint: `Aggregate functions (<code>COUNT</code>, <code>SUM</code>, <code>AVG</code>) cannot appear in a <code>WHERE</code> clause because <code>WHERE</code> filters individual rows <em>before</em> aggregation happens. Use <strong>HAVING</strong> to filter aggregate results instead!`,
+      actionReplace: { from: new RegExp(`WHERE\\s+${escapeRegExp(aggCond)}`, 'i'), to: `HAVING ${aggCond}` },
+      actionLabel: `Change 'WHERE' ➔ 'HAVING'`
+    };
+  }
+
+  // 1.2 Nested Aggregate Functions (Day 05) - e.g. MAX(AVG(salary))
+  if (/(MAX|MIN|AVG|SUM|COUNT)\s*\(\s*(MAX|MIN|AVG|SUM|COUNT)\s*\(/i.test(query)) {
+    return {
+      type: 'nested_aggregates',
+      header: 'Nested Aggregate Function',
+      hint: `SQL does not allow nesting aggregate functions directly (e.g. <code>MAX(AVG(...))</code>). To find the maximum of an average, compute the average in a subquery or Common Table Expression (CTE) first!`,
+      actionLabel: `Separate into subquery`
+    };
+  }
+
+  // 1.3 COUNT with multiple arguments (Day 05) - e.g. COUNT(id, name)
+  if (/COUNT\s*\(\s*[a-zA-Z0-9_]+\s*,\s*[a-zA-Z0-9_]+\s*\)/i.test(query) || (msg.includes('wrong number of arguments') && /COUNT/i.test(query))) {
+    return {
+      type: 'count_multi_arg',
+      header: 'Invalid Arguments for COUNT()',
+      hint: `The <code>COUNT()</code> function only accepts a single column name or <code>*</code> (e.g. <code>COUNT(*)</code> or <code>COUNT(id)</code>).`,
+      actionReplace: { from: /COUNT\s*\([^)]+\)/i, to: 'COUNT(*)' },
+      actionLabel: `Change to 'COUNT(*)'`
+    };
+  }
+
+  // 1.4 GROUP_CONCAT SEPARATOR (MySQL syntax in SQLite) (Day 05)
+  if (/GROUP_CONCAT\s*\([\s\S]+?\bSEPARATOR\b/i.test(query)) {
+    return {
+      type: 'group_concat_separator',
+      header: 'GROUP_CONCAT Syntax Mismatch',
+      hint: `In SQLite, specify the delimiter as a second argument without the <code>SEPARATOR</code> keyword: <code>GROUP_CONCAT(col, ', ')</code>.`,
+      actionReplace: { from: /\s+SEPARATOR\s+/i, to: ', ' },
+      actionLabel: `Remove 'SEPARATOR' keyword`
+    };
+  }
+
+  // 1.5 Equality with NULL (Day 03, 04) - e.g. WHERE salary = NULL
+  if (/=\s*NULL\b/i.test(query)) {
+    return {
+      type: 'null_equality',
+      header: 'Incorrect NULL Comparison',
+      hint: `In SQL, <code>= NULL</code> always evaluates to UNKNOWN/FALSE because NULL represents missing data. Use <strong>IS NULL</strong> or <strong>IS NOT NULL</strong> instead.`,
+      actionReplace: { from: '= NULL', to: 'IS NULL' },
+      actionLabel: `Change '= NULL' ➔ 'IS NULL'`
+    };
+  }
+  if (/(!=|<>)\s*NULL\b/i.test(query)) {
+    return {
+      type: 'null_inequality',
+      header: 'Incorrect NOT NULL Comparison',
+      hint: `In SQL, <code>!= NULL</code> or <code>&lt;&gt; NULL</code> fails to match. Use <strong>IS NOT NULL</strong> instead.`,
+      actionReplace: { from: /(!=|<>)\s*NULL/i, to: 'IS NOT NULL' },
+      actionLabel: `Change to 'IS NOT NULL'`
+    };
+  }
+
+  // 1.6 String Concatenation with + instead of || (Day 04)
+  if (/SELECT[\s\S]+?'\s*\+\s*'/i.test(query) || /SELECT[\s\S]+?[a-zA-Z0-9_]+\s*\+\s*'[\s\S]+?'/i.test(query)) {
+    return {
+      type: 'string_concat_plus',
+      header: 'String Concatenation Syntax',
+      hint: `In standard SQL and SQLite, concatenate strings using the pipe operator <code>||</code> (e.g. <code>first_name || ' ' || last_name</code>), not <code>+</code>.`,
+      actionReplace: { from: '+', to: '||' },
+      actionLabel: `Change '+' ➔ '||'`
+    };
+  }
+
+  // 1.7 Python-style Chained Comparison (Day 03) - e.g. WHERE 50000 < salary < 100000
+  if (/WHERE\s+[0-9'a-zA-Z_]+\s*[><=]+\s*[a-zA-Z0-9_]+\s*[><=]+\s*[0-9'a-zA-Z_]+/i.test(query)) {
+    return {
+      type: 'chained_comparison',
+      header: 'Chained Comparison Trap',
+      hint: `SQL does not support chained comparisons like <code>50 < salary < 100</code>. Connect two distinct comparisons with <strong>AND</strong>: <code>salary > 50 AND salary < 100</code> (or use <code>BETWEEN 50 AND 100</code>).`,
+      actionLabel: `Use 'BETWEEN' or 'AND'`
+    };
+  }
+
+  // 1.8 BETWEEN with OR (Day 03) - e.g. BETWEEN 10 OR 20
+  if (/BETWEEN\s+[0-9'a-zA-Z_]+\s+OR\s+/i.test(query)) {
+    return {
+      type: 'between_or_syntax',
+      header: 'BETWEEN Operator Syntax',
+      hint: `The <code>BETWEEN</code> operator connects its boundary values with <strong>AND</strong>, not <code>OR</code> (e.g. <code>BETWEEN 1000 AND 5000</code>).`,
+      actionReplace: { from: /\bBETWEEN\s+([0-9'a-zA-Z_]+)\s+OR\s+/i, to: 'BETWEEN $1 AND ' },
+      actionLabel: `Change 'OR' ➔ 'AND'`
+    };
+  }
+
+  // 1.9 LIKE with Regex Wildcards * or ? (Day 03)
+  if (/LIKE\s+'[^']*\*[^']*'/i.test(query)) {
+    return {
+      type: 'like_asterisk_wildcard',
+      header: 'LIKE Wildcard Mismatch',
+      hint: `In SQL <code>LIKE</code> clauses, use <code>%</code> for multi-character matching (not <code>*</code>) and <code>_</code> for single characters (not <code>?</code>).`,
+      actionReplace: { from: '*', to: '%' },
+      actionLabel: `Change '*' ➔ '%'`
+    };
+  }
+
+  // 1.10 Spelled out ASCENDING / DESCENDING (Day 02)
+  if (/\bDESCENDING\b/i.test(query)) {
+    return {
+      type: 'spelled_out_descending',
+      header: 'Sorting Keyword Abbreviation',
+      hint: `In SQL, sort direction is abbreviated as <strong>DESC</strong> (not <code>DESCENDING</code>).`,
+      actionReplace: { from: /\bDESCENDING\b/i, to: 'DESC' },
+      actionLabel: `Fix 'DESCENDING' ➔ 'DESC'`
+    };
+  }
+  if (/\bASCENDING\b/i.test(query)) {
+    return {
+      type: 'spelled_out_ascending',
+      header: 'Sorting Keyword Abbreviation',
+      hint: `In SQL, sort direction is abbreviated as <strong>ASC</strong> (not <code>ASCENDING</code>).`,
+      actionReplace: { from: /\bASCENDING\b/i, to: 'ASC' },
+      actionLabel: `Fix 'ASCENDING' ➔ 'ASC'`
+    };
+  }
+
+  // 1.11 SQL Server TOP instead of LIMIT (Day 02)
+  if (/SELECT\s+TOP\s+([0-9]+)\s+/i.test(query)) {
+    const topMatch = query.match(/SELECT\s+TOP\s+([0-9]+)\s+([\s\S]+)/i);
+    const topNum = topMatch ? topMatch[1] : '5';
+    return {
+      type: 'sql_server_top',
+      header: 'TOP vs LIMIT Dialect Syntax',
+      hint: `<code>TOP</code> is specific to SQL Server. In SQLite and PostgreSQL, slice the first N rows using <strong>LIMIT ${topNum}</strong> at the end of the query.`,
+      actionReplace: { from: new RegExp(`SELECT\\s+TOP\\s+${topNum}\\s+`, 'i'), to: 'SELECT ' },
+      suggestedFix: `LIMIT ${topNum};`,
+      actionLabel: `Convert TOP ${topNum} ➔ LIMIT ${topNum}`
+    };
+  }
+
+  // 1.12 Order of Execution: ORDER BY before WHERE (Day 02, 03)
+  if (/ORDER\s+BY[\s\S]+?WHERE/i.test(query)) {
+    return {
+      type: 'order_before_where',
+      header: 'Clause Execution Order Violation',
+      hint: `In SQL execution order, row filtering (<code>WHERE</code>) must always be written <strong>before</strong> sorting (<code>ORDER BY</code>).`,
+      actionLabel: `Reorder: WHERE before ORDER BY`
+    };
+  }
+
+  // 1.13 Order of Execution: LIMIT before ORDER BY (Day 02)
+  if (/LIMIT[\s\S]+?ORDER\s+BY/i.test(query)) {
+    return {
+      type: 'limit_before_order',
+      header: 'Clause Execution Order Violation',
+      hint: `Sorting (<code>ORDER BY</code>) must come <strong>before</strong> row slicing (<code>LIMIT</code>) so SQL knows which top rows to return.`,
+      actionLabel: `Reorder: ORDER BY before LIMIT`
+    };
+  }
+
+  // 1.14 Assignment Operator := (Day 01, 03)
+  if (/:=/i.test(query)) {
+    return {
+      type: 'assignment_operator',
+      header: 'Invalid Assignment Operator',
+      hint: `In SQL, filtering and comparisons use single equals <code>=</code>, not <code>:=</code>.`,
+      actionReplace: { from: ':=', to: '=' },
+      actionLabel: `Change ':=' ➔ '='`
+    };
+  }
+
+  // ───────────────────────────────────────────────────────────────────────────
+  // SECTION 2: RUNTIME SQLITE ERRORS (TABLE & COLUMN TYPOS)
+  // ───────────────────────────────────────────────────────────────────────────
+
+  // 2.1 Table Typo / Prefix / Substring Match (e.g. "no such table: em")
+  const noSuchTable = msg.match(/no such table:\s*([a-zA-Z0-9_]+)/i);
+  if (noSuchTable) {
+    const typo = noSuchTable[1];
+    let bestMatch = null;
+    let bestDist = 999;
+    
+    // Exact prefix match (e.g. "em" -> "employees", "prod" -> "products")
+    const prefixMatch = allTables.find(t => t.toLowerCase().startsWith(typo.toLowerCase()) || typo.toLowerCase().startsWith(t.toLowerCase()));
+    if (prefixMatch) {
+      bestMatch = prefixMatch;
+    } else {
+      // Fuzzy Levenshtein match
+      allTables.forEach(tbl => {
+        const d = levenshtein(typo.toLowerCase(), tbl.toLowerCase());
+        if (d < bestDist) {
+          bestDist = d;
+          bestMatch = tbl;
+        }
+      });
+      if (bestDist > Math.max(3, Math.floor(typo.length * 0.7)) && !bestMatch) {
+        bestMatch = preferredTable;
+      }
+    }
+
+    const resolvedTable = bestMatch || preferredTable;
+    return {
+      type: 'table_typo',
+      header: 'Table Name Typo',
+      hint: `Table <code>${escHtml(typo)}</code> does not exist in the database. Did you mean <strong><code>${escHtml(resolvedTable)}</code></strong>?`,
+      suggestedFix: resolvedTable,
+      actionReplace: { from: typo, to: resolvedTable },
+      actionLabel: `Fix '${typo}' ➔ '${resolvedTable}'`
+    };
+  }
+
+  // 2.2 Column Typo / Prefix / Unquoted String in WHERE (e.g. "no such column: sal")
+  const noSuchCol = msg.match(/no such column:\s*([a-zA-Z0-9_]+)/i);
+  if (noSuchCol) {
+    const typo = noSuchCol[1];
+
+    // Check if user forgot single quotes around a string literal in WHERE (e.g. WHERE department = Sales or status = Shipped)
+    const unquotedWherePattern = new RegExp(`WHERE\\s+([a-zA-Z0-9_]+)\\s*=\\s*${typo}\\b`, 'i');
+    const isUnquotedVal = unquotedWherePattern.test(query);
+    if (isUnquotedVal && !allTables.includes(typo)) {
       return {
-        type: 'missing_table',
-        header: 'Incomplete FROM Clause',
-        hint: `You opened a <code>FROM</code> clause but haven't specified which table to query. What table do you want to select from?`,
-        suggestedFix: preferredTable + ';',
-        actionLabel: `Add '${preferredTable};'`
+        type: 'missing_quotes',
+        header: 'Unquoted Text Literal in WHERE',
+        hint: `Text values in SQL must be enclosed in single quotes. Without quotes, SQLite looks for a column named <code>${escHtml(typo)}</code>. Try wrapping it in single quotes: <code>'${escHtml(typo)}'</code>.`,
+        actionReplace: { from: `= ${typo}`, to: `= '${typo}'` },
+        actionLabel: `Wrap '${typo}' in quotes`
       };
     }
 
-    // B. Just SELECT or query ends with SELECT
-    if (/SELECT\s*$/i.test(qTrim) || qTrim === 'SELECT') {
-      return {
-        type: 'missing_columns',
-        header: 'Incomplete SELECT Statement',
-        hint: `Specify what columns you want to retrieve. Use <code>*</code> for all columns, or list specific columns like <code>id, name</code>, followed by <code>FROM ${preferredTable};</code>`,
-        suggestedFix: `* FROM ${preferredTable};`,
-        actionLabel: `Add '* FROM ${preferredTable};'`
-      };
+    let bestMatch = null;
+    let bestDist = 999;
+
+    // Prefix match on columns
+    const prefixCol = allColumns.find(c => c.name.toLowerCase().startsWith(typo.toLowerCase()) || typo.toLowerCase().startsWith(c.name.toLowerCase()));
+    if (prefixCol) {
+      bestMatch = prefixCol;
+    } else {
+      // Fuzzy match
+      allColumns.forEach(c => {
+        const d = levenshtein(typo.toLowerCase(), c.name.toLowerCase());
+        if (d < bestDist) {
+          bestDist = d;
+          bestMatch = c;
+        }
+      });
     }
 
-    // C. Ends with WHERE
-    if (/WHERE\s*$/i.test(qTrim)) {
+    if (bestMatch) {
       return {
-        type: 'incomplete_where',
-        header: 'Incomplete WHERE Filter',
-        hint: `You added a <code>WHERE</code> clause but haven't provided a filter condition yet (e.g. <code>WHERE salary > 50000;</code> or <code>WHERE type = 'table';</code>).`,
-        suggestedFix: `type = 'table';`,
-        actionLabel: `Add sample condition`
-      };
-    }
-
-    // D. Ends with ORDER BY
-    if (/ORDER\s+BY\s*$/i.test(qTrim)) {
-      return {
-        type: 'incomplete_order_by',
-        header: 'Incomplete ORDER BY Clause',
-        hint: `Specify which column you want to sort by (e.g. <code>ORDER BY salary DESC;</code> or <code>ORDER BY name ASC;</code>).`,
-        suggestedFix: `name ASC;`,
-        actionLabel: `Add 'name ASC;'`
-      };
-    }
-
-    // E. Ends with GROUP BY
-    if (/GROUP\s+BY\s*$/i.test(qTrim)) {
-      return {
-        type: 'incomplete_group_by',
-        header: 'Incomplete GROUP BY Clause',
-        hint: `Specify which column you want to group rows by (e.g. <code>GROUP BY department;</code>).`,
-        suggestedFix: `department;`,
-        actionLabel: `Add 'department;'`
-      };
-    }
-
-    // F. Ends with HAVING
-    if (/HAVING\s*$/i.test(qTrim)) {
-      return {
-        type: 'incomplete_having',
-        header: 'Incomplete HAVING Clause',
-        hint: `Specify the aggregate condition for your group (e.g. <code>HAVING COUNT(*) > 2;</code>).`,
-        suggestedFix: `COUNT(*) > 1;`,
-        actionLabel: `Add 'COUNT(*) > 1;'`
-      };
-    }
-
-    // G. Ends with LIMIT
-    if (/LIMIT\s*$/i.test(qTrim)) {
-      return {
-        type: 'incomplete_limit',
-        header: 'Incomplete LIMIT Clause',
-        hint: `Specify how many rows to restrict the result set to (e.g. <code>LIMIT 5;</code>).`,
-        suggestedFix: `5;`,
-        actionLabel: `Add '5;'`
-      };
-    }
-
-    // H. Trailing comma before FROM (e.g. SELECT id, name, FROM employees;)
-    const trailingCommaMatch = query.match(/,\s+FROM/i);
-    if (trailingCommaMatch) {
-      return {
-        type: 'trailing_comma',
-        header: 'Trailing Comma in SELECT',
-        hint: `Syntax Error: You have an extra comma <code>,</code> before the <code>FROM</code> keyword. Remove the comma after your last column.`,
-        actionReplace: { from: ', FROM', to: ' FROM' },
-        actionLabel: `Remove extra comma`
-      };
-    }
-
-    // I. Unclosed single quote (odd number of ')
-    const singleQuotes = (query.match(/'/g) || []).length;
-    if (singleQuotes % 2 !== 0) {
-      return {
-        type: 'unclosed_quote',
-        header: 'Unclosed String Literal',
-        hint: `You opened a text string with a single quote ( <code>'</code> ) but forgot to close it. Every text literal in SQL must start and end with single quotes.`,
-        suggestedFix: `';`,
-        actionLabel: `Add closing quote & semicolon`
-      };
-    }
-
-    // J. Unmatched opening parenthesis
-    const openParens = (query.match(/\(/g) || []).length;
-    const closeParens = (query.match(/\)/g) || []).length;
-    if (openParens > closeParens) {
-      return {
-        type: 'unclosed_paren',
-        header: 'Mismatched Parentheses',
-        hint: `You opened a parenthesis <code>(</code> but haven't closed it. Make sure every opening parenthesis has a matching <code>)</code>.`,
-        suggestedFix: `);`,
-        actionLabel: `Add closing ')'`
-      };
-    }
-
-    // K. Multiple statements / premature semicolon
-    if (/;\s*SELECT|;\s*FROM/i.test(query)) {
-      return {
-        type: 'premature_semicolon',
-        header: 'Premature Semicolon',
-        hint: `A semicolon <code>;</code> ends the entire SQL statement. Remove the semicolon from the middle of your query.`,
-        actionReplace: { from: ';', to: '' },
-        actionLabel: `Remove premature semicolon`
+        type: 'column_typo',
+        header: 'Column Name Typo',
+        hint: `Column <code>${escHtml(typo)}</code> does not exist in the database. Did you mean <strong><code>${escHtml(bestMatch.name)}</code></strong> (in table <em>${escHtml(bestMatch.table)}</em>)?`,
+        suggestedFix: bestMatch.name,
+        actionReplace: { from: typo, to: bestMatch.name },
+        actionLabel: `Fix '${typo}' ➔ '${bestMatch.name}'`
       };
     }
   }
 
-  // 2. KEYWORD TYPOS (Comprehensive list)
+  // ───────────────────────────────────────────────────────────────────────────
+  // SECTION 3: KEYWORD TYPOS (FORM -> FROM, SELEC -> SELECT, etc.)
+  // ───────────────────────────────────────────────────────────────────────────
   const keywordTypos = [
     { typo: /\bFORM\b/i, wrong: 'FORM', correct: 'FROM' },
     { typo: /\bSELEC\b|\bSELEST\b|\bSELCT\b|\bSLCT\b/i, wrong: 'SELEST', correct: 'SELECT' },
@@ -648,87 +871,139 @@ function analyzeQueryError(query, rawError) {
     }
   }
 
-  // 3. EQUALITY COMPARISON WITH NULL (e.g. WHERE salary = NULL)
-  if (/=\s*NULL\b/i.test(query)) {
-    return {
-      type: 'null_equality',
-      header: 'Incorrect NULL Comparison',
-      hint: `In SQL, you cannot use <code>= NULL</code> because NULL represents an unknown value. Use <strong>IS NULL</strong> or <strong>IS NOT NULL</strong> instead.`,
-      actionReplace: { from: '= NULL', to: 'IS NULL' },
-      actionLabel: `Change '= NULL' ➔ 'IS NULL'`
-    };
-  }
-
-  // 4. UNQUOTED STRING LITERAL IN WHERE CLAUSE (e.g. WHERE department = Sales)
-  const whereMatch = query.match(/WHERE\s+([a-zA-Z0-9_]+)\s*=\s*([a-zA-Z_][a-zA-Z0-9_]*)/i);
-  if (whereMatch) {
-    const colName = whereMatch[1];
-    const val = whereMatch[2];
-    const isCol = allColumns.some(c => c.name.toLowerCase() === val.toLowerCase());
-    const isTbl = allTables.some(t => t.toLowerCase() === val.toLowerCase());
-    if (!isCol && !isTbl && !['TRUE', 'FALSE', 'NULL'].includes(val.toUpperCase())) {
+  // ───────────────────────────────────────────────────────────────────────────
+  // SECTION 4: INCOMPLETE INPUT & MISSING CLAUSES
+  // ───────────────────────────────────────────────────────────────────────────
+  if (msg.includes('incomplete input') || msg.includes('syntax error') || msg.includes('near')) {
+    // 4.1 Query ends with FROM
+    if (/FROM\s*$/i.test(qTrim)) {
       return {
-        type: 'missing_quotes',
-        header: 'Unquoted Text Literal',
-        hint: `Text values in SQL must be enclosed in single quotes. Without quotes, SQLite looks for a column named <code>${val}</code>. Try: <code>${colName} = '${val}'</code>.`,
-        suggestedFix: `'${val}'`,
-        actionReplace: { from: `= ${val}`, to: `= '${val}'` },
-        actionLabel: `Wrap '${val}' in quotes`
+        type: 'missing_table',
+        header: 'Incomplete FROM Clause',
+        hint: `You opened a <code>FROM</code> clause but haven't specified which table to query. What table do you want to select from?`,
+        suggestedFix: preferredTable + ';',
+        actionLabel: `Add '${preferredTable};'`
+      };
+    }
+
+    // 4.2 Just SELECT or query ends with SELECT
+    if (/SELECT\s*$/i.test(qTrim) || qTrim === 'SELECT') {
+      return {
+        type: 'missing_columns',
+        header: 'Incomplete SELECT Statement',
+        hint: `Specify what columns you want to retrieve. Use <code>*</code> for all columns, or list specific columns like <code>id, name</code>, followed by <code>FROM ${preferredTable};</code>`,
+        suggestedFix: `* FROM ${preferredTable};`,
+        actionLabel: `Add '* FROM ${preferredTable};'`
+      };
+    }
+
+    // 4.3 Ends with WHERE
+    if (/WHERE\s*$/i.test(qTrim)) {
+      return {
+        type: 'incomplete_where',
+        header: 'Incomplete WHERE Filter',
+        hint: `You added a <code>WHERE</code> clause but haven't provided a filter condition yet (e.g. <code>WHERE is_active = 1;</code>).`,
+        suggestedFix: `is_active = 1;`,
+        actionLabel: `Add sample condition`
+      };
+    }
+
+    // 4.4 Ends with ORDER BY
+    if (/ORDER\s+BY\s*$/i.test(qTrim)) {
+      return {
+        type: 'incomplete_order_by',
+        header: 'Incomplete ORDER BY Clause',
+        hint: `Specify which column you want to sort by (e.g. <code>ORDER BY salary DESC;</code> or <code>ORDER BY first_name ASC;</code>).`,
+        suggestedFix: `salary DESC;`,
+        actionLabel: `Add 'salary DESC;'`
+      };
+    }
+
+    // 4.5 Ends with GROUP BY
+    if (/GROUP\s+BY\s*$/i.test(qTrim)) {
+      return {
+        type: 'incomplete_group_by',
+        header: 'Incomplete GROUP BY Clause',
+        hint: `Specify which column you want to group rows by (e.g. <code>GROUP BY department_id;</code>).`,
+        suggestedFix: `department_id;`,
+        actionLabel: `Add 'department_id;'`
+      };
+    }
+
+    // 4.6 Ends with HAVING
+    if (/HAVING\s*$/i.test(qTrim)) {
+      return {
+        type: 'incomplete_having',
+        header: 'Incomplete HAVING Clause',
+        hint: `Specify the aggregate condition for your group (e.g. <code>HAVING COUNT(*) > 1;</code>).`,
+        suggestedFix: `COUNT(*) > 1;`,
+        actionLabel: `Add 'COUNT(*) > 1;'`
+      };
+    }
+
+    // 4.7 Ends with LIMIT
+    if (/LIMIT\s*$/i.test(qTrim)) {
+      return {
+        type: 'incomplete_limit',
+        header: 'Incomplete LIMIT Clause',
+        hint: `Specify how many rows to restrict the result set to (e.g. <code>LIMIT 5;</code>).`,
+        suggestedFix: `5;`,
+        actionLabel: `Add '5;'`
+      };
+    }
+
+    // 4.8 Trailing comma before FROM (e.g. SELECT id, name, FROM employees;)
+    const trailingCommaMatch = query.match(/,\s+FROM/i);
+    if (trailingCommaMatch) {
+      return {
+        type: 'trailing_comma',
+        header: 'Trailing Comma in SELECT',
+        hint: `Syntax Error: You have an extra comma <code>,</code> before the <code>FROM</code> keyword. Remove the comma after your last column.`,
+        actionReplace: { from: ', FROM', to: ' FROM' },
+        actionLabel: `Remove extra comma`
+      };
+    }
+
+    // 4.9 Unclosed single quote
+    const singleQuotes = (query.match(/'/g) || []).length;
+    if (singleQuotes % 2 !== 0) {
+      return {
+        type: 'unclosed_quote',
+        header: 'Unclosed String Literal',
+        hint: `You opened a text string with a single quote ( <code>'</code> ) but forgot to close it. Every text literal in SQL must start and end with single quotes.`,
+        suggestedFix: `';`,
+        actionLabel: `Add closing quote & semicolon`
+      };
+    }
+
+    // 4.10 Unclosed parenthesis
+    const openParens = (query.match(/\(/g) || []).length;
+    const closeParens = (query.match(/\)/g) || []).length;
+    if (openParens > closeParens) {
+      return {
+        type: 'unclosed_paren',
+        header: 'Mismatched Parentheses',
+        hint: `You opened a parenthesis <code>(</code> but haven't closed it. Make sure every opening parenthesis has a matching <code>)</code>.`,
+        suggestedFix: `);`,
+        actionLabel: `Add closing ')'`
+      };
+    }
+
+    // 4.11 Premature semicolon before FROM
+    if (/;\s*SELECT|;\s*FROM/i.test(query)) {
+      return {
+        type: 'premature_semicolon',
+        header: 'Premature Semicolon',
+        hint: `A semicolon <code>;</code> ends the entire SQL statement. Remove the semicolon from the middle of your query.`,
+        actionReplace: { from: ';', to: '' },
+        actionLabel: `Remove premature semicolon`
       };
     }
   }
 
-  // 5. COLUMN TYPO (FUZZY LEVENSHTEIN MATCHING)
-  const noSuchCol = msg.match(/no such column:\s*([a-zA-Z0-9_]+)/i);
-  if (noSuchCol) {
-    const typo = noSuchCol[1];
-    let bestMatch = null;
-    let bestDist = 3;
-    allColumns.forEach(c => {
-      const d = levenshtein(typo.toLowerCase(), c.name.toLowerCase());
-      if (d < bestDist) {
-        bestDist = d;
-        bestMatch = c;
-      }
-    });
-    if (bestMatch) {
-      return {
-        type: 'column_typo',
-        header: 'Column Name Typo',
-        hint: `Column <code>${escHtml(typo)}</code> does not exist in the database. Did you mean <strong><code>${escHtml(bestMatch.name)}</code></strong> (in table <em>${escHtml(bestMatch.table)}</em>)?`,
-        suggestedFix: bestMatch.name,
-        actionReplace: { from: typo, to: bestMatch.name },
-        actionLabel: `Fix '${typo}' ➔ '${bestMatch.name}'`
-      };
-    }
-  }
-
-  // 6. TABLE TYPO (FUZZY LEVENSHTEIN MATCHING)
-  const noSuchTable = msg.match(/no such table:\s*([a-zA-Z0-9_]+)/i);
-  if (noSuchTable) {
-    const typo = noSuchTable[1];
-    let bestMatch = null;
-    let bestDist = 3;
-    allTables.forEach(tbl => {
-      const d = levenshtein(typo.toLowerCase(), tbl.toLowerCase());
-      if (d < bestDist) {
-        bestDist = d;
-        bestMatch = tbl;
-      }
-    });
-    if (bestMatch) {
-      return {
-        type: 'table_typo',
-        header: 'Table Name Typo',
-        hint: `Table <code>${escHtml(typo)}</code> does not exist in the database. Did you mean <strong><code>${escHtml(bestMatch)}</code></strong>?`,
-        suggestedFix: bestMatch,
-        actionReplace: { from: typo, to: bestMatch },
-        actionLabel: `Fix '${typo}' ➔ '${bestMatch}'`
-      };
-    }
-  }
-
-  // 7. MISSING FROM CLAUSE ENTIRELY
+  // ───────────────────────────────────────────────────────────────────────────
+  // SECTION 5: MISSING FROM CLAUSE
+  // ───────────────────────────────────────────────────────────────────────────
   if (/SELECT/i.test(query) && !/FROM/i.test(query) && /no such column/i.test(msg)) {
     return {
       type: 'missing_from',
@@ -739,8 +1014,10 @@ function analyzeQueryError(query, rawError) {
     };
   }
 
-  // 8. MISSING SEMICOLON (ONLY IF QUERY IS OTHERWISE COMPLETE)
-  if (!query.trim().endsWith(';') && /SELECT.+FROM/i.test(query)) {
+  // ───────────────────────────────────────────────────────────────────────────
+  // SECTION 6: MISSING SEMICOLON (ONLY WHEN NO OTHER ERRORS EXIST)
+  // ───────────────────────────────────────────────────────────────────────────
+  if (!query.trim().endsWith(';') && /SELECT.+FROM/i.test(query) && !msg.toLowerCase().includes('no such')) {
     return {
       type: 'missing_semicolon',
       header: 'Missing Semicolon ( ; )',
@@ -753,114 +1030,8 @@ function analyzeQueryError(query, rawError) {
   return null;
 }
 
-function levenshtein(a, b) {
-  const m = a.length, n = b.length;
-  const dp = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
-  for (let i = 0; i <= m; i++) dp[i][0] = i;
-  for (let j = 0; j <= n; j++) dp[0][j] = j;
-  for (let i = 1; i <= m; i++)
-    for (let j = 1; j <= n; j++)
-      dp[i][j] = a[i - 1] === b[j - 1] ? dp[i - 1][j - 1] : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
-  return dp[m][n];
-}
-
-function autoHighlightSql(container) {
-  if (!container) return;
-  const pres = container.querySelectorAll('pre');
-  pres.forEach(pre => {
-    if (pre.getAttribute('data-sql-highlighted') === 'true') return;
-    let text = pre.textContent || pre.innerText;
-    if (!text || !text.trim()) return;
-
-    let raw = text
-      .replace(/&amp;/g, '&')
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>');
-
-    function esc(s) {
-      return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    }
-
-    const SQL_KEYWORDS = [
-      'SELECT', 'FROM', 'WHERE', 'AS', 'JOIN', 'LEFT', 'RIGHT', 'INNER', 'OUTER', 'CROSS',
-      'ON', 'GROUP BY', 'ORDER BY', 'HAVING', 'LIMIT', 'OFFSET', 'DISTINCT', 'UNION', 'ALL',
-      'INTERSECT', 'EXCEPT', 'INSERT', 'INTO', 'VALUES', 'UPDATE', 'SET', 'DELETE', 'CREATE',
-      'TABLE', 'DATABASE', 'PRIMARY', 'KEY', 'FOREIGN', 'REFERENCES', 'CONSTRAINT', 'DROP',
-      'ALTER', 'ADD', 'COLUMN', 'DEFAULT', 'CHECK', 'INDEX', 'VIEW', 'AND', 'OR', 'NOT', 'IN',
-      'IS', 'NULL', 'LIKE', 'ILIKE', 'BETWEEN', 'CASE', 'WHEN', 'THEN', 'ELSE', 'END', 'ASC',
-      'DESC', 'OVER', 'PARTITION BY', 'ROWS', 'RANGE', 'UNBOUNDED', 'PRECEDING', 'FOLLOWING',
-      'CURRENT ROW', 'WITH', 'RECURSIVE', 'IF', 'EXISTS', 'UNIQUE', 'RESTRICT', 'CASCADE'
-    ];
-
-    const SQL_TYPES = [
-      'UUID', 'TEXT', 'VARCHAR', 'CHAR', 'INT', 'INTEGER', 'BIGINT', 'SMALLINT',
-      'NUMERIC', 'DECIMAL', 'FLOAT', 'REAL', 'DOUBLE', 'PRECISION', 'BOOLEAN',
-      'DATE', 'TIME', 'TIMESTAMP', 'TIMESTAMPTZ', 'INTERVAL', 'JSON', 'JSONB', 'SERIAL', 'BIGSERIAL'
-    ];
-
-    const SQL_FUNCTIONS = [
-      'GEN_RANDOM_UUID', 'NOW', 'CURRENT_DATE', 'CURRENT_TIME', 'CURRENT_TIMESTAMP',
-      'COUNT', 'SUM', 'AVG', 'MIN', 'MAX', 'CAST', 'COALESCE', 'EXTRACT', 'DATE_TRUNC',
-      'DATE_PART', 'LAG', 'LEAD', 'RANK', 'DENSE_RANK', 'ROW_NUMBER', 'NTILE', 'UPPER',
-      'LOWER', 'INITCAP', 'LENGTH', 'CHAR_LENGTH', 'TRIM', 'LTRIM', 'RTRIM', 'LPAD',
-      'RPAD', 'CONCAT', 'CONCAT_WS', 'SUBSTRING', 'LEFT', 'RIGHT', 'POSITION', 'STRPOS',
-      'REPLACE', 'REGEXP_REPLACE', 'SPLIT_PART', 'ROUND', 'CEIL', 'FLOOR', 'ABS'
-    ];
-
-    const SQL_BOOLEANS = ['TRUE', 'FALSE'];
-
-    const masterRegex = /(--[^\n]*)|("[^"\n]*"|'[^'\n]*')|\b([a-zA-Z_][a-zA-Z0-9_]*)\s*(?=\()|\b([a-zA-Z_][a-zA-Z0-9_]*|\d+(?:\.\d+)?)\b/g;
-
-    let resultHtml = raw.replace(masterRegex, (match, comment, str, func, word) => {
-      if (comment) {
-        const isError = comment.toLowerCase().includes('error');
-        const isSuccess = comment.includes('✅') || comment.toLowerCase().includes('valid') || comment.toLowerCase().includes('works');
-        const style = isError ? 'color: #f87171 !important;' : (isSuccess ? 'color: #34d399 !important;' : '');
-        return `<span class="sql-comment" style="${style}">${esc(comment)}</span>`;
-      }
-      if (str) {
-        return `<span class="sql-string">${esc(str)}</span>`;
-      }
-      if (func) {
-        const upperFunc = func.toUpperCase();
-        if (SQL_FUNCTIONS.includes(upperFunc)) {
-          return `<span class="sql-function">${esc(func)}</span>`;
-        }
-        if (SQL_KEYWORDS.includes(upperFunc)) {
-          return `<span class="sql-keyword">${esc(func)}</span>`;
-        }
-        if (SQL_TYPES.includes(upperFunc)) {
-          return `<span class="sql-type">${esc(func)}</span>`;
-        }
-        return `<span class="sql-identifier">${esc(func)}</span>`;
-      }
-      if (word) {
-        const upperWord = word.toUpperCase();
-        if (/^\d+(?:\.\d+)?$/.test(word)) {
-          return `<span class="sql-number">${esc(word)}</span>`;
-        }
-        if (SQL_BOOLEANS.includes(upperWord)) {
-          return `<span class="sql-boolean">${esc(word)}</span>`;
-        }
-        if (SQL_TYPES.includes(upperWord)) {
-          return `<span class="sql-type">${esc(word)}</span>`;
-        }
-        if (SQL_KEYWORDS.includes(upperWord)) {
-          return `<span class="sql-keyword">${esc(word)}</span>`;
-        }
-        return `<span class="sql-identifier">${esc(word)}</span>`;
-      }
-      return esc(match);
-    });
-
-    const codeEl = pre.querySelector('code');
-    if (codeEl) {
-      codeEl.innerHTML = resultHtml;
-    } else {
-      pre.innerHTML = `<code class="sql">${resultHtml}</code>`;
-    }
-    pre.setAttribute('data-sql-highlighted', 'true');
-  });
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -3247,6 +3418,91 @@ function getInterviewersAngle(dayId, qId, prompt) {
 // WORKSPACE QUESTION NAVIGATION
 // ═══════════════════════════════════════════════════════════════
 
+// ── REEL CHALLENGE DEFINITIONS ──
+const REEL_CHALLENGES = {
+  'SQL-01-R1': {
+    day: 'day04',
+    title: '90% FAIL THIS SQL TRAP 💀',
+    task: 'Spot the Trap: NOT IN vs NULL Subquery',
+    prompt: `One of these queries silently returns <strong>0 rows</strong>! Test both options below in the editor to see how a NULL in a subquery breaks <code>NOT IN</code>.<br/>
+      <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-01-R1', 'A')">⚡ Load Option A (Trap)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-01-R1', 'B')">⚡ Load Option B (Fix)</button>
+      </div>`,
+    codeA: "SELECT *\nFROM employees\nWHERE department_id NOT IN (\n  SELECT department_id\n  FROM departments\n);",
+    codeB: "SELECT *\nFROM employees\nWHERE department_id NOT IN (\n  SELECT department_id\n  FROM departments\n  WHERE department_id IS NOT NULL\n);"
+  },
+  'SQL-01-R2': {
+    day: 'day04',
+    title: 'HR CALLED: TOTAL PAY IS NULL 💸',
+    task: 'Payroll Fix: Handling NULL in Calculations',
+    prompt: `HR called saying total compensation is NULL! Run Option A (salary + bonus) vs Option B (COALESCE) to see why arithmetic with NULL fails.<br/>
+      <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-01-R2', 'A')">⚡ Load Option A (Trap)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-01-R2', 'B')">⚡ Load Option B (Fix)</button>
+      </div>`,
+    codeA: "SELECT first_name AS emp_name,\n       salary AS base_salary,\n       salary + commission AS total_pay\nFROM employees;",
+    codeB: "SELECT first_name AS emp_name,\n       salary AS base_salary,\n       salary + COALESCE(commission, 0) AS total_pay\nFROM employees;"
+  },
+  'SQL-02-R1': {
+    day: 'day05',
+    title: 'TOP 3 EARNERS TRAP 🏆',
+    task: 'Ranking Challenge: Avoid Skipping Ranks on Ties',
+    prompt: `Two employees have the same salary! Run Option A (RANK) vs Option B (DENSE_RANK) to see why RANK() skips rank 2 and misses true earners.<br/>
+      <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-02-R1', 'A')">⚡ Load Option A (RANK)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-02-R1', 'B')">⚡ Load Option B (DENSE_RANK)</button>
+      </div>`,
+    codeA: "SELECT first_name AS emp_name, salary, rk\nFROM (\n  SELECT first_name, salary,\n         RANK() OVER (ORDER BY salary DESC) AS rk\n  FROM employees\n) t\nWHERE rk <= 3;",
+    codeB: "SELECT first_name AS emp_name, salary, rk\nFROM (\n  SELECT first_name, salary,\n         DENSE_RANK() OVER (ORDER BY salary DESC) AS rk\n  FROM employees\n) t\nWHERE rk <= 3;"
+  },
+  'SQL-02-R2': {
+    day: 'day05',
+    title: 'RUNNING TOTAL DISASTER 💸',
+    task: 'Cumulative Sum: True Row-by-Row Accumulation',
+    prompt: `Same-day orders exist in the table! Run Option A (ROWS UNBOUNDED PRECEDING) vs Option B (default) to see why default RANGE causes sudden sum jumps on duplicate dates.<br/>
+      <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-02-R2', 'A')">⚡ Load Option A (ROWS - Fix)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-02-R2', 'B')">⚡ Load Option B (Default - Trap)</button>
+      </div>`,
+    codeA: "SELECT order_date, total_amount AS amount,\n       SUM(total_amount) OVER (\n         ORDER BY order_date\n         ROWS UNBOUNDED PRECEDING\n       ) AS running_total\nFROM orders;",
+    codeB: "SELECT order_date, total_amount AS amount,\n       SUM(total_amount) OVER (\n         ORDER BY order_date\n       ) AS running_total\nFROM orders;"
+  }
+};
+
+window.loadReelCode = function(challengeId, optionKey) {
+  const chal = REEL_CHALLENGES[challengeId];
+  if (!chal || !mainEditor) return;
+  const code = optionKey === 'A' ? chal.codeA : chal.codeB;
+  mainEditor.setValue(code);
+  mainEditor.focus();
+  showToast(`⚡ Loaded Option ${optionKey}! Click Run (Ctrl+Enter) to execute.`);
+};
+
+function getActiveChallengeId() {
+  const urlP = new URLSearchParams(window.location.search);
+  const directChal = urlP.get('challenge') || urlP.get('reel');
+  if (directChal && REEL_CHALLENGES[directChal]) return directChal;
+
+  const camp = (urlP.get('utm_campaign') || '').toLowerCase();
+  if (camp.includes('reel_day04_q1') || camp.includes('reel_01') || camp.includes('high_performer')) return 'SQL-01-R1';
+  if (camp.includes('reel_day04_q2') || camp.includes('reel_02') || camp.includes('salary_analytic')) return 'SQL-01-R2';
+  if (camp.includes('reel_day04_q3') || camp.includes('reel_03') || camp.includes('dept_ranking')) return 'SQL-02-R1';
+  if (camp.includes('reel_day04_q4') || camp.includes('reel_04') || camp.includes('sales_growth')) return 'SQL-02-R2';
+
+  const dayParam = urlP.get('day');
+  const qParam = urlP.get('q') || urlP.get('question');
+  if (dayParam === '4' || dayParam === '04') {
+    if (qParam === '1') return 'SQL-01-R1';
+    if (qParam === '2') return 'SQL-01-R2';
+  }
+  if (dayParam === '5' || dayParam === '05') {
+    if (qParam === '1' || qParam === '3') return 'SQL-02-R1';
+    if (qParam === '2' || qParam === '4') return 'SQL-02-R2';
+  }
+  return null;
+}
+
 let currentPracticeQ = 0;
 let currentDay = 'day01';
 
@@ -3257,16 +3513,36 @@ function loadQuestionsForDay(day) {
   const tpq = (COURSE_CONFIG && COURSE_CONFIG.topicPracticeQuestions) || (dayContent && dayContent.topicPracticeQuestions);
 
   if (tpq && (tpq[currentSlide] || tpq[String(currentSlide)])) {
-    questions = tpq[currentSlide] || tpq[String(currentSlide)];
+    questions = [...(tpq[currentSlide] || tpq[String(currentSlide)])];
   } else if (COURSE_CONFIG.allPracticeQuestions && COURSE_CONFIG.allPracticeQuestions[currentDay]) {
-    questions = COURSE_CONFIG.allPracticeQuestions[currentDay];
+    questions = [...COURSE_CONFIG.allPracticeQuestions[currentDay]];
   } else {
-    questions = (dayContent && dayContent.practiceQuestions) || COURSE_CONFIG.practiceQuestions || [];
+    questions = [...((dayContent && dayContent.practiceQuestions) || COURSE_CONFIG.practiceQuestions || [])];
   }
+
+  const chalId = getActiveChallengeId();
+  if (chalId && REEL_CHALLENGES[chalId]) {
+    const chal = REEL_CHALLENGES[chalId];
+    questions.unshift({
+      id: 1,
+      prompt: `<strong>${chal.task}</strong><br/>${chal.prompt}`,
+      referenceSql: chal.codeB
+    });
+  }
+
   COURSE_CONFIG.practiceQuestions = questions;
   currentPracticeQ = 0;
   renderPracticeQuestion();
   updatePracticeStats();
+
+  if (chalId && REEL_CHALLENGES[chalId]) {
+    const chal = REEL_CHALLENGES[chalId];
+    setTimeout(() => {
+      if (mainEditor) {
+        mainEditor.setValue(chal.codeA);
+      }
+    }, 150);
+  }
 }
 
 // Mapping of question id → audio file (for Day 01)
@@ -3913,352 +4189,155 @@ const questionSolutionMap = {
       scrollAt: 12.0
     }
   },
-'day05': {
-      "1": {
-          "src": "Day05/New_Day5Question01sol.mp3",
-          "code": "SELECT SUM(salary) AS total_payroll,\n       AVG(salary) AS avg_salary,\n       MIN(salary) AS min_salary,\n       MAX(salary) AS max_salary\nFROM employees;",
-          "segments": [
-              {
-                  "text": "SELECT SUM(salary) AS total_payroll,\n",
-                  "startAt": 1.76,
-                  "charInterval": 55
-              },
-              {
-                  "text": "       AVG(salary) AS avg_salary,\n",
-                  "startAt": 5.2,
-                  "charInterval": 85
-              },
-              {
-                  "text": "       MIN(salary) AS min_salary,\n",
-                  "startAt": 8.48,
-                  "charInterval": 45
-              },
-              {
-                  "text": "       MAX(salary) AS max_salary\n",
-                  "startAt": 11.46,
-                  "charInterval": 45
-              },
-              {
-                  "text": "FROM employees;",
-                  "startAt": 14.32,
-                  "charInterval": 39
-              }
-          ],
-          "scrollAt": 15.8
-      },
-      "2": {
-          "src": "Day05/New_Day5Question02sol.mp3",
-          "code": "SELECT COUNT(*) AS active_employees\nFROM employees\nWHERE is_active = 1;",
-          "segments": [
-              {
-                  "text": "SELECT COUNT(*) AS active_employees\n",
-                  "startAt": 1.56,
-                  "charInterval": 53
-              },
-              {
-                  "text": "FROM employees\n",
-                  "startAt": 4.4,
-                  "charInterval": 55
-              },
-              {
-                  "text": "WHERE ",
-                  "startAt": 5.68,
-                  "charInterval": 57
-              },
-              {
-                  "text": "is_active = 1;",
-                  "startAt": 5.88,
-                  "charInterval": 29
-              }
-          ],
-          "scrollAt": 7.1
-      },
-      "3": {
-          "src": "Day05/New_Day5Question03sol.mp3",
-          "code": "SELECT MIN(unit_price) AS cheapest,\n       MAX(unit_price) AS most_expensive\nFROM products;",
-          "segments": [
-              {
-                  "text": "SELECT MIN(unit_price) AS cheapest,\n",
-                  "startAt": 1.68,
-                  "charInterval": 78
-              },
-              {
-                  "text": "       MAX(unit_price) AS most_expensive\n",
-                  "startAt": 4.92,
-                  "charInterval": 60
-              },
-              {
-                  "text": "FROM products;",
-                  "startAt": 8.78,
-                  "charInterval": 30
-              }
-          ],
-          "scrollAt": 10.1
-      },
-      "4": {
-          "src": "Day05/New_Day5Question04sol.mp3",
-          "code": "SELECT COUNT(*) AS total,\n       COUNT(commission) AS has_commission,\n       COUNT(*) - COUNT(commission) AS no_commission\nFROM employees;",
-          "segments": [
-              {
-                  "text": "SELECT COUNT(*) AS total,\n",
-                  "startAt": 1.8,
-                  "charInterval": 85
-              },
-              {
-                  "text": "       COUNT(commission) AS has_commission,\n",
-                  "startAt": 6.56,
-                  "charInterval": 75
-              },
-              {
-                  "text": "       COUNT(*) - COUNT(commission) AS no_commission\n",
-                  "startAt": 8.36,
-                  "charInterval": 50
-              },
-              {
-                  "text": "FROM employees;",
-                  "startAt": 10.38,
-                  "charInterval": 36
-              }
-          ],
-          "scrollAt": 11.8
-      },
-      "5": {
-          "src": "Day05/New_Day5Question05sol.mp3",
-          "code": "SELECT SUM(total_amount) AS shipped_revenue\nFROM orders\nWHERE status = 'Shipped';",
-          "segments": [
-              {
-                  "text": "SELECT SUM(total_amount) AS shipped_revenue\n",
-                  "startAt": 1.64,
-                  "charInterval": 64
-              },
-              {
-                  "text": "FROM orders\n",
-                  "startAt": 5.24,
-                  "charInterval": 39
-              },
-              {
-                  "text": "WHERE ",
-                  "startAt": 5.78,
-                  "charInterval": 80
-              },
-              {
-                  "text": "status = 'Shipped';",
-                  "startAt": 6.34,
-                  "charInterval": 60
-              }
-          ],
-          "scrollAt": 8.3
-      },
-      "6": {
-          "src": "Day05/New_Day5Question06sol.mp3",
-          "code": "SELECT COUNT(DISTINCT department_id) AS num_departments\nFROM employees;",
-          "segments": [
-              {
-                  "text": "SELECT COUNT(DISTINCT department_id) AS num_departments\n",
-                  "startAt": 1.5,
-                  "charInterval": 80
-              },
-              {
-                  "text": "FROM employees;",
-                  "startAt": 6,
-                  "charInterval": 58
-              }
-          ],
-          "scrollAt": 7.8
-      },
-      "7": {
-          "src": "Day05/New_Day5Question07sol.mp3",
-          "code": "SELECT SUM(stock_qty * unit_price) AS inventory_value\nFROM products;",
-          "segments": [
-              {
-                  "text": "SELECT SUM(stock_qty * unit_price) AS inventory_value\n",
-                  "startAt": 1.54,
-                  "charInterval": 81
-              },
-              {
-                  "text": "FROM products;",
-                  "startAt": 6.9,
-                  "charInterval": 41
-              }
-          ],
-          "scrollAt": 8.4
-      },
-      "8": {
-          "src": "Day05/New_Day5Question08sol.mp3",
-          "code": "SELECT AVG(commission) AS avg_non_null,\n       AVG(COALESCE(commission, 0)) AS avg_all\nFROM employees;",
-          "segments": [
-              {
-                  "text": "SELECT AVG(commission) AS avg_non_null,\n",
-                  "startAt": 1.58,
-                  "charInterval": 85
-              },
-              {
-                  "text": "       AVG(COALESCE(commission, 0)) AS avg_all\n",
-                  "startAt": 5.82,
-                  "charInterval": 63
-              },
-              {
-                  "text": "FROM employees;",
-                  "startAt": 10.08,
-                  "charInterval": 36
-              }
-          ],
-          "scrollAt": 11.5
-      },
-      "9": {
-          "src": "Day05/New_Day5Question09sol.mp3",
-          "code": "SELECT COUNT(*) AS premium_count\nFROM products\nWHERE unit_price > 5000;",
-          "segments": [
-              {
-                  "text": "SELECT COUNT(*) AS premium_count\n",
-                  "startAt": 1.38,
-                  "charInterval": 60
-              },
-              {
-                  "text": "FROM products\n",
-                  "startAt": 4.16,
-                  "charInterval": 35
-              },
-              {
-                  "text": "WHERE ",
-                  "startAt": 4.72,
-                  "charInterval": 57
-              },
-              {
-                  "text": "unit_price > 5000;",
-                  "startAt": 5.06,
-                  "charInterval": 85
-              }
-          ],
-          "scrollAt": 7.4
-      },
-      "10": {
-          "src": "Day05/New_Day5Question10sol.mp3",
-          "code": "SELECT COALESCE(AVG(salary), 0) AS avg_salary\nFROM employees\nWHERE department_id = 99;",
-          "segments": [
-              {
-                  "text": "SELECT COALESCE(AVG(salary), 0) AS avg_salary\n",
-                  "startAt": 2,
-                  "charInterval": 85
-              },
-              {
-                  "text": "FROM employees\n",
-                  "startAt": 6.8,
-                  "charInterval": 51
-              },
-              {
-                  "text": "WHERE ",
-                  "startAt": 7.66,
-                  "charInterval": 69
-              },
-              {
-                  "text": "department_id = 99;",
-                  "startAt": 8.14,
-                  "charInterval": 85
-              }
-          ],
-          "scrollAt": 10.6
-      },
-      "11": {
-          "src": "Day05/New_Day5Question11sol.mp3",
-          "code": "SELECT MAX(total_amount) AS largest_order\nFROM orders;",
-          "segments": [
-              {
-                  "text": "SELECT MAX(total_amount) AS largest_order\n",
-                  "startAt": 1.56,
-                  "charInterval": 71
-              },
-              {
-                  "text": "FROM orders;",
-                  "startAt": 5.24,
-                  "charInterval": 40
-              }
-          ],
-          "scrollAt": 6.6
-      },
-      "12": {
-          "src": "Day05/New_Day5Question12sol.mp3",
-          "code": "SELECT COUNT(DISTINCT region) AS num_regions\nFROM customers;",
-          "segments": [
-              {
-                  "text": "SELECT COUNT(DISTINCT region) AS num_regions\n",
-                  "startAt": 1.5,
-                  "charInterval": 78
-              },
-              {
-                  "text": "FROM customers;",
-                  "startAt": 5.02,
-                  "charInterval": 40
-              }
-          ],
-          "scrollAt": 6.5
-      },
-      "13": {
-          "src": "Day05/New_Day5Question13sol.mp3",
-          "code": "SELECT SUM(CASE WHEN status = 'Shipped' THEN total_amount ELSE 0 END) AS shipped_rev,\n       SUM(CASE WHEN status = 'Processing' THEN total_amount ELSE 0 END) AS processing_rev\nFROM orders;",
-          "segments": [
-              {
-                  "text": "SELECT SUM(CASE WHEN status = 'Shipped' THEN total_amount ELSE 0 END) AS shipped_rev,\n",
-                  "startAt": 2.62,
-                  "charInterval": 71
-              },
-              {
-                  "text": "       SUM(CASE WHEN status = 'Processing' THEN total_amount ELSE 0 END) AS processing_rev\n",
-                  "startAt": 9.8,
-                  "charInterval": 69
-              },
-              {
-                  "text": "FROM orders;",
-                  "startAt": 17.08,
-                  "charInterval": 29
-              }
-          ],
-          "scrollAt": 18.3
-      },
-      "14": {
-          "src": "Day05/New_Day5Question14sol.mp3",
-          "code": "SELECT ROUND(SUM(stock_qty * unit_price) * 1.0 / NULLIF(SUM(stock_qty), 0), 2) AS weighted_avg_price\nFROM products;",
-          "segments": [
-              {
-                  "text": "SELECT ROUND(SUM(stock_qty * unit_price) * 1.0 / NULLIF(SUM(stock_qty), 0), 2) AS weighted_avg_price\n",
-                  "startAt": 2.36,
-                  "charInterval": 72
-              },
-              {
-                  "text": "FROM products;",
-                  "startAt": 11.72,
-                  "charInterval": 25
-              }
-          ],
-          "scrollAt": 12.9
-      },
-      "15": {
-          "src": "Day05/New_Day5Question15sol.mp3",
-          "code": "SELECT GROUP_CONCAT(name, ', ') AS engineering_team\nFROM employees\nWHERE department_id = 10;",
-          "segments": [
-              {
-                  "text": "SELECT GROUP_CONCAT(name, ', ') AS engineering_team\n",
-                  "startAt": 1.5,
-                  "charInterval": 81
-              },
-              {
-                  "text": "FROM employees\n",
-                  "startAt": 6.86,
-                  "charInterval": 49
-              },
-              {
-                  "text": "WHERE ",
-                  "startAt": 8.66,
-                  "charInterval": 57
-              },
-              {
-                  "text": "department_id = 10;",
-                  "startAt": 10.46,
-                  "charInterval": 50
-              }
-          ],
-          "scrollAt": 12.2
-      }
+    'day05': {
+    1: {
+      src: 'Day05/New_Day5Question01sol.mp3',
+      code: 'SELECT SUM(salary) AS total_payroll,\n       AVG(salary) AS avg_salary,\n       MIN(salary) AS min_salary,\n       MAX(salary) AS max_salary\nFROM   employees;',
+      segments: [
+        { text: 'SELECT SUM(salary) AS total_payroll,\n', startAt: 2.44, charInterval: 65 },
+        { text: '       AVG(salary) AS avg_salary,\n', startAt: 5.31, charInterval: 71 },
+        { text: '       MIN(salary) AS min_salary,\n', startAt: 8.18, charInterval: 71 },
+        { text: '       MAX(salary) AS max_salary\n', startAt: 11.06, charInterval: 73 },
+        { text: 'FROM   employees;', startAt: 13.93, charInterval: 85 }
+      ],
+      scrollAt: 15.96
+    },
+    2: {
+      src: 'Day05/New_Day5Question02sol.mp3',
+      code: 'SELECT COUNT(*) AS active_employees\nFROM   employees\nWHERE  is_active = 1;',
+      segments: [
+        { text: 'SELECT COUNT(*) AS active_employees\n', startAt: 2.06, charInterval: 53 },
+        { text: 'FROM   employees\n', startAt: 4.32, charInterval: 85 },
+        { text: 'WHERE  is_active = 1;', startAt: 6.58, charInterval: 85 }
+      ],
+      scrollAt: 8.4
+    },
+    3: {
+      src: 'Day05/New_Day5Question03sol.mp3',
+      code: 'SELECT MIN(unit_price) AS cheapest,\n       MAX(unit_price) AS most_expensive\nFROM   products;',
+      segments: [
+        { text: 'SELECT MIN(unit_price) AS cheapest,\n', startAt: 2.02, charInterval: 67 },
+        { text: '       MAX(unit_price) AS most_expensive\n', startAt: 4.87, charInterval: 59 },
+        { text: 'FROM   products;', startAt: 7.73, charInterval: 85 }
+      ],
+      scrollAt: 10.05
+    },
+    4: {
+      src: 'Day05/New_Day5Question04sol.mp3',
+      code: 'SELECT COUNT(*) AS total,\n       COUNT(commission) AS has_commission,\n       COUNT(*) - COUNT(commission) AS no_commission\nFROM   employees;',
+      segments: [
+        { text: 'SELECT COUNT(*) AS total,\n', startAt: 2.18, charInterval: 75 },
+        { text: '       COUNT(commission) AS has_commission,\n', startAt: 4.5, charInterval: 44 },
+        { text: '       COUNT(*) - COUNT(commission) AS no_commission\n', startAt: 6.81, charInterval: 37 },
+        { text: 'FROM   employees;', startAt: 9.12, charInterval: 85 }
+      ],
+      scrollAt: 10.87
+    },
+    5: {
+      src: 'Day05/New_Day5Question05sol.mp3',
+      code: 'SELECT SUM(total_amount) AS shipped_revenue\nFROM   orders\nWHERE  status = \'Shipped\';',
+      segments: [
+        { text: 'SELECT SUM(total_amount) AS shipped_revenue\n', startAt: 2.24, charInterval: 41 },
+        { text: 'FROM   orders\n', startAt: 4.4, charInterval: 85 },
+        { text: 'WHERE  status = \'Shipped\';', startAt: 6.56, charInterval: 70 }
+      ],
+      scrollAt: 8.28
+    },
+    6: {
+      src: 'Day05/New_Day5Question06sol.mp3',
+      code: 'SELECT COUNT(DISTINCT department_id) AS num_departments\nFROM   employees;',
+      segments: [
+        { text: 'SELECT COUNT(DISTINCT department_id) AS num_departments\n', startAt: 2.42, charInterval: 45 },
+        { text: 'FROM   employees;', startAt: 5.39, charInterval: 85 }
+      ],
+      scrollAt: 7.94
+    },
+    7: {
+      src: 'Day05/New_Day5Question07sol.mp3',
+      code: 'SELECT SUM(stock_qty * unit_price) AS inventory_value\nFROM   products;',
+      segments: [
+        { text: 'SELECT SUM(stock_qty * unit_price) AS inventory_value\n', startAt: 2.58, charInterval: 51 },
+        { text: 'FROM   products;', startAt: 5.82, charInterval: 85 }
+      ],
+      scrollAt: 8.61
+    },
+    8: {
+      src: 'Day05/New_Day5Question08sol.mp3',
+      code: 'SELECT AVG(commission) AS avg_non_null,\n       AVG(COALESCE(commission, 0)) AS avg_all\nFROM   employees;',
+      segments: [
+        { text: 'SELECT AVG(commission) AS avg_non_null,\n', startAt: 2.12, charInterval: 70 },
+        { text: '       AVG(COALESCE(commission, 0)) AS avg_all\n', startAt: 5.42, charInterval: 59 },
+        { text: 'FROM   employees;', startAt: 8.72, charInterval: 85 }
+      ],
+      scrollAt: 11.42
+    },
+    9: {
+      src: 'Day05/New_Day5Question09sol.mp3',
+      code: 'SELECT COUNT(*) AS premium_count\nFROM   products\nWHERE  unit_price > 5000;',
+      segments: [
+        { text: 'SELECT COUNT(*) AS premium_count\n', startAt: 2.12, charInterval: 60 },
+        { text: 'FROM   products\n', startAt: 4.48, charInterval: 85 },
+        { text: 'WHERE  unit_price > 5000;', startAt: 6.84, charInterval: 80 }
+      ],
+      scrollAt: 8.74
+    },
+    10: {
+      src: 'Day05/New_Day5Question10sol.mp3',
+      code: 'SELECT COALESCE(AVG(salary), 0) AS avg_salary\nFROM   employees\nWHERE  department_id = 99;',
+      segments: [
+        { text: 'SELECT COALESCE(AVG(salary), 0) AS avg_salary\n', startAt: 2.6, charInterval: 57 },
+        { text: 'FROM   employees\n', startAt: 5.73, charInterval: 85 },
+        { text: 'WHERE  department_id = 99;', startAt: 8.85, charInterval: 85 }
+      ],
+      scrollAt: 11.38
+    },
+    11: {
+      src: 'Day05/New_Day5Question11sol.mp3',
+      code: 'SELECT MAX(total_amount) AS largest_order\nFROM   orders;',
+      segments: [
+        { text: 'SELECT MAX(total_amount) AS largest_order\n', startAt: 2.0, charInterval: 54 },
+        { text: 'FROM   orders;', startAt: 4.69, charInterval: 85 }
+      ],
+      scrollAt: 7.01
+    },
+    12: {
+      src: 'Day05/New_Day5Question12sol.mp3',
+      code: 'SELECT COUNT(DISTINCT region) AS num_regions\nFROM   customers;',
+      segments: [
+        { text: 'SELECT COUNT(DISTINCT region) AS num_regions\n', startAt: 2.3, charInterval: 42 },
+        { text: 'FROM   customers;', startAt: 4.53, charInterval: 85 }
+      ],
+      scrollAt: 6.42
+    },
+    13: {
+      src: 'Day05/New_Day5Question13sol.mp3',
+      code: 'SELECT SUM(CASE WHEN status = \'Shipped\' THEN total_amount ELSE 0 END) AS shipped_rev,\n       SUM(CASE WHEN status = \'Processing\' THEN total_amount ELSE 0 END) AS processing_rev\nFROM   orders;',
+      segments: [
+        { text: 'SELECT SUM(CASE WHEN status = \'Shipped\' THEN total_amount ELSE 0 END) AS shipped_rev,\n', startAt: 2.98, charInterval: 51 },
+        { text: '       SUM(CASE WHEN status = \'Processing\' THEN total_amount ELSE 0 END) AS processing_rev\n', startAt: 8.15, charInterval: 48 },
+        { text: 'FROM   orders;', startAt: 13.33, charInterval: 85 }
+      ],
+      scrollAt: 17.58
+    },
+    14: {
+      src: 'Day05/New_Day5Question14sol.mp3',
+      code: 'SELECT ROUND(SUM(unit_price * qty) * 1.0 / NULLIF(SUM(qty), 0), 2) AS weighted_avg_price\nFROM   order_items;',
+      segments: [
+        { text: 'SELECT ROUND(SUM(unit_price * qty) * 1.0 / NULLIF(SUM(qty), 0), 2) AS weighted_avg_price\n', startAt: 2.56, charInterval: 63 },
+        { text: 'FROM   order_items;', startAt: 9.16, charInterval: 85 }
+      ],
+      scrollAt: 14.97
+    },
+    15: {
+      src: 'Day05/New_Day5Question15sol.mp3',
+      code: 'SELECT GROUP_CONCAT(name, \', \') AS engineering_team\nFROM   employees\nWHERE  department_id = 10;',
+      segments: [
+        { text: 'SELECT GROUP_CONCAT(name, \', \') AS engineering_team\n', startAt: 2.1, charInterval: 50 },
+        { text: 'FROM   employees\n', startAt: 5.19, charInterval: 85 },
+        { text: 'WHERE  department_id = 10;', startAt: 8.29, charInterval: 85 }
+      ],
+      scrollAt: 10.81
+    }
   }
 };
 
@@ -5209,7 +5288,7 @@ function loadDayContent(dayId) {
 
     // Lazy-load the content script
     const script = document.createElement('script');
-    script.src = `/Version-3/content/day-${String(dayNum).padStart(2, '0')}.js?v=14.37`;
+    script.src = `/Version-3/content/day-${String(dayNum).padStart(2, '0')}.js?v=14.40`;
     script.onload = () => {
       // Re-run now that module is loaded
       loadDayContent(dayId);
@@ -5279,41 +5358,40 @@ function loadDayContent(dayId) {
     currentSlide = 0;
     currentDay = dayId;
     
-    // Check if a specific question is requested via URL (?q=1 or ?question=1)
+    // Check if a specific question or challenge is requested via URL
     const __urlParams = new URLSearchParams(window.location.search);
+    const __challengeId = typeof getActiveChallengeId === 'function' ? getActiveChallengeId() : (__urlParams.get('challenge') || __urlParams.get('reel'));
     const __qpQ = __urlParams.get('q') || __urlParams.get('question');
-    if (__qpQ && COURSE_CONFIG.practiceQuestions) {
-      const parsedQ = parseInt(__qpQ, 10) - 1;
-      if (parsedQ >= 0 && parsedQ < COURSE_CONFIG.practiceQuestions.length) {
-        currentPracticeQ = parsedQ;
-      } else {
-        currentPracticeQ = 0;
-      }
-    } else {
-      currentPracticeQ = 0;
-    }
+    const __utmCamp = __urlParams.get('utm_campaign') || '';
 
     // Guest pass banner if arrived via Instagram / Reel link
-    const __isGuestPass = __urlParams.get('guest') === 'true' || Boolean(__qpQ) || __urlParams.has('utm_campaign');
+    const __isGuestPass = __urlParams.get('guest') === 'true' || Boolean(__qpQ) || Boolean(__challengeId) || __urlParams.has('utm_campaign');
     if (__isGuestPass) {
       const existingBanner = document.getElementById('reelGuestPassBanner');
       if (!existingBanner) {
         const banner = document.createElement('div');
         banner.id = 'reelGuestPassBanner';
         banner.style.cssText = 'background: linear-gradient(135deg, #1e1b4b, #311042); border-bottom: 1px solid #7c3aed; color: #f8fafc; padding: 8px 16px; font-size: 0.82rem; display: flex; align-items: center; justify-content: space-between; gap: 12px; z-index: 100; font-family: sans-serif;';
+        
+        const bannerTitle = (__challengeId && REEL_CHALLENGES[__challengeId]) 
+          ? REEL_CHALLENGES[__challengeId].title 
+          : `Day ${dayId.replace('day', '')}, Question ${currentPracticeQ + 1}`;
+        
+        const checkoutUrl = `/landing_v2/index.html?utm_source=instagram&utm_medium=reels&utm_campaign=${encodeURIComponent(__utmCamp || 'reel_challenge')}#pricing`;
+
         banner.innerHTML = `
           <div style="display:flex; align-items:center; gap:8px;">
             <span style="background:#8b5cf6; color:#fff; font-size:0.68rem; font-weight:800; padding:2px 7px; border-radius:4px; text-transform:uppercase;">Reel Pass</span>
-            <span>🎁 <strong>Instagram Challenge Preview:</strong> Day ${dayId.replace('day', '')}, Question ${currentPracticeQ + 1}</span>
+            <span>🎁 <strong>Instagram Challenge:</strong> ${bannerTitle}</span>
           </div>
-          <a href="/sql-course" style="background:#10b981; color:#fff; font-weight:700; text-decoration:none; padding:4px 12px; border-radius:6px; font-size:0.75rem; transition: background 0.2s;" onmouseover="this.style.background='#059669'" onmouseout="this.style.background='#10b981'">Unlock All 60 Days →</a>
+          <a href="${checkoutUrl}" style="background:linear-gradient(135deg, #00e6f6, #a855f7); color:#060913; font-weight:800; text-decoration:none; padding:5px 14px; border-radius:8px; font-size:0.75rem; box-shadow:0 0 15px rgba(0,230,246,0.3); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='none'">Unlock All 60 Days — ₹2,499 →</a>
         `;
         document.body.prepend(banner);
       }
     }
 
     // Auto-select Practice / Coding Editor tab on mobile viewports for Reel visitors or ?q= questions
-    if (__isGuestPass || Boolean(__qpQ) || __urlParams.get('tab') === 'practice' || __urlParams.get('mobile_tab') === 'practice') {
+    if (__isGuestPass || Boolean(__qpQ) || Boolean(__challengeId) || __urlParams.get('tab') === 'practice' || __urlParams.get('mobile_tab') === 'practice') {
       setTimeout(() => {
         if (typeof setMobileTab === 'function') {
           setMobileTab('practice');
@@ -5348,7 +5426,12 @@ function loadDayContent(dayId) {
     // Clear editor and terminal on fresh load
     clearOutputSection();
     if (mainEditor) {
-      mainEditor.setValue('');
+      const activeChal = typeof getActiveChallengeId === 'function' ? getActiveChallengeId() : null;
+      if (activeChal && REEL_CHALLENGES[activeChal]) {
+        mainEditor.setValue(REEL_CHALLENGES[activeChal].codeA);
+      } else {
+        mainEditor.setValue('');
+      }
       mainEditor.clearHistory();
     }
 
@@ -6363,7 +6446,7 @@ const day04Tracks = [
   { src: 'Day04/New_Day4Question12sol.mp3', target: '#questionBar', title: 'Q12 Solution: Stock Value', type: 'solution', qId: 12 }
 ];
 
-const day05Durations = [17.6, 30.9, 9.0, 25.0, 27.2, 10.0, 19.1, 25.9, 12.6, 11.0, 20.3, 15.5, 20.7, 17.6, 10.9, 12.6, 15.3, 11.5, 10.8, 30.3, 11.9, 9.1, 10.4, 14.0, 14.3, 8.3, 7.5, 8.7, 9.0, 10.0, 10.6, 7.6, 7.3, 9.0, 7.1, 10.0, 9.3, 8.4, 10.3, 8.6, 7.9, 8.0, 10.1, 7.6, 5.9, 8.2, 5.9, 7.1, 16.5, 7.8, 12.2, 8.3, 8.6];
+const day05Durations = [11.88, 31.0, 8.4, 19.94, 29.7, 9.38, 13.54, 26.74, 12.54, 5.86, 20.8, 16.14, 18.2, 19.74, 10.48, 7.52, 16.72, 10.48, 5.06, 31.34, 11.84, 8.46, 9.92, 15.92, 16.8, 10.0, 8.84, 9.28, 10.58, 10.8, 11.44, 8.72, 8.72, 9.2, 8.36, 10.0, 9.06, 10.0, 12.02, 10.0, 9.2, 8.0, 11.98, 8.16, 7.38, 8.72, 6.76, 7.8, 18.5, 13.84, 15.76, 10.0, 11.38];
 
 const day05Tracks = [
   // ── Section 1: Why Aggregation Matters ──
@@ -10140,7 +10223,7 @@ function updateDay04NotInTrapCodeHighlights(currentTime, isPlaying) {
 
 
 // ══════════════════════════════════════════════════════════════════════
-// DAY 05: AGGREGATE FUNCTIONS PROGRESSIVE NARRATION HIGHLIGHTS
+// DAY 05: AGGREGATE FUNCTIONS PROGRESSIVE NARRATION HIGHLIGHTS (WHISPER SYNC)
 // ══════════════════════════════════════════════════════════════════════
 
 function updateDay05AggTableHighlights(currentTime, isPlaying) {
@@ -10159,40 +10242,53 @@ function updateDay05AggTableHighlights(currentTime, isPlaying) {
     return;
   }
 
-  // Whisper ASR timestamps for New_Day5Part1audio02.mp3 (30.50s):
-  // 3.10s - 8.92s : COUNT(*)
-  // 8.92s - 14.50s: COUNT(col)
-  // 14.50s - 18.98s: SUM(col)
-  // 18.98s - 24.40s: AVG(col)
-  // 24.40s - 30.50s: MIN/MAX(col)
-  if (rows.r1) rows.r1.classList.toggle('row-active-spotlight', currentTime >= 3.10 && currentTime < 8.92);
-  if (rows.r2) rows.r2.classList.toggle('row-active-spotlight', currentTime >= 8.92 && currentTime < 14.50);
-  if (rows.r3) rows.r3.classList.toggle('row-active-spotlight', currentTime >= 14.50 && currentTime < 18.98);
-  if (rows.r4) rows.r4.classList.toggle('row-active-spotlight', currentTime >= 18.98 && currentTime < 24.40);
-  if (rows.r5) rows.r5.classList.toggle('row-active-spotlight', currentTime >= 24.40 && currentTime <= 30.50);
+  // Calibrated Whisper ASR timestamps for New_Day5Part1audio02.mp3 (31.00s):
+  // 2.74s -  8.48s : Row 1 (COUNT(*) - Total row count, counts ALL rows)
+  // 8.48s - 13.62s : Row 2 (COUNT(col) - Populated rows, ignores NULLs)
+  // 13.62s - 18.12s: Row 3 (SUM(col) - Total sum of column, ignores NULLs)
+  // 18.12s - 24.24s: Row 4 (AVG(col) - Arithmetic mean, ignores NULLs in divisor)
+  // 24.24s - 31.00s: Row 5 (MIN/MAX(col) - Smallest/Largest value, ignores NULLs)
+  if (rows.r1) rows.r1.classList.toggle('row-active-spotlight', currentTime >= 2.74 && currentTime < 8.48);
+  if (rows.r2) rows.r2.classList.toggle('row-active-spotlight', currentTime >= 8.48 && currentTime < 13.62);
+  if (rows.r3) rows.r3.classList.toggle('row-active-spotlight', currentTime >= 13.62 && currentTime < 18.12);
+  if (rows.r4) rows.r4.classList.toggle('row-active-spotlight', currentTime >= 18.12 && currentTime < 24.24);
+  if (rows.r5) rows.r5.classList.toggle('row-active-spotlight', currentTime >= 24.24 && currentTime <= 31.00);
 }
 
 function updateDay05CountListHighlights(currentTime, isPlaying) {
   const items = {
-    i1: document.getElementById('day05CountLi1'),
-    i2: document.getElementById('day05CountLi2'),
-    i3: document.getElementById('day05CountLi3')
+    i1: document.getElementById('day05CountCard1'),
+    i2: document.getElementById('day05CountCard2'),
+    i3: document.getElementById('day05CountCard3')
   };
 
   if (!isPlaying) {
     Object.values(items).forEach(i => {
-      if (i) i.classList.remove('narration-highlight');
+      if (i) i.classList.remove('narration-highlight', 'card-active-spotlight');
     });
     return;
   }
 
-  // Whisper ASR timestamps for New_Day5Part1audio04.mp3 (24.42s):
-  // 8.12s - 12.72s : Volume: COUNT(*)
-  // 12.72s - 18.08s: Completeness: COUNT(col)
-  // 18.08s - 24.42s: Unique Entities: COUNT(DISTINCT col)
-  if (items.i1) items.i1.classList.toggle('narration-highlight', currentTime >= 8.12 && currentTime < 12.72);
-  if (items.i2) items.i2.classList.toggle('narration-highlight', currentTime >= 12.72 && currentTime < 18.08);
-  if (items.i3) items.i3.classList.toggle('narration-highlight', currentTime >= 18.08 && currentTime <= 24.42);
+  // Calibrated Whisper ASR timestamps for New_Day5Part1audio04.mp3 (19.94s):
+  // 3.66s -  8.26s : Card 1 (COUNT(*) - Volume: How many total records exist?)
+  // 8.26s - 13.66s : Card 2 (COUNT(col) - Completeness: How many rows have a value?)
+  // 13.66s - 19.94s: Card 3 (COUNT(DISTINCT col) - Unique Entities: How many unique?)
+  const isC1 = currentTime >= 3.66 && currentTime < 8.26;
+  const isC2 = currentTime >= 8.26 && currentTime < 13.66;
+  const isC3 = currentTime >= 13.66 && currentTime <= 20.00;
+
+  if (items.i1) {
+    items.i1.classList.toggle('narration-highlight', isC1);
+    items.i1.classList.toggle('card-active-spotlight', isC1);
+  }
+  if (items.i2) {
+    items.i2.classList.toggle('narration-highlight', isC2);
+    items.i2.classList.toggle('card-active-spotlight', isC2);
+  }
+  if (items.i3) {
+    items.i3.classList.toggle('narration-highlight', isC3);
+    items.i3.classList.toggle('card-active-spotlight', isC3);
+  }
 }
 
 function updateDay05CountCodeHighlights(currentTime, isPlaying) {
@@ -10206,13 +10302,13 @@ function updateDay05CountCodeHighlights(currentTime, isPlaying) {
     return;
   }
 
-  // Whisper ASR timestamps for New_Day5Part1audio05.mp3 (26.78s):
-  // 0.00s - 10.72s: Query 1 (Total headcount)
-  // 10.72s - 19.60s: Query 2 (Staff with commissions)
-  // 19.60s - 26.78s: Query 3 (Unique departments)
-  const isQ1 = currentTime >= 0.00 && currentTime < 10.72;
-  const isQ2 = currentTime >= 10.72 && currentTime < 19.60;
-  const isQ3 = currentTime >= 19.60 && currentTime <= 26.80;
+  // Calibrated Whisper ASR timestamps for New_Day5Part1audio05.mp3 (29.70s):
+  // 2.56s - 11.56s: Query 1 (Total headcount)
+  // 11.56s - 21.34s: Query 2 (Staff with commissions)
+  // 21.34s - 29.70s: Query 3 (Unique departments)
+  const isQ1 = currentTime >= 2.56 && currentTime < 11.56;
+  const isQ2 = currentTime >= 11.56 && currentTime < 21.34;
+  const isQ3 = currentTime >= 21.34 && currentTime <= 29.70;
 
   q1.classList.toggle('narration-highlight', isQ1);
   q1.classList.toggle('code-active-spotlight', isQ1);
@@ -10237,13 +10333,13 @@ function updateDay05SumAvgCodeHighlights(currentTime, isPlaying) {
     return;
   }
 
-  // Whisper ASR timestamps for New_Day5Part1audio08.mp3 (25.42s):
-  // 0.00s - 10.04s: Query 1 (Full summary stats)
-  // 10.04s - 17.28s: Query 2 (Commission earners only)
-  // 17.28s - 25.42s: Query 3 (All staff with COALESCE)
-  const isQ1 = currentTime >= 0.00 && currentTime < 10.04;
-  const isQ2 = currentTime >= 10.04 && currentTime < 17.28;
-  const isQ3 = currentTime >= 17.28 && currentTime <= 25.50;
+  // Calibrated Whisper ASR timestamps for New_Day5Part1audio08.mp3 (26.74s):
+  // 2.96s - 10.76s: Query 1 (Full summary stats)
+  // 10.76s - 18.18s: Query 2 (Commission earners only)
+  // 18.18s - 26.74s: Query 3 (All staff with COALESCE)
+  const isQ1 = currentTime >= 2.96 && currentTime < 10.76;
+  const isQ2 = currentTime >= 10.76 && currentTime < 18.18;
+  const isQ3 = currentTime >= 18.18 && currentTime <= 26.74;
 
   q1.classList.toggle('narration-highlight', isQ1);
   q1.classList.toggle('code-active-spotlight', isQ1);
@@ -10267,11 +10363,11 @@ function updateDay05CoalesceCodeHighlights(currentTime, isPlaying) {
     return;
   }
 
-  // Whisper ASR timestamps for New_Day5Part1audio11.mp3 (19.72s):
-  // 0.00s - 10.40s: Query 1 (Pattern A Inside)
-  // 10.40s - 19.72s: Query 2 (Pattern B Outside)
-  const isQ1 = currentTime >= 0.00 && currentTime < 10.40;
-  const isQ2 = currentTime >= 10.40 && currentTime <= 19.80;
+  // Calibrated Whisper ASR timestamps for New_Day5Part1audio11.mp3 (20.80s):
+  // 1.50s - 10.84s: Query 1 (Pattern A Inside)
+  // 10.84s - 20.80s: Query 2 (Pattern B Outside)
+  const isQ1 = currentTime >= 1.50 && currentTime < 10.84;
+  const isQ2 = currentTime >= 10.84 && currentTime <= 20.80;
 
   q1.classList.toggle('narration-highlight', isQ1);
   q1.classList.toggle('code-active-spotlight', isQ1);
@@ -10284,25 +10380,38 @@ function updateDay05CoalesceCodeHighlights(currentTime, isPlaying) {
 
 function updateDay05MinMaxListHighlights(currentTime, isPlaying) {
   const items = {
-    i1: document.getElementById('day05MinMaxLi1'),
-    i2: document.getElementById('day05MinMaxLi2'),
-    i3: document.getElementById('day05MinMaxLi3')
+    i1: document.getElementById('day05MinMaxCard1'),
+    i2: document.getElementById('day05MinMaxCard2'),
+    i3: document.getElementById('day05MinMaxCard3')
   };
 
   if (!isPlaying) {
     Object.values(items).forEach(i => {
-      if (i) i.classList.remove('narration-highlight');
+      if (i) i.classList.remove('narration-highlight', 'card-active-spotlight');
     });
     return;
   }
 
-  // Whisper ASR timestamps for New_Day5Part1audio13.mp3 (20.06s):
-  // 9.34s - 12.82s : Numbers (smallest/largest)
-  // 12.82s - 17.56s: Dates (earliest/latest)
-  // 17.56s - 20.06s: Strings (alphabetical first/last)
-  if (items.i1) items.i1.classList.toggle('narration-highlight', currentTime >= 9.34 && currentTime < 12.82);
-  if (items.i2) items.i2.classList.toggle('narration-highlight', currentTime >= 12.82 && currentTime < 17.56);
-  if (items.i3) items.i3.classList.toggle('narration-highlight', currentTime >= 17.56 && currentTime <= 20.10);
+  // Calibrated Whisper ASR timestamps for New_Day5Part1audio13.mp3 (18.20s):
+  // 6.80s - 10.04s: Card 1 (Numeric - Smallest and largest amounts)
+  // 10.04s - 15.66s: Card 2 (Dates - Earliest and most recent date)
+  // 15.66s - 18.20s: Card 3 (Strings - Alphabetical first and last)
+  const isC1 = currentTime >= 6.80 && currentTime < 10.04;
+  const isC2 = currentTime >= 10.04 && currentTime < 15.66;
+  const isC3 = currentTime >= 15.66 && currentTime <= 18.20;
+
+  if (items.i1) {
+    items.i1.classList.toggle('narration-highlight', isC1);
+    items.i1.classList.toggle('card-active-spotlight', isC1);
+  }
+  if (items.i2) {
+    items.i2.classList.toggle('narration-highlight', isC2);
+    items.i2.classList.toggle('card-active-spotlight', isC2);
+  }
+  if (items.i3) {
+    items.i3.classList.toggle('narration-highlight', isC3);
+    items.i3.classList.toggle('card-active-spotlight', isC3);
+  }
 }
 
 function updateDay05MinMaxCodeHighlights(currentTime, isPlaying) {
@@ -10316,13 +10425,13 @@ function updateDay05MinMaxCodeHighlights(currentTime, isPlaying) {
     return;
   }
 
-  // Whisper ASR timestamps for New_Day5Part1audio14.mp3 (17.14s):
-  // 0.00s - 6.46s : Query 1 (Price boundaries)
-  // 6.46s - 11.86s: Query 2 (Tenure range)
-  // 11.86s - 17.14s: Query 3 (Alphabetical boundaries)
-  const isQ1 = currentTime >= 0.00 && currentTime < 6.46;
-  const isQ2 = currentTime >= 6.46 && currentTime < 11.86;
-  const isQ3 = currentTime >= 11.86 && currentTime <= 17.20;
+  // Calibrated Whisper ASR timestamps for New_Day5Part1audio14.mp3 (19.74s):
+  // 1.56s -  7.84s: Query 1 (Numbers: Price boundaries)
+  // 7.84s - 14.40s: Query 2 (Dates: Tenure range)
+  // 14.40s - 19.74s: Query 3 (Strings: Alphabetical boundaries)
+  const isQ1 = currentTime >= 1.56 && currentTime < 7.84;
+  const isQ2 = currentTime >= 7.84 && currentTime < 14.40;
+  const isQ3 = currentTime >= 14.40 && currentTime <= 19.80;
 
   q1.classList.toggle('narration-highlight', isQ1);
   q1.classList.toggle('code-active-spotlight', isQ1);
@@ -10353,19 +10462,19 @@ function updateDay05NullTableHighlights(currentTime, isPlaying) {
     return;
   }
 
-  // Whisper ASR timestamps for New_Day5Part1audio20.mp3 (29.82s):
-  // 2.94s - 7.98s : Row 1 (15 rows, 4 NULLs -> COUNT(*) = 15)
-  // 7.98s - 11.20s: Row 2 (15 rows, 4 NULLs -> COUNT(col) = 11)
-  // 11.20s - 16.04s: Row 3 (15 rows, 4 NULLs -> AVG = SUM / 11)
-  // 16.04s - 21.20s: Row 4 (All NULLs -> SUM/AVG = NULL)
-  // 21.20s - 25.62s: Row 5 (0 rows -> COUNT(*) = 0)
-  // 25.62s - 29.82s: Row 6 (0 rows -> SUM/AVG = NULL)
-  if (rows.r1) rows.r1.classList.toggle('row-active-spotlight', currentTime >= 2.94 && currentTime < 7.98);
-  if (rows.r2) rows.r2.classList.toggle('row-active-spotlight', currentTime >= 7.98 && currentTime < 11.20);
-  if (rows.r3) rows.r3.classList.toggle('row-active-spotlight', currentTime >= 11.20 && currentTime < 16.04);
-  if (rows.r4) rows.r4.classList.toggle('row-active-spotlight', currentTime >= 16.04 && currentTime < 21.20);
-  if (rows.r5) rows.r5.classList.toggle('row-active-spotlight', currentTime >= 21.20 && currentTime < 25.62);
-  if (rows.r6) rows.r6.classList.toggle('row-active-spotlight', currentTime >= 25.62 && currentTime <= 29.90);
+  // Calibrated Whisper ASR timestamps for New_Day5Part1audio20.mp3 (31.34s):
+  // 2.94s -  8.00s: Row 1 (15 rows, 4 NULLs -> COUNT(*) = 15)
+  // 8.00s - 11.20s: Row 2 (15 rows, 4 NULLs -> COUNT(col) = 11)
+  // 11.20s - 16.42s: Row 3 (15 rows, 4 NULLs -> AVG = SUM / 11)
+  // 16.42s - 22.16s: Row 4 (All NULLs -> SUM/AVG = NULL)
+  // 22.16s - 26.62s: Row 5 (0 rows -> COUNT(*) = 0)
+  // 26.62s - 31.34s: Row 6 (0 rows -> SUM/AVG = NULL)
+  if (rows.r1) rows.r1.classList.toggle('row-active-spotlight', currentTime >= 2.94 && currentTime < 8.00);
+  if (rows.r2) rows.r2.classList.toggle('row-active-spotlight', currentTime >= 8.00 && currentTime < 11.20);
+  if (rows.r3) rows.r3.classList.toggle('row-active-spotlight', currentTime >= 11.20 && currentTime < 16.42);
+  if (rows.r4) rows.r4.classList.toggle('row-active-spotlight', currentTime >= 16.42 && currentTime < 22.16);
+  if (rows.r5) rows.r5.classList.toggle('row-active-spotlight', currentTime >= 22.16 && currentTime < 26.62);
+  if (rows.r6) rows.r6.classList.toggle('row-active-spotlight', currentTime >= 26.62 && currentTime <= 31.40);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════

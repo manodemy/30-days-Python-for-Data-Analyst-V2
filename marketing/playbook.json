@@ -1,0 +1,337 @@
+{
+  "version": "1.0.0",
+  "brand": "Manodemy",
+  "targetAudience": [
+    "Freshers preparing for Data Analyst / BI roles",
+    "Non-IT / BPO professionals switching to Data Analytics",
+    "Working professionals upgrading from Excel to SQL/Python"
+  ],
+  "visualTheme": {
+    "name": "Neon Radial Ticking Clock",
+    "aspectRatio": "9:16",
+    "resolution": "1080x1920",
+    "colorMapping": {
+      "cardA": {
+        "color": "#00f0ff",
+        "label": "OPTION A"
+      },
+      "cardB": {
+        "color": "#ff0055",
+        "label": "OPTION B"
+      }
+    },
+    "timerDefaultSeconds": 5
+  },
+  "winningHookPatterns": [
+    {
+      "patternId": "HOOK_88_FAIL",
+      "template": "⚡ {PERCENT}% GET THIS WRONG: {TOPIC}",
+      "confidence": 0.95,
+      "examples": [
+        "⚡ 88% GET THIS WRONG: Operator Precedence",
+        "⚡ 90% FAIL THIS SQL TRAP: NULL Comparisons"
+      ]
+    },
+    {
+      "patternId": "HOOK_BIG_TECH",
+      "template": "🏢 {COMPANY} INTERVIEW TRAP: Can you spot the bug?",
+      "confidence": 0.92,
+      "examples": [
+        "🏢 AMAZON SQL INTERVIEW: Can you spot the bug?",
+        "🏢 SWIGGY DATA ANALYST TRAP: Which query passes?"
+      ]
+    },
+    {
+      "patternId": "HOOK_WHICH_AVOIDS",
+      "template": "WHICH QUERY AVOIDS THE {ERROR_TYPE} BUG? 💀",
+      "confidence": 0.94,
+      "examples": [
+        "WHICH QUERY AVOIDS THE SILENT DATA LEAK? 💀",
+        "WHICH QUERY AVOIDS THE 2 AM RUNTIME ERROR? 💀"
+      ]
+    }
+  ],
+  "antiPatternsToAvoid": [
+    "Do NOT use homework/textbook titles like 'Day 4 Task 5' - always use curiosity/interview hooks",
+    "Do NOT give away the full answer in the video audio - keep solution in caption/pinned comment to maximize comments",
+    "Avoid queries with more than 6 lines on screen without zooming - keep code snippets punchy and readable"
+  ],
+  "registeredAgents": [
+    {
+      "id": "agent_pyreel_specialist",
+      "name": "Python Viral Reel Specialist",
+      "path": "marketing/agents/pyreel-specialist.js",
+      "status": "active"
+    },
+    {
+      "id": "agent_sqlreel_specialist",
+      "name": "SQL Viral Reel Specialist",
+      "path": "marketing/agents/sqlreel-specialist.js",
+      "status": "active"
+    },
+    {
+      "id": "agent_analytics_tracker",
+      "name": "Performance & Metric Tracker",
+      "status": "standby"
+    },
+    {
+      "id": "agent_dm_funnel",
+      "name": "Auto-DM & Lead Magnet Bot",
+      "status": "standby"
+    }
+  ],
+  "history": [
+    {
+      "id": "pyreel_01_mutable_default",
+      "day": "33",
+      "topic": "Mutable Default Argument Bug",
+      "language": "Python",
+      "hookTitle": "95% OF PYTHON DEVS FAIL THIS BUG 💀",
+      "correctOption": "B",
+      "generatedAt": "2026-08-23T07:08:53.698Z"
+    },
+    {
+      "id": "sqlreel_01_precedence_bug",
+      "day": "03",
+      "topic": "Operator Precedence (AND before OR)",
+      "language": "SQL",
+      "hookTitle": "WHICH QUERY AVOIDS THE SILENT DATA LEAK? 💀",
+      "correctOption": "B",
+      "generatedAt": "2026-08-23T07:08:54.002Z"
+    },
+    {
+      "id": "sqlreel_04_null_propagation_salary",
+      "day": "04",
+      "topic": "NULL Propagation in Arithmetic (Total Salary Bug)",
+      "language": "SQL",
+      "hookTitle": "ONE QUERY ACCIDENTALLY WIPES EMPLOYEE SALARIES 💀",
+      "correctOption": "B",
+      "generatedAt": "2026-08-23T07:11:26.251Z"
+    },
+    {
+      "id": "sqlreel_04_not_in_null_trap",
+      "day": "04",
+      "topic": "The Deadly NOT IN with NULL Subquery Trap",
+      "language": "SQL",
+      "hookTitle": "98% FAIL THIS FAANG SQL TRAP: 0 ROWS RETURNED? 💀",
+      "correctOption": "B",
+      "generatedAt": "2026-08-23T07:11:26.495Z"
+    },
+    {
+      "id": "sqlreel_04_not_in_null_trap",
+      "day": "04",
+      "topic": "The Deadly NOT IN with NULL Subquery Trap",
+      "language": "SQL",
+      "hookTitle": "98% FAIL THIS FAANG SQL TRAP: 0 ROWS RETURNED? 💀",
+      "correctOption": "B",
+      "generatedAt": "2026-08-23T07:34:18.146Z"
+    },
+    {
+      "id": "sqlreel_04_null_propagation_salary",
+      "day": "04",
+      "topic": "NULL Propagation in Arithmetic (Total Salary Bug)",
+      "language": "SQL",
+      "hookTitle": "ONE QUERY ACCIDENTALLY WIPES EMPLOYEE SALARIES 💀",
+      "correctOption": "B",
+      "generatedAt": "2026-08-23T07:34:18.475Z"
+    },
+    {
+      "id": "pyreel_01_mutable_default",
+      "day": "33",
+      "topic": "Mutable Default Argument Bug",
+      "language": "Python",
+      "hookTitle": "95% OF PYTHON DEVS FAIL THIS BUG 💀",
+      "correctOption": "B",
+      "generatedAt": "2026-08-23T07:34:18.784Z"
+    },
+    {
+      "id": "sqlreel_04_not_in_null_trap",
+      "day": "04",
+      "topic": "The Deadly NOT IN with NULL Subquery Trap",
+      "language": "SQL",
+      "hookTitle": "98% FAIL THIS FAANG SQL TRAP: 0 ROWS RETURNED? 💀",
+      "correctOption": "B",
+      "generatedAt": "2026-08-23T07:38:28.559Z"
+    },
+    {
+      "id": "sqlreel_04_null_propagation_salary",
+      "day": "04",
+      "topic": "NULL Propagation in Arithmetic (Total Salary Bug)",
+      "language": "SQL",
+      "hookTitle": "ONE QUERY ACCIDENTALLY WIPES EMPLOYEE SALARIES 💀",
+      "correctOption": "B",
+      "generatedAt": "2026-08-23T07:38:28.871Z"
+    },
+    {
+      "id": "pyreel_01_mutable_default",
+      "day": "33",
+      "topic": "Mutable Default Argument Bug",
+      "language": "Python",
+      "hookTitle": "95% OF PYTHON DEVS FAIL THIS BUG 💀",
+      "correctOption": "B",
+      "generatedAt": "2026-08-23T07:38:29.226Z"
+    },
+    {
+      "id": "sqlreel_04_not_in_null_trap",
+      "day": "04",
+      "topic": "The Deadly NOT IN with NULL Subquery Trap",
+      "language": "SQL",
+      "hookTitle": "98% FAIL THIS FAANG SQL TRAP: 0 ROWS RETURNED? 💀",
+      "correctOption": "B",
+      "generatedAt": "2026-08-23T07:40:25.426Z"
+    },
+    {
+      "id": "sqlreel_04_null_propagation_salary",
+      "day": "04",
+      "topic": "NULL Propagation in Arithmetic (Total Salary Bug)",
+      "language": "SQL",
+      "hookTitle": "ONE QUERY ACCIDENTALLY WIPES EMPLOYEE SALARIES 💀",
+      "correctOption": "B",
+      "generatedAt": "2026-08-23T07:40:25.660Z"
+    },
+    {
+      "id": "pyreel_01_mutable_default",
+      "day": "33",
+      "topic": "Mutable Default Argument Bug",
+      "language": "Python",
+      "hookTitle": "95% OF PYTHON DEVS FAIL THIS BUG 💀",
+      "correctOption": "B",
+      "generatedAt": "2026-08-23T07:40:25.899Z"
+    },
+    {
+      "id": "sqlreel_04_not_in_null_trap",
+      "day": "04",
+      "topic": "The Deadly NOT IN with NULL Subquery Trap",
+      "language": "SQL",
+      "hookTitle": "98% FAIL THIS FAANG SQL TRAP: 0 ROWS RETURNED? 💀",
+      "correctOption": "B",
+      "generatedAt": "2026-08-23T07:43:12.464Z"
+    },
+    {
+      "id": "sqlreel_04_null_propagation_salary",
+      "day": "04",
+      "topic": "NULL Propagation in Arithmetic (Total Salary Bug)",
+      "language": "SQL",
+      "hookTitle": "ONE QUERY ACCIDENTALLY WIPES EMPLOYEE SALARIES 💀",
+      "correctOption": "B",
+      "generatedAt": "2026-08-23T07:43:12.820Z"
+    },
+    {
+      "id": "pyreel_01_mutable_default",
+      "day": "33",
+      "topic": "Mutable Default Argument Bug",
+      "language": "Python",
+      "hookTitle": "95% OF PYTHON DEVS FAIL THIS BUG 💀",
+      "correctOption": "B",
+      "generatedAt": "2026-08-23T07:43:13.187Z"
+    },
+    {
+      "id": "sqlreel_04_not_in_null_trap",
+      "day": "04",
+      "topic": "The Deadly NOT IN with NULL Subquery Trap",
+      "language": "SQL",
+      "hookTitle": "98% FAIL THIS FAANG SQL TRAP: 0 ROWS RETURNED? 💀",
+      "correctOption": "B",
+      "generatedAt": "2026-08-23T07:45:24.831Z"
+    },
+    {
+      "id": "sqlreel_04_null_propagation_salary",
+      "day": "04",
+      "topic": "NULL Propagation in Arithmetic (Total Salary Bug)",
+      "language": "SQL",
+      "hookTitle": "ONE QUERY ACCIDENTALLY WIPES EMPLOYEE SALARIES 💀",
+      "correctOption": "B",
+      "generatedAt": "2026-08-23T07:45:25.127Z"
+    },
+    {
+      "id": "pyreel_01_mutable_default",
+      "day": "33",
+      "topic": "Mutable Default Argument Bug",
+      "language": "Python",
+      "hookTitle": "95% OF PYTHON DEVS FAIL THIS BUG 💀",
+      "correctOption": "B",
+      "generatedAt": "2026-08-23T07:45:25.561Z"
+    },
+    {
+      "id": "sqlreel_04_not_in_null_trap",
+      "day": "04",
+      "topic": "The Deadly NOT IN with NULL Subquery Trap",
+      "language": "SQL",
+      "hookTitle": "98% FAIL THIS FAANG SQL TRAP: 0 ROWS RETURNED? 💀",
+      "correctOption": "B",
+      "generatedAt": "2026-08-23T07:49:30.296Z"
+    },
+    {
+      "id": "sqlreel_04_null_propagation_salary",
+      "day": "04",
+      "topic": "NULL Propagation in Arithmetic (Total Salary Bug)",
+      "language": "SQL",
+      "hookTitle": "ONE QUERY ACCIDENTALLY WIPES EMPLOYEE SALARIES 💀",
+      "correctOption": "B",
+      "generatedAt": "2026-08-23T07:49:30.680Z"
+    },
+    {
+      "id": "pyreel_01_mutable_default",
+      "day": "33",
+      "topic": "Mutable Default Argument Bug",
+      "language": "Python",
+      "hookTitle": "95% OF PYTHON DEVS FAIL THIS BUG 💀",
+      "correctOption": "B",
+      "generatedAt": "2026-08-23T07:49:30.988Z"
+    },
+    {
+      "id": "sqlreel_04_not_in_null_trap",
+      "day": "04",
+      "topic": "The Deadly NOT IN with NULL Subquery Trap",
+      "language": "SQL",
+      "hookTitle": "98% FAIL THIS FAANG SQL TRAP: 0 ROWS RETURNED? 💀",
+      "correctOption": "B",
+      "generatedAt": "2026-08-23T07:52:57.498Z"
+    },
+    {
+      "id": "sqlreel_04_null_propagation_salary",
+      "day": "04",
+      "topic": "NULL Propagation in Arithmetic (Total Salary Bug)",
+      "language": "SQL",
+      "hookTitle": "ONE QUERY ACCIDENTALLY WIPES EMPLOYEE SALARIES 💀",
+      "correctOption": "B",
+      "generatedAt": "2026-08-23T07:52:57.855Z"
+    },
+    {
+      "id": "pyreel_01_mutable_default",
+      "day": "33",
+      "topic": "Mutable Default Argument Bug",
+      "language": "Python",
+      "hookTitle": "95% OF PYTHON DEVS FAIL THIS BUG 💀",
+      "correctOption": "B",
+      "generatedAt": "2026-08-23T07:52:58.166Z"
+    },
+    {
+      "id": "sqlreel_04_not_in_null_trap",
+      "day": "04",
+      "topic": "The Deadly NOT IN with NULL Subquery Trap",
+      "language": "SQL",
+      "hookTitle": "98% FAIL THIS FAANG SQL TRAP: 0 ROWS RETURNED? 💀",
+      "correctOption": "B",
+      "generatedAt": "2026-08-23T07:59:42.409Z"
+    },
+    {
+      "id": "sqlreel_04_null_propagation_salary",
+      "day": "04",
+      "topic": "NULL Propagation in Arithmetic (Total Salary Bug)",
+      "language": "SQL",
+      "hookTitle": "ONE QUERY ACCIDENTALLY WIPES EMPLOYEE SALARIES 💀",
+      "correctOption": "B",
+      "generatedAt": "2026-08-23T07:59:42.653Z"
+    },
+    {
+      "id": "pyreel_01_mutable_default",
+      "day": "33",
+      "topic": "Mutable Default Argument Bug",
+      "language": "Python",
+      "hookTitle": "95% OF PYTHON DEVS FAIL THIS BUG 💀",
+      "correctOption": "B",
+      "generatedAt": "2026-08-23T07:59:42.898Z"
+    }
+  ]
+}

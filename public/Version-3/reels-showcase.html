@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manodemy — Clock Ticking Hyper-Viral Reels</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@500;700&family=Plus+Jakarta+Sans:wght@700;800;900&family=Space+Grotesk:wght@700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #030407;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: #fff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      max-width: 800px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 6px 16px;
+      background: linear-gradient(90deg, #ff0055, #f59e0b);
+      color: #fff;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      box-shadow: 0 0 25px rgba(255, 0, 85, 0.5);
+    }
+    h1 {
+      font-size: 34px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #ffffff 40%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+    p.subtitle {
+      color: #94a3b8;
+      font-size: 15px;
+    }
+
+    .reels-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(330px, 350px));
+      gap: 32px;
+      justify-content: center;
+      width: 100%;
+      max-width: 1800px;
+    }
+
+    .reel-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .reel-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #f1f5f9;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* 9:16 Canvas (340px x 604px) */
+    .reel-canvas {
+      width: 340px;
+      height: 604px;
+      background: #000000;
+      border-radius: 30px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 22px 16px;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.1);
+      user-select: none;
+    }
+
+    /* Syntax Highlighting */
+    .code-box {
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+      line-height: 1.5;
+      color: #e4e4e7;
+      white-space: pre-wrap;
+    }
+    .kw { color: #ff3366; font-weight: 700; }
+    .col { color: #38bdf8; font-weight: 600; }
+    .str { color: #4ade80; }
+    .op { color: #facc15; font-weight: 800; }
+    .num { color: #c084fc; }
+
+    /* ══════════════════════════════════════════════════════════
+       CLOCK 1: CIRCULAR NEON SVG TICKING CLOCK
+       ══════════════════════════════════════════════════════════ */
+    .c-1 {
+      background: radial-gradient(circle at 50% 10%, #1e1b4b 0%, #000000 70%);
+      border: 1.5px solid rgba(139, 92, 246, 0.3);
+    }
+    .clock-radial-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 99px;
+      padding: 6px 18px;
+      width: fit-content;
+      margin: 4px auto;
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.2);
+    }
+    .svg-clock-dial {
+      width: 32px;
+      height: 32px;
+      position: relative;
+    }
+    .clock-circle-bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.1);
+      stroke-width: 3;
+    }
+    .clock-circle-progress {
+      fill: none;
+      stroke: #00f0ff;
+      stroke-width: 3.5;
+      stroke-linecap: round;
+      stroke-dasharray: 88;
+      stroke-dashoffset: 25;
+      transform: rotate(-90deg);
+      transform-origin: 50% 50%;
+      animation: clockDrain 5s linear infinite;
+    }
+    .clock-hand {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 2px;
+      height: 10px;
+      background: #ff0055;
+      border-radius: 2px;
+      transform-origin: bottom center;
+      animation: clockTick 1s steps(1) infinite;
+    }
+    .clock-sec-text {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 0.5px;
+    }
+    .clock-sec-text span {
+      color: #00f0ff;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       CLOCK 2: DIGITAL BOMB DEFUSAL TICKER (LED)
+       ══════════════════════════════════════════════════════════ */
+    .c-2 {
+      background: #000;
+      border: 1.5px solid #ef4444;
+    }
+    .bomb-ticker {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: #0c0a09;
+      border: 2px solid #ef4444;
+      border-radius: 12px;
+      padding: 8px 16px;
+      box-shadow: 0 0 25px rgba(239, 68, 68, 0.35);
+      margin: 4px auto;
+    }
+    .led-digits {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 20px;
+      font-weight: 900;
+      color: #ef4444;
+      letter-spacing: 2px;
+      text-shadow: 0 0 10px rgba(239, 68, 68, 0.8);
+      animation: blinkRed 1s infinite;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       CLOCK 3: CENTER ROTATING RADAR SWEEP CLOCK
+       ══════════════════════════════════════════════════════════ */
+    .c-3 {
+      background: radial-gradient(circle at 50% 50%, #171226 0%, #000 80%);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .radar-clock-badge {
+      width: 52px;
+      height: 52px;
+      background: #09090b;
+      border: 2.5px solid #ff0055;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 30px rgba(255, 0, 85, 0.6);
+      margin: -20px auto;
+      z-index: 10;
+      position: relative;
+    }
+    .radar-time {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1;
+    }
+    .radar-lbl {
+      font-size: 8px;
+      font-weight: 800;
+      color: #facc15;
+      letter-spacing: 0.5px;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       CLOCK 4: STOPWATCH TICKING NEEDLE & GLOW BAR
+       ══════════════════════════════════════════════════════════ */
+    .c-4 {
+      background: #05070a;
+      border: 1px solid #1e293b;
+    }
+    .stopwatch-container {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 14px;
+      padding: 8px 14px;
+      margin: 4px 0;
+    }
+    .sw-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: #94a3b8;
+    }
+    .sw-bar {
+      height: 4px;
+      background: #1e293b;
+      border-radius: 99px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+    .sw-bar-fill {
+      width: 65%;
+      height: 100%;
+      background: linear-gradient(90deg, #f59e0b, #ef4444);
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       CLOCK 5: RETRO ARCADE PIXEL CLOCK
+       ══════════════════════════════════════════════════════════ */
+    .c-5 {
+      background: #000;
+      border: 2px solid #00f0ff;
+      box-shadow: 0 0 30px rgba(0, 240, 255, 0.25);
+    }
+    .arcade-clock-pill {
+      background: #facc15;
+      color: #000;
+      font-weight: 900;
+      font-size: 13px;
+      padding: 6px 14px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin: 4px auto;
+      box-shadow: 0 0 15px rgba(250, 204, 21, 0.6);
+    }
+
+    @keyframes clockDrain {
+      0% { stroke-dashoffset: 0; }
+      100% { stroke-dashoffset: 88; }
+    }
+    @keyframes clockTick {
+      0% { transform: translate(-50%, -100%) rotate(0deg); }
+      25% { transform: translate(-50%, -100%) rotate(90deg); }
+      50% { transform: translate(-50%, -100%) rotate(180deg); }
+      75% { transform: translate(-50%, -100%) rotate(270deg); }
+      100% { transform: translate(-50%, -100%) rotate(360deg); }
+    }
+    @keyframes blinkRed {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="badge">⏱️ CLOCK TICKING VIRAL SUITE</div>
+    <h1>5 High-Tension Clock Ticking Designs</h1>
+    <p class="subtitle">Real animated ticking clock mechanics engineered to trigger intense decision urgency in 5 seconds.</p>
+  </div>
+
+  <div class="reels-grid">
+
+    <!-- REEL 1 -->
+    <div class="reel-wrapper">
+      <div class="reel-title"><span>01</span> ⏳ Neon Radial SVG Ticking Clock</div>
+      <div class="reel-canvas c-1">
+        <div>
+          <div class="clock-radial-container">
+            <div class="svg-clock-dial">
+              <svg width="32" height="32" viewBox="0 0 32 32">
+                <circle class="clock-circle-bg" cx="16" cy="16" r="14" />
+                <circle class="clock-circle-progress" cx="16" cy="16" r="14" />
+              </svg>
+              <div class="clock-hand"></div>
+            </div>
+            <div class="clock-sec-text"><span>05</span> SECONDS LEFT</div>
+          </div>
+          <div style="font-size:17px; font-weight:900; text-align:center; margin-top:6px;">WHICH QUERY AVOIDS THE BUG?</div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:14px; margin:auto 0;">
+          <div style="background:#090a10; border:1.5px solid #00f0ff; border-radius:16px; padding:14px; box-shadow:0 0 20px rgba(0,240,255,0.15); position:relative;">
+            <div style="position:absolute; top:-10px; left:14px; background:#00f0ff; color:#000; font-weight:900; font-size:10px; padding:2px 8px; border-radius:4px;">OPTION A</div>
+            <div class="code-box"><span class="kw">SELECT</span> name <span class="kw">FROM</span> employees
+<span class="kw">WHERE</span> dept = <span class="str">'Tech'</span>
+   <span class="op">OR</span> dept = <span class="str">'Sales'</span>
+  <span class="op">AND</span> is_active = <span class="num">1</span>;</div>
+          </div>
+
+          <div style="background:#090a10; border:1.5px solid #ff0055; border-radius:16px; padding:14px; box-shadow:0 0 20px rgba(255,0,85,0.15); position:relative;">
+            <div style="position:absolute; top:-10px; left:14px; background:#ff0055; color:#fff; font-weight:900; font-size:10px; padding:2px 8px; border-radius:4px;">OPTION B</div>
+            <div class="code-box"><span class="kw">SELECT</span> name <span class="kw">FROM</span> employees
+<span class="kw">WHERE</span> (dept = <span class="str">'Tech'</span>
+   <span class="op">OR</span> dept = <span class="str">'Sales'</span>)
+  <span class="op">AND</span> is_active = <span class="num">1</span>;</div>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div style="background:linear-gradient(135deg,#00f0ff,#0284c7); color:#000; font-weight:900; font-size:14px; padding:12px; border-radius:14px; text-align:center;">[ VOTE A ]</div>
+          <div style="background:linear-gradient(135deg,#ff0055,#e11d48); color:#fff; font-weight:900; font-size:14px; padding:12px; border-radius:14px; text-align:center;">[ VOTE B ]</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REEL 2 -->
+    <div class="reel-wrapper">
+      <div class="reel-title"><span>02</span> 💣 Digital Bomb Defusal LED Ticker</div>
+      <div class="reel-canvas c-2">
+        <div>
+          <div class="bomb-ticker">
+            <span style="font-size:16px;">💣</span>
+            <span class="led-digits">00:05.00</span>
+            <span style="font-size:10px; font-weight:900; color:#facc15;">TIME RUNNING OUT</span>
+          </div>
+          <div style="font-size:16px; font-weight:900; color:#fff; text-align:center; margin-top:6px;">ONE QUERY CRASHES AT 2 AM 💀</div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:12px; margin:auto 0;">
+          <div style="background:#0c0a09; border:1.5px solid #292524; border-radius:16px; padding:12px; position:relative;">
+            <div style="font-size:11px; font-weight:900; color:#ef4444; margin-bottom:4px;">QUERY [ A ]</div>
+            <div class="code-box"><span class="kw">SELECT</span> name <span class="kw">FROM</span> employees
+<span class="kw">WHERE</span> dept = <span class="str">'Tech'</span> <span class="op">OR</span> dept = <span class="str">'Sales'</span>
+  <span class="op">AND</span> is_active = <span class="num">1</span>;</div>
+          </div>
+
+          <div style="background:#0c0a09; border:1.5px solid #292524; border-radius:16px; padding:12px; position:relative;">
+            <div style="font-size:11px; font-weight:900; color:#22c55e; margin-bottom:4px;">QUERY [ B ]</div>
+            <div class="code-box"><span class="kw">SELECT</span> name <span class="kw">FROM</span> employees
+<span class="kw">WHERE</span> (dept = <span class="str">'Tech'</span> <span class="op">OR</span> dept = <span class="str">'Sales'</span>)
+  <span class="op">AND</span> is_active = <span class="num">1</span>;</div>
+          </div>
+        </div>
+
+        <div style="background:#facc15; color:#000; padding:12px; border-radius:12px; font-size:13px; font-weight:900; text-align:center;">
+          DROP 'A' OR 'B' · ANSWER IN PINNED 📌
+        </div>
+      </div>
+    </div>
+
+    <!-- REEL 3 -->
+    <div class="reel-wrapper">
+      <div class="reel-title"><span>03</span> ⏱️ Center Rotating Radar Clock</div>
+      <div class="reel-canvas c-3">
+        <div style="text-align:center;">
+          <div style="font-size:12px; font-weight:900; color:#38bdf8; letter-spacing:1px;">SQL OPERATOR PRECEDENCE</div>
+          <div style="font-size:17px; font-weight:900; color:#fff; margin-top:2px;">CHOOSE YOUR FIGHTER ⚔️</div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; margin:auto 0;">
+          <div style="background:#09090b; border:1.5px solid #38bdf8; border-radius:16px; padding:14px;">
+            <div style="font-size:11px; font-weight:800; color:#38bdf8; margin-bottom:4px;">QUERY A · NO BRACKETS</div>
+            <div class="code-box"><span class="kw">SELECT</span> name <span class="kw">FROM</span> employees
+<span class="kw">WHERE</span> dept = <span class="str">'Tech'</span> <span class="op">OR</span> dept = <span class="str">'Sales'</span>
+  <span class="op">AND</span> is_active = <span class="num">1</span>;</div>
+          </div>
+
+          <div class="radar-clock-badge">
+            <div class="radar-time">05</div>
+            <div class="radar-lbl">SECS</div>
+          </div>
+
+          <div style="background:#09090b; border:1.5px solid #c084fc; border-radius:16px; padding:14px;">
+            <div style="font-size:11px; font-weight:800; color:#c084fc; margin-bottom:4px;">QUERY B · WITH BRACKETS</div>
+            <div class="code-box"><span class="kw">SELECT</span> name <span class="kw">FROM</span> employees
+<span class="kw">WHERE</span> (dept = <span class="str">'Tech'</span> <span class="op">OR</span> dept = <span class="str">'Sales'</span>)
+  <span class="op">AND</span> is_active = <span class="num">1</span>;</div>
+          </div>
+        </div>
+
+        <div style="background:linear-gradient(135deg, #38bdf8, #a855f7); color:#fff; padding:12px; border-radius:14px; font-size:13px; font-weight:900; text-align:center;">
+          VOTE 'A' OR 'B' IN COMMENTS 💬
+        </div>
+      </div>
+    </div>
+
+    <!-- REEL 4 -->
+    <div class="reel-wrapper">
+      <div class="reel-title"><span>04</span> 📊 Stopwatch Needle & Drain Bar</div>
+      <div class="reel-canvas c-4">
+        <div>
+          <div class="stopwatch-container">
+            <div class="sw-header">
+              <span>⏱️ INTERVIEW TIMER</span>
+              <span style="color:#f59e0b;">05s / 05s</span>
+            </div>
+            <div class="sw-bar">
+              <div class="sw-bar-fill"></div>
+            </div>
+          </div>
+          <div style="font-size:16px; font-weight:900; color:#fff; text-align:center; margin-top:6px;">Which query satisfies both conditions?</div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:12px; margin:auto 0;">
+          <div style="background:#000; border:1px solid #334155; border-radius:14px; padding:12px 14px;">
+            <div style="font-size:11px; font-weight:800; color:#38bdf8; margin-bottom:4px;">CODE [ A ]</div>
+            <div class="code-box"><span class="kw">SELECT</span> name <span class="kw">FROM</span> staff
+<span class="kw">WHERE</span> dept = <span class="str">'Tech'</span> <span class="op">OR</span> dept = <span class="str">'Sales'</span>
+  <span class="op">AND</span> is_active = <span class="num">1</span>;</div>
+          </div>
+
+          <div style="background:#000; border:1px solid #334155; border-radius:14px; padding:12px 14px;">
+            <div style="font-size:11px; font-weight:800; color:#10b981; margin-bottom:4px;">CODE [ B ]</div>
+            <div class="code-box"><span class="kw">SELECT</span> name <span class="kw">FROM</span> staff
+<span class="kw">WHERE</span> (dept = <span class="str">'Tech'</span> <span class="op">OR</span> dept = <span class="str">'Sales'</span>)
+  <span class="op">AND</span> is_active = <span class="num">1</span>;</div>
+          </div>
+        </div>
+
+        <div style="background:#fff; color:#000; padding:12px; border-radius:12px; font-size:13px; font-weight:900; text-align:center;">
+          TEST FREE: MANODEMY.COM (LINK IN BIO)
+        </div>
+      </div>
+    </div>
+
+    <!-- REEL 5 -->
+    <div class="reel-wrapper">
+      <div class="reel-title"><span>05</span> 🕹️ Retro Arcade Ticking Clock</div>
+      <div class="reel-canvas c-5">
+        <div>
+          <div class="arcade-clock-pill">
+            <span>⏱️</span>
+            <span>COUNTDOWN: 05s</span>
+          </div>
+          <div style="font-size:18px; font-weight:900; color:#00f0ff; text-align:center; margin-top:6px;">CAN YOU SPOT IT?</div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:14px; margin:auto 0;">
+          <div style="background:#09090b; border:1.5px solid #00f0ff; border-radius:14px; padding:12px; box-shadow:0 0 15px rgba(0,240,255,0.2);">
+            <div style="font-size:11px; font-weight:900; color:#00f0ff; margin-bottom:4px;">[ OPTION A ]</div>
+            <div class="code-box"><span class="kw">SELECT</span> name <span class="kw">FROM</span> users
+<span class="kw">WHERE</span> dept = <span class="str">'Tech'</span> <span class="op">OR</span> dept = <span class="str">'Sales'</span>
+  <span class="op">AND</span> is_active = <span class="num">1</span>;</div>
+          </div>
+
+          <div style="background:#09090b; border:1.5px solid #facc15; border-radius:14px; padding:12px; box-shadow:0 0 15px rgba(250,204,21,0.2);">
+            <div style="font-size:11px; font-weight:900; color:#facc15; margin-bottom:4px;">[ OPTION B ]</div>
+            <div class="code-box"><span class="kw">SELECT</span> name <span class="kw">FROM</span> users
+<span class="kw">WHERE</span> (dept = <span class="str">'Tech'</span> <span class="op">OR</span> dept = <span class="str">'Sales'</span>)
+  <span class="op">AND</span> is_active = <span class="num">1</span>;</div>
+          </div>
+        </div>
+
+        <div style="background:#00f0ff; color:#000; padding:12px; border-radius:12px; font-size:13px; font-weight:900; text-align:center; box-shadow:0 0 20px rgba(0,240,255,0.4);">
+          COMMENT A OR B BELOW 👇
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

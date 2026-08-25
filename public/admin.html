@@ -3206,6 +3206,31 @@
           </div>
         </div>
 
+          <!-- ══ REELS & STORY PUBLISHING HUB ══ -->
+          <div class="table-panel" id="reelsHubPanel" style="background:linear-gradient(135deg, rgba(18,24,38,0.75) 0%, rgba(11,15,25,0.85) 100%); border:1px solid rgba(168,85,247,0.25); border-radius:18px; backdrop-filter:blur(16px); box-shadow:0 12px 32px rgba(168,85,247,0.12); overflow:hidden; margin-top:1.25rem;">
+            <div class="table-panel-header" style="display:flex; align-items:center; justify-content:space-between; padding:1.25rem 1.5rem; border-bottom:1px solid rgba(168,85,247,0.15);">
+              <span class="table-panel-title" style="font-family:var(--font-display); font-size:1.05rem; font-weight:800; color:#FFFFFF;">🎬 Reels &amp; Story Publishing Hub</span>
+              <span class="badge" id="reelsHubCountBadge" style="font-size:0.75rem; font-weight:700; padding:4px 12px; border-radius:8px; background:rgba(168,85,247,0.2); color:#C084FC; border:1px solid rgba(168,85,247,0.35);">0 Reels Ready</span>
+            </div>
+            <div class="table-wrap">
+              <table id="reelsHubTable" style="width:100%;">
+                <thead>
+                  <tr>
+                    <th style="min-width:90px;">Reel ID</th>
+                    <th style="min-width:220px;">Hook / Quiz Topic</th>
+                    <th>Day &amp; Question</th>
+                    <th>Schedule Slot</th>
+                    <th style="min-width:180px;">Story Link</th>
+                    <th style="min-width:180px;">Story Text</th>
+                  </tr>
+                </thead>
+                <tbody id="reelsHubTbody">
+                  <tr><td colspan="6" style="text-align:center; color:var(--ink-muted); padding:2.5rem;">Loading Reels Hub…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
         <!-- ══ EDIT CAMPAIGN MODAL ══ -->
         <div id="editCampaignModal" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 10000; align-items: center; justify-content: center; padding: 1.25rem;">
           <div style="background: var(--base); border: 1px solid var(--gold); border-radius: var(--radius-lg); max-width: 520px; width: 100%; padding: 1.75rem; box-shadow: 0 20px 50px rgba(0,0,0,0.8); animation: modalIn 0.2s ease-out; position: relative;">
@@ -7530,22 +7555,19 @@
                   data-url="${encodeURIComponent(targetUrl)}" 
                   data-spend="${spend}" 
                   data-date="${item.start_date || ''}" 
-                  style="padding:4px 8px; font-size:0.75rem; border-radius:6px; background:rgba(59,130,246,0.15); border:1px solid rgba(59,130,246,0.35); color:#60A5FA; font-weight:700; cursor:pointer; margin-right:4px; pointer-events:auto; position:relative; z-index:15;" 
-                  onclick="openEditCampaignModal('${cId}', decodeURIComponent('${encodeURIComponent(cName)}'), decodeURIComponent('${encodeURIComponent(platform)}'), decodeURIComponent('${encodeURIComponent(targetUrl)}'), ${spend}, '${item.start_date || ''}')">
+                  style="padding:4px 8px; font-size:0.75rem; border-radius:6px; background:rgba(59,130,246,0.15); border:1px solid rgba(59,130,246,0.35); color:#60A5FA; font-weight:700; cursor:pointer; margin-right:4px;">
                   ✏️ Edit
                 </button>
                 ${isHidden 
                   ? `<button type="button" class="apply-btn btn-restore-campaign" 
                       data-name="${encodeURIComponent(cName)}" 
-                      style="padding:4px 8px; font-size:0.75rem; border-radius:6px; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.35); color:var(--emerald); font-weight:700; cursor:pointer; pointer-events:auto; position:relative; z-index:15;" 
-                      onclick="restoreCampaignRecord(decodeURIComponent('${encodeURIComponent(cName)}'))">
+                      style="padding:4px 8px; font-size:0.75rem; border-radius:6px; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.35); color:var(--emerald); font-weight:700; cursor:pointer;">
                       ♻️ Restore
                     </button>`
                   : `<button type="button" class="apply-btn btn-del-campaign" 
                       data-id="${cId}" 
                       data-name="${encodeURIComponent(cName)}" 
-                      style="padding:4px 8px; font-size:0.75rem; border-radius:6px; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.35); color:#F87171; font-weight:700; cursor:pointer; pointer-events:auto; position:relative; z-index:15;" 
-                      onclick="deleteCampaignRecord('${cId}', decodeURIComponent('${encodeURIComponent(cName)}'))">
+                      style="padding:4px 8px; font-size:0.75rem; border-radius:6px; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.35); color:#F87171; font-weight:700; cursor:pointer;">
                       🗑️ Delete
                     </button>`
                 }
@@ -7692,21 +7714,23 @@
           payload.start_date = new Date(dateVal).toISOString();
         }
 
-        // 1. Update existing row in Supabase ad_campaigns (alters existing row in place without creating duplicates)
+        // 1. Update existing row in Supabase ad_campaigns
         let updateRes = null;
         if (client) {
-          if (id && id.startsWith('CMP-')) {
-            updateRes = await client.from('ad_campaigns').update(payload).eq('campaign_id', id);
-          }
-          if (!updateRes || updateRes.error) {
-            updateRes = await client.from('ad_campaigns').update(payload).eq('campaign_name', origName);
-          }
+          try {
+            if (id && id.startsWith('CMP-')) {
+              updateRes = await client.from('ad_campaigns').update(payload).eq('campaign_id', id);
+            }
+            if (!updateRes || updateRes.error) {
+              updateRes = await client.from('ad_campaigns').update(payload).ilike('campaign_name', origName);
+            }
 
-          // If campaign name changed, also update campaign_clicks table references
-          if (origName.toLowerCase() !== newName.toLowerCase()) {
-            try {
+            // If campaign name changed, also update campaign_clicks table references
+            if (origName.toLowerCase() !== newName.toLowerCase()) {
               await client.from('campaign_clicks').update({ campaign_name: newName }).ilike('campaign_name', origName);
-            } catch (e) {}
+            }
+          } catch (dbErr) {
+            console.warn('[Edit Campaign] Supabase update warning:', dbErr);
           }
         }
 
@@ -7726,11 +7750,19 @@
           window._adminCache.invalidate('ads');
         }
 
-        showToast(`✅ Campaign "${newName}" updated successfully in database!`, 'success');
+        if (typeof showToast === 'function') {
+          showToast(`✅ Campaign "${newName}" updated successfully!`, 'success');
+        } else {
+          alert(`✅ Campaign "${newName}" updated successfully!`);
+        }
         closeEditCampaignModal();
         loadCreativeAdsData();
       } catch (err) {
-        showToast('❌ Error updating campaign: ' + err.message, 'error');
+        if (typeof showToast === 'function') {
+          showToast('❌ Error updating campaign: ' + err.message, 'error');
+        } else {
+          alert('❌ Error updating campaign: ' + err.message);
+        }
       } finally {
         if (btn) { btn.textContent = '💾 Save Changes'; btn.disabled = false; }
       }
@@ -7751,26 +7783,31 @@
 
     window.deleteCampaignRecord = async function(id, name) {
       const cleanName = (name || '').trim();
-      if (!confirm(`Are you sure you want to permanently delete campaign "${cleanName}" (${id}) from both the leaderboard table and Supabase database?`)) {
+      if (!confirm(`Are you sure you want to permanently delete campaign "${cleanName}" (${id})?`)) {
         return;
       }
 
       try {
         const client = sb || initSupabaseClient();
 
-        // 1. Mark as deleted in Supabase ad_campaigns table (allowed by RLS UPDATE policy)
+        // 1. Mark as deleted in Supabase ad_campaigns via RPC & direct delete
         if (client) {
-          if (id && id.startsWith('CMP-')) {
-            await client.from('ad_campaigns').update({ spend_source: 'deleted' }).eq('campaign_id', id);
-            await client.from('ad_campaigns').delete().eq('campaign_id', id);
-          }
-          await client.from('ad_campaigns').update({ spend_source: 'deleted' }).ilike('campaign_name', cleanName);
-          await client.from('ad_campaigns').delete().ilike('campaign_name', cleanName);
-
-          // Also clean up tracked clicks
           try {
+            await client.rpc('delete_ad_campaign', { p_campaign_name: cleanName, p_campaign_id: id });
+          } catch (rpcErr) {
+            console.warn('[Delete Campaign] RPC notice:', rpcErr);
+          }
+          try {
+            if (id && id.startsWith('CMP-')) {
+              await client.from('ad_campaigns').update({ spend_source: 'deleted' }).eq('campaign_id', id);
+              await client.from('ad_campaigns').delete().eq('campaign_id', id);
+            }
+            await client.from('ad_campaigns').update({ spend_source: 'deleted' }).ilike('campaign_name', cleanName);
+            await client.from('ad_campaigns').delete().ilike('campaign_name', cleanName);
             await client.from('campaign_clicks').delete().ilike('campaign_name', cleanName);
-          } catch (e) {}
+          } catch (delErr) {
+            console.warn('[Delete Campaign] Direct delete notice:', delErr);
+          }
         }
 
         // 2. Remove from LocalStorage & register in deleted set
@@ -7794,23 +7831,44 @@
           window._adminCache.invalidate('ads');
         }
 
-        showToast(`🗑️ Campaign "${cleanName}" permanently deleted from database!`, 'success');
+        if (typeof showToast === 'function') {
+          showToast(`🗑️ Campaign "${cleanName}" permanently deleted!`, 'success');
+        } else {
+          alert(`🗑️ Campaign "${cleanName}" deleted!`);
+        }
         loadCreativeAdsData();
       } catch (err) {
-        showToast('❌ Error deleting campaign: ' + err.message, 'error');
+        if (typeof showToast === 'function') {
+          showToast('❌ Error deleting campaign: ' + err.message, 'error');
+        } else {
+          alert('❌ Error deleting campaign: ' + err.message);
+        }
       }
     };
 
     window.restoreCampaignRecord = function(name) {
       try {
-        const hidden = JSON.parse(localStorage.getItem('manodemy_hidden_campaigns') || '[]');
         const clean = (name || '').toLowerCase().trim();
+        const hidden = JSON.parse(localStorage.getItem('manodemy_hidden_campaigns') || '[]');
         const filtered = hidden.filter(h => h !== clean);
         localStorage.setItem('manodemy_hidden_campaigns', JSON.stringify(filtered));
-        showToast(`✅ Campaign "${name}" restored to active leaderboard!`, 'success');
+
+        const deleted = JSON.parse(localStorage.getItem('manodemy_deleted_campaigns') || '[]');
+        const filteredDeleted = deleted.filter(d => d !== clean);
+        localStorage.setItem('manodemy_deleted_campaigns', JSON.stringify(filteredDeleted));
+
+        if (typeof showToast === 'function') {
+          showToast(`✅ Campaign "${name}" restored to active leaderboard!`, 'success');
+        } else {
+          alert(`✅ Campaign "${name}" restored!`);
+        }
         loadCreativeAdsData();
       } catch (err) {
-        showToast('❌ Error restoring: ' + err.message, 'error');
+        if (typeof showToast === 'function') {
+          showToast('❌ Error restoring: ' + err.message, 'error');
+        } else {
+          alert('❌ Error restoring: ' + err.message);
+        }
       }
     };
 
@@ -7822,7 +7880,7 @@
       if (delBtn) {
         e.preventDefault();
         e.stopPropagation();
-        const id = delBtn.getAttribute('data-id');
+        const id = delBtn.getAttribute('data-id') || '';
         const name = decodeURIComponent(delBtn.getAttribute('data-name') || '');
         if (typeof window.deleteCampaignRecord === 'function') {
           window.deleteCampaignRecord(id, name);
@@ -7833,7 +7891,7 @@
       if (editBtn) {
         e.preventDefault();
         e.stopPropagation();
-        const id = editBtn.getAttribute('data-id');
+        const id = editBtn.getAttribute('data-id') || '';
         const name = decodeURIComponent(editBtn.getAttribute('data-name') || '');
         const platform = decodeURIComponent(editBtn.getAttribute('data-platform') || '');
         const url = decodeURIComponent(editBtn.getAttribute('data-url') || '');
@@ -8134,6 +8192,125 @@
       alert('📋 Full Campaign Link copied to clipboard!\n\n' + url);
     };
 
+    // ══════════════════════════════════════════════════════════════
+    // 🎬 REELS & STORY PUBLISHING HUB
+    // ══════════════════════════════════════════════════════════════
+    const REELS_HUB_DATA = [
+      {
+        reelId: 'SQL-01-R1',
+        hookText: '90% FAIL THIS SQL TRAP 💀',
+        hookLine2: 'RETURN 0-ROWS ?',
+        dayLabel: 'Day 04',
+        questionLabel: 'NOT IN + NULL',
+        scheduleSlot: 'Day 1 🌅 7:07 AM',
+        campaignName: 'reel_day04_q1_high_performers',
+        storyShortLink: 'https://www.manodemy.com/q1',
+        storyText: 'Option A or Option B?\nVote in the comments of our latest Reel! 👇\n\n🔗 Practice Free: manodemy.com/q1',
+        correct: 'B'
+      },
+      {
+        reelId: 'SQL-01-R2',
+        hookText: 'HR CALLED: TOTAL PAY IS NULL 💸',
+        hookLine2: 'WHICH QUERY FIXES PAYROLL ?',
+        dayLabel: 'Day 04',
+        questionLabel: 'NULL Arithmetic',
+        scheduleSlot: 'Day 1 🌙 8:30 PM',
+        campaignName: 'reel_day04_q2_salary_analytics',
+        storyShortLink: 'https://www.manodemy.com/q2',
+        storyText: 'Option A or Option B?\nWhich query fixes payroll for every employee? 💸\n\n🔗 Practice Free: manodemy.com/q2',
+        correct: 'B'
+      },
+      {
+        reelId: 'SQL-02-R1',
+        hookText: 'TOP 3 EARNERS TRAP 🏆',
+        hookLine2: 'AVOIDS SKIPPING RANKS ?',
+        dayLabel: 'Day 05',
+        questionLabel: 'RANK vs DENSE_RANK',
+        scheduleSlot: 'Day 2 🌅 7:07 AM',
+        campaignName: 'reel_day04_q3_dept_ranking',
+        storyShortLink: 'https://www.manodemy.com/q3',
+        storyText: 'Option A or Option B?\nWhich query avoids skipping ranks? 🏆\n\n🔗 Practice Free: manodemy.com/q3',
+        correct: 'B'
+      },
+      {
+        reelId: 'SQL-02-R2',
+        hookText: 'RUNNING TOTAL DISASTER 💸',
+        hookLine2: 'WHICH GIVES ROW-BY-ROW SUM ?',
+        dayLabel: 'Day 05',
+        questionLabel: 'ROWS vs RANGE',
+        scheduleSlot: 'Day 2 🌙 8:30 PM',
+        campaignName: 'reel_day04_q4_sales_growth',
+        storyShortLink: 'https://www.manodemy.com/q4',
+        storyText: 'Option A or Option B?\nWhich query gives a true row-by-row sum? 📊\n\n🔗 Practice Free: manodemy.com/q4',
+        correct: 'A'
+      }
+    ];
+
+    function loadReelsPublishingHub() {
+      const tbody = document.getElementById('reelsHubTbody');
+      const badge = document.getElementById('reelsHubCountBadge');
+      if (!tbody) return;
+
+      if (badge) badge.textContent = `${REELS_HUB_DATA.length} Reels Ready`;
+
+      tbody.innerHTML = REELS_HUB_DATA.map(reel => {
+        const escapedReelId = reel.reelId.replace(/'/g, "\\'");
+        return `
+          <tr>
+            <td><span class="badge" style="font-size:0.78rem; font-weight:800; padding:5px 12px; border-radius:8px; background:rgba(168,85,247,0.18); color:#C084FC; border:1px solid rgba(168,85,247,0.35); letter-spacing:0.03em;">${reel.reelId}</span></td>
+            <td style="font-weight:700; color:var(--gold); font-size:0.82rem; line-height:1.4;">
+              ${escapeHtml(reel.hookText)}
+              <div style="font-size:0.72rem; color:var(--ink-dim); font-weight:600; margin-top:2px;">${escapeHtml(reel.hookLine2)}</div>
+            </td>
+            <td>
+              <span class="badge badge-neutral" style="font-size:0.72rem; font-weight:700;">${reel.dayLabel}</span>
+              <div style="font-size:0.72rem; color:var(--cyan); font-weight:600; margin-top:3px;">${escapeHtml(reel.questionLabel)}</div>
+            </td>
+            <td style="font-size:0.78rem; color:var(--ink-dim); font-weight:600; white-space:nowrap;">${reel.scheduleSlot}</td>
+            <td style="white-space:nowrap;">
+              <button class="apply-btn" style="padding:5px 12px; font-size:0.78rem; border-radius:8px; background:rgba(0,230,246,0.15); border:1px solid rgba(0,230,246,0.3); color:var(--cyan); font-weight:700; cursor:pointer;" onclick="copyReelStoryLink('${escapedReelId}')">
+                ⚡ Copy Story Link
+              </button>
+              <div style="font-size:0.65rem; color:var(--ink-muted); margin-top:3px; font-family:var(--font-mono);">${reel.storyShortLink.replace('https://www.manodemy.com', 'manodemy.com')}</div>
+            </td>
+            <td style="white-space:nowrap;">
+              <button class="apply-btn" style="padding:5px 12px; font-size:0.78rem; border-radius:8px; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); color:var(--gold); font-weight:700; cursor:pointer;" onclick="copyReelStoryText('${escapedReelId}')">
+                📋 Copy Story Text
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    window.copyReelStoryLink = function(reelId) {
+      const reel = REELS_HUB_DATA.find(r => r.reelId === reelId);
+      if (!reel) return;
+      navigator.clipboard.writeText(reel.storyShortLink).then(() => {
+        if (typeof showToast === 'function') {
+          showToast(`🔗 Story Link copied for ${reelId}!`, 'success');
+        } else {
+          alert('🔗 Story Deep-Link Copied!\n\n' + reel.storyShortLink + '\n\nPaste this in your Instagram Story link sticker.');
+        }
+      }).catch(() => {
+        prompt('Copy this Story link:', reel.storyShortLink);
+      });
+    };
+
+    window.copyReelStoryText = function(reelId) {
+      const reel = REELS_HUB_DATA.find(r => r.reelId === reelId);
+      if (!reel) return;
+      navigator.clipboard.writeText(reel.storyText).then(() => {
+        if (typeof showToast === 'function') {
+          showToast(`📋 Story text copied for ${reelId}!`, 'success');
+        } else {
+          alert('📋 Story Overlay Text Copied!\n\nPaste this as text on your Instagram Story.');
+        }
+      }).catch(() => {
+        prompt('Copy this Story text:', reel.storyText);
+      });
+    };
+
     window.downloadCampaignQR = function(campaignName, url) {
       try {
         if (typeof qrcode !== 'undefined') {
@@ -8413,15 +8590,17 @@
     document.getElementById('sidebarBackdrop')?.addEventListener('click', window.closeSidebar);
 
     // ── SETTINGS ─────────────────────────────────────
-    document.getElementById('saveRateBtn').addEventListener('click', () => {
-      const rate = document.getElementById('inrUsdRate').value;
-      localStorage.setItem('bd_inr_usd_rate', rate);
-      INR_TO_USD_RATE = parseFloat(rate);
-      showToast('Conversion rate updated', 'success');
+    document.getElementById('saveRateBtn')?.addEventListener('click', () => {
+      const rate = document.getElementById('inrUsdRate')?.value;
+      if (rate) {
+        localStorage.setItem('bd_inr_usd_rate', rate);
+        INR_TO_USD_RATE = parseFloat(rate);
+        showToast('Conversion rate updated', 'success');
+      }
     });
 
     // HIGH-4 FIX: Real transaction CSV export (was a fake no-op placeholder)
-    document.getElementById('exportTxBtn').addEventListener('click', () => {
+    document.getElementById('exportTxBtn')?.addEventListener('click', () => {
       // Use the last loaded transactions stored in the closure
       const txRows = window._lastTxData || [];
       if (!txRows.length) { showToast('No transactions to export', 'info'); return; }
@@ -9227,6 +9406,7 @@
 
       // 2. Parallel background loaders
       try { loadCreativeAdsData(); } catch (e) {}
+      try { loadReelsPublishingHub(); } catch (e) {}
       try { loadPricingData(); } catch (e) {}
       try { fetchAdminReviews(); } catch (e) {}
 

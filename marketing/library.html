@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manodemy · Library</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/theme.css">
+<style>
+  .shell{ max-width:1280px; margin:0 auto; padding:26px 32px 90px; }
+
+  .toolbar{
+    display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:24px;
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius-md); padding:12px 14px;
+  }
+  .toolbar input[type="text"]{
+    font-family:var(--mono); background:var(--panel-3); border:1px solid var(--line); color:var(--paper);
+    border-radius:8px; padding:9px 12px; font-size:12.5px; min-width:220px; flex:1;
+  }
+  .toolbar select{
+    font-family:var(--mono); background:var(--panel-3); border:1px solid var(--line); color:var(--paper);
+    border-radius:8px; padding:9px 10px; font-size:12.5px;
+  }
+  .toolbar .spacer{ flex:1; }
+  .toolbar-title{ font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin:0 8px 0 0; white-space:nowrap; }
+
+  .grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:18px;
+  }
+
+  .card{
+    background:linear-gradient(180deg, var(--panel), var(--panel-2));
+    border:1px solid var(--line); border-radius:var(--radius-lg); padding:20px;
+    display:flex; flex-direction:column; gap:12px;
+  }
+  .card-top{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .reel-day{
+    font-size:11px; font-weight:800; letter-spacing:.08em; color:var(--ink);
+    background:linear-gradient(120deg,var(--cyan),var(--cyan-soft)); padding:4px 10px; border-radius:100px; white-space:nowrap;
+  }
+  .reel-badge{ font-size:11px; color:var(--muted); border:1px solid var(--line); padding:3px 9px; border-radius:100px; }
+  .updated{ font-size:10.5px; color:var(--muted-dim); margin-left:auto; }
+
+  .reel-hook{ font-weight:700; font-size:14px; line-height:1.4; }
+  .reel-hook .hc{ color:var(--cyan); } .reel-hook .hp{ color:var(--pink); }
+
+  .diff-preview{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .diff-box{
+    background:#0a0c12; border-radius:10px; padding:10px 12px; font-size:11px; line-height:1.5;
+    overflow:hidden; max-height:88px; color:#aab4cf;
+  }
+  .diff-box.a{ border:1px solid rgba(0,240,255,.4); }
+  .diff-box.b{ border:1px solid rgba(255,0,85,.4); }
+  .diff-box .lab{ font-size:10px; letter-spacing:.08em; font-weight:800; margin-bottom:4px; display:block; }
+  .diff-box.a .lab{ color:var(--cyan); } .diff-box.b .lab{ color:var(--pink); }
+
+  details.more{ font-size:11.5px; color:var(--muted); }
+  details.more summary{ cursor:pointer; color:var(--cyan); font-weight:700; list-style:none; }
+  details.more summary::-webkit-details-marker{ display:none; }
+  details.more[open] summary{ margin-bottom:8px; }
+  .more-block{ background:#0a0c12; border:1px solid var(--line); border-radius:9px; padding:10px 12px; white-space:pre-wrap; line-height:1.5; margin-bottom:8px; max-height:200px; overflow:auto; }
+  .more-block .lab{ font-size:10px; letter-spacing:.08em; font-weight:800; color:var(--muted); display:block; margin-bottom:4px; }
+  .more-block a{ color:var(--cyan); }
+
+  .action-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .card .btn.wide{ grid-column:1 / -1; }
+
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(5,6,10,.82); backdrop-filter:blur(6px);
+    display:none; align-items:center; justify-content:center; z-index:300; padding:24px;
+  }
+  .modal-overlay.show{ display:flex; }
+  .modal-card{ display:flex; flex-direction:column; align-items:center; gap:14px; }
+  .modal-close{ position:absolute; top:20px; right:26px; }
+
+  .import-panel{
+    display:none; margin-bottom:24px; background:var(--panel); border:1px solid var(--line);
+    border-radius:var(--radius-md); padding:14px;
+  }
+  .import-panel.show{ display:block; }
+  .import-panel textarea{
+    width:100%; font-family:var(--mono); background:var(--panel-3); border:1px solid var(--line); color:var(--paper);
+    border-radius:8px; padding:10px; font-size:11.5px; min-height:120px;
+  }
+  .import-actions{ display:flex; gap:8px; margin-top:10px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brandmark">
+    <div class="logo"><span class="c">MANO</span><span class="p">DEMY</span></div>
+  </div>
+  <nav class="tabnav">
+    <a href="studio.html">Studio</a>
+    <a href="library.html" class="active">Library</a>
+  </nav>
+  <div class="status"><span class="dot" id="dot"></span> <span id="countLabel">— reels</span></div>
+</div>
+
+<div class="shell">
+  <div class="toolbar">
+    <span class="toolbar-title">Saved Reels</span>
+    <input type="text" id="search" placeholder="Search hook, day, badge…">
+    <select id="filterLang">
+      <option value="">All languages</option>
+      <option value="sql">SQL</option>
+      <option value="python">Python</option>
+    </select>
+    <select id="sortBy">
+      <option value="recent">Recently updated</option>
+      <option value="day">Day (A→Z)</option>
+    </select>
+    <span class="spacer"></span>
+    <div class="btn sm" id="btnImportToggle">⇪ Import JSON</div>
+    <div class="btn sm" id="btnExport">⇩ Export JSON</div>
+    <a class="btn sm primary" href="studio.html" id="btnNewReel">✚ New Reel</a>
+  </div>
+
+  <div class="import-panel" id="importPanel">
+    <div style="font-size:11.5px;color:var(--muted);margin-bottom:8px;">
+      Paste a reels JSON export below to bring reels in from another browser (localStorage isn't shared automatically across separate downloads).
+    </div>
+    <textarea id="importText" placeholder="[ { &quot;id&quot;: ..., &quot;day&quot;: ... } ]"></textarea>
+    <div class="import-actions">
+      <div class="btn sm primary" id="btnImportConfirm">Import</div>
+      <div class="btn sm ghost" id="btnImportCancel">Cancel</div>
+    </div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="empty-state" id="emptyState" style="display:none;">
+    <div class="glyph">🎬</div>
+    <h3>No reels match your search</h3>
+    <p>Try clearing the search or filters, or head to the Studio to create a new one.</p>
+  </div>
+</div>
+
+<div class="modal-overlay" id="previewModal">
+  <div class="modal-card">
+    <div class="btn icon-only modal-close" id="btnCloseModal">✕</div>
+    <div class="iphone-frame">
+      <div class="iphone-screen">
+        <div class="notch"><div class="cam"></div></div>
+        <div class="reel-iframe-wrap"><iframe id="previewFrame" src="templates/neon-radial-clock.html" title="Reel preview"></iframe></div>
+        <div class="ig-status"><span>9:41</span><span class="right">▂▄▆ 5G 🔋</span></div>
+        <div class="ig-header">Reels <span class="cam-icon">📷</span></div>
+        <div class="ig-rail">
+          <div class="item"><div class="icon">🤍</div><div class="cnt">823k</div></div>
+          <div class="item"><div class="icon">💬</div><div class="cnt">51</div></div>
+          <div class="item"><div class="icon">✈️</div><div class="cnt">8.9k</div></div>
+          <div class="item"><div class="icon">⋯</div></div>
+          <div class="disc">💿</div>
+        </div>
+        <div class="ig-bottom">
+          <div class="who"><div class="avatar">M</div><div class="handle">@manodemy26</div><div class="follow">Follow</div></div>
+          <div class="caption" id="modalCaption">…</div>
+          <div class="audio">🎵 Original audio — Manodemy SQL</div>
+        </div>
+        <div class="ig-nav"><div class="tab">🏠</div><div class="tab">🔍</div><div class="tab active">▶</div><div class="tab">🛍</div><div class="tab">👤</div></div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="transport">
+        <div class="ctl-btn play" id="mPlay">▶</div>
+        <div class="ctl-btn" id="mReplay">⟲</div>
+        <div class="scrub-row"><span id="mNow">0:00</span><input type="range" id="mScrub" min="0" max="15000" value="0" step="50"><span id="mTotal">0:15</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="assets/store.js"></script>
+<script>
+const $ = (id)=>document.getElementById(id);
+function escapeHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function highlightHook(hook, terms){
+  let html = escapeHtml(hook);
+  (terms||[]).forEach((t,i)=>{
+    const cls = i % 2 === 0 ? 'hc' : 'hp';
+    const re = new RegExp('('+t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','i');
+    html = html.replace(re, `<span class="${cls}">$1</span>`);
+  });
+  return html;
+}
+function timeAgo(ts){
+  if(!ts) return '';
+  const s = Math.floor((Date.now()-ts)/1000);
+  if(s < 60) return 'just now';
+  if(s < 3600) return Math.floor(s/60)+'m ago';
+  if(s < 86400) return Math.floor(s/3600)+'h ago';
+  return Math.floor(s/86400)+'d ago';
+}
+
+const toastEl = $('toast');
+let toastTimer=null;
+function toast(msg, kind){
+  toastEl.textContent = msg;
+  toastEl.className = 'toast show' + (kind?' '+kind:'');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>toastEl.classList.remove('show'), 2200);
+}
+
+async function copyText(text, btn){
+  try{ await navigator.clipboard.writeText(text); }
+  catch(e){
+    const ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+  }
+  if(btn){
+    const orig = btn.textContent;
+    btn.classList.add('copied'); btn.textContent='✓ Copied';
+    setTimeout(()=>{ btn.classList.remove('copied'); btn.textContent=orig; }, 1300);
+  }
+}
+
+function render(){
+  const q = $('search').value.trim().toLowerCase();
+  const lang = $('filterLang').value;
+  const sort = $('sortBy').value;
+  let reels = ReelStore.getAll();
+
+  $('countLabel').textContent = reels.length + (reels.length===1 ? ' reel' : ' reels');
+
+  if(q){
+    reels = reels.filter(r =>
+      (r.day||'').toLowerCase().includes(q) ||
+      (r.badge||'').toLowerCase().includes(q) ||
+      (r.hook||'').toLowerCase().includes(q)
+    );
+  }
+  if(lang) reels = reels.filter(r => r.lang === lang);
+  if(sort === 'day') reels = reels.slice().sort((a,b)=> (a.day||'').localeCompare(b.day||''));
+
+  const grid = $('grid');
+  grid.innerHTML = '';
+  $('emptyState').style.display = reels.length ? 'none' : 'flex';
+
+  reels.forEach(r=>{
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="card-top">
+        <span class="reel-day">${escapeHtml(r.day)}</span>
+        <span class="reel-badge">${escapeHtml(r.badge)}</span>
+        <span class="updated">${timeAgo(r.updatedAt)}</span>
+      </div>
+      <div class="reel-hook">${highlightHook(r.hook, r.hookHighlights)}</div>
+      <div class="diff-preview">
+        <div class="diff-box a"><span class="lab">OPTION A</span>${escapeHtml(r.codeA).split('\n').slice(0,4).join('<br>')}</div>
+        <div class="diff-box b"><span class="lab">OPTION B</span>${escapeHtml(r.codeB).split('\n').slice(0,4).join('<br>')}</div>
+      </div>
+      <details class="more">
+        <summary>Show full details ▾</summary>
+        <div class="more-block"><span class="lab">Voiceover script</span>${escapeHtml(r.voiceScript)}</div>
+        <div class="more-block"><span class="lab">Instagram caption</span>${escapeHtml(r.caption)}</div>
+        <div class="more-block"><span class="lab">Pinned answer</span>${escapeHtml(r.pinnedAnswer)}</div>
+        <div class="more-block"><span class="lab">Playground link</span><a href="${escapeHtml(r.link)}" target="_blank" rel="noopener">${escapeHtml(r.link)}</a></div>
+      </details>
+      <div class="action-grid">
+        <div class="btn sm" data-act="caption" data-id="${r.id}">📋 Copy Caption</div>
+        <div class="btn sm ghost-pink" data-act="pinned" data-id="${r.id}">📌 Copy Pinned</div>
+        <div class="btn sm" data-act="link" data-id="${r.id}">🔗 Copy Link</div>
+        <div class="btn sm" data-act="preview" data-id="${r.id}">📱 Preview</div>
+        <a class="btn sm primary wide" href="studio.html?id=${encodeURIComponent(r.id)}">✎ Edit in Studio</a>
+        <div class="btn sm" data-act="duplicate" data-id="${r.id}">⧉ Duplicate</div>
+        <div class="btn sm danger" data-act="delete" data-id="${r.id}">🗑 Delete</div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+document.addEventListener('click', (ev)=>{
+  const el = ev.target.closest('[data-act]');
+  if(!el) return;
+  const id = el.dataset.id;
+  const r = ReelStore.getById(id);
+  const act = el.dataset.act;
+  if(!r) return;
+
+  if(act === 'caption') copyText(r.caption, el);
+  else if(act === 'pinned') copyText(r.pinnedAnswer, el);
+  else if(act === 'link') copyText(r.link, el);
+  else if(act === 'preview') openPreview(r);
+  else if(act === 'duplicate'){ ReelStore.duplicate(id); render(); toast('Duplicated "'+r.day+'".'); }
+  else if(act === 'delete'){
+    if(ReelStore.getAll().length <= 1){ toast('Keep at least one reel.', 'warn'); return; }
+    if(!confirm('Delete "'+r.day+' — '+r.badge+'"? This cannot be undone.')) return;
+    ReelStore.remove(id); render(); toast('Deleted.');
+  }
+});
+
+$('search').addEventListener('input', render);
+$('filterLang').addEventListener('change', render);
+$('sortBy').addEventListener('change', render);
+
+/* ---------- export / import ---------- */
+$('btnExport').addEventListener('click', ()=>{
+  const json = ReelStore.exportJSON();
+  const blob = new Blob([json], { type:'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'manodemy-reels-export.json'; a.click();
+  URL.revokeObjectURL(url);
+  toast('Exported ' + ReelStore.getAll().length + ' reels to JSON.');
+});
+$('btnImportToggle').addEventListener('click', ()=> $('importPanel').classList.toggle('show'));
+$('btnImportCancel').addEventListener('click', ()=>{ $('importPanel').classList.remove('show'); $('importText').value=''; });
+$('btnImportConfirm').addEventListener('click', ()=>{
+  try{
+    const count = ReelStore.importJSON($('importText').value);
+    toast('Imported — library now has ' + count + ' reels.');
+    $('importPanel').classList.remove('show');
+    $('importText').value = '';
+    render();
+  }catch(e){
+    toast('Could not parse that JSON — check the format.', 'err');
+  }
+});
+
+/* ---------- preview modal ---------- */
+const modal = $('previewModal');
+const pFrame = $('previewFrame');
+let pFrameReady = false;
+let pIsPlaying = false, pScrubbing = false;
+function fmt(ms){ return '0:' + String(Math.floor(ms/1000)).padStart(2,'0'); }
+
+pFrame.addEventListener('load', ()=>{ pFrameReady = true; });
+
+function openPreview(r){
+  modal.classList.add('show');
+  $('modalCaption').textContent = (r.caption||'').split('\n')[0] + ' …more';
+  const send = ()=> pFrame.contentWindow.postMessage({ type:'reel:load', data:r }, '*');
+  if(pFrameReady) send(); else pFrame.addEventListener('load', send, { once:true });
+  setTimeout(()=> pFrame.contentWindow.postMessage({ type:'reel:play' }, '*'), 80);
+}
+$('btnCloseModal').addEventListener('click', closePreview);
+modal.addEventListener('click', (e)=>{ if(e.target === modal) closePreview(); });
+function closePreview(){
+  modal.classList.remove('show');
+  try{ pFrame.contentWindow.postMessage({ type:'reel:reset' }, '*'); }catch(e){}
+}
+
+$('mPlay').addEventListener('click', ()=> pFrame.contentWindow.postMessage({ type: pIsPlaying?'reel:pause':'reel:play' }, '*'));
+$('mReplay').addEventListener('click', ()=>{
+  pFrame.contentWindow.postMessage({ type:'reel:reset' }, '*');
+  setTimeout(()=> pFrame.contentWindow.postMessage({ type:'reel:play' }, '*'), 30);
+});
+$('mScrub').addEventListener('input', ()=>{ pScrubbing = true; $('mNow').textContent = fmt(Number($('mScrub').value)); });
+$('mScrub').addEventListener('change', ()=>{ pFrame.contentWindow.postMessage({ type:'reel:seek', ms:Number($('mScrub').value) }, '*'); pScrubbing = false; });
+
+window.addEventListener('message', (ev)=>{
+  const msg = ev.data || {};
+  if(msg.type === 'reel:state' && ev.source === pFrame.contentWindow){
+    const st = msg.state;
+    pIsPlaying = st.playing;
+    $('mPlay').textContent = pIsPlaying ? '❚❚' : '▶';
+    if(!pScrubbing) $('mScrub').value = st.elapsedMs;
+    $('mNow').textContent = fmt(st.elapsedMs);
+    $('mTotal').textContent = fmt(st.totalMs);
+  }
+});
+
+render();
+</script>
+</body>
+</html>

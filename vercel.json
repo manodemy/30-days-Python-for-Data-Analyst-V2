@@ -331,82 +331,82 @@
     },
     {
       "source": "/q1",
-      "destination": "/Version-3/index.html?day=4&q=1&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_01",
+      "destination": "/Version-3/index.html?day=4&challenge=SQL-01-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q1_high_performers",
       "permanent": false
     },
     {
       "source": "/go/q1",
-      "destination": "/Version-3/index.html?day=4&q=1&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_01",
+      "destination": "/Version-3/index.html?day=4&challenge=SQL-01-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q1_high_performers",
       "permanent": false
     },
     {
       "source": "/go/reel1",
-      "destination": "/Version-3/index.html?day=4&q=2&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_01",
+      "destination": "/Version-3/index.html?day=4&challenge=SQL-01-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q1_high_performers",
       "permanent": false
     },
     {
       "source": "/go/instagram_reel_01",
-      "destination": "/Version-3/index.html?day=4&q=2&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_01",
+      "destination": "/Version-3/index.html?day=4&challenge=SQL-01-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q1_high_performers",
       "permanent": false
     },
     {
       "source": "/q2",
-      "destination": "/Version-3/index.html?day=4&q=2&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_01",
+      "destination": "/Version-3/index.html?day=4&challenge=SQL-01-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q2_salary_analytics",
       "permanent": false
     },
     {
       "source": "/go/q2",
-      "destination": "/Version-3/index.html?day=4&q=2&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_01",
+      "destination": "/Version-3/index.html?day=4&challenge=SQL-01-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q2_salary_analytics",
       "permanent": false
     },
     {
       "source": "/go/reel2",
-      "destination": "/Version-3/index.html?day=4&q=3&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_02",
+      "destination": "/Version-3/index.html?day=4&challenge=SQL-01-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q2_salary_analytics",
       "permanent": false
     },
     {
       "source": "/go/instagram_reel_02",
-      "destination": "/Version-3/index.html?day=4&q=3&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_02",
+      "destination": "/Version-3/index.html?day=4&challenge=SQL-01-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q2_salary_analytics",
       "permanent": false
     },
     {
       "source": "/q3",
-      "destination": "/Version-3/index.html?day=4&q=3&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_02",
+      "destination": "/Version-3/index.html?day=5&challenge=SQL-02-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q3_dept_ranking",
       "permanent": false
     },
     {
       "source": "/go/q3",
-      "destination": "/Version-3/index.html?day=4&q=3&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_02",
+      "destination": "/Version-3/index.html?day=5&challenge=SQL-02-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q3_dept_ranking",
       "permanent": false
     },
     {
       "source": "/go/reel3",
-      "destination": "/Version-3/index.html?day=4&q=4&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_03",
+      "destination": "/Version-3/index.html?day=5&challenge=SQL-02-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q3_dept_ranking",
       "permanent": false
     },
     {
       "source": "/go/instagram_reel_03",
-      "destination": "/Version-3/index.html?day=4&q=4&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_03",
+      "destination": "/Version-3/index.html?day=5&challenge=SQL-02-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q3_dept_ranking",
       "permanent": false
     },
     {
       "source": "/q4",
-      "destination": "/Version-3/index.html?day=4&q=4&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_03",
+      "destination": "/Version-3/index.html?day=5&challenge=SQL-02-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q4_sales_growth",
       "permanent": false
     },
     {
       "source": "/go/q4",
-      "destination": "/Version-3/index.html?day=4&q=4&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_03",
+      "destination": "/Version-3/index.html?day=5&challenge=SQL-02-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q4_sales_growth",
       "permanent": false
     },
     {
       "source": "/go/reel4",
-      "destination": "/Version-3/index.html?day=4&q=5&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_04",
+      "destination": "/Version-3/index.html?day=5&challenge=SQL-02-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q4_sales_growth",
       "permanent": false
     },
     {
       "source": "/go/instagram_reel_04",
-      "destination": "/Version-3/index.html?day=4&q=5&utm_source=instagram&utm_medium=reels&utm_campaign=instagram_reel_04",
+      "destination": "/Version-3/index.html?day=5&challenge=SQL-02-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q4_sales_growth",
       "permanent": false
     },
     {

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manodemy · Marketing Studio &amp; Reel Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/theme.css">
+<style>
+  .hub{
+    max-width:920px; margin:0 auto; padding:90px 32px 60px; text-align:center;
+  }
+  .hub .eyebrow{ font-size:11.5px; letter-spacing:.2em; color:var(--muted); text-transform:uppercase; margin-bottom:18px; }
+  .hub h1{ font-size:clamp(28px,4vw,42px); line-height:1.15; margin:0 0 16px; }
+  .hub h1 .c{ color:var(--cyan); text-shadow:0 0 20px rgba(0,240,255,.4); }
+  .hub h1 .p{ color:var(--pink); text-shadow:0 0 20px rgba(255,0,85,.4); }
+  .hub p.lede{ color:var(--muted); font-size:14px; max-width:560px; margin:0 auto 48px; line-height:1.6; }
+
+  .cards{ display:grid; grid-template-columns:1fr 1fr; gap:20px; text-align:left; }
+  @media (max-width:720px){ .cards{ grid-template-columns:1fr; } }
+
+  .hub-card{
+    background:linear-gradient(180deg, var(--panel), var(--panel-2));
+    border:1px solid var(--line); border-radius:20px; padding:30px;
+    display:flex; flex-direction:column; gap:14px; text-decoration:none; color:var(--paper);
+    transition:transform .15s ease, border-color .15s ease;
+  }
+  .hub-card:hover{ transform:translateY(-4px); border-color:var(--cyan); }
+  .hub-card.pink:hover{ border-color:var(--pink); }
+  .hub-card .glyph{ font-size:30px; }
+  .hub-card h2{ margin:0; font-size:17px; }
+  .hub-card p{ margin:0; font-size:12.5px; color:var(--muted); line-height:1.6; }
+  .hub-card .cta{ font-size:12px; font-weight:800; letter-spacing:.04em; margin-top:6px; }
+  .hub-card.cyan .cta{ color:var(--cyan); }
+  .hub-card.pink .cta{ color:var(--pink); }
+
+  .footnote{ margin-top:44px; font-size:11.5px; color:var(--muted-dim); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brandmark">
+    <img src="assets/logo.png" style="height:28px; object-fit:contain;" alt="MANODEMY" onerror="this.style.display='none';" />
+    <div class="logo"><span class="c">MANO</span><span class="p">DEMY</span></div>
+  </div>
+  <nav class="tabnav"><a href="studio.html">Studio</a><a href="library.html">Library</a></nav>
+  <div class="status"><span class="dot"></span> engine ready</div>
+</div>
+
+<div class="hub">
+  <div class="eyebrow">Marketing Studio &amp; Reel Engine</div>
+  <h1><span class="c">Build</span> the trap.<br><span class="p">Ship</span> the reel.</h1>
+  <p class="lede">Write, preview, and voice every "Option A vs Option B" reel in one place, then keep the whole back-catalog organized and ready to post.</p>
+
+  <div class="cards">
+    <a class="hub-card cyan" href="studio.html">
+      <div class="glyph">🎙️</div>
+      <h2>Live Studio Editor</h2>
+      <p>Live-edit a reel's hook, code diff, poll and voiceover script with an instant preview inside a photorealistic Instagram phone — test the voice as you type.</p>
+      <div class="cta">Open the Live Editor →</div>
+    </a>
+    <a class="hub-card pink" href="library.html">
+      <div class="glyph">🗂️</div>
+      <h2>Reels Library & 1-Click Launchpad</h2>
+      <p>Browse every saved reel with its full caption, pinned answer and playground link. Search, preview, duplicate, or export the whole back-catalog.</p>
+      <div class="cta">Open the Library →</div>
+    </a>
+  </div>
+
+  <div class="footnote">100% Local · Instant localStorage sync · Zero web bundle bloat</div>
+</div>
+
+</body>
+</html>

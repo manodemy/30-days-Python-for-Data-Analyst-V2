@@ -8094,13 +8094,35 @@ select:focus:not(:focus-visible) {
 
 /* VS Comparison Cards Spotlight */
 .vs-card {
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease !important;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease, background 0.35s ease !important;
 }
 
-.vs-card.card-active-spotlight {
-  transform: scale(1.02) translateY(-2px) !important;
-  box-shadow: 0 10px 24px -4px rgba(59, 130, 246, 0.2), 0 0 0 2px #3b82f6 !important;
+.vs-card.card-active-spotlight,
+.vs-card.narration-highlight {
+  transform: scale(1.025) translateY(-3px) !important;
+  border-color: #0284c7 !important;
+  background: #f0f9ff !important;
+  box-shadow: 0 10px 24px -4px rgba(2, 132, 199, 0.28), 0 0 0 2px #0284c7 !important;
   z-index: 4;
+}
+
+.vs-card.card-active-spotlight h4,
+.vs-card.narration-highlight h4 {
+  color: #0369a1 !important;
+  font-weight: 800 !important;
+}
+
+.vs-card.card-active-spotlight code,
+.vs-card.narration-highlight code {
+  background: #e0f2fe !important;
+  color: #0369a1 !important;
+  border-color: #7dd3fc !important;
+  font-weight: 700 !important;
+}
+
+.vs-card.card-active-spotlight strong,
+.vs-card.narration-highlight strong {
+  color: #0c4a6e !important;
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -8247,13 +8269,13 @@ select:focus:not(:focus-visible) {
   margin-top: 10px;
   padding: 12px 14px;
   background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(15, 23, 42, 0.95) 100%);
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  border: 1px solid rgba(245, 158, 11, 0.35);
   border-left: 4px solid #f59e0b;
   border-radius: 8px;
   font-size: 0.8rem;
   line-height: 1.5;
   color: #f8fafc;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
   animation: fadeInDiag 0.25s ease-out;
 }
 
@@ -8268,27 +8290,81 @@ select:focus:not(:focus-visible) {
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-bottom: 4px;
-  font-size: 0.82rem;
+  margin-bottom: 5px;
+  font-size: 0.84rem;
+}
+
+.sql-diagnostic-card .diag-body {
+  color: #e2e8f0;
+  font-size: 0.79rem;
+  line-height: 1.55;
+}
+
+.sql-diagnostic-card .diag-body code {
+  background: rgba(30, 41, 59, 0.9);
+  color: #38bdf8;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: var(--mono, monospace);
+  font-size: 0.78rem;
+  border: 1px solid rgba(56, 189, 248, 0.2);
+}
+
+.sql-diagnostic-card .diag-body strong {
+  color: #fef08a;
 }
 
 .sql-diagnostic-card .diag-fix-btn {
-  display: inline-block;
-  margin-top: 6px;
-  background: rgba(245, 158, 11, 0.2);
-  border: 1px solid rgba(245, 158, 11, 0.4);
-  color: #fde68a;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 0.72rem;
-  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(217, 119, 6, 0.35));
+  border: 1px solid rgba(245, 158, 11, 0.6);
+  color: #fef08a;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 0.76rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
 }
 
 .sql-diagnostic-card .diag-fix-btn:hover {
-  background: #f59e0b;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  border-color: #f59e0b;
   color: #0f172a;
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.45);
+}
+
+.sql-diagnostic-card .diag-fix-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.coach-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #0f172a;
+  border: 1px solid #f59e0b;
+  color: #fef08a;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 12px rgba(245, 158, 11, 0.3);
+  opacity: 0;
+  transform: translateY(12px);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  z-index: 1000000;
+}
+
+.coach-toast.show {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* ═════════════════════════════════════════════════════════════════

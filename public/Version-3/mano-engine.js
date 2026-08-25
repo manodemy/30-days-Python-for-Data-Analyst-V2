@@ -3467,6 +3467,30 @@ const REEL_CHALLENGES = {
       </div>`,
     codeA: "SELECT order_date, total_amount AS amount,\n       SUM(total_amount) OVER (\n         ORDER BY order_date\n         ROWS UNBOUNDED PRECEDING\n       ) AS running_total\nFROM orders;",
     codeB: "SELECT order_date, total_amount AS amount,\n       SUM(total_amount) OVER (\n         ORDER BY order_date\n       ) AS running_total\nFROM orders;"
+  },
+  'SQL-03-R1': {
+    day: 'day04',
+    title: 'COUNT(*) VS COUNT(COL) 💀',
+    task: 'Aggregation Trap: Counting Rows vs Non-NULL Values',
+    prompt: `Department 20 has 4 employees, but Devendra has NULL commission! Run Option A (COUNT(commission)) vs Option B (COUNT(*)) to see why COUNT(column) silently drops NULL rows.<br/>
+      <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-03-R1', 'A')">⚡ Load Option A (Trap)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-03-R1', 'B')">⚡ Load Option B (Fix)</button>
+      </div>`,
+    codeA: "SELECT department_id,\n       COUNT(commission) AS total_emps\nFROM employees\nWHERE department_id = 20;",
+    codeB: "SELECT department_id,\n       COUNT(*) AS total_emps\nFROM employees\nWHERE department_id = 20;"
+  },
+  'SQL-03-R2': {
+    day: 'day04',
+    title: 'SQL "OR" PRECEDENCE BUG 💀',
+    task: 'Boolean Precedence: Enforcing Parentheses in Compound Filters',
+    prompt: `HR needs all active employees in Dept 20 or 10! Siddharth is INACTIVE in Dept 10. Run Option A (no parens) vs Option B (with parens) to see why AND evaluates before OR.<br/>
+      <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-03-R2', 'A')">⚡ Load Option A (Trap)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-03-R2', 'B')">⚡ Load Option B (Fix)</button>
+      </div>`,
+    codeA: "SELECT first_name, department_id, is_active\nFROM employees\nWHERE is_active = 1\n  AND department_id = 20\n   OR department_id = 10;",
+    codeB: "SELECT first_name, department_id, is_active\nFROM employees\nWHERE is_active = 1\n  AND (department_id = 20 OR department_id = 10);"
   }
 };
 
@@ -3488,6 +3512,9 @@ function getActiveChallengeId() {
   if (camp.includes('reel_day04_q1') || camp.includes('reel_01') || camp.includes('instagram_reel_01') || camp.includes('high_performer')) return 'SQL-01-R1';
   if (camp.includes('reel_day04_q2') || camp.includes('reel_02') || camp.includes('instagram_reel_02') || camp.includes('salary_analytic')) return 'SQL-01-R2';
   if (camp.includes('reel_day04_q3') || camp.includes('reel_03') || camp.includes('instagram_reel_03') || camp.includes('dept_ranking')) return 'SQL-02-R1';
+  if (camp.includes('reel_day04_q4') || camp.includes('reel_04') || camp.includes('instagram_reel_04') || camp.includes('sales_growth')) return 'SQL-02-R2';
+  if (camp.includes('reel_day04_q5') || camp.includes('reel_05') || camp.includes('instagram_reel_05') || camp.includes('count_null')) return 'SQL-03-R1';
+  if (camp.includes('reel_day04_q6') || camp.includes('reel_06') || camp.includes('instagram_reel_06') || camp.includes('precedence')) return 'SQL-03-R2';
   if (camp.includes('reel_day04_q4') || camp.includes('reel_04') || camp.includes('instagram_reel_04') || camp.includes('sales_growth')) return 'SQL-02-R2';
 
   const dayParam = urlP.get('day');

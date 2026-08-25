@@ -264,6 +264,58 @@ REELS_CATALOG = {
         "caption": "RUNNING TOTAL DISASTER 💸\nWhich query gives a true row-by-row sum on same-day orders?\n\nCan you spot the trap before checking the pinned comment? \n\nDrop your vote (A or B) below 👇\n\n\nPractice Data Skills \n👉 Day 1 & Day 2 are 100% FREE\n🔗 Link in bio\n\n#sql #sqlinterview #windowfunctions #dataanalytics #dataengineer #datascience #dataanalyst #sqlquery #faang #techinterview #codinginterview #learnsql #database #manodemy #dataanalysis",
         "pinnedAnswer": "Option A is correct ✅ | Option B is the trap ❌\n\nWhy Option B fails on same-day orders:\nIf you don't specify a window frame after `ORDER BY`, SQL defaults to `RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW`.\n`RANGE` treats duplicate dates as a single tied group — adding all same-day amounts together in one sudden jump!\n\nOption A explicitly uses `ROWS UNBOUNDED PRECEDING`, forcing SQL to accumulate strictly row by row!\n\n💡 Pro-tip: Always specify `ROWS` in cumulative window sums!\n\nBe honest — did you get this right? 👇",
         "link": "https://manodemy.in"
+    },
+    "SQL-03-R1": {
+        "reelNo": "SQL-03-R1",
+        "day": "DAY 04",
+        "badge": "SQL · Aggregations",
+        "hook": "COUNT(*) VS COUNT(COL) 💀\nCOUNT WITHOUT DROPPING NULLS ?",
+        "hookLineObjects": [
+            {"text": "COUNT(*) VS COUNT(COL) 💀", "font": "Plus Jakarta Sans", "size": 5.6},
+            {"text": "COUNT WITHOUT DROPPING NULLS ?", "font": "Outfit", "size": 4.9}
+        ],
+        "hookHighlights": [
+            {"text": "COUNT(*)", "color": "#facc15"},
+            {"text": "DROPPING NULLS", "color": "#00f0ff"}
+        ],
+        "lang": "sql",
+        "codeA": "SELECT department_id,\n       COUNT(commission) AS total_emps\nFROM employees\nWHERE department_id = 20",
+        "codeB": "SELECT department_id,\n       COUNT(*) AS total_emps\nFROM employees\nWHERE department_id = 20",
+        "pollInstr": "DROP YOUR VOTE IN COMMENTS 👇",
+        "clockSfx": "bomb",
+        "ccStyle": "hormozi",
+        "ccEnabled": True,
+        "voice": "en-US-AndrewNeural",
+        "voiceScript": "Ninety percent fail this SQL aggregation trap!\nWhich query counts all employees without dropping nulls?\nChoose your answer.\nOption A...\nor Option B?\nDrop your vote in the comments below.",
+        "caption": "COUNT(*) VS COUNT(COL) 💀\nWhich query counts all employees without dropping NULLs?\n\nCan you spot the trap before checking the pinned comment? \n\nDrop your vote (A or B) below 👇\n\n\nPractice Data Skills \n👉 Day 1 & Day 2 are 100% FREE\n🔗 Link in bio / manodemy.com/q5\n\n#sql #sqlinterview #sqltips #dataanalytics #dataengineer #datascience #dataanalyst #sqlquery #faang #techinterview #codinginterview #learnsql #database #manodemy #dataanalysis",
+        "pinnedAnswer": "Option A is the trap ❌ | Option B is correct ✅\n\nWhy Option A undercounts employees:\n`COUNT(column_name)` ONLY counts rows where the column is NOT NULL. If an employee has NULL commission, they are silently excluded from the headcount!\n`COUNT(*)` counts total physical rows regardless of NULLs.\n\n💡 Pro-tip: Always use `COUNT(*)` for row counts and `COUNT(col)` only when checking non-null presence!\n\nBe honest — did you get this right? 👇",
+        "link": "https://www.manodemy.com/q5"
+    },
+    "SQL-03-R2": {
+        "reelNo": "SQL-03-R2",
+        "day": "DAY 04",
+        "badge": "SQL · Precedence",
+        "hook": "SQL \"OR\" PRECEDENCE BUG 💀\nSTRICTLY ACTIVE EMPLOYEES ?",
+        "hookLineObjects": [
+            {"text": "SQL \"OR\" PRECEDENCE BUG 💀", "font": "Plus Jakarta Sans", "size": 5.5},
+            {"text": "STRICTLY ACTIVE EMPLOYEES ?", "font": "Outfit", "size": 5.0}
+        ],
+        "hookHighlights": [
+            {"text": "PRECEDENCE BUG", "color": "#facc15"},
+            {"text": "ACTIVE EMPLOYEES", "color": "#00f0ff"}
+        ],
+        "lang": "sql",
+        "codeA": "SELECT first_name, department_id, is_active\nFROM employees\nWHERE is_active = 1\n  AND department_id = 20\n   OR department_id = 10",
+        "codeB": "SELECT first_name, department_id, is_active\nFROM employees\nWHERE is_active = 1\n  AND (department_id = 20 OR department_id = 10)",
+        "pollInstr": "DROP YOUR VOTE IN COMMENTS 👇",
+        "clockSfx": "bomb",
+        "ccStyle": "hormozi",
+        "ccEnabled": True,
+        "voice": "en-US-AndrewNeural",
+        "voiceScript": "The sneakiest Boolean operator bug in SQL!\nWhich query returns strictly active employees?\nChoose your answer.\nOption A...\nor Option B?\nDrop your vote in the comments below.",
+        "caption": "SQL \"OR\" PRECEDENCE BUG 💀\nWhich query returns strictly ACTIVE employees without pulling inactive rows?\n\nCan you spot the trap before checking the pinned comment? \n\nDrop your vote (A or B) below 👇\n\n\nPractice Data Skills \n👉 Day 1 & Day 2 are 100% FREE\n🔗 Link in bio / manodemy.com/q6\n\n#sql #sqlinterview #sqltips #dataanalytics #dataengineer #datascience #dataanalyst #sqlquery #faang #techinterview #codinginterview #learnsql #database #manodemy #dataanalysis",
+        "pinnedAnswer": "Option A is the trap ❌ | Option B is correct ✅\n\nWhy Option A returns inactive employees:\nIn SQL operator precedence, `AND` takes priority over `OR` (`A AND B OR C` evaluates as `(A AND B) OR C`).\nBecause of this, ANY employee in Department 10 is returned — even if they are inactive (`is_active = 0`)!\n\nOption B uses parentheses `AND (dept = 20 OR dept = 10)` to strictly enforce active status on both departments.\n\n💡 Pro-tip: Always use parentheses when mixing AND and OR in WHERE clauses!\n\nBe honest — did you get this right? 👇",
+        "link": "https://www.manodemy.com/q6"
     }
 }
 
@@ -623,5 +675,11 @@ async def build_direct_video(reel=DEFAULT_REEL, is_4k=False, fps=30):
 
 if __name__ == "__main__":
     is_4k = "--4k" in sys.argv
-    # 24fps = 20% fewer frames vs 30fps; Instagram/Shorts/TikTok all encode at 24fps internally
-    asyncio.run(build_direct_video(DEFAULT_REEL, is_4k=is_4k, fps=24))
+    reel_arg = next((arg for arg in sys.argv[1:] if not arg.startswith("--")), "SQL-03-R1")
+    if reel_arg.lower() == "all":
+        for k, r in REELS_CATALOG.items():
+            asyncio.run(build_direct_video(r, is_4k=is_4k, fps=24))
+    elif reel_arg in REELS_CATALOG:
+        asyncio.run(build_direct_video(REELS_CATALOG[reel_arg], is_4k=is_4k, fps=24))
+    else:
+        asyncio.run(build_direct_video(DEFAULT_REEL, is_4k=is_4k, fps=24))

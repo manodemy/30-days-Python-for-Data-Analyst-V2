@@ -3485,16 +3485,18 @@ function getActiveChallengeId() {
   if (directChal && REEL_CHALLENGES[directChal]) return directChal;
 
   const camp = (urlP.get('utm_campaign') || '').toLowerCase();
-  if (camp.includes('reel_day04_q1') || camp.includes('reel_01') || camp.includes('high_performer')) return 'SQL-01-R1';
-  if (camp.includes('reel_day04_q2') || camp.includes('reel_02') || camp.includes('salary_analytic')) return 'SQL-01-R2';
-  if (camp.includes('reel_day04_q3') || camp.includes('reel_03') || camp.includes('dept_ranking')) return 'SQL-02-R1';
-  if (camp.includes('reel_day04_q4') || camp.includes('reel_04') || camp.includes('sales_growth')) return 'SQL-02-R2';
+  if (camp.includes('reel_day04_q1') || camp.includes('reel_01') || camp.includes('instagram_reel_01') || camp.includes('high_performer')) return 'SQL-01-R1';
+  if (camp.includes('reel_day04_q2') || camp.includes('reel_02') || camp.includes('instagram_reel_02') || camp.includes('salary_analytic')) return 'SQL-01-R2';
+  if (camp.includes('reel_day04_q3') || camp.includes('reel_03') || camp.includes('instagram_reel_03') || camp.includes('dept_ranking')) return 'SQL-02-R1';
+  if (camp.includes('reel_day04_q4') || camp.includes('reel_04') || camp.includes('instagram_reel_04') || camp.includes('sales_growth')) return 'SQL-02-R2';
 
   const dayParam = urlP.get('day');
   const qParam = urlP.get('q') || urlP.get('question');
   if (dayParam === '4' || dayParam === '04') {
     if (qParam === '1') return 'SQL-01-R1';
     if (qParam === '2') return 'SQL-01-R2';
+    if (qParam === '3') return 'SQL-02-R1';
+    if (qParam === '4') return 'SQL-02-R2';
   }
   if (dayParam === '5' || dayParam === '05') {
     if (qParam === '1' || qParam === '3') return 'SQL-02-R1';
@@ -3512,22 +3514,23 @@ function loadQuestionsForDay(day) {
   const dayContent = (window.COURSE_CONTENT && window.COURSE_CONTENT[currentDay]) || COURSE_CONFIG;
   const tpq = (COURSE_CONFIG && COURSE_CONFIG.topicPracticeQuestions) || (dayContent && dayContent.topicPracticeQuestions);
 
-  if (tpq && (tpq[currentSlide] || tpq[String(currentSlide)])) {
+  const chalId = getActiveChallengeId();
+  if (chalId && REEL_CHALLENGES[chalId]) {
+    const chal = REEL_CHALLENGES[chalId];
+    questions = [{
+      id: 1,
+      isChallenge: true,
+      title: chal.title,
+      prompt: `<strong>${chal.task}</strong><br/>${chal.prompt}`,
+      referenceSql: chal.codeB,
+      codeA: chal.codeA
+    }];
+  } else if (tpq && (tpq[currentSlide] || tpq[String(currentSlide)])) {
     questions = [...(tpq[currentSlide] || tpq[String(currentSlide)])];
   } else if (COURSE_CONFIG.allPracticeQuestions && COURSE_CONFIG.allPracticeQuestions[currentDay]) {
     questions = [...COURSE_CONFIG.allPracticeQuestions[currentDay]];
   } else {
     questions = [...((dayContent && dayContent.practiceQuestions) || COURSE_CONFIG.practiceQuestions || [])];
-  }
-
-  const chalId = getActiveChallengeId();
-  if (chalId && REEL_CHALLENGES[chalId]) {
-    const chal = REEL_CHALLENGES[chalId];
-    questions.unshift({
-      id: 1,
-      prompt: `<strong>${chal.task}</strong><br/>${chal.prompt}`,
-      referenceSql: chal.codeB
-    });
   }
 
   COURSE_CONFIG.practiceQuestions = questions;
@@ -4551,10 +4554,10 @@ function renderPracticeQuestion() {
   const q = COURSE_CONFIG.practiceQuestions[currentPracticeQ];
   if (q) {
     const promptEl = document.getElementById('questionPrompt');
-    if (promptEl) promptEl.innerHTML = `Q${q.id}. ${q.prompt}`;
+    if (promptEl) promptEl.innerHTML = q.isChallenge ? q.prompt : `Q${q.id}. ${q.prompt}`;
     setTimeout(() => { if (typeof initSchemaCodePeeking === 'function') initSchemaCodePeeking(); }, 20);
     const counterEl = document.getElementById('qCounter');
-    if (counterEl) counterEl.textContent = `Question-${String(q.id).padStart(2, '0')}`;
+    if (counterEl) counterEl.textContent = q.isChallenge ? 'Challenge' : `Question-${String(q.id).padStart(2, '0')}`;
 
     // Update question audio button based on the question id & active topic slide
     const btn = document.getElementById('questionAudioBtn');
@@ -5384,7 +5387,7 @@ function loadDayContent(dayId) {
             <span style="background:#8b5cf6; color:#fff; font-size:0.68rem; font-weight:800; padding:2px 7px; border-radius:4px; text-transform:uppercase;">Reel Pass</span>
             <span>🎁 <strong>Instagram Challenge:</strong> ${bannerTitle}</span>
           </div>
-          <a href="${checkoutUrl}" style="background:linear-gradient(135deg, #00e6f6, #a855f7); color:#060913; font-weight:800; text-decoration:none; padding:5px 14px; border-radius:8px; font-size:0.75rem; box-shadow:0 0 15px rgba(0,230,246,0.3); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='none'">Unlock All 60 Days — ₹2,499 →</a>
+          <a href="${checkoutUrl}" style="background:linear-gradient(135deg, #00e6f6, #a855f7); color:#060913; font-weight:800; text-decoration:none; padding:5px 14px; border-radius:8px; font-size:0.75rem; box-shadow:0 0 15px rgba(0,230,246,0.3); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='none'">Unlock All 60 Days — ₹1,499 →</a>
         `;
         document.body.prepend(banner);
       }
@@ -5752,8 +5755,11 @@ function onTopicSelectChange(val) {
   currentSlide = parseInt(val, 10);
   renderCurrentSlide();
   clearDrawCanvas();
-  // Load topic-specific questions
-  loadQuestionsForDay(currentDay || 'day01');
+  // Load topic-specific questions only if not on a dedicated challenge pass
+  const chalId = typeof getActiveChallengeId === 'function' ? getActiveChallengeId() : null;
+  if (!chalId) {
+    loadQuestionsForDay(currentDay || 'day01');
+  }
 }
 
 function openScoreCard() {

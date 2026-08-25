@@ -4959,6 +4959,9 @@ function runCurrentQuery() {
       const gradingResult = window.gradeSubmission(query, q, db);
       correct = gradingResult.passed;
 
+      const chalId = typeof getActiveChallengeId === 'function' ? getActiveChallengeId() : null;
+      const chal = chalId ? REEL_CHALLENGES[chalId] : null;
+
       if (correct) {
         const solvedKey = `${currentDay}-${q.id}`;
         if (!solvedQuestions.has(solvedKey)) {
@@ -4972,32 +4975,37 @@ function runCurrentQuery() {
         // Update label to show correct indicator badge with encouraging compliments
         const label = document.querySelector('#mainOutput .output-label');
         if (label) {
-          const compliments = [
-            "Spot on!",
-            "You nailed it!",
-            "Brilliant work!",
-            "Awesome job!",
-            "Perfect query!",
-            "Keep crushing it!"
-          ];
-          const compliment = compliments[Math.floor(Math.random() * compliments.length)];
-          label.innerHTML = `Query Result <span class="correct-badge" style="background: var(--green-glow); color: var(--green); padding: 2px 8px; border-radius: var(--radius-sm); font-size: 0.7rem; margin-left: 8px; font-weight: 700; border: 1px solid rgba(16, 185, 129, 0.3); display: inline-flex; align-items: center; gap: 4px;">✓ Correct! ${compliment}</span>`;
+          label.innerHTML = `Query Result <span class="correct-badge" style="background: rgba(16,185,129,0.15); color: #34d399; padding: 3px 10px; border-radius: 6px; font-size: 0.72rem; margin-left: 8px; font-weight: 800; border: 1px solid rgba(16, 185, 129, 0.4); display: inline-flex; align-items: center; gap: 4px;">✓ Correct! You Nailed It!</span>`;
         }
         // Append correct answer banner
         const successBanner = document.createElement('div');
         successBanner.className = 'output-success';
-        successBanner.style.marginTop = '8px';
-        successBanner.innerHTML = '🎉 Correct Answer! Good job.';
+        successBanner.style.marginTop = '10px';
+        if (q.isChallenge && chal) {
+          successBanner.innerHTML = `🎉 <strong>BOOM! Perfect Query!</strong><br/>${chal.task || 'You successfully solved the challenge!'}`;
+        } else {
+          successBanner.innerHTML = '🎉 Correct Answer! Good job.';
+        }
         document.getElementById('mainOutput').appendChild(successBanner);
       } else {
-        // Show grading differences
+        // Show grading differences or challenge trap explanation
         const label = document.querySelector('#mainOutput .output-label');
         if (label) {
-          label.innerHTML = `Query Result <span class="incorrect-badge" style="background: var(--red-glow); color: var(--red); padding: 2px 8px; border-radius: var(--radius-sm); font-size: 0.7rem; margin-left: 8px; font-weight: 700; border: 1px solid rgba(239, 68, 68, 0.3); display: inline-flex; align-items: center; gap: 4px;">❌ Incorrect</span>`;
+          const badgeText = q.isChallenge ? '💀 Trap Encountered (Option A)' : '❌ Incorrect';
+          label.innerHTML = `Query Result <span class="incorrect-badge" style="background: rgba(239,68,68,0.15); color: #f87171; padding: 3px 10px; border-radius: 6px; font-size: 0.72rem; margin-left: 8px; font-weight: 800; border: 1px solid rgba(239, 68, 68, 0.4); display: inline-flex; align-items: center; gap: 4px;">${badgeText}</span>`;
         }
-        const diffHtml = formatGradingDiff(gradingResult.diff);
         const diffDiv = document.createElement('div');
-        diffDiv.innerHTML = diffHtml;
+        if (q.isChallenge) {
+          diffDiv.innerHTML = `
+            <div style="margin-top: 10px; padding: 12px 14px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; font-size: 0.8rem; line-height: 1.5; color: #fca5a5;">
+              <div style="font-weight: 800; color: #ef4444; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">💀 Trap Caught!</div>
+              <div>This query demonstrates the common SQL trap shown in our Reel. Notice the output above returned <strong>0 rows</strong> or failed calculation!</div>
+              <div style="margin-top: 8px; font-size: 0.76rem; color: #cbd5e1;">👉 Click <strong>[⚡ Load Option B (Fix)]</strong> in the question card above to test the corrected query!</div>
+            </div>
+          `;
+        } else {
+          diffDiv.innerHTML = formatGradingDiff(gradingResult.diff);
+        }
         document.getElementById('mainOutput').appendChild(diffDiv);
 
         // Save practice answer even if incorrect

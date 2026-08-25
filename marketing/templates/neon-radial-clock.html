@@ -135,16 +135,16 @@
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
   }
 
-  /* ============ STEP 2: MULTI-LINE HOOK & COMPLETE QUESTION CARD ============ */
+  /* ============ STEP 2: MULTI-LINE HOOK & CLEAN QUESTION PARAGRAPH ============ */
   .hook-stage-container{
     position: absolute;
-    top: 13.8cqw;
+    top: 14.5cqw;
     left: 4cqw;
     right: 4cqw;
     z-index: 10;
     display: flex;
     flex-direction: column;
-    gap: 1.2cqw;
+    gap: 1.8cqw;
     justify-content: center;
     align-items: center;
     text-align: center;
@@ -165,26 +165,18 @@
     text-shadow: 0 4px 18px rgba(0, 0, 0, 0.95);
   }
 
-  .hook-question-card{
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1.3cqw 3.6cqw;
-    min-height: 5.6cqw;
-    border-radius: 1.4cqw;
-    background: linear-gradient(135deg, rgba(15, 23, 42, 0.88) 0%, rgba(6, 9, 19, 0.96) 100%);
-    border: 1.5px solid rgba(0, 240, 255, 0.45);
-    box-shadow: 0 4px 22px rgba(0, 0, 0, 0.7), 0 0 25px rgba(0, 240, 255, 0.2), inset 0 1px 1.5px rgba(255, 255, 255, 0.3);
-    backdrop-filter: blur(14px);
-    font-family: 'Space Grotesk', 'Outfit', var(--font-hook);
-    font-size: 3.4cqw;
-    font-weight: 700;
-    line-height: 1.35;
+  .hook-question-text{
+    font-family: 'Outfit', 'Plus Jakarta Sans', var(--font-hook);
+    font-weight: 800;
+    font-size: 4.4cqw;
+    line-height: 1.30;
+    letter-spacing: -0.01em;
     color: #f8fafc;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
-    letter-spacing: 0.01em;
+    text-shadow: 0 3px 16px rgba(0, 0, 0, 0.95);
     text-align: center;
-    max-width: 92cqw;
+    text-wrap: balance;
+    max-width: 88cqw;
+    margin: 0 auto;
   }
 
   .hook-line.hook-slam{
@@ -1202,18 +1194,18 @@ function renderHook(){
     const rawText = currentData.hook || '';
     lines = rawText.split('\n').filter(l => l.trim().length > 0).map((l, i) => ({ 
       text: l, 
-      font: i === 0 ? (currentData.hookFont || 'Plus Jakarta Sans') : 'Space Grotesk', 
-      size: i === 0 ? 5.2 : 3.4 
+      font: i === 0 ? (currentData.hookFont || 'Plus Jakarta Sans') : 'Outfit', 
+      size: i === 0 ? 5.4 : 4.3 
     }));
   }
 
-  if(lines.length === 0) lines.push({ text: 'YOUR HOOK GOES HERE', font: 'Plus Jakarta Sans', size: 5.2 });
+  if(lines.length === 0) lines.push({ text: 'YOUR HOOK GOES HERE', font: 'Plus Jakarta Sans', size: 5.4 });
 
   hookStage.innerHTML = lines.map((lineObj, idx) => {
     const lineText = typeof lineObj === 'string' ? lineObj : (lineObj.text || '');
-    const lineFont = (typeof lineObj === 'object' && lineObj.font) ? lineObj.font : (idx === 0 ? (currentData.hookFont || 'Plus Jakarta Sans') : 'Space Grotesk');
-    const lineSize = (typeof lineObj === 'object' && lineObj.size) ? lineObj.size : (idx === 0 ? 5.2 : 3.4);
-    const isCard = idx >= 1;
+    const lineFont = (typeof lineObj === 'object' && lineObj.font) ? lineObj.font : (idx === 0 ? (currentData.hookFont || 'Plus Jakarta Sans') : 'Outfit');
+    const lineSize = (typeof lineObj === 'object' && lineObj.size) ? lineObj.size : (idx === 0 ? 5.4 : 4.3);
+    const isQuestion = idx >= 1;
 
     let text = escapeHtml(lineText);
     (currentData.hookHighlights || []).forEach((item, i) => {
@@ -1221,10 +1213,10 @@ function renderHook(){
       const color = typeof item === 'object' && item.color ? item.color : (i % 2 === 0 ? '#facc15' : '#00f0ff');
       if(!term) return;
       const re = new RegExp('(' + term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
-      text = text.replace(re, `<span style="color:${color}; text-shadow:0 0 18px ${color}bb; font-weight:800;">$1</span>`);
+      text = text.replace(re, `<span style="color:${color}; text-shadow:0 0 22px ${color}bb; font-weight:900;">$1</span>`);
     });
     
-    const cls = isCard ? 'hook-line hook-question-card' : 'hook-line hook-title-line';
+    const cls = isQuestion ? 'hook-line hook-question-text' : 'hook-line hook-title-line';
     return `<div class="${cls}" id="hookLine_${idx}" style="font-family:'${lineFont}', sans-serif; font-size:${lineSize}cqw;">${text}</div>`;
   }).join('');
 }
@@ -1936,25 +1928,46 @@ function computeHookLine1Anim(elapsedMs){
   }
 }
 
-function computeHookLine2Anim(elapsedMs){
+function computeHookLine2Anim(elapsedMs, t_line2_start){
   const line2 = document.getElementById('hookLine_1');
   if(!line2) return;
 
-  const startMs = 40;
-  if(elapsedMs < startMs){
+  if(elapsedMs < t_line2_start){
     line2.style.opacity = '0';
-    line2.style.transform = 'translateY(2.5cqw) scale(0.92)';
-  } else if(elapsedMs >= startMs && elapsedMs < startMs + 450){
-    const t = (elapsedMs - startMs) / 450.0;
-    const ease = Math.sin(t * Math.PI / 2);
-    const scale = 0.92 + (1.0 - 0.92) * ease;
-    const ty = 2.5 * (1 - ease);
-    const op = Math.min(1.0, t * 2.5);
-    line2.style.transform = `translateY(${ty.toFixed(2)}cqw) scale(${scale.toFixed(3)})`;
+    line2.style.transform = 'translateY(4.5cqw) scale(0.90)';
+    line2.style.filter = 'blur(8px)';
+  } else if(elapsedMs >= t_line2_start && elapsedMs < t_line2_start + 550){
+    const t = (elapsedMs - t_line2_start) / 550.0;
+    let scale, ty, rot, op, blur;
+    if(t < 0.40){
+      const p = t / 0.40;
+      const ease = Math.sin(p * Math.PI / 2);
+      scale = 1.36 - (1.36 - 0.92) * ease;
+      ty = 4.5 + (-0.8 - 4.5) * p;
+      rot = 1.2 + (-0.5 - 1.2) * p;
+      op = Math.min(1.0, p * 3.0);
+      blur = Math.max(0, 8 * (1 - p));
+    } else if(t < 0.70){
+      const p = (t - 0.40) / 0.30;
+      scale = 0.92 + (1.06 - 0.92) * p;
+      ty = -0.8 - (-0.8 - 0.3) * p;
+      rot = -0.5 - (-0.5 - 0.2) * p;
+      op = 1.0; blur = 0;
+    } else {
+      const p = (t - 0.70) / 0.30;
+      scale = 1.06 - (1.06 - 1.0) * p;
+      ty = 0.3 - 0.3 * p;
+      rot = 0.2 - 0.2 * p;
+      op = 1.0; blur = 0;
+    }
+
+    line2.style.transform = `translateY(${ty.toFixed(2)}cqw) scale(${scale.toFixed(3)}) rotate(${rot.toFixed(2)}deg)`;
     line2.style.opacity = op.toFixed(2);
+    line2.style.filter = blur > 0.1 ? `blur(${blur.toFixed(1)}px) drop-shadow(0 0 40px #00f0ff)` : 'drop-shadow(0 4px 20px rgba(0,0,0,0.95))';
   } else {
-    line2.style.transform = 'translateY(0) scale(1)';
+    line2.style.transform = 'translateY(0) scale(1) rotate(0deg)';
     line2.style.opacity = '1';
+    line2.style.filter = 'drop-shadow(0 4px 20px rgba(0,0,0,0.95))';
   }
 }
 
@@ -1975,7 +1988,7 @@ function computeOptionsAndClockStage(elapsedMs, cues){
       clockStage.style.pointerEvents = 'none';
     }
     optionsStage.style.top = `${topUpper.toFixed(2)}cqw`;
-    optionsStage.style.opacity = '1';
+    optionsStage.style.opacity = elapsedMs >= cues.t_line2_start ? '1' : '0';
   }
   // 2. Clock Entry Glide Down (t_clock_in -> t_clock_in + glideDuration)
   else if(elapsedMs >= cues.t_clock_in && elapsedMs < cues.t_clock_in + glideDuration){
@@ -2045,11 +2058,11 @@ function renderTimelineState(elapsedMs){
   // 1. Compute Deterministic Mathematical Frame Animations
   computeLogoFrameAnim(elapsedMs);
   computeHookLine1Anim(elapsedMs);
-  computeHookLine2Anim(elapsedMs);
+  computeHookLine2Anim(elapsedMs, cues.t_line2_start);
   computeOptionsAndClockStage(elapsedMs, cues);
 
   // ==========================================
-  // PHASE 1: 0ms -> t_line2_start (Hook & Complete Question Card Entry)
+  // PHASE 1: 0ms -> t_line2_start (Hook 1 Title Only)
   // ==========================================
   if(elapsedMs < cues.t_line2_start){
     // Explosive Hook Impact Trigger at 0.0s!
@@ -2061,13 +2074,13 @@ function renderTimelineState(elapsedMs){
 
     if(cardA) {
       cardA.className = 'ide-code-cell cell-a';
-      cardA.style.opacity = '1';
-      cardA.style.transform = '';
+      cardA.style.opacity = '0';
+      cardA.style.transform = 'translateY(2cqw) scale(0.96)';
     }
     if(cardB) {
       cardB.className = 'ide-code-cell cell-b';
-      cardB.style.opacity = '1';
-      cardB.style.transform = '';
+      cardB.style.opacity = '0';
+      cardB.style.transform = 'translateY(2cqw) scale(0.96)';
     }
     if(pollStage) {
       pollStage.style.opacity = '0';

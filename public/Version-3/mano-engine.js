@@ -3422,13 +3422,14 @@ function getInterviewersAngle(dayId, qId, prompt) {
 const REEL_CHALLENGES = {
   'SQL-01-R1': {
     day: 'day04',
-    title: '90% FAIL THIS SQL TRAP 💀',
-    task: 'Spot the Trap: NOT IN vs NULL Subquery',
-    prompt: `One of these queries silently returns <strong>0 rows</strong>! Test both options below in the editor to see how a NULL in a subquery breaks <code>NOT IN</code>.<br/>
+    title: 'NOT IN WITH NULL TRAP 💀',
+    task: 'Subquery Edge Case: The Silent NULL Black Hole in NOT IN',
+    prompt: `Department table contains a NULL manager_id! Run Option A (plain NOT IN) vs Option B (WHERE manager_id IS NOT NULL) to see why Option A returns zero rows.<br/>
       <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
         <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-01-R1', 'A')">⚡ Load Option A (Trap)</button>
         <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-01-R1', 'B')">⚡ Load Option B (Fix)</button>
       </div>`,
+    trapExplanation: 'Notice the query returned <strong>0 rows</strong>! In SQL, <code>NOT IN (subquery)</code> returns an empty result if the subquery contains even a single NULL value.',
     codeA: "SELECT employee_id, first_name, job_title\nFROM employees\nWHERE employee_id NOT IN (\n  SELECT manager_id\n  FROM departments\n);",
     codeB: "SELECT employee_id, first_name, job_title\nFROM employees\nWHERE employee_id NOT IN (\n  SELECT manager_id\n  FROM departments\n  WHERE manager_id IS NOT NULL\n);"
   },
@@ -3441,6 +3442,7 @@ const REEL_CHALLENGES = {
         <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-01-R2', 'A')">⚡ Load Option A (Trap)</button>
         <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-01-R2', 'B')">⚡ Load Option B (Fix)</button>
       </div>`,
+    trapExplanation: 'Notice total_pay is <strong>NULL</strong> for employees without commission! In SQL, any arithmetic with NULL (e.g. <code>salary + NULL</code>) always results in NULL.',
     codeA: "SELECT first_name AS emp_name,\n       salary AS base_salary,\n       salary + commission AS total_pay\nFROM employees;",
     codeB: "SELECT first_name AS emp_name,\n       salary AS base_salary,\n       salary + COALESCE(commission, 0) AS total_pay\nFROM employees;"
   },
@@ -3453,6 +3455,7 @@ const REEL_CHALLENGES = {
         <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-02-R1', 'A')">⚡ Load Option A (RANK)</button>
         <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-02-R1', 'B')">⚡ Load Option B (DENSE_RANK)</button>
       </div>`,
+    trapExplanation: 'Notice that <strong>Rank 2 was skipped</strong>! <code>RANK()</code> leaves gaps when ties occur (1, 1, 3), missing valid leaderboard earners.',
     codeA: "SELECT first_name AS emp_name, salary, rk\nFROM (\n  SELECT first_name, salary,\n         RANK() OVER (ORDER BY salary DESC) AS rk\n  FROM employees\n) t\nWHERE rk <= 3;",
     codeB: "SELECT first_name AS emp_name, salary, rk\nFROM (\n  SELECT first_name, salary,\n         DENSE_RANK() OVER (ORDER BY salary DESC) AS rk\n  FROM employees\n) t\nWHERE rk <= 3;"
   },
@@ -3465,30 +3468,33 @@ const REEL_CHALLENGES = {
         <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-02-R2', 'A')">⚡ Load Option A (ROWS - Fix)</button>
         <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-02-R2', 'B')">⚡ Load Option B (Default - Trap)</button>
       </div>`,
+    trapExplanation: 'Notice the running total <strong>jumps suddenly</strong> on duplicate dates! Default <code>RANGE BETWEEN</code> sums same-day rows all at once instead of row-by-row.',
     codeA: "SELECT order_date, total_amount AS amount,\n       SUM(total_amount) OVER (\n         ORDER BY order_date\n         ROWS UNBOUNDED PRECEDING\n       ) AS running_total\nFROM orders;",
     codeB: "SELECT order_date, total_amount AS amount,\n       SUM(total_amount) OVER (\n         ORDER BY order_date\n       ) AS running_total\nFROM orders;"
   },
   'SQL-03-R1': {
     day: 'day04',
-    title: 'COUNT(*) VS COUNT(COL) 💀',
+    title: 'COUNT(*) VS COUNT(COL) 🔢',
     task: 'Aggregation Trap: Counting Rows vs Non-NULL Values',
     prompt: `Department 20 has 4 employees, but Devendra has NULL commission! Run Option A (COUNT(commission)) vs Option B (COUNT(*)) to see why COUNT(column) silently drops NULL rows.<br/>
       <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
         <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-03-R1', 'A')">⚡ Load Option A (Trap)</button>
         <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-03-R1', 'B')">⚡ Load Option B (Fix)</button>
       </div>`,
+    trapExplanation: 'Notice total_emps returned <strong>3</strong> instead of <strong>4</strong>! Because Devendra has a NULL commission, <code>COUNT(commission)</code> silently excluded him from the count.',
     codeA: "SELECT department_id,\n       COUNT(commission) AS total_emps\nFROM employees\nWHERE department_id = 20;",
     codeB: "SELECT department_id,\n       COUNT(*) AS total_emps\nFROM employees\nWHERE department_id = 20;"
   },
   'SQL-03-R2': {
     day: 'day04',
-    title: 'SQL "OR" PRECEDENCE BUG 💀',
+    title: 'PRECEDENCE BUG 🐛',
     task: 'Boolean Precedence: Enforcing Parentheses in Compound Filters',
     prompt: `HR needs all active employees in Dept 20 or 10! Siddharth is INACTIVE in Dept 10. Run Option A (no parens) vs Option B (with parens) to see why AND evaluates before OR.<br/>
       <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
         <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-03-R2', 'A')">⚡ Load Option A (Trap)</button>
         <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-03-R2', 'B')">⚡ Load Option B (Fix)</button>
       </div>`,
+    trapExplanation: 'Notice that inactive employees in Dept 10 (like Siddharth, is_active = 0) are returned! In SQL, <code>AND</code> evaluates before <code>OR</code>, so <code>is_active = 1</code> was only applied to Dept 20.',
     codeA: "SELECT first_name, department_id, is_active\nFROM employees\nWHERE is_active = 1\n  AND department_id = 20\n   OR department_id = 10;",
     codeB: "SELECT first_name, department_id, is_active\nFROM employees\nWHERE is_active = 1\n  AND (department_id = 20 OR department_id = 10);"
   }
@@ -5033,11 +5039,12 @@ function runCurrentQuery() {
           label.innerHTML = `Query Result <span class="incorrect-badge" style="background: rgba(239,68,68,0.15); color: #f87171; padding: 3px 10px; border-radius: 6px; font-size: 0.72rem; margin-left: 8px; font-weight: 800; border: 1px solid rgba(239, 68, 68, 0.4); display: inline-flex; align-items: center; gap: 4px;">${badgeText}</span>`;
         }
         const diffDiv = document.createElement('div');
-        if (q.isChallenge) {
+        if (q.isChallenge && chal) {
+          const trapDetail = chal.trapExplanation || 'This query demonstrates the common SQL trap shown in our Reel. Notice the output produced unexpected values!';
           diffDiv.innerHTML = `
             <div style="margin-top: 10px; padding: 12px 14px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; font-size: 0.8rem; line-height: 1.5; color: #fca5a5;">
               <div style="font-weight: 800; color: #ef4444; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">💀 Trap Caught!</div>
-              <div>This query demonstrates the common SQL trap shown in our Reel. Notice the output above returned <strong>0 rows</strong> or failed calculation!</div>
+              <div>${trapDetail}</div>
               <div style="margin-top: 8px; font-size: 0.76rem; color: #cbd5e1;">👉 Click <strong>[⚡ Load Option B (Fix)]</strong> in the question card above to test the corrected query!</div>
             </div>
           `;

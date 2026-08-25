@@ -17,10 +17,12 @@ Can you spot the trap before checking the pinned comment?
 
 Drop your vote (A or B) below 👇
 
+Test this question live on manodemy.com/q6
 
 Practice Data Skills 
 👉 Day 1 & Day 2 are 100% FREE
-🔗 Link in bio / manodemy.com/q6
+🔗 Links in bio 
+
 
 #sql #sqlinterview #sqltips #dataanalytics #dataengineer #datascience #dataanalyst #sqlquery #faang #techinterview #codinginterview #learnsql #database #manodemy #dataanalysis
 ```

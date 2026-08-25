@@ -629,22 +629,12 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.6cqw;
-    margin-top: 2.6cqw;
+    gap: 1.4cqw;
+    margin-top: 2.2cqw;
     opacity: 0;
-    max-height: 0;
-    overflow: hidden;
     pointer-events: none;
-    transform: translateY(3.2cqw) scale(0.93);
-    transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.52s cubic-bezier(0.175, 0.885, 0.32, 1.275), max-height 0.45s ease;
-  }
-
-  .poll-stage-container.visible{
-    opacity: 1;
-    max-height: 25cqw;
-    overflow: visible;
-    pointer-events: auto;
-    transform: translateY(0) scale(1.0);
+    transform: translateY(2.4cqw) scale(0.96);
+    will-change: transform, opacity;
   }
 
   .poll-cta-instruction{
@@ -658,17 +648,7 @@
     display: flex;
     align-items: center;
     gap: 1.2cqw;
-    transition: transform 0.4s ease;
-  }
-
-  .poll-stage-container.visible .poll-cta-instruction{
-    animation: pollInstructionPop 0.48s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-  }
-
-  @keyframes pollInstructionPop{
-    0% { transform: scale(0.8) translateY(1.5cqw); opacity: 0; }
-    60% { transform: scale(1.08) translateY(-0.3cqw); opacity: 1; text-shadow: 0 0 20px rgba(0, 240, 255, 0.8); }
-    100% { transform: scale(1.0) translateY(0); opacity: 1; }
+    will-change: transform, opacity;
   }
 
   .poll-hand-icon{
@@ -678,25 +658,26 @@
 
   @keyframes pointDownBounce{
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(0.7cqw) scale(1.18); }
+    50% { transform: translateY(0.5cqw) scale(1.15); }
   }
 
   .poll-buttons-grid{
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 2.5cqw;
+    gap: 2.2cqw;
     width: 100%;
+    will-change: transform, opacity;
   }
 
   .poll-btn{
-    padding: 1.9cqw 2.8cqw;
+    padding: 1.8cqw 2.8cqw;
     border-radius: 999px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 1.4cqw;
     font-family: var(--font-poll);
-    font-size: 3.3cqw;
+    font-size: 3.2cqw;
     font-weight: 900;
     letter-spacing: 0.04em;
     cursor: pointer;
@@ -704,48 +685,7 @@
     box-shadow: 0 1.5cqw 4cqw rgba(0, 0, 0, 0.85);
     position: relative;
     overflow: hidden;
-  }
-
-  .poll-stage-container.visible .poll-btn-a{
-    animation: pollBtnSlamA 0.52s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, pulseGlowA 2.5s infinite ease-in-out 0.55s;
-  }
-
-  .poll-stage-container.visible .poll-btn-b{
-    animation: pollBtnSlamB 0.52s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.08s forwards, pulseGlowB 2.5s infinite ease-in-out 0.63s;
-  }
-
-  @keyframes pollBtnSlamA{
-    0% { transform: translateX(-4cqw) scale(0.68) rotate(-4deg); opacity: 0; filter: drop-shadow(0 0 25px #00f59b); }
-    60% { transform: translateX(0.6cqw) scale(1.08) rotate(1deg); opacity: 1; filter: drop-shadow(0 0 22px #00f59b); }
-    100% { transform: translateX(0) scale(1.0) rotate(0deg); opacity: 1; }
-  }
-
-  @keyframes pollBtnSlamB{
-    0% { transform: translateX(4cqw) scale(0.68) rotate(4deg); opacity: 0; filter: drop-shadow(0 0 25px #c084fc); }
-    60% { transform: translateX(-0.6cqw) scale(1.08) rotate(-1deg); opacity: 1; filter: drop-shadow(0 0 22px #c084fc); }
-    100% { transform: translateX(0) scale(1.0) rotate(0deg); opacity: 1; }
-  }
-
-  /* Shimmer laser sweep across buttons */
-  .poll-btn::after{
-    content: "";
-    position: absolute;
-    top: -50%;
-    left: -120%;
-    width: 60%;
-    height: 200%;
-    background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.8) 50%, transparent 100%);
-    transform: rotate(25deg);
-    pointer-events: none;
-  }
-
-  .poll-stage-container.visible .poll-btn::after{
-    animation: pollSheenSweep 1.0s ease 0.25s forwards;
-  }
-
-  @keyframes pollSheenSweep{
-    0% { left: -120%; }
-    100% { left: 240%; }
+    will-change: transform, opacity;
   }
 
   .poll-btn-a{
@@ -1568,52 +1508,64 @@ function playSpotlightB(){
   }catch(e){}
 }
 
-// 6. Poll CTA Orchestral Timpani Drum Slam & Tubular Bell Chime (13.1s)
+// 6. Super Sonic Riser + Sub Drop + Crystal Glass Chime (Poll Entrance SFX)
 function playPollEntranceSFX(){
   try{
     const c = getAudioCtx();
     const now = c.currentTime;
     
-    // Layer 1: Orchestral Timpani Acoustic Drum Slam (85Hz -> 32Hz)
-    const osc1 = c.createOscillator();
-    const gain1 = c.createGain();
-    osc1.type = 'sine';
-    osc1.frequency.setValueAtTime(85, now);
-    osc1.frequency.exponentialRampToValueAtTime(32, now + 0.45);
-    gain1.gain.setValueAtTime(0.0001, now);
-    gain1.gain.exponentialRampToValueAtTime(0.85, now + 0.012);
-    gain1.gain.exponentialRampToValueAtTime(0.0001, now + 0.55);
-    osc1.connect(gain1);
-    gain1.connect(c.destination);
-    osc1.start(now);
-    osc1.stop(now + 0.6);
+    // Layer 1: Deep Visceral Sub Boom (110Hz -> 28Hz)
+    const oscSub = c.createOscillator();
+    const gainSub = c.createGain();
+    oscSub.type = 'sine';
+    oscSub.frequency.setValueAtTime(110, now);
+    oscSub.frequency.exponentialRampToValueAtTime(28, now + 0.5);
+    gainSub.gain.setValueAtTime(0.0001, now);
+    gainSub.gain.exponentialRampToValueAtTime(0.9, now + 0.01);
+    gainSub.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+    oscSub.connect(gainSub);
+    gainSub.connect(c.destination);
+    oscSub.start(now);
+    oscSub.stop(now + 0.65);
 
-    // Layer 2: Orchestral Tubular Glass Bell / Chime (G6 / 1568Hz + G7 / 3136Hz)
-    const osc2 = c.createOscillator();
-    const gain2 = c.createGain();
-    osc2.type = 'sine';
-    osc2.frequency.setValueAtTime(1568, now + 0.01);
-    gain2.gain.setValueAtTime(0.0001, now + 0.01);
-    gain2.gain.exponentialRampToValueAtTime(0.45, now + 0.016);
-    gain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
-    osc2.connect(gain2);
-    gain2.connect(c.destination);
-    osc2.start(now + 0.01);
-    osc2.stop(now + 0.38);
+    // Layer 2: Smooth Upward Cyber Laser Riser (260Hz -> 2400Hz)
+    const oscRise = c.createOscillator();
+    const gainRise = c.createGain();
+    oscRise.type = 'sine';
+    oscRise.frequency.setValueAtTime(260, now);
+    oscRise.frequency.exponentialRampToValueAtTime(2400, now + 0.22);
+    gainRise.gain.setValueAtTime(0.0001, now);
+    gainRise.gain.exponentialRampToValueAtTime(0.5, now + 0.12);
+    gainRise.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
+    oscRise.connect(gainRise);
+    gainRise.connect(c.destination);
+    oscRise.start(now);
+    oscRise.stop(now + 0.38);
 
-    // Layer 3: Acoustic Wooden Clave Snap
-    const osc3 = c.createOscillator();
-    const gain3 = c.createGain();
-    osc3.type = 'triangle';
-    osc3.frequency.setValueAtTime(1400, now);
-    osc3.frequency.exponentialRampToValueAtTime(450, now + 0.05);
-    gain3.gain.setValueAtTime(0.0001, now);
-    gain3.gain.exponentialRampToValueAtTime(0.5, now + 0.005);
-    gain3.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
-    osc3.connect(gain3);
-    gain3.connect(c.destination);
-    osc3.start(now);
-    osc3.stop(now + 0.1);
+    // Layer 3: Crystal Glass Major Chord Chime (1318.5Hz + 2093Hz)
+    const oscChime1 = c.createOscillator();
+    const gainChime1 = c.createGain();
+    oscChime1.type = 'sine';
+    oscChime1.frequency.setValueAtTime(1318.5, now + 0.05);
+    gainChime1.gain.setValueAtTime(0.0001, now + 0.05);
+    gainChime1.gain.exponentialRampToValueAtTime(0.4, now + 0.06);
+    gainChime1.gain.exponentialRampToValueAtTime(0.0001, now + 0.45);
+    oscChime1.connect(gainChime1);
+    gainChime1.connect(c.destination);
+    oscChime1.start(now + 0.05);
+    oscChime1.stop(now + 0.5);
+
+    const oscChime2 = c.createOscillator();
+    const gainChime2 = c.createGain();
+    oscChime2.type = 'triangle';
+    oscChime2.frequency.setValueAtTime(2093.0, now + 0.06);
+    gainChime2.gain.setValueAtTime(0.0001, now + 0.06);
+    gainChime2.gain.exponentialRampToValueAtTime(0.3, now + 0.07);
+    gainChime2.gain.exponentialRampToValueAtTime(0.0001, now + 0.4);
+    oscChime2.connect(gainChime2);
+    gainChime2.connect(c.destination);
+    oscChime2.start(now + 0.06);
+    oscChime2.stop(now + 0.45);
   }catch(e){}
 }
 
@@ -2107,7 +2059,11 @@ function renderTimelineState(elapsedMs){
       cardB.style.opacity = '0';
       cardB.style.transform = 'translateY(2cqw) scale(0.96)';
     }
-    if(pollStage) pollStage.classList.remove('visible');
+    if(pollStage) {
+      pollStage.style.opacity = '0';
+      pollStage.style.transform = 'translateY(2.4cqw) scale(0.96)';
+      pollStage.style.pointerEvents = 'none';
+    }
 
     setClock(10);
     lastTickWholeSec = null;
@@ -2135,7 +2091,11 @@ function renderTimelineState(elapsedMs){
       cardB.style.opacity = '1';
       cardB.style.transform = '';
     }
-    if(pollStage) pollStage.classList.remove('visible');
+    if(pollStage) {
+      pollStage.style.opacity = '0';
+      pollStage.style.transform = 'translateY(2.4cqw) scale(0.96)';
+      pollStage.style.pointerEvents = 'none';
+    }
 
     setClock(10);
     lastTickWholeSec = null;
@@ -2164,8 +2124,6 @@ function renderTimelineState(elapsedMs){
     }
 
     // Dynamic A / B Spotlight Boundaries with SFX & 3D Zoom Pop
-    // Card A: glow from t_opta until t_optb (hold through breath gap so no flicker)
-    // Card B: glow from t_optb until t_optb_end (exact Whisper timestamp, not hardcoded)
     if(elapsedMs >= cues.t_opta && elapsedMs < cues.t_optb){
       if(cardA) {
         cardA.className = 'ide-code-cell cell-a spotlight-active';
@@ -2205,7 +2163,11 @@ function renderTimelineState(elapsedMs){
       }
     }
 
-    if(pollStage) pollStage.classList.remove('visible');
+    if(pollStage) {
+      pollStage.style.opacity = '0';
+      pollStage.style.transform = 'translateY(2.4cqw) scale(0.96)';
+      pollStage.style.pointerEvents = 'none';
+    }
     heartbeatTriggered = false;
   }
   // ==========================================
@@ -2228,8 +2190,42 @@ function renderTimelineState(elapsedMs){
       cardB.style.transform = '';
     }
 
-    // Poll CTA expands directly below Card B right as narration starts!
-    if(pollStage) pollStage.classList.add('visible');
+    // Buttery smooth mathematical cubic easing for pollStage
+    const t = Math.min(1.0, Math.max(0, (elapsedMs - cues.t_clock_out) / 360));
+    const ease = 1 - Math.pow(1 - t, 3);
+    
+    if(pollStage){
+      pollStage.style.opacity = ease.toFixed(3);
+      const translateY = ((1 - ease) * 2.4).toFixed(2);
+      const scale = (0.96 + 0.04 * ease).toFixed(3);
+      pollStage.style.transform = `translateY(${translateY}cqw) scale(${scale})`;
+      pollStage.style.pointerEvents = 'auto';
+    }
+
+    const btnA = document.querySelector('.poll-btn-a');
+    const btnB = document.querySelector('.poll-btn-b');
+    const pill = document.getElementById('liveSandboxPill');
+
+    const tBtnA = Math.min(1.0, Math.max(0, (elapsedMs - (cues.t_clock_out + 20)) / 300));
+    const easeBtnA = 1 - Math.pow(1 - tBtnA, 3);
+    if(btnA){
+      btnA.style.opacity = easeBtnA.toFixed(3);
+      btnA.style.transform = `translateX(${((1 - easeBtnA) * -2.2).toFixed(2)}cqw) scale(${(0.94 + 0.06 * easeBtnA).toFixed(3)})`;
+    }
+
+    const tBtnB = Math.min(1.0, Math.max(0, (elapsedMs - (cues.t_clock_out + 50)) / 300));
+    const easeBtnB = 1 - Math.pow(1 - tBtnB, 3);
+    if(btnB){
+      btnB.style.opacity = easeBtnB.toFixed(3);
+      btnB.style.transform = `translateX(${((1 - easeBtnB) * 2.2).toFixed(2)}cqw) scale(${(0.94 + 0.06 * easeBtnB).toFixed(3)})`;
+    }
+
+    const tPill = Math.min(1.0, Math.max(0, (elapsedMs - (cues.t_clock_out + 90)) / 300));
+    const easePill = 1 - Math.pow(1 - tPill, 3);
+    if(pill){
+      pill.style.opacity = easePill.toFixed(3);
+      pill.style.transform = `translateY(${((1 - easePill) * 1.6).toFixed(2)}cqw) scale(${(0.95 + 0.05 * easePill).toFixed(3)})`;
+    }
   }
 
   // Render Kinetic Closed Captions (CC)

@@ -156,19 +156,31 @@ def synth_spotlight_b():
         f2[mask] = np.sin(2 * np.pi * 987.77 * t_sub) * env2
     return f1 + f2
 
-# 6. Poll Timpani Slam & Tubular Chime (13.1s)
+# 6. Super Sonic Riser + Sub Drop + Crystal Glass Chime (Poll Entrance SFX)
 def synth_timpani():
     dur = 0.65
     t = np.linspace(0, dur, int(SAMPLE_RATE * dur), False)
-    # Timpani Body (85Hz -> 32Hz)
-    freq_t = 85 * np.exp(-5.0 * t) + 32
-    phase_t = 2 * np.pi * np.cumsum(freq_t) / SAMPLE_RATE
-    env_t = exp_envelope(t, 0.008, 6.0, 0.85)
-    timpani = np.sin(phase_t) * env_t
-    # Tubular Glass Chime (1046.5Hz / C6)
-    env_c = exp_envelope(t, 0.004, 9.0, 0.3)
-    chime = np.sin(2 * np.pi * 1046.5 * t) * env_c
-    return timpani + chime
+    
+    # Layer A: Deep Visceral Sub Boom (110Hz -> 28Hz)
+    freq_sub = 110 * np.exp(-6.5 * t) + 28
+    phase_sub = 2 * np.pi * np.cumsum(freq_sub) / SAMPLE_RATE
+    env_sub = exp_envelope(t, 0.01, 5.0, 0.9)
+    sub_boom = np.sin(phase_sub) * env_sub
+    
+    # Layer B: Smooth Upward Cyber Laser Riser (260Hz -> 2400Hz over 220ms)
+    t_rise = np.clip(t / 0.22, 0, 1)
+    freq_rise = 260 + (2400 - 260) * (t_rise**2)
+    phase_rise = 2 * np.pi * np.cumsum(freq_rise) / SAMPLE_RATE
+    env_rise = exp_envelope(t, 0.12, 12.0, 0.55)
+    riser = np.sin(phase_rise) * env_rise
+    
+    # Layer C: Crystal Glass Bell Pop (E6 / 1318.5Hz + C7 / 2093Hz Major Chord)
+    env_c1 = exp_envelope(t, 0.005, 8.0, 0.4)
+    chime1 = np.sin(2 * np.pi * 1318.5 * t) * env_c1
+    env_c2 = exp_envelope(t, 0.008, 10.0, 0.3)
+    chime2 = np.sin(2 * np.pi * 2093.0 * t) * env_c2
+    
+    return sub_boom + riser + chime1 + chime2
 
 def build_sfx_audio_segment(cues, total_ms=15500):
     total_samples = int(SAMPLE_RATE * (total_ms / 1000.0))

@@ -47,6 +47,14 @@ This skill defines the autonomous multi-agent pipeline for creating high-convert
    - **Type 2 (Sneaky 1-Character Trap - Mind Bender):** One query is 100% correct, while the other has a subtle, easily overlooked edge case or precedence bug (e.g. missing parentheses around `OR` in `WHERE`).
    - **Type 3 (Both Fail - Trick Question):** Both queries contain subtle bugs (used sparingly for extreme shock value).
 3. **Hook Formulation:** Crafts a 3-second uppercase title (e.g., `⚡ 90% GET THIS WRONG`, `🚨 SQL INTERVIEW TRAP`).
+   - **Hook Emoji Standard (Strict Rule):**
+     - **NEVER repeat generic skull emojis (`💀`) across reels.**
+     - **ALWAYS choose a distinct, context-relevant emoji tailored to the concept:**
+       - Aggregations / Headcount / Counting / Math: 🔢, 📊, 🧮
+       - Logic / Precedence / Edge Cases / Traps: 🐛, ⚠️, 🔀
+       - Running Totals / Money / Finance: 💸, 💰, 🪙
+       - NULLs / Missing Rows / Drops: 🕳️, 🔍, 🚫
+       - Performance / Joins / Optimization: ⚡, 🔗, 🚀
 4. **Copy Package Generation:** Writes:
    - Voiceover narration script (natural English)
    - Instagram / YouTube Caption with strategic hashtags

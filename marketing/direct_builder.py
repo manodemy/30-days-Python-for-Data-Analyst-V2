@@ -472,6 +472,32 @@ REELS_CATALOG = {
         "caption": "NOT IN NULL TRAP 🕳️💀\nWhich query safely finds customers who never ordered?\n\nDid a single NULL break your entire subquery? \n\nDrop your vote (A or B) below 👇\n\n\nPractice Data Skills \n👉 Day 1 & Day 2 are 100% FREE\n🔗 Link in bio / manodemy.com/q12\n\n#sql #sqlinterview #sqltips #dataanalytics #dataengineer #datascience #dataanalyst #sqlquery #faang #techinterview #codinginterview #learnsql #database #manodemy #dataanalysis",
         "pinnedAnswer": "Option A is the trap ❌ | Option B is correct ✅\n\nWhy Option A returns 0 rows in production:\nIf the orders table contains even ONE guest order with a NULL customer_id, the subquery produces (101, 102, NULL).\nIn SQL, `id NOT IN (..., NULL)` translates to `id != NULL`, which is UNKNOWN.\nBecause `TRUE AND UNKNOWN` equals UNKNOWN, the WHERE clause throws away EVERY single customer, returning 0 rows!\n\nOption B uses `NOT EXISTS`, which safely checks row presence and ignores NULLs!\n\n💡 Rule of thumb: Never use NOT IN with nullable columns. Always use NOT EXISTS!\n\nDid you know about the 3-Valued Logic trap? 👇",
         "link": "https://www.manodemy.com/q12"
+    },
+    "SQL-07-R2": {
+        "reelNo": "SQL-07-R2",
+        "day": "DAY 07",
+        "badge": "SQL · Window Functions & Ranking",
+        "hook": "SALARY TIE GAP TRAP 🥈\nWhich query assigns continuous 1, 2, 3 ranks?",
+        "hookLineObjects": [
+            {"text": "SALARY TIE GAP TRAP 🥈", "font": "Plus Jakarta Sans", "size": 4.9},
+            {"text": "Which query assigns continuous ranks on ties?", "font": "Outfit", "size": 3.9}
+        ],
+        "hookHighlights": [
+            {"text": "SALARY TIE GAP", "color": "#facc15"},
+            {"text": "continuous ranks", "color": "#00f0ff"}
+        ],
+        "lang": "sql",
+        "codeA": "SELECT employee_id, salary,\n       RANK() OVER (\n         ORDER BY salary DESC\n       ) AS sal_rank\nFROM employees",
+        "codeB": "SELECT employee_id, salary,\n       DENSE_RANK() OVER (\n         ORDER BY salary DESC\n       ) AS sal_rank\nFROM employees",
+        "pollInstr": "DROP YOUR VOTE IN COMMENTS 👇",
+        "clockSfx": "bomb",
+        "ccStyle": "hormozi",
+        "ccEnabled": True,
+        "voice": "en-US-AndrewNeural",
+        "voiceScript": "Two employees share the top salary! Which query keeps ranks continuous without skipping?\nChoose your answer.\nOption A...\nor Option B?\nDrop your vote in the comments below.",
+        "caption": "SALARY TIE GAP TRAP 🥈⚔️\nWhich ranking function avoids skipping 2nd place when salaries tie?\n\nCan you spot the difference between RANK and DENSE_RANK? \n\nDrop your vote (A or B) below 👇\n\n\nPractice Data Skills \n👉 Day 1 & Day 2 are 100% FREE\n🔗 Link in bio / manodemy.com/q13\n\n#sql #sqlinterview #sqltips #dataanalytics #dataengineer #datascience #dataanalyst #sqlquery #faang #techinterview #codinginterview #learnsql #database #manodemy #dataanalysis",
+        "pinnedAnswer": "Option A is the trap ❌ | Option B is correct ✅\n\nWhy Option A creates gaps:\nWhen two employees tie for 1st place (1, 1), `RANK()` skips rank 2 and assigns 3 to the next person!\n`DENSE_RANK()` keeps rank numbering continuous (1, 1, 2) without leaving any gaps!\n\n💡 Rule of thumb: If you need top N without skipping ranks, always use DENSE_RANK()!\n\nDid you vote A or B? 👇",
+        "link": "https://www.manodemy.com/q13"
     }
 }
 

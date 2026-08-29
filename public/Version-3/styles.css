@@ -8343,6 +8343,43 @@ select:focus:not(:focus-visible) {
   transform: translateY(0) scale(0.98);
 }
 
+/* ═════════════════════════════════════════════════════════════════
+   UX UPGRADE: SQL VISUAL RESULT SET DIFF CONTAINER (v4.0)
+   ═════════════════════════════════════════════════════════════════ */
+.sql-visual-diff-wrap {
+  margin-top: 12px;
+  background: #090d16;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.sql-visual-diff-wrap table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--mono, 'Fira Code', monospace);
+  font-size: 0.76rem;
+}
+
+.sql-visual-diff-wrap th {
+  background: #111827;
+  color: #94a3b8;
+  font-weight: 700;
+  padding: 7px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  letter-spacing: 0.03em;
+}
+
+.sql-visual-diff-wrap td {
+  padding: 6px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.sql-visual-diff-wrap tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
 .coach-toast {
   position: fixed;
   bottom: 24px;

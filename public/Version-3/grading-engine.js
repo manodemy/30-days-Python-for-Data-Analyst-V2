@@ -263,7 +263,7 @@
     ast.hasWithCte = /\bWITH\b[\s\S]+?\bAS\s*\(/i.test(sql);
 
     // Group By scan
-    const groupMatch = sql.match(/GROUP\s+BY\s+([^HAVING|ORDER|LIMIT;]+)/i);
+    const groupMatch = sql.match(/GROUP\s+BY\s+([\s\S]+?)(?:\s+(?:HAVING|ORDER\s+BY|LIMIT)|;|$)/i);
     if (groupMatch) {
       ast.groupByColumns = groupMatch[1].split(',').map(s => s.trim()).filter(Boolean);
     }
@@ -564,7 +564,7 @@
     }
 
     // 3.5 GROUP BY Non-Aggregated Projection Trap
-    const groupMatch = studentSql.match(/GROUP\s+BY\s+([^HAVING|ORDER|LIMIT;]+)/i);
+    const groupMatch = studentSql.match(/GROUP\s+BY\s+([\s\S]+?)(?:\s+(?:HAVING|ORDER\s+BY|LIMIT)|;|$)/i);
     if (groupMatch) {
       const groupCols = groupMatch[1].split(',').map(s => s.trim().toLowerCase().split('.').pop());
       const selectPart = (studentSql.match(/SELECT\s+([\s\S]+?)\s+FROM/i) || [])[1] || '';

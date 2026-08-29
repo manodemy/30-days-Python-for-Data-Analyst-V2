@@ -316,10 +316,166 @@ REELS_CATALOG = {
         "caption": "PRECEDENCE BUG 🐛\nWhich query returns strictly ACTIVE employees in Dept 10 or 20?\n\nCan you spot the trap before checking the pinned comment? \n\nDrop your vote (A or B) below 👇\n\n\nPractice Data Skills \n👉 Day 1 & Day 2 are 100% FREE\n🔗 Link in bio / manodemy.com/q6\n\n#sql #sqlinterview #sqltips #dataanalytics #dataengineer #datascience #dataanalyst #sqlquery #faang #techinterview #codinginterview #learnsql #database #manodemy #dataanalysis",
         "pinnedAnswer": "Option A is the trap ❌ | Option B is correct ✅\n\nWhy Option A returns inactive employees:\nIn SQL operator precedence, `AND` takes priority over `OR` (`A AND B OR C` evaluates as `(A AND B) OR C`).\nBecause of this, ANY employee in Department 10 is returned — even if they are inactive (`is_active = 0`)!\n\nOption B uses parentheses `AND (dept = 20 OR dept = 10)` to strictly enforce active status on both departments.\n\n💡 Pro-tip: Always use parentheses when mixing AND and OR in WHERE clauses!\n\nBe honest — did you get this right? 👇",
         "link": "https://www.manodemy.com/q6"
+    },
+    "SQL-04-R1": {
+        "reelNo": "SQL-04-R1",
+        "day": "DAY 04",
+        "badge": "SQL · GROUP BY",
+        "hook": "WHERE VS HAVING TRAP ⚗️\nWhich query filters departments by average salary without crashing?",
+        "hookLineObjects": [
+            {"text": "WHERE VS HAVING TRAP ⚗️", "font": "Plus Jakarta Sans", "size": 5.0},
+            {"text": "Which query filters departments by average salary without crashing?", "font": "Outfit", "size": 3.5}
+        ],
+        "hookHighlights": [
+            {"text": "WHERE VS HAVING", "color": "#facc15"},
+            {"text": "without crashing", "color": "#00f0ff"}
+        ],
+        "lang": "sql",
+        "codeA": "SELECT department_id,\n       AVG(salary) AS avg_sal\nFROM employees\nWHERE AVG(salary) > 60000\nGROUP BY department_id",
+        "codeB": "SELECT department_id,\n       AVG(salary) AS avg_sal\nFROM employees\nGROUP BY department_id\nHAVING AVG(salary) > 60000",
+        "pollInstr": "DROP YOUR VOTE IN COMMENTS 👇",
+        "clockSfx": "bomb",
+        "ccStyle": "hormozi",
+        "ccEnabled": True,
+        "voice": "en-US-AndrewNeural",
+        "voiceScript": "WHERE versus HAVING is the most asked screening question in SQL technical rounds.\nWhich query filters departments by average salary without crashing?\nChoose your answer.\nOption A...\nor Option B?\nDrop your vote in the comments below.",
+        "caption": "WHERE VS HAVING TRAP ⚗️\nWhich query filters departments by average salary without crashing?\n\nCan you spot the trap before checking the pinned comment? \n\nDrop your vote (A or B) below 👇\n\n\nPractice Data Skills \n👉 Day 1 & Day 2 are 100% FREE\n🔗 Link in bio / manodemy.com/q7\n\n#sql #sqlinterview #sqltips #dataanalytics #dataengineer #datascience #dataanalyst #sqlquery #faang #techinterview #codinginterview #learnsql #database #manodemy #dataanalysis",
+        "pinnedAnswer": "Option A is the trap ❌ | Option B is correct ✅\n\nWhy Option A throws an error:\nIn SQL, WHERE filters individual rows BEFORE GROUP BY runs. Aggregate functions like AVG() don't exist yet at the WHERE stage — they haven't been computed!\n\nOption B correctly uses HAVING, which runs AFTER GROUP BY has computed the average for each department.\n\n💡 Rule of thumb: WHERE = filter rows (before grouping), HAVING = filter groups (after grouping)!\n\nBe honest — did you get this right? 👇",
+        "link": "https://www.manodemy.com/q7"
+    },
+    "SQL-04-R2": {
+        "reelNo": "SQL-04-R2",
+        "day": "DAY 04",
+        "badge": "SQL · Datetime Filtering",
+        "hook": "DATE RANGE TRAP 📅\nWhich query pulls all January sales?",
+        "hookLineObjects": [
+            {"text": "DATE RANGE TRAP 📅", "font": "Plus Jakarta Sans", "size": 5.2},
+            {"text": "Which query pulls all January sales?", "font": "Outfit", "size": 4.1}
+        ],
+        "hookHighlights": [
+            {"text": "DATE RANGE", "color": "#facc15"},
+            {"text": "all January sales", "color": "#00f0ff"}
+        ],
+        "lang": "sql",
+        "codeA": "SELECT order_id, total_amount\nFROM sales\nWHERE order_date\n  BETWEEN '2024-01-01 00:00:00'\n      AND '2024-01-31 23:59:59'",
+        "codeB": "SELECT order_id, total_amount\nFROM sales\nWHERE order_date >= '2024-01-01'\n  AND order_date <  '2024-02-01'",
+        "pollInstr": "DROP YOUR VOTE IN COMMENTS 👇",
+        "clockSfx": "bomb",
+        "ccStyle": "hormozi",
+        "ccEnabled": True,
+        "voice": "en-US-AndrewNeural",
+        "voiceScript": "Most candidates fail this date filtering trap.\nWhich query pulls all January sales?\nChoose your answer.\nOption A...\nor Option B?\nDrop your vote in the comments below.",
+        "caption": "DATE RANGE TRAP 📅\nWhich query pulls all January sales?\n\nCan you spot the trap before checking the pinned comment? \n\nDrop your vote (A or B) below 👇\n\n\nPractice Data Skills \n👉 Day 1 & Day 2 are 100% FREE\n🔗 Link in bio / manodemy.com/q8\n\n#sql #sqlinterview #sqltips #dataanalytics #dataengineer #datascience #dataanalyst #sqlquery #faang #techinterview #codinginterview #learnsql #database #manodemy #dataanalysis",
+        "pinnedAnswer": "Option A is the trap ❌ | Option B is correct ✅\n\nWhy Option A fails on real databases:\nIn modern databases, timestamps store fractional seconds or milliseconds (like `23:59:59.850`).\n`BETWEEN ... 23:59:59` misses every single transaction placed in the final second of January!\nEven worse, on engines like SQL Server, `23:59:59.999` rounds UP into Feb 1st!\n\nOption B (`>= '2024-01-01' AND < '2024-02-01'`) is the half-open interval standard used in production — it guarantees 100% data capture with zero rounding bugs!\n\n💡 Rule of thumb: NEVER use BETWEEN on datetime columns!\n\nBe honest — did you think Option A was bulletproof? 👇",
+        "link": "https://www.manodemy.com/q8"
+    },
+    "SQL-05-R1": {
+        "reelNo": "SQL-05-R1",
+        "day": "DAY 05",
+        "badge": "SQL · LEFT JOIN Filtering",
+        "hook": "LEFT JOIN TRAP 💥\nWhich query keeps customers with zero orders?",
+        "hookLineObjects": [
+            {"text": "LEFT JOIN TRAP 💥", "font": "Plus Jakarta Sans", "size": 5.2},
+            {"text": "Which query keeps customers with zero orders?", "font": "Outfit", "size": 3.9}
+        ],
+        "hookHighlights": [
+            {"text": "LEFT JOIN", "color": "#facc15"},
+            {"text": "with zero orders", "color": "#00f0ff"}
+        ],
+        "lang": "sql",
+        "codeA": "SELECT c.customer_name, o.order_amount\nFROM customers c\nLEFT JOIN orders o ON c.id = o.customer_id\nWHERE o.status = 'COMPLETED'",
+        "codeB": "SELECT c.customer_name, o.order_amount\nFROM customers c\nLEFT JOIN orders o ON c.id = o.customer_id\n                  AND o.status = 'COMPLETED'",
+        "pollInstr": "DROP YOUR VOTE IN COMMENTS 👇",
+        "clockSfx": "bomb",
+        "ccStyle": "hormozi",
+        "ccEnabled": True,
+        "voice": "en-US-AndrewNeural",
+        "voiceScript": "Most candidates fail this classic LEFT JOIN screening question.\nWhich query keeps customers with zero orders?\nChoose your answer.\nOption A...\nor Option B?\nDrop your vote in the comments below.",
+        "caption": "LEFT JOIN TRAP 💥\nWhich query keeps customers with zero orders?\n\nCan you spot the trap before checking the pinned comment? \n\nDrop your vote (A or B) below 👇\n\n\nPractice Data Skills \n👉 Day 1 & Day 2 are 100% FREE\n🔗 Link in bio / manodemy.com/q9\n\n#sql #sqlinterview #sqltips #dataanalytics #dataengineer #datascience #dataanalyst #sqlquery #faang #techinterview #codinginterview #learnsql #database #manodemy #dataanalysis",
+        "pinnedAnswer": "Option A is the trap ❌ | Option B is correct ✅\n\nWhy Option A silently acts like an INNER JOIN:\nIn Option A, the WHERE clause executes AFTER the join.\nFor customers with no orders, `o.status` is NULL. Because `NULL = 'COMPLETED'` evaluates to UNKNOWN, the WHERE clause throws them out!\n\nOption B filters the orders table in the ON clause BEFORE joining, preserving all customers with zero orders!\n\n💡 Rule of thumb: Filter right-table columns in the ON clause to keep your LEFT JOIN working!\n\nBe honest — did you get this right? 👇",
+        "link": "https://www.manodemy.com/q9"
+    },
+    "SQL-05-R2": {
+        "reelNo": "SQL-05-R2",
+        "day": "DAY 05",
+        "badge": "SQL · Conditional Aggregation",
+        "hook": "CONDITIONAL COUNT TRAP 🤯\nWhich query correctly counts failed orders?",
+        "hookLineObjects": [
+            {"text": "CONDITIONAL COUNT TRAP 🤯", "font": "Plus Jakarta Sans", "size": 4.9},
+            {"text": "Which query correctly counts failed orders?", "font": "Outfit", "size": 3.9}
+        ],
+        "hookHighlights": [
+            {"text": "CONDITIONAL COUNT", "color": "#facc15"},
+            {"text": "failed orders", "color": "#00f0ff"}
+        ],
+        "lang": "sql",
+        "codeA": "SELECT customer_id,\n       COUNT(CASE WHEN status = 'FAILED'\n             THEN 1 ELSE 0 END) AS failed_cnt\nFROM orders\nGROUP BY customer_id",
+        "codeB": "SELECT customer_id,\n       SUM(CASE WHEN status = 'FAILED'\n           THEN 1 ELSE 0 END) AS failed_cnt\nFROM orders\nGROUP BY customer_id",
+        "pollInstr": "DROP YOUR VOTE IN COMMENTS 👇",
+        "clockSfx": "bomb",
+        "ccStyle": "hormozi",
+        "ccEnabled": True,
+        "voice": "en-US-AndrewNeural",
+        "voiceScript": "This subtle CASE WHEN bug catches almost every data analyst.\nWhich query correctly counts failed orders?\nChoose your answer.\nOption A...\nor Option B?\nDrop your vote in the comments below.",
+        "caption": "CONDITIONAL COUNT TRAP 🤯\nWhich query correctly counts failed orders?\n\nCan you spot the trap before checking the pinned comment? \n\nDrop your vote (A or B) below 👇\n\n\nPractice Data Skills \n👉 Day 1 & Day 2 are 100% FREE\n🔗 Link in bio / manodemy.com/q10\n\n#sql #sqlinterview #sqltips #dataanalytics #dataengineer #datascience #dataanalyst #sqlquery #faang #techinterview #codinginterview #learnsql #database #manodemy #dataanalysis",
+        "pinnedAnswer": "Option A is the trap ❌ | Option B is correct ✅\n\nWhy Option A fails:\nIn SQL, `COUNT(expression)` counts EVERY single row where the expression is NOT NULL.\nIn Option A, when status != 'FAILED', the CASE expression returns 0.\nBecause `0` is a valid number (not NULL), `COUNT(0)` still increments the count! So Option A returns the TOTAL count of all orders!\n\nOption B uses `SUM(CASE ... THEN 1 ELSE 0 END)`, which adds 1 for failed orders and 0 for others, giving the exact count!\n\n💡 Rule of thumb: With COUNT, never use ELSE 0 (let it default to NULL). With SUM, use ELSE 0!\n\nBe honest — did you vote Option A? 👇",
+        "link": "https://www.manodemy.com/q10"
+    },
+    "SQL-06-R2": {
+        "reelNo": "SQL-06-R2",
+        "day": "DAY 06",
+        "badge": "SQL · Self Joins & Hierarchy",
+        "hook": "CEO DISAPPEARED TRAP 👔\nWhich query keeps the CEO in the org report?",
+        "hookLineObjects": [
+            {"text": "CEO DISAPPEARED TRAP 👔", "font": "Plus Jakarta Sans", "size": 4.9},
+            {"text": "Which query keeps the CEO in the org report?", "font": "Outfit", "size": 3.9}
+        ],
+        "hookHighlights": [
+            {"text": "CEO DISAPPEARED", "color": "#facc15"},
+            {"text": "keeps the CEO", "color": "#00f0ff"}
+        ],
+        "lang": "sql",
+        "codeA": "SELECT e.first_name AS employee,\n       m.first_name AS manager\nFROM employees e\nJOIN employees m ON e.manager_id = m.id",
+        "codeB": "SELECT e.first_name AS employee,\n       m.first_name AS manager\nFROM employees e\nLEFT JOIN employees m ON e.manager_id = m.id",
+        "pollInstr": "DROP YOUR VOTE IN COMMENTS 👇",
+        "clockSfx": "bomb",
+        "ccStyle": "hormozi",
+        "ccEnabled": True,
+        "voice": "en-US-AndrewNeural",
+        "voiceScript": "HR says! The CEO disappeared from the company's org report!\nWhich query correctly keeps the CEO in the org chart?\nChoose your answer.\nOption A...\nor Option B?\nDrop your vote in the comments below.",
+        "caption": "CEO DISAPPEARED TRAP 👔💀\nWhich query keeps the CEO in the org chart report?\n\nDid you accidentally fire the CEO with an INNER JOIN? \n\nDrop your vote (A or B) below 👇\n\n\nPractice Data Skills \n👉 Day 1 & Day 2 are 100% FREE\n🔗 Link in bio / manodemy.com/q11\n\n#sql #sqlinterview #sqltips #dataanalytics #dataengineer #datascience #dataanalyst #sqlquery #faang #techinterview #codinginterview #learnsql #database #manodemy #dataanalysis",
+        "pinnedAnswer": "Option A is the trap ❌ | Option B is correct ✅\n\nWhy Option A accidentally deletes the CEO:\nIn most relational databases, the CEO has a NULL `manager_id` (since nobody manages the CEO!).\nIn Option A, the plain `JOIN` (INNER JOIN) requires matching values on both sides.\nBecause `NULL = m.id` evaluates to UNKNOWN, Option A silently DELETES the CEO from the entire company org chart!\n\nOption B uses `LEFT JOIN`, ensuring that all employees (including the top CEO) are preserved with a NULL manager.\n\n💡 Rule of thumb: When building manager-employee hierarchy reports, always use LEFT JOIN!\n\nBe honest — did you accidentally fire the CEO? 👇",
+        "link": "https://www.manodemy.com/q11"
+    },
+    "SQL-07-R1": {
+        "reelNo": "SQL-07-R1",
+        "day": "DAY 07",
+        "badge": "SQL · Subqueries & EXISTS",
+        "hook": "NOT IN NULL TRAP 🕳️\nWhich query finds customers who never ordered?",
+        "hookLineObjects": [
+            {"text": "NOT IN NULL TRAP 🕳️", "font": "Plus Jakarta Sans", "size": 4.9},
+            {"text": "Which query finds customers who never ordered?", "font": "Outfit", "size": 3.9}
+        ],
+        "hookHighlights": [
+            {"text": "NOT IN NULL", "color": "#facc15"},
+            {"text": "never ordered", "color": "#00f0ff"}
+        ],
+        "lang": "sql",
+        "codeA": "SELECT name FROM customers\nWHERE id NOT IN (\n    SELECT customer_id FROM orders\n)",
+        "codeB": "SELECT c.name FROM customers c\nWHERE NOT EXISTS (\n    SELECT 1 FROM orders o\n    WHERE o.customer_id = c.id\n)",
+        "pollInstr": "DROP YOUR VOTE IN COMMENTS 👇",
+        "clockSfx": "bomb",
+        "ccStyle": "hormozi",
+        "ccEnabled": True,
+        "voice": "en-US-AndrewNeural",
+        "voiceScript": "This not in query returned zero rows in production!\nWhich query safely finds customers who never ordered?\nChoose your answer.\nOption A...\nor Option B?\nDrop your vote in the comments below.",
+        "caption": "NOT IN NULL TRAP 🕳️💀\nWhich query safely finds customers who never ordered?\n\nDid a single NULL break your entire subquery? \n\nDrop your vote (A or B) below 👇\n\n\nPractice Data Skills \n👉 Day 1 & Day 2 are 100% FREE\n🔗 Link in bio / manodemy.com/q12\n\n#sql #sqlinterview #sqltips #dataanalytics #dataengineer #datascience #dataanalyst #sqlquery #faang #techinterview #codinginterview #learnsql #database #manodemy #dataanalysis",
+        "pinnedAnswer": "Option A is the trap ❌ | Option B is correct ✅\n\nWhy Option A returns 0 rows in production:\nIf the orders table contains even ONE guest order with a NULL customer_id, the subquery produces (101, 102, NULL).\nIn SQL, `id NOT IN (..., NULL)` translates to `id != NULL`, which is UNKNOWN.\nBecause `TRUE AND UNKNOWN` equals UNKNOWN, the WHERE clause throws away EVERY single customer, returning 0 rows!\n\nOption B uses `NOT EXISTS`, which safely checks row presence and ignores NULLs!\n\n💡 Rule of thumb: Never use NOT IN with nullable columns. Always use NOT EXISTS!\n\nDid you know about the 3-Valued Logic trap? 👇",
+        "link": "https://www.manodemy.com/q12"
     }
 }
 
-DEFAULT_REEL = REELS_CATALOG["SQL-02-R2"]
+DEFAULT_REEL = REELS_CATALOG["SQL-07-R1"]
 
 async def build_direct_video(reel=DEFAULT_REEL, is_4k=False, fps=30):
     start_total = time.time()
@@ -362,7 +518,7 @@ async def build_direct_video(reel=DEFAULT_REEL, is_4k=False, fps=30):
             saved = False
             for attempt in range(4):
                 try:
-                    com = edge_tts.Communicate(text, reel["voice"], rate="+3%", pitch="+1Hz")
+                    com = edge_tts.Communicate(text, reel["voice"], rate="+8%", pitch="+1Hz")
                     await com.save(str(tfile))
                     saved = True
                     break
@@ -384,19 +540,19 @@ async def build_direct_video(reel=DEFAULT_REEL, is_4k=False, fps=30):
 
     t_hook_start = 0
     t_line2_start = dur_hook
-    t_clock_in = t_line2_start + dur_line2 + 50
-    tension_ms = 2400
+    t_clock_in = t_line2_start + dur_line2 + 20
+    tension_ms = 550
 
     raw_narration = (
         audio_segments["hook"] +
         audio_segments["line2"] +
-        AudioSegment.silent(duration=50) +
+        AudioSegment.silent(duration=20) +
         audio_segments["choose"] +
         audio_segments["optA"] +
         audio_segments["optB"] +
         AudioSegment.silent(duration=tension_ms) +
         audio_segments["cta"] +
-        AudioSegment.silent(duration=1300)
+        AudioSegment.silent(duration=600)
     )
     narration_out = AUDIO_DIR / f"{reel_no}_narration.mp3"
     raw_narration.export(str(narration_out), format="mp3", bitrate="320k")
@@ -408,8 +564,8 @@ async def build_direct_video(reel=DEFAULT_REEL, is_4k=False, fps=30):
     print("\n📝 [STEP 2/5] Extracting Whisper AI Word Timestamps from Stitched Narration...", flush=True)
     import whisper
     whisper_model = whisper.load_model('base')
-    # Cache key = reel_no + all script text (stable; Edge-TTS audio bytes are non-deterministic)
-    _script_key = reel_no + reel.get("hook","") + reel.get("codeA","") + reel.get("codeB","")
+    # Cache key = reel_no + all script text + voiceScript (stable across re-runs)
+    _script_key = reel_no + reel.get("voiceScript", "") + reel.get("hook", "") + reel.get("codeA", "") + reel.get("codeB", "")
     w_res = _whisper_cached_transcribe(narration_out, whisper_model, reel_no, _script_key)
     w_segs = w_res.get('segments', [])
 
@@ -428,61 +584,62 @@ async def build_direct_video(reel=DEFAULT_REEL, is_4k=False, fps=30):
 
     all_raw_words = extract_words_from_segs(w_segs)
 
-    # Find acoustic anchor indices in Whisper word list:
-    # 1. Line 2 start
+    # Chunk acoustic timeline offsets
+    c0_start = 0
+    c0_end = dur_hook
+    c1_start = dur_hook
+    c1_end = dur_hook + dur_line2
+    c2_start = c1_end + 20
+    c2_end = c2_start + dur_choose
+    c3_start = c2_end
+    c3_end = c3_start + dur_opta
+    c4_start = c3_end
+    c4_end = c4_start + dur_optb
+    c5_start = c4_end + tension_ms
+
+    # Find acoustic anchor indices using chunk boundary windows
     idx_line2 = 0
     for i, tok in enumerate(all_raw_words):
-        clean_tok = re.sub(r"[^\w]", "", tok["word"].lower())
-        if i >= 3 and (tok["startMs"] >= dur_hook - 400 or clean_tok in ["which", "what", "how", "one", "top", "why"]):
+        if tok["startMs"] >= c1_start - 120:
             idx_line2 = i
             break
     if idx_line2 == 0:
         idx_line2 = max(1, min(len(all_raw_words) - 1, len(hook_text.split())))
 
-    # 2. Choose answer start
     idx_choose = idx_line2
     for i in range(idx_line2, len(all_raw_words)):
-        clean_tok = re.sub(r"[^\w]", "", all_raw_words[i]["word"].lower())
-        if clean_tok in ["choose", "pick", "select"] or all_raw_words[i]["startMs"] >= (dur_hook + dur_line2 - 300):
+        if all_raw_words[i]["startMs"] >= c2_start - 120:
             idx_choose = i
             break
 
-    # 3. Option A start
     idx_opta = idx_choose
     for i in range(idx_choose, len(all_raw_words)):
-        clean_tok = re.sub(r"[^\w]", "", all_raw_words[i]["word"].lower())
-        if clean_tok == "option":
+        if all_raw_words[i]["startMs"] >= c3_start - 120:
             idx_opta = i
             break
 
-    # 4. Option B start
     idx_optb = idx_opta + 1
     for i in range(idx_opta + 1, len(all_raw_words)):
-        clean_tok = re.sub(r"[^\w]", "", all_raw_words[i]["word"].lower())
-        if clean_tok in ["or", "option"]:
+        if all_raw_words[i]["startMs"] >= c4_start - 120:
             idx_optb = i
             break
 
-    # 5. CTA start
     idx_cta = idx_optb + 1
     for i in range(idx_optb + 1, len(all_raw_words)):
-        clean_tok = re.sub(r"[^\w]", "", all_raw_words[i]["word"].lower())
-        if clean_tok in ["drop", "comment", "vote", "share"]:
+        if all_raw_words[i]["startMs"] >= c5_start - 180:
             idx_cta = i
             break
 
     t_hook_start = 0
-    t_line2_start = all_raw_words[idx_line2]["startMs"] if all_raw_words and idx_line2 < len(all_raw_words) else dur_hook
-    t_clock_in = all_raw_words[idx_choose]["startMs"] if all_raw_words and idx_choose < len(all_raw_words) else (t_line2_start + dur_line2)
-    t_opta = all_raw_words[idx_opta]["startMs"] if all_raw_words and idx_opta < len(all_raw_words) else (t_clock_in + dur_choose)
-    t_optb = all_raw_words[idx_optb]["startMs"] if all_raw_words and idx_optb < len(all_raw_words) else (t_opta + dur_opta)
+    t_line2_start = all_raw_words[idx_line2]["startMs"] if all_raw_words and idx_line2 < len(all_raw_words) else c1_start
+    t_clock_in = all_raw_words[idx_choose]["startMs"] if all_raw_words and idx_choose < len(all_raw_words) else c2_start
+    t_opta = all_raw_words[idx_opta]["startMs"] if all_raw_words and idx_opta < len(all_raw_words) else c3_start
+    t_optb = all_raw_words[idx_optb]["startMs"] if all_raw_words and idx_optb < len(all_raw_words) else c4_start
     
-    wh_optb = all_raw_words[idx_optb:idx_cta]
-    t_optb_end = wh_optb[-1]["endMs"] if wh_optb else (t_optb + dur_optb)
-    
-    t_cta_start = all_raw_words[idx_cta]["startMs"] if all_raw_words and idx_cta < len(all_raw_words) else round((len(raw_narration) - dur_cta - 300))
+    t_cta_start = all_raw_words[idx_cta]["startMs"] if all_raw_words and idx_cta < len(all_raw_words) else c5_start
     t_clock_out = t_cta_start
-    t_voice_end = all_raw_words[-1]["endMs"] + 120 if all_raw_words else round(len(raw_narration))
+    t_optb_end = t_clock_out - 150  # Option B stays highlighted throughout Option B + tension beat
+    t_voice_end = all_raw_words[-1]["endMs"] + 100 if all_raw_words else round(len(raw_narration))
 
     # Align clean script words with acoustic timestamps for each phrase:
     p0_words = align_expected_phrase(hook_text, all_raw_words[:idx_line2], t_hook_start, t_line2_start)
@@ -497,13 +654,13 @@ async def build_direct_video(reel=DEFAULT_REEL, is_4k=False, fps=30):
         {"index": 1, "text": line2_text, "startMs": t_line2_start, "endMs": t_clock_in, "words": p1_words},
         {"index": 2, "text": "Choose your answer...", "startMs": t_clock_in, "endMs": t_opta, "words": p2_words},
         {"index": 3, "text": "Option A...", "startMs": t_opta, "endMs": t_optb, "words": p3_words},
-        {"index": 4, "text": "or Option B?", "startMs": t_optb, "endMs": t_optb_end + 350, "words": p4_words},
+        {"index": 4, "text": "or Option B?", "startMs": t_optb, "endMs": t_optb_end, "words": p4_words},
         {"index": 5, "text": cta_text, "startMs": t_cta_start, "endMs": t_voice_end, "words": p5_words}
     ]
     all_words = p0_words + p1_words + p2_words + p3_words + p4_words + p5_words
     print(f"   ✓ Extracted {len(all_words)} word cues across {len(phrases)} perfectly aligned phrases", flush=True)
 
-    hold_ms = 2500  # 2.5-second hold after voiceover finishes for user reaction and live link viewing
+    hold_ms = 1400  # 1.4-second high-energy hold after voiceover finishes for user reaction and live link viewing
     total_ms = t_voice_end + hold_ms
     total_sec = total_ms / 1000.0
 
@@ -513,7 +670,7 @@ async def build_direct_video(reel=DEFAULT_REEL, is_4k=False, fps=30):
         "t_clock_in": t_clock_in,
         "t_opta": t_opta,
         "t_optb": t_optb,
-        "t_optb_end": t_optb_end + 350,  # Exact Card B glow END from Whisper (phrase 4 endMs + 350ms buffer)
+        "t_optb_end": t_optb_end,  # Exact Card B glow END from Whisper
         "t_clock_out": t_clock_out,
         "t_cta_start": t_cta_start,
         "t_voice_end": t_voice_end,
@@ -642,15 +799,23 @@ async def build_direct_video(reel=DEFAULT_REEL, is_4k=False, fps=30):
             except: pass
 
     # -------------------------------------------------------------
-    # STEP 5: Generate 1-Click Publishing Pack JSON
+    # STEP 5: Generate 1-Click Publishing Pack JSON & Cover Thumbnail
     # -------------------------------------------------------------
-    print("\n📦 [STEP 5/5] Generating 1-Click Publishing Pack...", flush=True)
+    print("\n📦 [STEP 5/5] Generating 1-Click Publishing Pack & Cover Thumbnail...", flush=True)
+    try:
+        from marketing.cover_generator import generate_cover
+        await generate_cover(reel_no)
+    except Exception as e:
+        print(f"   ⚠️ Cover generation note: {e}")
+
     pack_data = {
         "reelNo": reel_no,
         "day": reel["day"],
         "badge": reel["badge"],
         "videoFile": str(out_mp4.name),
         "videoPath": str(out_mp4),
+        "coverFile": f"{reel_no}_Cover.png",
+        "coverJpg": f"{reel_no}_Cover.jpg",
         "fileSizeMb": round(out_mp4.stat().st_size / (1024 * 1024), 2),
         "resolution": f"{w}x{h}",
         "fps": fps,
@@ -669,6 +834,7 @@ async def build_direct_video(reel=DEFAULT_REEL, is_4k=False, fps=30):
     print("\n==================================================================", flush=True)
     print(f"🎉 DIRECT PIPELINE COMPLETE IN {total_time} SECONDS!", flush=True)
     print(f"📁 Video: {out_mp4} ({pack_data['fileSizeMb']} MB)", flush=True)
+    print(f"📁 Cover: {OUTPUT_DIR / f'{reel_no}_Cover.png'}", flush=True)
     print(f"📁 Pack:  {pack_json_file}", flush=True)
     print("==================================================================", flush=True)
     return pack_data

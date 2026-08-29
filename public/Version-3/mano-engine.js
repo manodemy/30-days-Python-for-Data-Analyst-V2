@@ -4957,7 +4957,7 @@ function updateOverallScoreUI() {
     badge.className = 'header-overall-score';
     badge.id = 'headerOverallScoreBadge';
     badge.title = 'View Overall Course Score & Certificate Status';
-    badge.onclick = () => window.location.href = '/home.html';
+    badge.onclick = () => openCertificateStatus();
     badge.innerHTML = `
       <div class="overall-score-icon">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
@@ -4987,7 +4987,7 @@ function updateOverallScoreUI() {
     testBadge.className = 'header-overall-score';
     testBadge.id = 'testHeaderOverallScoreBadge';
     testBadge.title = 'View Overall Course Score & Certificate Status';
-    testBadge.onclick = () => window.location.href = '/home.html';
+    testBadge.onclick = () => openCertificateStatus();
     testBadge.innerHTML = `
       <div class="overall-score-icon">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
@@ -5577,6 +5577,21 @@ function loadDayContent(dayId) {
           <a href="${checkoutUrl}" style="background:linear-gradient(135deg, #00e6f6, #a855f7); color:#060913; font-weight:800; text-decoration:none; padding:5px 14px; border-radius:8px; font-size:0.75rem; box-shadow:0 0 15px rgba(0,230,246,0.3); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='none'">Unlock All 60 Days — ₹1,499 →</a>
         `;
         document.body.prepend(banner);
+
+        // Apply visual locked indicator on guest buttons
+        setTimeout(() => {
+          const scoreBtns = document.querySelectorAll('#scoreBtn, #testScoreBtn');
+          scoreBtns.forEach(btn => {
+            btn.title = '🔒 Enroll in Masterclass to view full Score Card';
+            btn.innerHTML = `<svg class="score-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right: 4px;"><path d="M1.5 1.5H5.5V5.5H1.5V1.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.5 1.5H12.5V5.5H8.5V1.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M1.5 8.5H5.5V12.5H1.5V8.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.5 8.5H12.5V12.5H8.5V8.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Score Card <span style="font-size:10px; margin-left:4px; opacity:0.85;">🔒</span>`;
+          });
+
+          const badges = document.querySelectorAll('#headerOverallScoreBadge, #testHeaderOverallScoreBadge');
+          badges.forEach(b => {
+            b.title = '🔒 Enroll in Masterclass to unlock Certification & 1,500 Marks Tracking';
+            b.style.cursor = 'pointer';
+          });
+        }, 150);
       }
     }
 
@@ -5954,12 +5969,31 @@ function onTopicSelectChange(val) {
 }
 
 function openScoreCard() {
+  if (IS_GUEST_REEL || (!isPaidUser() && !isAdminUser())) {
+    showGuestPaywallModal('Full Course Progress & Score Card');
+    return;
+  }
   window.location.href = '/home.html';
 }
+window.openScoreCard = openScoreCard;
 
 function openTestScoreCard() {
+  if (IS_GUEST_REEL || (!isPaidUser() && !isAdminUser())) {
+    showGuestPaywallModal('Full Course Progress & Score Card');
+    return;
+  }
   window.location.href = '/home.html';
 }
+window.openTestScoreCard = openTestScoreCard;
+
+function openCertificateStatus() {
+  if (IS_GUEST_REEL || (!isPaidUser() && !isAdminUser())) {
+    showGuestPaywallModal('1,500 Marks Certification System');
+    return;
+  }
+  window.location.href = '/home.html';
+}
+window.openCertificateStatus = openCertificateStatus;
 
 function getDaySolvedCount() {
   let solved = 0;

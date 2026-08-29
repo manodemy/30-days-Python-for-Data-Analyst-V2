@@ -3404,27 +3404,27 @@ const REEL_CHALLENGES = {
     day: 'day04',
     slideIndex: 0,
     title: 'HIGH PERFORMERS 🚀',
-    task: 'Row Filtering: Target Top Tier Performers by Score & Salary',
-    prompt: `HR needs all active high performers earning above ₹75,000 with a performance rating of at least 4.5. Run Option A vs Option B to see which query correctly filters the top tier.<br/>
+    task: 'Row Filtering: Target Top Tier Active Performers by Salary',
+    prompt: `HR needs all active high earners making above ₹75,000. Run Option A vs Option B to see why Option A accidentally includes inactive employees.<br/>
       <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-01-R1', 'A')">⚡ Load Option A</button>
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-01-R1', 'B')">⚡ Load Option B</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-01-R1', 'A')">⚡ Load Option A (Trap)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-01-R1', 'B')">⚡ Load Option B (Fix)</button>
       </div>`,
-    trapExplanation: 'Option A misses the active status filter. Option B correctly combines all compound criteria.',
-    codeA: "SELECT first_name, salary, rating\nFROM employees\nWHERE salary > 75000\n  AND rating >= 4.5;",
-    codeB: "SELECT first_name, salary, rating\nFROM employees\nWHERE is_active = 1\n  AND salary > 75000\n  AND rating >= 4.5;"
+    trapExplanation: 'Option A misses the active status filter (<code>is_active = 1</code>). Option B correctly filters only currently active high earners.',
+    codeA: "SELECT first_name, salary\nFROM employees\nWHERE salary > 75000;",
+    codeB: "SELECT first_name, salary\nFROM employees\nWHERE is_active = 1\n  AND salary > 75000;"
   },
   'SQL-01-R2': {
     day: 'day04',
     slideIndex: 0,
     title: 'SALARY ANALYTICS 💼',
-    task: 'Calculated Columns: Annual Payroll & Bonus Projections',
-    prompt: `Calculate the total annual compensation (monthly salary * 12 + bonus). Run Option A vs Option B to see how SQL handles column arithmetic.<br/>
+    task: 'Calculated Columns: Handling NULLs in Compensation Arithmetic',
+    prompt: `Calculate total compensation (monthly salary * 12 + commission). Run Option A vs Option B to see why NULL commission wipes out the entire annual calculation.<br/>
       <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-01-R2', 'A')">⚡ Load Option A</button>
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-01-R2', 'B')">⚡ Load Option B</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-01-R2', 'A')">⚡ Load Option A (Trap)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-01-R2', 'B')">⚡ Load Option B (Fix)</button>
       </div>`,
-    trapExplanation: 'Option A fails on NULL bonuses. Option B uses COALESCE to safely compute total compensation.',
+    trapExplanation: 'In SQL, <code>number + NULL = NULL</code>! Option A turns annual compensation into NULL for employees without commission. Option B uses <code>COALESCE</code> to safely treat NULL as 0.',
     codeA: "SELECT first_name, (salary * 12) + commission AS annual_comp\nFROM employees;",
     codeB: "SELECT first_name, (salary * 12) + COALESCE(commission, 0) AS annual_comp\nFROM employees;"
   },
@@ -3503,42 +3503,42 @@ const REEL_CHALLENGES = {
     slideIndex: 0,
     title: 'DATE RANGE TRAP 📅',
     task: 'Datetime Filtering: Why BETWEEN 23:59:59 Drops Transactions',
-    prompt: `Finance needs all January sales! Run Option A (BETWEEN ... 23:59:59) vs Option B (&gt;= Jan 1 AND &lt; Feb 1) to see why Option A drops end-of-day orders with fractional seconds.<br/>
+    prompt: `Finance needs all 2024 orders! Run Option A (BETWEEN ... 23:59:59) vs Option B (&gt;= Jan 1 AND &lt; Jan 1 2025) to see why Option A drops end-of-day orders with fractional seconds.<br/>
       <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
         <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-04-R2', 'A')">⚡ Load Option A (Trap)</button>
         <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-04-R2', 'B')">⚡ Load Option B (Fix)</button>
       </div>`,
-    trapExplanation: 'Option A misses orders placed in the final second of January (e.g. <code>23:59:59.850</code>)! In production databases, always use the half-open interval <code>&gt;= \'2024-01-01\' AND &lt; \'2024-02-01\'</code>.',
-    codeA: "SELECT order_id, total_amount\nFROM sales\nWHERE order_date\n  BETWEEN '2024-01-01 00:00:00'\n      AND '2024-01-31 23:59:59';",
-    codeB: "SELECT order_id, total_amount\nFROM sales\nWHERE order_date >= '2024-01-01'\n  AND order_date <  '2024-02-01';"
+    trapExplanation: 'Option A misses orders placed in the final second of the year (e.g. <code>23:59:59.850</code>)! In production databases, always use the half-open interval <code>&gt;= \'2024-01-01\' AND &lt; \'2025-01-01\'</code>.',
+    codeA: "SELECT order_id, total_amount\nFROM orders\nWHERE order_date\n  BETWEEN '2024-01-01 00:00:00'\n      AND '2024-12-31 23:59:59';",
+    codeB: "SELECT order_id, total_amount\nFROM orders\nWHERE order_date >= '2024-01-01'\n  AND order_date <  '2025-01-01';"
   },
   'SQL-05-R1': {
     day: 'day05',
     slideIndex: 0,
     title: 'LEFT JOIN TRAP 💥',
     task: 'LEFT JOIN Filtering: WHERE vs AND (The Accidental INNER JOIN)',
-    prompt: `Analytics needs a list of all customers, including those with zero orders. Run Option A (Filter in WHERE) vs Option B (Filter in ON) to see why Option A silently throws away zero-order customers.<br/>
+    prompt: `Analytics needs a list of all customers, including those with zero shipped orders. Run Option A (Filter in WHERE) vs Option B (Filter in ON) to see why Option A silently throws away zero-order customers.<br/>
       <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
         <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-05-R1', 'A')">⚡ Load Option A (Trap)</button>
         <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-05-R1', 'B')">⚡ Load Option B (Fix)</button>
       </div>`,
-    trapExplanation: 'Option A filters the right table in the <code>WHERE</code> clause, which runs <em>after</em> the join. Customers with no orders have <code>NULL</code> status, and <code>NULL = \'COMPLETED\'</code> is UNKNOWN, discarding them like an INNER JOIN! Option B filters in the <code>ON</code> clause, keeping all customers.',
-    codeA: "SELECT c.customer_name, o.order_amount\nFROM customers c\nLEFT JOIN orders o ON c.id = o.customer_id\nWHERE o.status = 'COMPLETED';",
-    codeB: "SELECT c.customer_name, o.order_amount\nFROM customers c\nLEFT JOIN orders o ON c.id = o.customer_id\n                  AND o.status = 'COMPLETED';"
+    trapExplanation: 'Option A filters the right table in the <code>WHERE</code> clause, which runs <em>after</em> the join. Customers with no shipped orders have <code>NULL</code> status, and <code>NULL = \'Shipped\'</code> is UNKNOWN, discarding them like an INNER JOIN! Option B filters in the <code>ON</code> clause, keeping all customers.',
+    codeA: "SELECT c.first_name, o.total_amount\nFROM customers c\nLEFT JOIN orders o ON c.customer_id = o.customer_id\nWHERE o.status = 'Shipped';",
+    codeB: "SELECT c.first_name, o.total_amount\nFROM customers c\nLEFT JOIN orders o ON c.customer_id = o.customer_id\n                  AND o.status = 'Shipped';"
   },
   'SQL-05-R2': {
     day: 'day05',
     slideIndex: 0,
     title: 'CONDITIONAL COUNT TRAP 🤯',
     task: 'Conditional Aggregation: COUNT(CASE ... ELSE 0) vs SUM(CASE ... ELSE 0)',
-    prompt: `Analytics needs the total number of FAILED orders for each customer. Run Option A (COUNT with ELSE 0) vs Option B (SUM with ELSE 0) to see why COUNT(0) inflates the count.<br/>
+    prompt: `Analytics needs the total number of SHIPPED orders for each customer. Run Option A (COUNT with ELSE 0) vs Option B (SUM with ELSE 0) to see why COUNT(0) inflates the count.<br/>
       <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
         <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-05-R2', 'A')">⚡ Load Option A (Trap)</button>
         <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-05-R2', 'B')">⚡ Load Option B (Fix)</button>
       </div>`,
-    trapExplanation: 'In SQL, <code>COUNT()</code> increments for EVERY non-NULL value! Because <code>0</code> is a valid number, <code>COUNT(0)</code> still counts the row, returning total orders! Option B uses <code>SUM()</code>, adding 1 for failed and 0 for others.',
-    codeA: "SELECT customer_id,\n       COUNT(CASE WHEN status = 'FAILED'\n                  THEN 1 ELSE 0 END) AS failed_orders\nFROM orders\nGROUP BY customer_id;",
-    codeB: "SELECT customer_id,\n       SUM(CASE WHEN status = 'FAILED'\n                THEN 1 ELSE 0 END) AS failed_orders\nFROM orders\nGROUP BY customer_id;"
+    trapExplanation: 'In SQL, <code>COUNT()</code> increments for EVERY non-NULL value! Because <code>0</code> is a valid number, <code>COUNT(0)</code> still counts the row, returning total orders! Option B uses <code>SUM()</code>, adding 1 for shipped and 0 for others.',
+    codeA: "SELECT customer_id,\n       COUNT(CASE WHEN status = 'Shipped'\n                  THEN 1 ELSE 0 END) AS shipped_orders\nFROM orders\nGROUP BY customer_id;",
+    codeB: "SELECT customer_id,\n       SUM(CASE WHEN status = 'Shipped'\n                THEN 1 ELSE 0 END) AS shipped_orders\nFROM orders\nGROUP BY customer_id;"
   },
   'SQL-06-R2': {
     day: 'day06',
@@ -3551,8 +3551,8 @@ const REEL_CHALLENGES = {
         <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-06-R2', 'B')">⚡ Load Option B (Fix)</button>
       </div>`,
     trapExplanation: 'Option A silently <strong>deletes the CEO</strong>! Because the CEO has a NULL <code>manager_id</code>, plain <code>JOIN</code> (INNER JOIN) rejects the row. Option B uses <code>LEFT JOIN</code>, preserving the CEO.',
-    codeA: "SELECT e.first_name AS employee,\n       m.first_name AS manager\nFROM employees e\nJOIN employees m ON e.manager_id = m.id;",
-    codeB: "SELECT e.first_name AS employee,\n       COALESCE(m.first_name, 'TOP BOSS') AS manager\nFROM employees e\nLEFT JOIN employees m ON e.manager_id = m.id;"
+    codeA: "SELECT e.first_name AS employee,\n       m.first_name AS manager\nFROM employees e\nJOIN employees m ON e.manager_id = m.employee_id;",
+    codeB: "SELECT e.first_name AS employee,\n       COALESCE(m.first_name, 'TOP BOSS') AS manager\nFROM employees e\nLEFT JOIN employees m ON e.manager_id = m.employee_id;"
   },
   'SQL-07-R1': {
     day: 'day07',
@@ -3564,9 +3564,23 @@ const REEL_CHALLENGES = {
         <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-07-R1', 'A')">⚡ Load Option A (Trap)</button>
         <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-07-R1', 'B')">⚡ Load Option B (Fix)</button>
       </div>`,
-    trapExplanation: 'If the subquery contains even one <code>NULL</code>, <code>id NOT IN (..., NULL)</code> evaluates to <strong>UNKNOWN</strong> for every row, returning 0 rows! Option B uses <code>NOT EXISTS</code>, which is 100% NULL-safe.',
-    codeA: "SELECT name FROM customers\nWHERE id NOT IN (\n    SELECT customer_id FROM orders\n);",
-    codeB: "SELECT c.name FROM customers c\nWHERE NOT EXISTS (\n    SELECT 1 FROM orders o\n    WHERE o.customer_id = c.id\n);"
+    trapExplanation: 'If the subquery contains even one <code>NULL</code>, <code>customer_id NOT IN (..., NULL)</code> evaluates to <strong>UNKNOWN</strong> for every row, returning 0 rows! Option B uses <code>NOT EXISTS</code>, which is 100% NULL-safe.',
+    codeA: "SELECT first_name FROM customers\nWHERE customer_id NOT IN (\n    SELECT customer_id FROM orders\n);",
+    codeB: "SELECT c.first_name FROM customers c\nWHERE NOT EXISTS (\n    SELECT 1 FROM orders o\n    WHERE o.customer_id = c.customer_id\n);"
+  },
+  'SQL-07-R2': {
+    day: 'day07',
+    slideIndex: 0,
+    title: 'SALARY TIE GAP TRAP 🥈⚔️',
+    task: 'Ranking Functions: RANK() vs DENSE_RANK() on Tied Salaries',
+    prompt: `HR needs the salary leaderboard! Two employees share the #1 salary. Run Option A (RANK) vs Option B (DENSE_RANK) to see why RANK() skips 2nd place and JUMPS straight to 3.<br/>
+      <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-07-R2', 'A')">⚡ Load Option A (RANK)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-07-R2', 'B')">⚡ Load Option B (DENSE_RANK)</button>
+      </div>`,
+    trapExplanation: 'When ties occur, <code>RANK()</code> leaves gaps (1, 1, 3), skipping 2nd place! <code>DENSE_RANK()</code> assigns consecutive ranks (1, 1, 2) without any gaps.',
+    codeA: "SELECT employee_id, first_name, salary,\n       RANK() OVER (ORDER BY salary DESC) AS sal_rank\nFROM employees;",
+    codeB: "SELECT employee_id, first_name, salary,\n       DENSE_RANK() OVER (ORDER BY salary DESC) AS sal_rank\nFROM employees;"
   }
 };
 
@@ -3597,6 +3611,7 @@ function getActiveChallengeId() {
   if (camp.includes('reel_day05_q2') || camp.includes('reel_10') || camp.includes('q10') || camp.includes('conditional_count')) return 'SQL-05-R2';
   if (camp.includes('reel_day06_q2') || camp.includes('reel_11') || camp.includes('q11') || camp.includes('ceo') || camp.includes('hierarchy')) return 'SQL-06-R2';
   if (camp.includes('reel_day07_q1') || camp.includes('reel_12') || camp.includes('q12') || camp.includes('not_in') || camp.includes('exists')) return 'SQL-07-R1';
+  if (camp.includes('reel_day07_q2') || camp.includes('reel_13') || camp.includes('q13') || camp.includes('dense_rank') || camp.includes('salary_dense_rank')) return 'SQL-07-R2';
 
   const dayParam = urlP.get('day');
   const qParam = urlP.get('q') || urlP.get('question');
@@ -3605,18 +3620,24 @@ function getActiveChallengeId() {
     if (qParam === '2') return 'SQL-01-R2';
     if (qParam === '3') return 'SQL-02-R1';
     if (qParam === '4') return 'SQL-02-R2';
+    if (qParam === '5') return 'SQL-03-R1';
+    if (qParam === '6') return 'SQL-03-R2';
+    if (qParam === '7') return 'SQL-04-R1';
+    if (qParam === '8') return 'SQL-04-R2';
   }
   if (dayParam === '5' || dayParam === '05') {
-    if (qParam === '1' || qParam === '3') return 'SQL-05-R1';
-    if (qParam === '2' || qParam === '4') return 'SQL-05-R2';
+    if (qParam === '1' || qParam === '9') return 'SQL-05-R1';
+    if (qParam === '2' || qParam === '10') return 'SQL-05-R2';
   }
   if (dayParam === '6' || dayParam === '06') {
     if (qParam === '1' || qParam === '2' || qParam === '11') return 'SQL-06-R2';
   }
   if (dayParam === '7' || dayParam === '07') {
     if (qParam === '1' || qParam === '12') return 'SQL-07-R1';
+    if (qParam === '2' || qParam === '13') return 'SQL-07-R2';
   }
   if (qParam === '12' || qParam === 'q12') return 'SQL-07-R1';
+  if (qParam === '13' || qParam === 'q13') return 'SQL-07-R2';
   return null;
 }
 

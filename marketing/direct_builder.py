@@ -498,6 +498,58 @@ REELS_CATALOG = {
         "caption": "SALARY TIE GAP TRAP 🥈⚔️\nWhich ranking function avoids skipping 2nd place when salaries tie?\n\nCan you spot the difference between RANK and DENSE_RANK? \n\nDrop your vote (A or B) below 👇\n\n\nPractice Data Skills \n👉 Day 1 & Day 2 are 100% FREE\n🔗 Link in bio / manodemy.com/q13\n\n#sql #sqlinterview #sqltips #dataanalytics #dataengineer #datascience #dataanalyst #sqlquery #faang #techinterview #codinginterview #learnsql #database #manodemy #dataanalysis",
         "pinnedAnswer": "Option A is the trap ❌ | Option B is correct ✅\n\nWhy Option A creates gaps:\nWhen two employees tie for 1st place (1, 1), `RANK()` skips rank 2 and assigns 3 to the next person!\n`DENSE_RANK()` keeps rank numbering continuous (1, 1, 2) without leaving any gaps!\n\n💡 Rule of thumb: If you need top N without skipping ranks, always use DENSE_RANK()!\n\nDid you vote A or B? 👇",
         "link": "https://www.manodemy.com/q13"
+    },
+    "SQL-08-R1": {
+        "reelNo": "SQL-08-R1",
+        "day": "DAY 08",
+        "badge": "SQL · Error Handling & NULLIF",
+        "hook": "DIVISION BY ZERO TRAP 💥\nWhich query prevents a 2 AM database crash?",
+        "hookLineObjects": [
+            {"text": "DIVISION BY ZERO TRAP 💥", "font": "Plus Jakarta Sans", "size": 4.9},
+            {"text": "Which query prevents a 2 AM database crash?", "font": "Outfit", "size": 3.9}
+        ],
+        "hookHighlights": [
+            {"text": "DIVISION BY ZERO", "color": "#facc15"},
+            {"text": "prevents a 2 AM", "color": "#00f0ff"}
+        ],
+        "lang": "sql",
+        "codeA": "SELECT store_id,\n       total_revenue / total_orders AS avg_order_val\nFROM daily_metrics",
+        "codeB": "SELECT store_id,\n       total_revenue / NULLIF(total_orders, 0) AS avg_order_val\nFROM daily_metrics",
+        "pollInstr": "DROP YOUR VOTE IN COMMENTS 👇",
+        "clockSfx": "bomb",
+        "ccStyle": "hormozi",
+        "ccEnabled": True,
+        "voice": "en-US-AndrewNeural",
+        "voiceScript": "Production alert! A store with zero orders crashed the entire dashboard pipeline!\nWhich query prevents the division by zero crash?\nChoose your answer.\nOption A...\nor Option B?\nDrop your vote in the comments below.",
+        "caption": "DIVISION BY ZERO TRAP 💥💀\nWhich query prevents a store with 0 orders from crashing the entire pipeline?\n\nCan you spot the SQL function that saves production? \n\nDrop your vote (A or B) below 👇\n\n\nPractice Data Skills \n👉 Day 1 & Day 2 are 100% FREE\n🔗 Link in bio / manodemy.com/q14\n\n#sql #sqlinterview #sqltips #dataanalytics #dataengineer #datascience #dataanalyst #sqlquery #faang #techinterview #codinginterview #learnsql #database #manodemy #dataanalysis",
+        "pinnedAnswer": "Option A is the trap ❌ | Option B is correct ✅\n\nWhy Option A crashes production:\nWhen a newly opened store or inactive user has `total_orders = 0`, Option A attempts `revenue / 0` which throws a fatal `division by zero` runtime exception, killing your entire ETL / dashboard pipeline!\n\nOption B uses `NULLIF(total_orders, 0)`.\nIf total_orders is 0, NULLIF turns it into NULL. In SQL, any number divided by NULL safely returns NULL without crashing!\n\n💡 Rule of thumb: Always wrap division denominators in NULLIF(col, 0)!\n\nDid you vote A or B? 👇",
+        "link": "https://www.manodemy.com/q14"
+    },
+    "SQL-08-R2": {
+        "reelNo": "SQL-08-R2",
+        "day": "DAY 08",
+        "badge": "SQL · Set Operations & Deduplication",
+        "hook": "UNION DEDUPLICATION TRAP ⚡\nWhich query keeps identical transactions across months?",
+        "hookLineObjects": [
+            {"text": "UNION DEDUPLICATION TRAP ⚡", "font": "Plus Jakarta Sans", "size": 4.8},
+            {"text": "Which query keeps identical transactions across months?", "font": "Outfit", "size": 3.7}
+        ],
+        "hookHighlights": [
+            {"text": "UNION DEDUPLICATION", "color": "#facc15"},
+            {"text": "keeps identical transactions", "color": "#00f0ff"}
+        ],
+        "lang": "sql",
+        "codeA": "SELECT customer_id, amount FROM jan_sales\nUNION\nSELECT customer_id, amount FROM feb_sales",
+        "codeB": "SELECT customer_id, amount FROM jan_sales\nUNION ALL\nSELECT customer_id, amount FROM feb_sales",
+        "pollInstr": "DROP YOUR VOTE IN COMMENTS 👇",
+        "clockSfx": "bomb",
+        "ccStyle": "hormozi",
+        "ccEnabled": True,
+        "voice": "en-US-AndrewNeural",
+        "voiceScript": "Finance report is missing revenue!\nWhich query keeps identical sales transactions across both months?\nChoose your answer.\nOption A...\nor Option B?\nDrop your vote in the comments below.",
+        "caption": "UNION DEDUPLICATION TRAP ⚡💣\nWhich query keeps identical sales transactions across both months?\n\nDid plain UNION accidentally delete duplicate payments? \n\nDrop your vote (A or B) below 👇\n\n\nPractice Data Skills \n👉 Day 1 & Day 2 are 100% FREE\n🔗 Link in bio / manodemy.com/q15\n\n#sql #sqlinterview #sqltips #dataanalytics #dataengineer #datascience #dataanalyst #sqlquery #faang #techinterview #codinginterview #learnsql #database #manodemy #dataanalysis",
+        "pinnedAnswer": "Option A is the trap ❌ | Option B is correct ✅\n\nWhy Option A deletes revenue:\nPlain `UNION` automatically runs an expensive DISTINCT sort across all columns.\nIf a customer made a $100 payment in Jan and another $100 payment in Feb, Option A deletes the 2nd transaction as a duplicate, underreporting total company revenue!\n\nOption B (`UNION ALL`) keeps all records intact and runs 5x faster with zero sorting overhead!\n\n💡 Rule of thumb: Always default to UNION ALL unless you explicitly need duplicate removal!\n\nDid you vote A or B? 👇",
+        "link": "https://www.manodemy.com/q15"
     }
 }
 

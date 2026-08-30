@@ -1,0 +1,432 @@
+{
+  "reelNo": "SQL-08-R1",
+  "day": "DAY 08",
+  "badge": "SQL · Error Handling & NULLIF",
+  "videoFile": "SQL-08-R1.mp4",
+  "videoPath": "D:\\Learn Python in 60days\\Manodemy_Web_V2\\marketing\\output\\video\\SQL-08-R1.mp4",
+  "coverFile": "SQL-08-R1_Cover.png",
+  "coverJpg": "SQL-08-R1_Cover.jpg",
+  "fileSizeMb": 3.72,
+  "resolution": "1080x1920",
+  "fps": 24,
+  "durationSec": 17.0,
+  "caption": "DIVISION BY ZERO TRAP 💥💀\nWhich query prevents a store with 0 orders from crashing the entire pipeline?\n\nCan you spot the SQL function that saves production? \n\nDrop your vote (A or B) below 👇\n\n\nPractice Data Skills \n👉 Day 1 & Day 2 are 100% FREE\n🔗 Link in bio / manodemy.com/q14\n\n#sql #sqlinterview #sqltips #dataanalytics #dataengineer #datascience #dataanalyst #sqlquery #faang #techinterview #codinginterview #learnsql #database #manodemy #dataanalysis",
+  "pinnedAnswer": "Option A is the trap ❌ | Option B is correct ✅\n\nWhy Option A crashes production:\nWhen a newly opened store or inactive user has `total_orders = 0`, Option A attempts `revenue / 0` which throws a fatal `division by zero` runtime exception, killing your entire ETL / dashboard pipeline!\n\nOption B uses `NULLIF(total_orders, 0)`.\nIf total_orders is 0, NULLIF turns it into NULL. In SQL, any number divided by NULL safely returns NULL without crashing!\n\n💡 Rule of thumb: Always wrap division denominators in NULLIF(col, 0)!\n\nDid you vote A or B? 👇",
+  "simulatorLink": "https://www.manodemy.com/q14",
+  "cues": {
+    "t_hook_start": 0,
+    "t_line2_start": 4920,
+    "t_clock_in": 8060,
+    "t_opta": 9700,
+    "t_optb": 11780,
+    "t_optb_end": 13870,
+    "t_clock_out": 14020,
+    "t_cta_start": 14020,
+    "t_voice_end": 15600,
+    "totalMs": 17000,
+    "clockDurationMs": 5960,
+    "wordCues": [
+      {
+        "word": "Production",
+        "startMs": 0,
+        "endMs": 420
+      },
+      {
+        "word": "alert!",
+        "startMs": 420,
+        "endMs": 740
+      },
+      {
+        "word": "A",
+        "startMs": 1200,
+        "endMs": 1300
+      },
+      {
+        "word": "store",
+        "startMs": 1300,
+        "endMs": 1540
+      },
+      {
+        "word": "with",
+        "startMs": 1540,
+        "endMs": 1760
+      },
+      {
+        "word": "zero",
+        "startMs": 1760,
+        "endMs": 2080
+      },
+      {
+        "word": "orders",
+        "startMs": 2080,
+        "endMs": 2400
+      },
+      {
+        "word": "crashed",
+        "startMs": 2400,
+        "endMs": 2760
+      },
+      {
+        "word": "the",
+        "startMs": 2760,
+        "endMs": 3040
+      },
+      {
+        "word": "entire",
+        "startMs": 3040,
+        "endMs": 3500
+      },
+      {
+        "word": "dashboard",
+        "startMs": 3500,
+        "endMs": 3960
+      },
+      {
+        "word": "pipeline!",
+        "startMs": 3960,
+        "endMs": 4520
+      },
+      {
+        "word": "Which",
+        "startMs": 4920,
+        "endMs": 5220
+      },
+      {
+        "word": "query",
+        "startMs": 5220,
+        "endMs": 5520
+      },
+      {
+        "word": "prevents",
+        "startMs": 5520,
+        "endMs": 5880
+      },
+      {
+        "word": "the",
+        "startMs": 5880,
+        "endMs": 6080
+      },
+      {
+        "word": "division",
+        "startMs": 6080,
+        "endMs": 6460
+      },
+      {
+        "word": "by",
+        "startMs": 6460,
+        "endMs": 6820
+      },
+      {
+        "word": "zero",
+        "startMs": 6820,
+        "endMs": 7080
+      },
+      {
+        "word": "crash?",
+        "startMs": 7080,
+        "endMs": 7460
+      },
+      {
+        "word": "Choose",
+        "startMs": 8060,
+        "endMs": 8300
+      },
+      {
+        "word": "your",
+        "startMs": 8300,
+        "endMs": 8480
+      },
+      {
+        "word": "answer...",
+        "startMs": 8480,
+        "endMs": 8740
+      },
+      {
+        "word": "Option",
+        "startMs": 9700,
+        "endMs": 10160
+      },
+      {
+        "word": "A...",
+        "startMs": 10160,
+        "endMs": 10440
+      },
+      {
+        "word": "or",
+        "startMs": 11780,
+        "endMs": 12080
+      },
+      {
+        "word": "Option",
+        "startMs": 12080,
+        "endMs": 12260
+      },
+      {
+        "word": "B?",
+        "startMs": 12260,
+        "endMs": 12320
+      },
+      {
+        "word": "Drop",
+        "startMs": 14020,
+        "endMs": 14160
+      },
+      {
+        "word": "your",
+        "startMs": 14160,
+        "endMs": 14340
+      },
+      {
+        "word": "vote",
+        "startMs": 14340,
+        "endMs": 14580
+      },
+      {
+        "word": "in",
+        "startMs": 14580,
+        "endMs": 14800
+      },
+      {
+        "word": "the",
+        "startMs": 14800,
+        "endMs": 14880
+      },
+      {
+        "word": "comments",
+        "startMs": 14880,
+        "endMs": 15180
+      },
+      {
+        "word": "below.",
+        "startMs": 15180,
+        "endMs": 15500
+      }
+    ],
+    "phrases": [
+      {
+        "index": 0,
+        "text": "Production alert! A store with zero orders crashed the entire dashboard pipeline!",
+        "startMs": 0,
+        "endMs": 4920,
+        "words": [
+          {
+            "word": "Production",
+            "startMs": 0,
+            "endMs": 420
+          },
+          {
+            "word": "alert!",
+            "startMs": 420,
+            "endMs": 740
+          },
+          {
+            "word": "A",
+            "startMs": 1200,
+            "endMs": 1300
+          },
+          {
+            "word": "store",
+            "startMs": 1300,
+            "endMs": 1540
+          },
+          {
+            "word": "with",
+            "startMs": 1540,
+            "endMs": 1760
+          },
+          {
+            "word": "zero",
+            "startMs": 1760,
+            "endMs": 2080
+          },
+          {
+            "word": "orders",
+            "startMs": 2080,
+            "endMs": 2400
+          },
+          {
+            "word": "crashed",
+            "startMs": 2400,
+            "endMs": 2760
+          },
+          {
+            "word": "the",
+            "startMs": 2760,
+            "endMs": 3040
+          },
+          {
+            "word": "entire",
+            "startMs": 3040,
+            "endMs": 3500
+          },
+          {
+            "word": "dashboard",
+            "startMs": 3500,
+            "endMs": 3960
+          },
+          {
+            "word": "pipeline!",
+            "startMs": 3960,
+            "endMs": 4520
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "text": "Which query prevents the division by zero crash?",
+        "startMs": 4920,
+        "endMs": 8060,
+        "words": [
+          {
+            "word": "Which",
+            "startMs": 4920,
+            "endMs": 5220
+          },
+          {
+            "word": "query",
+            "startMs": 5220,
+            "endMs": 5520
+          },
+          {
+            "word": "prevents",
+            "startMs": 5520,
+            "endMs": 5880
+          },
+          {
+            "word": "the",
+            "startMs": 5880,
+            "endMs": 6080
+          },
+          {
+            "word": "division",
+            "startMs": 6080,
+            "endMs": 6460
+          },
+          {
+            "word": "by",
+            "startMs": 6460,
+            "endMs": 6820
+          },
+          {
+            "word": "zero",
+            "startMs": 6820,
+            "endMs": 7080
+          },
+          {
+            "word": "crash?",
+            "startMs": 7080,
+            "endMs": 7460
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "text": "Choose your answer...",
+        "startMs": 8060,
+        "endMs": 9700,
+        "words": [
+          {
+            "word": "Choose",
+            "startMs": 8060,
+            "endMs": 8300
+          },
+          {
+            "word": "your",
+            "startMs": 8300,
+            "endMs": 8480
+          },
+          {
+            "word": "answer...",
+            "startMs": 8480,
+            "endMs": 8740
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "text": "Option A...",
+        "startMs": 9700,
+        "endMs": 11780,
+        "words": [
+          {
+            "word": "Option",
+            "startMs": 9700,
+            "endMs": 10160
+          },
+          {
+            "word": "A...",
+            "startMs": 10160,
+            "endMs": 10440
+          }
+        ]
+      },
+      {
+        "index": 4,
+        "text": "or Option B?",
+        "startMs": 11780,
+        "endMs": 13870,
+        "words": [
+          {
+            "word": "or",
+            "startMs": 11780,
+            "endMs": 12080
+          },
+          {
+            "word": "Option",
+            "startMs": 12080,
+            "endMs": 12260
+          },
+          {
+            "word": "B?",
+            "startMs": 12260,
+            "endMs": 12320
+          }
+        ]
+      },
+      {
+        "index": 5,
+        "text": "Drop your vote in the comments below.",
+        "startMs": 14020,
+        "endMs": 15600,
+        "words": [
+          {
+            "word": "Drop",
+            "startMs": 14020,
+            "endMs": 14160
+          },
+          {
+            "word": "your",
+            "startMs": 14160,
+            "endMs": 14340
+          },
+          {
+            "word": "vote",
+            "startMs": 14340,
+            "endMs": 14580
+          },
+          {
+            "word": "in",
+            "startMs": 14580,
+            "endMs": 14800
+          },
+          {
+            "word": "the",
+            "startMs": 14800,
+            "endMs": 14880
+          },
+          {
+            "word": "comments",
+            "startMs": 14880,
+            "endMs": 15180
+          },
+          {
+            "word": "below.",
+            "startMs": 15180,
+            "endMs": 15500
+          }
+        ]
+      }
+    ]
+  },
+  "generatedAt": "2026-08-31 01:22:33"
+}

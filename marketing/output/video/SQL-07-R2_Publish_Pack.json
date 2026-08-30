@@ -1,0 +1,392 @@
+{
+  "reelNo": "SQL-07-R2",
+  "day": "DAY 07",
+  "badge": "SQL · Window Functions & Ranking",
+  "videoFile": "SQL-07-R2.mp4",
+  "videoPath": "D:\\Learn Python in 60days\\Manodemy_Web_V2\\marketing\\output\\video\\SQL-07-R2.mp4",
+  "coverFile": "SQL-07-R2_Cover.png",
+  "coverJpg": "SQL-07-R2_Cover.jpg",
+  "fileSizeMb": 3.75,
+  "resolution": "1080x1920",
+  "fps": 24,
+  "durationSec": 15.96,
+  "caption": "SALARY TIE GAP TRAP 🥈⚔️\nWhich ranking function avoids skipping 2nd place when salaries tie?\n\nCan you spot the difference between RANK and DENSE_RANK? \n\nDrop your vote (A or B) below 👇\n\n\nPractice Data Skills \n👉 Day 1 & Day 2 are 100% FREE\n🔗 Link in bio / manodemy.com/q13\n\n#sql #sqlinterview #sqltips #dataanalytics #dataengineer #datascience #dataanalyst #sqlquery #faang #techinterview #codinginterview #learnsql #database #manodemy #dataanalysis",
+  "pinnedAnswer": "Option A is the trap ❌ | Option B is correct ✅\n\nWhy Option A creates gaps:\nWhen two employees tie for 1st place (1, 1), `RANK()` skips rank 2 and assigns 3 to the next person!\n`DENSE_RANK()` keeps rank numbering continuous (1, 1, 2) without leaving any gaps!\n\n💡 Rule of thumb: If you need top N without skipping ranks, always use DENSE_RANK()!\n\nDid you vote A or B? 👇",
+  "simulatorLink": "https://www.manodemy.com/q13",
+  "cues": {
+    "t_hook_start": 0,
+    "t_line2_start": 5340,
+    "t_clock_in": 6940,
+    "t_opta": 9120,
+    "t_optb": 10760,
+    "t_optb_end": 12590,
+    "t_clock_out": 12740,
+    "t_cta_start": 12740,
+    "t_voice_end": 14560,
+    "totalMs": 15960,
+    "clockDurationMs": 5800,
+    "wordCues": [
+      {
+        "word": "Two",
+        "startMs": 0,
+        "endMs": 260
+      },
+      {
+        "word": "employees",
+        "startMs": 260,
+        "endMs": 700
+      },
+      {
+        "word": "share",
+        "startMs": 700,
+        "endMs": 1120
+      },
+      {
+        "word": "the",
+        "startMs": 1120,
+        "endMs": 1280
+      },
+      {
+        "word": "top",
+        "startMs": 1280,
+        "endMs": 1480
+      },
+      {
+        "word": "salary!",
+        "startMs": 1480,
+        "endMs": 1860
+      },
+      {
+        "word": "Which",
+        "startMs": 2260,
+        "endMs": 2540
+      },
+      {
+        "word": "query",
+        "startMs": 2540,
+        "endMs": 2820
+      },
+      {
+        "word": "keeps",
+        "startMs": 2820,
+        "endMs": 3180
+      },
+      {
+        "word": "ranks",
+        "startMs": 3180,
+        "endMs": 3420
+      },
+      {
+        "word": "continuous",
+        "startMs": 3420,
+        "endMs": 4040
+      },
+      {
+        "word": "without",
+        "startMs": 4040,
+        "endMs": 4440
+      },
+      {
+        "word": "skipping?",
+        "startMs": 4440,
+        "endMs": 4760
+      },
+      {
+        "word": "Choose",
+        "startMs": 5340,
+        "endMs": 5480
+      },
+      {
+        "word": "your",
+        "startMs": 5480,
+        "endMs": 5660
+      },
+      {
+        "word": "answer.",
+        "startMs": 5660,
+        "endMs": 5920
+      },
+      {
+        "word": "Choose",
+        "startMs": 6940,
+        "endMs": 7360
+      },
+      {
+        "word": "your",
+        "startMs": 7360,
+        "endMs": 7620
+      },
+      {
+        "word": "answer...",
+        "startMs": 8480,
+        "endMs": 9120
+      },
+      {
+        "word": "Option",
+        "startMs": 9120,
+        "endMs": 9400
+      },
+      {
+        "word": "A...",
+        "startMs": 10120,
+        "endMs": 10760
+      },
+      {
+        "word": "or",
+        "startMs": 10760,
+        "endMs": 11040
+      },
+      {
+        "word": "Option",
+        "startMs": 11040,
+        "endMs": 11220
+      },
+      {
+        "word": "B?",
+        "startMs": 11220,
+        "endMs": 11280
+      },
+      {
+        "word": "Drop",
+        "startMs": 12740,
+        "endMs": 13140
+      },
+      {
+        "word": "your",
+        "startMs": 13140,
+        "endMs": 13320
+      },
+      {
+        "word": "vote",
+        "startMs": 13320,
+        "endMs": 13560
+      },
+      {
+        "word": "in",
+        "startMs": 13560,
+        "endMs": 13760
+      },
+      {
+        "word": "the",
+        "startMs": 13760,
+        "endMs": 13860
+      },
+      {
+        "word": "comments",
+        "startMs": 13860,
+        "endMs": 14140
+      },
+      {
+        "word": "below.",
+        "startMs": 14140,
+        "endMs": 14460
+      }
+    ],
+    "phrases": [
+      {
+        "index": 0,
+        "text": "Two employees share the top salary! Which query keeps ranks continuous without skipping?",
+        "startMs": 0,
+        "endMs": 5340,
+        "words": [
+          {
+            "word": "Two",
+            "startMs": 0,
+            "endMs": 260
+          },
+          {
+            "word": "employees",
+            "startMs": 260,
+            "endMs": 700
+          },
+          {
+            "word": "share",
+            "startMs": 700,
+            "endMs": 1120
+          },
+          {
+            "word": "the",
+            "startMs": 1120,
+            "endMs": 1280
+          },
+          {
+            "word": "top",
+            "startMs": 1280,
+            "endMs": 1480
+          },
+          {
+            "word": "salary!",
+            "startMs": 1480,
+            "endMs": 1860
+          },
+          {
+            "word": "Which",
+            "startMs": 2260,
+            "endMs": 2540
+          },
+          {
+            "word": "query",
+            "startMs": 2540,
+            "endMs": 2820
+          },
+          {
+            "word": "keeps",
+            "startMs": 2820,
+            "endMs": 3180
+          },
+          {
+            "word": "ranks",
+            "startMs": 3180,
+            "endMs": 3420
+          },
+          {
+            "word": "continuous",
+            "startMs": 3420,
+            "endMs": 4040
+          },
+          {
+            "word": "without",
+            "startMs": 4040,
+            "endMs": 4440
+          },
+          {
+            "word": "skipping?",
+            "startMs": 4440,
+            "endMs": 4760
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "text": "Choose your answer.",
+        "startMs": 5340,
+        "endMs": 6940,
+        "words": [
+          {
+            "word": "Choose",
+            "startMs": 5340,
+            "endMs": 5480
+          },
+          {
+            "word": "your",
+            "startMs": 5480,
+            "endMs": 5660
+          },
+          {
+            "word": "answer.",
+            "startMs": 5660,
+            "endMs": 5920
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "text": "Choose your answer...",
+        "startMs": 6940,
+        "endMs": 9120,
+        "words": [
+          {
+            "word": "Choose",
+            "startMs": 6940,
+            "endMs": 7360
+          },
+          {
+            "word": "your",
+            "startMs": 7360,
+            "endMs": 7620
+          },
+          {
+            "word": "answer...",
+            "startMs": 8480,
+            "endMs": 9120
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "text": "Option A...",
+        "startMs": 9120,
+        "endMs": 10760,
+        "words": [
+          {
+            "word": "Option",
+            "startMs": 9120,
+            "endMs": 9400
+          },
+          {
+            "word": "A...",
+            "startMs": 10120,
+            "endMs": 10760
+          }
+        ]
+      },
+      {
+        "index": 4,
+        "text": "or Option B?",
+        "startMs": 10760,
+        "endMs": 12590,
+        "words": [
+          {
+            "word": "or",
+            "startMs": 10760,
+            "endMs": 11040
+          },
+          {
+            "word": "Option",
+            "startMs": 11040,
+            "endMs": 11220
+          },
+          {
+            "word": "B?",
+            "startMs": 11220,
+            "endMs": 11280
+          }
+        ]
+      },
+      {
+        "index": 5,
+        "text": "Drop your vote in the comments below.",
+        "startMs": 12740,
+        "endMs": 14560,
+        "words": [
+          {
+            "word": "Drop",
+            "startMs": 12740,
+            "endMs": 13140
+          },
+          {
+            "word": "your",
+            "startMs": 13140,
+            "endMs": 13320
+          },
+          {
+            "word": "vote",
+            "startMs": 13320,
+            "endMs": 13560
+          },
+          {
+            "word": "in",
+            "startMs": 13560,
+            "endMs": 13760
+          },
+          {
+            "word": "the",
+            "startMs": 13760,
+            "endMs": 13860
+          },
+          {
+            "word": "comments",
+            "startMs": 13860,
+            "endMs": 14140
+          },
+          {
+            "word": "below.",
+            "startMs": 14140,
+            "endMs": 14460
+          }
+        ]
+      }
+    ]
+  },
+  "generatedAt": "2026-08-31 01:05:58"
+}

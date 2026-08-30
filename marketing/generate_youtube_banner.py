@@ -54,34 +54,35 @@ def create_ultra_banner():
     font_tag = ImageFont.truetype(f_segoe, 23)
     font_url = ImageFont.truetype(f_bold, 28)
 
-    # 3. Process Emblem (Extract only the 3D Keycap Emblem)
-    logo_path = Path(r"D:\Learn Python in 60days\Manodemy_Web_V2\marketing\assets\logo.png")
+    # 3. Process Emblem (Load the new Ultra HD 3D Keycap Logo)
+    logo_path = Path(r"D:\Learn Python in 60days\Manodemy_Web_V2\marketing\assets\manodemy_3d_keycap_logo_hd.png")
+    if not logo_path.exists():
+        logo_path = Path(r"D:\Learn Python in 60days\Manodemy_Web_V2\marketing\assets\logo.png")
+
     if logo_path.exists():
         raw_logo = Image.open(logo_path).convert("RGBA")
-        # Crop the left emblem (the 3D keyboard keycap)
-        # raw logo size is roughly 500x500
-        w_raw, h_raw = raw_logo.size
-        # Crop ONLY the keycap emblem tightly (0 to 0.30 of width)
-        emblem_crop = raw_logo.crop((0, int(h_raw * 0.12), int(w_raw * 0.28), int(h_raw * 0.88)))
+        target_h = 260
+        target_w = 260
+        emblem_img = raw_logo.resize((target_w, target_h), Image.Resampling.LANCZOS)
         
-        target_h = 240
-        aspect = emblem_crop.width / emblem_crop.height
-        target_w = int(target_h * aspect)
-        emblem_img = emblem_crop.resize((target_w, target_h), Image.Resampling.LANCZOS)
+        # Make circular / rounded with smooth mask
+        mask = Image.new('L', (target_w, target_h), 0)
+        mask_draw = ImageDraw.Draw(mask)
+        mask_draw.rounded_rectangle([0, 0, target_w, target_h], radius=32, fill=255)
         
-        lx = safe_left + 90
-        ly = safe_top + (423 - target_h) // 2 - 5
+        lx = safe_left + 70
+        ly = safe_top + (423 - target_h) // 2
         
         # Emblem ambient aura
         emblem_glow = Image.new("RGBA", (width, height), (0, 0, 0, 0))
         eg_draw = ImageDraw.Draw(emblem_glow)
-        for r in range(140, 0, -8):
-            alpha = int(70 * (1 - r / 140))
+        for r in range(160, 0, -8):
+            alpha = int(75 * (1 - r / 160))
             eg_draw.ellipse([lx + target_w//2 - r, ly + target_h//2 - r, lx + target_w//2 + r, ly + target_h//2 + r], fill=(0, 230, 246, alpha))
         img = Image.alpha_composite(img, emblem_glow)
-        img.paste(emblem_img, (lx, ly), emblem_img)
+        img.paste(emblem_img, (lx, ly), mask)
         
-        text_start_x = lx + target_w + 55
+        text_start_x = lx + target_w + 50
     else:
         text_start_x = safe_left + 120
 

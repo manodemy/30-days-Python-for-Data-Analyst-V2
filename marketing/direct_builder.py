@@ -502,27 +502,27 @@ REELS_CATALOG = {
     "SQL-08-R1": {
         "reelNo": "SQL-08-R1",
         "day": "DAY 08",
-        "badge": "SQL · Error Handling & NULLIF",
-        "hook": "DIVISION BY ZERO TRAP 💥\nWhich query prevents a 2 AM database crash?",
+        "badge": "SQL · Pattern Matching & Wildcards",
+        "hook": "LIKE WILDCARD TRAP 🔍\nWhich query finds codes with literal 50% discount?",
         "hookLineObjects": [
-            {"text": "DIVISION BY ZERO TRAP 💥", "font": "Plus Jakarta Sans", "size": 4.9},
-            {"text": "Which query prevents a 2 AM database crash?", "font": "Outfit", "size": 3.9}
+            {"text": "LIKE WILDCARD TRAP 🔍", "font": "Plus Jakarta Sans", "size": 4.9},
+            {"text": "Which query finds codes with literal 50% discount?", "font": "Outfit", "size": 3.7}
         ],
         "hookHighlights": [
-            {"text": "DIVISION BY ZERO", "color": "#facc15"},
-            {"text": "prevents a 2 AM", "color": "#00f0ff"}
+            {"text": "LIKE WILDCARD", "color": "#facc15"},
+            {"text": "literal 50% discount", "color": "#00f0ff"}
         ],
         "lang": "sql",
-        "codeA": "SELECT store_id,\n       total_revenue / total_orders AS avg_order_val\nFROM daily_metrics",
-        "codeB": "SELECT store_id,\n       total_revenue / NULLIF(total_orders, 0) AS avg_order_val\nFROM daily_metrics",
+        "codeA": "SELECT promo_code\nFROM coupons\nWHERE promo_code LIKE '%50%%'",
+        "codeB": "SELECT promo_code\nFROM coupons\nWHERE promo_code LIKE '%50\\%%' ESCAPE '\\'",
         "pollInstr": "DROP YOUR VOTE IN COMMENTS 👇",
         "clockSfx": "bomb",
         "ccStyle": "hormozi",
         "ccEnabled": True,
         "voice": "en-US-AndrewNeural",
-        "voiceScript": "Production alert! A store with zero orders crashed the entire dashboard pipeline!\nWhich query prevents the division by zero crash?\nChoose your answer.\nOption A...\nor Option B?\nDrop your vote in the comments below.",
-        "caption": "DIVISION BY ZERO TRAP 💥💀\nWhich query prevents a store with 0 orders from crashing the entire pipeline?\n\nCan you spot the SQL function that saves production? \n\nDrop your vote (A or B) below 👇\n\n\nPractice Data Skills \n👉 Day 1 & Day 2 are 100% FREE\n🔗 Link in bio / manodemy.com/q14\n\n#sql #sqlinterview #sqltips #dataanalytics #dataengineer #datascience #dataanalyst #sqlquery #faang #techinterview #codinginterview #learnsql #database #manodemy #dataanalysis",
-        "pinnedAnswer": "Option A is the trap ❌ | Option B is correct ✅\n\nWhy Option A crashes production:\nWhen a newly opened store or inactive user has `total_orders = 0`, Option A attempts `revenue / 0` which throws a fatal `division by zero` runtime exception, killing your entire ETL / dashboard pipeline!\n\nOption B uses `NULLIF(total_orders, 0)`.\nIf total_orders is 0, NULLIF turns it into NULL. In SQL, any number divided by NULL safely returns NULL without crashing!\n\n💡 Rule of thumb: Always wrap division denominators in NULLIF(col, 0)!\n\nDid you vote A or B? 👇",
+        "voiceScript": "Marketing alert! Find all coupon codes with a literal fifty percent discount!\nWhich query searches for the percent symbol without matching everything?\nChoose your answer.\nOption A...\nor Option B?\nDrop your vote in the comments below.",
+        "caption": "LIKE WILDCARD TRAP 🔍💥\nWhich query finds promo codes with a literal '50%' discount?\n\nDid Option A accidentally match '500_FLAT' and '50_OFF'? \n\nDrop your vote (A or B) below 👇\n\n\nPractice Data Skills \n👉 Day 1 & Day 2 are 100% FREE\n🔗 Link in bio / manodemy.com/q14\n\n#sql #sqlinterview #sqltips #dataanalytics #dataengineer #datascience #dataanalyst #sqlquery #faang #techinterview #codinginterview #learnsql #database #manodemy #dataanalysis",
+        "pinnedAnswer": "Option A is the trap ❌ | Option B is correct ✅\n\nWhy Option A matches the wrong codes:\nIn SQL `LIKE`, `%` is a special wildcard that matches ANY sequence of zero or more characters.\nOption A (`'%50%%'`) matches anything starting or containing '50' followed by any characters — accidentally matching `500_FLAT`, `50_SPECIAL`, and `5099_DEAL`!\n\nOption B uses `ESCAPE '\\'` which tells SQL that `\\%` is a literal percentage character `%`, matching ONLY codes containing literal 50%!\n\n💡 Rule of thumb: Always use ESCAPE when searching for literal '%' or '_' in SQL LIKE!\n\nDid you vote A or B? 👇",
         "link": "https://www.manodemy.com/q14"
     },
     "SQL-08-R2": {

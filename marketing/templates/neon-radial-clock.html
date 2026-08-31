@@ -790,7 +790,7 @@
     margin-bottom: 0.6cqw;
     opacity: 0;
     transform: translateY(2.0cqw) scale(0.94);
-    transition: opacity 0.35s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    will-change: transform, opacity;
   }
 
   .cc-stage-container.visible{
@@ -1770,7 +1770,6 @@ function renderCC(elapsedMs){
     ccStage.style.display = 'none';
     return;
   }
-  ccStage.style.display = 'flex';
 
   // Apply theme styling
   const styleTheme = currentData.ccStyle || 'hormozi';
@@ -1788,6 +1787,9 @@ function renderCC(elapsedMs){
   // 1. Word highlight tracking
   const activePhrase = cachedCCTimeline.find(p => elapsedMs >= p.startMs && elapsedMs < p.endMs);
   if(activePhrase){
+    ccStage.style.display = 'flex';
+    ccStage.style.opacity = '1';
+    ccStage.style.transform = 'translateY(0) scale(1.0)';
     ccStage.classList.add('visible');
 
     // If new phrase, rebuild DOM
@@ -1810,6 +1812,8 @@ function renderCC(elapsedMs){
     });
   } else {
     if(elapsedMs < t_voice_end){
+      ccStage.style.opacity = '0';
+      ccStage.style.transform = 'translateY(1.0cqw) scale(0.96)';
       ccStage.classList.remove('visible');
     }
   }

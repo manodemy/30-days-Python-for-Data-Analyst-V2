@@ -15,19 +15,19 @@ from pydub import AudioSegment
 from playwright.async_api import async_playwright
 
 # ---------------------------------------------------------------
-# ⚡ WHISPER RESULT CACHE — skip re-transcription on same audio
+# ⚡ WHISPER RESULT CACHE — keyed strictly on exact audio file SHA-256
 # ---------------------------------------------------------------
-def _whisper_cached_transcribe(narration_path: Path, model, reel_no: str, script_text: str) -> dict:
-    """Return cached Whisper result keyed on reel_no + script text (stable across re-runs)."""
+def _whisper_cached_transcribe(narration_path: Path, model, reel_no: str) -> dict:
+    """Return cached Whisper result keyed on exact SHA256 of the audio bytes."""
     cache_dir = narration_path.parent / ".whisper_cache"
     cache_dir.mkdir(exist_ok=True)
-    # Key on script TEXT (stable), NOT audio bytes (Edge-TTS is non-deterministic)
-    text_hash = hashlib.md5((reel_no + script_text).encode('utf-8')).hexdigest()[:14]
-    cache_file = cache_dir / f"{reel_no}_{text_hash}.json"
+    audio_bytes = narration_path.read_bytes()
+    audio_hash = hashlib.sha256(audio_bytes).hexdigest()[:16]
+    cache_file = cache_dir / f"{reel_no}_{audio_hash}.json"
     if cache_file.exists():
-        print("   ✓ Whisper cache HIT — skipping re-transcription (saved ~9s)", flush=True)
+        print("   ✓ Whisper cache HIT (audio exact match) — skipping re-transcription", flush=True)
         return json.loads(cache_file.read_text(encoding='utf-8'))
-    print("   🔄 Whisper cache MISS — running transcription...", flush=True)
+    print("   🔄 Whisper cache MISS — running fresh transcription on CPU...", flush=True)
     result = model.transcribe(str(narration_path), word_timestamps=True)
     cache_file.write_text(
         json.dumps(result, ensure_ascii=False, default=str), encoding='utf-8'
@@ -35,6 +35,25 @@ def _whisper_cached_transcribe(narration_path: Path, model, reel_no: str, script
     return result
 
 import re
+
+NORM_MAP = {
+    "50%": ["fifty", "percent", "50"],
+    "50": ["fifty"],
+    "%": ["percent"],
+    "100%": ["one", "hundred", "percent", "100"],
+    "100": ["one", "hundred"],
+    "10": ["ten"],
+    "20": ["twenty"],
+    "1st": ["first"],
+    "2nd": ["second"],
+    "3rd": ["third"],
+    "&": ["and"],
+    "=": ["equals"],
+    "!=": ["not", "equal"],
+}
+
+def clean_tok(w):
+    return re.sub(r"[^\w%]", "", w.lower().strip())
 
 def align_expected_phrase(expected_text: str, raw_whisper_words: list, phrase_start_ms: int, phrase_end_ms: int) -> list:
     """
@@ -57,90 +76,80 @@ def align_expected_phrase(expected_text: str, raw_whisper_words: list, phrase_st
             for i, w in enumerate(expected_words)
         ]
     
+    # If 1-to-1 length match
+    if len(expected_words) == len(raw_whisper_words):
+        result = []
+        for exp_w, wh in zip(expected_words, raw_whisper_words):
+            result.append({
+                "word": exp_w,
+                "startMs": wh["startMs"],
+                "endMs": max(wh["startMs"] + 80, wh["endMs"])
+            })
+        return result
+
+    # Dynamic length matching
     result = []
     w_idx = 0
     num_exp = len(expected_words)
     num_wh = len(raw_whisper_words)
     
-    for e_i, exp_w in enumerate(expected_words):
-        clean_exp = re.sub(r"[^\w]", "", exp_w.lower())
+    e_idx = 0
+    while e_idx < num_exp:
+        exp_w = expected_words[e_idx]
         
         if w_idx >= num_wh:
             last_end = result[-1]["endMs"] if result else phrase_start_ms
-            rem_words = num_exp - e_i
+            rem_words = num_exp - e_idx
             step = max(100, (phrase_end_ms - last_end) / max(1, rem_words))
             result.append({
                 "word": exp_w,
                 "startMs": round(last_end),
                 "endMs": round(last_end + step)
             })
+            e_idx += 1
             continue
 
         cur_wh = raw_whisper_words[w_idx]
-        clean_wh = re.sub(r"[^\w]", "", cur_wh["word"].lower())
+        c_exp = clean_tok(exp_w)
+        c_wh = clean_tok(cur_wh["word"])
 
-        is_compound = False
-        if clean_exp != clean_wh:
-            remaining_exp = expected_words[e_i:]
-            remaining_wh = raw_whisper_words[w_idx:]
-            
-            if len(remaining_wh) == 1 and len(remaining_exp) > 1:
-                is_compound = True
-                matched_group = remaining_exp
-            elif (clean_exp in clean_wh) or (clean_wh[:4] == clean_exp[:4] and len(clean_wh) > len(clean_exp) + 2):
-                matched_group = [exp_w]
-                temp_i = e_i + 1
-                while temp_i < num_exp and (len(remaining_wh) - 1) < (num_exp - temp_i):
-                    matched_group.append(expected_words[temp_i])
-                    temp_i += 1
-                if len(matched_group) > 1:
-                    is_compound = True
+        if c_exp == c_wh or c_exp in NORM_MAP.get(c_wh, []) or c_wh in NORM_MAP.get(c_exp, []):
+            result.append({
+                "word": exp_w,
+                "startMs": cur_wh["startMs"],
+                "endMs": max(cur_wh["startMs"] + 80, cur_wh["endMs"])
+            })
+            e_idx += 1
+            w_idx += 1
+            continue
 
-            if is_compound:
-                wh_start = cur_wh["startMs"]
-                wh_end = cur_wh["endMs"]
-                wh_dur = wh_end - wh_start
-                total_len = sum(len(w) for w in matched_group)
-                cur_t = wh_start
-                for g_idx, g_w in enumerate(matched_group):
-                    ratio = len(g_w) / max(1, total_len)
-                    g_dur = ratio * wh_dur
-                    result.append({
-                        "word": g_w,
-                        "startMs": round(cur_t),
-                        "endMs": round(cur_t + g_dur)
-                    })
-                    cur_t += g_dur
-                w_idx += 1
+        # Lookahead match up to 3 tokens
+        found_wh = -1
+        for look_w in range(w_idx, min(num_wh, w_idx + 3)):
+            look_c_wh = clean_tok(raw_whisper_words[look_w]["word"])
+            if look_c_wh == c_exp or look_c_wh in NORM_MAP.get(c_exp, []) or c_exp in NORM_MAP.get(look_c_wh, []):
+                found_wh = look_w
                 break
-
-        if clean_wh in clean_exp and clean_exp != clean_wh:
+        
+        if found_wh != -1:
+            wh = raw_whisper_words[found_wh]
+            result.append({
+                "word": exp_w,
+                "startMs": wh["startMs"],
+                "endMs": max(wh["startMs"] + 80, wh["endMs"])
+            })
+            w_idx = found_wh + 1
+            e_idx += 1
+        else:
             wh_start = cur_wh["startMs"]
             wh_end = cur_wh["endMs"]
-            combined = clean_wh
-            temp_w = w_idx + 1
-            while temp_w < num_wh:
-                next_wh = re.sub(r"[^\w]", "", raw_whisper_words[temp_w]["word"].lower())
-                if next_wh and (combined + next_wh) in clean_exp:
-                    combined += next_wh
-                    wh_end = raw_whisper_words[temp_w]["endMs"]
-                    temp_w += 1
-                else:
-                    break
             result.append({
                 "word": exp_w,
                 "startMs": wh_start,
-                "endMs": wh_end
+                "endMs": max(wh_start + 80, wh_end)
             })
-            w_idx = temp_w
-            continue
-
-        result.append({
-            "word": exp_w,
-            "startMs": cur_wh["startMs"],
-            "endMs": cur_wh["endMs"]
-        })
-        w_idx += 1
+            w_idx += 1
+            e_idx += 1
 
     return result
 
@@ -642,9 +651,7 @@ async def build_direct_video(reel=DEFAULT_REEL, is_4k=False, fps=30):
     print("\n📝 [STEP 2/5] Extracting Whisper AI Word Timestamps from Stitched Narration...", flush=True)
     import whisper
     whisper_model = whisper.load_model('base')
-    # Cache key = reel_no + all script text + voiceScript (stable across re-runs)
-    _script_key = reel_no + reel.get("voiceScript", "") + reel.get("hook", "") + reel.get("codeA", "") + reel.get("codeB", "")
-    w_res = _whisper_cached_transcribe(narration_out, whisper_model, reel_no, _script_key)
+    w_res = _whisper_cached_transcribe(narration_out, whisper_model, reel_no)
     w_segs = w_res.get('segments', [])
 
     def extract_words_from_segs(segs):
@@ -660,72 +667,87 @@ async def build_direct_video(reel=DEFAULT_REEL, is_4k=False, fps=30):
                     })
         return extracted
 
-    all_raw_words = extract_words_from_segs(w_segs)
+    if len(w_segs) == 6:
+        seg_words = [extract_words_from_segs([s]) for s in w_segs]
+        t_hook_start = 0
+        t_line2_start = round(w_segs[1]['start'] * 1000)
+        t_clock_in = round(w_segs[2]['start'] * 1000)
+        t_opta = round(w_segs[3]['start'] * 1000)
+        t_optb = round(w_segs[4]['start'] * 1000)
+        t_optb_end = round(w_segs[4]['end'] * 1000)
+        t_cta_start = round(w_segs[5]['start'] * 1000)
+        t_clock_out = t_cta_start
+        t_voice_end = round(w_segs[5]['end'] * 1000) + 50
 
-    # Chunk acoustic timeline offsets
-    c0_start = 0
-    c0_end = dur_hook
-    c1_start = dur_hook
-    c1_end = dur_hook + dur_line2
-    c2_start = c1_end + 20
-    c2_end = c2_start + dur_choose
-    c3_start = c2_end
-    c3_end = c3_start + dur_opta
-    c4_start = c3_end
-    c4_end = c4_start + dur_optb
-    c5_start = c4_end + tension_ms
+        p0_words = align_expected_phrase(hook_text, seg_words[0], t_hook_start, t_line2_start)
+        p1_words = align_expected_phrase(line2_text, seg_words[1], t_line2_start, t_clock_in)
+        p2_words = align_expected_phrase("Choose your answer...", seg_words[2], t_clock_in, t_opta)
+        p3_words = align_expected_phrase("Option A...", seg_words[3], t_opta, t_optb)
+        p4_words = align_expected_phrase("or Option B?", seg_words[4], t_optb, t_optb_end)
+        p5_words = align_expected_phrase(cta_text, seg_words[5], t_cta_start, t_voice_end)
+    else:
+        # Fallback using chunk boundary windows
+        c0_start = 0
+        c0_end = dur_hook
+        c1_start = dur_hook
+        c1_end = dur_hook + dur_line2
+        c2_start = c1_end + 20
+        c2_end = c2_start + dur_choose
+        c3_start = c2_end
+        c3_end = c3_start + dur_opta
+        c4_start = c3_end
+        c4_end = c4_start + dur_optb
+        c5_start = c4_end + tension_ms
 
-    # Find acoustic anchor indices using chunk boundary windows
-    idx_line2 = 0
-    for i, tok in enumerate(all_raw_words):
-        if tok["startMs"] >= c1_start - 120:
-            idx_line2 = i
-            break
-    if idx_line2 == 0:
-        idx_line2 = max(1, min(len(all_raw_words) - 1, len(hook_text.split())))
+        idx_line2 = 0
+        for i, tok in enumerate(all_raw_words):
+            if tok["startMs"] >= c1_start - 120:
+                idx_line2 = i
+                break
+        if idx_line2 == 0:
+            idx_line2 = max(1, min(len(all_raw_words) - 1, len(hook_text.split())))
 
-    idx_choose = idx_line2
-    for i in range(idx_line2, len(all_raw_words)):
-        if all_raw_words[i]["startMs"] >= c2_start - 120:
-            idx_choose = i
-            break
+        idx_choose = idx_line2
+        for i in range(idx_line2, len(all_raw_words)):
+            if all_raw_words[i]["startMs"] >= c2_start - 120:
+                idx_choose = i
+                break
 
-    idx_opta = idx_choose
-    for i in range(idx_choose, len(all_raw_words)):
-        if all_raw_words[i]["startMs"] >= c3_start - 120:
-            idx_opta = i
-            break
+        idx_opta = idx_choose
+        for i in range(idx_choose, len(all_raw_words)):
+            if all_raw_words[i]["startMs"] >= c3_start - 120:
+                idx_opta = i
+                break
 
-    idx_optb = idx_opta + 1
-    for i in range(idx_opta + 1, len(all_raw_words)):
-        if all_raw_words[i]["startMs"] >= c4_start - 120:
-            idx_optb = i
-            break
+        idx_optb = idx_opta + 1
+        for i in range(idx_opta + 1, len(all_raw_words)):
+            if all_raw_words[i]["startMs"] >= c4_start - 120:
+                idx_optb = i
+                break
 
-    idx_cta = idx_optb + 1
-    for i in range(idx_optb + 1, len(all_raw_words)):
-        if all_raw_words[i]["startMs"] >= c5_start - 180:
-            idx_cta = i
-            break
+        idx_cta = idx_optb + 1
+        for i in range(idx_optb + 1, len(all_raw_words)):
+            if all_raw_words[i]["startMs"] >= c5_start - 180:
+                idx_cta = i
+                break
 
-    t_hook_start = 0
-    t_line2_start = all_raw_words[idx_line2]["startMs"] if all_raw_words and idx_line2 < len(all_raw_words) else c1_start
-    t_clock_in = all_raw_words[idx_choose]["startMs"] if all_raw_words and idx_choose < len(all_raw_words) else c2_start
-    t_opta = all_raw_words[idx_opta]["startMs"] if all_raw_words and idx_opta < len(all_raw_words) else c3_start
-    t_optb = all_raw_words[idx_optb]["startMs"] if all_raw_words and idx_optb < len(all_raw_words) else c4_start
-    
-    t_cta_start = all_raw_words[idx_cta]["startMs"] if all_raw_words and idx_cta < len(all_raw_words) else c5_start
-    t_clock_out = t_cta_start
-    t_optb_end = t_clock_out - 150  # Option B stays highlighted throughout Option B + tension beat
-    t_voice_end = all_raw_words[-1]["endMs"] + 100 if all_raw_words else round(len(raw_narration))
+        t_hook_start = 0
+        t_line2_start = all_raw_words[idx_line2]["startMs"] if all_raw_words and idx_line2 < len(all_raw_words) else c1_start
+        t_clock_in = all_raw_words[idx_choose]["startMs"] if all_raw_words and idx_choose < len(all_raw_words) else c2_start
+        t_opta = all_raw_words[idx_opta]["startMs"] if all_raw_words and idx_opta < len(all_raw_words) else c3_start
+        t_optb = all_raw_words[idx_optb]["startMs"] if all_raw_words and idx_optb < len(all_raw_words) else c4_start
+        
+        t_cta_start = all_raw_words[idx_cta]["startMs"] if all_raw_words and idx_cta < len(all_raw_words) else c5_start
+        t_clock_out = t_cta_start
+        t_optb_end = t_clock_out - 150
+        t_voice_end = all_raw_words[-1]["endMs"] + 100 if all_raw_words else round(len(raw_narration))
 
-    # Align clean script words with acoustic timestamps for each phrase:
-    p0_words = align_expected_phrase(hook_text, all_raw_words[:idx_line2], t_hook_start, t_line2_start)
-    p1_words = align_expected_phrase(line2_text, all_raw_words[idx_line2:idx_choose], t_line2_start, t_clock_in)
-    p2_words = align_expected_phrase("Choose your answer...", all_raw_words[idx_choose:idx_opta], t_clock_in, t_opta)
-    p3_words = align_expected_phrase("Option A...", all_raw_words[idx_opta:idx_optb], t_opta, t_optb)
-    p4_words = align_expected_phrase("or Option B?", all_raw_words[idx_optb:idx_cta], t_optb, t_optb_end)
-    p5_words = align_expected_phrase(cta_text, all_raw_words[idx_cta:], t_cta_start, t_voice_end)
+        p0_words = align_expected_phrase(hook_text, all_raw_words[:idx_line2], t_hook_start, t_line2_start)
+        p1_words = align_expected_phrase(line2_text, all_raw_words[idx_line2:idx_choose], t_line2_start, t_clock_in)
+        p2_words = align_expected_phrase("Choose your answer...", all_raw_words[idx_choose:idx_opta], t_clock_in, t_opta)
+        p3_words = align_expected_phrase("Option A...", all_raw_words[idx_opta:idx_optb], t_opta, t_optb)
+        p4_words = align_expected_phrase("or Option B?", all_raw_words[idx_optb:idx_cta], t_optb, t_optb_end)
+        p5_words = align_expected_phrase(cta_text, all_raw_words[idx_cta:], t_cta_start, t_voice_end)
 
     phrases = [
         {"index": 0, "text": hook_text, "startMs": t_hook_start, "endMs": t_line2_start, "words": p0_words},

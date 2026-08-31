@@ -50,16 +50,16 @@ Did you vote A or B? 👇
 
 | Timestamp | Visual Layer / Action | 🎙️ Spoken Voice Narration | 🔊 Acoustic SFX Layer |
 |---|---|---|---|
-| **0.00s – 4.70s** | 🚨 Header: `LIKE WILDCARD TRAP 🔍` | *"Marketing alert! Find all coupon codes with a literal fifty percent discount!"* | Dramatic cyber alert whoosh |
-| **4.70s – 7.10s** | Code A & Code B render in macOS frame | *"Which query searches for the percent symbol without matching everything?"* | Code typewriter click |
-| **7.10s – 9.80s** | Option A (`'%50%%'`) vs Option B (`ESCAPE '\'`) | *"Choose your answer..."* | Duel focus ping |
-| **9.80s – 13.50s** | ⏰ **Animated Clock Ticking Countdown** | *"Option A... or Option B?"* | 💣 **Clock Ticking Bomb SFX + Heartbeat** |
-| **13.50s – 17.42s** | Option B emerald glow + Bottom CTA | *"Drop your vote in the comments below."* | Winner chime ding + Sub-bass sweep |
+| **0.00s – 3.32s** | 🚨 Header: `LIKE WILDCARD TRAP 🔍` | *"How do you search for a literal percent symbol in SQL?"* | Cyber Alert Whoosh + 22% Anthem BGM |
+| **3.32s – 6.84s** | Code A & Code B render in macOS frame | *"Which query finds coupon codes with a true fifty percent discount?"* | Code typewriter clicks |
+| **6.84s – 8.84s** | Duel focus active on Option A vs B | *"Choose your answer..."* | High-tension duel ping |
+| **8.84s – 12.18s** | ⏰ **Animated Clock Ticking Countdown** | *"Option A... or Option B?"* | 💣 **Clock Ticking Bomb SFX + Heartbeat** |
+| **12.18s – 15.46s** | Option B emerald glow + Bottom CTA | *"Drop your vote in the comments below."* | Winner chime ding + Sub-bass sweep |
 
 ---
 
 ## 🎯 Verification Checklist
 
-- [x] **Video:** `marketing/output/video/SQL-08-R1.mp4` (1080x1920 @ 24fps, crisp 320kbps 3-layer audio, 17.42s duration)
+- [x] **Video:** `marketing/output/video/SQL-08-R1.mp4` (1080x1920 @ 24fps, crisp 320kbps 3-layer audio, 15.46s duration)
 - [x] **Cover:** `marketing/output/video/SQL-08-R1_Cover.jpg` (High-CTR macOS IDE Glassmorphism)
 - [x] **Simulator Mapping:** `https://www.manodemy.com/q14` connected in `mano-engine.js`!

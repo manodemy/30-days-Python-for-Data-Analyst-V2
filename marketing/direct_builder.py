@@ -520,7 +520,7 @@ REELS_CATALOG = {
         "ccStyle": "hormozi",
         "ccEnabled": True,
         "voice": "en-US-AndrewNeural",
-        "voiceScript": "Marketing alert! Find all coupon codes with a literal fifty percent discount!\nWhich query searches for the percent symbol without matching everything?\nChoose your answer.\nOption A...\nor Option B?\nDrop your vote in the comments below.",
+        "voiceScript": "How do you search for a literal percent symbol in SQL?\nWhich query finds coupon codes with a true fifty percent discount?\nChoose your answer.\nOption A...\nor Option B?\nDrop your vote in the comments below.",
         "caption": "LIKE WILDCARD TRAP 🔍💥\nWhich query finds promo codes with a literal '50%' discount?\n\nDid Option A accidentally match '500_FLAT' and '50_OFF'? \n\nDrop your vote (A or B) below 👇\n\n\nPractice Data Skills \n👉 Day 1 & Day 2 are 100% FREE\n🔗 Link in bio / manodemy.com/q14\n\n#sql #sqlinterview #sqltips #dataanalytics #dataengineer #datascience #dataanalyst #sqlquery #faang #techinterview #codinginterview #learnsql #database #manodemy #dataanalysis",
         "pinnedAnswer": "Option A is the trap ❌ | Option B is correct ✅\n\nWhy Option A matches the wrong codes:\nIn SQL `LIKE`, `%` is a special wildcard that matches ANY sequence of zero or more characters.\nOption A (`'%50%%'`) matches anything starting or containing '50' followed by any characters — accidentally matching `500_FLAT`, `50_SPECIAL`, and `5099_DEAL`!\n\nOption B uses `ESCAPE '\\'` which tells SQL that `\\%` is a literal percentage character `%`, matching ONLY codes containing literal 50%!\n\n💡 Rule of thumb: Always use ESCAPE when searching for literal '%' or '_' in SQL LIKE!\n\nDid you vote A or B? 👇",
         "link": "https://www.manodemy.com/q14"

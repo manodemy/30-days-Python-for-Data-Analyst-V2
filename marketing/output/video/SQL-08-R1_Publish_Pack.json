@@ -6,447 +6,447 @@
   "videoPath": "D:\\Learn Python in 60days\\Manodemy_Web_V2\\marketing\\output\\video\\SQL-08-R1.mp4",
   "coverFile": "SQL-08-R1_Cover.png",
   "coverJpg": "SQL-08-R1_Cover.jpg",
-  "fileSizeMb": 3.58,
+  "fileSizeMb": 3.34,
   "resolution": "1080x1920",
   "fps": 24,
-  "durationSec": 17.46,
+  "durationSec": 15.5,
   "caption": "LIKE WILDCARD TRAP 🔍💥\nWhich query finds promo codes with a literal '50%' discount?\n\nDid Option A accidentally match '500_FLAT' and '50_OFF'? \n\nDrop your vote (A or B) below 👇\n\n\nPractice Data Skills \n👉 Day 1 & Day 2 are 100% FREE\n🔗 Link in bio / manodemy.com/q14\n\n#sql #sqlinterview #sqltips #dataanalytics #dataengineer #datascience #dataanalyst #sqlquery #faang #techinterview #codinginterview #learnsql #database #manodemy #dataanalysis",
   "pinnedAnswer": "Option A is the trap ❌ | Option B is correct ✅\n\nWhy Option A matches the wrong codes:\nIn SQL `LIKE`, `%` is a special wildcard that matches ANY sequence of zero or more characters.\nOption A (`'%50%%'`) matches anything starting or containing '50' followed by any characters — accidentally matching `500_FLAT`, `50_SPECIAL`, and `5099_DEAL`!\n\nOption B uses `ESCAPE '\\'` which tells SQL that `\\%` is a literal percentage character `%`, matching ONLY codes containing literal 50%!\n\n💡 Rule of thumb: Always use ESCAPE when searching for literal '%' or '_' in SQL LIKE!\n\nDid you vote A or B? 👇",
   "simulatorLink": "https://www.manodemy.com/q14",
   "cues": {
     "t_hook_start": 0,
-    "t_line2_start": 4940,
-    "t_clock_in": 8660,
-    "t_opta": 10320,
-    "t_optb": 12260,
-    "t_optb_end": 14230,
-    "t_clock_out": 14380,
-    "t_cta_start": 14380,
-    "t_voice_end": 16060,
-    "totalMs": 17460,
-    "clockDurationMs": 5720,
+    "t_line2_start": 2800,
+    "t_clock_in": 6660,
+    "t_opta": 8220,
+    "t_optb": 10300,
+    "t_optb_end": 12530,
+    "t_clock_out": 12680,
+    "t_cta_start": 12680,
+    "t_voice_end": 14100,
+    "totalMs": 15500,
+    "clockDurationMs": 6020,
     "wordCues": [
       {
-        "word": "Marketing",
+        "word": "How",
         "startMs": 0,
-        "endMs": 400
+        "endMs": 220
       },
       {
-        "word": "alert!",
-        "startMs": 400,
-        "endMs": 720
+        "word": "do",
+        "startMs": 220,
+        "endMs": 300
       },
       {
-        "word": "Find",
-        "startMs": 1300,
-        "endMs": 1480
+        "word": "you",
+        "startMs": 300,
+        "endMs": 380
       },
       {
-        "word": "all",
-        "startMs": 1480,
-        "endMs": 1800
-      },
-      {
-        "word": "coupon",
-        "startMs": 1800,
-        "endMs": 2140
-      },
-      {
-        "word": "codes",
-        "startMs": 2140,
-        "endMs": 2640
-      },
-      {
-        "word": "with",
-        "startMs": 2640,
-        "endMs": 2780
-      },
-      {
-        "word": "a",
-        "startMs": 2780,
-        "endMs": 2880
-      },
-      {
-        "word": "literal",
-        "startMs": 2880,
-        "endMs": 3180
-      },
-      {
-        "word": "fifty",
-        "startMs": 3180,
-        "endMs": 3620
-      },
-      {
-        "word": "percent",
-        "startMs": 3620,
-        "endMs": 4000
-      },
-      {
-        "word": "discount!",
-        "startMs": 4000,
-        "endMs": 4380
-      },
-      {
-        "word": "Which",
-        "startMs": 4940,
-        "endMs": 5160
-      },
-      {
-        "word": "query",
-        "startMs": 5160,
-        "endMs": 5440
-      },
-      {
-        "word": "searches",
-        "startMs": 5440,
-        "endMs": 5860
+        "word": "search",
+        "startMs": 380,
+        "endMs": 580
       },
       {
         "word": "for",
-        "startMs": 5860,
-        "endMs": 6040
+        "startMs": 580,
+        "endMs": 800
       },
       {
-        "word": "the",
-        "startMs": 6040,
-        "endMs": 6160
+        "word": "a",
+        "startMs": 800,
+        "endMs": 900
+      },
+      {
+        "word": "literal",
+        "startMs": 900,
+        "endMs": 1140
       },
       {
         "word": "percent",
-        "startMs": 6160,
-        "endMs": 6420
+        "startMs": 1140,
+        "endMs": 1500
       },
       {
         "word": "symbol",
-        "startMs": 6420,
-        "endMs": 6780
-      },
-      {
-        "word": "without",
-        "startMs": 6780,
-        "endMs": 7280
-      },
-      {
-        "word": "matching",
-        "startMs": 7280,
-        "endMs": 7700
-      },
-      {
-        "word": "everything?",
-        "startMs": 7700,
-        "endMs": 8060
-      },
-      {
-        "word": "Choose",
-        "startMs": 8660,
-        "endMs": 8800
-      },
-      {
-        "word": "your",
-        "startMs": 8800,
-        "endMs": 8960
-      },
-      {
-        "word": "answer...",
-        "startMs": 8960,
-        "endMs": 9220
-      },
-      {
-        "word": "Option",
-        "startMs": 10320,
-        "endMs": 10640
-      },
-      {
-        "word": "A...",
-        "startMs": 10640,
-        "endMs": 10900
-      },
-      {
-        "word": "or",
-        "startMs": 12260,
-        "endMs": 12560
-      },
-      {
-        "word": "Option",
-        "startMs": 12560,
-        "endMs": 12740
-      },
-      {
-        "word": "B?",
-        "startMs": 12740,
-        "endMs": 12800
-      },
-      {
-        "word": "Drop",
-        "startMs": 14380,
-        "endMs": 14640
-      },
-      {
-        "word": "your",
-        "startMs": 14640,
-        "endMs": 14820
-      },
-      {
-        "word": "vote",
-        "startMs": 14820,
-        "endMs": 15060
+        "startMs": 1500,
+        "endMs": 1840
       },
       {
         "word": "in",
-        "startMs": 15060,
-        "endMs": 15280
+        "startMs": 1840,
+        "endMs": 1980
+      },
+      {
+        "word": "SQL?",
+        "startMs": 1980,
+        "endMs": 2260
+      },
+      {
+        "word": "Which",
+        "startMs": 2800,
+        "endMs": 3000
+      },
+      {
+        "word": "query",
+        "startMs": 3000,
+        "endMs": 3240
+      },
+      {
+        "word": "finds",
+        "startMs": 3240,
+        "endMs": 3660
+      },
+      {
+        "word": "coupon",
+        "startMs": 3660,
+        "endMs": 3940
+      },
+      {
+        "word": "codes",
+        "startMs": 3940,
+        "endMs": 4440
+      },
+      {
+        "word": "with",
+        "startMs": 4440,
+        "endMs": 4580
+      },
+      {
+        "word": "a",
+        "startMs": 4580,
+        "endMs": 4700
+      },
+      {
+        "word": "true",
+        "startMs": 4700,
+        "endMs": 4900
+      },
+      {
+        "word": "fifty",
+        "startMs": 4900,
+        "endMs": 5340
+      },
+      {
+        "word": "percent",
+        "startMs": 5340,
+        "endMs": 5640
+      },
+      {
+        "word": "discount?",
+        "startMs": 5640,
+        "endMs": 6020
+      },
+      {
+        "word": "Choose",
+        "startMs": 6660,
+        "endMs": 6820
+      },
+      {
+        "word": "your",
+        "startMs": 6820,
+        "endMs": 7000
+      },
+      {
+        "word": "answer...",
+        "startMs": 7000,
+        "endMs": 7240
+      },
+      {
+        "word": "Option",
+        "startMs": 8220,
+        "endMs": 8680
+      },
+      {
+        "word": "A...",
+        "startMs": 8680,
+        "endMs": 8940
+      },
+      {
+        "word": "or",
+        "startMs": 10300,
+        "endMs": 10580
+      },
+      {
+        "word": "Option",
+        "startMs": 10580,
+        "endMs": 10860
+      },
+      {
+        "word": "B?",
+        "startMs": 12140,
+        "endMs": 12680
+      },
+      {
+        "word": "Drop",
+        "startMs": 12680,
+        "endMs": 12860
+      },
+      {
+        "word": "your",
+        "startMs": 12860,
+        "endMs": 13100
+      },
+      {
+        "word": "vote",
+        "startMs": 13100,
+        "endMs": 13300
+      },
+      {
+        "word": "in",
+        "startMs": 13300,
+        "endMs": 13400
       },
       {
         "word": "the",
-        "startMs": 15280,
-        "endMs": 15360
+        "startMs": 13400,
+        "endMs": 13680
       },
       {
         "word": "comments",
-        "startMs": 15360,
-        "endMs": 15660
+        "startMs": 13680,
+        "endMs": 13863
       },
       {
         "word": "below.",
-        "startMs": 15660,
-        "endMs": 15960
+        "startMs": 13863,
+        "endMs": 14000
       }
     ],
     "phrases": [
       {
         "index": 0,
-        "text": "Marketing alert! Find all coupon codes with a literal fifty percent discount!",
+        "text": "How do you search for a literal percent symbol in SQL?",
         "startMs": 0,
-        "endMs": 4940,
+        "endMs": 2800,
         "words": [
           {
-            "word": "Marketing",
+            "word": "How",
             "startMs": 0,
-            "endMs": 400
+            "endMs": 220
           },
           {
-            "word": "alert!",
-            "startMs": 400,
-            "endMs": 720
+            "word": "do",
+            "startMs": 220,
+            "endMs": 300
           },
           {
-            "word": "Find",
-            "startMs": 1300,
-            "endMs": 1480
+            "word": "you",
+            "startMs": 300,
+            "endMs": 380
           },
           {
-            "word": "all",
-            "startMs": 1480,
-            "endMs": 1800
+            "word": "search",
+            "startMs": 380,
+            "endMs": 580
           },
           {
-            "word": "coupon",
-            "startMs": 1800,
-            "endMs": 2140
-          },
-          {
-            "word": "codes",
-            "startMs": 2140,
-            "endMs": 2640
-          },
-          {
-            "word": "with",
-            "startMs": 2640,
-            "endMs": 2780
+            "word": "for",
+            "startMs": 580,
+            "endMs": 800
           },
           {
             "word": "a",
-            "startMs": 2780,
-            "endMs": 2880
+            "startMs": 800,
+            "endMs": 900
           },
           {
             "word": "literal",
-            "startMs": 2880,
-            "endMs": 3180
-          },
-          {
-            "word": "fifty",
-            "startMs": 3180,
-            "endMs": 3620
+            "startMs": 900,
+            "endMs": 1140
           },
           {
             "word": "percent",
-            "startMs": 3620,
-            "endMs": 4000
+            "startMs": 1140,
+            "endMs": 1500
           },
           {
-            "word": "discount!",
-            "startMs": 4000,
-            "endMs": 4380
+            "word": "symbol",
+            "startMs": 1500,
+            "endMs": 1840
+          },
+          {
+            "word": "in",
+            "startMs": 1840,
+            "endMs": 1980
+          },
+          {
+            "word": "SQL?",
+            "startMs": 1980,
+            "endMs": 2260
           }
         ]
       },
       {
         "index": 1,
-        "text": "Which query searches for the percent symbol without matching everything?",
-        "startMs": 4940,
-        "endMs": 8660,
+        "text": "Which query finds coupon codes with a true fifty percent discount?",
+        "startMs": 2800,
+        "endMs": 6660,
         "words": [
           {
             "word": "Which",
-            "startMs": 4940,
-            "endMs": 5160
+            "startMs": 2800,
+            "endMs": 3000
           },
           {
             "word": "query",
-            "startMs": 5160,
-            "endMs": 5440
+            "startMs": 3000,
+            "endMs": 3240
           },
           {
-            "word": "searches",
-            "startMs": 5440,
-            "endMs": 5860
+            "word": "finds",
+            "startMs": 3240,
+            "endMs": 3660
           },
           {
-            "word": "for",
-            "startMs": 5860,
-            "endMs": 6040
+            "word": "coupon",
+            "startMs": 3660,
+            "endMs": 3940
           },
           {
-            "word": "the",
-            "startMs": 6040,
-            "endMs": 6160
+            "word": "codes",
+            "startMs": 3940,
+            "endMs": 4440
+          },
+          {
+            "word": "with",
+            "startMs": 4440,
+            "endMs": 4580
+          },
+          {
+            "word": "a",
+            "startMs": 4580,
+            "endMs": 4700
+          },
+          {
+            "word": "true",
+            "startMs": 4700,
+            "endMs": 4900
+          },
+          {
+            "word": "fifty",
+            "startMs": 4900,
+            "endMs": 5340
           },
           {
             "word": "percent",
-            "startMs": 6160,
-            "endMs": 6420
+            "startMs": 5340,
+            "endMs": 5640
           },
           {
-            "word": "symbol",
-            "startMs": 6420,
-            "endMs": 6780
-          },
-          {
-            "word": "without",
-            "startMs": 6780,
-            "endMs": 7280
-          },
-          {
-            "word": "matching",
-            "startMs": 7280,
-            "endMs": 7700
-          },
-          {
-            "word": "everything?",
-            "startMs": 7700,
-            "endMs": 8060
+            "word": "discount?",
+            "startMs": 5640,
+            "endMs": 6020
           }
         ]
       },
       {
         "index": 2,
         "text": "Choose your answer...",
-        "startMs": 8660,
-        "endMs": 10320,
+        "startMs": 6660,
+        "endMs": 8220,
         "words": [
           {
             "word": "Choose",
-            "startMs": 8660,
-            "endMs": 8800
+            "startMs": 6660,
+            "endMs": 6820
           },
           {
             "word": "your",
-            "startMs": 8800,
-            "endMs": 8960
+            "startMs": 6820,
+            "endMs": 7000
           },
           {
             "word": "answer...",
-            "startMs": 8960,
-            "endMs": 9220
+            "startMs": 7000,
+            "endMs": 7240
           }
         ]
       },
       {
         "index": 3,
         "text": "Option A...",
-        "startMs": 10320,
-        "endMs": 12260,
+        "startMs": 8220,
+        "endMs": 10300,
         "words": [
           {
             "word": "Option",
-            "startMs": 10320,
-            "endMs": 10640
+            "startMs": 8220,
+            "endMs": 8680
           },
           {
             "word": "A...",
-            "startMs": 10640,
-            "endMs": 10900
+            "startMs": 8680,
+            "endMs": 8940
           }
         ]
       },
       {
         "index": 4,
         "text": "or Option B?",
-        "startMs": 12260,
-        "endMs": 14230,
+        "startMs": 10300,
+        "endMs": 12530,
         "words": [
           {
             "word": "or",
-            "startMs": 12260,
-            "endMs": 12560
+            "startMs": 10300,
+            "endMs": 10580
           },
           {
             "word": "Option",
-            "startMs": 12560,
-            "endMs": 12740
+            "startMs": 10580,
+            "endMs": 10860
           },
           {
             "word": "B?",
-            "startMs": 12740,
-            "endMs": 12800
+            "startMs": 12140,
+            "endMs": 12680
           }
         ]
       },
       {
         "index": 5,
         "text": "Drop your vote in the comments below.",
-        "startMs": 14380,
-        "endMs": 16060,
+        "startMs": 12680,
+        "endMs": 14100,
         "words": [
           {
             "word": "Drop",
-            "startMs": 14380,
-            "endMs": 14640
+            "startMs": 12680,
+            "endMs": 12860
           },
           {
             "word": "your",
-            "startMs": 14640,
-            "endMs": 14820
+            "startMs": 12860,
+            "endMs": 13100
           },
           {
             "word": "vote",
-            "startMs": 14820,
-            "endMs": 15060
+            "startMs": 13100,
+            "endMs": 13300
           },
           {
             "word": "in",
-            "startMs": 15060,
-            "endMs": 15280
+            "startMs": 13300,
+            "endMs": 13400
           },
           {
             "word": "the",
-            "startMs": 15280,
-            "endMs": 15360
+            "startMs": 13400,
+            "endMs": 13680
           },
           {
             "word": "comments",
-            "startMs": 15360,
-            "endMs": 15660
+            "startMs": 13680,
+            "endMs": 13863
           },
           {
             "word": "below.",
-            "startMs": 15660,
-            "endMs": 15960
+            "startMs": 13863,
+            "endMs": 14000
           }
         ]
       }
     ]
   },
-  "generatedAt": "2026-08-31 01:28:08"
+  "generatedAt": "2026-08-31 19:56:53"
 }

@@ -12,7 +12,7 @@
 
 ```text
 LIKE WILDCARD TRAP 🔍💥
-Which query finds promo codes with a literal '50%' discount?
+Which query finds the 50% offer promo code?
 
 Did Option A accidentally match '500_FLAT' and '50_OFF'? 
 
@@ -51,15 +51,16 @@ Did you vote A or B? 👇
 | Timestamp | Visual Layer / Action | 🎙️ Spoken Voice Narration | 🔊 Acoustic SFX Layer |
 |---|---|---|---|
 | **0.00s – 3.32s** | 🚨 Header: `LIKE WILDCARD TRAP 🔍` | *"How do you search for a literal percent symbol in SQL?"* | Cyber Alert Whoosh + 22% Anthem BGM |
-| **3.32s – 6.84s** | Code A & Code B render in macOS frame | *"Which query finds coupon codes with a true fifty percent discount?"* | Code typewriter clicks |
-| **6.84s – 8.84s** | Duel focus active on Option A vs B | *"Choose your answer..."* | High-tension duel ping |
-| **8.84s – 12.18s** | ⏰ **Animated Clock Ticking Countdown** | *"Option A... or Option B?"* | 💣 **Clock Ticking Bomb SFX + Heartbeat** |
-| **12.18s – 15.46s** | Option B emerald glow + Bottom CTA | *"Drop your vote in the comments below."* | Winner chime ding + Sub-bass sweep |
+| **3.32s – 6.20s** | 💻 Sub-headline: `Which query finds the 50% offer promo code?` | *"Which query finds the fifty percent offer promo code?"* | Code typewriter clicks |
+| **6.20s – 8.10s** | ⚡ Duel focus active on Option A vs B | *"Choose your answer..."* | High-tension duel ping |
+| **8.10s – 9.80s** | 🩵 **Card A glows Cyber Cyan:** `LIKE '%50%%'` | *"Option A..."* | Left Channel Accent Ping |
+| **9.80s – 11.50s** | 💜 **Card B glows Neon Pink:** `ESCAPE '\'` | *"or Option B?"* | Right Channel Accent Ping |
+| **11.50s – 14.67s** | 💣 **3-Second Bomb Ticking** + Bottom CTA pill | *"Drop your vote in the comments below."* | ⏰ Clock Ticking SFX ➔ Winner Chime Ding + Sub-Bass Sweep |
 
 ---
 
 ## 🎯 Verification Checklist
 
-- [x] **Video:** `marketing/output/video/SQL-08-R1.mp4` (1080x1920 @ 24fps, crisp 320kbps 3-layer audio, 15.46s duration)
+- [x] **Video:** `marketing/output/video/SQL-08-R1.mp4` (1080x1920 @ 24fps, crisp 320kbps 3-layer audio, 14.67s duration)
 - [x] **Cover:** `marketing/output/video/SQL-08-R1_Cover.jpg` (High-CTR macOS IDE Glassmorphism)
 - [x] **Simulator Mapping:** `https://www.manodemy.com/q14` connected in `mano-engine.js`!

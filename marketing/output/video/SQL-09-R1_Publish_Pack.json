@@ -1,0 +1,392 @@
+{
+  "reelNo": "SQL-09-R1",
+  "day": "DAY 09",
+  "badge": "SQL · CTEs & Window Functions",
+  "videoFile": "SQL-09-R1.mp4",
+  "videoPath": "D:\\Learn Python in 60days\\Manodemy_Web_V2\\marketing\\output\\video\\SQL-09-R1.mp4",
+  "coverFile": "SQL-09-R1_Cover.png",
+  "coverJpg": "SQL-09-R1_Cover.jpg",
+  "fileSizeMb": 4.76,
+  "resolution": "1080x1920",
+  "fps": 24,
+  "durationSec": 15.75,
+  "caption": "LATEST RECORD PER USER 📊⚡\n\nWhich query reliably fetches the latest order per customer?\n\nCan you spot which approach handles duplicate timestamps without returning extra rows?\n\nWhat’s your answer — A or B? 👇\nDrop your choice in the comments before checking the answer!\n\n🧠 Test this SQL interview question live:\n👉 manodemy.com/q16\n\n📊 Practice Data Skills with Manodemy\n🎁 Day 1 & Day 2 are 100% FREE\n\n🔗 Link in bio\n\n[sql interview questions, sql cte, row_number vs group by max, window functions sql, data analyst interview questions, sql query questions, advanced sql, learn sql]\n\n#SQL #SQLInterview #SQLQuestions #SQLTips #DataAnalyst #DataAnalytics #LearnSQL #Manodemy",
+  "pinnedAnswer": "Option A is the Industry Standard ✅ | Option B has a Silent Trap ⚠️\n\nWhy Option A (ROW_NUMBER CTE) is the FAANG standard:\nOption A numbers rows sequentially within each customer group. Even if a customer placed TWO orders with the exact same timestamp, `ROW_NUMBER()` guarantees exactly ONE latest row is returned!\n\nWhy Option B (GROUP BY MAX + JOIN) fails on ties:\nIf a customer has two orders on the same max date, the join matches BOTH rows, returning duplicate orders and inflating downstream revenue metrics!\n\n💡 Rule of thumb: Always use ROW_NUMBER() or QUALIFY to fetch top N / latest records per group!\n\nDid you vote A or B? 👇",
+  "simulatorLink": "https://www.manodemy.com/q16",
+  "cues": {
+    "t_hook_start": 0,
+    "t_line2_start": 3260,
+    "t_clock_in": 6960,
+    "t_opta": 8400,
+    "t_optb": 10020,
+    "t_optb_end": 11120,
+    "t_clock_out": 12600,
+    "t_cta_start": 12600,
+    "t_voice_end": 14350,
+    "totalMs": 15750,
+    "clockDurationMs": 5640,
+    "wordCues": [
+      {
+        "word": "FAANG",
+        "startMs": 0,
+        "endMs": 360
+      },
+      {
+        "word": "interviewers",
+        "startMs": 360,
+        "endMs": 940
+      },
+      {
+        "word": "love",
+        "startMs": 940,
+        "endMs": 1220
+      },
+      {
+        "word": "this",
+        "startMs": 1220,
+        "endMs": 1500
+      },
+      {
+        "word": "data",
+        "startMs": 1500,
+        "endMs": 1820
+      },
+      {
+        "word": "engineering",
+        "startMs": 1820,
+        "endMs": 2260
+      },
+      {
+        "word": "question!",
+        "startMs": 2260,
+        "endMs": 2800
+      },
+      {
+        "word": "Which",
+        "startMs": 3260,
+        "endMs": 3460
+      },
+      {
+        "word": "query",
+        "startMs": 3460,
+        "endMs": 3820
+      },
+      {
+        "word": "reliably",
+        "startMs": 3820,
+        "endMs": 4360
+      },
+      {
+        "word": "fetches",
+        "startMs": 4360,
+        "endMs": 4860
+      },
+      {
+        "word": "the",
+        "startMs": 4860,
+        "endMs": 5060
+      },
+      {
+        "word": "latest",
+        "startMs": 5060,
+        "endMs": 5280
+      },
+      {
+        "word": "transaction",
+        "startMs": 5280,
+        "endMs": 5820
+      },
+      {
+        "word": "per",
+        "startMs": 5820,
+        "endMs": 6100
+      },
+      {
+        "word": "user?",
+        "startMs": 6100,
+        "endMs": 6360
+      },
+      {
+        "word": "Choose",
+        "startMs": 6960,
+        "endMs": 7100
+      },
+      {
+        "word": "your",
+        "startMs": 7100,
+        "endMs": 7280
+      },
+      {
+        "word": "answer...",
+        "startMs": 7280,
+        "endMs": 7520
+      },
+      {
+        "word": "Option",
+        "startMs": 8400,
+        "endMs": 8960
+      },
+      {
+        "word": "A...",
+        "startMs": 8960,
+        "endMs": 9240
+      },
+      {
+        "word": "or",
+        "startMs": 10020,
+        "endMs": 10580
+      },
+      {
+        "word": "Option",
+        "startMs": 10580,
+        "endMs": 10880
+      },
+      {
+        "word": "B?",
+        "startMs": 10880,
+        "endMs": 11120
+      },
+      {
+        "word": "Drop",
+        "startMs": 12600,
+        "endMs": 12960
+      },
+      {
+        "word": "your",
+        "startMs": 12960,
+        "endMs": 13140
+      },
+      {
+        "word": "vote",
+        "startMs": 13140,
+        "endMs": 13380
+      },
+      {
+        "word": "in",
+        "startMs": 13380,
+        "endMs": 13600
+      },
+      {
+        "word": "the",
+        "startMs": 13600,
+        "endMs": 13680
+      },
+      {
+        "word": "comments",
+        "startMs": 13680,
+        "endMs": 13960
+      },
+      {
+        "word": "below.",
+        "startMs": 13960,
+        "endMs": 14300
+      }
+    ],
+    "phrases": [
+      {
+        "index": 0,
+        "text": "FAANG interviewers love this data engineering question!",
+        "startMs": 0,
+        "endMs": 3260,
+        "words": [
+          {
+            "word": "FAANG",
+            "startMs": 0,
+            "endMs": 360
+          },
+          {
+            "word": "interviewers",
+            "startMs": 360,
+            "endMs": 940
+          },
+          {
+            "word": "love",
+            "startMs": 940,
+            "endMs": 1220
+          },
+          {
+            "word": "this",
+            "startMs": 1220,
+            "endMs": 1500
+          },
+          {
+            "word": "data",
+            "startMs": 1500,
+            "endMs": 1820
+          },
+          {
+            "word": "engineering",
+            "startMs": 1820,
+            "endMs": 2260
+          },
+          {
+            "word": "question!",
+            "startMs": 2260,
+            "endMs": 2800
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "text": "Which query reliably fetches the latest transaction per user?",
+        "startMs": 3260,
+        "endMs": 6960,
+        "words": [
+          {
+            "word": "Which",
+            "startMs": 3260,
+            "endMs": 3460
+          },
+          {
+            "word": "query",
+            "startMs": 3460,
+            "endMs": 3820
+          },
+          {
+            "word": "reliably",
+            "startMs": 3820,
+            "endMs": 4360
+          },
+          {
+            "word": "fetches",
+            "startMs": 4360,
+            "endMs": 4860
+          },
+          {
+            "word": "the",
+            "startMs": 4860,
+            "endMs": 5060
+          },
+          {
+            "word": "latest",
+            "startMs": 5060,
+            "endMs": 5280
+          },
+          {
+            "word": "transaction",
+            "startMs": 5280,
+            "endMs": 5820
+          },
+          {
+            "word": "per",
+            "startMs": 5820,
+            "endMs": 6100
+          },
+          {
+            "word": "user?",
+            "startMs": 6100,
+            "endMs": 6360
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "text": "Choose your answer...",
+        "startMs": 6960,
+        "endMs": 8400,
+        "words": [
+          {
+            "word": "Choose",
+            "startMs": 6960,
+            "endMs": 7100
+          },
+          {
+            "word": "your",
+            "startMs": 7100,
+            "endMs": 7280
+          },
+          {
+            "word": "answer...",
+            "startMs": 7280,
+            "endMs": 7520
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "text": "Option A...",
+        "startMs": 8400,
+        "endMs": 10020,
+        "words": [
+          {
+            "word": "Option",
+            "startMs": 8400,
+            "endMs": 8960
+          },
+          {
+            "word": "A...",
+            "startMs": 8960,
+            "endMs": 9240
+          }
+        ]
+      },
+      {
+        "index": 4,
+        "text": "or Option B?",
+        "startMs": 10020,
+        "endMs": 11120,
+        "words": [
+          {
+            "word": "or",
+            "startMs": 10020,
+            "endMs": 10580
+          },
+          {
+            "word": "Option",
+            "startMs": 10580,
+            "endMs": 10880
+          },
+          {
+            "word": "B?",
+            "startMs": 10880,
+            "endMs": 11120
+          }
+        ]
+      },
+      {
+        "index": 5,
+        "text": "Drop your vote in the comments below.",
+        "startMs": 12600,
+        "endMs": 14350,
+        "words": [
+          {
+            "word": "Drop",
+            "startMs": 12600,
+            "endMs": 12960
+          },
+          {
+            "word": "your",
+            "startMs": 12960,
+            "endMs": 13140
+          },
+          {
+            "word": "vote",
+            "startMs": 13140,
+            "endMs": 13380
+          },
+          {
+            "word": "in",
+            "startMs": 13380,
+            "endMs": 13600
+          },
+          {
+            "word": "the",
+            "startMs": 13600,
+            "endMs": 13680
+          },
+          {
+            "word": "comments",
+            "startMs": 13680,
+            "endMs": 13960
+          },
+          {
+            "word": "below.",
+            "startMs": 13960,
+            "endMs": 14300
+          }
+        ]
+      }
+    ]
+  },
+  "generatedAt": "2026-09-01 20:02:11"
+}

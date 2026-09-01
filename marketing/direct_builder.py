@@ -559,6 +559,32 @@ REELS_CATALOG = {
         "caption": "UNION DEDUPLICATION TRAP ⚡💣\n\nWhich query keeps identical sales transactions across both months?\n\nDid plain UNION accidentally delete duplicate payments?\n\nWhat’s your answer — A or B? 👇\nDrop your choice in the comments before checking the answer!\n\n🧠 Test this SQL interview question live:\n👉 manodemy.com/q15\n\n📊 Practice Data Skills with Manodemy\n🎁 Day 1 & Day 2 are 100% FREE\n\n🔗 Link in bio\n\n[sql interview questions, sql union vs union all, set operations, sql query interview, deduplication in sql, data analyst interview questions, sql tips, learn sql]\n\n#SQL #SQLInterview #SQLQuestions #SQLTips #DataAnalyst #DataAnalytics #LearnSQL #Manodemy",
         "pinnedAnswer": "Option A is the trap ❌ | Option B is correct ✅\n\nWhy Option A deletes revenue:\nPlain `UNION` automatically runs an expensive DISTINCT sort across all columns.\nIf a customer made a $100 payment in Jan and another $100 payment in Feb, Option A deletes the 2nd transaction as a duplicate, underreporting total company revenue!\n\nOption B (`UNION ALL`) keeps all records intact and runs 5x faster with zero sorting overhead!\n\n💡 Rule of thumb: Always default to UNION ALL unless you explicitly need duplicate removal!\n\nDid you vote A or B? 👇",
         "link": "https://www.manodemy.com/q15"
+    },
+    "SQL-09-R1": {
+        "reelNo": "SQL-09-R1",
+        "day": "DAY 09",
+        "badge": "SQL · CTEs & Window Functions",
+        "hook": "LATEST RECORD PER USER 📊\nWhich query gets the latest order per customer?",
+        "hookLineObjects": [
+            {"text": "LATEST RECORD PER USER 📊", "font": "Plus Jakarta Sans", "size": 4.8},
+            {"text": "Which query gets the latest order per customer?", "font": "Outfit", "size": 3.7}
+        ],
+        "hookHighlights": [
+            {"text": "LATEST RECORD", "color": "#facc15"},
+            {"text": "latest order per customer", "color": "#00f0ff"}
+        ],
+        "lang": "sql",
+        "codeA": "WITH ranked AS (\n  SELECT *,\n         ROW_NUMBER() OVER (\n           PARTITION BY customer_id\n           ORDER BY order_date DESC\n         ) AS rn\n  FROM orders\n)\nSELECT * FROM ranked WHERE rn = 1",
+        "codeB": "SELECT o.*\nFROM orders o\nJOIN (\n  SELECT customer_id, MAX(order_date) AS max_date\n  FROM orders GROUP BY customer_id\n) m ON o.customer_id = m.customer_id\n   AND o.order_date = m.max_date",
+        "pollInstr": "DROP YOUR VOTE IN COMMENTS 👇",
+        "clockSfx": "bomb",
+        "ccStyle": "hormozi",
+        "ccEnabled": True,
+        "voice": "en-US-AndrewNeural",
+        "voiceScript": "FAANG interviewers love this data engineering question!\nWhich query reliably fetches the latest transaction per user?\nChoose your answer.\nOption A...\nor Option B?\nDrop your vote in the comments below.",
+        "caption": "LATEST RECORD PER USER 📊⚡\n\nWhich query reliably fetches the latest order per customer?\n\nCan you spot which approach handles duplicate timestamps without returning extra rows?\n\nWhat’s your answer — A or B? 👇\nDrop your choice in the comments before checking the answer!\n\n🧠 Test this SQL interview question live:\n👉 manodemy.com/q16\n\n📊 Practice Data Skills with Manodemy\n🎁 Day 1 & Day 2 are 100% FREE\n\n🔗 Link in bio\n\n[sql interview questions, sql cte, row_number vs group by max, window functions sql, data analyst interview questions, sql query questions, advanced sql, learn sql]\n\n#SQL #SQLInterview #SQLQuestions #SQLTips #DataAnalyst #DataAnalytics #LearnSQL #Manodemy",
+        "pinnedAnswer": "Option A is the Industry Standard ✅ | Option B has a Silent Trap ⚠️\n\nWhy Option A (ROW_NUMBER CTE) is the FAANG standard:\nOption A numbers rows sequentially within each customer group. Even if a customer placed TWO orders with the exact same timestamp, `ROW_NUMBER()` guarantees exactly ONE latest row is returned!\n\nWhy Option B (GROUP BY MAX + JOIN) fails on ties:\nIf a customer has two orders on the same max date, the join matches BOTH rows, returning duplicate orders and inflating downstream revenue metrics!\n\n💡 Rule of thumb: Always use ROW_NUMBER() or QUALIFY to fetch top N / latest records per group!\n\nDid you vote A or B? 👇",
+        "link": "https://www.manodemy.com/q16"
     }
 }
 

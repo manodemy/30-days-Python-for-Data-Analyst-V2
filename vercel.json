@@ -539,6 +539,16 @@
       "destination": "/Version-3/index.html?day=8&challenge=SQL-08-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day08_q15_union_dedup",
       "permanent": false
     },
+    {
+      "source": "/q16",
+      "destination": "/Version-3/index.html?day=9&challenge=SQL-09-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day09_q16_latest_record",
+      "permanent": false
+    },
+    {
+      "source": "/go/q16",
+      "destination": "/Version-3/index.html?day=9&challenge=SQL-09-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day09_q16_latest_record",
+      "permanent": false
+    },
 
     {
       "source": "/day:day(0[3-9]|[12][0-9]|30).html",

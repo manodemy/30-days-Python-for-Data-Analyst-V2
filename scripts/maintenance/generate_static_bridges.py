@@ -16,7 +16,9 @@ bridges = {
     'q10': '/Version-3/index.html?day=5&challenge=SQL-05-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day05_q10_conditional_count',
     'q11': '/Version-3/index.html?day=6&challenge=SQL-06-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day06_q11_ceo_hierarchy',
     'q12': '/Version-3/index.html?day=7&challenge=SQL-07-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day07_q12_not_in_null',
-    'q13': '/Version-3/index.html?day=7&challenge=SQL-07-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day07_q13_salary_dense_rank'
+    'q13': '/Version-3/index.html?day=7&challenge=SQL-07-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day07_q13_salary_dense_rank',
+    'q14': '/Version-3/index.html?day=8&challenge=SQL-08-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day08_q14_like_wildcard',
+    'q15': '/Version-3/index.html?day=8&challenge=SQL-08-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day08_q15_union_dedup'
 }
 
 html_template = """<!DOCTYPE html>

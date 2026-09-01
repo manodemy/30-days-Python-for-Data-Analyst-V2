@@ -1128,6 +1128,15 @@ function formatHeadingBoxes(container) {
   });
 }
 
+function autoHighlightSql(container) {
+  if (!container) return;
+  if (typeof Prism !== 'undefined' && Prism.highlightAllUnder) {
+    Prism.highlightAllUnder(container);
+  } else if (typeof hljs !== 'undefined' && hljs.highlightElement) {
+    container.querySelectorAll('pre code, .sql-code').forEach(el => hljs.highlightElement(el));
+  }
+}
+
 function renderPresentSlide() {
   const slide = COURSE_CONFIG.slides[currentSlide];
   const container = document.getElementById('presentSlideContent');
@@ -3581,6 +3590,34 @@ const REEL_CHALLENGES = {
     trapExplanation: 'When ties occur, <code>RANK()</code> leaves gaps (1, 1, 3), skipping 2nd place! <code>DENSE_RANK()</code> assigns consecutive ranks (1, 1, 2) without any gaps.',
     codeA: "SELECT employee_id, first_name, salary,\n       RANK() OVER (ORDER BY salary DESC) AS sal_rank\nFROM employees;",
     codeB: "SELECT employee_id, first_name, salary,\n       DENSE_RANK() OVER (ORDER BY salary DESC) AS sal_rank\nFROM employees;"
+  },
+  'SQL-08-R1': {
+    day: 'day08',
+    slideIndex: 0,
+    title: 'LIKE WILDCARD TRAP 🔍💥',
+    task: 'Pattern Matching: Escaping Literal % and _ in LIKE Queries',
+    prompt: `Marketing needs all promo codes with a literal 50% discount. Run Option A (plain LIKE) vs Option B (ESCAPE) to see why Option A accidentally matches 500_FLAT, 50_OFF, etc.<br/>
+      <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-08-R1', 'A')">⚡ Load Option A (Trap)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-08-R1', 'B')">⚡ Load Option B (Fix)</button>
+      </div>`,
+    trapExplanation: 'In SQL <code>LIKE</code>, <code>%</code> matches any character sequence. Option A (<code>\'%50%%\'</code>) matches 500_FLAT and 50_OFF! Option B uses <code>ESCAPE \'\\\'</code> to match literal 50%.',
+    codeA: "SELECT promo_code\nFROM coupons\nWHERE promo_code LIKE '%50%%';",
+    codeB: "SELECT promo_code\nFROM coupons\nWHERE promo_code LIKE '%50\\%%' ESCAPE '\\';"
+  },
+  'SQL-08-R2': {
+    day: 'day08',
+    slideIndex: 0,
+    title: 'UNION DEDUPLICATION TRAP ⚡💣',
+    task: 'Set Operations: UNION vs UNION ALL Deduplication and Revenue Loss',
+    prompt: `Finance needs to merge January and February sales transactions. Run Option A (UNION) vs Option B (UNION ALL) to see why Option A accidentally deletes identical sales transactions!<br/>
+      <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-08-R2', 'A')">⚡ Load Option A (UNION)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-08-R2', 'B')">⚡ Load Option B (UNION ALL)</button>
+      </div>`,
+    trapExplanation: 'Plain <code>UNION</code> automatically deduplicates records, silently deleting legitimate identical transactions! <code>UNION ALL</code> keeps all rows and runs 5x faster.',
+    codeA: "SELECT customer_id, amount FROM jan_sales\nUNION\nSELECT customer_id, amount FROM feb_sales;",
+    codeB: "SELECT customer_id, amount FROM jan_sales\nUNION ALL\nSELECT customer_id, amount FROM feb_sales;"
   }
 };
 
@@ -3612,6 +3649,8 @@ function getActiveChallengeId() {
   if (camp.includes('reel_day06_q2') || camp.includes('reel_11') || camp.includes('q11') || camp.includes('ceo') || camp.includes('hierarchy')) return 'SQL-06-R2';
   if (camp.includes('reel_day07_q1') || camp.includes('reel_12') || camp.includes('q12') || camp.includes('not_in') || camp.includes('exists')) return 'SQL-07-R1';
   if (camp.includes('reel_day07_q2') || camp.includes('reel_13') || camp.includes('q13') || camp.includes('dense_rank') || camp.includes('salary_dense_rank')) return 'SQL-07-R2';
+  if (camp.includes('reel_day08_q14') || camp.includes('reel_14') || camp.includes('q14') || camp.includes('like_wildcard') || camp.includes('wildcard')) return 'SQL-08-R1';
+  if (camp.includes('reel_day08_q15') || camp.includes('reel_15') || camp.includes('q15') || camp.includes('union_dedup') || camp.includes('union')) return 'SQL-08-R2';
 
   const dayParam = urlP.get('day');
   const qParam = urlP.get('q') || urlP.get('question');
@@ -3636,8 +3675,14 @@ function getActiveChallengeId() {
     if (qParam === '1' || qParam === '12') return 'SQL-07-R1';
     if (qParam === '2' || qParam === '13') return 'SQL-07-R2';
   }
+  if (dayParam === '8' || dayParam === '08') {
+    if (qParam === '1' || qParam === '14') return 'SQL-08-R1';
+    if (qParam === '2' || qParam === '15') return 'SQL-08-R2';
+  }
   if (qParam === '12' || qParam === 'q12') return 'SQL-07-R1';
   if (qParam === '13' || qParam === 'q13') return 'SQL-07-R2';
+  if (qParam === '14' || qParam === 'q14') return 'SQL-08-R1';
+  if (qParam === '15' || qParam === 'q15') return 'SQL-08-R2';
   return null;
 }
 
@@ -6795,7 +6840,9 @@ async function loadManifest() {
   try {
     if (Object.keys(manifest).length === 0) {
       const res = await fetch('/Version-3/manifest.json?v=19.0');
-      manifest = await res.json();
+      if (res.ok) {
+        manifest = await res.json();
+      }
     }
     // Re-calculate durations from manifest metadata for all slides
     Object.keys(slideTrackMap).forEach(dayKey => {
@@ -6828,7 +6875,10 @@ async function loadTrackEvents(trackId) {
   if (!entry || !entry.eventsPath) return null;
   try {
     const res = await fetch(getAudioUrl(entry).replace('.mp3', '.events.json'));
-    return await res.json();
+    if (!res.ok) return null;
+    const text = await res.text();
+    if (!text || !text.trim()) return null;
+    return JSON.parse(text);
   } catch (err) {
     return null;
   }

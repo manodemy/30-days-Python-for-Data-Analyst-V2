@@ -96,7 +96,11 @@ export async function middleware(request: NextRequest) {
     '/fb_ads_1': '/?utm_source=meta&utm_medium=cpc&utm_campaign=fb_ads_1',
     '/go/bio': '/?utm_source=meta&utm_medium=cpc&utm_campaign=insta_bio_link',
     '/bio': '/?utm_source=meta&utm_medium=cpc&utm_campaign=insta_bio_link',
-    '/insta': '/?utm_source=meta&utm_medium=cpc&utm_campaign=insta_bio_link'
+    '/insta': '/?utm_source=meta&utm_medium=cpc&utm_campaign=insta_bio_link',
+    '/q14': '/Version-3/index.html?day=8&challenge=SQL-08-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day08_q14_like_wildcard',
+    '/go/q14': '/Version-3/index.html?day=8&challenge=SQL-08-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day08_q14_like_wildcard',
+    '/q15': '/Version-3/index.html?day=8&challenge=SQL-08-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day08_q15_union_dedup',
+    '/go/q15': '/Version-3/index.html?day=8&challenge=SQL-08-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day08_q15_union_dedup'
   };
 
   // Track any inbound campaign click query param ONLY if not from a shortlink redirect
@@ -303,7 +307,7 @@ export const config = {
     '/notebook/:path*',
     // Ultra-short campaign links & redirection triggers
     '/bio', '/insta',
-    '/q1', '/q2', '/q3', '/q4', '/q5',
+    '/q:path*',
     '/go/:path*', '/r/:path*',
   ],
 };

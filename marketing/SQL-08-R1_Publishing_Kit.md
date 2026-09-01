@@ -12,18 +12,25 @@
 
 ```text
 LIKE WILDCARD TRAP 🔍💥
-Which query finds the 50% offer promo code?
 
-Did Option A accidentally match '500_FLAT' and '50_OFF'? 
+Which query correctly finds the 50% offer promo code?
 
-Drop your vote (A or B) below 👇
+Did Option A accidentally match 500_FLAT and 50_OFF?
 
+What’s your answer — A or B? 👇
+Drop your choice in the comments before checking the answer!
 
-Practice Data Skills 
-👉 Day 1 & Day 2 are 100% FREE
-🔗 Link in bio / manodemy.com/q14
+🧠 Test this SQL interview question live:
+👉 manodemy.com/q14
 
-#sql #sqlinterview #sqltips #dataanalytics #dataengineer #datascience #dataanalyst #sqlquery #faang #techinterview #codinginterview #learnsql #database #manodemy #dataanalysis
+📊 Practice Data Skills with Manodemy
+🎁 Day 1 & Day 2 are 100% FREE
+
+🔗 Link in bio
+
+[sql interview questions, sql wildcard, sql like operator, sql escape character, sql query questions, sql interview preparation, data analyst interview, data analytics, learn sql]
+
+#SQL #SQLInterview #SQLQuestions #SQLTips #DataAnalyst #DataAnalytics #LearnSQL #Manodemy
 ```
 
 ---

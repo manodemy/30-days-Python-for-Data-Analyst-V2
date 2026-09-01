@@ -57,9 +57,31 @@ This skill defines the autonomous multi-agent pipeline for creating high-convert
        - Performance / Joins / Optimization: ⚡, 🔗, 🚀
 4. **Copy Package Generation:** Writes:
    - Voiceover narration script (natural English)
-   - Instagram / YouTube Caption with strategic hashtags
-   - Pinned first comment revealing the technical answer explanation
-   - Deep-link to the free interactive playground on Manodemy.
+   - **Standardized Caption Blueprint (Strict Standard):**
+     ```text
+     [TOPIC HOOK TITLE] 🔍💥
+
+     [QUESTION LINE]?
+
+     [TRAP CONTEXT / CURIOUS PROMPT]?
+
+     What’s your answer — A or B? 👇
+     Drop your choice in the comments before checking the answer!
+
+     🧠 Test this SQL interview question live:
+     👉 manodemy.com/qXX
+
+     📊 Practice Data Skills with Manodemy
+     🎁 Day 1 & Day 2 are 100% FREE
+
+     🔗 Link in bio
+
+     [seo keyword 1, seo keyword 2, ..., learn sql]
+
+     #SQL #SQLInterview #SQLQuestions #SQLTips #DataAnalyst #DataAnalytics #LearnSQL #Manodemy
+     ```
+   - Pinned first comment revealing the technical answer explanation with markdown and rule of thumb
+   - Deep-link to the free interactive simulator on Manodemy (`manodemy.com/qXX`).
 
 ---
 

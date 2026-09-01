@@ -304,5 +304,38 @@ window.DB_SEEDS['retail'] = {
         { name: "role", type: "TEXT", pk: false },
       ]
     },
+    {
+      name: "coupons",
+      createSQL: "CREATE TABLE coupons (\n        coupon_id INTEGER PRIMARY KEY,\n        promo_code TEXT NOT NULL,\n        discount_pct REAL NOT NULL,\n        is_active INTEGER NOT NULL\n    )",
+      seedSQL: "INSERT INTO coupons VALUES\n        (1, 'SAVE50%NOW', 50.0, 1),\n        (2, '500_FLAT', 10.0, 1),\n        (3, 'VIP_50%_OFF', 50.0, 1),\n        (4, '50_SPECIAL', 15.0, 1),\n        (5, 'WELCOME_50%', 50.0, 1),\n        (6, 'DEAL_5099', 5.0, 0);",
+      columns: [
+        { name: "coupon_id", type: "INTEGER", pk: true },
+        { name: "promo_code", type: "TEXT", pk: false },
+        { name: "discount_pct", type: "REAL", pk: false },
+        { name: "is_active", type: "INTEGER", pk: false },
+      ]
+    },
+    {
+      name: "jan_sales",
+      createSQL: "CREATE TABLE jan_sales (\n        sale_id INTEGER PRIMARY KEY,\n        customer_id INTEGER NOT NULL,\n        amount REAL NOT NULL,\n        sale_date DATE NOT NULL\n    )",
+      seedSQL: "INSERT INTO jan_sales VALUES\n        (1, 101, 250.00, '2026-01-15'),\n        (2, 102, 150.00, '2026-01-18'),\n        (3, 103, 500.00, '2026-01-22'),\n        (4, 104, 100.00, '2026-01-28');",
+      columns: [
+        { name: "sale_id", type: "INTEGER", pk: true },
+        { name: "customer_id", type: "INTEGER", pk: false },
+        { name: "amount", type: "REAL", pk: false },
+        { name: "sale_date", type: "DATE", pk: false },
+      ]
+    },
+    {
+      name: "feb_sales",
+      createSQL: "CREATE TABLE feb_sales (\n        sale_id INTEGER PRIMARY KEY,\n        customer_id INTEGER NOT NULL,\n        amount REAL NOT NULL,\n        sale_date DATE NOT NULL\n    )",
+      seedSQL: "INSERT INTO feb_sales VALUES\n        (5, 101, 250.00, '2026-02-10'),\n        (6, 105, 300.00, '2026-02-14'),\n        (7, 103, 500.00, '2026-02-18'),\n        (8, 106, 450.00, '2026-02-25');",
+      columns: [
+        { name: "sale_id", type: "INTEGER", pk: true },
+        { name: "customer_id", type: "INTEGER", pk: false },
+        { name: "amount", type: "REAL", pk: false },
+        { name: "sale_date", type: "DATE", pk: false },
+      ]
+    }
   ]
 };

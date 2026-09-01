@@ -269,12 +269,51 @@ function showToast(msg, duration = 3000) {
 }
 
 function runSQL(query) {
-  if (!db) throw new Error('Database not initialized.');
+  if (!db) {
+    if (typeof SQL_INSTANCE !== 'undefined' && SQL_INSTANCE) {
+      loadDatabaseSeed('retail');
+    } else {
+      throw new Error('Database is still initializing. Please wait a moment.');
+    }
+  }
   const trimmed = query.trim();
   if (!trimmed) throw new Error('SQL query cannot be empty.');
-  const results = db.exec(trimmed);
-  if (results.length === 0) return { columns: [], values: [], message: 'Query executed successfully. No rows returned.' };
-  return { columns: results[0].columns, values: results[0].values };
+
+  try {
+    const results = db.exec(trimmed);
+    if (results.length === 0) return { columns: [], values: [], message: 'Query executed successfully. No rows returned.' };
+    return { columns: results[0].columns, values: results[0].values };
+  } catch (err) {
+    // 🛡️ Autonomous Self-Healing Interceptor: Check for missing tables (e.g. "no such table: coupons")
+    const noTableMatch = err && err.message && err.message.match(/no such table:\s*([a-zA-Z0-9_]+)/i);
+    if (noTableMatch && window.DB_SEEDS) {
+      const missingTable = noTableMatch[1].toLowerCase();
+      let provisioned = false;
+      for (const key of Object.keys(window.DB_SEEDS)) {
+        const sDef = window.DB_SEEDS[key];
+        if (sDef && sDef.tables) {
+          const tDef = sDef.tables.find(t => t.name.toLowerCase() === missingTable);
+          if (tDef) {
+            try {
+              if (tDef.createSQL) db.run(tDef.createSQL);
+              if (tDef.seedSQL) db.run(tDef.seedSQL);
+              provisioned = true;
+              console.log(`[Auto-Provision Shield] 🛡️ Auto-provisioned missing table '${missingTable}' on the fly.`);
+            } catch (e) {
+              console.warn('[Auto-Provision Shield] Table provision warning:', e);
+            }
+          }
+        }
+      }
+      if (provisioned) {
+        // Re-execute after auto-provisioning
+        const retriedResults = db.exec(trimmed);
+        if (retriedResults.length === 0) return { columns: [], values: [], message: 'Query executed successfully. No rows returned.' };
+        return { columns: retriedResults[0].columns, values: retriedResults[0].values };
+      }
+    }
+    throw err;
+  }
 }
 
 function getSchemaInfo() {

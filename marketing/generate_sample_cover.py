@@ -217,26 +217,39 @@ HTML_COVER = """<!DOCTYPE html>
   .op { color: #f43f5e; }
   .num { color: #fb923c; }
 
-  /* VS Floating Badge */
+  /* VS Floating Divider Row */
+  .vs-divider-row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin: 4px 0;
+    position: relative;
+    z-index: 20;
+  }
+
+  .divider-line {
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(250, 204, 21, 0.4), transparent);
+  }
+
   .vs-badge {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 72px;
-    height: 72px;
+    width: 64px;
+    height: 64px;
     background: linear-gradient(135deg, #0f172a, #1e1b4b);
-    border: 3px solid #facc15;
-    box-shadow: 0 0 30px rgba(250, 204, 21, 0.6);
+    border: 2.5px solid #facc15;
+    box-shadow: 0 0 25px rgba(250, 204, 21, 0.5);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 28px;
+    font-size: 24px;
     font-weight: 900;
     color: #facc15;
-    z-index: 20;
-    letter-spacing: -1px;
+    letter-spacing: -0.5px;
+    flex-shrink: 0;
   }
 
   /* Bottom Callout Banner */
@@ -293,7 +306,6 @@ HTML_COVER = """<!DOCTYPE html>
 
     <!-- Dual Code Cards Clash -->
     <div class="cards-grid">
-      <div class="vs-badge">VS</div>
 
       <!-- Card A -->
       <div class="code-card card-a">
@@ -312,6 +324,13 @@ HTML_COVER = """<!DOCTYPE html>
          )
        ) || <span class="str">' days'</span>) <span class="kw">AS</span> streak_grp
 <span class="kw">FROM</span> user_logins;</div>
+      </div>
+
+      <!-- VS Divider Row -->
+      <div class="vs-divider-row">
+        <div class="divider-line"></div>
+        <div class="vs-badge">VS</div>
+        <div class="divider-line"></div>
       </div>
 
       <!-- Card B -->

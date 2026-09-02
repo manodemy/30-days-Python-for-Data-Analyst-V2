@@ -585,6 +585,32 @@ REELS_CATALOG = {
         "caption": "LATEST RECORD PER USER 📊⚡\n\nWhich query reliably fetches the latest order per customer?\n\nCan you spot which approach handles duplicate timestamps without returning extra rows?\n\nWhat’s your answer — A or B? 👇\nDrop your choice in the comments before checking the answer!\n\n🧠 Test this SQL interview question live:\n👉 manodemy.com/q16\n\n📊 Practice Data Skills with Manodemy\n🎁 Day 1 & Day 2 are 100% FREE\n\n🔗 Link in bio\n\n[sql interview questions, sql cte, row_number vs group by max, window functions sql, data analyst interview questions, sql query questions, advanced sql, learn sql]\n\n#SQL #SQLInterview #SQLQuestions #SQLTips #DataAnalyst #DataAnalytics #LearnSQL #Manodemy",
         "pinnedAnswer": "Option A is the Industry Standard ✅ | Option B has a Silent Trap ⚠️\n\nWhy Option A (ROW_NUMBER CTE) is the FAANG standard:\nOption A numbers rows sequentially within each customer group. Even if a customer placed TWO orders with the exact same timestamp, `ROW_NUMBER()` guarantees exactly ONE latest row is returned!\n\nWhy Option B (GROUP BY MAX + JOIN) fails on ties:\nIf a customer has two orders on the same max date, the join matches BOTH rows, returning duplicate orders and inflating downstream revenue metrics!\n\n💡 Rule of thumb: Always use ROW_NUMBER() or QUALIFY to fetch top N / latest records per group!\n\nDid you vote A or B? 👇",
         "link": "https://www.manodemy.com/q16"
+    },
+    "SQL-10-R1": {
+        "reelNo": "SQL-10-R1",
+        "day": "DAY 10",
+        "badge": "SQL · Gaps & Islands Streaks",
+        "hook": "GAPS & ISLANDS TRAP 🏝️\nWhich query groups consecutive login streaks?",
+        "hookLineObjects": [
+            {"text": "GAPS & ISLANDS TRAP 🏝️", "font": "Plus Jakarta Sans", "size": 4.8},
+            {"text": "Which query groups consecutive login streaks?", "font": "Outfit", "size": 3.7}
+        ],
+        "hookHighlights": [
+            {"text": "GAPS & ISLANDS", "color": "#facc15"},
+            {"text": "consecutive login streaks", "color": "#00f0ff"}
+        ],
+        "lang": "sql",
+        "codeA": "SELECT user_id, login_date,\n       DATE(login_date, '-' || (\n         ROW_NUMBER() OVER (\n           PARTITION BY user_id ORDER BY login_date\n         )\n       ) || ' days') AS streak_grp\nFROM user_logins",
+        "codeB": "SELECT user_id, login_date,\n       DENSE_RANK() OVER (\n         PARTITION BY user_id ORDER BY login_date\n       ) AS streak_grp\nFROM user_logins",
+        "pollInstr": "DROP YOUR VOTE IN COMMENTS 👇",
+        "clockSfx": "bomb",
+        "ccStyle": "hormozi",
+        "ccEnabled": True,
+        "voice": "en-US-AndrewNeural",
+        "voiceScript": "Meta and Google love asking this gaps and islands SQL trap!\nWhich query groups consecutive active days into unbroken login streaks?\nChoose your answer.\nOption A...\nor Option B?\nDrop your vote in the comments below.",
+        "caption": "GAPS & ISLANDS TRAP 🏝️⚡\n\nWhich query groups consecutive active days into unbroken login streaks?\n\nCan you spot which approach generates a constant grouping key for consecutive days?\n\nWhat’s your answer — A or B? 👇\nDrop your choice in the comments before checking the answer!\n\n🧠 Test this SQL interview question live:\n👉 manodemy.com/q17\n\n📊 Practice Data Skills with Manodemy\n🎁 Day 1 & Day 2 are 100% FREE\n\n🔗 Link in bio\n\n[sql interview questions, gaps and islands sql, row_number trick, consecutive streaks, faang sql interview, data analyst interview, advanced sql, learn sql]\n\n#SQL #SQLInterview #SQLQuestions #SQLTips #DataAnalyst #DataAnalytics #LearnSQL #Manodemy",
+        "pinnedAnswer": "Option A is the FAANG Standard ✅ | Option B is the Trap ❌\n\nWhy Option A (date - ROW_NUMBER()) works:\nAs long as login dates are consecutive, both `login_date` and `ROW_NUMBER()` increment by +1 each day. Subtracting ROW_NUMBER() from login_date produces a CONSTANT date anchor for the entire unbroken streak!\n\nWhy Option B (DENSE_RANK) fails on gaps:\n`DENSE_RANK()` simply numbers rows sequentially 1, 2, 3... regardless of whether there is a 5-day gap between logins! It fails to detect broken streaks.\n\n💡 Rule of thumb: Subtracting ROW_NUMBER() from dates is the golden trick for Gaps & Islands problems!\n\nDid you vote A or B? 👇",
+        "link": "https://www.manodemy.com/q17"
     }
 }
 

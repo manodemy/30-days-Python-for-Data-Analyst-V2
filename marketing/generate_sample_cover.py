@@ -278,16 +278,16 @@ HTML_COVER = """<!DOCTYPE html>
     <!-- Top Pill -->
     <div class="top-pill">
       <div class="dot"></div>
-      <span>FAANG SQL INTERVIEW TRAP ⚡</span>
+      <span>META / GOOGLE SQL TRAP ⚡</span>
     </div>
 
     <!-- Title Section -->
     <div class="title-section">
       <div class="main-hook">
-        <span class="highlight-gold">LATEST RECORD</span> PER USER 📊
+        <span class="highlight-gold">GAPS & ISLANDS</span> TRAP 🏝️
       </div>
       <div class="sub-question">
-        Which query gets the <span class="highlight-cyan">latest order per customer</span>?
+        Which query groups <span class="highlight-cyan">consecutive login streaks</span>?
       </div>
     </div>
 
@@ -298,35 +298,37 @@ HTML_COVER = """<!DOCTYPE html>
       <!-- Card A -->
       <div class="code-card card-a">
         <div class="card-header">
-          <div class="card-label label-a">⚡ OPTION A · CTE Window</div>
+          <div class="card-label label-a">⚡ OPTION A · Date - ROW_NUMBER</div>
           <div class="mac-dots">
             <div class="mac-dot" style="background:#ff5f56;"></div>
             <div class="mac-dot" style="background:#ffbd2e;"></div>
             <div class="mac-dot" style="background:#27c93f;"></div>
           </div>
         </div>
-        <div class="code-content"><span class="kw">WITH</span> ranked <span class="kw">AS</span> (
-  <span class="kw">SELECT</span> *, <span class="fn">ROW_NUMBER</span>() <span class="kw">OVER</span>(
-    <span class="kw">PARTITION BY</span> user_id <span class="kw">ORDER BY</span> order_date <span class="kw">DESC</span>
-  ) <span class="kw">AS</span> rn <span class="kw">FROM</span> orders
-) <span class="kw">SELECT</span> * <span class="kw">FROM</span> ranked <span class="kw">WHERE</span> rn = <span class="num">1</span>;</div>
+        <div class="code-content"><span class="kw">SELECT</span> user_id, login_date,
+       <span class="fn">DATE</span>(login_date, <span class="str">'-'</span> || (
+         <span class="fn">ROW_NUMBER</span>() <span class="kw">OVER</span>(
+           <span class="kw">PARTITION BY</span> user_id <span class="kw">ORDER BY</span> login_date
+         )
+       ) || <span class="str">' days'</span>) <span class="kw">AS</span> streak_grp
+<span class="kw">FROM</span> user_logins;</div>
       </div>
 
       <!-- Card B -->
       <div class="code-card card-b">
         <div class="card-header">
-          <div class="card-label label-b">⚠️ OPTION B · Self-Join MAX</div>
+          <div class="card-label label-b">⚠️ OPTION B · DENSE_RANK Trap</div>
           <div class="mac-dots">
             <div class="mac-dot" style="background:#ff5f56;"></div>
             <div class="mac-dot" style="background:#ffbd2e;"></div>
             <div class="mac-dot" style="background:#27c93f;"></div>
           </div>
         </div>
-        <div class="code-content"><span class="kw">SELECT</span> o.* <span class="kw">FROM</span> orders o
-<span class="kw">JOIN</span> (
-  <span class="kw">SELECT</span> user_id, <span class="fn">MAX</span>(order_date) <span class="kw">AS</span> max_d
-  <span class="kw">FROM</span> orders <span class="kw">GROUP BY</span> user_id
-) m <span class="kw">ON</span> o.user_id = m.user_id <span class="kw">AND</span> o.order_date = m.max_d;</div>
+        <div class="code-content"><span class="kw">SELECT</span> user_id, login_date,
+       <span class="fn">DENSE_RANK</span>() <span class="kw">OVER</span>(
+         <span class="kw">PARTITION BY</span> user_id <span class="kw">ORDER BY</span> login_date
+       ) <span class="kw">AS</span> streak_grp
+<span class="kw">FROM</span> user_logins;</div>
       </div>
 
     </div>
@@ -337,7 +339,7 @@ HTML_COVER = """<!DOCTYPE html>
         <span>👇 Option A or Option B?</span>
       </div>
       <div class="brand-text">
-        <span>manodemy.com/q16</span>
+        <span>manodemy.com/q17</span>
       </div>
     </div>
 
@@ -354,14 +356,14 @@ async def generate_cover():
         await page.set_content(HTML_COVER)
         await page.wait_for_timeout(500)
         
-        full_png = OUTPUT_DIR / "SQL-09-R1_Cover_HighCTR.png"
-        full_jpg = OUTPUT_DIR / "SQL-09-R1_Cover.jpg"
+        full_png = OUTPUT_DIR / "SQL-10-R1_Cover_HighCTR.png"
+        full_jpg = OUTPUT_DIR / "SQL-10-R1_Cover.jpg"
         await page.screenshot(path=str(full_png))
         await page.screenshot(path=str(full_jpg), quality=95)
         print(f"[OK] Full 9:16 High-CTR Cover saved: {full_jpg}", flush=True)
 
         # 2. Render 1:1 Instagram Grid Preview (Crop middle 1080x1080)
-        grid_jpg = OUTPUT_DIR / "SQL-09-R1_Grid_1x1_Preview.jpg"
+        grid_jpg = OUTPUT_DIR / "SQL-10-R1_Grid_1x1_Preview.jpg"
         await page.screenshot(
             path=str(grid_jpg),
             clip={"x": 0, "y": (1920 - 1080) / 2, "width": 1080, "height": 1080},

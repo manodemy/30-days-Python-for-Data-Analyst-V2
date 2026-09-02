@@ -1,0 +1,442 @@
+{
+  "reelNo": "SQL-10-R1",
+  "day": "DAY 10",
+  "badge": "SQL · Gaps & Islands Streaks",
+  "videoFile": "SQL-10-R1.mp4",
+  "videoPath": "D:\\Learn Python in 60days\\Manodemy_Web_V2\\marketing\\output\\video\\SQL-10-R1.mp4",
+  "coverFile": "SQL-10-R1_Cover.png",
+  "coverJpg": "SQL-10-R1_Cover.jpg",
+  "fileSizeMb": 4.44,
+  "resolution": "1080x1920",
+  "fps": 24,
+  "durationSec": 17.17,
+  "caption": "GAPS & ISLANDS TRAP 🏝️⚡\n\nWhich query groups consecutive active days into unbroken login streaks?\n\nCan you spot which approach generates a constant grouping key for consecutive days?\n\nWhat’s your answer — A or B? 👇\nDrop your choice in the comments before checking the answer!\n\n🧠 Test this SQL interview question live:\n👉 manodemy.com/q17\n\n📊 Practice Data Skills with Manodemy\n🎁 Day 1 & Day 2 are 100% FREE\n\n🔗 Link in bio\n\n[sql interview questions, gaps and islands sql, row_number trick, consecutive streaks, faang sql interview, data analyst interview, advanced sql, learn sql]\n\n#SQL #SQLInterview #SQLQuestions #SQLTips #DataAnalyst #DataAnalytics #LearnSQL #Manodemy",
+  "pinnedAnswer": "Option A is the FAANG Standard ✅ | Option B is the Trap ❌\n\nWhy Option A (date - ROW_NUMBER()) works:\nAs long as login dates are consecutive, both `login_date` and `ROW_NUMBER()` increment by +1 each day. Subtracting ROW_NUMBER() from login_date produces a CONSTANT date anchor for the entire unbroken streak!\n\nWhy Option B (DENSE_RANK) fails on gaps:\n`DENSE_RANK()` simply numbers rows sequentially 1, 2, 3... regardless of whether there is a 5-day gap between logins! It fails to detect broken streaks.\n\n💡 Rule of thumb: Subtracting ROW_NUMBER() from dates is the golden trick for Gaps & Islands problems!\n\nDid you vote A or B? 👇",
+  "simulatorLink": "https://www.manodemy.com/q17",
+  "cues": {
+    "t_hook_start": 0,
+    "t_line2_start": 3700,
+    "t_clock_in": 8300,
+    "t_opta": 10020,
+    "t_optb": 11360,
+    "t_optb_end": 12560,
+    "t_clock_out": 13740,
+    "t_cta_start": 13740,
+    "t_voice_end": 15770,
+    "totalMs": 17170,
+    "clockDurationMs": 5440,
+    "wordCues": [
+      {
+        "word": "Meta",
+        "startMs": 0,
+        "endMs": 360
+      },
+      {
+        "word": "and",
+        "startMs": 360,
+        "endMs": 540
+      },
+      {
+        "word": "Google",
+        "startMs": 540,
+        "endMs": 820
+      },
+      {
+        "word": "love",
+        "startMs": 820,
+        "endMs": 1120
+      },
+      {
+        "word": "asking",
+        "startMs": 1120,
+        "endMs": 1600
+      },
+      {
+        "word": "this",
+        "startMs": 1600,
+        "endMs": 1820
+      },
+      {
+        "word": "gaps",
+        "startMs": 1820,
+        "endMs": 2100
+      },
+      {
+        "word": "and",
+        "startMs": 2100,
+        "endMs": 2320
+      },
+      {
+        "word": "islands",
+        "startMs": 2320,
+        "endMs": 2840
+      },
+      {
+        "word": "SQL",
+        "startMs": 2840,
+        "endMs": 2980
+      },
+      {
+        "word": "trap!",
+        "startMs": 2980,
+        "endMs": 3320
+      },
+      {
+        "word": "Which",
+        "startMs": 3700,
+        "endMs": 4020
+      },
+      {
+        "word": "query",
+        "startMs": 4020,
+        "endMs": 4320
+      },
+      {
+        "word": "groups",
+        "startMs": 4320,
+        "endMs": 4660
+      },
+      {
+        "word": "consecutive",
+        "startMs": 4660,
+        "endMs": 5120
+      },
+      {
+        "word": "active",
+        "startMs": 5120,
+        "endMs": 5580
+      },
+      {
+        "word": "days",
+        "startMs": 5580,
+        "endMs": 5920
+      },
+      {
+        "word": "into",
+        "startMs": 5920,
+        "endMs": 6400
+      },
+      {
+        "word": "unbroken",
+        "startMs": 6400,
+        "endMs": 6960
+      },
+      {
+        "word": "login",
+        "startMs": 6960,
+        "endMs": 7340
+      },
+      {
+        "word": "streaks?",
+        "startMs": 7340,
+        "endMs": 7760
+      },
+      {
+        "word": "Choose",
+        "startMs": 8300,
+        "endMs": 8520
+      },
+      {
+        "word": "your",
+        "startMs": 8520,
+        "endMs": 8700
+      },
+      {
+        "word": "answer...",
+        "startMs": 8700,
+        "endMs": 8980
+      },
+      {
+        "word": "Option",
+        "startMs": 10020,
+        "endMs": 10380
+      },
+      {
+        "word": "A...",
+        "startMs": 10380,
+        "endMs": 10660
+      },
+      {
+        "word": "or",
+        "startMs": 11360,
+        "endMs": 12000
+      },
+      {
+        "word": "Option",
+        "startMs": 12000,
+        "endMs": 12300
+      },
+      {
+        "word": "B?",
+        "startMs": 12300,
+        "endMs": 12560
+      },
+      {
+        "word": "Drop",
+        "startMs": 13740,
+        "endMs": 14380
+      },
+      {
+        "word": "your",
+        "startMs": 14380,
+        "endMs": 14560
+      },
+      {
+        "word": "vote",
+        "startMs": 14560,
+        "endMs": 14800
+      },
+      {
+        "word": "in",
+        "startMs": 14800,
+        "endMs": 15020
+      },
+      {
+        "word": "the",
+        "startMs": 15020,
+        "endMs": 15100
+      },
+      {
+        "word": "comments",
+        "startMs": 15100,
+        "endMs": 15400
+      },
+      {
+        "word": "below.",
+        "startMs": 15400,
+        "endMs": 15720
+      }
+    ],
+    "phrases": [
+      {
+        "index": 0,
+        "text": "Meta and Google love asking this gaps and islands SQL trap!",
+        "startMs": 0,
+        "endMs": 3700,
+        "words": [
+          {
+            "word": "Meta",
+            "startMs": 0,
+            "endMs": 360
+          },
+          {
+            "word": "and",
+            "startMs": 360,
+            "endMs": 540
+          },
+          {
+            "word": "Google",
+            "startMs": 540,
+            "endMs": 820
+          },
+          {
+            "word": "love",
+            "startMs": 820,
+            "endMs": 1120
+          },
+          {
+            "word": "asking",
+            "startMs": 1120,
+            "endMs": 1600
+          },
+          {
+            "word": "this",
+            "startMs": 1600,
+            "endMs": 1820
+          },
+          {
+            "word": "gaps",
+            "startMs": 1820,
+            "endMs": 2100
+          },
+          {
+            "word": "and",
+            "startMs": 2100,
+            "endMs": 2320
+          },
+          {
+            "word": "islands",
+            "startMs": 2320,
+            "endMs": 2840
+          },
+          {
+            "word": "SQL",
+            "startMs": 2840,
+            "endMs": 2980
+          },
+          {
+            "word": "trap!",
+            "startMs": 2980,
+            "endMs": 3320
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "text": "Which query groups consecutive active days into unbroken login streaks?",
+        "startMs": 3700,
+        "endMs": 8300,
+        "words": [
+          {
+            "word": "Which",
+            "startMs": 3700,
+            "endMs": 4020
+          },
+          {
+            "word": "query",
+            "startMs": 4020,
+            "endMs": 4320
+          },
+          {
+            "word": "groups",
+            "startMs": 4320,
+            "endMs": 4660
+          },
+          {
+            "word": "consecutive",
+            "startMs": 4660,
+            "endMs": 5120
+          },
+          {
+            "word": "active",
+            "startMs": 5120,
+            "endMs": 5580
+          },
+          {
+            "word": "days",
+            "startMs": 5580,
+            "endMs": 5920
+          },
+          {
+            "word": "into",
+            "startMs": 5920,
+            "endMs": 6400
+          },
+          {
+            "word": "unbroken",
+            "startMs": 6400,
+            "endMs": 6960
+          },
+          {
+            "word": "login",
+            "startMs": 6960,
+            "endMs": 7340
+          },
+          {
+            "word": "streaks?",
+            "startMs": 7340,
+            "endMs": 7760
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "text": "Choose your answer...",
+        "startMs": 8300,
+        "endMs": 10020,
+        "words": [
+          {
+            "word": "Choose",
+            "startMs": 8300,
+            "endMs": 8520
+          },
+          {
+            "word": "your",
+            "startMs": 8520,
+            "endMs": 8700
+          },
+          {
+            "word": "answer...",
+            "startMs": 8700,
+            "endMs": 8980
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "text": "Option A...",
+        "startMs": 10020,
+        "endMs": 11360,
+        "words": [
+          {
+            "word": "Option",
+            "startMs": 10020,
+            "endMs": 10380
+          },
+          {
+            "word": "A...",
+            "startMs": 10380,
+            "endMs": 10660
+          }
+        ]
+      },
+      {
+        "index": 4,
+        "text": "or Option B?",
+        "startMs": 11360,
+        "endMs": 12560,
+        "words": [
+          {
+            "word": "or",
+            "startMs": 11360,
+            "endMs": 12000
+          },
+          {
+            "word": "Option",
+            "startMs": 12000,
+            "endMs": 12300
+          },
+          {
+            "word": "B?",
+            "startMs": 12300,
+            "endMs": 12560
+          }
+        ]
+      },
+      {
+        "index": 5,
+        "text": "Drop your vote in the comments below.",
+        "startMs": 13740,
+        "endMs": 15770,
+        "words": [
+          {
+            "word": "Drop",
+            "startMs": 13740,
+            "endMs": 14380
+          },
+          {
+            "word": "your",
+            "startMs": 14380,
+            "endMs": 14560
+          },
+          {
+            "word": "vote",
+            "startMs": 14560,
+            "endMs": 14800
+          },
+          {
+            "word": "in",
+            "startMs": 14800,
+            "endMs": 15020
+          },
+          {
+            "word": "the",
+            "startMs": 15020,
+            "endMs": 15100
+          },
+          {
+            "word": "comments",
+            "startMs": 15100,
+            "endMs": 15400
+          },
+          {
+            "word": "below.",
+            "startMs": 15400,
+            "endMs": 15720
+          }
+        ]
+      }
+    ]
+  },
+  "generatedAt": "2026-09-02 20:03:36"
+}

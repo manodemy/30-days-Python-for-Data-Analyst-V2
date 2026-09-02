@@ -336,6 +336,16 @@ window.DB_SEEDS['retail'] = {
         { name: "amount", type: "REAL", pk: false },
         { name: "sale_date", type: "DATE", pk: false },
       ]
+    },
+    {
+      name: "user_logins",
+      createSQL: "CREATE TABLE user_logins (\n        login_id INTEGER PRIMARY KEY,\n        user_id INTEGER NOT NULL,\n        login_date DATE NOT NULL\n    )",
+      seedSQL: "INSERT INTO user_logins VALUES\n        (1, 101, '2026-01-01'),\n        (2, 101, '2026-01-02'),\n        (3, 101, '2026-01-03'),\n        (4, 101, '2026-01-06'),\n        (5, 101, '2026-01-07'),\n        (6, 102, '2026-01-01'),\n        (7, 102, '2026-01-02');",
+      columns: [
+        { name: "login_id", type: "INTEGER", pk: true },
+        { name: "user_id", type: "INTEGER", pk: false },
+        { name: "login_date", type: "DATE", pk: false },
+      ]
     }
   ]
 };

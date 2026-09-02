@@ -3671,6 +3671,20 @@ const REEL_CHALLENGES = {
     trapExplanation: 'Option A uses <code>ROW_NUMBER()</code> inside a CTE, which guarantees exactly 1 row per customer even when order timestamps tie! Option B uses <code>GROUP BY MAX + JOIN</code>, which returns duplicate rows if two orders occur on the same date.',
     codeA: "WITH ranked AS (\n  SELECT *,\n         ROW_NUMBER() OVER (\n           PARTITION BY customer_id\n           ORDER BY order_date DESC\n         ) AS rn\n  FROM orders\n)\nSELECT * FROM ranked WHERE rn = 1;",
     codeB: "SELECT o.*\nFROM orders o\nJOIN (\n  SELECT customer_id, MAX(order_date) AS max_date\n  FROM orders GROUP BY customer_id\n) m ON o.customer_id = m.customer_id\n   AND o.order_date = m.max_date;"
+  },
+  'SQL-10-R1': {
+    day: 'day10',
+    slideIndex: 0,
+    title: 'GAPS & ISLANDS TRAP 🏝️⚡',
+    task: 'Advanced Algorithmic SQL: Grouping Consecutive Login Streaks',
+    prompt: `Analytics needs to group consecutive active days into unbroken login streaks. Run Option A (Date - ROW_NUMBER trick) vs Option B (DENSE_RANK) to see why Option A is the Meta/Google FAANG standard.<br/>
+      <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-10-R1', 'A')">⚡ Load Option A (Date - ROW_NUMBER Trick)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-10-R1', 'B')">⚡ Load Option B (DENSE_RANK Trap)</button>
+      </div>`,
+    trapExplanation: 'Subtracting <code>ROW_NUMBER()</code> from consecutive login dates produces a CONSTANT date anchor for the entire unbroken streak! Plain <code>DENSE_RANK()</code> ignores date gaps and fails to detect broken streaks.',
+    codeA: "SELECT user_id, login_date,\n       DATE(login_date, '-' || (\n         ROW_NUMBER() OVER (\n           PARTITION BY user_id ORDER BY login_date\n         )\n       ) || ' days') AS streak_grp\nFROM user_logins;",
+    codeB: "SELECT user_id, login_date,\n       DENSE_RANK() OVER (\n         PARTITION BY user_id ORDER BY login_date\n       ) AS streak_grp\nFROM user_logins;"
   }
 };
 
@@ -3705,6 +3719,7 @@ function getActiveChallengeId() {
   if (camp.includes('reel_day08_q14') || camp.includes('reel_14') || camp.includes('q14') || camp.includes('like_wildcard') || camp.includes('wildcard')) return 'SQL-08-R1';
   if (camp.includes('reel_day08_q15') || camp.includes('reel_15') || camp.includes('q15') || camp.includes('union_dedup') || camp.includes('union')) return 'SQL-08-R2';
   if (camp.includes('reel_day09_q16') || camp.includes('reel_16') || camp.includes('q16') || camp.includes('latest_record') || camp.includes('row_number')) return 'SQL-09-R1';
+  if (camp.includes('reel_day10_q17') || camp.includes('reel_17') || camp.includes('q17') || camp.includes('gaps_islands') || camp.includes('streaks')) return 'SQL-10-R1';
 
   const dayParam = urlP.get('day');
   const qParam = urlP.get('q') || urlP.get('question');
@@ -3736,11 +3751,15 @@ function getActiveChallengeId() {
   if (dayParam === '9' || dayParam === '09') {
     if (qParam === '1' || qParam === '16') return 'SQL-09-R1';
   }
+  if (dayParam === '10') {
+    if (qParam === '1' || qParam === '17') return 'SQL-10-R1';
+  }
   if (qParam === '12' || qParam === 'q12') return 'SQL-07-R1';
   if (qParam === '13' || qParam === 'q13') return 'SQL-07-R2';
   if (qParam === '14' || qParam === 'q14') return 'SQL-08-R1';
   if (qParam === '15' || qParam === 'q15') return 'SQL-08-R2';
   if (qParam === '16' || qParam === 'q16') return 'SQL-09-R1';
+  if (qParam === '17' || qParam === 'q17') return 'SQL-10-R1';
   return null;
 }
 

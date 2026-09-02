@@ -1,0 +1,374 @@
+import asyncio
+from pathlib import Path
+from playwright.async_api import async_playwright
+
+OUTPUT_DIR = Path(r"d:\Learn Python in 60days\Manodemy_Web_V2\marketing\output\video")
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+HTML_COVER = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@800;900&family=Outfit:wght@600;700;800;900&family=JetBrains+Mono:wght@700;800&display=swap');
+
+  :root {
+    --cyan: #00f0ff;
+    --gold: #facc15;
+    --green: #10b981;
+    --red: #f43f5e;
+    --purple: #c084fc;
+    --bg-dark: #040711;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    width: 1080px;
+    height: 1920px;
+    background: var(--bg-dark);
+    color: #ffffff;
+    font-family: 'Outfit', sans-serif;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Cyberpunk Grid Background */
+  .grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image: 
+      linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(circle at 50% 50%, black 40%, transparent 80%);
+    z-index: 0;
+  }
+
+  /* Ambient Glow Spheres */
+  .glow-top {
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 850px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(0, 240, 255, 0.28) 0%, rgba(250, 204, 21, 0.15) 45%, transparent 70%);
+    filter: blur(80px);
+    z-index: 1;
+  }
+
+  .glow-bottom {
+    position: absolute;
+    bottom: 18%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 850px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(244, 63, 94, 0.22) 0%, rgba(16, 185, 129, 0.2) 45%, transparent 70%);
+    filter: blur(80px);
+    z-index: 1;
+  }
+
+  /* 1:1 Instagram Profile Grid Safe Container (1080 x 1080) */
+  .safe-container {
+    width: 1000px;
+    height: 1060px;
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 30px 20px;
+  }
+
+  /* Top Category Pill */
+  .top-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 26px;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.85);
+    border: 1.5px solid rgba(0, 240, 255, 0.4);
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.25);
+  }
+  .top-pill .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #00f0ff;
+    box-shadow: 0 0 10px #00f0ff;
+  }
+  .top-pill span {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: 2.5px;
+    color: #e2e8f0;
+    text-transform: uppercase;
+  }
+
+  /* Giant Attention Hook Title */
+  .title-section {
+    text-align: center;
+    margin-top: 15px;
+    margin-bottom: 20px;
+  }
+  .main-hook {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 68px;
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    text-transform: uppercase;
+    text-shadow: 0 8px 30px rgba(0,0,0,0.8);
+  }
+  .highlight-gold {
+    color: #facc15;
+    text-shadow: 0 0 25px rgba(250, 204, 21, 0.4);
+  }
+  .highlight-cyan {
+    color: #00f0ff;
+    text-shadow: 0 0 25px rgba(0, 240, 255, 0.5);
+  }
+  .sub-question {
+    font-size: 32px;
+    font-weight: 700;
+    color: #cbd5e1;
+    margin-top: 10px;
+    letter-spacing: 0.5px;
+  }
+
+  /* Code Cards Clash Container */
+  .cards-grid {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    position: relative;
+  }
+
+  .code-card {
+    border-radius: 20px;
+    background: rgba(10, 15, 30, 0.85);
+    backdrop-filter: blur(20px);
+    padding: 20px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-a {
+    border: 2px solid rgba(16, 185, 129, 0.6);
+    box-shadow: 0 0 35px rgba(16, 185, 129, 0.2), inset 0 0 15px rgba(16, 185, 129, 0.1);
+  }
+
+  .card-b {
+    border: 2px solid rgba(244, 63, 94, 0.6);
+    box-shadow: 0 0 35px rgba(244, 63, 94, 0.2), inset 0 0 15px rgba(244, 63, 94, 0.1);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .card-label {
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .label-a { color: #10b981; }
+  .label-b { color: #f43f5e; }
+
+  .mac-dots {
+    display: flex;
+    gap: 7px;
+  }
+  .mac-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+
+  .code-content {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 27px;
+    font-weight: 700;
+    line-height: 1.45;
+    color: #f1f5f9;
+    white-space: pre-wrap;
+  }
+
+  .kw { color: #38bdf8; font-weight: 800; }
+  .fn { color: #facc15; font-weight: 800; }
+  .str { color: #4ade80; }
+  .op { color: #f43f5e; }
+  .num { color: #fb923c; }
+
+  /* VS Floating Badge */
+  .vs-badge {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 72px;
+    height: 72px;
+    background: linear-gradient(135deg, #0f172a, #1e1b4b);
+    border: 3px solid #facc15;
+    box-shadow: 0 0 30px rgba(250, 204, 21, 0.6);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 900;
+    color: #facc15;
+    z-index: 20;
+    letter-spacing: -1px;
+  }
+
+  /* Bottom Callout Banner */
+  .bottom-banner {
+    margin-top: 15px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 28px;
+    border-radius: 16px;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1.5px solid rgba(255, 255, 255, 0.12);
+  }
+  .bottom-text {
+    font-size: 28px;
+    font-weight: 800;
+    color: #facc15;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .brand-text {
+    font-size: 26px;
+    font-weight: 800;
+    color: #00f0ff;
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+  <div class="grid-bg"></div>
+  <div class="glow-top"></div>
+  <div class="glow-bottom"></div>
+
+  <!-- Central 1:1 Profile Safe Zone -->
+  <div class="safe-container">
+    
+    <!-- Top Pill -->
+    <div class="top-pill">
+      <div class="dot"></div>
+      <span>FAANG SQL INTERVIEW TRAP ⚡</span>
+    </div>
+
+    <!-- Title Section -->
+    <div class="title-section">
+      <div class="main-hook">
+        <span class="highlight-gold">LATEST RECORD</span> PER USER 📊
+      </div>
+      <div class="sub-question">
+        Which query avoids <span class="highlight-cyan">duplicate orders</span> on tie dates?
+      </div>
+    </div>
+
+    <!-- Dual Code Cards Clash -->
+    <div class="cards-grid">
+      <div class="vs-badge">VS</div>
+
+      <!-- Card A -->
+      <div class="code-card card-a">
+        <div class="card-header">
+          <div class="card-label label-a">⚡ OPTION A · CTE Window</div>
+          <div class="mac-dots">
+            <div class="mac-dot" style="background:#ff5f56;"></div>
+            <div class="mac-dot" style="background:#ffbd2e;"></div>
+            <div class="mac-dot" style="background:#27c93f;"></div>
+          </div>
+        </div>
+        <div class="code-content"><span class="kw">WITH</span> ranked <span class="kw">AS</span> (
+  <span class="kw">SELECT</span> *, <span class="fn">ROW_NUMBER</span>() <span class="kw">OVER</span>(
+    <span class="kw">PARTITION BY</span> user_id <span class="kw">ORDER BY</span> order_date <span class="kw">DESC</span>
+  ) <span class="kw">AS</span> rn <span class="kw">FROM</span> orders
+) <span class="kw">SELECT</span> * <span class="kw">FROM</span> ranked <span class="kw">WHERE</span> rn = <span class="num">1</span>;</div>
+      </div>
+
+      <!-- Card B -->
+      <div class="code-card card-b">
+        <div class="card-header">
+          <div class="card-label label-b">⚠️ OPTION B · Self-Join MAX</div>
+          <div class="mac-dots">
+            <div class="mac-dot" style="background:#ff5f56;"></div>
+            <div class="mac-dot" style="background:#ffbd2e;"></div>
+            <div class="mac-dot" style="background:#27c93f;"></div>
+          </div>
+        </div>
+        <div class="code-content"><span class="kw">SELECT</span> o.* <span class="kw">FROM</span> orders o
+<span class="kw">JOIN</span> (
+  <span class="kw">SELECT</span> user_id, <span class="fn">MAX</span>(order_date) <span class="kw">AS</span> max_d
+  <span class="kw">FROM</span> orders <span class="kw">GROUP BY</span> user_id
+) m <span class="kw">ON</span> o.user_id = m.user_id <span class="kw">AND</span> o.order_date = m.max_d;</div>
+      </div>
+
+    </div>
+
+    <!-- Bottom Action Banner -->
+    <div class="bottom-banner">
+      <div class="bottom-text">
+        <span>👇 Option A or Option B?</span>
+      </div>
+      <div class="brand-text">
+        <span>manodemy.com/q16</span>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
+"""
+
+async def generate_cover():
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(headless=True)
+        # 1. Render Full 1080x1920 Reel Cover
+        page = await browser.new_page(viewport={"width": 1080, "height": 1920})
+        await page.set_content(HTML_COVER)
+        await page.wait_for_timeout(500)
+        
+        full_png = OUTPUT_DIR / "SQL-09-R1_Cover_HighCTR.png"
+        full_jpg = OUTPUT_DIR / "SQL-09-R1_Cover.jpg"
+        await page.screenshot(path=str(full_png))
+        await page.screenshot(path=str(full_jpg), quality=95)
+        print(f"[OK] Full 9:16 High-CTR Cover saved: {full_jpg}", flush=True)
+
+        # 2. Render 1:1 Instagram Grid Preview (Crop middle 1080x1080)
+        grid_jpg = OUTPUT_DIR / "SQL-09-R1_Grid_1x1_Preview.jpg"
+        await page.screenshot(
+            path=str(grid_jpg),
+            clip={"x": 0, "y": (1920 - 1080) / 2, "width": 1080, "height": 1080},
+            quality=95
+        )
+        print(f"[OK] 1:1 Instagram Grid Safe-Zone Preview saved: {grid_jpg}", flush=True)
+        await browser.close()
+
+if __name__ == "__main__":
+    asyncio.run(generate_cover())

@@ -153,11 +153,11 @@ HTML_TEMPLATE = f"""<!DOCTYPE html>
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 4px 0;
+    margin: 6px 0;
   }}
   .problem-visual-frame img {{
     width: 100%;
-    max-height: 380px;
+    max-height: 450px;
     object-fit: contain;
     filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.9));
   }}

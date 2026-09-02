@@ -1,6 +1,6 @@
 """
-Renders a stunning dark cyberpunk 3D glassmorphic streak calendar widget
-representing the Gaps & Islands problem statement.
+Renders an authentic, realistic full-month dark cyberpunk streak calendar widget
+representing consecutive login streaks with zero spoilers.
 """
 import asyncio
 from pathlib import Path
@@ -20,7 +20,7 @@ CALENDAR_HTML = """<!DOCTYPE html>
 
   body {
     width: 860px;
-    height: 420px;
+    height: 520px;
     background: transparent;
     display: flex;
     align-items: center;
@@ -29,75 +29,76 @@ CALENDAR_HTML = """<!DOCTYPE html>
     overflow: hidden;
   }
 
-  /* 3D Glassmorphic Calendar Card */
+  /* 3D Glassmorphic Realistic Calendar Card */
   .calendar-card {
-    width: 780px;
-    background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(7, 11, 22, 0.98) 100%);
-    border: 2px solid rgba(0, 240, 255, 0.45);
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 40px rgba(0, 240, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    border-radius: 28px;
-    padding: 24px 36px 28px 36px;
+    width: 800px;
+    background: linear-gradient(145deg, rgba(16, 24, 44, 0.96) 0%, rgba(8, 12, 24, 0.98) 100%);
+    border: 2px solid rgba(0, 240, 255, 0.4);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95), 0 0 45px rgba(0, 240, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    border-radius: 26px;
+    padding: 26px 36px;
     position: relative;
     backdrop-filter: blur(24px);
   }
 
-  /* Month Header */
+  /* Month Header: Clean, Authentic, Centered */
   .cal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 18px;
+    margin-bottom: 22px;
+    padding: 0 10px;
   }
 
   .nav-arrow {
     width: 38px;
     height: 38px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
     color: #94a3b8;
-    font-size: 20px;
-    font-weight: 800;
+    font-size: 22px;
+    font-weight: 700;
+    cursor: pointer;
   }
 
   .month-title {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 28px;
+    font-size: 30px;
     font-weight: 900;
     color: #ffffff;
     letter-spacing: 0.5px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
   }
   .month-title span {
     color: #00f0ff;
-    text-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+    text-shadow: 0 0 15px rgba(0, 240, 255, 0.6);
   }
 
-  /* Days of Week Row */
+  /* Weekdays Header */
   .weekdays {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     text-align: center;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 10px;
   }
   .weekday {
-    font-size: 17px;
+    font-size: 18px;
     font-weight: 800;
     color: #64748b;
     letter-spacing: 1px;
     text-transform: uppercase;
   }
 
-  /* Calendar Dates Grid */
+  /* Full Calendar 5-Week Grid */
   .days-grid {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
   }
 
   .week-row {
@@ -106,6 +107,7 @@ CALENDAR_HTML = """<!DOCTYPE html>
     align-items: center;
     text-align: center;
     position: relative;
+    height: 48px;
   }
 
   .day-cell {
@@ -122,65 +124,58 @@ CALENDAR_HTML = """<!DOCTYPE html>
 
   .day-cell.muted {
     color: #334155;
+    font-weight: 600;
   }
 
-  .day-cell.empty-dot {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
   .day-cell.empty-dot::after {
     content: '';
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     background: #334155;
   }
 
-  /* Streak Highlight Pill 1: Days 1 - 5 */
+  /* Streak Capsule 1: Days 1 to 5 */
   .streak-pill-1 {
     position: absolute;
     left: calc(100% / 7 * 1 + 6px);
     right: calc(100% / 7 * 1 + 6px);
-    top: 2px;
-    bottom: 2px;
-    background: linear-gradient(90deg, rgba(0, 240, 255, 0.25) 0%, rgba(0, 240, 255, 0.35) 100%);
-    border: 1.5px solid rgba(0, 240, 255, 0.7);
+    top: 4px;
+    bottom: 4px;
+    background: linear-gradient(90deg, rgba(0, 240, 255, 0.28) 0%, rgba(0, 240, 255, 0.42) 100%);
+    border: 2px solid rgba(0, 240, 255, 0.85);
     border-radius: 999px;
-    box-shadow: 0 0 25px rgba(0, 240, 255, 0.35), inset 0 0 15px rgba(0, 240, 255, 0.2);
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.4), inset 0 0 12px rgba(0, 240, 255, 0.25);
     z-index: 1;
   }
 
-  /* Streak Highlight Pill 2: Days 7 - 13 */
+  /* Streak Capsule 2: Days 7 to 13 with Flame */
   .streak-pill-2 {
     position: absolute;
-    left: 4px;
-    right: 4px;
-    top: 2px;
-    bottom: 2px;
-    background: linear-gradient(90deg, rgba(0, 240, 255, 0.3) 0%, rgba(250, 204, 21, 0.35) 85%, rgba(239, 68, 68, 0.45) 100%);
-    border: 1.5px solid rgba(250, 204, 21, 0.8);
+    left: 6px;
+    right: 6px;
+    top: 4px;
+    bottom: 4px;
+    background: linear-gradient(90deg, rgba(0, 240, 255, 0.3) 0%, rgba(250, 204, 21, 0.4) 80%, rgba(239, 68, 68, 0.5) 100%);
+    border: 2px solid rgba(250, 204, 21, 0.85);
     border-radius: 999px;
-    box-shadow: 0 0 30px rgba(250, 204, 21, 0.4), inset 0 0 15px rgba(250, 204, 21, 0.2);
+    box-shadow: 0 0 30px rgba(250, 204, 21, 0.45), inset 0 0 12px rgba(250, 204, 21, 0.25);
     z-index: 1;
   }
 
   .active-day {
     color: #ffffff !important;
     font-weight: 900 !important;
-    text-shadow: 0 0 10px rgba(0, 240, 255, 0.8);
+    text-shadow: 0 0 10px rgba(0, 240, 255, 0.9);
   }
 
-  /* Fire Flame Streak Icon on Day 13 */
+  /* Flame Badge on Day 13 */
   .fire-container {
     position: absolute;
-    right: -10px;
+    right: -12px;
     top: -16px;
     z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    filter: drop-shadow(0 0 16px rgba(239, 68, 68, 0.9));
+    filter: drop-shadow(0 0 18px rgba(239, 68, 68, 0.95));
   }
   .fire-badge {
     background: linear-gradient(135deg, #ef4444 0%, #f97316 50%, #facc15 100%);
@@ -191,47 +186,22 @@ CALENDAR_HTML = """<!DOCTYPE html>
     align-items: center;
     justify-content: center;
     font-size: 26px;
-    box-shadow: 0 0 20px rgba(239, 68, 68, 0.8);
     border: 2px solid #ffffff;
-    animation: pulse 2s infinite;
+    box-shadow: 0 0 22px rgba(239, 68, 68, 0.9);
   }
-
-  /* Gap Marker Callout */
-  .gap-callout {
-    position: absolute;
-    right: 18px;
-    top: 14px;
-    background: rgba(239, 68, 68, 0.2);
-    border: 1px solid #ef4444;
-    color: #fca5a5;
-    padding: 4px 12px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 800;
-    letter-spacing: 0.5px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .gap-dot { width: 8px; height: 8px; border-radius: 50%; background: #ef4444; box-shadow: 0 0 8px #ef4444; }
 </style>
 </head>
 <body>
 
   <div class="calendar-card">
-    <div class="gap-callout">
-      <div class="gap-dot"></div>
-      <span>GAP ON DAY 6</span>
-    </div>
-
-    <!-- Header -->
+    <!-- Clean Centered Month Header -->
     <div class="cal-header">
       <div class="nav-arrow">‹</div>
-      <div class="month-title">August <span>2025</span> · Streak Activity</div>
+      <div class="month-title">August <span>2025</span></div>
       <div class="nav-arrow">›</div>
     </div>
 
-    <!-- Weekdays -->
+    <!-- Weekdays Header -->
     <div class="weekdays">
       <div class="weekday">Sun</div>
       <div class="weekday">Mon</div>
@@ -242,9 +212,9 @@ CALENDAR_HTML = """<!DOCTYPE html>
       <div class="weekday">Sat</div>
     </div>
 
-    <!-- Dates Grid -->
+    <!-- Full Realistic Monthly Dates Grid -->
     <div class="days-grid">
-      <!-- Row 1: Streak 1 to 5, Gap on 6 -->
+      <!-- Week 1: Days 1 - 6 (Streak 1-5, Day 6 regular/unmarked) -->
       <div class="week-row">
         <div class="streak-pill-1"></div>
         <div class="day-cell empty-dot"></div>
@@ -253,10 +223,10 @@ CALENDAR_HTML = """<!DOCTYPE html>
         <div class="day-cell active-day">3</div>
         <div class="day-cell active-day">4</div>
         <div class="day-cell active-day">5</div>
-        <div class="day-cell" style="color:#ef4444; font-weight:900;">6</div>
+        <div class="day-cell">6</div>
       </div>
 
-      <!-- Row 2: Streak 7 to 13 with Flame -->
+      <!-- Week 2: Days 7 - 13 (Streak 7-13 with Flame on 13) -->
       <div class="week-row">
         <div class="streak-pill-2"></div>
         <div class="day-cell active-day">7</div>
@@ -273,7 +243,7 @@ CALENDAR_HTML = """<!DOCTYPE html>
         </div>
       </div>
 
-      <!-- Row 3: Inactive Days -->
+      <!-- Week 3: Days 14 - 20 -->
       <div class="week-row">
         <div class="day-cell muted">14</div>
         <div class="day-cell muted">15</div>
@@ -282,6 +252,28 @@ CALENDAR_HTML = """<!DOCTYPE html>
         <div class="day-cell muted">18</div>
         <div class="day-cell muted">19</div>
         <div class="day-cell muted">20</div>
+      </div>
+
+      <!-- Week 4: Days 21 - 27 -->
+      <div class="week-row">
+        <div class="day-cell muted">21</div>
+        <div class="day-cell muted">22</div>
+        <div class="day-cell muted">23</div>
+        <div class="day-cell muted">24</div>
+        <div class="day-cell muted">25</div>
+        <div class="day-cell muted">26</div>
+        <div class="day-cell muted">27</div>
+      </div>
+
+      <!-- Week 5: Days 28 - 31 -->
+      <div class="week-row">
+        <div class="day-cell muted">28</div>
+        <div class="day-cell muted">29</div>
+        <div class="day-cell muted">30</div>
+        <div class="day-cell muted">31</div>
+        <div class="day-cell empty-dot"></div>
+        <div class="day-cell empty-dot"></div>
+        <div class="day-cell empty-dot"></div>
       </div>
     </div>
   </div>
@@ -293,12 +285,12 @@ CALENDAR_HTML = """<!DOCTYPE html>
 async def render():
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)
-        page = await browser.new_page(viewport={"width": 860, "height": 420}, device_scale_factor=2.0)
+        page = await browser.new_page(viewport={"width": 860, "height": 520}, device_scale_factor=2.0)
         await page.set_content(CALENDAR_HTML)
         await page.wait_for_timeout(300)
         OUTPUT_IMG.parent.mkdir(parents=True, exist_ok=True)
         await page.screenshot(path=str(OUTPUT_IMG), type="png", omit_background=True)
-        print(f"Rendered dark calendar widget: {OUTPUT_IMG}")
+        print(f"Rendered realistic full calendar widget: {OUTPUT_IMG}")
         await browser.close()
 
 if __name__ == "__main__":

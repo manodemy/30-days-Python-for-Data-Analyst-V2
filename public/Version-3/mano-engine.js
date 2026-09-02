@@ -3682,7 +3682,8 @@ const REEL_CHALLENGES = {
         <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-10-R1', 'A')">⚡ Load Option A (Date - ROW_NUMBER Trick)</button>
         <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-10-R1', 'B')">⚡ Load Option B (DENSE_RANK Trap)</button>
       </div>`,
-    trapExplanation: 'Subtracting <code>ROW_NUMBER()</code> from consecutive login dates produces a CONSTANT date anchor for the entire unbroken streak! Plain <code>DENSE_RANK()</code> ignores date gaps and fails to detect broken streaks.',
+    trapExplanation: 'Option B uses plain <code>DENSE_RANK()</code>, which simply counts 1, 2, 3... ignoring multi-day gaps! Option A subtracts <code>ROW_NUMBER()</code> from consecutive dates to form a constant date anchor for each unbroken streak.',
+    correctOption: 'A',
     codeA: "SELECT user_id, login_date,\n       DATE(login_date, '-' || (\n         ROW_NUMBER() OVER (\n           PARTITION BY user_id ORDER BY login_date\n         )\n       ) || ' days') AS streak_grp\nFROM user_logins;",
     codeB: "SELECT user_id, login_date,\n       DENSE_RANK() OVER (\n         PARTITION BY user_id ORDER BY login_date\n       ) AS streak_grp\nFROM user_logins;"
   }
@@ -3775,13 +3776,17 @@ function loadQuestionsForDay(day) {
   const chalId = getActiveChallengeId();
   if (chalId && REEL_CHALLENGES[chalId]) {
     const chal = REEL_CHALLENGES[chalId];
+    const isCorrectA = chal.correctOption === 'A';
     questions = [{
       id: 1,
       isChallenge: true,
       title: chal.title,
       prompt: `<strong>${chal.task}</strong><br/>${chal.prompt}`,
-      referenceSql: chal.codeB,
-      codeA: chal.codeA
+      referenceSql: isCorrectA ? chal.codeA : chal.codeB,
+      codeA: chal.codeA,
+      codeB: chal.codeB,
+      correctOption: isCorrectA ? 'A' : 'B',
+      trapOption: isCorrectA ? 'B' : 'A'
     }];
   } else if (tpq && (tpq[currentSlide] || tpq[String(currentSlide)])) {
     questions = [...(tpq[currentSlide] || tpq[String(currentSlide)])];
@@ -5216,13 +5221,17 @@ function runCurrentQuery() {
 
     let q = (COURSE_CONFIG.practiceQuestions && COURSE_CONFIG.practiceQuestions[currentPracticeQ]) || null;
     if (chal) {
+      const isCorrectA = chal.correctOption === 'A';
       q = {
         id: 1,
         isChallenge: true,
         title: chal.title,
         prompt: `<strong>${chal.task}</strong><br/>${chal.prompt}`,
-        referenceSql: chal.codeB,
-        codeA: chal.codeA
+        referenceSql: isCorrectA ? chal.codeA : chal.codeB,
+        codeA: chal.codeA,
+        codeB: chal.codeB,
+        correctOption: isCorrectA ? 'A' : 'B',
+        trapOption: isCorrectA ? 'B' : 'A'
       };
     }
 
@@ -5251,7 +5260,10 @@ function runCurrentQuery() {
         successBanner.className = 'output-success';
         successBanner.style.marginTop = '10px';
         if (q.isChallenge && chal) {
-          successBanner.innerHTML = `🎉 <strong>BOOM! Perfect Query!</strong><br/>${chal.task || 'You successfully solved the challenge!'}`;
+          const successDetail = chal.correctOption === 'A' 
+            ? 'Option A uses the Date - ROW_NUMBER trick to generate a constant date anchor for each unbroken streak!'
+            : (chal.task || 'You successfully solved the challenge!');
+          successBanner.innerHTML = `🎉 <strong>BOOM! Perfect Query!</strong><br/>${successDetail}`;
         } else {
           successBanner.innerHTML = '🎉 Correct Answer! Good job.';
         }
@@ -5260,17 +5272,20 @@ function runCurrentQuery() {
         // Show grading differences or challenge trap explanation
         const label = document.querySelector('#mainOutput .output-label');
         if (label) {
-          const badgeText = q.isChallenge ? '💀 Trap Encountered (Option A)' : '❌ Incorrect';
+          const trapOpt = (q && q.trapOption) || 'A';
+          const badgeText = q.isChallenge ? `💀 Trap Encountered (Option ${trapOpt})` : '❌ Incorrect';
           label.innerHTML = `Query Result <span class="incorrect-badge" style="background: rgba(239,68,68,0.15); color: #f87171; padding: 3px 10px; border-radius: 6px; font-size: 0.72rem; margin-left: 8px; font-weight: 800; border: 1px solid rgba(239, 68, 68, 0.4); display: inline-flex; align-items: center; gap: 4px;">${badgeText}</span>`;
         }
         const diffDiv = document.createElement('div');
         if (q.isChallenge && chal) {
           const trapDetail = chal.trapExplanation || 'This query demonstrates the common SQL trap shown in our Reel. Notice the output produced unexpected values!';
+          const fixOpt = (q && q.correctOption) || 'B';
+          const fixLabel = fixOpt === 'A' ? '⚡ Load Option A (Date - ROW_NUMBER Trick)' : '⚡ Load Option B (Fix)';
           diffDiv.innerHTML = `
             <div style="margin-top: 10px; padding: 12px 14px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; font-size: 0.8rem; line-height: 1.5; color: #fca5a5;">
               <div style="font-weight: 800; color: #ef4444; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">💀 Trap Caught!</div>
               <div>${trapDetail}</div>
-              <div style="margin-top: 8px; font-size: 0.76rem; color: #cbd5e1;">👉 Click <strong>[⚡ Load Option B (Fix)]</strong> in the question card above to test the corrected query!</div>
+              <div style="margin-top: 8px; font-size: 0.76rem; color: #cbd5e1;">👉 Click <strong>[${fixLabel}]</strong> in the question card above to test the corrected query!</div>
             </div>
           `;
         } else {
@@ -5907,13 +5922,17 @@ window.addEventListener('DOMContentLoaded', async () => {
     const initialChal = typeof getActiveChallengeId === 'function' ? getActiveChallengeId() : null;
     if (initialChal && REEL_CHALLENGES[initialChal]) {
       const chal = REEL_CHALLENGES[initialChal];
+      const isCorrectA = chal.correctOption === 'A';
       COURSE_CONFIG.practiceQuestions = [{
         id: 1,
         isChallenge: true,
         title: chal.title,
         prompt: `<strong>${chal.task}</strong><br/>${chal.prompt}`,
-        referenceSql: chal.codeB,
-        codeA: chal.codeA
+        referenceSql: isCorrectA ? chal.codeA : chal.codeB,
+        codeA: chal.codeA,
+        codeB: chal.codeB,
+        correctOption: isCorrectA ? 'A' : 'B',
+        trapOption: isCorrectA ? 'B' : 'A'
       }];
       currentPracticeQ = 0;
       renderPracticeQuestion();

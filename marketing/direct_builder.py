@@ -607,7 +607,7 @@ REELS_CATALOG = {
         "ccStyle": "hormozi",
         "ccEnabled": True,
         "voice": "en-US-AndrewNeural",
-        "voiceScript": "Meta and Google love asking this gaps and islands SQL trap!\nWhich query groups consecutive active days into unbroken login streaks?\nChoose your answer.\nOption A...\nor Option B?\nDrop your vote in the comments below.",
+        "voiceScript": "Meta and Google love asking this Gaps and Islands S-Q-L trap!\nWhich query groups consecutive active days into unbroken login streaks?\nChoose your answer.\nOption A...\nor Option B?\nDrop your vote in the comments below.",
         "caption": "GAPS & ISLANDS TRAP 🏝️⚡\n\nWhich query groups consecutive active days into unbroken login streaks?\n\nCan you spot which approach generates a constant grouping key for consecutive days?\n\nWhat’s your answer — A or B? 👇\nDrop your choice in the comments before checking the answer!\n\n🧠 Test this SQL interview question live:\n👉 manodemy.com/q17\n\n📊 Practice Data Skills with Manodemy\n🎁 Day 1 & Day 2 are 100% FREE\n\n🔗 Link in bio\n\n[sql interview questions, gaps and islands sql, row_number trick, consecutive streaks, faang sql interview, data analyst interview, advanced sql, learn sql]\n\n#SQL #SQLInterview #SQLQuestions #SQLTips #DataAnalyst #DataAnalytics #LearnSQL #Manodemy",
         "pinnedAnswer": "Option A is the FAANG Standard ✅ | Option B is the Trap ❌\n\nWhy Option A (date - ROW_NUMBER()) works:\nAs long as login dates are consecutive, both `login_date` and `ROW_NUMBER()` increment by +1 each day. Subtracting ROW_NUMBER() from login_date produces a CONSTANT date anchor for the entire unbroken streak!\n\nWhy Option B (DENSE_RANK) fails on gaps:\n`DENSE_RANK()` simply numbers rows sequentially 1, 2, 3... regardless of whether there is a 5-day gap between logins! It fails to detect broken streaks.\n\n💡 Rule of thumb: Subtracting ROW_NUMBER() from dates is the golden trick for Gaps & Islands problems!\n\nDid you vote A or B? 👇",
         "link": "https://www.manodemy.com/q17"
@@ -657,7 +657,7 @@ async def build_direct_video(reel=DEFAULT_REEL, is_4k=False, fps=30):
             saved = False
             for attempt in range(4):
                 try:
-                    com = edge_tts.Communicate(text, reel["voice"], rate="+8%", pitch="+1Hz")
+                    com = edge_tts.Communicate(text, reel["voice"], rate="+3%", pitch="+0Hz")
                     await com.save(str(tfile))
                     saved = True
                     break
@@ -841,14 +841,14 @@ async def build_direct_video(reel=DEFAULT_REEL, is_4k=False, fps=30):
     # Voiceover: +2.5dB dominant punch with 1.5s silent hold tail
     vox = (raw_narration + 2.5) + AudioSegment.silent(duration=hold_ms)
     
-    # BGM: Exact 22% volume (-13.15dB) extended across full total_ms
-    bgm_path = PROJECT_ROOT / "marketing" / "assets" / "audio" / "quiz_night_anthem_reel_16s.mp3"
-    bgm = AudioSegment.from_file(str(bgm_path)) - 13.15
+    # BGM: Exact 22% volume (-13.15dB) continuous full track extended across full total_ms with zero seamless cuts
+    bgm_path = PROJECT_ROOT / "marketing" / "assets" / "audio" / "quiz_night_anthem_full.mp3"
+    bgm = AudioSegment.from_file(str(bgm_path)) - 14.0
     if len(bgm) < total_ms:
-        bgm = (bgm * 2)[:total_ms]
+        bgm = bgm.append(bgm, crossfade=400)[:total_ms]
     else:
         bgm = bgm[:total_ms]
-    bgm = bgm.fade_out(450)
+    bgm = bgm.fade_out(500)
     
     # SFX Suite: Multi-oscillator acoustic textures
     sfx = build_sfx_audio_segment(cues_data, total_ms) + 1.5

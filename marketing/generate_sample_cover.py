@@ -163,13 +163,13 @@ HTML_COVER = """<!DOCTYPE html>
   }
 
   .card-a {
-    border: 2px solid rgba(16, 185, 129, 0.6);
-    box-shadow: 0 0 35px rgba(16, 185, 129, 0.2), inset 0 0 15px rgba(16, 185, 129, 0.1);
+    border: 2px solid rgba(0, 240, 255, 0.6);
+    box-shadow: 0 0 35px rgba(0, 240, 255, 0.2), inset 0 0 15px rgba(0, 240, 255, 0.1);
   }
 
   .card-b {
-    border: 2px solid rgba(244, 63, 94, 0.6);
-    box-shadow: 0 0 35px rgba(244, 63, 94, 0.2), inset 0 0 15px rgba(244, 63, 94, 0.1);
+    border: 2px solid rgba(250, 204, 21, 0.6);
+    box-shadow: 0 0 35px rgba(250, 204, 21, 0.2), inset 0 0 15px rgba(250, 204, 21, 0.1);
   }
 
   .card-header {
@@ -189,8 +189,8 @@ HTML_COVER = """<!DOCTYPE html>
     align-items: center;
     gap: 8px;
   }
-  .label-a { color: #10b981; }
-  .label-b { color: #f43f5e; }
+  .label-a { color: #00f0ff; }
+  .label-b { color: #facc15; }
 
   .mac-dots {
     display: flex;
@@ -298,7 +298,7 @@ HTML_COVER = """<!DOCTYPE html>
       <!-- Card A -->
       <div class="code-card card-a">
         <div class="card-header">
-          <div class="card-label label-a">⚡ OPTION A · Date - ROW_NUMBER</div>
+          <div class="card-label label-a">⚡ OPTION A</div>
           <div class="mac-dots">
             <div class="mac-dot" style="background:#ff5f56;"></div>
             <div class="mac-dot" style="background:#ffbd2e;"></div>
@@ -317,7 +317,7 @@ HTML_COVER = """<!DOCTYPE html>
       <!-- Card B -->
       <div class="code-card card-b">
         <div class="card-header">
-          <div class="card-label label-b">⚠️ OPTION B · DENSE_RANK Trap</div>
+          <div class="card-label label-b">⚡ OPTION B</div>
           <div class="mac-dots">
             <div class="mac-dot" style="background:#ff5f56;"></div>
             <div class="mac-dot" style="background:#ffbd2e;"></div>

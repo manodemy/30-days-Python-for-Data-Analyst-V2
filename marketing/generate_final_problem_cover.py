@@ -233,8 +233,9 @@ HTML_TEMPLATE = f"""<!DOCTYPE html>
     font-weight: 800;
     line-height: 1.4;
     color: #f8fafc;
-    text-align: center;
+    text-align: left;
     width: 100%;
+    padding-left: 6px;
   }}
   .opt-code .kw {{ color: #38bdf8; }}
   .opt-code .fn {{ color: #facc15; }}

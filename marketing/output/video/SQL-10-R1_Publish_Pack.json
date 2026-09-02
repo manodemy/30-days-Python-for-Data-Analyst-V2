@@ -6,205 +6,205 @@
   "videoPath": "D:\\Learn Python in 60days\\Manodemy_Web_V2\\marketing\\output\\video\\SQL-10-R1.mp4",
   "coverFile": "SQL-10-R1_Cover.png",
   "coverJpg": "SQL-10-R1_Cover.jpg",
-  "fileSizeMb": 4.34,
+  "fileSizeMb": 4.49,
   "resolution": "1080x1920",
   "fps": 24,
-  "durationSec": 18.95,
+  "durationSec": 17.83,
   "caption": "GAPS & ISLANDS TRAP 🏝️⚡\n\nWhich query groups consecutive active days into unbroken login streaks?\n\nCan you spot which approach generates a constant grouping key for consecutive days?\n\nWhat’s your answer — A or B? 👇\nDrop your choice in the comments before checking the answer!\n\n🧠 Test this SQL interview question live:\n👉 manodemy.com/q17\n\n📊 Practice Data Skills with Manodemy\n🎁 Day 1 & Day 2 are 100% FREE\n\n🔗 Link in bio\n\n[sql interview questions, gaps and islands sql, row_number trick, consecutive streaks, faang sql interview, data analyst interview, advanced sql, learn sql]\n\n#SQL #SQLInterview #SQLQuestions #SQLTips #DataAnalyst #DataAnalytics #LearnSQL #Manodemy",
   "pinnedAnswer": "Option A is the FAANG Standard ✅ | Option B is the Trap ❌\n\nWhy Option A (date - ROW_NUMBER()) works:\nAs long as login dates are consecutive, both `login_date` and `ROW_NUMBER()` increment by +1 each day. Subtracting ROW_NUMBER() from login_date produces a CONSTANT date anchor for the entire unbroken streak!\n\nWhy Option B (DENSE_RANK) fails on gaps:\n`DENSE_RANK()` simply numbers rows sequentially 1, 2, 3... regardless of whether there is a 5-day gap between logins! It fails to detect broken streaks.\n\n💡 Rule of thumb: Subtracting ROW_NUMBER() from dates is the golden trick for Gaps & Islands problems!\n\nDid you vote A or B? 👇",
   "simulatorLink": "https://www.manodemy.com/q17",
   "cues": {
     "t_hook_start": 0,
-    "t_line2_start": 4880,
-    "t_clock_in": 9520,
-    "t_opta": 11460,
-    "t_optb": 13560,
-    "t_optb_end": 14300,
-    "t_clock_out": 16000,
-    "t_cta_start": 16000,
-    "t_voice_end": 17550,
-    "totalMs": 18950,
-    "clockDurationMs": 6480,
+    "t_line2_start": 4020,
+    "t_clock_in": 8900,
+    "t_opta": 10440,
+    "t_optb": 11960,
+    "t_optb_end": 13200,
+    "t_clock_out": 14340,
+    "t_cta_start": 14340,
+    "t_voice_end": 16430,
+    "totalMs": 17830,
+    "clockDurationMs": 5440,
     "wordCues": [
       {
         "word": "Meta",
         "startMs": 0,
-        "endMs": 480
+        "endMs": 380
       },
       {
         "word": "and",
-        "startMs": 480,
-        "endMs": 660
+        "startMs": 380,
+        "endMs": 560
       },
       {
         "word": "Google",
-        "startMs": 660,
-        "endMs": 900
+        "startMs": 560,
+        "endMs": 880
       },
       {
         "word": "love",
-        "startMs": 900,
-        "endMs": 1180
+        "startMs": 880,
+        "endMs": 1160
       },
       {
         "word": "asking",
-        "startMs": 1180,
-        "endMs": 1600
+        "startMs": 1160,
+        "endMs": 1580
       },
       {
         "word": "this",
-        "startMs": 1600,
-        "endMs": 1820
+        "startMs": 1580,
+        "endMs": 1800
       },
       {
         "word": "Gaps",
-        "startMs": 1820,
-        "endMs": 2100
+        "startMs": 1800,
+        "endMs": 2080
       },
       {
         "word": "and",
-        "startMs": 2100,
-        "endMs": 2380
+        "startMs": 2080,
+        "endMs": 2480
       },
       {
         "word": "Islands",
-        "startMs": 2380,
-        "endMs": 2680
+        "startMs": 2480,
+        "endMs": 2800
       },
       {
         "word": "S-Q-L",
-        "startMs": 2900,
-        "endMs": 3260
+        "startMs": 3080,
+        "endMs": 3340
       },
       {
         "word": "trap!",
-        "startMs": 3260,
-        "endMs": 3720
+        "startMs": 3340,
+        "endMs": 3660
       },
       {
         "word": "Which",
-        "startMs": 4660,
-        "endMs": 5020
+        "startMs": 4020,
+        "endMs": 4420
       },
       {
         "word": "query",
-        "startMs": 5020,
-        "endMs": 5340
+        "startMs": 4420,
+        "endMs": 4740
       },
       {
         "word": "groups",
-        "startMs": 5340,
-        "endMs": 5760
+        "startMs": 4740,
+        "endMs": 5100
       },
       {
         "word": "consecutive",
-        "startMs": 5760,
-        "endMs": 6260
+        "startMs": 5100,
+        "endMs": 5580
       },
       {
         "word": "active",
-        "startMs": 6260,
-        "endMs": 6680
+        "startMs": 5580,
+        "endMs": 6060
       },
       {
         "word": "days",
-        "startMs": 6680,
-        "endMs": 7000
+        "startMs": 6060,
+        "endMs": 6420
       },
       {
         "word": "into",
-        "startMs": 7000,
-        "endMs": 7300
+        "startMs": 6420,
+        "endMs": 6920
       },
       {
         "word": "unbroken",
-        "startMs": 7300,
-        "endMs": 7780
+        "startMs": 6920,
+        "endMs": 7480
       },
       {
         "word": "login",
-        "startMs": 7780,
-        "endMs": 8220
+        "startMs": 7480,
+        "endMs": 7820
       },
       {
         "word": "streaks?",
-        "startMs": 8220,
-        "endMs": 8680
+        "startMs": 7820,
+        "endMs": 8320
       },
       {
         "word": "Choose",
-        "startMs": 9520,
-        "endMs": 10040
+        "startMs": 8900,
+        "endMs": 9140
       },
       {
         "word": "your",
-        "startMs": 10040,
-        "endMs": 10260
+        "startMs": 9140,
+        "endMs": 9320
       },
       {
         "word": "answer...",
-        "startMs": 10260,
-        "endMs": 10600
+        "startMs": 9320,
+        "endMs": 9600
       },
       {
         "word": "Option",
-        "startMs": 11460,
-        "endMs": 12040
+        "startMs": 10440,
+        "endMs": 10980
       },
       {
         "word": "A...",
-        "startMs": 12040,
-        "endMs": 12460
+        "startMs": 10980,
+        "endMs": 11280
       },
       {
         "word": "or",
-        "startMs": 13280,
-        "endMs": 13640
+        "startMs": 11960,
+        "endMs": 12620
       },
       {
         "word": "Option",
-        "startMs": 13640,
-        "endMs": 13980
+        "startMs": 12620,
+        "endMs": 12920
       },
       {
         "word": "B?",
-        "startMs": 13980,
-        "endMs": 14300
+        "startMs": 12920,
+        "endMs": 13200
       },
       {
         "word": "Drop",
-        "startMs": 15740,
-        "endMs": 16100
+        "startMs": 14340,
+        "endMs": 15000
       },
       {
         "word": "your",
-        "startMs": 16100,
-        "endMs": 16320
+        "startMs": 15000,
+        "endMs": 15180
       },
       {
         "word": "vote",
-        "startMs": 16320,
-        "endMs": 16540
+        "startMs": 15180,
+        "endMs": 15420
       },
       {
         "word": "in",
-        "startMs": 16540,
-        "endMs": 16700
+        "startMs": 15420,
+        "endMs": 15640
       },
       {
         "word": "the",
-        "startMs": 16700,
-        "endMs": 16800
+        "startMs": 15640,
+        "endMs": 15740
       },
       {
         "word": "comments",
-        "startMs": 16800,
-        "endMs": 17120
+        "startMs": 15740,
+        "endMs": 16040
       },
       {
         "word": "below.",
-        "startMs": 17120,
-        "endMs": 17500
+        "startMs": 16040,
+        "endMs": 16380
       }
     ],
     "phrases": [
@@ -212,231 +212,231 @@
         "index": 0,
         "text": "Meta and Google love asking this Gaps and Islands S-Q-L trap!",
         "startMs": 0,
-        "endMs": 4880,
+        "endMs": 4020,
         "words": [
           {
             "word": "Meta",
             "startMs": 0,
-            "endMs": 480
+            "endMs": 380
           },
           {
             "word": "and",
-            "startMs": 480,
-            "endMs": 660
+            "startMs": 380,
+            "endMs": 560
           },
           {
             "word": "Google",
-            "startMs": 660,
-            "endMs": 900
+            "startMs": 560,
+            "endMs": 880
           },
           {
             "word": "love",
-            "startMs": 900,
-            "endMs": 1180
+            "startMs": 880,
+            "endMs": 1160
           },
           {
             "word": "asking",
-            "startMs": 1180,
-            "endMs": 1600
+            "startMs": 1160,
+            "endMs": 1580
           },
           {
             "word": "this",
-            "startMs": 1600,
-            "endMs": 1820
+            "startMs": 1580,
+            "endMs": 1800
           },
           {
             "word": "Gaps",
-            "startMs": 1820,
-            "endMs": 2100
+            "startMs": 1800,
+            "endMs": 2080
           },
           {
             "word": "and",
-            "startMs": 2100,
-            "endMs": 2380
+            "startMs": 2080,
+            "endMs": 2480
           },
           {
             "word": "Islands",
-            "startMs": 2380,
-            "endMs": 2680
+            "startMs": 2480,
+            "endMs": 2800
           },
           {
             "word": "S-Q-L",
-            "startMs": 2900,
-            "endMs": 3260
+            "startMs": 3080,
+            "endMs": 3340
           },
           {
             "word": "trap!",
-            "startMs": 3260,
-            "endMs": 3720
+            "startMs": 3340,
+            "endMs": 3660
           }
         ]
       },
       {
         "index": 1,
         "text": "Which query groups consecutive active days into unbroken login streaks?",
-        "startMs": 4880,
-        "endMs": 9520,
+        "startMs": 4020,
+        "endMs": 8900,
         "words": [
           {
             "word": "Which",
-            "startMs": 4660,
-            "endMs": 5020
+            "startMs": 4020,
+            "endMs": 4420
           },
           {
             "word": "query",
-            "startMs": 5020,
-            "endMs": 5340
+            "startMs": 4420,
+            "endMs": 4740
           },
           {
             "word": "groups",
-            "startMs": 5340,
-            "endMs": 5760
+            "startMs": 4740,
+            "endMs": 5100
           },
           {
             "word": "consecutive",
-            "startMs": 5760,
-            "endMs": 6260
+            "startMs": 5100,
+            "endMs": 5580
           },
           {
             "word": "active",
-            "startMs": 6260,
-            "endMs": 6680
+            "startMs": 5580,
+            "endMs": 6060
           },
           {
             "word": "days",
-            "startMs": 6680,
-            "endMs": 7000
+            "startMs": 6060,
+            "endMs": 6420
           },
           {
             "word": "into",
-            "startMs": 7000,
-            "endMs": 7300
+            "startMs": 6420,
+            "endMs": 6920
           },
           {
             "word": "unbroken",
-            "startMs": 7300,
-            "endMs": 7780
+            "startMs": 6920,
+            "endMs": 7480
           },
           {
             "word": "login",
-            "startMs": 7780,
-            "endMs": 8220
+            "startMs": 7480,
+            "endMs": 7820
           },
           {
             "word": "streaks?",
-            "startMs": 8220,
-            "endMs": 8680
+            "startMs": 7820,
+            "endMs": 8320
           }
         ]
       },
       {
         "index": 2,
         "text": "Choose your answer...",
-        "startMs": 9520,
-        "endMs": 11460,
+        "startMs": 8900,
+        "endMs": 10440,
         "words": [
           {
             "word": "Choose",
-            "startMs": 9520,
-            "endMs": 10040
+            "startMs": 8900,
+            "endMs": 9140
           },
           {
             "word": "your",
-            "startMs": 10040,
-            "endMs": 10260
+            "startMs": 9140,
+            "endMs": 9320
           },
           {
             "word": "answer...",
-            "startMs": 10260,
-            "endMs": 10600
+            "startMs": 9320,
+            "endMs": 9600
           }
         ]
       },
       {
         "index": 3,
         "text": "Option A...",
-        "startMs": 11460,
-        "endMs": 13560,
+        "startMs": 10440,
+        "endMs": 11960,
         "words": [
           {
             "word": "Option",
-            "startMs": 11460,
-            "endMs": 12040
+            "startMs": 10440,
+            "endMs": 10980
           },
           {
             "word": "A...",
-            "startMs": 12040,
-            "endMs": 12460
+            "startMs": 10980,
+            "endMs": 11280
           }
         ]
       },
       {
         "index": 4,
         "text": "or Option B?",
-        "startMs": 13560,
-        "endMs": 14300,
+        "startMs": 11960,
+        "endMs": 13200,
         "words": [
           {
             "word": "or",
-            "startMs": 13280,
-            "endMs": 13640
+            "startMs": 11960,
+            "endMs": 12620
           },
           {
             "word": "Option",
-            "startMs": 13640,
-            "endMs": 13980
+            "startMs": 12620,
+            "endMs": 12920
           },
           {
             "word": "B?",
-            "startMs": 13980,
-            "endMs": 14300
+            "startMs": 12920,
+            "endMs": 13200
           }
         ]
       },
       {
         "index": 5,
         "text": "Drop your vote in the comments below.",
-        "startMs": 16000,
-        "endMs": 17550,
+        "startMs": 14340,
+        "endMs": 16430,
         "words": [
           {
             "word": "Drop",
-            "startMs": 15740,
-            "endMs": 16100
+            "startMs": 14340,
+            "endMs": 15000
           },
           {
             "word": "your",
-            "startMs": 16100,
-            "endMs": 16320
+            "startMs": 15000,
+            "endMs": 15180
           },
           {
             "word": "vote",
-            "startMs": 16320,
-            "endMs": 16540
+            "startMs": 15180,
+            "endMs": 15420
           },
           {
             "word": "in",
-            "startMs": 16540,
-            "endMs": 16700
+            "startMs": 15420,
+            "endMs": 15640
           },
           {
             "word": "the",
-            "startMs": 16700,
-            "endMs": 16800
+            "startMs": 15640,
+            "endMs": 15740
           },
           {
             "word": "comments",
-            "startMs": 16800,
-            "endMs": 17120
+            "startMs": 15740,
+            "endMs": 16040
           },
           {
             "word": "below.",
-            "startMs": 17120,
-            "endMs": 17500
+            "startMs": 16040,
+            "endMs": 16380
           }
         ]
       }
     ]
   },
-  "generatedAt": "2026-09-02 23:57:42"
+  "generatedAt": "2026-09-03 00:44:18"
 }

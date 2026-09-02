@@ -77,14 +77,14 @@ HTML_COVER = """<!DOCTYPE html>
   /* 1:1 Instagram Profile Grid Safe Container (1080 x 1080) */
   .safe-container {
     width: 1000px;
-    height: 1060px;
+    height: 1040px;
     position: relative;
     z-index: 10;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    padding: 30px 20px;
+    padding: 20px 20px;
   }
 
   /* Top Category Pill */
@@ -92,7 +92,7 @@ HTML_COVER = """<!DOCTYPE html>
     display: inline-flex;
     align-items: center;
     gap: 12px;
-    padding: 10px 26px;
+    padding: 8px 24px;
     border-radius: 999px;
     background: rgba(15, 23, 42, 0.85);
     border: 1.5px solid rgba(0, 240, 255, 0.4);
@@ -106,7 +106,7 @@ HTML_COVER = """<!DOCTYPE html>
     box-shadow: 0 0 10px #00f0ff;
   }
   .top-pill span {
-    font-size: 26px;
+    font-size: 24px;
     font-weight: 800;
     letter-spacing: 2.5px;
     color: #e2e8f0;
@@ -116,12 +116,12 @@ HTML_COVER = """<!DOCTYPE html>
   /* Giant Attention Hook Title */
   .title-section {
     text-align: center;
-    margin-top: 15px;
-    margin-bottom: 20px;
+    margin-top: 10px;
+    margin-bottom: 12px;
   }
   .main-hook {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 68px;
+    font-size: 62px;
     font-weight: 900;
     line-height: 1.1;
     letter-spacing: -1px;
@@ -137,10 +137,10 @@ HTML_COVER = """<!DOCTYPE html>
     text-shadow: 0 0 25px rgba(0, 240, 255, 0.5);
   }
   .sub-question {
-    font-size: 32px;
+    font-size: 30px;
     font-weight: 700;
     color: #cbd5e1;
-    margin-top: 10px;
+    margin-top: 8px;
     letter-spacing: 0.5px;
   }
 
@@ -149,15 +149,15 @@ HTML_COVER = """<!DOCTYPE html>
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 12px;
     position: relative;
   }
 
   .code-card {
-    border-radius: 20px;
+    border-radius: 18px;
     background: rgba(10, 15, 30, 0.85);
     backdrop-filter: blur(20px);
-    padding: 20px 24px;
+    padding: 16px 20px;
     position: relative;
     overflow: hidden;
   }
@@ -176,13 +176,13 @@ HTML_COVER = """<!DOCTYPE html>
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
 
   .card-label {
-    font-size: 28px;
+    font-size: 25px;
     font-weight: 900;
     letter-spacing: 1px;
     display: flex;
@@ -197,16 +197,16 @@ HTML_COVER = """<!DOCTYPE html>
     gap: 7px;
   }
   .mac-dot {
-    width: 12px;
-    height: 12px;
+    width: 11px;
+    height: 11px;
     border-radius: 50%;
   }
 
   .code-content {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 27px;
+    font-size: 24px;
     font-weight: 700;
-    line-height: 1.45;
+    line-height: 1.4;
     color: #f1f5f9;
     white-space: pre-wrap;
   }
@@ -224,7 +224,7 @@ HTML_COVER = """<!DOCTYPE html>
     align-items: center;
     justify-content: center;
     gap: 15px;
-    margin: 4px 0;
+    margin: 2px 0;
     position: relative;
     z-index: 20;
   }
@@ -236,8 +236,8 @@ HTML_COVER = """<!DOCTYPE html>
   }
 
   .vs-badge {
-    width: 64px;
-    height: 64px;
+    width: 56px;
+    height: 56px;
     background: linear-gradient(135deg, #0f172a, #1e1b4b);
     border: 2.5px solid #facc15;
     box-shadow: 0 0 25px rgba(250, 204, 21, 0.5);
@@ -245,7 +245,7 @@ HTML_COVER = """<!DOCTYPE html>
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 900;
     color: #facc15;
     letter-spacing: -0.5px;
@@ -254,13 +254,13 @@ HTML_COVER = """<!DOCTYPE html>
 
   /* Bottom Callout Banner */
   .bottom-banner {
-    margin-top: 15px;
+    margin-top: 10px;
     width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 14px 28px;
-    border-radius: 16px;
+    padding: 12px 24px;
+    border-radius: 14px;
     background: rgba(15, 23, 42, 0.9);
     border: 1.5px solid rgba(255, 255, 255, 0.12);
   }

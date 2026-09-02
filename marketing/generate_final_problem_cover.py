@@ -180,7 +180,9 @@ HTML_TEMPLATE = f"""<!DOCTYPE html>
     backdrop-filter: blur(20px);
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
     position: relative;
   }}
 
@@ -195,20 +197,27 @@ HTML_TEMPLATE = f"""<!DOCTYPE html>
   }}
 
   .card-top {{
+    width: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
+    position: relative;
   }}
 
   .opt-badge {{
     font-size: 20px;
     font-weight: 900;
     letter-spacing: 0.8px;
+    text-align: center;
   }}
   .badge-a {{ color: #00f0ff; }}
   .badge-b {{ color: #facc15; }}
 
   .mac-dots {{
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
     display: flex;
     gap: 6px;
   }}
@@ -222,8 +231,10 @@ HTML_TEMPLATE = f"""<!DOCTYPE html>
     font-family: 'JetBrains Mono', monospace;
     font-size: 20px;
     font-weight: 800;
-    line-height: 1.35;
+    line-height: 1.4;
     color: #f8fafc;
+    text-align: center;
+    width: 100%;
   }}
   .opt-code .kw {{ color: #38bdf8; }}
   .opt-code .fn {{ color: #facc15; }}
@@ -245,12 +256,13 @@ HTML_TEMPLATE = f"""<!DOCTYPE html>
     flex-shrink: 0;
   }}
 
-  /* Bottom Callout Banner */
+  /* Bottom Callout Banner: Unified Together */
   .bottom-banner {{
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
+    gap: 12px;
     padding: 12px 24px;
     border-radius: 14px;
     background: rgba(15, 23, 42, 0.95);
@@ -293,7 +305,7 @@ HTML_TEMPLATE = f"""<!DOCTYPE html>
       <img src="data:image/png;base64,{cal_b64}" alt="Streak Calendar Problem Statement">
     </div>
 
-    <!-- Below Image: Dual Option Badges -->
+    <!-- Below Image: Dual Option Badges (Center-Aligned) -->
     <div class="duel-container">
       <!-- Option A Card -->
       <div class="option-card opt-a">
@@ -329,14 +341,10 @@ HTML_TEMPLATE = f"""<!DOCTYPE html>
       </div>
     </div>
 
-    <!-- Bottom Callout Banner -->
+    <!-- Bottom Callout Banner: Text Unified Together -->
     <div class="bottom-banner">
-      <div class="bottom-text">
-        <span>👇 Test your code Live</span>
-      </div>
-      <div class="brand-text">
-        <span>manodemy.com/q17</span>
-      </div>
+      <span class="bottom-text">👇 Test your code Live:</span>
+      <span class="brand-text">manodemy.com/q17</span>
     </div>
   </div>
 </body>

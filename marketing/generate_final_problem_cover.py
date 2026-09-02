@@ -153,13 +153,13 @@ HTML_TEMPLATE = f"""<!DOCTYPE html>
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 6px 0;
+    margin: 4px 0;
   }}
   .problem-visual-frame img {{
     width: 100%;
-    max-height: 450px;
+    max-height: 500px;
     object-fit: contain;
-    filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.9));
+    filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.95));
   }}
 
   /* Below Image: Dual Option Badges */

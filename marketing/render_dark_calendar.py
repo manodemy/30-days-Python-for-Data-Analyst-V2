@@ -1,6 +1,6 @@
 """
-Renders an authentic, realistic full-month dark cyberpunk streak calendar widget
-representing consecutive login streaks with zero spoilers.
+Renders a large, prominent, authentic full-month dark cyberpunk streak calendar widget
+with maximum readability and visual impact.
 """
 import asyncio
 from pathlib import Path
@@ -19,7 +19,7 @@ CALENDAR_HTML = """<!DOCTYPE html>
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    width: 860px;
+    width: 880px;
     height: 520px;
     background: transparent;
     display: flex;
@@ -29,14 +29,14 @@ CALENDAR_HTML = """<!DOCTYPE html>
     overflow: hidden;
   }
 
-  /* 3D Glassmorphic Realistic Calendar Card */
+  /* 3D Glassmorphic Large Calendar Card */
   .calendar-card {
-    width: 800px;
-    background: linear-gradient(145deg, rgba(16, 24, 44, 0.96) 0%, rgba(8, 12, 24, 0.98) 100%);
-    border: 2px solid rgba(0, 240, 255, 0.4);
-    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95), 0 0 45px rgba(0, 240, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.25);
-    border-radius: 26px;
-    padding: 26px 36px;
+    width: 870px;
+    background: linear-gradient(145deg, rgba(16, 24, 44, 0.98) 0%, rgba(8, 12, 24, 0.99) 100%);
+    border: 2px solid rgba(0, 240, 255, 0.45);
+    box-shadow: 0 25px 65px rgba(0, 0, 0, 0.95), 0 0 50px rgba(0, 240, 255, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    border-radius: 28px;
+    padding: 24px 36px 26px 36px;
     position: relative;
     backdrop-filter: blur(24px);
   }
@@ -46,35 +46,34 @@ CALENDAR_HTML = """<!DOCTYPE html>
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 22px;
-    padding: 0 10px;
+    margin-bottom: 20px;
+    padding: 0 12px;
   }
 
   .nav-arrow {
-    width: 38px;
-    height: 38px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1.5px solid rgba(255, 255, 255, 0.12);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #94a3b8;
-    font-size: 22px;
+    color: #cbd5e1;
+    font-size: 24px;
     font-weight: 700;
-    cursor: pointer;
   }
 
   .month-title {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 30px;
+    font-size: 34px;
     font-weight: 900;
     color: #ffffff;
     letter-spacing: 0.5px;
   }
   .month-title span {
     color: #00f0ff;
-    text-shadow: 0 0 15px rgba(0, 240, 255, 0.6);
+    text-shadow: 0 0 18px rgba(0, 240, 255, 0.7);
   }
 
   /* Weekdays Header */
@@ -83,14 +82,14 @@ CALENDAR_HTML = """<!DOCTYPE html>
     grid-template-columns: repeat(7, 1fr);
     text-align: center;
     margin-bottom: 14px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1.5px solid rgba(255, 255, 255, 0.09);
     padding-bottom: 10px;
   }
   .weekday {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 800;
     color: #64748b;
-    letter-spacing: 1px;
+    letter-spacing: 1.2px;
     text-transform: uppercase;
   }
 
@@ -107,15 +106,15 @@ CALENDAR_HTML = """<!DOCTYPE html>
     align-items: center;
     text-align: center;
     position: relative;
-    height: 48px;
+    height: 50px;
   }
 
   .day-cell {
-    height: 48px;
+    height: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 22px;
+    font-size: 25px;
     font-weight: 800;
     color: #94a3b8;
     position: relative;
@@ -129,8 +128,8 @@ CALENDAR_HTML = """<!DOCTYPE html>
 
   .day-cell.empty-dot::after {
     content: '';
-    width: 6px;
-    height: 6px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     background: #334155;
   }
@@ -142,10 +141,10 @@ CALENDAR_HTML = """<!DOCTYPE html>
     right: calc(100% / 7 * 1 + 6px);
     top: 4px;
     bottom: 4px;
-    background: linear-gradient(90deg, rgba(0, 240, 255, 0.28) 0%, rgba(0, 240, 255, 0.42) 100%);
-    border: 2px solid rgba(0, 240, 255, 0.85);
+    background: linear-gradient(90deg, rgba(0, 240, 255, 0.3) 0%, rgba(0, 240, 255, 0.45) 100%);
+    border: 2px solid rgba(0, 240, 255, 0.9);
     border-radius: 999px;
-    box-shadow: 0 0 25px rgba(0, 240, 255, 0.4), inset 0 0 12px rgba(0, 240, 255, 0.25);
+    box-shadow: 0 0 28px rgba(0, 240, 255, 0.45), inset 0 0 14px rgba(0, 240, 255, 0.3);
     z-index: 1;
   }
 
@@ -156,38 +155,38 @@ CALENDAR_HTML = """<!DOCTYPE html>
     right: 6px;
     top: 4px;
     bottom: 4px;
-    background: linear-gradient(90deg, rgba(0, 240, 255, 0.3) 0%, rgba(250, 204, 21, 0.4) 80%, rgba(239, 68, 68, 0.5) 100%);
-    border: 2px solid rgba(250, 204, 21, 0.85);
+    background: linear-gradient(90deg, rgba(0, 240, 255, 0.32) 0%, rgba(250, 204, 21, 0.42) 80%, rgba(239, 68, 68, 0.55) 100%);
+    border: 2px solid rgba(250, 204, 21, 0.9);
     border-radius: 999px;
-    box-shadow: 0 0 30px rgba(250, 204, 21, 0.45), inset 0 0 12px rgba(250, 204, 21, 0.25);
+    box-shadow: 0 0 35px rgba(250, 204, 21, 0.5), inset 0 0 14px rgba(250, 204, 21, 0.3);
     z-index: 1;
   }
 
   .active-day {
     color: #ffffff !important;
     font-weight: 900 !important;
-    text-shadow: 0 0 10px rgba(0, 240, 255, 0.9);
+    text-shadow: 0 0 12px rgba(0, 240, 255, 0.95);
   }
 
   /* Flame Badge on Day 13 */
   .fire-container {
     position: absolute;
-    right: -12px;
-    top: -16px;
+    right: -14px;
+    top: -18px;
     z-index: 10;
-    filter: drop-shadow(0 0 18px rgba(239, 68, 68, 0.95));
+    filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.95));
   }
   .fire-badge {
     background: linear-gradient(135deg, #ef4444 0%, #f97316 50%, #facc15 100%);
-    width: 48px;
-    height: 48px;
+    width: 52px;
+    height: 52px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 26px;
-    border: 2px solid #ffffff;
-    box-shadow: 0 0 22px rgba(239, 68, 68, 0.9);
+    font-size: 28px;
+    border: 2.5px solid #ffffff;
+    box-shadow: 0 0 25px rgba(239, 68, 68, 0.95);
   }
 </style>
 </head>
@@ -214,7 +213,7 @@ CALENDAR_HTML = """<!DOCTYPE html>
 
     <!-- Full Realistic Monthly Dates Grid -->
     <div class="days-grid">
-      <!-- Week 1: Days 1 - 6 (Streak 1-5, Day 6 regular/unmarked) -->
+      <!-- Week 1: Days 1 - 6 (Streak 1-5, Day 6 regular) -->
       <div class="week-row">
         <div class="streak-pill-1"></div>
         <div class="day-cell empty-dot"></div>
@@ -285,12 +284,12 @@ CALENDAR_HTML = """<!DOCTYPE html>
 async def render():
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)
-        page = await browser.new_page(viewport={"width": 860, "height": 520}, device_scale_factor=2.0)
+        page = await browser.new_page(viewport={"width": 880, "height": 520}, device_scale_factor=2.0)
         await page.set_content(CALENDAR_HTML)
         await page.wait_for_timeout(300)
         OUTPUT_IMG.parent.mkdir(parents=True, exist_ok=True)
         await page.screenshot(path=str(OUTPUT_IMG), type="png", omit_background=True)
-        print(f"Rendered realistic full calendar widget: {OUTPUT_IMG}")
+        print(f"Rendered larger realistic calendar widget: {OUTPUT_IMG}")
         await browser.close()
 
 if __name__ == "__main__":

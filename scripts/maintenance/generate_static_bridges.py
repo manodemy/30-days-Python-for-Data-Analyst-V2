@@ -4,23 +4,23 @@ from pathlib import Path
 root = Path(r'd:\Learn Python in 60days\Manodemy_Web_V2\public')
 
 bridges = {
-    'q1': '/Version-3/index.html?day=4&challenge=SQL-01-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q1_high_performer',
-    'q2': '/Version-3/index.html?day=4&challenge=SQL-01-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q2_salary_analytic',
-    'q3': '/Version-3/index.html?day=5&challenge=SQL-02-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q3_dept_ranking',
-    'q4': '/Version-3/index.html?day=5&challenge=SQL-02-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q4_sales_growth',
-    'q5': '/Version-3/index.html?day=4&challenge=SQL-03-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q5_count_null',
-    'q6': '/Version-3/index.html?day=4&challenge=SQL-03-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q6_precedence',
-    'q7': '/Version-3/index.html?day=5&challenge=SQL-04-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q7_where_having',
-    'q8': '/Version-3/index.html?day=4&challenge=SQL-04-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q8_date_range',
-    'q9': '/Version-3/index.html?day=5&challenge=SQL-05-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day05_q9_left_join',
-    'q10': '/Version-3/index.html?day=5&challenge=SQL-05-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day05_q10_conditional_count',
-    'q11': '/Version-3/index.html?day=6&challenge=SQL-06-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day06_q11_ceo_hierarchy',
-    'q12': '/Version-3/index.html?day=7&challenge=SQL-07-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day07_q12_not_in_null',
-    'q13': '/Version-3/index.html?day=7&challenge=SQL-07-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day07_q13_salary_dense_rank',
-    'q14': '/Version-3/index.html?day=8&challenge=SQL-08-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day08_q14_like_wildcard',
-    'q15': '/Version-3/index.html?day=8&challenge=SQL-08-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day08_q15_union_dedup',
-    'q16': '/Version-3/index.html?day=9&challenge=SQL-09-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day09_q16_latest_record',
-    'q17': '/Version-3/index.html?day=10&challenge=SQL-10-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day10_q17_gaps_islands'
+    'q1': '/Version-3/index.html?day=4&challenge=SQL-01-R1&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q1_high_performer',
+    'q2': '/Version-3/index.html?day=4&challenge=SQL-01-R2&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q2_salary_analytic',
+    'q3': '/Version-3/index.html?day=5&challenge=SQL-02-R1&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q3_dept_ranking',
+    'q4': '/Version-3/index.html?day=5&challenge=SQL-02-R2&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q4_sales_growth',
+    'q5': '/Version-3/index.html?day=4&challenge=SQL-03-R1&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q5_count_null',
+    'q6': '/Version-3/index.html?day=4&challenge=SQL-03-R2&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q6_precedence',
+    'q7': '/Version-3/index.html?day=5&challenge=SQL-04-R1&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q7_where_having',
+    'q8': '/Version-3/index.html?day=4&challenge=SQL-04-R2&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q8_date_range',
+    'q9': '/Version-3/index.html?day=5&challenge=SQL-05-R1&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day05_q9_left_join',
+    'q10': '/Version-3/index.html?day=5&challenge=SQL-05-R2&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day05_q10_conditional_count',
+    'q11': '/Version-3/index.html?day=6&challenge=SQL-06-R2&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day06_q11_ceo_hierarchy',
+    'q12': '/Version-3/index.html?day=7&challenge=SQL-07-R1&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day07_q12_not_in_null',
+    'q13': '/Version-3/index.html?day=7&challenge=SQL-07-R2&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day07_q13_salary_dense_rank',
+    'q14': '/Version-3/index.html?day=8&challenge=SQL-08-R1&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day08_q14_like_wildcard',
+    'q15': '/Version-3/index.html?day=8&challenge=SQL-08-R2&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day08_q15_union_dedup',
+    'q16': '/Version-3/index.html?day=9&challenge=SQL-09-R1&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day09_q16_latest_record',
+    'q17': '/Version-3/index.html?day=10&challenge=SQL-10-R1&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day10_q17_gaps_islands'
 }
 
 html_template = """<!DOCTYPE html>

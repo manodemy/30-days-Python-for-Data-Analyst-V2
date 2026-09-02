@@ -331,12 +331,12 @@
     },
     {
       "source": "/q1",
-      "destination": "/Version-3/index.html?day=4&challenge=SQL-01-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q1_high_performers",
+      "destination": "/Version-3/index.html?day=4&challenge=SQL-01-R1&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q1_high_performer",
       "permanent": false
     },
     {
       "source": "/go/q1",
-      "destination": "/Version-3/index.html?day=4&challenge=SQL-01-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q1_high_performers",
+      "destination": "/Version-3/index.html?day=4&challenge=SQL-01-R1&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q1_high_performer",
       "permanent": false
     },
     {
@@ -351,12 +351,12 @@
     },
     {
       "source": "/q2",
-      "destination": "/Version-3/index.html?day=4&challenge=SQL-01-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q2_salary_analytics",
+      "destination": "/Version-3/index.html?day=4&challenge=SQL-01-R2&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q2_salary_analytic",
       "permanent": false
     },
     {
       "source": "/go/q2",
-      "destination": "/Version-3/index.html?day=4&challenge=SQL-01-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q2_salary_analytics",
+      "destination": "/Version-3/index.html?day=4&challenge=SQL-01-R2&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q2_salary_analytic",
       "permanent": false
     },
     {
@@ -371,12 +371,12 @@
     },
     {
       "source": "/q3",
-      "destination": "/Version-3/index.html?day=5&challenge=SQL-02-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q3_dept_ranking",
+      "destination": "/Version-3/index.html?day=5&challenge=SQL-02-R1&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q3_dept_ranking",
       "permanent": false
     },
     {
       "source": "/go/q3",
-      "destination": "/Version-3/index.html?day=5&challenge=SQL-02-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q3_dept_ranking",
+      "destination": "/Version-3/index.html?day=5&challenge=SQL-02-R1&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q3_dept_ranking",
       "permanent": false
     },
     {
@@ -391,12 +391,12 @@
     },
     {
       "source": "/q4",
-      "destination": "/Version-3/index.html?day=5&challenge=SQL-02-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q4_sales_growth",
+      "destination": "/Version-3/index.html?day=5&challenge=SQL-02-R2&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q4_sales_growth",
       "permanent": false
     },
     {
       "source": "/go/q4",
-      "destination": "/Version-3/index.html?day=5&challenge=SQL-02-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q4_sales_growth",
+      "destination": "/Version-3/index.html?day=5&challenge=SQL-02-R2&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q4_sales_growth",
       "permanent": false
     },
     {
@@ -411,12 +411,12 @@
     },
     {
       "source": "/q5",
-      "destination": "/Version-3/index.html?day=4&challenge=SQL-03-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q5_count_null",
+      "destination": "/Version-3/index.html?day=4&challenge=SQL-03-R1&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q5_count_null",
       "permanent": false
     },
     {
       "source": "/go/q5",
-      "destination": "/Version-3/index.html?day=4&challenge=SQL-03-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q5_count_null",
+      "destination": "/Version-3/index.html?day=4&challenge=SQL-03-R1&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q5_count_null",
       "permanent": false
     },
     {
@@ -431,12 +431,12 @@
     },
     {
       "source": "/q6",
-      "destination": "/Version-3/index.html?day=4&challenge=SQL-03-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q6_precedence",
+      "destination": "/Version-3/index.html?day=4&challenge=SQL-03-R2&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q6_precedence",
       "permanent": false
     },
     {
       "source": "/go/q6",
-      "destination": "/Version-3/index.html?day=4&challenge=SQL-03-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q6_precedence",
+      "destination": "/Version-3/index.html?day=4&challenge=SQL-03-R2&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q6_precedence",
       "permanent": false
     },
     {
@@ -451,115 +451,114 @@
     },
     {
       "source": "/q7",
-      "destination": "/Version-3/index.html?day=4&challenge=SQL-04-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q7_where_having",
+      "destination": "/Version-3/index.html?day=5&challenge=SQL-04-R1&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q7_where_having",
       "permanent": false
     },
     {
       "source": "/go/q7",
-      "destination": "/Version-3/index.html?day=4&challenge=SQL-04-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q7_where_having",
+      "destination": "/Version-3/index.html?day=5&challenge=SQL-04-R1&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q7_where_having",
       "permanent": false
     },
     {
       "source": "/q8",
-      "destination": "/Version-3/index.html?day=4&challenge=SQL-04-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q8_date_range",
+      "destination": "/Version-3/index.html?day=4&challenge=SQL-04-R2&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q8_date_range",
       "permanent": false
     },
     {
       "source": "/go/q8",
-      "destination": "/Version-3/index.html?day=4&challenge=SQL-04-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q8_date_range",
+      "destination": "/Version-3/index.html?day=4&challenge=SQL-04-R2&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day04_q8_date_range",
       "permanent": false
     },
     {
       "source": "/q9",
-      "destination": "/Version-3/index.html?day=5&challenge=SQL-05-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day05_q9_left_join",
+      "destination": "/Version-3/index.html?day=5&challenge=SQL-05-R1&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day05_q9_left_join",
       "permanent": false
     },
     {
       "source": "/go/q9",
-      "destination": "/Version-3/index.html?day=5&challenge=SQL-05-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day05_q9_left_join",
+      "destination": "/Version-3/index.html?day=5&challenge=SQL-05-R1&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day05_q9_left_join",
       "permanent": false
     },
     {
       "source": "/q10",
-      "destination": "/Version-3/index.html?day=5&challenge=SQL-05-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day05_q10_conditional_count",
+      "destination": "/Version-3/index.html?day=5&challenge=SQL-05-R2&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day05_q10_conditional_count",
       "permanent": false
     },
     {
       "source": "/go/q10",
-      "destination": "/Version-3/index.html?day=5&challenge=SQL-05-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day05_q10_conditional_count",
+      "destination": "/Version-3/index.html?day=5&challenge=SQL-05-R2&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day05_q10_conditional_count",
       "permanent": false
     },
     {
       "source": "/q11",
-      "destination": "/Version-3/index.html?day=6&challenge=SQL-06-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day06_q11_ceo_hierarchy",
+      "destination": "/Version-3/index.html?day=6&challenge=SQL-06-R2&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day06_q11_ceo_hierarchy",
       "permanent": false
     },
     {
       "source": "/go/q11",
-      "destination": "/Version-3/index.html?day=6&challenge=SQL-06-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day06_q11_ceo_hierarchy",
+      "destination": "/Version-3/index.html?day=6&challenge=SQL-06-R2&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day06_q11_ceo_hierarchy",
       "permanent": false
     },
     {
       "source": "/q12",
-      "destination": "/Version-3/index.html?day=7&challenge=SQL-07-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day07_q12_not_in_null",
+      "destination": "/Version-3/index.html?day=7&challenge=SQL-07-R1&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day07_q12_not_in_null",
       "permanent": false
     },
     {
       "source": "/go/q12",
-      "destination": "/Version-3/index.html?day=7&challenge=SQL-07-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day07_q12_not_in_null",
+      "destination": "/Version-3/index.html?day=7&challenge=SQL-07-R1&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day07_q12_not_in_null",
       "permanent": false
     },
     {
       "source": "/q13",
-      "destination": "/Version-3/index.html?day=7&challenge=SQL-07-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day07_q13_salary_dense_rank",
+      "destination": "/Version-3/index.html?day=7&challenge=SQL-07-R2&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day07_q13_salary_dense_rank",
       "permanent": false
     },
     {
       "source": "/go/q13",
-      "destination": "/Version-3/index.html?day=7&challenge=SQL-07-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day07_q13_salary_dense_rank",
+      "destination": "/Version-3/index.html?day=7&challenge=SQL-07-R2&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day07_q13_salary_dense_rank",
       "permanent": false
     },
     {
       "source": "/q14",
-      "destination": "/Version-3/index.html?day=8&challenge=SQL-08-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day08_q14_like_wildcard",
+      "destination": "/Version-3/index.html?day=8&challenge=SQL-08-R1&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day08_q14_like_wildcard",
       "permanent": false
     },
     {
       "source": "/go/q14",
-      "destination": "/Version-3/index.html?day=8&challenge=SQL-08-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day08_q14_like_wildcard",
+      "destination": "/Version-3/index.html?day=8&challenge=SQL-08-R1&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day08_q14_like_wildcard",
       "permanent": false
     },
     {
       "source": "/q15",
-      "destination": "/Version-3/index.html?day=8&challenge=SQL-08-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day08_q15_union_dedup",
+      "destination": "/Version-3/index.html?day=8&challenge=SQL-08-R2&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day08_q15_union_dedup",
       "permanent": false
     },
     {
       "source": "/go/q15",
-      "destination": "/Version-3/index.html?day=8&challenge=SQL-08-R2&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day08_q15_union_dedup",
+      "destination": "/Version-3/index.html?day=8&challenge=SQL-08-R2&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day08_q15_union_dedup",
       "permanent": false
     },
     {
       "source": "/q16",
-      "destination": "/Version-3/index.html?day=9&challenge=SQL-09-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day09_q16_latest_record",
+      "destination": "/Version-3/index.html?day=9&challenge=SQL-09-R1&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day09_q16_latest_record",
       "permanent": false
     },
     {
       "source": "/go/q16",
-      "destination": "/Version-3/index.html?day=9&challenge=SQL-09-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day09_q16_latest_record",
+      "destination": "/Version-3/index.html?day=9&challenge=SQL-09-R1&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day09_q16_latest_record",
       "permanent": false
     },
     {
       "source": "/q17",
-      "destination": "/Version-3/index.html?day=10&challenge=SQL-10-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day10_q17_gaps_islands",
+      "destination": "/Version-3/index.html?day=10&challenge=SQL-10-R1&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day10_q17_gaps_islands",
       "permanent": false
     },
     {
       "source": "/go/q17",
-      "destination": "/Version-3/index.html?day=10&challenge=SQL-10-R1&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day10_q17_gaps_islands",
+      "destination": "/Version-3/index.html?day=10&challenge=SQL-10-R1&guest=true&tab=practice&utm_source=instagram&utm_medium=reels&utm_campaign=reel_day10_q17_gaps_islands",
       "permanent": false
     },
-
     {
       "source": "/day:day(0[3-9]|[12][0-9]|30).html",
       "destination": "/notebook/day:day",

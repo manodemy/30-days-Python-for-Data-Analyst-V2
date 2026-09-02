@@ -5537,8 +5537,19 @@ function loadDayContent(dayId) {
   const dayMeta = manifest.find(d => d.id === dayId);
   const dayNum = parseInt(dayId.replace('day', ''), 10) || 1;
 
-  // 1. Days 06–60: Coming Soon lock for non-admin students
-  if (dayNum >= 6 && !isAdminUser()) {
+  const chalId = typeof getActiveChallengeId === 'function' ? getActiveChallengeId() : null;
+  const urlP = new URLSearchParams(window.location.search);
+  const isGuestReelPass = (typeof IS_GUEST_REEL !== 'undefined' && IS_GUEST_REEL) || 
+                          Boolean(chalId) || 
+                          Boolean(urlP.get('challenge')) || 
+                          Boolean(urlP.get('reel')) || 
+                          urlP.get('guest') === 'true' || 
+                          urlP.has('utm_campaign') || 
+                          Boolean(urlP.get('q')) || 
+                          Boolean(urlP.get('question'));
+
+  // 1. Days 06–60: Coming Soon lock ONLY for regular non-admin students (Reel visitors get Reel Pass!)
+  if (dayNum >= 6 && !isAdminUser() && !isGuestReelPass) {
     if (window.showComingSoonToast) {
       window.showComingSoonToast(dayMeta?.title || `Day ${String(dayNum).padStart(2, '0')}`, dayNum);
     }
@@ -5560,10 +5571,7 @@ function loadDayContent(dayId) {
     return;
   }
 
-  // 2. Days 03–30: Paywall check for non-paid users
-  const chalId = typeof getActiveChallengeId === 'function' ? getActiveChallengeId() : null;
-  const isGuestReelPass = IS_GUEST_REEL || Boolean(chalId) || Boolean(URL_PARAMS.get('challenge')) || Boolean(URL_PARAMS.get('reel')) || Boolean(URL_PARAMS.get('utm_campaign'));
-
+  // 2. Days 03–30: Paywall check for non-paid users (Reel visitors get Reel Pass!)
   if (!isPaidUser() && !isAdminUser()) {
     if (dayNum >= 3 && !isGuestReelPass) {
       showGuestPaywallModal(`Day ${String(dayNum).padStart(2, '0')}`);
@@ -5574,13 +5582,17 @@ function loadDayContent(dayId) {
   // Pre-render challenge question immediately if challenge param is active (0ms instant render)
   if (chalId && REEL_CHALLENGES[chalId]) {
     const chal = REEL_CHALLENGES[chalId];
+    const isCorrectA = chal.correctOption === 'A';
     COURSE_CONFIG.practiceQuestions = [{
       id: 1,
       isChallenge: true,
       title: chal.title,
       prompt: `<strong>${chal.task}</strong><br/>${chal.prompt}`,
-      referenceSql: chal.codeB,
-      codeA: chal.codeA
+      referenceSql: isCorrectA ? chal.codeA : chal.codeB,
+      codeA: chal.codeA,
+      codeB: chal.codeB,
+      correctOption: isCorrectA ? 'A' : 'B',
+      trapOption: isCorrectA ? 'B' : 'A'
     }];
     currentPracticeQ = 0;
     renderPracticeQuestion();

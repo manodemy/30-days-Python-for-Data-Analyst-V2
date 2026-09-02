@@ -76,7 +76,7 @@ HTML_COVER = """<!DOCTYPE html>
 
   /* 1:1 Instagram Profile Grid Safe Container (1080 x 1080) */
   .safe-container {
-    width: 1000px;
+    width: 880px;
     height: 1040px;
     position: relative;
     z-index: 10;
@@ -84,7 +84,7 @@ HTML_COVER = """<!DOCTYPE html>
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    padding: 20px 20px;
+    padding: 20px 0;
   }
 
   /* Top Category Pill */

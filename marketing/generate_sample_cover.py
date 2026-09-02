@@ -287,7 +287,7 @@ HTML_COVER = """<!DOCTYPE html>
         <span class="highlight-gold">LATEST RECORD</span> PER USER 📊
       </div>
       <div class="sub-question">
-        Which query avoids <span class="highlight-cyan">duplicate orders</span> on tie dates?
+        Which query gets the <span class="highlight-cyan">latest order per customer</span>?
       </div>
     </div>
 

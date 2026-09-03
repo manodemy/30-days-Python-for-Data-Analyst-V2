@@ -42,7 +42,7 @@ HTML_TEMPLATE = f"""<!DOCTYPE html>
 
   body {{
     width: 1080px;
-    height: 1080px;
+    height: 1920px;
     background: var(--bg-dark);
     color: #fff;
     font-family: var(--font-sub);
@@ -57,13 +57,25 @@ HTML_TEMPLATE = f"""<!DOCTYPE html>
   /* Ambient Glow Spheres */
   .ambient-top {{
     position: absolute;
-    top: 5%;
+    top: 15%;
     left: 50%;
     transform: translateX(-50%);
-    width: 850px;
-    height: 450px;
+    width: 900px;
+    height: 650px;
     background: radial-gradient(circle, rgba(0, 240, 255, 0.22) 0%, rgba(250, 204, 21, 0.12) 40%, transparent 70%);
-    filter: blur(60px);
+    filter: blur(80px);
+    z-index: 1;
+  }}
+
+  .ambient-bottom {{
+    position: absolute;
+    bottom: 12%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 900px;
+    height: 550px;
+    background: radial-gradient(circle, rgba(168, 85, 247, 0.18) 0%, rgba(0, 240, 255, 0.1) 45%, transparent 70%);
+    filter: blur(80px);
     z-index: 1;
   }}
 
@@ -77,9 +89,45 @@ HTML_TEMPLATE = f"""<!DOCTYPE html>
     z-index: 2;
   }}
 
-  /* 1:1 Instagram Profile Safe Container */
+  /* Top & Bottom Accents for 9:16 Full Screen */
+  .top-brand-bar {{
+    position: absolute;
+    top: 180px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    color: #64748b;
+    text-transform: uppercase;
+  }}
+  .top-brand-bar .brand-name {{
+    color: #00f0ff;
+  }}
+
+  .bottom-cue-bar {{
+    position: absolute;
+    bottom: 180px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: #64748b;
+    text-transform: uppercase;
+  }}
+
+  /* 1:1 Instagram Profile Safe Container (Exactly 1080x1080 Center Zone) */
   .safe-container {{
-    width: 880px;
+    width: 960px;
     height: 1040px;
     position: relative;
     z-index: 10;
@@ -87,7 +135,7 @@ HTML_TEMPLATE = f"""<!DOCTYPE html>
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 0;
+    padding: 10px 0;
   }}
 
   /* Top Category Pill */
@@ -282,7 +330,15 @@ HTML_TEMPLATE = f"""<!DOCTYPE html>
 </head>
 <body>
   <div class="ambient-top"></div>
+  <div class="ambient-bottom"></div>
   <div class="cyber-grid"></div>
+
+  <!-- Top Brand Accent (outside 1:1 safe zone, visible in 9:16 full cover) -->
+  <div class="top-brand-bar">
+    <span>MANODEMY</span>
+    <span style="color:#facc15;">•</span>
+    <span class="brand-name">SQL MASTERCLASS</span>
+  </div>
 
   <div class="safe-container">
     <!-- Top Pill -->
@@ -348,6 +404,13 @@ HTML_TEMPLATE = f"""<!DOCTYPE html>
       <span class="brand-text">manodemy.com/q17</span>
     </div>
   </div>
+
+  <!-- Bottom Cue Accent (outside 1:1 safe zone, visible in 9:16 full cover) -->
+  <div class="bottom-cue-bar">
+    <span>🎧 Turn Sound On</span>
+    <span style="color:#00f0ff;">•</span>
+    <span>Practice Live on Manodemy</span>
+  </div>
 </body>
 </html>
 """
@@ -355,20 +418,39 @@ HTML_TEMPLATE = f"""<!DOCTYPE html>
 async def build_cover():
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)
-        page = await browser.new_page(viewport={"width": 1080, "height": 1080}, device_scale_factor=1.0)
+        # 1. Full 1080x1920 (9:16) Official Reel Cover
+        page = await browser.new_page(viewport={"width": 1080, "height": 1920}, device_scale_factor=1.0)
         await page.set_content(HTML_TEMPLATE)
-        await page.wait_for_timeout(300)
+        await page.wait_for_timeout(400)
 
-        out_jpg = OUTPUT_DIR / "SQL-10-R1_Cover_ProblemVisual.jpg"
-        await page.screenshot(path=str(out_jpg), type="jpeg", quality=95)
-        print(f"[OK] Final Problem-Visual Cover generated: {out_jpg}")
-        
-        # Also update official cover
         official_cover = OUTPUT_DIR / "SQL-10-R1_Cover.jpg"
+        official_cover_png = OUTPUT_DIR / "SQL-10-R1_Cover.png"
         await page.screenshot(path=str(official_cover), type="jpeg", quality=95)
-        print(f"[OK] Official cover overwritten: {official_cover}")
+        await page.screenshot(path=str(official_cover_png))
+        print(f"[OK] Full 9:16 Official Cover generated: {official_cover} (1080x1920)")
+
+        # 2. Instagram 1:1 Profile Grid Preview (Center 1080x1080 crop: y = (1920-1080)/2 = 420)
+        grid_preview = OUTPUT_DIR / "SQL-10-R1_Grid_1x1_Preview.jpg"
+        await page.screenshot(
+            path=str(grid_preview),
+            type="jpeg",
+            quality=95,
+            clip={"x": 0, "y": 420, "width": 1080, "height": 1080}
+        )
+        print(f"[OK] Instagram 1:1 Profile Grid Preview generated: {grid_preview} (1080x1080)")
+
+        # 3. Instagram 4:5 Home Feed Preview (Center 1080x1350 crop: y = (1920-1350)/2 = 285)
+        feed_preview = OUTPUT_DIR / "SQL-10-R1_Feed_4x5_Preview.jpg"
+        await page.screenshot(
+            path=str(feed_preview),
+            type="jpeg",
+            quality=95,
+            clip={"x": 0, "y": 285, "width": 1080, "height": 1350}
+        )
+        print(f"[OK] Instagram 4:5 Feed Preview generated: {feed_preview} (1080x1350)")
         
         await browser.close()
 
 if __name__ == "__main__":
     asyncio.run(build_cover())
+

@@ -18,7 +18,11 @@ from pathlib import Path
 from http.server import SimpleHTTPRequestHandler
 from socketserver import TCPServer
 
-sys.stdout.reconfigure(encoding='utf-8')
+if hasattr(sys.stdout, 'reconfigure'):
+    try:
+        sys.stdout.reconfigure(encoding='utf-8', errors='backslashreplace')
+    except Exception:
+        pass
 
 ROOT = Path(__file__).resolve().parent
 NB_DIR = ROOT / 'notebooks'

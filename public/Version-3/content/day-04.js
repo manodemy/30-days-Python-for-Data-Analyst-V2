@@ -22,7 +22,7 @@ window.COURSE_CONTENT['day04'] = {
         <div class="slide-section" id="day04ArithmeticTableSection">
           <div class="db-mock-table-wrap" id="day04ArithmeticTable">
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; padding: 0 4px;">
-              <h4 style="margin: 0; color: #0f172a; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">Arithmetic Operator Reference</h4>
+              <h4 style="margin: 0; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">Arithmetic Operator Reference</h4>
             </div>
             <table class="db-table-mock db-table-mock--compact">
               <thead><tr><th>Operator</th><th>Meaning</th><th>Example</th><th>Result (salary=80000)</th></tr></thead>
@@ -39,7 +39,7 @@ window.COURSE_CONTENT['day04'] = {
 
         <div class="slide-section" id="day04ArithmeticExamplesSection">
           <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 4px;">
-            <h4 style="margin: 0; color: #0f172a; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">Arithmetic Operator Examples</h4>
+            <h4 style="margin: 0; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">Arithmetic Operator Examples</h4>
           </div>
           <div class="code-block-container" id="day04ArithmeticExamples">
             <div class="code-subblock" id="arithCodeQuery1">
@@ -82,7 +82,7 @@ window.COURSE_CONTENT['day04'] = {
         <div class="slide-section" id="day04PrecedenceTableSection">
           <div class="db-mock-table-wrap" id="day04PrecedenceTable">
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; padding: 0 4px;">
-              <h4 style="margin: 0; color: #0f172a; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">Operator Precedence Table</h4>
+              <h4 style="margin: 0; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">Operator Precedence Table</h4>
             </div>
             <table class="db-table-mock db-table-mock--compact">
               <thead><tr><th>Precedence</th><th>Operators</th><th>Description</th></tr></thead>
@@ -101,7 +101,7 @@ window.COURSE_CONTENT['day04'] = {
 
         <div class="slide-section" id="day04PrecedenceExamplesSection">
           <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 4px;">
-            <h4 style="margin: 0; color: #0f172a; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">AND / OR Precedence Examples</h4>
+            <h4 style="margin: 0; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">AND / OR Precedence Examples</h4>
           </div>
           <div class="code-block-container" id="day04PrecedenceExamples">
             <div class="code-subblock" id="precCodeQuery1">
@@ -197,7 +197,7 @@ window.COURSE_CONTENT['day04'] = {
 
         <div class="slide-section" id="day04EscapeCodeSection">
           <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 4px;">
-            <h4 style="margin: 0; color: #0f172a; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">ESCAPE Examples — Literal Wildcards in Patterns</h4>
+            <h4 style="margin: 0; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">ESCAPE Examples — Literal Wildcards in Patterns</h4>
           </div>
           <div class="code-block-container" id="day04EscapeCode">
             <div class="code-subblock" id="escapeCodeQuery1">
@@ -239,7 +239,7 @@ window.COURSE_CONTENT['day04'] = {
 
         <div class="slide-section" id="day04NullCodeSection">
           <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 4px;">
-            <h4 style="margin: 0; color: #0f172a; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">NULL Propagation — Safe vs Unsafe Patterns</h4>
+            <h4 style="margin: 0; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">NULL Propagation — Safe vs Unsafe Patterns</h4>
           </div>
           <div class="code-block-container" id="day04NullCode">
             <div class="code-subblock" id="nullCodeQuery1">
@@ -280,7 +280,7 @@ window.COURSE_CONTENT['day04'] = {
         <div class="slide-section" id="day04ThreeValTableSection">
           <div class="db-mock-table-wrap" id="day04ThreeValTable">
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; padding: 0 4px;">
-              <h4 style="margin: 0; color: #0f172a; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">Three-Valued Logic Truth Table</h4>
+              <h4 style="margin: 0; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">Three-Valued Logic Truth Table</h4>
             </div>
             <table class="db-table-mock db-table-mock--compact">
               <thead><tr><th>Expression</th><th>Result</th><th>Why</th></tr></thead>
@@ -298,7 +298,7 @@ window.COURSE_CONTENT['day04'] = {
 
         <div class="slide-section" id="day04NotInTrapCodeSection">
           <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 4px;">
-            <h4 style="margin: 0; color: #0f172a; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">The NOT IN + NULL Trap</h4>
+            <h4 style="margin: 0; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">The NOT IN + NULL Trap</h4>
           </div>
           <div class="code-block-container" id="day04NotInTrapCode">
             <div class="code-subblock" id="notInTrapQuery1">

@@ -20,7 +20,7 @@ window.COURSE_CONTENT['day03'] = {
 
         <div class="slide-section" id="day03WhereCodeSection">
           <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 4px;">
-            <h4 style="margin: 0;  color: #0f172a; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.01em; flex: 1;">WHERE Clause — Minimal Anatomy</h4>
+            <h4 style="margin: 0;  font-size: 1.0rem; font-weight: 800; letter-spacing: -0.01em; flex: 1;">WHERE Clause — Minimal Anatomy</h4>
           </div>
           <div class="code-block-container" id="day03WhereCode">
             <div class="code-subblock" id="whereCodeSyntax">
@@ -285,7 +285,7 @@ window.COURSE_CONTENT['day03'] = {
         <div class="slide-section" id="day03OpsTableSection">
           <div class="db-mock-table-wrap" id="day03OpsTable">
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; padding: 0 4px;">
-              <h4 style="margin: 0;  color: #0f172a; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.01em; flex: 1;">Comparison Operator Reference</h4>
+              <h4 style="margin: 0;  font-size: 1.0rem; font-weight: 800; letter-spacing: -0.01em; flex: 1;">Comparison Operator Reference</h4>
             </div>
             <table class="db-table-mock db-table-mock--compact">
               <thead><tr><th>Operator</th><th>Meaning</th><th>Live Example</th></tr></thead>
@@ -303,7 +303,7 @@ window.COURSE_CONTENT['day03'] = {
 
         <div class="slide-section" id="day03CompCodeSection">
           <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 4px;">
-            <h4 style="margin: 0;  color: #0f172a; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.01em; flex: 1;">Comparison Operator Examples</h4>
+            <h4 style="margin: 0;  font-size: 1.0rem; font-weight: 800; letter-spacing: -0.01em; flex: 1;">Comparison Operator Examples</h4>
           </div>
           <div class="code-block-container" id="day03CompCode">
             <div class="code-subblock" id="compCodeQuery1">
@@ -664,7 +664,7 @@ window.COURSE_CONTENT['day03'] = {
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
               <span style="color: #1d4ed8; font-weight: 800; font-size: 0.90rem; display: inline-flex; align-items: center; gap: 6px;">⚠️ Operator Precedence Rule</span>
             </div>
-            <p style="margin: 0; font-size: 0.85rem; line-height: 1.65; color: #1e293b;">
+            <p style="margin: 0; font-size: 0.85rem; line-height: 1.65; color: var(--theory-text);">
               SQL evaluates them in <strong>operator precedence</strong> order: <code>NOT</code> binds tightest → then <code>AND</code> → then <code>OR</code>. Mixing <code>AND</code> and <code>OR</code> without parentheses is a classic bug source — always use brackets to make your intent explicit.
             </p>
           </div>
@@ -672,7 +672,7 @@ window.COURSE_CONTENT['day03'] = {
 
         <div class="slide-section" id="day03LogicCodeSection">
           <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 4px;">
-            <h4 style="margin: 0;  color: #0f172a; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.01em; flex: 1;">AND / OR / NOT Examples</h4>
+            <h4 style="margin: 0; color: var(--theory-heading); font-size: 1.0rem; font-weight: 800; letter-spacing: -0.01em; flex: 1;">AND / OR / NOT Examples</h4>
           </div>
           <div class="code-block-container" id="day03LogicCode">
             <div class="code-subblock" id="logicCodeQuery1">
@@ -720,7 +720,7 @@ window.COURSE_CONTENT['day03'] = {
 
         <div class="slide-section" id="day03BetweenCodeSection">
           <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 4px;">
-            <h4 style="margin: 0;  color: #0f172a; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.01em; flex: 1;">BETWEEN — Numeric, Date, and NOT BETWEEN</h4>
+            <h4 style="margin: 0;  font-size: 1.0rem; font-weight: 800; letter-spacing: -0.01em; flex: 1;">BETWEEN — Numeric, Date, and NOT BETWEEN</h4>
           </div>
           <div class="code-block-container" id="day03BetweenCode">
             <div class="code-subblock" id="betweenCodeQuery1">
@@ -783,7 +783,7 @@ window.COURSE_CONTENT['day03'] = {
 
         <div class="slide-section" id="day03InCodeSection">
           <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 4px;">
-            <h4 style="margin: 0;  color: #0f172a; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.01em; flex: 1;">IN / NOT IN Examples</h4>
+            <h4 style="margin: 0;  font-size: 1.0rem; font-weight: 800; letter-spacing: -0.01em; flex: 1;">IN / NOT IN Examples</h4>
           </div>
           <div class="code-block-container" id="day03InCode">
             <div class="code-subblock" id="inCodeQuery1">
@@ -866,7 +866,7 @@ WHERE name LIKE '_oo%'  -- 2nd/3rd = 'oo'</code></pre>
 
         <div class="slide-section" id="day03LikeCodeSection">
           <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 4px;">
-            <h4 style="margin: 0;  color: #0f172a; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.01em; flex: 1;">LIKE in Context — Full Query Examples</h4>
+            <h4 style="margin: 0;  font-size: 1.0rem; font-weight: 800; letter-spacing: -0.01em; flex: 1;">LIKE in Context — Full Query Examples</h4>
           </div>
           <div class="code-block-container" id="day03LikeCode">
             <div class="code-subblock" id="likeCodeQuery1">
@@ -912,7 +912,7 @@ WHERE name LIKE '_oo%'  -- 2nd/3rd = 'oo'</code></pre>
 
         <div class="slide-section" id="day03NullCodeSection">
           <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 4px;">
-            <h4 style="margin: 0;  color: #0f172a; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.01em; flex: 1;">IS NULL / IS NOT NULL Examples</h4>
+            <h4 style="margin: 0;  font-size: 1.0rem; font-weight: 800; letter-spacing: -0.01em; flex: 1;">IS NULL / IS NOT NULL Examples</h4>
           </div>
           <div class="code-block-container" id="day03NullCode">
             <div class="code-subblock" id="nullCodeQuery1">

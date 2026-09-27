@@ -21,7 +21,7 @@ window.COURSE_CONTENT['day06'] = {
 
         <div class="slide-section" id="day06GroupByExamplesSection">
           <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 4px;">
-            <h4 style="margin: 0; color: #0f172a; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">GROUP BY in Action</h4>
+            <h4 style="margin: 0; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">GROUP BY in Action</h4>
           </div>
           <div class="code-block-container" id="day06GroupByExamples">
             <div class="code-subblock" id="day06GroupByQuery1">
@@ -46,7 +46,7 @@ window.COURSE_CONTENT['day06'] = {
         <div class="slide-section" id="day06BucketingVisualSection">
           <div class="db-mock-table-wrap" id="day06BucketingVisual">
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; padding: 0 4px;">
-              <h4 style="margin: 0; color: #0f172a; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">How GROUP BY Buckets &amp; Collapses Rows</h4>
+              <h4 style="margin: 0; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">How GROUP BY Buckets &amp; Collapses Rows</h4>
             </div>
             <table class="db-table-mock db-table-mock--compact">
               <thead><tr><th>Department ID</th><th>Input Rows Collapsed</th><th>headcount: COUNT(*)</th><th>avg_salary: AVG(salary)</th></tr></thead>
@@ -81,7 +81,7 @@ window.COURSE_CONTENT['day06'] = {
 
         <div class="slide-section" id="day06MultiGroupExamplesSection">
           <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 4px;">
-            <h4 style="margin: 0; color: #0f172a; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">Multi-Column Grouping Examples</h4>
+            <h4 style="margin: 0; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">Multi-Column Grouping Examples</h4>
           </div>
           <div class="code-block-container" id="day06MultiGroupExamples">
             <div class="code-subblock" id="day06MultiGroupQuery1">
@@ -124,7 +124,7 @@ window.COURSE_CONTENT['day06'] = {
 
         <div class="slide-section" id="day06HavingExamplesSection">
           <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 4px;">
-            <h4 style="margin: 0; color: #0f172a; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">HAVING in Action</h4>
+            <h4 style="margin: 0; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">HAVING in Action</h4>
           </div>
           <div class="code-block-container" id="day06HavingExamples">
             <div class="code-subblock" id="day06HavingQuery1">
@@ -150,7 +150,7 @@ window.COURSE_CONTENT['day06'] = {
         <div class="slide-section" id="day06HavingFilterTableSection">
           <div class="db-mock-table-wrap" id="day06HavingFilterTable">
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; padding: 0 4px;">
-              <h4 style="margin: 0; color: #0f172a; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">HAVING Filter Mechanics: COUNT(*) &gt; 2</h4>
+              <h4 style="margin: 0; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">HAVING Filter Mechanics: COUNT(*) &gt; 2</h4>
             </div>
             <table class="db-table-mock db-table-mock--compact">
               <thead><tr><th>Department</th><th>Group Headcount</th><th>HAVING Condition</th><th>Filter Outcome</th></tr></thead>
@@ -197,7 +197,7 @@ window.COURSE_CONTENT['day06'] = {
 
         <div class="slide-section" id="day06WhereVsHavingCodeSection">
           <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 4px;">
-            <h4 style="margin: 0; color: #0f172a; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">Side-by-Side Comparison</h4>
+            <h4 style="margin: 0; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">Side-by-Side Comparison</h4>
           </div>
           <div class="code-block-container" id="day06WhereVsHavingCode">
             <div class="code-subblock" id="day06WhereCode">
@@ -236,7 +236,7 @@ window.COURSE_CONTENT['day06'] = {
 
         <div class="slide-section" id="day06CombineCodeSection">
           <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 4px;">
-            <h4 style="margin: 0; color: #0f172a; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">Complete 6-Clause Query Flow</h4>
+            <h4 style="margin: 0; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">Complete 6-Clause Query Flow</h4>
           </div>
           <div class="code-block-container" id="day06CombineCode">
             <div class="code-subblock" id="day06CombineQuery">
@@ -276,7 +276,7 @@ window.COURSE_CONTENT['day06'] = {
         <div class="slide-section" id="day06ExecPipelineVisualSection">
           <div class="db-mock-table-wrap" id="day06ExecPipelineVisual">
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; padding: 0 4px;">
-              <h4 style="margin: 0; color: #0f172a; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">The 8-Step Logical Execution Hierarchy</h4>
+              <h4 style="margin: 0; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">The 8-Step Logical Execution Hierarchy</h4>
             </div>
             <table class="db-table-mock db-table-mock--compact">
               <thead><tr><th>Step</th><th>Clause</th><th>Phase</th><th>What Happens Here?</th></tr></thead>

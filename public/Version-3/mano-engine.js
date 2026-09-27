@@ -12592,3 +12592,66 @@ document.addEventListener('keydown', (e) => {
     toggleCaptions();
   }
 });
+
+/* ═══════════════════════════════════════════════════════════════
+   THEME TOGGLE SYSTEM (DARK / LIGHT DUAL THEME)
+   ═══════════════════════════════════════════════════════════════ */
+function initTheme() {
+  try {
+    const saved = localStorage.getItem('manodemy-theme');
+    const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+    const currentTheme = saved || (prefersLight ? 'light' : 'dark');
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    updateThemeToggleUI(currentTheme);
+  } catch (e) {
+    console.error('Error initializing theme:', e);
+  }
+}
+
+function updateThemeToggleUI(theme) {
+  const btn = document.getElementById('themeToggleBtn');
+  if (!btn) return;
+  const isLight = theme === 'light';
+  btn.setAttribute('aria-checked', isLight ? 'true' : 'false');
+  btn.title = isLight ? 'Switch to Dark mode' : 'Switch to Light mode';
+  btn.setAttribute('aria-label', isLight ? 'Switch to Dark mode' : 'Switch to Light mode');
+}
+
+function toggleTheme() {
+  try {
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+    // Temporary class for smooth 350ms transition
+    document.body.classList.add('theme-transitioning');
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('manodemy-theme', newTheme);
+    updateThemeToggleUI(newTheme);
+
+    if (typeof mainEditor !== 'undefined' && mainEditor) {
+      setTimeout(() => { try { mainEditor.refresh(); } catch (e) {} }, 50);
+    }
+    if (typeof testEditor !== 'undefined' && testEditor) {
+      setTimeout(() => { try { testEditor.refresh(); } catch (e) {} }, 50);
+    }
+
+    setTimeout(() => {
+      document.body.classList.remove('theme-transitioning');
+    }, 400);
+  } catch (e) {
+    console.error('Error toggling theme:', e);
+  }
+}
+
+// Expose globally
+window.initTheme = initTheme;
+window.toggleTheme = toggleTheme;
+window.updateThemeToggleUI = updateThemeToggleUI;
+
+// Initialize on DOM ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initTheme);
+} else {
+  initTheme();
+}
+

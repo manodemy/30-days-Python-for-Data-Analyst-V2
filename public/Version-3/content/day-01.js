@@ -414,7 +414,7 @@ CREATE TABLE employees (
           </div>
 
           <div id="parentTableDept">
-            <div class="heading-with-audio" style="margin: 12px 0 4px; font-weight: 600; font-size: 0.8rem; color: #1e293b; display: flex; align-items: center; gap: 8px;">
+            <div class="heading-with-audio table-section-label" style="margin: 12px 0 4px; font-weight: 600; font-size: 0.8rem; display: flex; align-items: center; gap: 8px;">
               Parent Table: departments
               <button class="audio-play-btn" onclick="playAudio('New_Day1Part1audio12.mp3', this)" title="Play narration">
                 <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
@@ -436,7 +436,7 @@ CREATE TABLE employees (
               </table>
             </div>
 
-            <div style="margin: 12px 0 4px; font-weight: 600; font-size: 0.8rem; color: #1e293b;">Child Table: employees</div>
+            <div class="table-section-label" style="margin: 12px 0 4px; font-weight: 600; font-size: 0.8rem;">Child Table: employees</div>
             <div class="db-mock-table-wrap">
               <table class="db-table-mock">
                 <thead>

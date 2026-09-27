@@ -5162,19 +5162,23 @@ function loadSavedPracticeAnswer() {
   mainEditor.setValue('');
 }
 
-function formatGradingDiff(diff) {
-  if (!diff) return '';
-  let html = `<div class="grading-diff-alert" style="margin-top: 10px; padding: 12px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 6px; font-size: 0.78rem; line-height: 1.45;">`;
-  html += `<div style="font-weight: 700; color: var(--red); margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">❌ Grading Check Failed</div>`;
+function formatGradingDiff(diffOrResult) {
+  if (!diffOrResult) return '';
+  const result = (diffOrResult && diffOrResult.diff) ? diffOrResult : { diff: diffOrResult };
+  const diff = result.diff || diffOrResult;
+  const badge = result.badge || (diff && diff.type ? `⚠️ Result Mismatch (${diff.type})` : '❌ Grading Check Failed');
+  const summary = result.summary || (diff && diff.summary) || 'Your query ran successfully but returned different results than expected.';
+  const hint = result.actionable_hint || 'Review your WHERE filter bounds, expressions, or SELECT column list.';
+  const visualDiff = result.visual_diff_html || '';
 
-  if (diff.type === 'column_count_mismatch') {
-    html += `<div><strong>Column Count Mismatch:</strong> Expected <strong>${diff.expected}</strong> columns, but your query returned <strong>${diff.actual}</strong> columns.</div>`;
-  } else if (diff.type === 'column_name_mismatch') {
-    html += `<div><strong>Column Name Mismatch:</strong> The column at index <strong>${diff.index + 1}</strong> is expected to be named <code>${escHtml(diff.expected)}</code>, but got <code>${escHtml(diff.actual)}</code>. (Column names are strict for alias grading)</div>`;
-  } else if (diff.type === 'row_count_mismatch') {
-    html += `<div><strong>Row Count Mismatch:</strong> Expected <strong>${diff.expected}</strong> rows in the result set, but your query returned <strong>${diff.actual}</strong> rows.</div>`;
-  } else if (diff.type === 'value_mismatch') {
-    html += `<div><strong>Result Value Mismatch:</strong> The values returned by your query do not match the expected solution. Check your filters (WHERE clauses), calculations, or JOIN conditions.</div>`;
+  let html = `<div class="grading-diff-alert" style="margin-top: 10px; padding: 12px 14px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; font-size: 0.8rem; line-height: 1.5; color: #fca5a5;">`;
+  html += `<div style="font-weight: 800; color: #ef4444; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">${badge}</div>`;
+  html += `<div style="color: #fca5a5; margin-bottom: 6px;">${summary}</div>`;
+  if (hint) {
+    html += `<div style="margin-top: 6px; font-size: 0.76rem; color: #cbd5e1;">💡 <strong>Hint:</strong> ${hint}</div>`;
+  }
+  if (visualDiff) {
+    html += `<div style="margin-top: 8px;">${visualDiff}</div>`;
   }
   html += `</div>`;
   return html;
@@ -5218,7 +5222,7 @@ function populateQPicker() {
   const questions = (COURSE_CONFIG && COURSE_CONFIG.practiceQuestions) || [];
   list.innerHTML = '';
   questions.forEach((q, idx) => {
-    const isSolved = solvedQuestions && solvedQuestions.has(`${currentDay}_${q.id}`);
+    const isSolved = solvedQuestions && (solvedQuestions.has(`${currentDay}-${q.id}`) || solvedQuestions.has(`${currentDay}_${q.id}`));
     const isActive = idx === currentPracticeQ;
 
     // Strip HTML tags from prompt for plain-text display
@@ -5525,7 +5529,7 @@ function runCurrentQuery() {
             </div>
           `;
         } else {
-          diffDiv.innerHTML = formatGradingDiff(gradingResult.diff);
+          diffDiv.innerHTML = formatGradingDiff(gradingResult);
         }
         document.getElementById('mainOutput').appendChild(diffDiv);
 

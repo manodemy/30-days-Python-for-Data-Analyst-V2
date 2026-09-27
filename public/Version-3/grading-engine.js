@@ -513,6 +513,41 @@
   // 3. COGNITIVE ANTI-PATTERN DETECTORS
   // ─────────────────────────────────────────────────────────────
 
+  function splitSqlTopLevelList(str) {
+    const parts = [];
+    let current = '';
+    let parenDepth = 0;
+    let inString = false;
+    let stringChar = '';
+    for (let i = 0; i < str.length; i++) {
+      const ch = str[i];
+      if (inString) {
+        current += ch;
+        if (ch === stringChar) {
+          if (str[i + 1] === stringChar) { current += str[i + 1]; i++; }
+          else inString = false;
+        }
+      } else if (ch === "'" || ch === '"' || ch === '`') {
+        inString = true;
+        stringChar = ch;
+        current += ch;
+      } else if (ch === '(') {
+        parenDepth++;
+        current += ch;
+      } else if (ch === ')') {
+        if (parenDepth > 0) parenDepth--;
+        current += ch;
+      } else if (ch === ',' && parenDepth === 0) {
+        parts.push(current.trim());
+        current = '';
+      } else {
+        current += ch;
+      }
+    }
+    if (current.trim()) parts.push(current.trim());
+    return parts;
+  }
+
   function runDiagnostics(studentSql, refSql, studentResult, refResult, errorMsg) {
     const diags = [];
 
@@ -533,24 +568,29 @@
     const leftJoinMatch = /\bLEFT\s+(OUTER\s+)?JOIN\s+([a-zA-Z0-9_]+)(\s+AS\s+([a-zA-Z0-9_]+)|\s+([a-zA-Z0-9_]+))?\b/i.exec(studentSql);
     if (leftJoinMatch) {
       const rightTbl = leftJoinMatch[4] || leftJoinMatch[5] || leftJoinMatch[2];
-      const whereFilter = new RegExp(`WHERE[\\s\\S]*?\\b${rightTbl}\\.`, 'i');
-      if (whereFilter.test(studentSql)) {
-        diags.push({
-          trapId: 'LEFT_JOIN_NULLIFICATION',
-          badge: '⚠️ Cognitive Bug: LEFT JOIN Nullified',
-          header: 'LEFT JOIN Filter in WHERE Clause',
-          explanation: `Filtering right-table columns (<code>${rightTbl}</code>) inside <code>WHERE</code> evaluates to <code>NULL = 'value'</code> on unmatched rows. This unintentionally converts your <code>LEFT JOIN</code> into an <strong>INNER JOIN</strong>!`,
-          actionableHint: `Move the right-table condition into the <code>ON</code> clause of your <code>LEFT JOIN</code>.`,
-          remediation: { actionLabel: 'Move filter to ON clause' },
-          severity: 'HIGH'
-        });
+      const isAntiJoin = new RegExp(`\\b${rightTbl}\\.[a-zA-Z0-9_]+\\s+IS\\s+NULL\\b`, 'i').test(studentSql);
+      if (!isAntiJoin) {
+        const whereFilter = new RegExp(`WHERE[\\s\\S]*?\\b${rightTbl}\\.`, 'i');
+        if (whereFilter.test(studentSql)) {
+          diags.push({
+            trapId: 'LEFT_JOIN_NULLIFICATION',
+            badge: '⚠️ Cognitive Bug: LEFT JOIN Nullified',
+            header: 'LEFT JOIN Filter in WHERE Clause',
+            explanation: `Filtering right-table columns (<code>${rightTbl}</code>) inside <code>WHERE</code> evaluates to <code>NULL = 'value'</code> on unmatched rows. This unintentionally converts your <code>LEFT JOIN</code> into an <strong>INNER JOIN</strong>!`,
+            actionableHint: `Move the right-table condition into the <code>ON</code> clause of your <code>LEFT JOIN</code>.`,
+            remediation: { actionLabel: 'Move filter to ON clause' },
+            severity: 'HIGH'
+          });
+        }
       }
     }
 
     // 3. COUNT(*) vs COUNT(col)
-    if (/COUNT\s*\(\s*([a-zA-Z0-9_]+)\s*\)/i.test(studentSql) && /COUNT\s*\(\s*\*\s*\)/i.test(refSql || '')) {
-      const col = studentSql.match(/COUNT\s*\(\s*([a-zA-Z0-9_]+)\s*\)/i)[1];
-      if (col.toUpperCase() !== 'DISTINCT') {
+    const countColMatch = studentSql.match(/COUNT\s*\(\s*([a-zA-Z0-9_]+)\s*\)/i);
+    if (countColMatch && /COUNT\s*\(\s*\*\s*\)/i.test(refSql || '')) {
+      const col = countColMatch[1];
+      const refUsesCol = new RegExp(`COUNT\\s*\\(\\s*${col}\\s*\\)`, 'i').test(refSql || '');
+      if (col.toUpperCase() !== 'DISTINCT' && !refUsesCol) {
         diags.push({
           trapId: 'COUNT_STAR_VS_COL',
           badge: '💡 Concept Clarity: COUNT(*) vs COUNT(column)',
@@ -566,14 +606,24 @@
     // 3.5 GROUP BY Non-Aggregated Projection Trap
     const groupMatch = studentSql.match(/GROUP\s+BY\s+([\s\S]+?)(?:\s+(?:HAVING|ORDER\s+BY|LIMIT)|;|$)/i);
     if (groupMatch) {
-      const groupCols = groupMatch[1].split(',').map(s => s.trim().toLowerCase().split('.').pop());
+      const groupColsRaw = splitSqlTopLevelList(groupMatch[1]).map(s => s.toLowerCase());
+      const groupColsClean = groupColsRaw.map(s => s.split('.').pop().trim());
       const selectPart = (studentSql.match(/SELECT\s+([\s\S]+?)\s+FROM/i) || [])[1] || '';
-      const projections = selectPart.split(',').map(s => s.trim());
+      const projections = splitSqlTopLevelList(selectPart);
       const unagg = [];
       projections.forEach(p => {
         if (!/\b(COUNT|SUM|AVG|MIN|MAX|GROUP_CONCAT)\s*\(/i.test(p) && !/\bOVER\s*\(/i.test(p) && p !== '*') {
-          const colName = p.replace(/\s+AS\s+[a-zA-Z0-9_]+/i, '').trim().toLowerCase().split('.').pop();
-          if (colName && !groupCols.includes(colName) && colName !== '1' && colName !== '2') {
+          const aliasM = p.match(/\s+AS\s+([a-zA-Z0-9_]+)/i);
+          const alias = aliasM ? aliasM[1].toLowerCase() : '';
+          const expr = p.replace(/\s+AS\s+[a-zA-Z0-9_]+/i, '').trim().toLowerCase();
+          const colName = expr.split('.').pop().trim();
+          const isGrouped = groupColsClean.includes(alias) ||
+                            groupColsRaw.includes(alias) ||
+                            groupColsClean.includes(colName) ||
+                            groupColsRaw.includes(expr) ||
+                            groupColsClean.includes(expr) ||
+                            colName === '1' || colName === '2';
+          if (!isGrouped && colName) {
             unagg.push(p);
           }
         }
@@ -618,7 +668,19 @@
     }
 
     // 6. Aggregate in WHERE
-    if (/WHERE\s+[\s\S]*?\b(COUNT|SUM|AVG|MIN|MAX)\s*\(/i.test(studentSql) || /misuse of aggregate/i.test(errorMsg || '')) {
+    let hasAggInWhere = false;
+    if (/misuse of aggregate/i.test(errorMsg || '')) {
+      hasAggInWhere = true;
+    } else {
+      const wm = studentSql.match(/\bWHERE\b([\s\S]+?)(?:\b(?:GROUP\s+BY|HAVING|ORDER\s+BY|LIMIT|UNION|EXCEPT|INTERSECT)\b|;|$)/i);
+      if (wm) {
+        const wt = wm[1].replace(/\(\s*SELECT\b[\s\S]*?\)/gi, '');
+        if (/\b(COUNT|SUM|AVG|MIN|MAX)\s*\(/i.test(wt)) {
+          hasAggInWhere = true;
+        }
+      }
+    }
+    if (hasAggInWhere) {
       diags.push({
         trapId: 'AGGREGATE_IN_WHERE',
         badge: '❌ Execution Order Error: Aggregate in WHERE',
@@ -865,7 +927,10 @@
 
   function gradeSubmission(studentSql, question, db, edgeDb) {
     const refSql = question.ref || question.referenceSql || '';
-    const gradingRules = question.grading || {};
+    const gradingRules = Object.assign({}, question.grading || {});
+    if (gradingRules.orderSensitive === undefined) {
+      gradingRules.orderSensitive = /\bORDER\s+BY\b/i.test(refSql);
+    }
 
     const trimmed = (studentSql || '').trim();
     if (!trimmed || trimmed.startsWith('-- Write your answer') || trimmed.startsWith('-- Write your query')) {
@@ -975,13 +1040,15 @@
 
     const isPassed = baseComp.passed && edgeComp.passed;
     const diags = runDiagnostics(studentSql, refSql, stu, ref, null);
-    const activeTrap = diags.find(d => d.severity === 'HIGH') || diags[0];
+    const activeTrap = isPassed 
+      ? diags.find(d => d.severity === 'HIGH') 
+      : (diags.find(d => d.severity === 'HIGH') || diags[0]);
 
     const htmlDiff = formatHtmlDiff(ref, stu);
     const mdDiff = formatMarkdownDiff(ref, stu, baseComp.diff || edgeComp.diff);
     const ansiDiff = formatAnsiDiff(ref, stu, baseComp.diff || edgeComp.diff);
 
-    if (!isPassed || activeTrap) {
+    if (!isPassed || (activeTrap && activeTrap.severity === 'HIGH')) {
       const diff = baseComp.diff || edgeComp.diff;
 
       let badge = '⚠️ Result Mismatch';

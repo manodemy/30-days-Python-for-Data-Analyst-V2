@@ -33,7 +33,7 @@ window.DB_SEEDS['retail'] = {
     },
     {
       name: "employees",
-      createSQL: "CREATE TABLE employees (\n        employee_id INTEGER PRIMARY KEY,\n        first_name TEXT NOT NULL,\n        last_name TEXT NOT NULL,\n        salary REAL NOT NULL,\n        hire_date DATE NOT NULL,\n        department_id INTEGER,\n        job_title TEXT NOT NULL,\n        email TEXT NOT NULL,\n        is_active INTEGER NOT NULL,\n        manager_id INTEGER,\n        commission REAL,\n        emp_id INTEGER,\n        status TEXT DEFAULT 'Active',\n        exit_date DATE,\n        FOREIGN KEY (department_id) REFERENCES departments(department_id)\n    )",
+      createSQL: "CREATE TABLE employees (\n        employee_id INTEGER PRIMARY KEY,\n        first_name TEXT NOT NULL,\n        last_name TEXT NOT NULL,\n        salary REAL NOT NULL,\n        hire_date DATE NOT NULL,\n        department_id INTEGER,\n        job_title TEXT NOT NULL,\n        email TEXT NOT NULL,\n        is_active INTEGER NOT NULL,\n        manager_id INTEGER,\n        commission REAL,\n        emp_id INTEGER,\n        status TEXT DEFAULT 'Active',\n        exit_date DATE,\n        name TEXT GENERATED ALWAYS AS (first_name || ' ' || last_name),\n        FOREIGN KEY (department_id) REFERENCES departments(department_id)\n    )",
       seedSQL: "INSERT INTO employees VALUES\n        (1, 'Rajesh', 'Sen', 160000.0, '2019-01-15', 1, 'Director', 'rajesh.sen@manodemy.com', 1, NULL, NULL, 1, 'Active', NULL),\n        (2, 'Amit', 'Kumar', 95000.0, '2020-03-10', 10, 'Senior Engineering Manager', 'amit.kumar@manodemy.com', 1, 1, NULL, 2, 'Active', NULL),\n        (3, 'Priya', 'Nair', 120000.0, '2020-06-01', 20, 'Lead Data Scientist', 'priya.nair@manodemy.com', 1, 1, 15000.0, 3, 'Active', NULL),\n        (4, 'Sneha', 'Patel', 80000.0, '2021-02-15', 20, 'Senior Data Analyst', 'sneha.patel@manodemy.com', 1, 3, 8000.0, 4, 'Active', NULL),\n        (5, 'Rahul', 'Sharma', 75000.0, '2021-08-20', 20, 'Data Analyst', 'rahul.sharma@manodemy.com', 1, 3, 5000.0, 5, 'Active', NULL),\n        (6, 'Vikram', 'Malhotra', 70000.0, '2021-11-05', 30, 'Senior Marketing Manager', 'vikram.malhotra@manodemy.com', 1, 1, 12000.0, 6, 'Active', NULL),\n        (7, 'Ananya', 'Gupta', 65000.0, '2022-01-10', 40, 'Sales Representative', 'ananya.gupta@manodemy.com', 1, 2, 20000.0, 7, 'Active', NULL),\n        (8, 'Karan', 'Johar', 55000.0, '2022-05-15', 50, 'HR Specialist', 'karan.johar@manodemy.com', 1, NULL, NULL, 8, 'Active', NULL),\n        (9, 'Siddharth', 'Roy', 60000.0, '2023-02-10', 10, 'Software Engineer', 'siddharth.roy@manodemy.com', 0, 2, NULL, 9, 'Resigned', '2023-12-31'),\n        (10, 'Riya', 'Sen', 45000.0, '2023-05-20', 30, 'Marketing Executive', 'riya.sen@manodemy.com', 1, 6, 2000.0, 10, 'Active', NULL),\n        (11, 'Devendra', 'Singh', 85000.0, '2022-10-01', 20, 'Data Scientist', 'devendra.singh@manodemy.com', 1, 3, NULL, 11, 'Active', NULL),\n        (12, 'Neha', 'Sharma', 50000.0, '2023-01-15', 40, 'Sales Executive', 'neha.sharma@manodemy.com', 1, 7, 15000.0, 12, 'Active', NULL),\n        (13, 'Aditi', 'Rao', 42000.0, '2023-04-01', 40, 'Sales Associate', 'aditi.rao@manodemy.com', 1, 7, 8000.0, 13, 'Active', NULL),\n        (14, 'Rohit', 'Verma', 88000.0, '2020-11-15', 10, 'Senior Software Engineer', 'rohit.verma@manodemy.com', 1, 2, NULL, 14, 'Active', NULL),\n        (15, 'Pooja', 'Patel', 48000.0, '2021-06-10', 50, 'HR Coordinator', 'pooja.patel@manodemy.com', 1, 8, NULL, 15, 'Active', NULL);",
       columns: [
         { name: "employee_id", type: "INTEGER", pk: true },
@@ -49,12 +49,13 @@ window.DB_SEEDS['retail'] = {
         { name: "commission", type: "REAL", pk: false },
         { name: "emp_id", type: "INTEGER", pk: false },
         { name: "status", type: "TEXT", pk: false },
-        { name: "exit_date", type: "DATE", pk: false }
+        { name: "exit_date", type: "DATE", pk: false },
+        { name: "name", type: "TEXT", pk: false }
       ]
     },
     {
       name: "customers",
-      createSQL: "CREATE TABLE customers (\n        customer_id INTEGER PRIMARY KEY,\n        first_name TEXT NOT NULL,\n        last_name TEXT NOT NULL,\n        email TEXT NOT NULL,\n        signup_date DATE NOT NULL,\n        region TEXT NOT NULL\n    )",
+      createSQL: "CREATE TABLE customers (\n        customer_id INTEGER PRIMARY KEY,\n        first_name TEXT NOT NULL,\n        last_name TEXT NOT NULL,\n        email TEXT NOT NULL,\n        signup_date DATE NOT NULL,\n        region TEXT NOT NULL,\n        name TEXT GENERATED ALWAYS AS (first_name || ' ' || last_name)\n    )",
       seedSQL: "INSERT INTO customers VALUES\n        (1, 'Amit', 'Sharma', 'amit.sharma@example.com', '2022-01-15', 'North'),\n        (2, 'Priya', 'Nair', 'priya.nair@example.com', '2022-03-22', 'South'),\n        (3, 'Karthik', 'Raja', 'karthik.raja@example.com', '2022-06-18', 'South'),\n        (4, 'Rahul', 'Sharma', 'rahul.sharma@example.com', '2022-08-05', 'North'),\n        (5, 'Sneha', 'Patel', 'sneha.patel@example.com', '2022-10-12', 'West'),\n        (6, 'Anoop', 'Mishra', 'anoop.mishra@example.com', '2023-01-20', 'East'),\n        (7, 'Gaurav', 'Joshi', 'gaurav.joshi@example.com', '2023-03-15', 'North'),\n        (8, 'Ananya', 'Gupta', 'ananya.gupta@example.com', '2023-04-10', 'East'),\n        (9, 'Deepak', 'Verma', 'deepak.verma@example.com', '2023-05-18', 'West');",
       columns: [
         { name: "customer_id", type: "INTEGER", pk: true },
@@ -63,6 +64,7 @@ window.DB_SEEDS['retail'] = {
         { name: "email", type: "TEXT", pk: false },
         { name: "signup_date", type: "DATE", pk: false },
         { name: "region", type: "TEXT", pk: false },
+        { name: "name", type: "TEXT", pk: false }
       ]
     },
     {

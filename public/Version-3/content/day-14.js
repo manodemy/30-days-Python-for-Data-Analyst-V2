@@ -1,4 +1,4 @@
-// Day 14 — Common Table Expressions (CTEs)
+// Day 14 — Common Table Expressions (CTEs): Single, Chained, Recursive & Optimization
 if (!window.COURSE_CONTENT) window.COURSE_CONTENT = {};
 window.COURSE_CONTENT['day14'] = {
   "day": 14,
@@ -8,206 +8,463 @@ window.COURSE_CONTENT['day14'] = {
   "slides": [
     {
       "title": "CTEs — Named Temporary Result Sets",
-      "duration": "0:00",
-      "html": `
-        <h2>🏗️ Common Table Expressions (CTEs)</h2>
+      "duration": "07:45",
+      "html": `<h2>🏗️ Common Table Expressions (CTEs)</h2>
 
-        <div class="slide-section">
-          <h3>01. What Is a CTE?</h3>
-          <p>A <strong>Common Table Expression (CTE)</strong> is a named, temporary result set defined using <code>WITH ... AS (...)</code> and referenced in the main query. CTEs are:</p>
-          <ul>
-            <li><strong>Readable</strong> — break complex queries into named logical steps</li>
-            <li><strong>Reusable</strong> — a CTE can be referenced multiple times in the same query</li>
-            <li><strong>Modular</strong> — build queries like functions: each CTE is one step</li>
-            <li><strong>Temporary</strong> — only exist for the duration of the query (unlike views)</li>
-          </ul>
+        <!-- ── Section 01: What Is a CTE? ── -->
+        <div class="slide-section" id="day14WhatSection">
+          <h3 class="heading-with-audio" id="day14What">
+            01. What Is a Common Table Expression?
+          </h3>
+          <p>A <strong>Common Table Expression (CTE)</strong> is a temporary, named result set defined within the scope of a single SQL statement using the <code>WITH</code> keyword. CTEs act like temporary virtual views, breaking complex analytical problems into clean, sequential, self-documenting steps.</p>
         </div>
 
-        <div class="slide-section">
-          <h3>02. Basic CTE Syntax</h3>
-          <pre><code>-- Syntax
-WITH cte_name AS (
-  SELECT ...  -- this is the CTE definition
-)
-SELECT ...
-FROM   cte_name;
-
--- Example: Employees earning above average
-WITH avg_salary AS (
-  SELECT AVG(salary) AS avg_sal
-  FROM   employees
-)
-SELECT e.first_name, e.salary
-FROM   employees AS e
-CROSS JOIN avg_salary AS a
-WHERE  e.salary > a.avg_sal;</code></pre>
-
-          <div class="info-box">
-            ℹ️ The <code>WITH</code> clause comes before the main <code>SELECT</code>. The CTE name is used exactly like a table name in the main query. Most databases execute CTEs as inline views — they are not materialised by default unless specified.
+        <div class="slide-section" id="day14RefTableSection">
+          <div class="db-mock-table-wrap" id="day14RefTable">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; padding: 0 4px;">
+              <h4 style="margin: 0; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">Architectural Comparison Matrix</h4>
+            </div>
+            <table class="db-table-mock db-table-mock--compact">
+              <thead><tr><th>Construct</th><th>Scope</th><th>Storage Location</th><th>Reusable</th><th>Can Be Indexed?</th></tr></thead>
+              <tbody>
+                <tr id="day14Row1"><td><strong>CTE (WITH)</strong></td><td>Single query statement</td><td>In-memory / Query pipeline</td><td>Yes (within query)</td><td>No</td></tr>
+                <tr id="day14Row2"><td><strong>Subquery</strong></td><td>Enclosing clause only</td><td>In-memory inline evaluation</td><td>No (must repeat code)</td><td>No</td></tr>
+                <tr id="day14Row3"><td><strong>Temp Table</strong></td><td>Database session / connection</td><td>Temp storage on disk/RAM</td><td>Yes (across session queries)</td><td>Yes</td></tr>
+                <tr id="day14Row4"><td><strong>View</strong></td><td>Permanent database catalog</td><td>Virtual stored query metadata</td><td>Yes (system-wide)</td><td>Yes (Indexed Views)</td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
-        <div class="slide-section">
-          <h3>03. Multiple CTEs</h3>
-          <p>Chain multiple CTEs with commas. Each subsequent CTE can reference earlier ones. This is the most powerful feature of CTEs — building a readable pipeline of transformations.</p>
+        <!-- ── Section 02: Basic CTE Syntax ── -->
+        <div class="slide-section" id="day14BasicSection">
+          <h3 class="heading-with-audio" id="day14Basic">
+            02. Basic CTE Syntax &amp; Readability
+          </h3>
+          <p>The <code>WITH</code> clause precedes your main query. You assign your CTE a descriptive name, enclose the definition query in parentheses, and immediately reference it as if it were a physical database table.</p>
+        </div>
 
-          <pre><code>WITH
--- Step 1: Revenue per customer
-customer_revenue AS (
-  SELECT customer_id,
-         SUM(total_amount) AS total_spent
-  FROM   orders
-  GROUP BY customer_id
+        <div class="slide-section" id="day14BasicCodeSection">
+          <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 4px;">
+            <h4 style="margin: 0; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">Query 1 — Company Benchmark via CTE</h4>
+          </div>
+          <div class="code-block-container" id="day14BasicCode">
+            <div class="code-subblock" id="day14BasicQuery1">
+              <pre><code><span class="kw">WITH</span> avg_salary <span class="kw">AS</span> (
+  <span class="kw">SELECT</span> AVG(salary) <span class="kw">AS</span> avg_sal
+  <span class="kw">FROM</span>   employees
+)
+<span class="kw">SELECT</span> e.first_name,
+       e.salary
+<span class="kw">FROM</span>   employees <span class="kw">AS</span> e,
+       avg_salary <span class="kw">AS</span> a
+<span class="kw">WHERE</span>  e.salary > a.avg_sal;</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Section 03: Chained Multi-Step CTEs ── -->
+        <div class="slide-section" id="day14MultiSection">
+          <h3 class="heading-with-audio" id="day14Multi">
+            03. Multi-Step Chained Pipelines
+          </h3>
+          <p>You can chain multiple CTEs together separated by commas. Each subsequent CTE can query any CTE defined prior to it, forming a readable, unidirectional data transformation pipeline.</p>
+        </div>
+
+        <div class="slide-section" id="day14MultiCodeSection">
+          <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 4px;">
+            <h4 style="margin: 0; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">Query 2 — Multi-Stage Customer Segmentation</h4>
+          </div>
+          <div class="code-block-container" id="day14MultiCode">
+            <div class="code-subblock" id="day14MultiQuery1">
+              <pre><code><span class="kw">WITH</span>
+<span class="code-comment">-- Step 1: Aggregate spending per customer</span>
+customer_revenue <span class="kw">AS</span> (
+  <span class="kw">SELECT</span>   customer_id,
+           SUM(total_amount) <span class="kw">AS</span> total_spent
+  <span class="kw">FROM</span>     orders
+  <span class="kw">GROUP BY</span> customer_id
 ),
--- Step 2: Classify customers
-customer_tier AS (
-  SELECT customer_id,
+<span class="code-comment">-- Step 2: Segment into business loyalty tiers</span>
+customer_tier <span class="kw">AS</span> (
+  <span class="kw">SELECT</span> customer_id,
          total_spent,
-         CASE
-           WHEN total_spent >= 100000 THEN 'Platinum'
-           WHEN total_spent >= 50000  THEN 'Gold'
-           WHEN total_spent >= 10000  THEN 'Silver'
-           ELSE 'Bronze'
-         END AS tier
-  FROM   customer_revenue
+         <span class="kw">CASE</span>
+           <span class="kw">WHEN</span> total_spent >= 50000 <span class="kw">THEN</span> 'Gold'
+           <span class="kw">WHEN</span> total_spent >= 10000 <span class="kw">THEN</span> 'Silver'
+           <span class="kw">ELSE</span>                            'Bronze'
+         <span class="kw">END AS</span> tier
+  <span class="kw">FROM</span>   customer_revenue
 )
--- Main query: Show tier distribution
-SELECT tier, COUNT(*) AS customer_count, SUM(total_spent) AS tier_revenue
-FROM   customer_tier
-GROUP BY tier
-ORDER BY tier_revenue DESC;</code></pre>
-        </div>
-
-        <div class="slide-section">
-          <h3>04. CTEs vs Subqueries — When to Use Which</h3>
-
-          <div class="vs-block">
-            <div class="vs-card">
-              <h4>CTE — Use When:</h4>
-              <ul>
-                <li>Logic needs to be reused multiple times</li>
-                <li>Query has multiple transformation steps</li>
-                <li>You want readable, self-documenting code</li>
-                <li>Building recursive queries (hierarchies)</li>
-              </ul>
+<span class="code-comment">-- Main Query: Summarize metrics by tier</span>
+<span class="kw">SELECT</span>   tier,
+         COUNT(*) <span class="kw">AS</span> customer_count,
+         SUM(total_spent) <span class="kw">AS</span> tier_revenue
+<span class="kw">FROM</span>     customer_tier
+<span class="kw">GROUP BY</span> tier
+<span class="kw">ORDER BY</span> tier_revenue <span class="kw">DESC</span>;</code></pre>
             </div>
-            <div class="vs-card">
-              <h4>Subquery — Use When:</h4>
-              <ul>
-                <li>Simple, one-off scalar filter value</li>
-                <li>Used only in a single location</li>
-                <li>You need the value inside an expression</li>
-                <li>Brevity is preferred over readability</li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="pro-tip-box">
-            💡 <strong>Pro Tip — CTEs in Production:</strong> CTEs make peer code reviews significantly easier. Most data teams enforce the use of CTEs for any query with more than one level of aggregation or more than two joins. Well-named CTEs serve as self-documenting SQL.
           </div>
         </div>
 
-        <div class="slide-section">
-          <h3>05. Recursive CTE — Hierarchical Data</h3>
-          <p>A <strong>recursive CTE</strong> references itself. It consists of: (1) an <strong>anchor</strong> (base case), and (2) a <strong>recursive member</strong> (each step). Used for traversing trees, org charts, or generating sequences.</p>
+        <!-- ── Section 04: Recursive CTEs ── -->
+        <div class="slide-section" id="day14RecursiveSection">
+          <h3 class="heading-with-audio" id="day14Recursive">
+            04. Recursive CTEs — Tree &amp; Hierarchy Traversal
+          </h3>
+          <p>A <strong>Recursive CTE</strong> references itself. In standard SQL, you declare it using <code>WITH RECURSIVE</code>. It executes in two phases: the <strong>Anchor Member</strong> (base case rows), and the <strong>Recursive Member</strong> connected via <code>UNION ALL</code> which generates subsequent hierarchy depths.</p>
+        </div>
 
-          <pre><code>-- Generate numbers 1 through 10 (recursive sequence)
-WITH RECURSIVE nums AS (
-  SELECT 1 AS n          -- anchor
-  UNION ALL
-  SELECT n + 1           -- recursive: adds 1 each time
-  FROM   nums
-  WHERE  n < 10          -- termination condition
+        <div class="slide-section" id="day14RecursiveCodeSection">
+          <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 4px;">
+            <h4 style="margin: 0; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">Queries 3 &amp; 4 — Numbers &amp; Org Charts</h4>
+          </div>
+          <div class="code-block-container" id="day14RecursiveCode">
+            <div class="code-subblock" id="day14RecursiveQuery1">
+              <pre><code><span class="code-comment">-- 1. Generate sequence 1 through 10</span>
+<span class="kw">WITH RECURSIVE</span> nums <span class="kw">AS</span> (
+  <span class="kw">SELECT</span> 1 <span class="kw">AS</span> num                     <span class="code-comment">-- Anchor</span>
+  <span class="kw">UNION ALL</span>
+  <span class="kw">SELECT</span> num + 1 <span class="kw">FROM</span> nums <span class="kw">WHERE</span> num &lt; 10  <span class="code-comment">-- Recursive step</span>
 )
-SELECT * FROM nums;
-
--- Traverse employee hierarchy from top to bottom
-WITH RECURSIVE org_chart AS (
-  -- Anchor: top-level employees (no manager)
-  SELECT employee_id, first_name, manager_id, 0 AS level
-  FROM   employees
-  WHERE  manager_id IS NULL
-  UNION ALL
-  -- Recursive: employees who report to previous level
-  SELECT e.employee_id, e.first_name, e.manager_id, oc.level + 1
-  FROM   employees AS e
-  INNER JOIN org_chart AS oc ON e.manager_id = oc.employee_id
+<span class="kw">SELECT</span> num <span class="kw">FROM</span> nums;</code></pre>
+            </div>
+            <div class="code-subblock" id="day14RecursiveQuery2">
+              <pre><code><span class="code-comment">-- 2. Traverse Organizational Reporting Hierarchy</span>
+<span class="kw">WITH RECURSIVE</span> org_chart <span class="kw">AS</span> (
+  <span class="kw">SELECT</span> employee_id, first_name, manager_id, 0 <span class="kw">AS</span> level
+  <span class="kw">FROM</span>   employees
+  <span class="kw">WHERE</span>  manager_id <span class="kw">IS NULL</span>          <span class="code-comment">-- Anchor: Top Director</span>
+  <span class="kw">UNION ALL</span>
+  <span class="kw">SELECT</span> e.employee_id, e.first_name, e.manager_id, oc.level + 1
+  <span class="kw">FROM</span>   employees e
+  <span class="kw">JOIN</span>   org_chart oc <span class="kw">ON</span> e.manager_id = oc.employee_id
 )
-SELECT first_name, level
-FROM   org_chart
-ORDER BY level, first_name;</code></pre>
+<span class="kw">SELECT</span> first_name, manager_id, level
+<span class="kw">FROM</span>   org_chart
+<span class="kw">ORDER BY</span> level, first_name;</code></pre>
+            </div>
+          </div>
+        </div>
 
+        <!-- ── Section 05: Optimization & Materialization ── -->
+        <div class="slide-section" id="day14OptSection">
+          <div class="info-box" id="day14Opt">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; width: 100%;">
+              <strong style="color:var(--ink-teal); flex: 1;">⚡ Materialized vs Inlined CTEs:</strong>
+            </div>
+            <p style="margin: 0;">In PostgreSQL 12+, SQLite 3.35+, and modern engines, the query optimizer automatically inlines simple CTEs into the main query plan to push down predicates. If you reference an expensive CTE multiple times, you can explicitly force materialization in PostgreSQL with <code>WITH cte AS MATERIALIZED (...)</code>.</p>
+          </div>
+        </div>
+
+        <!-- ── Section 06: Top 25 Interview Q&A ── -->
+        <div class="slide-section" id="day14QASection">
           <div class="interview-box">
-            <h4>🎯 Interview Insight</h4>
-            <div>
-              <p><strong>Q: What is the difference between a CTE and a temporary table?</strong></p>
-              <p><em>A: A CTE is an inline, session-scoped named result set that exists only for the duration of a single query. It cannot be indexed or stored. A temporary table (CREATE TEMP TABLE) is a real table written to the database's temporary storage; it can be indexed, updated, and persisted across multiple queries within a session. Use CTEs for readable multi-step logic in a single query; use temp tables when you need to reuse a dataset across multiple queries or need an index for performance.</em></p>
+            <h4 id="day14QAHeading" style="margin: 0 0 12px 0; font-size: 1rem; color: #38bdf8; display: flex; align-items: center; gap: 6px;">
+              <span>🎯</span> Top 25 SQL Interview Q&amp;A — Common Table Expressions (CTEs)
+            </h4>
+
+            <div id="day14QA1">
+              <p><strong>Q1: What is a Common Table Expression (CTE) in SQL?</strong></p>
+              <p><em>A: A CTE is a temporary named result set defined with the <code>WITH</code> clause that exists strictly for the execution scope of a single SELECT, INSERT, UPDATE, or DELETE statement.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day14QA2">
+              <p><strong>Q2: What are the primary advantages of CTEs over nested subqueries?</strong></p>
+              <p><em>A: 1) Superior readability: logic flows top-to-bottom rather than nested inside-out. 2) Reusability: a single CTE can be referenced multiple times within the same query. 3) Modularity: easy debugging and isolation of complex transformation steps. 4) Recursion: ability to traverse hierarchical structures.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day14QA3">
+              <p><strong>Q3: How do you define multiple CTEs in a single query?</strong></p>
+              <p><em>A: Use the <code>WITH</code> keyword once, separate each CTE definition with a comma, and reference them in the main query: <code>WITH cte1 AS (...), cte2 AS (...) SELECT ...</code>.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day14QA4">
+              <p><strong>Q4: Can a CTE reference another CTE defined in the same query?</strong></p>
+              <p><em>A: Yes, as long as the referenced CTE is defined earlier (above) in the <code>WITH</code> list. Forward references to subsequent CTEs are not allowed in standard SQL.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day14QA5">
+              <p><strong>Q5: What is a Recursive CTE?</strong></p>
+              <p><em>A: A recursive CTE is a CTE that references its own name. It is defined with <code>WITH RECURSIVE</code> and consists of an Anchor query and a Recursive member combined with <code>UNION ALL</code> to traverse trees, graphs, or generate series.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day14QA6">
+              <p><strong>Q6: What is the Anchor member in a Recursive CTE?</strong></p>
+              <p><em>A: The Anchor is the non-recursive initial query that returns the starting base row(s) (e.g. root employees where <code>manager_id IS NULL</code> or sequence start <code>SELECT 1</code>).</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day14QA7">
+              <p><strong>Q7: How do you prevent infinite loops in a Recursive CTE?</strong></p>
+              <p><em>A: Ensure the recursive member has a strict, monotonic termination condition in its <code>WHERE</code> clause (e.g. <code>WHERE num &lt; 100</code> or <code>WHERE level &lt; 10</code>) and guard against circular reference cycles.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day14QA8">
+              <p><strong>Q8: What is the difference between a CTE and a Temporary Table?</strong></p>
+              <p><em>A: A CTE is virtual, held in memory, and exists only for one single SQL statement. A temporary table (<code>CREATE TEMP TABLE</code>) is written to tempdb/storage, can be indexed, and persists across multiple queries across the session.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day14QA9">
+              <p><strong>Q9: What is the difference between a CTE and a Database View?</strong></p>
+              <p><em>A: A View is a permanent database catalog object stored as metadata that anyone with permissions can query anytime. A CTE is temporary code written inline for a single statement.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day14QA10">
+              <p><strong>Q10: Are CTEs materialized in memory or re-executed each time they are referenced?</strong></p>
+              <p><em>A: In PostgreSQL 11 and earlier, CTEs acted as optimization fences (always materialized). In PostgreSQL 12+, SQLite 3.35+, and SQL Server, the optimizer inlines CTEs by default unless forced with <code>AS MATERIALIZED</code>.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day14QA11">
+              <p><strong>Q11: Can you use a CTE inside an INSERT, UPDATE, or DELETE statement?</strong></p>
+              <p><em>A: Yes! You can write <code>WITH cte AS (...) INSERT INTO target SELECT * FROM cte;</code> or update rows filtered by a CTE. Some engines (like Postgres) also allow data-modifying CTEs (INSERT/UPDATE/DELETE inside the WITH clause).</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day14QA12">
+              <p><strong>Q12: Can you rename columns in a CTE declaration header?</strong></p>
+              <p><em>A: Yes: <code>WITH dept_stats(dept, headcount, avg_sal) AS (SELECT department_id, COUNT(*), AVG(salary) FROM employees GROUP BY department_id)</code>.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day14QA13">
+              <p><strong>Q13: Why is UNION ALL preferred over UNION in Recursive CTEs?</strong></p>
+              <p><em>A: ANSI SQL specifies that the recursive step must combine successive generation iterations using <code>UNION ALL</code> because distinct sorting on each recursion step would be computationally prohibitive.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day14QA14">
+              <p><strong>Q14: What is the default recursion limit in SQL Server and how do you change it?</strong></p>
+              <p><em>A: SQL Server defaults to 100 recursion levels. You can modify it up to 32767 or unlimited using <code>OPTION (MAXRECURSION 500)</code> or <code>OPTION (MAXRECURSION 0)</code>.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day14QA15">
+              <p><strong>Q15: Can a CTE be self-joined in the main query?</strong></p>
+              <p><em>A: Yes, you can reference the same CTE multiple times with different aliases in the main query (e.g. <code>FROM dept_avg d1 JOIN dept_avg d2 ON ...</code>), avoiding code duplication.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day14QA16">
+              <p><strong>Q16: Can a CTE contain an ORDER BY clause?</strong></p>
+              <p><em>A: In standard SQL, <code>ORDER BY</code> is prohibited inside a CTE unless paired with a <code>LIMIT</code> or <code>TOP</code> clause because intermediate sets are unordered. The final <code>ORDER BY</code> belongs on the outer query.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day14QA17">
+              <p><strong>Q17: How do you traverse a parent-child category tree to construct a breadcrumb path?</strong></p>
+              <p><em>A: In a recursive CTE, concatenate names: <code>SELECT id, name AS path FROM categories WHERE parent_id IS NULL UNION ALL SELECT c.id, ch.path || ' &gt; ' || c.name FROM categories c JOIN ch ON c.parent_id = ch.id</code>.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day14QA18">
+              <p><strong>Q18: What is the performance impact of referencing an unmaterialized CTE multiple times?</strong></p>
+              <p><em>A: If the database optimizer inlines the CTE, it may evaluate the CTE sub-query multiple times, multiplying execution cost. In such cases, a temporary table or <code>MATERIALIZED</code> hint is preferred.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day14QA19">
+              <p><strong>Q19: Can you nest a WITH clause inside a subquery?</strong></p>
+              <p><em>A: Yes, in modern dialects (PostgreSQL, SQLite), a subquery can contain its own private <code>WITH</code> clause scoped exclusively to that subquery.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day14QA20">
+              <p><strong>Q20: When is a Temporary Table strictly better than a CTE?</strong></p>
+              <p><em>A: When working with massive intermediate datasets (&gt; millions of rows) that need to be filtered or joined across 3 or more separate downstream queries, requiring custom indexes and statistics.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day14QA21">
+              <p><strong>Q21: How do you write a simple benchmark CTE in SQL?</strong></p>
+              <p><em>A: <code>WITH avg_sal AS (SELECT AVG(salary) AS avg FROM employees) SELECT first_name, salary FROM employees, avg_sal WHERE salary &gt; avg_sal.avg;</code></em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day14QA22">
+              <p><strong>Q22: How do you write a two-step chained CTE pipeline?</strong></p>
+              <p><em>A: <code>WITH step1 AS (SELECT ...), step2 AS (SELECT ... FROM step1) SELECT ... FROM step2;</code></em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day14QA23">
+              <p><strong>Q23: How do you generate numbers 1 to 5 using a recursive CTE?</strong></p>
+              <p><em>A: <code>WITH RECURSIVE nums AS (SELECT 1 AS n UNION ALL SELECT n + 1 FROM nums WHERE n &lt; 5) SELECT n FROM nums;</code></em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day14QA24">
+              <p><strong>Q24: How do you join a CTE with a physical table?</strong></p>
+              <p><em>A: <code>WITH cust_totals AS (SELECT customer_id, SUM(total_amount) AS spent FROM orders GROUP BY customer_id) SELECT c.first_name, ct.spent FROM customers c JOIN cust_totals ct ON c.customer_id = ct.customer_id;</code></em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day14QA25">
+              <p><strong>Q25: How do you calculate percentage of total using a CTE without window functions?</strong></p>
+              <p><em>A: <code>WITH total AS (SELECT SUM(salary) AS grand_total FROM employees) SELECT first_name, ROUND(salary * 100.0 / total.grand_total, 2) AS pct FROM employees, total;</code></em></p>
             </div>
           </div>
-        </div>
-      `
+        </div>`
     }
   ],
+
   "practiceQuestions": [
     {
       "id": 1,
-      "prompt": "<strong>Task: Above Average Salary (CTE)</strong><br/>Using a CTE, find all employees earning above the company average salary.",
-      "referenceSql": "WITH avg_sal AS (SELECT AVG(salary) AS avg FROM employees) SELECT first_name, salary FROM employees, avg_sal WHERE salary > avg_sal.avg;"
+      "title": "Basic Benchmark CTE",
+      "prompt": "Using a CTE named <code>avg_sal</code> that computes the company average salary as <code>avg</code>, return <code>first_name</code> and <code>salary</code> for employees earning above average, ordered by <code>salary</code> descending.",
+      "starterSql": "WITH avg_sal AS (\n  SELECT AVG(salary) AS avg\n  FROM   employees\n)\nSELECT first_name,\n       salary\nFROM   employees, avg_sal\nWHERE  salary > avg_sal.avg;",
+      "referenceSql": "WITH avg_sal AS (\n  SELECT AVG(salary) AS avg\n  FROM   employees\n)\nSELECT first_name,\n       salary\nFROM   employees, avg_sal\nWHERE  salary > avg_sal.avg\nORDER BY salary DESC;",
+      "solutionAudio": "Day14/New_Day14Question01sol.mp3"
     },
     {
       "id": 2,
-      "prompt": "<strong>Task: Customer Tier (Multi-CTE)</strong><br/>Write a two-step CTE: first compute total revenue per customer, then classify them as 'Gold' (>=50000), 'Silver' (>=10000), or 'Bronze'. Show tier and count.",
-      "referenceSql": "WITH cust_rev AS (SELECT customer_id, SUM(total_amount) AS spent FROM orders GROUP BY customer_id), tiers AS (SELECT customer_id, CASE WHEN spent>=50000 THEN 'Gold' WHEN spent>=10000 THEN 'Silver' ELSE 'Bronze' END AS tier FROM cust_rev) SELECT tier, COUNT(*) AS cnt FROM tiers GROUP BY tier;"
+      "title": "Department Payroll Summary CTE",
+      "prompt": "Define a CTE <code>dept_summary</code> computing <code>department_id</code>, <code>headcount</code> (COUNT(*)), and <code>total_payroll</code> (SUM(salary)). Query it to return departments where <code>total_payroll &gt; 100000</code>, ordered by <code>total_payroll</code> descending.",
+      "starterSql": "WITH dept_summary AS (\n  SELECT department_id\n  FROM   employees\n)\nSELECT * FROM dept_summary;",
+      "referenceSql": "WITH dept_summary AS (\n  SELECT   department_id,\n           COUNT(*) AS headcount,\n           SUM(salary) AS total_payroll\n  FROM     employees\n  GROUP BY department_id\n)\nSELECT department_id,\n       headcount,\n       total_payroll\nFROM   dept_summary\nWHERE  total_payroll > 100000\nORDER BY total_payroll DESC;",
+      "solutionAudio": "Day14/New_Day14Question02sol.mp3"
     },
     {
       "id": 3,
-      "prompt": "<strong>Task: Top Products per Category</strong><br/>Using a CTE, find the product with the highest unit_price in each category.",
-      "referenceSql": "WITH max_price AS (SELECT category_id, MAX(unit_price) AS max_p FROM products GROUP BY category_id) SELECT p.name, p.category_id, p.unit_price FROM products p INNER JOIN max_price mp ON p.category_id = mp.category_id AND p.unit_price = mp.max_p;"
+      "title": "Two-Step Customer Tier Pipeline",
+      "prompt": "Chain two CTEs: <code>cust_rev</code> (calculating <code>customer_id</code> and <code>spent</code>), then <code>tiers</code> (classifying customers as 'Gold' for spent &gt;= 50000, 'Silver' for &gt;= 10000, and 'Bronze' otherwise). Return <code>tier</code> and <code>customer_count</code>, ordered by count descending.",
+      "starterSql": "WITH cust_rev AS (\n  SELECT customer_id,\n         SUM(total_amount) AS spent\n  FROM   orders\n  GROUP BY customer_id\n),\ntiers AS (\n  SELECT customer_id,\n         spent\n  FROM   cust_rev\n)\nSELECT * FROM tiers;",
+      "referenceSql": "WITH cust_rev AS (\n  SELECT   customer_id,\n           SUM(total_amount) AS spent\n  FROM     orders\n  GROUP BY customer_id\n),\ntiers AS (\n  SELECT customer_id,\n         CASE\n           WHEN spent >= 50000 THEN 'Gold'\n           WHEN spent >= 10000 THEN 'Silver'\n           ELSE                     'Bronze'\n         END AS tier\n  FROM   cust_rev\n)\nSELECT   tier,\n         COUNT(*) AS customer_count\nFROM     tiers\nGROUP BY tier\nORDER BY customer_count DESC;",
+      "solutionAudio": "Day14/New_Day14Question03sol.mp3"
     },
     {
       "id": 4,
-      "prompt": "<strong>Task: Department Payroll Summary</strong><br/>Use a CTE to compute total payroll per department, then find departments with payroll above the median.",
-      "referenceSql": "WITH dept_pay AS (SELECT department_id, SUM(salary) AS payroll FROM employees GROUP BY department_id) SELECT * FROM dept_pay WHERE payroll > (SELECT AVG(payroll) FROM dept_pay);"
+      "title": "Customer Order Volume Ranking",
+      "prompt": "Define a CTE <code>customer_orders</code> computing <code>customer_id</code>, <code>order_count</code> (COUNT(order_id)), and <code>total_spend</code> (SUM(total_amount)). Join with <code>customers</code> to return <code>first_name</code>, <code>order_count</code>, and <code>total_spend</code>, ordered by <code>total_spend</code> descending.",
+      "starterSql": "WITH customer_orders AS (\n  SELECT customer_id,\n         COUNT(order_id) AS order_count,\n         SUM(total_amount) AS total_spend\n  FROM   orders\n  GROUP BY customer_id\n)\nSELECT c.first_name\nFROM   customers c;",
+      "referenceSql": "WITH customer_orders AS (\n  SELECT   customer_id,\n           COUNT(order_id) AS order_count,\n           SUM(total_amount) AS total_spend\n  FROM     orders\n  GROUP BY customer_id\n)\nSELECT   c.first_name,\n         co.order_count,\n         co.total_spend\nFROM     customers c\nJOIN     customer_orders co ON c.customer_id = co.customer_id\nORDER BY co.total_spend DESC;",
+      "solutionAudio": "Day14/New_Day14Question04sol.mp3"
     },
     {
       "id": 5,
-      "prompt": "<strong>Task: Order Revenue Ranking</strong><br/>Using a CTE, compute total revenue per customer and rank by revenue.",
-      "referenceSql": "WITH cust_rev AS (SELECT customer_id, SUM(total_amount) AS revenue FROM orders GROUP BY customer_id) SELECT customer_id, revenue FROM cust_rev ORDER BY revenue DESC;"
+      "title": "Recursive Number Sequence (1 to 10)",
+      "prompt": "Use a recursive CTE named <code>nums</code> to generate a sequence of integers from 1 through 10 as <code>num</code>.",
+      "starterSql": "WITH RECURSIVE nums AS (\n  SELECT 1 AS num\n)\nSELECT num FROM nums;",
+      "referenceSql": "WITH RECURSIVE nums AS (\n  SELECT 1 AS num\n  UNION ALL\n  SELECT num + 1\n  FROM   nums\n  WHERE  num < 10\n)\nSELECT num\nFROM   nums;",
+      "solutionAudio": "Day14/New_Day14Question05sol.mp3"
     },
     {
       "id": 6,
-      "prompt": "<strong>Task: Recursive Number Series</strong><br/>Write a recursive CTE to generate numbers from 1 to 15.",
-      "referenceSql": "WITH RECURSIVE nums AS (SELECT 1 AS n UNION ALL SELECT n + 1 FROM nums WHERE n < 15) SELECT * FROM nums;"
+      "title": "Organizational Hierarchy Traversal",
+      "prompt": "Using a recursive CTE <code>org_chart</code>, traverse employees from top executives (<code>manager_id IS NULL</code> with level 0) down through all direct reports (level + 1). Return <code>first_name</code>, <code>manager_id</code>, and <code>level</code>, ordered by <code>level</code>, then <code>first_name</code>.",
+      "starterSql": "WITH RECURSIVE org_chart AS (\n  SELECT employee_id,\n         first_name,\n         manager_id,\n         0 AS level\n  FROM   employees\n  WHERE  manager_id IS NULL\n)\nSELECT * FROM org_chart;",
+      "referenceSql": "WITH RECURSIVE org_chart AS (\n  SELECT employee_id,\n         first_name,\n         manager_id,\n         0 AS level\n  FROM   employees\n  WHERE  manager_id IS NULL\n  UNION ALL\n  SELECT e.employee_id,\n         e.first_name,\n         e.manager_id,\n         oc.level + 1\n  FROM   employees e\n  JOIN   org_chart oc ON e.manager_id = oc.employee_id\n)\nSELECT   first_name,\n         manager_id,\n         level\nFROM     org_chart\nORDER BY level, first_name;",
+      "solutionAudio": "Day14/New_Day14Question06sol.mp3"
+    },
+    {
+      "id": 7,
+      "title": "Category Parent-Child Tree Traversal",
+      "prompt": "Using a recursive CTE <code>cat_hierarchy</code>, traverse categories from root categories (<code>parent_id IS NULL</code>, level 0) to subcategories (level + 1). Return <code>id</code>, <code>name</code>, and <code>level</code>, ordered by <code>level</code>, then <code>name</code>.",
+      "starterSql": "WITH RECURSIVE cat_hierarchy AS (\n  SELECT id, name, parent_id, 0 AS level\n  FROM   categories\n  WHERE  parent_id IS NULL\n)\nSELECT * FROM cat_hierarchy;",
+      "referenceSql": "WITH RECURSIVE cat_hierarchy AS (\n  SELECT id, name, parent_id, 0 AS level\n  FROM   categories\n  WHERE  parent_id IS NULL\n  UNION ALL\n  SELECT c.id, c.name, c.parent_id, ch.level + 1\n  FROM   categories c\n  JOIN   cat_hierarchy ch ON c.parent_id = ch.id\n)\nSELECT   id,\n         name,\n         level\nFROM     cat_hierarchy\nORDER BY level, name;",
+      "solutionAudio": "Day14/New_Day14Question07sol.mp3"
+    },
+    {
+      "id": 8,
+      "title": "High-Value Order Customer Details",
+      "prompt": "Using a CTE named <code>big_orders</code> containing orders with <code>total_amount &gt;= 50000</code>, return <code>order_id</code>, <code>total_amount</code>, and customer <code>email</code> by joining with <code>customers</code>, ordered by <code>total_amount</code> descending.",
+      "starterSql": "WITH big_orders AS (\n  SELECT order_id, customer_id, total_amount\n  FROM   orders\n  WHERE  total_amount >= 50000\n)\nSELECT * FROM big_orders;",
+      "referenceSql": "WITH big_orders AS (\n  SELECT order_id, customer_id, total_amount\n  FROM   orders\n  WHERE  total_amount >= 50000\n)\nSELECT   bo.order_id,\n         bo.total_amount,\n         c.email\nFROM     big_orders bo\nJOIN     customers c ON bo.customer_id = c.customer_id\nORDER BY bo.total_amount DESC;",
+      "solutionAudio": "Day14/New_Day14Question08sol.mp3"
+    },
+    {
+      "id": 9,
+      "title": "Self-Join a Reusable CTE",
+      "prompt": "Define a CTE <code>dept_avg</code> computing <code>department_id</code> and <code>avg_sal</code> (AVG(salary)). Join it twice with itself to find pairs of departments where <code>d1.avg_sal &gt; d2.avg_sal</code> and <code>d1.department_id &lt; d2.department_id</code>, returning <code>dept1</code>, <code>sal1</code>, <code>dept2</code>, and <code>sal2</code>.",
+      "starterSql": "WITH dept_avg AS (\n  SELECT department_id, AVG(salary) AS avg_sal\n  FROM   employees\n  GROUP BY department_id\n)\nSELECT * FROM dept_avg;",
+      "referenceSql": "WITH dept_avg AS (\n  SELECT   department_id,\n           AVG(salary) AS avg_sal\n  FROM     employees\n  GROUP BY department_id\n)\nSELECT d1.department_id AS dept1,\n       d1.avg_sal AS sal1,\n       d2.department_id AS dept2,\n       d2.avg_sal AS sal2\nFROM   dept_avg d1\nJOIN   dept_avg d2 ON d1.avg_sal > d2.avg_sal\n                  AND d1.department_id < d2.department_id;",
+      "solutionAudio": "Day14/New_Day14Question09sol.mp3"
+    },
+    {
+      "id": 10,
+      "title": "Customer Spend Variance from Group Mean",
+      "prompt": "Define a CTE <code>cust_totals</code> calculating <code>customer_id</code> and <code>total_spend</code> (SUM(total_amount)). In the main query, return <code>customer_id</code>, <code>total_spend</code>, and <code>diff_from_avg</code>: <code>ROUND(total_spend - (SELECT AVG(total_spend) FROM cust_totals), 2)</code>, ordered by variance descending.",
+      "starterSql": "WITH cust_totals AS (\n  SELECT customer_id, SUM(total_amount) AS total_spend\n  FROM   orders\n  GROUP BY customer_id\n)\nSELECT * FROM cust_totals;",
+      "referenceSql": "WITH cust_totals AS (\n  SELECT   customer_id,\n           SUM(total_amount) AS total_spend\n  FROM     orders\n  GROUP BY customer_id\n)\nSELECT   customer_id,\n         total_spend,\n         ROUND(total_spend - (SELECT AVG(total_spend) FROM cust_totals), 2) AS diff_from_avg\nFROM     cust_totals\nORDER BY diff_from_avg DESC;",
+      "solutionAudio": "Day14/New_Day14Question10sol.mp3"
+    },
+    {
+      "id": 11,
+      "title": "Department Headcount and Budget Utilization",
+      "prompt": "Define a CTE <code>dept_metrics</code> computing <code>department_id</code>, <code>headcount</code> (COUNT(*)), and <code>total_payroll</code> (SUM(salary)). Join with <code>departments</code> to return <code>department_name</code>, <code>budget</code>, <code>total_payroll</code>, and <code>budget_remaining</code> (budget - total_payroll), ordered by budget remaining descending.",
+      "starterSql": "WITH dept_metrics AS (\n  SELECT department_id, COUNT(*) AS headcount, SUM(salary) AS total_payroll\n  FROM   employees\n  GROUP BY department_id\n)\nSELECT * FROM dept_metrics;",
+      "referenceSql": "WITH dept_metrics AS (\n  SELECT   department_id,\n           COUNT(*) AS headcount,\n           SUM(salary) AS total_payroll\n  FROM     employees\n  GROUP BY department_id\n)\nSELECT   d.department_name,\n         d.budget,\n         dm.total_payroll,\n         d.budget - dm.total_payroll AS budget_remaining\nFROM     departments d\nJOIN     dept_metrics dm ON d.department_id = dm.department_id\nORDER BY budget_remaining DESC;",
+      "solutionAudio": "Day14/New_Day14Question11sol.mp3"
+    },
+    {
+      "id": 12,
+      "title": "Multi-Metric Category Revenue Performance",
+      "prompt": "Define a CTE <code>item_sales</code> summing revenue per product: <code>SUM(qty * unit_price) AS prod_revenue</code>. Join with <code>products</code> and <code>categories</code> to return <code>category_name</code> (c.name) and <code>category_revenue</code> (SUM(isales.prod_revenue)), ordered by revenue descending.",
+      "starterSql": "WITH item_sales AS (\n  SELECT product_id, SUM(qty * unit_price) AS prod_revenue\n  FROM   order_items\n  GROUP BY product_id\n)\nSELECT * FROM item_sales;",
+      "referenceSql": "WITH item_sales AS (\n  SELECT   product_id,\n           SUM(qty * unit_price) AS prod_revenue\n  FROM     order_items\n  GROUP BY product_id\n)\nSELECT   c.name AS category_name,\n         SUM(isales.prod_revenue) AS category_revenue\nFROM     item_sales isales\nJOIN     products p ON isales.product_id = p.product_id\nJOIN     categories c ON p.category_id = c.id\nGROUP BY c.name\nORDER BY category_revenue DESC;",
+      "solutionAudio": "Day14/New_Day14Question12sol.mp3"
+    },
+    {
+      "id": 13,
+      "title": "Recursive Date Calendar Generator",
+      "prompt": "Using a recursive CTE <code>days</code>, generate a sequence of calendar dates starting from '2024-01-01' through '2024-01-05' as <code>day_date</code> using SQLite's <code>date(day_date, '+1 day')</code>.",
+      "starterSql": "WITH RECURSIVE days AS (\n  SELECT '2024-01-01' AS day_date\n)\nSELECT day_date FROM days;",
+      "referenceSql": "WITH RECURSIVE days AS (\n  SELECT '2024-01-01' AS day_date\n  UNION ALL\n  SELECT date(day_date, '+1 day')\n  FROM   days\n  WHERE  day_date < '2024-01-05'\n)\nSELECT day_date\nFROM   days;",
+      "solutionAudio": "Day14/New_Day14Question13sol.mp3"
+    },
+    {
+      "id": 14,
+      "title": "Executive vs Staff Payroll Rollup",
+      "prompt": "Define a CTE <code>role_groups</code> classifying job titles as 'Leadership' if job_title contains 'Director' or 'Manager', and 'Staff' otherwise. Return <code>role_category</code>, <code>employee_count</code> (COUNT(*)), and <code>total_payroll</code> (SUM(salary)).",
+      "starterSql": "WITH role_groups AS (\n  SELECT first_name, salary, job_title\n  FROM   employees\n)\nSELECT * FROM role_groups;",
+      "referenceSql": "WITH role_groups AS (\n  SELECT first_name,\n         salary,\n         CASE\n           WHEN job_title LIKE '%Director%' OR job_title LIKE '%Manager%' THEN 'Leadership'\n           ELSE 'Staff'\n         END AS role_category\n  FROM   employees\n)\nSELECT   role_category,\n         COUNT(*) AS employee_count,\n         SUM(salary) AS total_payroll\nFROM     role_groups\nGROUP BY role_category;",
+      "solutionAudio": "Day14/New_Day14Question14sol.mp3"
+    },
+    {
+      "id": 15,
+      "title": "Regional Revenue Rollup via CTE",
+      "prompt": "Define a CTE <code>regional_sales</code> joining <code>customers</code> and <code>orders</code> to aggregate <code>region</code> and <code>regional_revenue</code> (SUM(total_amount)). Return <code>region</code> and <code>regional_revenue</code>, ordered by revenue descending.",
+      "starterSql": "WITH regional_sales AS (\n  SELECT c.region, SUM(o.total_amount) AS regional_revenue\n  FROM   customers c\n  JOIN   orders o ON c.customer_id = o.customer_id\n  GROUP BY c.region\n)\nSELECT * FROM regional_sales;",
+      "referenceSql": "WITH regional_sales AS (\n  SELECT   c.region,\n           SUM(o.total_amount) AS regional_revenue\n  FROM     customers c\n  JOIN     orders o ON c.customer_id = o.customer_id\n  GROUP BY c.region\n)\nSELECT   region,\n         regional_revenue\nFROM     regional_sales\nORDER BY regional_revenue DESC;",
+      "solutionAudio": "Day14/New_Day14Question15sol.mp3"
     }
   ],
+
   "testQuestions": [
-    { "id": 1, "prompt": "Use a CTE to find employees earning above average.", "ref": "WITH avg_s AS (SELECT AVG(salary) AS avg FROM employees) SELECT * FROM employees WHERE salary > (SELECT avg FROM avg_s);" },
-    { "id": 2, "prompt": "CTE: Compute total revenue per customer, then select customers who spent > 50000.", "ref": "WITH cr AS (SELECT customer_id, SUM(total_amount) AS rev FROM orders GROUP BY customer_id) SELECT * FROM cr WHERE rev > 50000;" },
-    { "id": 3, "prompt": "CTE: Find average order value per customer, then find those above company-wide average.", "ref": "WITH avg_ord AS (SELECT customer_id, AVG(total_amount) AS avg_o FROM orders GROUP BY customer_id) SELECT * FROM avg_ord WHERE avg_o > (SELECT AVG(total_amount) FROM orders);" },
-    { "id": 4, "prompt": "CTE: Find top 3 customers by total spend.", "ref": "WITH spend AS (SELECT customer_id, SUM(total_amount) AS total FROM orders GROUP BY customer_id) SELECT * FROM spend ORDER BY total DESC LIMIT 3;" },
-    { "id": 5, "prompt": "CTE: Compute products' profit margin; then find products with margin > 40%.", "ref": "WITH margins AS (SELECT name, (unit_price-cost_price)*100.0/unit_price AS margin FROM products) SELECT * FROM margins WHERE margin > 40;" },
-    { "id": 6, "prompt": "Multi-CTE: Step 1 = revenue per department via employee orders, Step 2 = rank by revenue.", "ref": "WITH emp_orders AS (SELECT e.department_id, SUM(o.total_amount) AS rev FROM orders o INNER JOIN employees e ON o.employee_id = e.employee_id GROUP BY e.department_id) SELECT * FROM emp_orders ORDER BY rev DESC;" },
-    { "id": 7, "prompt": "CTE: For each product, compute total qty sold, then find products with qty_sold > 5.", "ref": "WITH sold AS (SELECT product_id, SUM(qty) AS qty_sold FROM order_items GROUP BY product_id) SELECT * FROM sold WHERE qty_sold > 5;" },
-    { "id": 8, "prompt": "Recursive CTE: Generate months 1 through 12.", "ref": "WITH RECURSIVE months AS (SELECT 1 AS m UNION ALL SELECT m+1 FROM months WHERE m < 12) SELECT * FROM months;" },
-    { "id": 9, "prompt": "CTE: Find the best-selling product (most qty sold) in each category.", "ref": "WITH sold AS (SELECT product_id, SUM(qty) AS qty FROM order_items GROUP BY product_id), best AS (SELECT p.category_id, p.product_id, p.name, s.qty FROM products p INNER JOIN sold s ON p.product_id = s.product_id) SELECT * FROM best WHERE qty = (SELECT MAX(qty) FROM best b2 WHERE b2.category_id = best.category_id);" },
-    { "id": 10, "prompt": "CTE: Classify orders as 'Large' (>50000), 'Medium' (>10000), or 'Small', then count per class.", "ref": "WITH classified AS (SELECT CASE WHEN total_amount>50000 THEN 'Large' WHEN total_amount>10000 THEN 'Medium' ELSE 'Small' END AS cls FROM orders) SELECT cls, COUNT(*) FROM classified GROUP BY cls;" },
-    { "id": 11, "prompt": "CTE: Find employees hired in 2022 and their department names.", "ref": "WITH new_hires AS (SELECT * FROM employees WHERE strftime('%Y', hire_date)='2022') SELECT h.first_name, d.name FROM new_hires h INNER JOIN departments d ON h.department_id = d.department_id;" },
-    { "id": 12, "prompt": "CTE: Compute fulfillment days for each shipped order, then find orders taking > 5 days.", "ref": "WITH ful AS (SELECT order_id, CAST(julianday(shipped_date)-julianday(order_date) AS INTEGER) AS days FROM orders WHERE shipped_date IS NOT NULL) SELECT * FROM ful WHERE days > 5;" },
-    { "id": 13, "prompt": "CTE: Find customers who placed orders in both 2023 and 2024.", "ref": "WITH y23 AS (SELECT DISTINCT customer_id FROM orders WHERE strftime('%Y',order_date)='2023'), y24 AS (SELECT DISTINCT customer_id FROM orders WHERE strftime('%Y',order_date)='2024') SELECT * FROM y23 INNER JOIN y24 USING(customer_id);" },
-    { "id": 14, "prompt": "CTE: Compute per-department avg salary; flag departments with avg > 75000.", "ref": "WITH da AS (SELECT department_id, AVG(salary) AS avg_sal FROM employees GROUP BY department_id) SELECT *, CASE WHEN avg_sal>75000 THEN 'High' ELSE 'Normal' END AS flag FROM da;" },
-    { "id": 15, "prompt": "Multi-CTE: Step1=revenue per order, Step2=avg revenue, Step3=orders above avg.", "ref": "WITH rev AS (SELECT order_id, total_amount FROM orders), avg_rev AS (SELECT AVG(total_amount) AS avg_r FROM rev) SELECT * FROM rev WHERE total_amount > (SELECT avg_r FROM avg_rev);" },
-    { "id": 16, "prompt": "CTE: Find the second-highest salary using a CTE.", "ref": "WITH ranked AS (SELECT salary FROM employees ORDER BY salary DESC LIMIT 2) SELECT MIN(salary) FROM ranked;" },
-    { "id": 17, "prompt": "CTE: Count unique customers per region, then find regions with more than 2 customers.", "ref": "WITH rg AS (SELECT region, COUNT(*) AS cnt FROM customers GROUP BY region) SELECT * FROM rg WHERE cnt > 2;" },
-    { "id": 18, "prompt": "CTE: Products with profit margin > 30% and stock_qty > 20.", "ref": "WITH pm AS (SELECT name, (unit_price-cost_price)*100.0/unit_price AS margin, stock_qty FROM products) SELECT * FROM pm WHERE margin > 30 AND stock_qty > 20;" },
-    { "id": 19, "prompt": "CTE: Total orders per month in 2024, then find months with total_amount > 100000.", "ref": "WITH monthly AS (SELECT strftime('%m',order_date) AS m, SUM(total_amount) AS rev FROM orders WHERE strftime('%Y',order_date)='2024' GROUP BY m) SELECT * FROM monthly WHERE rev > 100000;" },
-    { "id": 20, "prompt": "Recursive CTE: Walk the employee hierarchy starting from employee_id = 1 (their direct reports, and their reports' reports).", "ref": "WITH RECURSIVE hier AS (SELECT employee_id, first_name, manager_id, 0 AS lvl FROM employees WHERE employee_id=1 UNION ALL SELECT e.employee_id, e.first_name, e.manager_id, h.lvl+1 FROM employees e INNER JOIN hier h ON e.manager_id=h.employee_id) SELECT * FROM hier;" },
-    { "id": 21, "prompt": "CTE: Find the employee with the highest salary in each department.", "ref": "WITH dept_max AS (SELECT department_id, MAX(salary) AS max_sal FROM employees GROUP BY department_id) SELECT e.first_name, e.department_id, e.salary FROM employees e INNER JOIN dept_max dm ON e.department_id=dm.department_id AND e.salary=dm.max_sal;" },
-    { "id": 22, "prompt": "CTE: Compute each customer's average order value, join to customers, show those above 20000.", "ref": "WITH avg_ord AS (SELECT customer_id, AVG(total_amount) AS avg_o FROM orders GROUP BY customer_id) SELECT c.first_name, a.avg_o FROM customers c INNER JOIN avg_ord a ON c.customer_id=a.customer_id WHERE a.avg_o > 20000;" },
-    { "id": 23, "prompt": "CTE: Compute total stock_value per category, then rank by stock_value.", "ref": "WITH sv AS (SELECT category_id, SUM(stock_qty*unit_price) AS stock_val FROM products GROUP BY category_id) SELECT * FROM sv ORDER BY stock_val DESC;" },
-    { "id": 24, "prompt": "CTE: Find orders where total_amount is above the 90th percentile (top 10%).", "ref": "WITH sorted AS (SELECT total_amount FROM orders ORDER BY total_amount DESC), cutoff AS (SELECT total_amount AS p90 FROM sorted LIMIT 1 OFFSET (SELECT CAST(COUNT(*)*0.1 AS INTEGER) FROM orders)) SELECT * FROM orders WHERE total_amount >= (SELECT p90 FROM cutoff);" },
-    { "id": 25, "prompt": "CTE: Find which employee processed the most orders and the total revenue they handled.", "ref": "WITH emp_rev AS (SELECT employee_id, COUNT(*) AS orders, SUM(total_amount) AS revenue FROM orders GROUP BY employee_id) SELECT e.first_name, r.orders, r.revenue FROM emp_rev r INNER JOIN employees e ON r.employee_id=e.employee_id ORDER BY r.orders DESC LIMIT 1;" }
-  ],
-  "topics": [
-    { "id": "topic-1", "label": "Topic 1: CTEs, Multi-CTEs & Recursive CTEs", "recordingKey": null }
+    { "id": 1, "type": "mcq", "question": "What keyword initiates a Common Table Expression (CTE) in SQL?", "options": ["WITH", "CREATE CTE", "DECLARE", "SUBQUERY"], "answer": "WITH", "explanation": "CTEs are defined using the standard ANSI SQL WITH keyword." },
+    { "id": 2, "type": "mcq", "question": "What is the lifespan of a Common Table Expression?", "options": ["Strictly for the duration of the single query statement in which it is defined", "Throughout the user's database session", "Until the database restarts", "Permanently stored in catalog metadata"], "answer": "Strictly for the duration of the single query statement in which it is defined", "explanation": "A CTE is session-less and transient, existing solely for the evaluation of the single query statement." },
+    { "id": 3, "type": "mcq", "question": "How do you separate multiple CTE definitions in a single WITH statement?", "options": ["With a comma (,)", "With the AND keyword", "With a semicolon (;)", "By repeating the WITH keyword"], "answer": "With a comma (,)", "explanation": "Multiple CTEs are chained using a single comma without repeating the WITH keyword." },
+    { "id": 4, "type": "mcq", "question": "Can a CTE reference another CTE defined in the same query?", "options": ["Yes, provided the referenced CTE appears earlier in the statement", "No, CTEs are strictly isolated", "Only if declared as RECURSIVE", "Only in MySQL"], "answer": "Yes, provided the referenced CTE appears earlier in the statement", "explanation": "Subsequent CTEs can reference any previously defined CTE in the same statement." },
+    { "id": 5, "type": "mcq", "question": "Which SQL keyword is required to enable self-referencing in a recursive CTE in PostgreSQL, SQLite, and MySQL?", "options": ["RECURSIVE (WITH RECURSIVE)", "LOOP", "ITERATE", "REPEAT"], "answer": "RECURSIVE (WITH RECURSIVE)", "explanation": "Standard SQL requires WITH RECURSIVE to signal self-referencing query evaluation." },
+    { "id": 6, "type": "mcq", "question": "What are the two mandatory members of a Recursive CTE?", "options": ["Anchor Member and Recursive Member", "Primary Query and Foreign Query", "Loop Header and Exit Predicate", "Root Node and Leaf Node"], "answer": "Anchor Member and Recursive Member", "explanation": "A recursive CTE requires an Anchor member (base case) and a Recursive member combined by UNION ALL." },
+    { "id": 7, "type": "mcq", "question": "Which set operator is required to join the Anchor member and Recursive member in a recursive CTE?", "options": ["UNION ALL", "INTERSECT", "EXCEPT", "CROSS JOIN"], "answer": "UNION ALL", "explanation": "Standard SQL mandates UNION ALL between the anchor and recursive query branches." },
+    { "id": 8, "type": "mcq", "question": "What is the key difference between a CTE and a Temporary Table?", "options": ["A CTE exists only for one query and cannot be indexed; a temporary table persists across the session and can be indexed", "CTEs can only hold 100 rows", "Temporary tables cannot use WHERE clauses", "There is no difference"], "answer": "A CTE exists only for one query and cannot be indexed; a temporary table persists across the session and can be indexed", "explanation": "Temporary tables are physical session-scoped storage structures with index capabilities; CTEs are inline query constructs." },
+    { "id": 9, "type": "mcq", "question": "What happens if a recursive CTE lacks a proper termination condition in its WHERE clause?", "options": ["The query loops until the engine hits its maximum recursion limit or crashes with out-of-memory", "SQL automatically detects the loop and stops after 10 rows", "The query returns NULL", "SQL converts it to an INNER JOIN"], "answer": "The query loops until the engine hits its maximum recursion limit or crashes with out-of-memory", "explanation": "Without a termination filter, the recursive step evaluates indefinitely until a safety threshold aborts execution." },
+    { "id": 10, "type": "mcq", "question": "Can you reference the same CTE more than once in the main query?", "options": ["Yes, you can join or union the same CTE multiple times", "No, a CTE can only be consumed once", "Only in Oracle", "Only if it is recursive"], "answer": "Yes, you can join or union the same CTE multiple times", "explanation": "Reusability is a key advantage of CTEs: one named calculation can be joined to itself or other tables repeatedly." },
+    { "id": 11, "type": "mcq", "question": "What does WITH cte AS MATERIALIZED (...) do in PostgreSQL 12+?", "options": ["Forces PostgreSQL to execute the CTE once and store the result in memory as a temporary buffer", "Writes the CTE permanently to disk", "Encrypts the CTE", "Makes the CTE global across all users"], "answer": "Forces PostgreSQL to execute the CTE once and store the result in memory as a temporary buffer", "explanation": "The MATERIALIZED keyword instructs the planner to materialize the CTE once rather than inlining it." },
+    { "id": 12, "type": "mcq", "question": "Can you use a CTE with an INSERT statement?", "options": ["Yes: WITH cte AS (...) INSERT INTO target SELECT * FROM cte;", "No, CTEs only support SELECT", "Only in SQL Server", "Only if target is empty"], "answer": "Yes: WITH cte AS (...) INSERT INTO target SELECT * FROM cte;", "explanation": "CTEs can precede INSERT, UPDATE, or DELETE statements to supply dynamic candidate rows." },
+    { "id": 13, "type": "mcq", "question": "In what order does a database optimizer typically evaluate chained CTEs?", "options": ["The optimizer determines the most cost-effective execution plan, which may inline or reorder CTE evaluation", "Always strictly from top to bottom in lockstep", "Always from bottom to top", "Random order"], "answer": "The optimizer determines the most cost-effective execution plan, which may inline or reorder CTE evaluation", "explanation": "Modern cost-based optimizers treat unmaterialized CTEs as relational views, optimizing across the entire query tree." },
+    { "id": 14, "type": "mcq", "question": "Why is ORDER BY generally forbidden inside a non-recursive CTE without a LIMIT clause?", "options": ["Because relational algebra defines intermediate datasets as unordered sets", "Because ORDER BY breaks indexes", "Because CTEs only store text", "Because SQL parsers reject keywords with more than 5 letters"], "answer": "Because relational algebra defines intermediate datasets as unordered sets", "explanation": "Unless an explicit row slice (LIMIT) requires ordering, sorting intermediate results is computationally wasteful and ignored." },
+    { "id": 15, "type": "mcq", "question": "How do you specify explicit column aliases in the CTE header?", "options": ["WITH cte_name (col1, col2) AS (SELECT ...)", "WITH cte_name ALIAS (col1, col2) AS (SELECT ...)", "WITH cte_name AS (col1, col2 := SELECT ...)", "WITH (col1, col2) cte_name AS (...)"], "answer": "WITH cte_name (col1, col2) AS (SELECT ...)", "explanation": "Enclosing column names in parentheses directly following the CTE identifier defines explicit output column names." },
+    { "id": 16, "type": "mcq", "question": "Can a CTE be defined inside a subquery in modern PostgreSQL or SQLite?", "options": ["Yes, CTEs can be locally scoped within subqueries", "No, WITH can only appear as the absolute first word of a file", "Only in stored procedures", "Only with views"], "answer": "Yes, CTEs can be locally scoped within subqueries", "explanation": "Modern SQL engines support nested WITH clauses scoped to individual subquery expressions." },
+    { "id": 17, "type": "mcq", "question": "What is the primary use case of a recursive CTE in data analytics?", "options": ["Traversing hierarchies such as org charts, product category trees, and bill-of-materials", "Speeding up simple SELECT queries", "Replacing primary keys", "Creating database backups"], "answer": "Traversing hierarchies such as org charts, product category trees, and bill-of-materials", "explanation": "Recursive CTEs provide the relational mechanism to traverse variable-depth parent-child trees." },
+    { "id": 18, "type": "mcq", "question": "How do you generate a series of dates using a recursive CTE in SQLite?", "options": ["Start with an anchor date and recursively apply date(day, '+1 day') with a WHERE cutoff", "Using the GENERATE_SERIES function only", "Using a CROSS JOIN on customers", "Dates cannot be generated recursively"], "answer": "Start with an anchor date and recursively apply date(day, '+1 day') with a WHERE cutoff", "explanation": "SQLite's date modifier functions combined with recursive increments cleanly generate date calendars." },
+    { "id": 19, "type": "mcq", "question": "What is an optimization fence in the context of CTEs?", "options": ["When the query optimizer cannot push predicates into the CTE, forcing it to materialize independently", "A firewall protecting database security", "An index constraint", "A memory quota"], "answer": "When the query optimizer cannot push predicates into the CTE, forcing it to materialize independently", "explanation": "An optimization fence prevents the planner from optimizing across the CTE boundary, which can be good or bad depending on the query." },
+    { "id": 20, "type": "mcq", "question": "Why do enterprise engineering teams often mandate CTEs over nested subqueries in SQL style guides?", "options": ["CTEs make complex SQL dramatically easier to read, review, test, and maintain in team environments", "CTEs consume 50% less RAM", "CTEs bypass database permissions", "CTEs compile to C code"], "answer": "CTEs make complex SQL dramatically easier to read, review, test, and maintain in team environments", "explanation": "Maintainability and self-documenting linear code flow make CTEs the gold standard in production SQL engineering." },
+    { "id": 21, "type": "code", "question": "Write a query using a CTE named `avg_sal` returning `first_name` and `salary` for employees earning above company average.", "answer": "WITH avg_sal AS (SELECT AVG(salary) AS avg FROM employees) SELECT first_name, salary FROM employees, avg_sal WHERE salary > avg_sal.avg;" },
+    { "id": 22, "type": "code", "question": "Write a query using a CTE named `dept_summary` computing `department_id` and total payroll as `dept_payroll`.", "answer": "WITH dept_summary AS (SELECT department_id, SUM(salary) AS dept_payroll FROM employees GROUP BY department_id) SELECT department_id, dept_payroll FROM dept_summary;" },
+    { "id": 23, "type": "code", "question": "Write a recursive CTE named `nums` generating numbers from 1 to 5 as `num`.", "answer": "WITH RECURSIVE nums AS (SELECT 1 AS num UNION ALL SELECT num + 1 FROM nums WHERE num < 5) SELECT num FROM nums;" },
+    { "id": 24, "type": "code", "question": "Write a query using a CTE `big_orders` filtering orders where `total_amount >= 50000`, returning `order_id` and `total_amount`.", "answer": "WITH big_orders AS (SELECT order_id, total_amount FROM orders WHERE total_amount >= 50000) SELECT order_id, total_amount FROM big_orders;" },
+    { "id": 25, "type": "code", "question": "Write a query chaining two CTEs: `step1` selecting `customer_id`, and `step2` selecting `customer_id` from `step1`.", "answer": "WITH step1 AS (SELECT customer_id FROM customers), step2 AS (SELECT customer_id FROM step1) SELECT customer_id FROM step2;" }
   ]
 };

@@ -1,215 +1,498 @@
-// Day 13 — Subqueries: scalar, multi-row, correlated, EXISTS
+// Day 13 — Subqueries: Scalar, Multi-Row, Derived Tables, Correlated, EXISTS & NOT EXISTS
 if (!window.COURSE_CONTENT) window.COURSE_CONTENT = {};
 window.COURSE_CONTENT['day13'] = {
   "day": 13,
-  "title": "Subqueries",
+  "title": "Subqueries — Nested Analytics",
   "db": "retail",
   "emoji": "🧠",
   "slides": [
     {
       "title": "Subqueries — Queries Within Queries",
-      "duration": "0:00",
-      "html": `
-        <h2>🧠 Subqueries</h2>
+      "duration": "07:35",
+      "html": `<h2>🧠 Subqueries — Queries Within Queries</h2>
 
-        <div class="slide-section">
-          <h3>01. What Is a Subquery?</h3>
-          <p>A <strong>subquery</strong> (nested query / inner query) is a complete SQL query embedded inside another query. The outer query uses the subquery's result. Subqueries can appear in <code>SELECT</code>, <code>FROM</code>, <code>WHERE</code>, and <code>HAVING</code> clauses.</p>
+        <!-- ── Section 01: What Is a Subquery? ── -->
+        <div class="slide-section" id="day13WhatSection">
+          <h3 class="heading-with-audio" id="day13What">
+            01. What Is a Subquery?
+          </h3>
+          <p>A <strong>subquery</strong> (also called an <em>inner query</em> or <em>nested query</em>) is a complete <code>SELECT</code> statement embedded within an outer SQL statement. The outer query consumes the inner query's output as an input value, list, or virtual table.</p>
+        </div>
 
-          <div class="db-mock-table-wrap">
+        <div class="slide-section" id="day13RefTableSection">
+          <div class="db-mock-table-wrap" id="day13RefTable">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; padding: 0 4px;">
+              <h4 style="margin: 0; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">The 4 Primary Types of Subqueries</h4>
+            </div>
             <table class="db-table-mock db-table-mock--compact">
-              <thead><tr><th>Type</th><th>Returns</th><th>Used In</th></tr></thead>
+              <thead><tr><th>Subquery Type</th><th>Returns</th><th>Common Location</th><th>Key Operators</th></tr></thead>
               <tbody>
-                <tr><td>Scalar</td><td>Single value (1 row, 1 col)</td><td>SELECT, WHERE, HAVING</td></tr>
-                <tr><td>Multi-row</td><td>Multiple rows (1 col)</td><td>WHERE IN/ANY/ALL</td></tr>
-                <tr><td>Multi-column</td><td>Multiple rows & columns</td><td>FROM (derived table)</td></tr>
-                <tr><td>Correlated</td><td>Depends on outer row</td><td>WHERE, SELECT</td></tr>
+                <tr id="day13Row1"><td><strong>Scalar</strong></td><td>Single value (1 row, 1 col)</td><td><code>SELECT</code>, <code>WHERE</code>, <code>HAVING</code></td><td><code>=</code>, <code>&gt;</code>, <code>&lt;</code>, <code>!=</code></td></tr>
+                <tr id="day13Row2"><td><strong>Multi-Row</strong></td><td>Single column, multiple rows</td><td><code>WHERE</code>, <code>HAVING</code></td><td><code>IN</code>, <code>NOT IN</code>, <code>ANY</code>, <code>ALL</code></td></tr>
+                <tr id="day13Row3"><td><strong>Derived Table</strong></td><td>Multiple rows &amp; columns</td><td><code>FROM</code>, <code>JOIN</code></td><td>Must be aliased with <code>AS</code></td></tr>
+                <tr id="day13Row4"><td><strong>Correlated</strong></td><td>Depends on outer query row</td><td><code>WHERE</code>, <code>SELECT</code></td><td><code>EXISTS</code>, <code>NOT EXISTS</code>, <code>&gt;</code></td></tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <div class="slide-section">
-          <h3>02. Scalar Subquery</h3>
-          <p>A scalar subquery returns exactly one value (one row, one column). It can appear anywhere a single value is expected — including in SELECT expressions.</p>
-
-          <pre><code>-- Employees earning above the company average
-SELECT first_name, salary
-FROM   employees
-WHERE  salary > (SELECT AVG(salary) FROM employees);
-
--- Show each employee's salary vs. company average
-SELECT first_name,
-       salary,
-       (SELECT AVG(salary) FROM employees) AS company_avg,
-       salary - (SELECT AVG(salary) FROM employees) AS diff_from_avg
-FROM   employees
-ORDER BY diff_from_avg DESC;</code></pre>
+        <!-- ── Section 02: Scalar Subqueries ── -->
+        <div class="slide-section" id="day13ScalarSection">
+          <h3 class="heading-with-audio" id="day13Scalar">
+            02. Scalar Subqueries in WHERE &amp; SELECT
+          </h3>
+          <p>A <strong>Scalar Subquery</strong> evaluates to exactly one solitary scalar value (one row, one column). You can place it anywhere a numeric, date, or text literal is valid.</p>
         </div>
 
-        <div class="slide-section">
-          <h3>03. Multi-Row Subquery with IN</h3>
-          <p>When a subquery returns multiple rows, use <code>IN</code>, <code>ANY</code>, or <code>ALL</code> to compare against the list.</p>
-
-          <pre><code>-- Customers who have placed at least one order
-SELECT first_name, last_name
-FROM   customers
-WHERE  customer_id IN (SELECT DISTINCT customer_id FROM orders);
-
--- Products that appear in Shipped orders
-SELECT name
-FROM   products
-WHERE  product_id IN (
-  SELECT oi.product_id
-  FROM   order_items AS oi
-  INNER JOIN orders AS o ON oi.order_id = o.order_id
-  WHERE  o.status = 'Shipped'
-);</code></pre>
-        </div>
-
-        <div class="slide-section">
-          <h3>04. Subquery in FROM (Derived Table)</h3>
-          <p>A subquery in the <code>FROM</code> clause creates a <strong>derived table</strong> (inline view). You must alias it and can then query it like any table. Useful for multi-step aggregations.</p>
-
-          <pre><code>-- Average of per-department averages (requires two levels of aggregation)
-SELECT AVG(dept_avg_salary) AS avg_dept_avg
-FROM (
-  SELECT department_id,
-         AVG(salary) AS dept_avg_salary
-  FROM   employees
-  GROUP BY department_id
-) AS dept_summary;
-
--- Find departments that are above the company avg salary
-SELECT department_id, dept_avg_salary
-FROM (
-  SELECT department_id, AVG(salary) AS dept_avg_salary
-  FROM   employees
-  GROUP BY department_id
-) AS dept_summary
-WHERE dept_avg_salary > (SELECT AVG(salary) FROM employees);</code></pre>
-        </div>
-
-        <div class="slide-section">
-          <h3>05. Correlated Subquery</h3>
-          <p>A <strong>correlated subquery</strong> references columns from the outer query — it is re-executed once for each row of the outer query. While powerful, they can be slow on large datasets.</p>
-
-          <pre><code>-- For each employee, find the highest-earning colleague in their department
-SELECT e1.first_name,
-       e1.salary,
-       e1.department_id,
-       (SELECT MAX(e2.salary)
-        FROM   employees AS e2
-        WHERE  e2.department_id = e1.department_id) AS dept_max
-FROM   employees AS e1;
-
--- Employees who earn MORE than the average of their own department
-SELECT first_name, salary, department_id
-FROM   employees AS e1
-WHERE  salary > (
-  SELECT AVG(salary)
-  FROM   employees AS e2
-  WHERE  e2.department_id = e1.department_id
-);</code></pre>
-
-          <div class="pro-tip-box">
-            💡 <strong>Correlated vs. Non-Correlated:</strong> Non-correlated subqueries run once. Correlated subqueries run N times (once per outer row). For performance at scale, consider rewriting correlated subqueries as JOINs or CTEs (covered in Day 14).
+        <div class="slide-section" id="day13ScalarCodeSection">
+          <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 4px;">
+            <h4 style="margin: 0; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">Query 1 — Benchmarking with Scalar Subqueries</h4>
           </div>
-        </div>
-
-        <div class="slide-section">
-          <h3>06. EXISTS and NOT EXISTS</h3>
-          <p><code>EXISTS</code> returns TRUE if the subquery returns at least one row. It is more efficient than <code>IN</code> for large datasets because it short-circuits on the first match.</p>
-
-          <pre><code>-- Customers who have placed at least one order
-SELECT c.first_name
-FROM   customers AS c
-WHERE  EXISTS (
-  SELECT 1
-  FROM   orders AS o
-  WHERE  o.customer_id = c.customer_id
-);
-
--- Customers who have NEVER placed an order
-SELECT c.first_name
-FROM   customers AS c
-WHERE  NOT EXISTS (
-  SELECT 1
-  FROM   orders AS o
-  WHERE  o.customer_id = c.customer_id
-);</code></pre>
-
-          <div class="interview-box">
-            <h4>🎯 Interview Insight</h4>
-            <div>
-              <p><strong>Q: EXISTS vs IN — which is faster and why?</strong></p>
-              <p><em>A: EXISTS short-circuits — it stops as soon as the first match is found. IN materialises the entire result set into a list before comparison. For large subqueries, EXISTS is generally faster. However, NOT IN with NULLs in the subquery produces incorrect results (returns no rows), whereas NOT EXISTS handles NULLs correctly. In modern query optimisers the difference is often negligible, but the NULL safety of NOT EXISTS is always the safer choice.</em></p>
+          <div class="code-block-container" id="day13ScalarCode">
+            <div class="code-subblock" id="day13ScalarQuery1">
+              <pre><code><span class="code-comment">-- 1. Employees earning above the company-wide average salary</span>
+<span class="kw">SELECT</span> first_name,
+       salary
+<span class="kw">FROM</span>   employees
+<span class="kw">WHERE</span>  salary > (<span class="kw">SELECT</span> AVG(salary) <span class="kw">FROM</span> employees);</code></pre>
+            </div>
+            <div class="code-subblock" id="day13ScalarQuery2">
+              <pre><code><span class="code-comment">-- 2. Calculating salary variance from benchmark in SELECT</span>
+<span class="kw">SELECT</span> first_name,
+       salary,
+       ROUND(salary - (<span class="kw">SELECT</span> AVG(salary) <span class="kw">FROM</span> employees), 2) <span class="kw">AS</span> variance
+<span class="kw">FROM</span>   employees
+<span class="kw">ORDER BY</span> variance <span class="kw">DESC</span>;</code></pre>
             </div>
           </div>
         </div>
-      `
+
+        <!-- ── Section 03: Multi-Row Subqueries ── -->
+        <div class="slide-section" id="day13MultiRowSection">
+          <h3 class="heading-with-audio" id="day13MultiRow">
+            03. Multi-Row Subqueries with IN &amp; NOT IN
+          </h3>
+          <p>When the inner query returns a list of values across multiple rows, standard equality (<code>=</code>) will throw an error. Use the <code>IN</code> or <code>NOT IN</code> operators to test set membership.</p>
+        </div>
+
+        <div class="slide-section" id="day13MultiRowCodeSection">
+          <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 4px;">
+            <h4 style="margin: 0; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">Query 2 — Multi-Row Set Membership</h4>
+          </div>
+          <div class="code-block-container" id="day13MultiRowCode">
+            <div class="code-subblock" id="day13MultiRowQuery1">
+              <pre><code><span class="code-comment">-- Customers who have placed at least one order</span>
+<span class="kw">SELECT</span> customer_id,
+       first_name,
+       email
+<span class="kw">FROM</span>   customers
+<span class="kw">WHERE</span>  customer_id <span class="kw">IN</span> (
+         <span class="kw">SELECT DISTINCT</span> customer_id
+         <span class="kw">FROM</span>   orders
+       );</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Section 04: Derived Tables (Subquery in FROM) ── -->
+        <div class="slide-section" id="day13DerivedSection">
+          <h3 class="heading-with-audio" id="day13Derived">
+            04. Subqueries in the FROM Clause (Derived Tables)
+          </h3>
+          <p>A subquery in the <code>FROM</code> clause creates an in-memory virtual dataset known as a <strong>Derived Table</strong> or <em>Inline View</em>. In standard ANSI SQL, every derived table <strong>must be assigned an alias</strong>.</p>
+        </div>
+
+        <div class="slide-section" id="day13DerivedCodeSection">
+          <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 4px;">
+            <h4 style="margin: 0; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">Query 3 — Two-Tier Department Aggregation</h4>
+          </div>
+          <div class="code-block-container" id="day13DerivedCode">
+            <div class="code-subblock" id="day13DerivedQuery1">
+              <pre><code><span class="code-comment">-- Compute average of department total payrolls</span>
+<span class="kw">SELECT</span> ROUND(AVG(dept_payroll), 2) <span class="kw">AS</span> avg_dept_payroll
+<span class="kw">FROM</span>   (
+         <span class="kw">SELECT</span>   department_id,
+                  SUM(salary) <span class="kw">AS</span> dept_payroll
+         <span class="kw">FROM</span>     employees
+         <span class="kw">GROUP BY</span> department_id
+       ) <span class="kw">AS</span> summaries;</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Section 05: Correlated Subqueries ── -->
+        <div class="slide-section" id="day13CorrelatedSection">
+          <h3 class="heading-with-audio" id="day13Correlated">
+            05. Correlated Subqueries — Row-by-Row Execution
+          </h3>
+          <p>A <strong>Correlated Subquery</strong> references columns from the enclosing outer query. Unlike non-correlated subqueries that execute just once, a correlated subquery is evaluated dynamically <em>once per candidate row</em> of the outer query.</p>
+        </div>
+
+        <div class="slide-section" id="day13CorrelatedCodeSection">
+          <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 4px;">
+            <h4 style="margin: 0; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">Query 4 — Above-Department-Average Earners</h4>
+          </div>
+          <div class="code-block-container" id="day13CorrelatedCode">
+            <div class="code-subblock" id="day13CorrelatedQuery1">
+              <pre><code><span class="code-comment">-- Employees earning more than THEIR OWN department's average</span>
+<span class="kw">SELECT</span> first_name,
+       salary,
+       department_id
+<span class="kw">FROM</span>   employees <span class="kw">AS</span> e1
+<span class="kw">WHERE</span>  salary > (
+         <span class="kw">SELECT</span> AVG(salary)
+         <span class="kw">FROM</span>   employees <span class="kw">AS</span> e2
+         <span class="kw">WHERE</span>  e2.department_id = e1.department_id
+       );</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Section 06: EXISTS & NOT EXISTS ── -->
+        <div class="slide-section" id="day13ExistsSection">
+          <h3 class="heading-with-audio" id="day13Exists">
+            06. The EXISTS &amp; NOT EXISTS Predicates
+          </h3>
+          <p>The <code>EXISTS</code> operator evaluates whether an inner correlated query returns <strong>at least one row</strong>. It short-circuits on the first found match, returning <code>TRUE</code> immediately without reading additional records.</p>
+        </div>
+
+        <div class="slide-section" id="day13ExistsCodeSection">
+          <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 4px;">
+            <h4 style="margin: 0; font-size: 1.0rem; font-weight: 800; letter-spacing: -0.015em; flex: 1;">Query 5 — Customer Audit with NOT EXISTS</h4>
+          </div>
+          <div class="code-block-container" id="day13ExistsCode">
+            <div class="code-subblock" id="day13ExistsQuery1">
+              <pre><code><span class="code-comment">-- Customers who have NEVER placed an order</span>
+<span class="kw">SELECT</span> c.customer_id,
+       c.first_name
+<span class="kw">FROM</span>   customers <span class="kw">AS</span> c
+<span class="kw">WHERE  NOT EXISTS</span> (
+         <span class="kw">SELECT</span> 1
+         <span class="kw">FROM</span>   orders <span class="kw">AS</span> o
+         <span class="kw">WHERE</span>  o.customer_id = c.customer_id
+       );</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Section 07: The NOT IN NULL Trap ── -->
+        <div class="slide-section" id="day13NullTrapSection">
+          <div class="warn-box" id="day13NullTrap">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; width: 100%;">
+              <strong style="color:var(--ink-amber); flex: 1;">⚠️ The Fatal NOT IN with NULL Trap:</strong>
+            </div>
+            <p style="margin: 0;">In SQL three-valued logic, if the subquery for <code>NOT IN</code> returns even a <strong>single NULL value</strong>, the comparison expression evaluates to <code>UNKNOWN</code> for every candidate row. The query will silently return <strong>0 rows</strong>! Always use <code>NOT EXISTS</code> or explicitly add <code>WHERE col IS NOT NULL</code> to the inner query.</p>
+          </div>
+        </div>
+
+        <!-- ── Section 08: Top 25 Interview Q&A ── -->
+        <div class="slide-section" id="day13QASection">
+          <div class="interview-box">
+            <h4 id="day13QAHeading" style="margin: 0 0 12px 0; font-size: 1rem; color: #38bdf8; display: flex; align-items: center; gap: 6px;">
+              <span>🎯</span> Top 25 SQL Interview Q&amp;A — Subqueries
+            </h4>
+
+            <div id="day13QA1">
+              <p><strong>Q1: What is a Subquery in SQL?</strong></p>
+              <p><em>A: A subquery (inner query) is a complete SELECT statement nested within another SQL statement (SELECT, INSERT, UPDATE, or DELETE). The outer query consumes its results.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day13QA2">
+              <p><strong>Q2: What is the difference between a Correlated and Non-Correlated Subquery?</strong></p>
+              <p><em>A: A non-correlated subquery is completely independent of the outer query; it executes once and passes its fixed result set to the outer query. A correlated subquery references columns from the outer table and re-executes once per candidate row of the outer query.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day13QA3">
+              <p><strong>Q3: What does a Scalar Subquery return?</strong></p>
+              <p><em>A: Exactly one row and one column (a single atomic value). It can be used anywhere a literal expression or column name is valid.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day13QA4">
+              <p><strong>Q4: Why does NOT IN return zero rows when the inner subquery contains a NULL?</strong></p>
+              <p><em>A: Because <code>x NOT IN (1, 2, NULL)</code> expands to <code>x != 1 AND x != 2 AND x != NULL</code>. In SQL three-valued logic, <code>x != NULL</code> evaluates to UNKNOWN. Since AND with UNKNOWN cannot be TRUE, the predicate fails for every row.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day13QA5">
+              <p><strong>Q5: What is the advantage of EXISTS over IN for large subqueries?</strong></p>
+              <p><em>A: <code>EXISTS</code> short-circuits: it stops reading the inner table as soon as the first matching record is found. <code>IN</code> typically materializes the complete distinct result set before evaluating. Additionally, <code>NOT EXISTS</code> handles NULLs safely.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day13QA6">
+              <p><strong>Q6: Why must a subquery in the FROM clause have an alias?</strong></p>
+              <p><em>A: In standard ANSI SQL, a subquery in the FROM clause creates a Derived Table (virtual inline view). The SQL engine requires a table alias to resolve column references unambiguously.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day13QA7">
+              <p><strong>Q7: What happens if a Scalar Subquery returns more than one row?</strong></p>
+              <p><em>A: The database halts execution with a runtime error: "Subquery returns more than 1 row" (or "scalar subquery produced more than one element").</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day13QA8">
+              <p><strong>Q8: Can a subquery be used inside an UPDATE statement?</strong></p>
+              <p><em>A: Yes. You can set column values equal to a scalar subquery or use multi-row subqueries in the WHERE clause to selectively filter records being modified.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day13QA9">
+              <p><strong>Q9: What is the difference between IN and = ANY?</strong></p>
+              <p><em>A: In SQL, <code>IN</code> and <code>= ANY</code> are syntactically and semantically identical. However, <code>ANY</code> can also be combined with inequalities (such as <code>&gt; ANY</code> or <code>&lt; ANY</code>).</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day13QA10">
+              <p><strong>Q10: What does the ALL operator do with a subquery?</strong></p>
+              <p><em>A: <code>WHERE salary &gt; ALL (SELECT salary FROM ...)</code> requires the condition to be true against every single value returned by the inner query (effectively equivalent to <code>salary &gt; MAX(salary)</code>).</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day13QA11">
+              <p><strong>Q11: Can a subquery appear in the HAVING clause?</strong></p>
+              <p><em>A: Yes. For example, <code>HAVING AVG(salary) &gt; (SELECT AVG(salary) FROM employees)</code> compares each group's aggregate metric against a company-wide benchmark.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day13QA12">
+              <p><strong>Q12: How do query optimizers optimize correlated subqueries?</strong></p>
+              <p><em>A: Modern query planners often "decorrelate" the query, transforming the correlated subquery into an equivalent <code>INNER JOIN</code> or <code>LEFT JOIN</code> with group-by aggregation to avoid O(N²) nested loops.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day13QA13">
+              <p><strong>Q13: What does SELECT 1 inside an EXISTS subquery do?</strong></p>
+              <p><em>A: <code>EXISTS</code> only checks for the existence of rows, ignoring projected column values entirely. <code>SELECT 1</code> is a developer convention indicating that the returned columns are irrelevant.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day13QA14">
+              <p><strong>Q14: How can you find the N-th highest salary using a subquery?</strong></p>
+              <p><em>A: Using a correlated subquery: <code>SELECT salary FROM employees e1 WHERE (N-1) = (SELECT COUNT(DISTINCT salary) FROM employees e2 WHERE e2.salary &gt; e1.salary);</code></em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day13QA15">
+              <p><strong>Q15: What is a multi-column subquery?</strong></p>
+              <p><em>A: A subquery that returns tuples of multiple columns: <code>WHERE (dept_id, role) IN (SELECT dept_id, role FROM ...)</code>. Supported in PostgreSQL, MySQL, and SQLite.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day13QA16">
+              <p><strong>Q16: Can a subquery contain an ORDER BY clause?</strong></p>
+              <p><em>A: Generally yes, but it is meaningless unless paired with <code>LIMIT</code> or <code>TOP</code>. Without a limit, standard relational algebra treats intermediate subquery results as unordered sets.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day13QA17">
+              <p><strong>Q17: What is the maximum nesting depth for subqueries in SQL?</strong></p>
+              <p><em>A: SQL Server allows up to 32 levels; Oracle and PostgreSQL allow hundreds depending on available memory. However, nesting beyond 3 levels makes queries unmaintainable; use CTEs instead.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day13QA18">
+              <p><strong>Q18: What is an Anti-Join and how can it be written using subqueries?</strong></p>
+              <p><em>A: An Anti-Join returns rows from Table A that have no matching rows in Table B. It can be written as <code>WHERE NOT EXISTS (SELECT 1 FROM B WHERE B.id = A.id)</code>.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day13QA19">
+              <p><strong>Q19: How do subqueries differ from Common Table Expressions (CTEs)?</strong></p>
+              <p><em>A: Subqueries are embedded inline inside the query. CTEs are defined at the top using <code>WITH</code>, can be referenced multiple times, and support recursive execution.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day13QA20">
+              <p><strong>Q20: Why can a subquery in SELECT be dangerous for query performance?</strong></p>
+              <p><em>A: If correlated, the scalar subquery in the SELECT list executes once for every single row in the outer query, creating an O(N) execution penalty on large tables.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day13QA21">
+              <p><strong>Q21: How do you find employees earning more than the company average?</strong></p>
+              <p><em>A: <code>SELECT first_name, salary FROM employees WHERE salary &gt; (SELECT AVG(salary) FROM employees);</code></em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day13QA22">
+              <p><strong>Q22: How do you find customers who have placed at least one order using IN?</strong></p>
+              <p><em>A: <code>SELECT customer_id, first_name FROM customers WHERE customer_id IN (SELECT DISTINCT customer_id FROM orders);</code></em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day13QA23">
+              <p><strong>Q23: How do you verify customer activity using EXISTS?</strong></p>
+              <p><em>A: <code>SELECT customer_id, first_name FROM customers c WHERE EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.customer_id);</code></em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day13QA24">
+              <p><strong>Q24: How do you find the single highest paid employee across a company?</strong></p>
+              <p><em>A: <code>SELECT first_name, job_title, salary FROM employees WHERE salary = (SELECT MAX(salary) FROM employees);</code></em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day13QA25">
+              <p><strong>Q25: How do you find employees earning more than their own department average?</strong></p>
+              <p><em>A: <code>SELECT first_name, salary FROM employees e1 WHERE salary &gt; (SELECT AVG(salary) FROM employees e2 WHERE e2.department_id = e1.department_id);</code></em></p>
+            </div>
+          </div>
+        </div>`
     }
   ],
+
   "practiceQuestions": [
     {
       "id": 1,
-      "prompt": "<strong>Task: Above Average Earners</strong><br/>Find all employees earning more than the company-wide average salary.",
-      "referenceSql": "SELECT first_name, salary FROM employees WHERE salary > (SELECT AVG(salary) FROM employees);"
+      "title": "Above Average Earners",
+      "prompt": "Find all employees who earn more than the company-wide average salary. Return <code>first_name</code>, <code>last_name</code>, and <code>salary</code>, ordered by <code>salary</code> descending.",
+      "starterSql": "SELECT first_name,\n       last_name,\n       salary\nFROM   employees;",
+      "referenceSql": "SELECT first_name,\n       last_name,\n       salary\nFROM   employees\nWHERE  salary > (SELECT AVG(salary) FROM employees)\nORDER BY salary DESC;",
+      "solutionAudio": "Day13/New_Day13Question01sol.mp3"
     },
     {
       "id": 2,
-      "prompt": "<strong>Task: Customer Orders</strong><br/>Using a subquery with IN, find customers who have placed at least one order.",
-      "referenceSql": "SELECT first_name, last_name FROM customers WHERE customer_id IN (SELECT DISTINCT customer_id FROM orders);"
+      "title": "Salary Variance from Company Benchmark",
+      "prompt": "For each employee, calculate their salary difference from the company average: <code>ROUND(salary - (SELECT AVG(salary) FROM employees), 2) AS variance</code>. Return <code>first_name</code>, <code>salary</code>, and <code>variance</code>, ordered by variance descending.",
+      "starterSql": "SELECT first_name,\n       salary\nFROM   employees;",
+      "referenceSql": "SELECT first_name,\n       salary,\n       ROUND(salary - (SELECT AVG(salary) FROM employees), 2) AS variance\nFROM   employees\nORDER BY variance DESC;",
+      "solutionAudio": "Day13/New_Day13Question02sol.mp3"
     },
     {
       "id": 3,
-      "prompt": "<strong>Task: Products in Shipped Orders</strong><br/>Find product names that appear in at least one Shipped order (use a subquery).",
-      "referenceSql": "SELECT name FROM products WHERE product_id IN (SELECT oi.product_id FROM order_items oi INNER JOIN orders o ON oi.order_id = o.order_id WHERE o.status = 'Shipped');"
+      "title": "Purchasing Customers via IN",
+      "prompt": "Return <code>customer_id</code>, <code>first_name</code>, and <code>email</code> for customers who appear in the <code>orders</code> table using a multi-row <code>IN</code> subquery, ordered by <code>customer_id</code>.",
+      "starterSql": "SELECT customer_id,\n       first_name,\n       email\nFROM   customers;",
+      "referenceSql": "SELECT customer_id,\n       first_name,\n       email\nFROM   customers\nWHERE  customer_id IN (SELECT DISTINCT customer_id FROM orders)\nORDER BY customer_id;",
+      "solutionAudio": "Day13/New_Day13Question03sol.mp3"
     },
     {
       "id": 4,
-      "prompt": "<strong>Task: Dept Salary vs Company</strong><br/>Find departments whose average salary exceeds the company-wide average (use a derived table).",
-      "referenceSql": "SELECT department_id, dept_avg FROM (SELECT department_id, AVG(salary) AS dept_avg FROM employees GROUP BY department_id) AS ds WHERE dept_avg > (SELECT AVG(salary) FROM employees);"
+      "title": "Products in Shipped Orders",
+      "prompt": "Return <code>name</code> and <code>unit_price</code> for products whose <code>product_id</code> is found in <code>order_items</code> where the parent order's status is 'Shipped'.",
+      "starterSql": "SELECT name,\n       unit_price\nFROM   products;",
+      "referenceSql": "SELECT name,\n       unit_price\nFROM   products\nWHERE  product_id IN (\n         SELECT oi.product_id\n         FROM   order_items oi\n         JOIN   orders o ON oi.order_id = o.order_id\n         WHERE  o.status = 'Shipped'\n       );",
+      "solutionAudio": "Day13/New_Day13Question04sol.mp3"
     },
     {
       "id": 5,
-      "prompt": "<strong>Task: EXISTS — Customers with Orders</strong><br/>Using EXISTS, find all customers who have placed at least one order.",
-      "referenceSql": "SELECT first_name FROM customers c WHERE EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.customer_id);"
+      "title": "Inactive Customers via NOT IN",
+      "prompt": "Return <code>customer_id</code> and <code>first_name</code> for customers who have never placed an order using <code>NOT IN</code>. Guard against NULL values by adding <code>WHERE customer_id IS NOT NULL</code> to the subquery.",
+      "starterSql": "SELECT customer_id,\n       first_name\nFROM   customers;",
+      "referenceSql": "SELECT customer_id,\n       first_name\nFROM   customers\nWHERE  customer_id NOT IN (\n         SELECT customer_id\n         FROM   orders\n         WHERE  customer_id IS NOT NULL\n       );",
+      "solutionAudio": "Day13/New_Day13Question05sol.mp3"
     },
     {
       "id": 6,
-      "prompt": "<strong>Task: Employees Above Department Average</strong><br/>Using a correlated subquery, find employees who earn more than the average salary of their own department.",
-      "referenceSql": "SELECT first_name, salary, department_id FROM employees e1 WHERE salary > (SELECT AVG(salary) FROM employees e2 WHERE e2.department_id = e1.department_id);"
+      "title": "Department Max Salary via Correlated SELECT",
+      "prompt": "Return <code>first_name</code>, <code>salary</code>, <code>department_id</code>, and the maximum salary in that employee's department as <code>dept_max_salary</code> using a correlated subquery in the <code>SELECT</code> list.",
+      "starterSql": "SELECT e1.first_name,\n       e1.salary,\n       e1.department_id\nFROM   employees e1;",
+      "referenceSql": "SELECT e1.first_name,\n       e1.salary,\n       e1.department_id,\n       (SELECT MAX(e2.salary)\n        FROM   employees e2\n        WHERE  e2.department_id = e1.department_id) AS dept_max_salary\nFROM   employees e1;",
+      "solutionAudio": "Day13/New_Day13Question06sol.mp3"
+    },
+    {
+      "id": 7,
+      "title": "Above Departmental Average Earners",
+      "prompt": "Return <code>first_name</code>, <code>salary</code>, and <code>department_id</code> for employees who earn more than the average salary of their own department using a correlated subquery in the <code>WHERE</code> clause.",
+      "starterSql": "SELECT first_name,\n       salary,\n       department_id\nFROM   employees e1;",
+      "referenceSql": "SELECT first_name,\n       salary,\n       department_id\nFROM   employees e1\nWHERE  salary > (\n         SELECT AVG(salary)\n         FROM   employees e2\n         WHERE  e2.department_id = e1.department_id\n       );",
+      "solutionAudio": "Day13/New_Day13Question07sol.mp3"
+    },
+    {
+      "id": 8,
+      "title": "Average of Department Payrolls (Derived Table)",
+      "prompt": "Calculate the average of total department payrolls as <code>avg_dept_payroll</code> rounded to 2 decimal places using a derived table in the <code>FROM</code> clause.",
+      "starterSql": "SELECT ROUND(AVG(dept_payroll), 2) AS avg_dept_payroll\nFROM   (SELECT 1);",
+      "referenceSql": "SELECT ROUND(AVG(dept_payroll), 2) AS avg_dept_payroll\nFROM   (\n         SELECT   department_id,\n                  SUM(salary) AS dept_payroll\n         FROM     employees\n         GROUP BY department_id\n       ) AS summaries;",
+      "solutionAudio": "Day13/New_Day13Question08sol.mp3"
+    },
+    {
+      "id": 9,
+      "title": "Highest Paid Company Employee",
+      "prompt": "Return <code>first_name</code>, <code>job_title</code>, and <code>salary</code> for the employee who earns the absolute maximum salary in the company using a scalar subquery.",
+      "starterSql": "SELECT first_name,\n       job_title,\n       salary\nFROM   employees;",
+      "referenceSql": "SELECT first_name,\n       job_title,\n       salary\nFROM   employees\nWHERE  salary = (SELECT MAX(salary) FROM employees);",
+      "solutionAudio": "Day13/New_Day13Question09sol.mp3"
+    },
+    {
+      "id": 10,
+      "title": "Verify Active Buyers with EXISTS",
+      "prompt": "Return <code>customer_id</code> and <code>first_name</code> for customers where at least one order exists in the <code>orders</code> table using the correlated <code>EXISTS</code> operator.",
+      "starterSql": "SELECT customer_id,\n       first_name\nFROM   customers c;",
+      "referenceSql": "SELECT customer_id,\n       first_name\nFROM   customers c\nWHERE  EXISTS (\n         SELECT 1\n         FROM   orders o\n         WHERE  o.customer_id = c.customer_id\n       );",
+      "solutionAudio": "Day13/New_Day13Question10sol.mp3"
+    },
+    {
+      "id": 11,
+      "title": "Audit Inactive Accounts with NOT EXISTS",
+      "prompt": "Return <code>customer_id</code> and <code>first_name</code> for customers who have never placed an order using the correlated <code>NOT EXISTS</code> predicate.",
+      "starterSql": "SELECT customer_id,\n       first_name\nFROM   customers c;",
+      "referenceSql": "SELECT customer_id,\n       first_name\nFROM   customers c\nWHERE  NOT EXISTS (\n         SELECT 1\n         FROM   orders o\n         WHERE  o.customer_id = c.customer_id\n       );",
+      "solutionAudio": "Day13/New_Day13Question11sol.mp3"
+    },
+    {
+      "id": 12,
+      "title": "Products Priced Above Category Average",
+      "prompt": "Return <code>name</code>, <code>category_id</code>, and <code>unit_price</code> for products whose price is greater than the average unit price of their respective category using a correlated subquery.",
+      "starterSql": "SELECT name,\n       category_id,\n       unit_price\nFROM   products p1;",
+      "referenceSql": "SELECT name,\n       category_id,\n       unit_price\nFROM   products p1\nWHERE  unit_price > (\n         SELECT AVG(unit_price)\n         FROM   products p2\n         WHERE  p2.category_id = p1.category_id\n       );",
+      "solutionAudio": "Day13/New_Day13Question12sol.mp3"
+    },
+    {
+      "id": 13,
+      "title": "Large Departments via IN with HAVING",
+      "prompt": "Return <code>department_name</code> from <code>departments</code> where the department ID is in the set of departments with more than 2 employees.",
+      "starterSql": "SELECT department_name\nFROM   departments;",
+      "referenceSql": "SELECT department_name\nFROM   departments\nWHERE  department_id IN (\n         SELECT   department_id\n         FROM     employees\n         GROUP BY department_id\n         HAVING   COUNT(*) > 2\n       );",
+      "solutionAudio": "Day13/New_Day13Question13sol.mp3"
+    },
+    {
+      "id": 14,
+      "title": "High-Volume Spenders via Derived Table",
+      "prompt": "Using a derived table summarizing customer order totals, return <code>customer_id</code> and <code>total_spent</code> for customers whose combined order spending is 50000 or greater.",
+      "starterSql": "SELECT customer_id,\n       total_spent\nFROM   (SELECT 1);",
+      "referenceSql": "SELECT customer_id,\n       total_spent\nFROM   (\n         SELECT   customer_id,\n                  SUM(total_amount) AS total_spent\n         FROM     orders\n         GROUP BY customer_id\n       ) AS spenders\nWHERE  total_spent >= 50000;",
+      "solutionAudio": "Day13/New_Day13Question14sol.mp3"
+    },
+    {
+      "id": 15,
+      "title": "Orders with Above-Average Item Quantities",
+      "prompt": "Return distinct <code>order_id</code> from <code>order_items</code> for items where <code>qty</code> is strictly greater than the overall average item quantity across all order items.",
+      "starterSql": "SELECT DISTINCT order_id\nFROM   order_items;",
+      "referenceSql": "SELECT DISTINCT order_id\nFROM   order_items\nWHERE  qty > (SELECT AVG(qty) FROM order_items);",
+      "solutionAudio": "Day13/New_Day13Question15sol.mp3"
     }
   ],
+
   "testQuestions": [
-    { "id": 1, "prompt": "Find employees earning above the company average salary.", "ref": "SELECT * FROM employees WHERE salary > (SELECT AVG(salary) FROM employees);" },
-    { "id": 2, "prompt": "Find the employee with the maximum salary using a scalar subquery.", "ref": "SELECT * FROM employees WHERE salary = (SELECT MAX(salary) FROM employees);" },
-    { "id": 3, "prompt": "Find customers who have placed at least one order (subquery with IN).", "ref": "SELECT * FROM customers WHERE customer_id IN (SELECT DISTINCT customer_id FROM orders);" },
-    { "id": 4, "prompt": "Find customers who have NEVER placed an order (NOT IN).", "ref": "SELECT * FROM customers WHERE customer_id NOT IN (SELECT DISTINCT customer_id FROM orders);" },
-    { "id": 5, "prompt": "Find products never ordered (NOT IN from order_items).", "ref": "SELECT * FROM products WHERE product_id NOT IN (SELECT DISTINCT product_id FROM order_items);" },
-    { "id": 6, "prompt": "Find products whose unit_price is above the average unit_price.", "ref": "SELECT * FROM products WHERE unit_price > (SELECT AVG(unit_price) FROM products);" },
-    { "id": 7, "prompt": "Using a derived table, find the average of department averages.", "ref": "SELECT AVG(dept_avg) FROM (SELECT AVG(salary) AS dept_avg FROM employees GROUP BY department_id) ds;" },
-    { "id": 8, "prompt": "Find all orders from customers in the 'North' region using a subquery.", "ref": "SELECT * FROM orders WHERE customer_id IN (SELECT customer_id FROM customers WHERE region = 'North');" },
-    { "id": 9, "prompt": "Using EXISTS, find customers who have placed at least one order.", "ref": "SELECT * FROM customers c WHERE EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.customer_id);" },
-    { "id": 10, "prompt": "Using NOT EXISTS, find customers who have never placed an order.", "ref": "SELECT * FROM customers c WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.customer_id);" },
-    { "id": 11, "prompt": "Find employees earning more than the max salary in department 50.", "ref": "SELECT * FROM employees WHERE salary > (SELECT MAX(salary) FROM employees WHERE department_id = 50);" },
-    { "id": 12, "prompt": "Find employees above average salary in their own department (correlated subquery).", "ref": "SELECT first_name, salary FROM employees e1 WHERE salary > (SELECT AVG(salary) FROM employees e2 WHERE e2.department_id = e1.department_id);" },
-    { "id": 13, "prompt": "Find orders with total_amount above the average order amount.", "ref": "SELECT * FROM orders WHERE total_amount > (SELECT AVG(total_amount) FROM orders);" },
-    { "id": 14, "prompt": "Find top 3 departments by average salary (derived table).", "ref": "SELECT department_id, avg_sal FROM (SELECT department_id, AVG(salary) AS avg_sal FROM employees GROUP BY department_id) ds ORDER BY avg_sal DESC LIMIT 3;" },
-    { "id": 15, "prompt": "Find products in category 5 that have never been ordered.", "ref": "SELECT * FROM products WHERE category_id = 5 AND product_id NOT IN (SELECT DISTINCT product_id FROM order_items);" },
-    { "id": 16, "prompt": "Find each employee and how many orders their department has processed (correlated scalar subquery).", "ref": "SELECT e.first_name, (SELECT COUNT(*) FROM orders o WHERE o.employee_id = e.employee_id) AS orders_handled FROM employees e;" },
-    { "id": 17, "prompt": "Find customers who have spent more than the average customer spend (derived table approach).", "ref": "SELECT customer_id FROM (SELECT customer_id, SUM(total_amount) AS total_spend FROM orders GROUP BY customer_id) t WHERE total_spend > (SELECT AVG(total_amount) FROM orders);" },
-    { "id": 18, "prompt": "Find the product with the highest unit_price using a scalar subquery.", "ref": "SELECT * FROM products WHERE unit_price = (SELECT MAX(unit_price) FROM products);" },
-    { "id": 19, "prompt": "Find orders that include the most expensive product (scalar subquery in WHERE IN).", "ref": "SELECT * FROM orders WHERE order_id IN (SELECT order_id FROM order_items WHERE product_id = (SELECT product_id FROM products ORDER BY unit_price DESC LIMIT 1));" },
-    { "id": 20, "prompt": "Find employees whose salary equals the minimum salary in any department.", "ref": "SELECT * FROM employees WHERE salary IN (SELECT MIN(salary) FROM employees GROUP BY department_id);" },
-    { "id": 21, "prompt": "Show each product and whether it has been ordered (use a correlated EXISTS).", "ref": "SELECT name, CASE WHEN EXISTS (SELECT 1 FROM order_items oi WHERE oi.product_id = p.product_id) THEN 'Yes' ELSE 'No' END AS has_orders FROM products p;" },
-    { "id": 22, "prompt": "Find departments with payroll above the median payroll (use a derived table and comparison).", "ref": "SELECT department_id, SUM(salary) AS payroll FROM employees GROUP BY department_id HAVING SUM(salary) > (SELECT AVG(dept_pay) FROM (SELECT SUM(salary) AS dept_pay FROM employees GROUP BY department_id) t);" },
-    { "id": 23, "prompt": "Find the second highest salary (scalar subquery approach).", "ref": "SELECT MAX(salary) FROM employees WHERE salary < (SELECT MAX(salary) FROM employees);" },
-    { "id": 24, "prompt": "Find all employees who share the same department as employee_id = 1 (subquery).", "ref": "SELECT * FROM employees WHERE department_id = (SELECT department_id FROM employees WHERE employee_id = 1) AND employee_id <> 1;" },
-    { "id": 25, "prompt": "Find the customer who spent the most total (scalar subquery to get max spend, then match).", "ref": "SELECT * FROM customers WHERE customer_id = (SELECT customer_id FROM orders GROUP BY customer_id ORDER BY SUM(total_amount) DESC LIMIT 1);" }
-  ],
-  "topics": [
-    { "id": "topic-1", "label": "Topic 1: Scalar, Multi-Row, Correlated Subqueries & EXISTS", "recordingKey": null }
+    { "id": 1, "type": "mcq", "question": "What is a Scalar Subquery?", "options": ["A subquery that returns a single value (1 row, 1 column)", "A subquery that runs in parallel across multiple CPUs", "A subquery that scales linearly with table size", "A subquery that returns multiple columns"], "answer": "A subquery that returns a single value (1 row, 1 column)", "explanation": "A scalar subquery evaluates to a single cell value, allowing it to be used in expressions, SELECT columns, and WHERE comparisons." },
+    { "id": 2, "type": "mcq", "question": "How does a Correlated Subquery differ from a Non-Correlated Subquery?", "options": ["A correlated subquery references columns from the outer query and executes once per outer row; non-correlated executes once", "A correlated subquery runs in memory while non-correlated writes to disk", "A correlated subquery cannot use aggregate functions", "Non-correlated subqueries only work in WHERE"], "answer": "A correlated subquery references columns from the outer query and executes once per outer row; non-correlated executes once", "explanation": "Correlated subqueries depend on outer row attributes, making them row-by-row evaluations unless decorrelated by the database engine." },
+    { "id": 3, "type": "mcq", "question": "What happens if a Scalar Subquery produces 2 or more rows at runtime?", "options": ["SQL takes the first row and ignores the rest", "SQL raises a runtime error (Subquery returns more than 1 row)", "SQL automatically converts the rows to an array", "The comparison evaluates to NULL"], "answer": "SQL raises a runtime error (Subquery returns more than 1 row)", "explanation": "Scalar subqueries must return at most 1 row and 1 column; returning multiple rows throws an immediate execution exception." },
+    { "id": 4, "type": "mcq", "question": "Why does WHERE col NOT IN (subquery) return zero rows if the subquery returns even a single NULL?", "options": ["Because NULL is converted to zero", "Because in SQL three-valued logic, col != NULL evaluates to UNKNOWN, making the entire AND condition fail", "Because NOT IN requires integer types", "Because the database halts on syntax error"], "answer": "Because in SQL three-valued logic, col != NULL evaluates to UNKNOWN, making the entire AND condition fail", "explanation": "NOT IN tests equality against all elements. If any element is NULL, the result is UNKNOWN, and WHERE clauses discard UNKNOWN results." },
+    { "id": 5, "type": "mcq", "question": "Why is EXISTS generally faster than IN for large subqueries?", "options": ["EXISTS short-circuits as soon as the first matching record is found", "EXISTS uses hardware acceleration", "EXISTS runs without transactions", "IN creates temporary tables on disk"], "answer": "EXISTS short-circuits as soon as the first matching record is found", "explanation": "EXISTS checks for boolean existence and stops scanning immediately upon finding the first match." },
+    { "id": 6, "type": "mcq", "question": "What is required when writing a subquery in the FROM clause (Derived Table)?", "options": ["An explicit table alias", "A GROUP BY clause", "A temporary table name prefix", "A primary key"], "answer": "An explicit table alias", "explanation": "ANSI SQL requires every derived table in the FROM clause to have a unique table alias." },
+    { "id": 7, "type": "mcq", "question": "What does the query SELECT 1 FROM table WHERE EXISTS (...) return if no rows match?", "options": ["An empty result set (0 rows)", "A single row with 0", "NULL", "An error"], "answer": "An empty result set (0 rows)", "explanation": "If the WHERE EXISTS condition fails, zero rows pass the filter, resulting in an empty set." },
+    { "id": 8, "type": "mcq", "question": "What operator is equivalent to = ANY (subquery)?", "options": ["IN", "ALL", "LIKE", "EXISTS"], "answer": "IN", "explanation": "In SQL standard syntax, = ANY is logically identical to the IN operator." },
+    { "id": 9, "type": "mcq", "question": "What is the result of WHERE salary > ALL (SELECT salary FROM employees WHERE department_id = 10)?", "options": ["Finds employees whose salary is strictly greater than the maximum salary in department 10", "Finds employees whose salary is greater than the average salary", "Finds employees whose salary is greater than at least one employee in department 10", "Returns an error"], "answer": "Finds employees whose salary is strictly greater than the maximum salary in department 10", "explanation": "> ALL requires the condition to hold true against every element in the subquery, which is equivalent to being greater than the maximum." },
+    { "id": 10, "type": "mcq", "question": "Can a subquery be placed inside a HAVING clause?", "options": ["Yes, to filter aggregated groups against a dynamic scalar benchmark", "No, HAVING only accepts aggregate function calls", "Only in MySQL", "Only if aliased in SELECT"], "answer": "Yes, to filter aggregated groups against a dynamic scalar benchmark", "explanation": "HAVING AVG(col) > (SELECT AVG(col) FROM ...) is standard SQL for filtering grouped results against an aggregate benchmark." },
+    { "id": 11, "type": "mcq", "question": "In SELECT c.name, (SELECT COUNT(*) FROM orders o WHERE o.customer_id = c.id) AS cnt FROM customers c, how many times does the subquery execute?", "options": ["Once for each row in the customers table", "Exactly once for the entire query", "Zero times", "Twice"], "answer": "Once for each row in the customers table", "explanation": "Because the subquery in the SELECT list correlates on c.id, it runs once per customer row." },
+    { "id": 12, "type": "mcq", "question": "What is the recommended alternative to NOT IN when handling nullable foreign keys?", "options": ["NOT EXISTS or LEFT JOIN ... WHERE right_table.key IS NULL", "UNION ALL", "INNER JOIN with HAVING", "CROSS JOIN"], "answer": "NOT EXISTS or LEFT JOIN ... WHERE right_table.key IS NULL", "explanation": "Both NOT EXISTS and LEFT JOIN anti-joins handle NULL values predictably without the three-valued logic trap of NOT IN." },
+    { "id": 13, "type": "mcq", "question": "What does a subquery return if it matches 0 rows when used in a Scalar context (e.g. SELECT (SELECT max(salary) FROM employees WHERE 1=0))?", "options": ["NULL", "0", "An error", "False"], "answer": "NULL", "explanation": "A scalar subquery that returns no rows evaluates cleanly to NULL." },
+    { "id": 14, "type": "mcq", "question": "Can you update a table using a subquery in SQL?", "options": ["Yes, subqueries can be used in UPDATE SET clauses and WHERE filters", "No, subqueries are strictly read-only SELECT tools", "Only in SQLite", "Only with stored procedures"], "answer": "Yes, subqueries can be used in UPDATE SET clauses and WHERE filters", "explanation": "Subqueries can dynamically set new column values or identify candidate rows to update." },
+    { "id": 15, "type": "mcq", "question": "What is a multi-column subquery?", "options": ["A subquery that returns multiple columns evaluated as row tuples (e.g. WHERE (a, b) IN (...))", "A subquery with multiple SELECT statements", "A query with two FROM clauses", "A query using UNION"], "answer": "A subquery that returns multiple columns evaluated as row tuples (e.g. WHERE (a, b) IN (...))", "explanation": "Row constructor comparisons evaluate tuples of columns together against multi-column subquery results." },
+    { "id": 16, "type": "mcq", "question": "Why is SELECT 1 conventionally used inside an EXISTS subquery instead of column names?", "options": ["Because EXISTS only checks for row presence, making column projection irrelevant", "Because SELECT 1 bypasses index scans", "Because column names cause syntax errors in EXISTS", "Because 1 represents boolean TRUE"], "answer": "Because EXISTS only checks for row presence, making column projection irrelevant", "explanation": "EXISTS ignores the SELECT expression list entirely; SELECT 1 clarifies that no column data is being transferred." },
+    { "id": 17, "type": "mcq", "question": "Can a subquery reference columns from multiple levels of outer queries?", "options": ["Yes, inner queries can access outer column scopes within their enclosing hierarchy", "No, only the immediate parent query is accessible", "Only in PostgreSQL", "Only with CTEs"], "answer": "Yes, inner queries can access outer column scopes within their enclosing hierarchy", "explanation": "SQL lexical scoping allows deeply nested subqueries to reference attributes from any enclosing parent level." },
+    { "id": 18, "type": "mcq", "question": "What is decorrelation in database query optimization?", "options": ["When the query optimizer rewrites a correlated subquery into a JOIN to improve performance", "When subqueries are converted into temporary tables", "When subqueries are stripped of indexes", "When subqueries fail execution"], "answer": "When the query optimizer rewrites a correlated subquery into a JOIN to improve performance", "explanation": "Optimizers decorrelate queries into relational joins to replace O(N²) nested loops with fast hash or merge joins." },
+    { "id": 19, "type": "mcq", "question": "What happens if you use an ORDER BY clause inside a subquery without a LIMIT clause?", "options": ["In standard SQL, it is ignored because intermediate relations are unordered mathematical sets", "It causes a syntax error in all database engines", "It sorts the entire final query", "It speeds up subquery execution"], "answer": "In standard SQL, it is ignored because intermediate relations are unordered mathematical sets", "explanation": "Relational algebra treats tables and subqueries as unordered sets unless explicitly limited or ranked." },
+    { "id": 20, "type": "mcq", "question": "What is a common symptom of an unindexed correlated subquery on a 1-million row table?", "options": ["Query execution time scales catastrophically as 1 million full table scans occur", "Memory overflow error immediately", "Automatic conversion to CROSS JOIN", "Data corruption in outer table"], "answer": "Query execution time scales catastrophically as 1 million full table scans occur", "explanation": "Without indexes or decorrelation, evaluating the inner query for each outer row forces N full table scans." },
+    { "id": 21, "type": "code", "question": "Write a query returning `first_name` and `salary` from `employees` where salary is greater than the company average salary.", "answer": "SELECT first_name, salary FROM employees WHERE salary > (SELECT AVG(salary) FROM employees);" },
+    { "id": 22, "type": "code", "question": "Write a query returning `customer_id` from `customers` who have placed at least one order using an `IN` subquery.", "answer": "SELECT customer_id FROM customers WHERE customer_id IN (SELECT DISTINCT customer_id FROM orders);" },
+    { "id": 23, "type": "code", "question": "Write a query returning `customer_id` and `first_name` from `customers` who have orders using the `EXISTS` operator.", "answer": "SELECT customer_id, first_name FROM customers c WHERE EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.customer_id);" },
+    { "id": 24, "type": "code", "question": "Write a query returning `name` and `unit_price` of the single most expensive product in `products` using a scalar subquery.", "answer": "SELECT name, unit_price FROM products WHERE unit_price = (SELECT MAX(unit_price) FROM products);" },
+    { "id": 25, "type": "code", "question": "Write a query returning `first_name` and `salary` from `employees` for employees earning more than their own department average using a correlated subquery.", "answer": "SELECT first_name, salary FROM employees e1 WHERE salary > (SELECT AVG(salary) FROM employees e2 WHERE e2.department_id = e1.department_id);" }
   ]
 };

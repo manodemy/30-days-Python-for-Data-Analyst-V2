@@ -1,4 +1,4 @@
-// Day 09 — CASE & Conditional Logic
+// Day 09 — CASE Expressions & Conditional Logic
 if (!window.COURSE_CONTENT) window.COURSE_CONTENT = {};
 window.COURSE_CONTENT['day09'] = {
   "day": 9,
@@ -7,239 +7,508 @@ window.COURSE_CONTENT['day09'] = {
   "emoji": "🔀",
   "slides": [
     {
-      "title": "CASE & Conditional Logic in SQL",
-      "duration": "0:00",
-      "html": `
-        <h2>🔀 CASE & Conditional Logic</h2>
+      "title": "CASE Expressions & Conditional Logic in SQL",
+      "duration": "8:45",
+      "html": `<h2>🔀 CASE Expressions &amp; Conditional Logic</h2>
 
-        <div class="slide-section">
-          <h3>01. The CASE Expression</h3>
-          <p>The <code>CASE</code> expression is SQL's conditional logic construct — equivalent to an if-else or switch statement. It returns a value based on which condition is true first. It can appear in <code>SELECT</code>, <code>WHERE</code>, <code>ORDER BY</code>, and <code>GROUP BY</code>.</p>
+        <!-- ── Section 01: The CASE Expression ── -->
+        <div class="slide-section" id="day09CaseSection">
+          <h3 class="heading-with-audio" id="day09Case">
+            01. What Is the CASE Expression?
+          </h3>
+          <p>The <code>CASE</code> expression is SQL's conditional logic construct — equivalent to an if-else statement. It evaluates conditions sequentially and returns a corresponding value when the first condition is met. It can appear in <code>SELECT</code>, <code>WHERE</code>, <code>ORDER BY</code>, and <code>GROUP BY</code>.</p>
+        </div>
 
-          <div class="vs-block">
+        <div class="slide-section" id="day09IfElseSection">
+          <div class="info-box" id="day09IfElse">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; width: 100%;">
+              <strong style="color:var(--ink-teal); flex: 1;">💡 Anywhere in SQL:</strong>
+            </div>
+            <p style="margin: 0;">Because <code>CASE</code> is a scalar expression, you can use it in <code>SELECT</code> to create custom columns, in <code>ORDER BY</code> to sort by custom priority, or inside aggregate functions like <code>SUM()</code> and <code>COUNT()</code> for conditional analytics.</p>
+          </div>
+        </div>
+
+        <!-- ── Section 02: Searched vs Simple CASE ── -->
+        <div class="slide-section" id="day09SearchedSection">
+          <h3 class="heading-with-audio" id="day09Searched">
+            02. Searched vs Simple CASE Syntax
+          </h3>
+          <p>SQL provides two ways to write conditional expressions:</p>
+        </div>
+
+        <div class="slide-section" id="day09VsSection">
+          <div class="vs-block" id="day09SearchedFlex">
             <div class="vs-card">
-              <h4>Searched CASE (most common)</h4>
+              <h4>Searched CASE (Most Flexible)</h4>
+              <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:8px;">Evaluates distinct boolean expressions:</p>
               <pre><code>CASE
-  WHEN condition1 THEN result1
-  WHEN condition2 THEN result2
-  ...
-  ELSE default_result
+  WHEN salary &gt;= 100000 THEN 'Executive'
+  WHEN salary &gt;= 75000  THEN 'Senior'
+  WHEN salary &gt;= 50000  THEN 'Mid-Level'
+  ELSE                       'Junior'
 END</code></pre>
             </div>
             <div class="vs-card">
-              <h4>Simple CASE</h4>
-              <pre><code>CASE expression
-  WHEN value1 THEN result1
-  WHEN value2 THEN result2
-  ...
-  ELSE default_result
+              <h4>Simple CASE (Exact Value Match)</h4>
+              <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:8px;">Tests a single expression against literals:</p>
+              <pre><code>CASE status
+  WHEN 'Shipped'    THEN 'Completed'
+  WHEN 'Processing' THEN 'In Flight'
+  ELSE                   'Pending'
 END</code></pre>
             </div>
           </div>
         </div>
 
-        <div class="slide-section">
-          <h3>02. Searched CASE — Multi-Condition Logic</h3>
-          <pre><code>-- Categorise employees by salary band
-SELECT first_name,
+        <!-- ── Section 03: Searched CASE Examples & Ordering ── -->
+        <div class="slide-section" id="day09SalaryExamplesSection">
+          <div class="terminal-card" id="day09SalaryExamples">
+            <div class="terminal-header">
+              <span class="terminal-title">Query 1 — Salary Tier Categorization (Searched CASE)</span>
+            </div>
+            <div class="terminal-body">
+              <pre><code>SELECT first_name,
        salary,
        CASE
          WHEN salary >= 100000 THEN 'Executive'
          WHEN salary >= 75000  THEN 'Senior'
          WHEN salary >= 50000  THEN 'Mid-Level'
          ELSE                       'Junior'
-       END AS salary_band
-FROM   employees;
-
--- Categorise products by stock level
-SELECT name,
-       stock_qty,
-       CASE
-         WHEN stock_qty = 0      THEN 'Out of Stock'
-         WHEN stock_qty < 10     THEN 'Critical'
-         WHEN stock_qty < 30     THEN 'Low'
-         ELSE                         'Adequate'
-       END AS stock_status
-FROM   products;</code></pre>
-
-          <div class="info-box">
-            ℹ️ <strong>Evaluation Order:</strong> CASE evaluates WHEN clauses top-to-bottom and returns the first match. Once matched, subsequent WHENs are not evaluated. Always put the most specific (or most restrictive) conditions first.
-          </div>
-        </div>
-
-        <div class="slide-section">
-          <h3>03. Simple CASE — Value Matching</h3>
-          <pre><code>-- Map status codes to readable labels
-SELECT order_id,
-       CASE status
-         WHEN 'Shipped'    THEN 'Dispatched ✓'
-         WHEN 'Processing' THEN 'In Progress ⏳'
-         WHEN 'Cancelled'  THEN 'Cancelled ✗'
-         ELSE                   'Unknown'
-       END AS status_label
-FROM   orders;
-
--- Map department_id to department name
-SELECT first_name,
-       department_id,
-       CASE department_id
-         WHEN 10 THEN 'Engineering'
-         WHEN 20 THEN 'Data Science'
-         WHEN 30 THEN 'Marketing'
-         ELSE 'Other'
-       END AS department_name
+       END AS salary_tier
 FROM   employees;</code></pre>
+            </div>
+          </div>
         </div>
 
-        <div class="slide-section">
-          <h3>04. CASE in Aggregates — Conditional Counting</h3>
-          <p>One of the most powerful uses of CASE is inside aggregate functions to create <strong>conditional counts or sums</strong> (pivot-like behaviour) — effectively <code>COUNT(IF ...)</code>.</p>
+        <div class="slide-section" id="day09OrderWarnSection">
+          <div class="warn-box" id="day09OrderWarn">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; width: 100%;">
+              <strong style="color:var(--ink-amber); flex: 1;">⚠️ First-Match Wins Trap:</strong>
+            </div>
+            <p style="margin: 0;">SQL evaluates <code>WHEN</code> clauses top-to-bottom and stops immediately upon finding the first true condition. If you place <code>WHEN salary >= 50000</code> before <code>WHEN salary >= 100000</code>, an executive earning $150,000 will be mistakenly assigned 'Mid-Level'!</p>
+          </div>
+        </div>
 
-          <pre><code>-- Count active and inactive employees per department in one query
-SELECT department_id,
-       COUNT(*) AS total,
-       SUM(CASE WHEN is_active = 1 THEN 1 ELSE 0 END) AS active_count,
-       SUM(CASE WHEN is_active = 0 THEN 1 ELSE 0 END) AS inactive_count
-FROM   employees
-GROUP BY department_id;
+        <!-- ── Section 04: Simple CASE ── -->
+        <div class="slide-section" id="day09SimpleCaseSection">
+          <h3 class="heading-with-audio" id="day09SimpleCase">
+            03. Simple CASE Expressions
+          </h3>
+          <p>Simple <code>CASE</code> evaluates a single column expression once and checks for exact matches. It is concise and perfect for status mapping and domain lookups.</p>
+        </div>
 
--- Revenue by order status in a single row
-SELECT
-  SUM(CASE WHEN status = 'Shipped'    THEN total_amount ELSE 0 END) AS shipped_revenue,
-  SUM(CASE WHEN status = 'Processing' THEN total_amount ELSE 0 END) AS processing_revenue,
-  SUM(CASE WHEN status = 'Cancelled'  THEN total_amount ELSE 0 END) AS cancelled_revenue
+        <div class="slide-section" id="day09SimpleExamplesSection">
+          <div class="terminal-card" id="day09SimpleExamples">
+            <div class="terminal-header">
+              <span class="terminal-title">Query 2 — Human-Friendly Status Mapping (Simple CASE)</span>
+            </div>
+            <div class="terminal-body">
+              <pre><code>SELECT order_id,
+       status,
+       CASE status
+         WHEN 'Shipped'    THEN 'Completed Order'
+         WHEN 'Processing' THEN 'In Flight'
+         ELSE                   'Pending Review'
+       END AS status_label
 FROM   orders;</code></pre>
-
-          <div class="pro-tip-box">
-            💡 <strong>Pro Tip — Conditional Counting Pattern:</strong> <code>SUM(CASE WHEN condition THEN 1 ELSE 0 END)</code> is equivalent to <code>COUNT(CASE WHEN condition THEN 1 END)</code> (since COUNT ignores NULLs). Both are widely used in data analytics for pivot-style aggregations.
+            </div>
           </div>
         </div>
 
-        <div class="slide-section">
-          <h3>05. CASE in ORDER BY — Custom Sort Orders</h3>
-          <pre><code>-- Sort orders: Cancelled last, Processing first, Shipped second
-SELECT order_id, status, total_amount
+        <!-- ── Section 05: Conditional Aggregation ── -->
+        <div class="slide-section" id="day09ConditionalAggSection">
+          <h3 class="heading-with-audio" id="day09ConditionalAgg">
+            04. Conditional Aggregation (Pivoting Metrics)
+          </h3>
+          <p>One of the most powerful SQL patterns in business reporting is combining <code>COUNT()</code> and <code>SUM()</code> with <code>CASE</code>. This allows you to pivot row metrics into side-by-side columns in a single table scan.</p>
+        </div>
+
+        <div class="slide-section" id="day09PivotExamplesSection">
+          <div class="terminal-card" id="day09PivotExamples">
+            <div class="terminal-header">
+              <span class="terminal-title">Query 3 — Pivoting Status Counts Side-by-Side</span>
+            </div>
+            <div class="terminal-body">
+              <pre><code>SELECT COUNT(*) AS total_orders,
+       COUNT(CASE WHEN status = 'Shipped' THEN 1 END) AS shipped_count,
+       COUNT(CASE WHEN status = 'Processing' THEN 1 END) AS processing_count,
+       SUM(CASE WHEN status = 'Shipped' THEN total_amount ELSE 0 END) AS shipped_revenue
+FROM   orders;</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Section 06: NULL Handling & Safe Division ── -->
+        <div class="slide-section" id="day09NullsSection">
+          <h3 class="heading-with-audio" id="day09Nulls">
+            05. NULL Handling &amp; Safe Division
+          </h3>
+          <p>Always provide an explicit <code>ELSE</code> fallback in your <code>CASE</code> statements. If omitted and no condition matches, SQL returns <code>NULL</code> by default.</p>
+        </div>
+
+        <div class="slide-section" id="day09SafeDivExamplesSection">
+          <div class="terminal-card" id="day09SafeDivExamples">
+            <div class="terminal-header">
+              <span class="terminal-title">Safe Division &amp; Markup Calculation</span>
+            </div>
+            <div class="terminal-body">
+              <pre><code>SELECT name,
+       unit_price,
+       cost_price,
+       CASE
+         WHEN cost_price = 0 THEN 0.0
+         ELSE ROUND((unit_price - cost_price) * 100.0 / cost_price, 2)
+       END AS markup_pct
+FROM   products;</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Section 07: Custom Sorting with CASE ── -->
+        <div class="slide-section" id="day09OrderSortSection">
+          <h3 class="heading-with-audio" id="day09OrderSort">
+            06. Custom Sorting with CASE in ORDER BY
+          </h3>
+          <p>You can inject <code>CASE</code> directly into the <code>ORDER BY</code> clause to establish bespoke sorting hierarchies that alphabetical or numerical ordering cannot achieve.</p>
+        </div>
+
+        <div class="slide-section" id="day09SortExamplesSection">
+          <div class="terminal-card" id="day09SortExamples">
+            <div class="terminal-header">
+              <span class="terminal-title">Query 4 — Custom Urgency Priority Sorting</span>
+            </div>
+            <div class="terminal-body">
+              <pre><code>SELECT order_id,
+       status,
+       total_amount
 FROM   orders
-ORDER BY
-  CASE status
-    WHEN 'Processing' THEN 1
-    WHEN 'Shipped'    THEN 2
-    WHEN 'Cancelled'  THEN 3
-    ELSE 4
-  END;
-
--- Sort employees: Executives first, then Seniors, then others
-SELECT first_name, salary
-FROM   employees
-ORDER BY
-  CASE
-    WHEN salary >= 100000 THEN 1
-    WHEN salary >= 75000  THEN 2
-    ELSE 3
-  END, salary DESC;</code></pre>
-        </div>
-
-        <div class="slide-section">
-          <h3>06. COALESCE and NULLIF</h3>
-
-          <div class="vs-block">
-            <div class="vs-card">
-              <h4>COALESCE — First Non-NULL</h4>
-              <p>Returns the first non-NULL value in its argument list. Ideal for providing fallback defaults.</p>
-              <pre><code>-- Use 0 if commission is NULL
-SELECT first_name,
-  COALESCE(commission, 0) AS commission
-FROM employees;
-
--- Chain multiple fallbacks
-SELECT COALESCE(phone, email, 'No contact') 
-FROM customers;</code></pre>
-            </div>
-            <div class="vs-card">
-              <h4>NULLIF — Return NULL on Match</h4>
-              <p>Returns NULL if both arguments are equal; otherwise returns the first argument. Useful for preventing division by zero.</p>
-              <pre><code>-- Avoid division by zero
-SELECT order_id,
-  total_amount / NULLIF(qty, 0) AS unit_price
-FROM order_items;
-
--- Return NULL if salary equals min salary
-SELECT NULLIF(salary, 45000)
-FROM employees;</code></pre>
+ORDER BY CASE status
+           WHEN 'Processing' THEN 1
+           WHEN 'Shipped'    THEN 2
+           ELSE                   3
+         END,
+         total_amount DESC;</code></pre>
             </div>
           </div>
+        </div>
 
+        <div class="slide-section" id="day09CrossDbSection">
+          <div class="info-box" id="day09CrossDb">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; width: 100%;">
+              <strong style="color:var(--ink-teal); flex: 1;">🌐 100% ANSI-SQL Compatible:</strong>
+            </div>
+            <p style="margin: 0;">The <code>CASE</code> statement is part of standard ANSI-SQL and behaves identically across PostgreSQL, SQLite, MySQL, SQL Server, Oracle, Snowflake, and BigQuery.</p>
+          </div>
+        </div>
+
+        <!-- ── Section 08: Top 25 Interview Q&A ── -->
+        <div class="slide-section" id="day09QASection">
           <div class="interview-box">
-            <h4>🎯 Interview Insight</h4>
-            <div>
-              <p><strong>Q: How would you count how many rows satisfy a condition without WHERE?</strong></p>
-              <p><em>A: Use a conditional SUM or COUNT with CASE: SUM(CASE WHEN condition THEN 1 ELSE 0 END) or COUNT(CASE WHEN condition THEN 1 END). This technique enables computing multiple conditional counts in a single pass over the table — far more efficient than multiple subqueries.</em></p>
+            <h4 id="day09QAHeading" style="margin: 0 0 12px 0; font-size: 1rem; color: #38bdf8; display: flex; align-items: center; gap: 6px;">
+              <span>🎯</span> Top 25 SQL Interview Q&amp;A — CASE &amp; Conditional Logic
+            </h4>
+
+            <div id="day09QA1">
+              <p><strong>Q1: What does a CASE expression return if no WHEN conditions match and no ELSE clause is specified?</strong></p>
+              <p><em>A: If no WHEN condition matches and no ELSE clause is provided, SQL silently returns NULL. Always specify an explicit ELSE fallback when NULL is undesirable.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day09QA2">
+              <p><strong>Q2: What is the key difference between Searched CASE and Simple CASE?</strong></p>
+              <p><em>A: Simple CASE (<code>CASE expr WHEN val THEN ...</code>) evaluates only equality matches against a single operand. Searched CASE (<code>CASE WHEN condition THEN ...</code>) evaluates arbitrary boolean expressions including inequalities, ranges, NULL checks, and logical AND/OR combinations.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day09QA3">
+              <p><strong>Q3: What happens when multiple WHEN conditions in a CASE expression evaluate to true?</strong></p>
+              <p><em>A: CASE evaluates top-to-bottom and short-circuits. It stops immediately at the first condition that evaluates to TRUE, returns that branch's result, and ignores all subsequent WHEN clauses.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day09QA4">
+              <p><strong>Q4: Which SQL clause is required to terminate a CASE expression?</strong></p>
+              <p><em>A: Every CASE expression must conclude with the <code>END</code> keyword.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day09QA5">
+              <p><strong>Q5: What technique is used to count specific subsets of rows in a single query pass?</strong></p>
+              <p><em>A: Conditional Aggregation: <code>COUNT(CASE WHEN condition THEN 1 END)</code>. Because <code>COUNT(col)</code> ignores NULL values, non-matching rows produce NULL and are excluded, allowing multiple category counts in one table scan.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day09QA6">
+              <p><strong>Q6: Can a CASE expression be used inside an ORDER BY clause?</strong></p>
+              <p><em>A: Yes. CASE in <code>ORDER BY</code> maps column values to arbitrary numerical ranks (e.g., <code>WHEN 'Processing' THEN 1 WHEN 'Shipped' THEN 2</code>), enabling custom business sorting hierarchies that alphabetical or numerical ordering cannot achieve.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day09QA7">
+              <p><strong>Q7: How can CASE prevent a division-by-zero error?</strong></p>
+              <p><em>A: By checking the denominator in a WHEN clause: <code>CASE WHEN denominator = 0 THEN 0 ELSE numerator * 1.0 / denominator END</code>. Because CASE short-circuits, the division is never evaluated when denominator is 0.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day09QA8">
+              <p><strong>Q8: In SUM(CASE WHEN status = 'Shipped' THEN total_amount ELSE 0 END), why is ELSE 0 recommended?</strong></p>
+              <p><em>A: Providing <code>ELSE 0</code> ensures that non-matching rows add 0 rather than NULL. If no rows match, the aggregate yields 0 instead of NULL, keeping reporting cards and charts reliable.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day09QA9">
+              <p><strong>Q9: Which is valid syntax for a Searched CASE?</strong></p>
+              <p><em>A: <code>CASE WHEN salary &gt; 50000 THEN 'High' ELSE 'Low' END</code>. In Searched CASE, the keyword <code>CASE</code> is immediately followed by <code>WHEN</code> and a boolean condition.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day09QA10">
+              <p><strong>Q10: Is it valid to nest a CASE expression inside another CASE expression?</strong></p>
+              <p><em>A: Yes, SQL fully supports nesting CASE expressions inside THEN or ELSE branches, although maintaining clean indented formatting or using boolean AND/OR in a single searched CASE is usually preferred for readability.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day09QA11">
+              <p><strong>Q11: Can CASE expressions be used inside the GROUP BY clause?</strong></p>
+              <p><em>A: Yes. Grouping by a CASE expression (e.g. <code>GROUP BY CASE WHEN age &lt; 25 THEN 'Youth' ELSE 'Adult' END</code>) dynamically clusters records into analytical cohorts without requiring new database columns.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day09QA12">
+              <p><strong>Q12: What is the result of CASE WHEN NULL THEN 'A' ELSE 'B' END?</strong></p>
+              <p><em>A: It returns 'B'. In SQL three-valued logic, NULL evaluates to UNKNOWN (neither TRUE nor FALSE). Because the WHEN condition is not TRUE, execution falls through to the ELSE clause.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day09QA13">
+              <p><strong>Q13: What data type does a CASE expression return?</strong></p>
+              <p><em>A: The highest-precedence compatible data type among all THEN and ELSE return expressions. If types cannot be implicitly converted (such as mixing dates and integers), SQL raises a type mismatch error.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day09QA14">
+              <p><strong>Q14: Why is COUNT(CASE WHEN x &gt; 10 THEN 0 END) equal to the count of matching rows, even though it returns 0?</strong></p>
+              <p><em>A: Because <code>COUNT(expr)</code> counts every non-NULL instance. The scalar value 0 is a non-null number, so every row meeting the condition increments the tally.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day09QA15">
+              <p><strong>Q15: How do you test for NULL in a Searched CASE statement?</strong></p>
+              <p><em>A: You must use the <code>IS NULL</code> or <code>IS NOT NULL</code> predicate: <code>WHEN col IS NULL THEN ...</code>. In SQL, <code>col = NULL</code> always evaluates to UNKNOWN.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day09QA16">
+              <p><strong>Q16: In Simple CASE: CASE dept_id WHEN 10 THEN 'Eng' WHEN 20 THEN 'Data' END, what comparison operator is applied implicitly?</strong></p>
+              <p><em>A: The equality operator (<code>=</code>). It translates to <code>dept_id = 10</code>, <code>dept_id = 20</code>.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day09QA17">
+              <p><strong>Q17: What is the output of CASE WHEN 5 &gt; 10 THEN 'A' WHEN 10 &gt; 5 THEN 'B' WHEN 20 &gt; 5 THEN 'C' ELSE 'D' END?</strong></p>
+              <p><em>A: 'B'. 5 &gt; 10 is false; 10 &gt; 5 is true, so 'B' is returned immediately and subsequent conditions are ignored.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day09QA18">
+              <p><strong>Q18: Which function can replace a simple two-valued CASE statement in SQLite?</strong></p>
+              <p><em>A: <code>IIF(condition, true_val, false_val)</code>. Supported natively in SQLite 3.32+ and SQL Server as a compact equivalent.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day09QA19">
+              <p><strong>Q19: Can you use subqueries inside a CASE expression's WHEN condition?</strong></p>
+              <p><em>A: Yes, scalar subqueries or <code>EXISTS (...)</code> checks can be embedded directly in WHEN predicates.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day09QA20">
+              <p><strong>Q20: What is a key performance tip when using CASE expressions with indexed columns in WHERE?</strong></p>
+              <p><em>A: Wrapping an indexed column inside a CASE expression in a WHERE clause makes the predicate non-sargable, preventing index seeks and forcing full table scans. Use standard boolean logic instead whenever possible.</em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day09QA21">
+              <p><strong>Q21: How do you classify products into price tiers in SQL?</strong></p>
+              <p><em>A: <code>SELECT name, unit_price, CASE WHEN unit_price &lt; 2000 THEN 'Budget' ELSE 'Standard' END AS tier FROM products;</code></em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day09QA22">
+              <p><strong>Q22: How do you calculate progressive tax rates using Searched CASE?</strong></p>
+              <p><em>A: <code>SELECT first_name, salary, CASE WHEN salary &gt;= 90000 THEN 0.30 WHEN salary &gt;= 60000 THEN 0.20 ELSE 0.10 END AS tax_rate FROM employees;</code></em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day09QA23">
+              <p><strong>Q23: How do you implement Simple CASE to map order statuses to urgency flags?</strong></p>
+              <p><em>A: <code>SELECT order_id, CASE status WHEN 'Processing' THEN 'High' WHEN 'Shipped' THEN 'Normal' ELSE 'Unknown' END AS urgency FROM orders;</code></em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day09QA24">
+              <p><strong>Q24: How do you create a binary indicator flag (0 or 1) with CASE?</strong></p>
+              <p><em>A: <code>SELECT customer_id, CASE WHEN region = 'West' THEN 1 ELSE 0 END AS is_west FROM customers;</code></em></p>
+            </div>
+            <hr style="border: none; border-top: 1px dashed #cbd5e1; margin: 10px 0;" />
+
+            <div id="day09QA25">
+              <p><strong>Q25: How do you calculate conditional revenue in a single summary row?</strong></p>
+              <p><em>A: <code>SELECT SUM(CASE WHEN status = 'Shipped' THEN total_amount ELSE 0 END) AS shipped_total FROM orders;</code></em></p>
             </div>
           </div>
-        </div>
-      `
+        </div>`
     }
   ],
+
   "practiceQuestions": [
     {
       "id": 1,
-      "prompt": "<strong>Task: Salary Band</strong><br/>Categorise employees into 'Executive' (>=100000), 'Senior' (>=75000), 'Mid-Level' (>=50000), or 'Junior' using a CASE expression.",
-      "referenceSql": "SELECT first_name, salary, CASE WHEN salary >= 100000 THEN 'Executive' WHEN salary >= 75000 THEN 'Senior' WHEN salary >= 50000 THEN 'Mid-Level' ELSE 'Junior' END AS salary_band FROM employees;"
+      "title": "Salary Tier Classification",
+      "prompt": "From <code>employees</code>, return <code>first_name</code>, <code>salary</code>, and a calculated <code>salary_tier</code>: 'Executive' for salaries &gt;= 100000, 'Senior' for &gt;= 75000, 'Mid-Level' for &gt;= 50000, and 'Junior' otherwise.",
+      "starterSql": "SELECT first_name,\n       salary\nFROM   employees;",
+      "referenceSql": "SELECT first_name,\n       salary,\n       CASE\n         WHEN salary >= 100000 THEN 'Executive'\n         WHEN salary >= 75000  THEN 'Senior'\n         WHEN salary >= 50000  THEN 'Mid-Level'\n         ELSE                       'Junior'\n       END AS salary_tier\nFROM   employees;",
+      "solutionAudio": "Day09/New_Day9Question01sol.mp3"
     },
     {
       "id": 2,
-      "prompt": "<strong>Task: Order Status Labels</strong><br/>Map <code>status</code> column values to friendlier labels: 'Shipped' → 'Dispatched', 'Processing' → 'In Progress', 'Cancelled' → 'Cancelled ✗'.",
-      "referenceSql": "SELECT order_id, CASE status WHEN 'Shipped' THEN 'Dispatched' WHEN 'Processing' THEN 'In Progress' WHEN 'Cancelled' THEN 'Cancelled X' ELSE 'Unknown' END AS status_label FROM orders;"
+      "title": "Order Value Segmentation",
+      "prompt": "From <code>orders</code>, return <code>order_id</code>, <code>customer_id</code>, <code>total_amount</code>, and <code>order_size</code>: 'Small' for amounts &lt; 2000, 'Medium' for amounts &lt; 15000, and 'Large' otherwise.",
+      "starterSql": "SELECT order_id,\n       customer_id,\n       total_amount\nFROM   orders;",
+      "referenceSql": "SELECT order_id,\n       customer_id,\n       total_amount,\n       CASE\n         WHEN total_amount < 2000  THEN 'Small'\n         WHEN total_amount < 15000 THEN 'Medium'\n         ELSE                           'Large'\n       END AS order_size\nFROM   orders;",
+      "solutionAudio": "Day09/New_Day9Question02sol.mp3"
     },
     {
       "id": 3,
-      "prompt": "<strong>Task: Stock Status</strong><br/>Label each product's stock: 'Out of Stock' (qty=0), 'Critical' (<10), 'Low' (<30), or 'Adequate' (all others).",
-      "referenceSql": "SELECT name, stock_qty, CASE WHEN stock_qty = 0 THEN 'Out of Stock' WHEN stock_qty < 10 THEN 'Critical' WHEN stock_qty < 30 THEN 'Low' ELSE 'Adequate' END AS stock_status FROM products;"
+      "title": "Customer Loyalty Segmentation",
+      "prompt": "From <code>customers</code>, return <code>first_name</code>, <code>signup_date</code>, and <code>customer_status</code>: 'Veteran' if registered before '2023-01-01', else 'Recent'.",
+      "starterSql": "SELECT first_name,\n       signup_date\nFROM   customers;",
+      "referenceSql": "SELECT first_name,\n       signup_date,\n       CASE\n         WHEN signup_date < '2023-01-01' THEN 'Veteran'\n         ELSE                                 'Recent'\n       END AS customer_status\nFROM   customers;",
+      "solutionAudio": "Day09/New_Day9Question03sol.mp3"
     },
     {
       "id": 4,
-      "prompt": "<strong>Task: Conditional Count</strong><br/>Count active and inactive employees per department in a single query using CASE inside SUM.",
-      "referenceSql": "SELECT department_id, SUM(CASE WHEN is_active = 1 THEN 1 ELSE 0 END) AS active_count, SUM(CASE WHEN is_active = 0 THEN 1 ELSE 0 END) AS inactive_count FROM employees GROUP BY department_id;"
+      "title": "Translate Order Status Codes",
+      "prompt": "Using a Simple CASE expression on <code>orders</code>, return <code>order_id</code>, <code>status</code>, and <code>status_label</code>: 'Completed Order' for 'Shipped', 'In Flight' for 'Processing', and 'Pending Review' otherwise.",
+      "starterSql": "SELECT order_id,\n       status\nFROM   orders;",
+      "referenceSql": "SELECT order_id,\n       status,\n       CASE status\n         WHEN 'Shipped'    THEN 'Completed Order'\n         WHEN 'Processing' THEN 'In Flight'\n         ELSE                   'Pending Review'\n       END AS status_label\nFROM   orders;",
+      "solutionAudio": "Day09/New_Day9Question04sol.mp3"
     },
     {
       "id": 5,
-      "prompt": "<strong>Task: Revenue Pivot</strong><br/>Show total revenue split by order status (Shipped, Processing, Cancelled) in a single row using CASE inside SUM.",
-      "referenceSql": "SELECT SUM(CASE WHEN status = 'Shipped' THEN total_amount ELSE 0 END) AS shipped_revenue, SUM(CASE WHEN status = 'Processing' THEN total_amount ELSE 0 END) AS processing_revenue, SUM(CASE WHEN status = 'Cancelled' THEN total_amount ELSE 0 END) AS cancelled_revenue FROM orders;"
+      "title": "Inventory Replenishment Alert",
+      "prompt": "From <code>products</code>, return <code>name</code>, <code>stock_qty</code>, and <code>inventory_status</code>: 'Critical' if stock &lt; 20, 'Moderate' if stock &lt; 50, and 'Plentiful' otherwise.",
+      "starterSql": "SELECT name,\n       stock_qty\nFROM   products;",
+      "referenceSql": "SELECT name,\n       stock_qty,\n       CASE\n         WHEN stock_qty < 20 THEN 'Critical'\n         WHEN stock_qty < 50 THEN 'Moderate'\n         ELSE                     'Plentiful'\n       END AS inventory_status\nFROM   products;",
+      "solutionAudio": "Day09/New_Day9Question05sol.mp3"
     },
     {
       "id": 6,
-      "prompt": "<strong>Task: COALESCE Fallback</strong><br/>Retrieve <code>first_name</code> and <code>total_comp</code> where total_comp = salary + COALESCE(commission, 0). Sort by total_comp descending.",
-      "referenceSql": "SELECT first_name, salary + COALESCE(commission, 0) AS total_comp FROM employees ORDER BY total_comp DESC;"
+      "title": "Conditional Order Counts",
+      "prompt": "Across the <code>orders</code> table, return <code>total_orders</code>, <code>shipped_count</code> (where status = 'Shipped'), and <code>processing_count</code> (where status = 'Processing') in a single row using conditional aggregation.",
+      "starterSql": "SELECT COUNT(*) AS total_orders\nFROM   orders;",
+      "referenceSql": "SELECT COUNT(*) AS total_orders,\n       COUNT(CASE WHEN status = 'Shipped' THEN 1 END) AS shipped_count,\n       COUNT(CASE WHEN status = 'Processing' THEN 1 END) AS processing_count\nFROM   orders;",
+      "solutionAudio": "Day09/New_Day9Question06sol.mp3"
+    },
+    {
+      "id": 7,
+      "title": "Annual Bonus Calculation",
+      "prompt": "From <code>employees</code>, return <code>first_name</code>, <code>salary</code>, and calculated <code>bonus</code>: 10% of salary (salary * 0.10) if salary &lt; 60000, else 5% of salary (salary * 0.05).",
+      "starterSql": "SELECT first_name,\n       salary\nFROM   employees;",
+      "referenceSql": "SELECT first_name,\n       salary,\n       CASE\n         WHEN salary < 60000 THEN salary * 0.10\n         ELSE                     salary * 0.05\n       END AS bonus\nFROM   employees;",
+      "solutionAudio": "Day09/New_Day9Question07sol.mp3"
+    },
+    {
+      "id": 8,
+      "title": "Safe Markup Percentage Calculation",
+      "prompt": "From <code>products</code>, return <code>name</code>, <code>unit_price</code>, <code>cost_price</code>, and <code>markup_pct</code> calculated as <code>ROUND((unit_price - cost_price) * 100.0 / cost_price, 2)</code>, returning 0.0 if cost_price is 0.",
+      "starterSql": "SELECT name,\n       unit_price,\n       cost_price\nFROM   products;",
+      "referenceSql": "SELECT name,\n       unit_price,\n       cost_price,\n       CASE\n         WHEN cost_price = 0 THEN 0.0\n         ELSE                     ROUND((unit_price - cost_price) * 100.0 / cost_price, 2)\n       END AS markup_pct\nFROM   products;",
+      "solutionAudio": "Day09/New_Day9Question08sol.mp3"
+    },
+    {
+      "id": 9,
+      "title": "Flag High-Cost Tech Staff",
+      "prompt": "From <code>employees</code>, return <code>first_name</code>, <code>department_id</code>, <code>salary</code>, and <code>compensation_tier</code>: 'High-Cost Tech' if department_id is 10 or 20 AND salary &gt;= 80000, else 'Standard'.",
+      "starterSql": "SELECT first_name,\n       department_id,\n       salary\nFROM   employees;",
+      "referenceSql": "SELECT first_name,\n       department_id,\n       salary,\n       CASE\n         WHEN department_id IN (10, 20) AND salary >= 80000 THEN 'High-Cost Tech'\n         ELSE                                                    'Standard'\n       END AS compensation_tier\nFROM   employees;",
+      "solutionAudio": "Day09/New_Day9Question09sol.mp3"
+    },
+    {
+      "id": 10,
+      "title": "Sort by Custom Business Urgency",
+      "prompt": "Return <code>order_id</code>, <code>status</code>, and <code>total_amount</code> from <code>orders</code>, ordered with 'Processing' orders first, 'Shipped' orders second, and then by <code>total_amount</code> descending.",
+      "starterSql": "SELECT order_id,\n       status,\n       total_amount\nFROM   orders;",
+      "referenceSql": "SELECT order_id,\n       status,\n       total_amount\nFROM   orders\nORDER BY CASE status\n           WHEN 'Processing' THEN 1\n           WHEN 'Shipped'    THEN 2\n           ELSE                   3\n         END,\n         total_amount DESC;",
+      "solutionAudio": "Day09/New_Day9Question10sol.mp3"
+    },
+    {
+      "id": 11,
+      "title": "Catalog Price Category",
+      "prompt": "From <code>products</code>, return <code>name</code>, <code>unit_price</code>, and <code>price_category</code>: 'Budget' for unit_price &lt; 1000, 'Standard' for unit_price &lt; 10000, and 'Luxury' otherwise.",
+      "starterSql": "SELECT name,\n       unit_price\nFROM   products;",
+      "referenceSql": "SELECT name,\n       unit_price,\n       CASE\n         WHEN unit_price < 1000  THEN 'Budget'\n         WHEN unit_price < 10000 THEN 'Standard'\n         ELSE                         'Luxury'\n       END AS price_category\nFROM   products;",
+      "solutionAudio": "Day09/New_Day9Question11sol.mp3"
+    },
+    {
+      "id": 12,
+      "title": "Fiscal Quarter Extraction",
+      "prompt": "From <code>orders</code>, return <code>order_id</code>, <code>order_date</code>, and <code>quarter</code>: 'Q1' for months 01-03, 'Q2' for 04-06, 'Q3' for 07-09, and 'Q4' for 10-12 using strftime('%m', order_date).",
+      "starterSql": "SELECT order_id,\n       order_date\nFROM   orders;",
+      "referenceSql": "SELECT order_id,\n       order_date,\n       CASE\n         WHEN strftime('%m', order_date) IN ('01', '02', '03') THEN 'Q1'\n         WHEN strftime('%m', order_date) IN ('04', '05', '06') THEN 'Q2'\n         WHEN strftime('%m', order_date) IN ('07', '08', '09') THEN 'Q3'\n         ELSE                                                       'Q4'\n       END AS quarter\nFROM   orders;",
+      "solutionAudio": "Day09/New_Day9Question12sol.mp3"
+    },
+    {
+      "id": 13,
+      "title": "Audit Commission Eligibility",
+      "prompt": "From <code>employees</code>, return <code>first_name</code>, <code>commission</code>, and <code>commission_status</code>: 'Eligible' if commission IS NOT NULL, else 'Base Salary Only'.",
+      "starterSql": "SELECT first_name,\n       commission\nFROM   employees;",
+      "referenceSql": "SELECT first_name,\n       commission,\n       CASE\n         WHEN commission IS NOT NULL THEN 'Eligible'\n         ELSE                             'Base Salary Only'\n       END AS commission_status\nFROM   employees;",
+      "solutionAudio": "Day09/New_Day9Question13sol.mp3"
+    },
+    {
+      "id": 14,
+      "title": "VIP Order Flagging",
+      "prompt": "From <code>orders</code>, return <code>order_id</code>, <code>customer_id</code>, <code>total_amount</code>, and <code>vip_flag</code>: 'VIP Order' if total_amount &gt;= 50000, else 'Regular Order'.",
+      "starterSql": "SELECT order_id,\n       customer_id,\n       total_amount\nFROM   orders;",
+      "referenceSql": "SELECT order_id,\n       customer_id,\n       total_amount,\n       CASE\n         WHEN total_amount >= 50000 THEN 'VIP Order'\n         ELSE                            'Regular Order'\n       END AS vip_flag\nFROM   orders;",
+      "solutionAudio": "Day09/New_Day9Question14sol.mp3"
+    },
+    {
+      "id": 15,
+      "title": "Multi-Metric Revenue Summary",
+      "prompt": "Calculate total revenue from Shipped orders (<code>shipped_revenue</code>) and Processing orders (<code>processing_revenue</code>) in a single summary row using conditional aggregation.",
+      "starterSql": "SELECT SUM(total_amount) AS total_revenue\nFROM   orders;",
+      "referenceSql": "SELECT SUM(CASE WHEN status = 'Shipped' THEN total_amount ELSE 0 END) AS shipped_revenue,\n       SUM(CASE WHEN status = 'Processing' THEN total_amount ELSE 0 END) AS processing_revenue\nFROM   orders;",
+      "solutionAudio": "Day09/New_Day9Question15sol.mp3"
     }
   ],
+
   "testQuestions": [
-    { "id": 1, "prompt": "Label employees as 'High' if salary > 80000, else 'Standard'.", "ref": "SELECT first_name, CASE WHEN salary > 80000 THEN 'High' ELSE 'Standard' END AS pay_grade FROM employees;" },
-    { "id": 2, "prompt": "Map order status to numeric priority: Cancelled=1, Processing=2, Shipped=3.", "ref": "SELECT order_id, CASE status WHEN 'Cancelled' THEN 1 WHEN 'Processing' THEN 2 WHEN 'Shipped' THEN 3 END AS priority FROM orders;" },
-    { "id": 3, "prompt": "Categorise products into 'Premium' (price>10000), 'Mid' (>3000), or 'Budget'.", "ref": "SELECT name, CASE WHEN unit_price > 10000 THEN 'Premium' WHEN unit_price > 3000 THEN 'Mid' ELSE 'Budget' END AS tier FROM products;" },
-    { "id": 4, "prompt": "Count employees per salary band (Executive, Senior, Mid-Level, Junior) across the whole company.", "ref": "SELECT CASE WHEN salary >= 100000 THEN 'Executive' WHEN salary >= 75000 THEN 'Senior' WHEN salary >= 50000 THEN 'Mid-Level' ELSE 'Junior' END AS band, COUNT(*) AS cnt FROM employees GROUP BY band;" },
-    { "id": 5, "prompt": "Use COALESCE to replace NULL commission with 0 for all employees.", "ref": "SELECT first_name, COALESCE(commission, 0) AS commission FROM employees;" },
-    { "id": 6, "prompt": "Use NULLIF to return NULL when stock_qty equals 0 (to avoid zero division in a price-per-unit calc).", "ref": "SELECT name, unit_price / NULLIF(stock_qty, 0) AS price_per_unit FROM products;" },
-    { "id": 7, "prompt": "Compute a 'loyalty_tier': Customers who signed up before 2022 = 'Gold', before 2024 = 'Silver', else 'Bronze'.", "ref": "SELECT first_name, CASE WHEN signup_date < '2022-01-01' THEN 'Gold' WHEN signup_date < '2024-01-01' THEN 'Silver' ELSE 'Bronze' END AS loyalty_tier FROM customers;" },
-    { "id": 8, "prompt": "Count shipped and non-shipped orders using CASE inside SUM.", "ref": "SELECT SUM(CASE WHEN status = 'Shipped' THEN 1 ELSE 0 END) AS shipped, SUM(CASE WHEN status != 'Shipped' THEN 1 ELSE 0 END) AS not_shipped FROM orders;" },
-    { "id": 9, "prompt": "Sort orders: Cancelled first, Processing second, Shipped last using CASE in ORDER BY.", "ref": "SELECT * FROM orders ORDER BY CASE status WHEN 'Cancelled' THEN 1 WHEN 'Processing' THEN 2 WHEN 'Shipped' THEN 3 END;" },
-    { "id": 10, "prompt": "Label each employee as 'Manager' if job_title contains 'Manager', else 'Individual Contributor'.", "ref": "SELECT first_name, job_title, CASE WHEN job_title LIKE '%Manager%' THEN 'Manager' ELSE 'Individual Contributor' END AS role_type FROM employees;" },
-    { "id": 11, "prompt": "Count products per stock status (Out of Stock, Critical, Low, Adequate).", "ref": "SELECT CASE WHEN stock_qty=0 THEN 'Out of Stock' WHEN stock_qty<10 THEN 'Critical' WHEN stock_qty<30 THEN 'Low' ELSE 'Adequate' END AS status, COUNT(*) AS cnt FROM products GROUP BY status;" },
-    { "id": 12, "prompt": "Compute total commission paid, treating NULLs as 0.", "ref": "SELECT SUM(COALESCE(commission, 0)) AS total_commission FROM employees;" },
-    { "id": 13, "prompt": "Show 'Active' or 'Inactive' for each employee based on is_active flag.", "ref": "SELECT first_name, CASE WHEN is_active = 1 THEN 'Active' ELSE 'Inactive' END AS status FROM employees;" },
-    { "id": 14, "prompt": "Find revenue per order size category: 'Large' (>50000), 'Medium' (>10000), 'Small' (rest).", "ref": "SELECT CASE WHEN total_amount > 50000 THEN 'Large' WHEN total_amount > 10000 THEN 'Medium' ELSE 'Small' END AS order_size, SUM(total_amount) AS revenue FROM orders GROUP BY order_size;" },
-    { "id": 15, "prompt": "Use CASE to show 'Has Commission' or 'No Commission' for each employee.", "ref": "SELECT first_name, CASE WHEN commission IS NOT NULL THEN 'Has Commission' ELSE 'No Commission' END AS commission_status FROM employees;" },
-    { "id": 16, "prompt": "Compute average salary per salary band (Executive, Senior, Mid-Level, Junior).", "ref": "SELECT CASE WHEN salary>=100000 THEN 'Executive' WHEN salary>=75000 THEN 'Senior' WHEN salary>=50000 THEN 'Mid-Level' ELSE 'Junior' END AS band, AVG(salary) AS avg_sal FROM employees GROUP BY band;" },
-    { "id": 17, "prompt": "Flag products where stock_value (stock_qty * unit_price) exceeds 500000 as 'High Value Inventory'.", "ref": "SELECT name, CASE WHEN stock_qty * unit_price > 500000 THEN 'High Value Inventory' ELSE 'Normal' END AS inventory_flag FROM products;" },
-    { "id": 18, "prompt": "Return employee total_comp = salary + COALESCE(commission,0), flagged 'Above Target' if total_comp > 100000.", "ref": "SELECT first_name, salary + COALESCE(commission,0) AS total_comp, CASE WHEN salary + COALESCE(commission,0) > 100000 THEN 'Above Target' ELSE 'Below Target' END AS flag FROM employees;" },
-    { "id": 19, "prompt": "Map region to a region code: 'North'='N', 'South'='S', 'East'='E', 'West'='W', else 'X'.", "ref": "SELECT first_name, CASE region WHEN 'North' THEN 'N' WHEN 'South' THEN 'S' WHEN 'East' THEN 'E' WHEN 'West' THEN 'W' ELSE 'X' END AS region_code FROM customers;" },
-    { "id": 20, "prompt": "Show count of orders per year with a 'Good Year' flag (revenue > 100000) using CASE in HAVING context.", "ref": "SELECT strftime('%Y', order_date) AS year, SUM(total_amount) AS rev, CASE WHEN SUM(total_amount) > 100000 THEN 'Good Year' ELSE 'Moderate' END AS yr_flag FROM orders GROUP BY year;" },
-    { "id": 21, "prompt": "Compute a discount: 20% if premium product (price > 10000), 10% if mid (>3000), 5% otherwise.", "ref": "SELECT name, unit_price, CASE WHEN unit_price>10000 THEN unit_price*0.8 WHEN unit_price>3000 THEN unit_price*0.9 ELSE unit_price*0.95 END AS discounted_price FROM products;" },
-    { "id": 22, "prompt": "Count orders per customer: label customers as 'Frequent' (>=3 orders) or 'Occasional'.", "ref": "SELECT customer_id, COUNT(*) AS order_cnt, CASE WHEN COUNT(*) >= 3 THEN 'Frequent' ELSE 'Occasional' END AS customer_type FROM orders GROUP BY customer_id;" },
-    { "id": 23, "prompt": "Show product name and 'In Season' / 'Clearance' based on stock_qty > 50.", "ref": "SELECT name, CASE WHEN stock_qty > 50 THEN 'In Season' ELSE 'Clearance' END AS season_flag FROM products;" },
-    { "id": 24, "prompt": "Show employees with salary_after_raise: 10% raise for Executives, 5% for Seniors, 2% for rest.", "ref": "SELECT first_name, salary, CASE WHEN salary>=100000 THEN salary*1.1 WHEN salary>=75000 THEN salary*1.05 ELSE salary*1.02 END AS salary_after_raise FROM employees;" },
-    { "id": 25, "prompt": "Produce a report showing number of 'On-Time' (fulfillment <= 3 days) and 'Delayed' (> 3 days) shipments.", "ref": "SELECT SUM(CASE WHEN CAST(julianday(shipped_date)-julianday(order_date) AS INTEGER) <= 3 THEN 1 ELSE 0 END) AS on_time, SUM(CASE WHEN CAST(julianday(shipped_date)-julianday(order_date) AS INTEGER) > 3 THEN 1 ELSE 0 END) AS delayed FROM orders WHERE shipped_date IS NOT NULL;" }
-  ],
-  "topics": [
-    { "id": "topic-1", "label": "Topic 1: CASE, COALESCE & Conditional Logic", "recordingKey": null }
+    { "id": 1, "type": "mcq", "question": "What does a CASE expression return if no WHEN conditions match and no ELSE clause is specified?", "options": ["An error", "0", "NULL", "An empty string"], "answer": "NULL", "explanation": "If no WHEN condition matches and no ELSE clause is provided, SQL silently returns NULL." },
+    { "id": 2, "type": "mcq", "question": "What is the key difference between Searched CASE and Simple CASE?", "options": ["Simple CASE can only compare equality against a single expression; Searched CASE evaluates arbitrary boolean expressions", "Searched CASE only works in WHERE; Simple CASE only works in SELECT", "Simple CASE evaluates conditions in parallel; Searched CASE is sequential", "There is no difference"], "answer": "Simple CASE can only compare equality against a single expression; Searched CASE evaluates arbitrary boolean expressions", "explanation": "Simple CASE evaluates CASE expr WHEN val THEN ... whereas Searched CASE evaluates arbitrary boolean conditions (ranges, AND/OR, inequalities) with CASE WHEN condition THEN ..." },
+    { "id": 3, "type": "mcq", "question": "What happens when multiple WHEN conditions in a CASE expression evaluate to true?", "options": ["All matching THEN clauses execute and concatenate", "Only the first matching condition executes and its result is returned", "SQL raises an AmbiguousMatchException", "The last matching condition overrides earlier ones"], "answer": "Only the first matching condition executes and its result is returned", "explanation": "CASE evaluates top-to-bottom and stops immediately at the first condition that evaluates to true." },
+    { "id": 4, "type": "mcq", "question": "Which SQL clause is required to terminate a CASE expression?", "options": ["STOP", "END", "EXIT", "FINISH"], "answer": "END", "explanation": "Every CASE expression must conclude with the END keyword." },
+    { "id": 5, "type": "mcq", "question": "What technique is used to count specific subsets of rows in a single query pass?", "options": ["COUNT(DISTINCT *)", "Conditional Aggregation: COUNT(CASE WHEN condition THEN 1 END)", "HAVING COUNT() > 0", "WHERE CASE = 1"], "answer": "Conditional Aggregation: COUNT(CASE WHEN condition THEN 1 END)", "explanation": "Because COUNT(expr) ignores NULLs, returning 1 when the condition matches and NULL otherwise counts only matching rows." },
+    { "id": 6, "type": "mcq", "question": "Can a CASE expression be used inside an ORDER BY clause?", "options": ["No, ORDER BY only accepts column names", "Yes, to implement custom non-alphabetical sorting hierarchies", "Only in MySQL", "Only if aliased in SELECT"], "answer": "Yes, to implement custom non-alphabetical sorting hierarchies", "explanation": "CASE in ORDER BY maps column values to arbitrary numerical ranks, enabling custom sort orders." },
+    { "id": 7, "type": "mcq", "question": "How can CASE prevent a division-by-zero error?", "options": ["By wrapping the division in TRY_DIVIDE", "By checking if the denominator is 0 in a WHEN clause and returning 0 or NULL before dividing", "By setting ZERO_MODE = OFF", "CASE cannot prevent runtime arithmetic errors"], "answer": "By checking if the denominator is 0 in a WHEN clause and returning 0 or NULL before dividing", "explanation": "WHEN denominator = 0 THEN 0 (or NULL) prevents the division expression from evaluating on zero values." },
+    { "id": 8, "type": "mcq", "question": "In the expression SUM(CASE WHEN status = 'Shipped' THEN total_amount ELSE 0 END), why is ELSE 0 recommended?", "options": ["To avoid adding NULLs, which could result in a NULL total if all rows fail", "Because SUM requires an integer", "To speed up query compilation", "It is not recommended, ELSE NULL is mandatory"], "answer": "To avoid adding NULLs, which could result in a NULL total if all rows fail", "explanation": "Providing ELSE 0 ensures that non-matching rows add 0, and if no rows match, the result is 0 rather than NULL." },
+    { "id": 9, "type": "mcq", "question": "Which of the following is valid syntax for a Searched CASE?", "options": ["CASE WHEN salary > 50000 THEN 'High' ELSE 'Low' END", "CASE salary WHEN > 50000 THEN 'High' END", "SELECT IF salary > 50000 THEN 'High'", "CASE WHERE salary > 50000 THEN 'High' END"], "answer": "CASE WHEN salary > 50000 THEN 'High' ELSE 'Low' END", "explanation": "Searched CASE syntax starts with CASE followed directly by WHEN <condition> THEN <result>." },
+    { "id": 10, "type": "mcq", "question": "Is it valid to nest a CASE expression inside another CASE expression in SQL?", "options": ["No, nested CASE expressions are forbidden by ANSI standard", "Yes, SQL fully supports nested CASE expressions", "Only in SQLite", "Only up to 1 level"], "answer": "Yes, SQL fully supports nested CASE expressions", "explanation": "SQL expressions are fully composable, allowing CASE expressions inside THEN or ELSE clauses." },
+    { "id": 11, "type": "mcq", "question": "Can CASE expressions be used inside the GROUP BY clause?", "options": ["Yes, to group records into dynamic analytical buckets", "No, GROUP BY only accepts base table columns", "Only if the expression is aliased in the SELECT list", "Only with aggregate functions"], "answer": "Yes, to group records into dynamic analytical buckets", "explanation": "You can group by a CASE expression to aggregate data into custom tiers without persisting calculated columns." },
+    { "id": 12, "type": "mcq", "question": "What is the result of CASE WHEN NULL THEN 'A' ELSE 'B' END?", "options": ["'A'", "'B'", "NULL", "Syntax Error"], "answer": "'B'", "explanation": "In SQL, NULL evaluates to UNKNOWN (not true). Since the condition is not true, execution proceeds to the ELSE clause and returns 'B'." },
+    { "id": 13, "type": "mcq", "question": "What data type does a CASE expression return?", "options": ["Always TEXT", "The highest precedence compatible data type among all THEN and ELSE return values", "Always INTEGER", "A dynamic Variant type"], "answer": "The highest precedence compatible data type among all THEN and ELSE return values", "explanation": "SQL resolves the return type by determining the common data type with highest conversion precedence among all result branches." },
+    { "id": 14, "type": "mcq", "question": "Why is COUNT(CASE WHEN x > 10 THEN 0 END) equal to the count of matching rows, even though it returns 0?", "options": ["Because 0 is evaluated as boolean true", "Because COUNT(expr) counts non-NULL values, and 0 is not NULL", "Because SQL converts 0 to 1", "It will return 0 rows"], "answer": "Because COUNT(expr) counts non-NULL values, and 0 is not NULL", "explanation": "COUNT(expr) counts every row where expr is NOT NULL. Since 0 is a non-null scalar, each match increments the counter." },
+    { "id": 15, "type": "mcq", "question": "How do you test for NULL in a Searched CASE statement?", "options": ["WHEN col = NULL THEN ...", "WHEN col IS NULL THEN ...", "WHEN ISNULL(col) THEN ...", "WHEN col == NULL THEN ..."], "answer": "WHEN col IS NULL THEN ...", "explanation": "In SQL, NULL cannot be compared with the equality operator =; the IS NULL predicate must be used." },
+    { "id": 16, "type": "mcq", "question": "In Simple CASE: CASE dept_id WHEN 10 THEN 'Eng' WHEN 20 THEN 'Data' END, what comparison operator is applied implicitly?", "options": ["LIKE", "IN", "=", "IS"], "answer": "=", "explanation": "Simple CASE evaluates equality (dept_id = 10, dept_id = 20)." },
+    { "id": 17, "type": "mcq", "question": "What is the output of CASE WHEN 5 > 10 THEN 'A' WHEN 10 > 5 THEN 'B' WHEN 20 > 5 THEN 'C' ELSE 'D' END?", "options": ["'A'", "'B'", "'C'", "'D'"], "answer": "'B'", "explanation": "5 > 10 is false. 10 > 5 is true, so 'B' is returned immediately without evaluating subsequent conditions." },
+    { "id": 18, "type": "mcq", "question": "Which of the following can replace a simple two-valued CASE statement in SQLite?", "options": ["IIF(condition, true_val, false_val)", "IFELSE()", "CHOOSE()", "DECODE()"], "answer": "IIF(condition, true_val, false_val)", "explanation": "SQLite 3.32+ natively supports IIF(c, t, f) as shorthand syntax for CASE WHEN c THEN t ELSE f END." },
+    { "id": 19, "type": "mcq", "question": "Can you use subqueries inside a CASE expression's WHEN condition?", "options": ["No, subqueries cannot appear in CASE", "Yes, scalar or EXISTS subqueries are permitted in WHEN clauses", "Only with INNER JOIN", "Only in stored procedures"], "answer": "Yes, scalar or EXISTS subqueries are permitted in WHEN clauses", "explanation": "A CASE expression can contain scalar subqueries or EXISTS checks inside its conditions." },
+    { "id": 20, "type": "mcq", "question": "What is a common performance tip when using CASE expressions with indexed columns in WHERE?", "options": ["Wrapping indexed columns in CASE prevents index usage (non-sargable)", "CASE speeds up index lookups by 50%", "Always put CASE in WHERE rather than Boolean OR", "Indices ignore CASE"], "answer": "Wrapping indexed columns in CASE prevents index usage (non-sargable)", "explanation": "Wrapping indexed columns inside functions or CASE expressions prevents B-Tree index range scans, forcing a full table scan." },
+    { "id": 21, "type": "code", "question": "Write a query on `products` that returns `name`, `unit_price`, and `tier`: 'Budget' if unit_price < 2000, else 'Standard'.", "answer": "SELECT name, unit_price, CASE WHEN unit_price < 2000 THEN 'Budget' ELSE 'Standard' END AS tier FROM products;" },
+    { "id": 22, "type": "code", "question": "Write a query on `employees` that returns `first_name`, `salary`, and `tax_rate`: 0.30 if salary >= 90000, 0.20 if salary >= 60000, else 0.10.", "answer": "SELECT first_name, salary, CASE WHEN salary >= 90000 THEN 0.30 WHEN salary >= 60000 THEN 0.20 ELSE 0.10 END AS tax_rate FROM employees;" },
+    { "id": 23, "type": "code", "question": "Write a query on `orders` using Simple CASE to return `order_id` and `urgency`: 'High' for 'Processing', 'Normal' for 'Shipped', and 'Unknown' otherwise.", "answer": "SELECT order_id, CASE status WHEN 'Processing' THEN 'High' WHEN 'Shipped' THEN 'Normal' ELSE 'Unknown' END AS urgency FROM orders;" },
+    { "id": 24, "type": "code", "question": "Write a query on `customers` that returns `customer_id` and `is_west`: 1 if region = 'West', else 0.", "answer": "SELECT customer_id, CASE WHEN region = 'West' THEN 1 ELSE 0 END AS is_west FROM customers;" },
+    { "id": 25, "type": "code", "question": "Write a query on `orders` calculating total revenue from orders with status 'Shipped' as `shipped_total` using SUM and CASE.", "answer": "SELECT SUM(CASE WHEN status = 'Shipped' THEN total_amount ELSE 0 END) AS shipped_total FROM orders;" }
   ]
 };

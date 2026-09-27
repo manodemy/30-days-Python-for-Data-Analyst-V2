@@ -790,6 +790,48 @@ function analyzeQueryError(query, rawError) {
     };
   }
 
+
+  // 1.15 String Functions: CONCAT function in SQLite (Day 07)
+  if (/\bCONCAT\s*\(/i.test(query)) {
+    return {
+      type: 'concat_function_mismatch',
+      header: 'CONCAT Function Dialect Mismatch',
+      hint: 'In SQLite and PostgreSQL, concatenate strings using the double pipe operator <code>||</code> (e.g. <code>first_name || \' \' || last_name</code>) instead of the MySQL <code>CONCAT()</code> function.',
+      actionLabel: 'Use double pipe ||'
+    };
+  }
+
+  // 1.16 Date Functions: MySQL DATEDIFF() in SQLite (Day 08)
+  if (/\bDATEDIFF\s*\(/i.test(query)) {
+    return {
+      type: 'datediff_dialect_mismatch',
+      header: 'DATEDIFF Dialect Mismatch',
+      hint: 'SQLite does not feature MySQL\'s <code>DATEDIFF()</code> function. Calculate the day interval by subtracting Julian day numbers: <code>CAST(julianday(shipped_date) - julianday(order_date) AS INTEGER)</code>.',
+      actionLabel: 'Use julianday() difference'
+    };
+  }
+
+  // 1.17 Date Functions: MySQL DATE_ADD/DATE_SUB in SQLite (Day 08)
+  if (/\b(DATE_ADD|DATE_SUB)\s*\(/i.test(query)) {
+    return {
+      type: 'date_add_dialect_mismatch',
+      header: 'DATE_ADD / DATE_SUB Dialect Mismatch',
+      hint: 'SQLite uses <code>date(column, \'+30 days\')</code> or <code>date(column, \'-90 days\')</code> with modifier strings instead of MySQL\'s <code>DATE_ADD()</code> or <code>DATE_SUB()</code>.',
+      actionLabel: 'Use date(col, \'+N days\')'
+    };
+  }
+
+  // 1.18 Date Functions: strftime uppercase month/day (%M / %D typo) (Day 08)
+  if (/strftime\s*\(\s*['"][^'"]*%M[^'"]*['"]\s*,/i.test(query) && !/time|hour|minute/i.test(query)) {
+    return {
+      type: 'strftime_minute_vs_month',
+      header: 'strftime Directive: %M vs %m',
+      hint: 'In <code>strftime()</code>, lowercase <strong><code>%m</code></strong> extracts the 2-digit month (01–12), while uppercase <strong><code>%M</code></strong> extracts the minute (00–59)!',
+      actionReplace: { from: /%M/, to: '%m' },
+      actionLabel: 'Change \'%M\' ➔ \'%m\''
+    };
+  }
+
   // ───────────────────────────────────────────────────────────────────────────
   // SECTION 2: RUNTIME SQLITE ERRORS (TABLE & COLUMN TYPOS)
   // ───────────────────────────────────────────────────────────────────────────
@@ -4207,6 +4249,193 @@ const questionAudioMap = {
     13: 'Day06/New_Day6Question13.mp3',
     14: 'Day06/New_Day6Question14.mp3',
     15: 'Day06/New_Day6Question15.mp3'
+  },
+  'day07': {
+    1: 'Day07/New_Day7Question01.mp3',
+    2: 'Day07/New_Day7Question02.mp3',
+    3: 'Day07/New_Day7Question03.mp3',
+    4: 'Day07/New_Day7Question04.mp3',
+    5: 'Day07/New_Day7Question05.mp3',
+    6: 'Day07/New_Day7Question06.mp3',
+    7: 'Day07/New_Day7Question07.mp3',
+    8: 'Day07/New_Day7Question08.mp3',
+    9: 'Day07/New_Day7Question09.mp3',
+    10: 'Day07/New_Day7Question10.mp3',
+    11: 'Day07/New_Day7Question11.mp3',
+    12: 'Day07/New_Day7Question12.mp3',
+    13: 'Day07/New_Day7Question13.mp3',
+    14: 'Day07/New_Day7Question14.mp3',
+    15: 'Day07/New_Day7Question15.mp3'
+  },
+  'day08': {
+    1: 'Day08/New_Day8Question01.mp3',
+    2: 'Day08/New_Day8Question02.mp3',
+    3: 'Day08/New_Day8Question03.mp3',
+    4: 'Day08/New_Day8Question04.mp3',
+    5: 'Day08/New_Day8Question05.mp3',
+    6: 'Day08/New_Day8Question06.mp3',
+    7: 'Day08/New_Day8Question07.mp3',
+    8: 'Day08/New_Day8Question08.mp3',
+    9: 'Day08/New_Day8Question09.mp3',
+    10: 'Day08/New_Day8Question10.mp3',
+    11: 'Day08/New_Day8Question11.mp3',
+    12: 'Day08/New_Day8Question12.mp3',
+    13: 'Day08/New_Day8Question13.mp3',
+    14: 'Day08/New_Day8Question14.mp3',
+    15: 'Day08/New_Day8Question15.mp3'
+  },
+  'day09': {
+    1: 'Day09/New_Day9Question01.mp3',
+    2: 'Day09/New_Day9Question02.mp3',
+    3: 'Day09/New_Day9Question03.mp3',
+    4: 'Day09/New_Day9Question04.mp3',
+    5: 'Day09/New_Day9Question05.mp3',
+    6: 'Day09/New_Day9Question06.mp3',
+    7: 'Day09/New_Day9Question07.mp3',
+    8: 'Day09/New_Day9Question08.mp3',
+    9: 'Day09/New_Day9Question09.mp3',
+    10: 'Day09/New_Day9Question10.mp3',
+    11: 'Day09/New_Day9Question11.mp3',
+    12: 'Day09/New_Day9Question12.mp3',
+    13: 'Day09/New_Day9Question13.mp3',
+    14: 'Day09/New_Day9Question14.mp3',
+    15: 'Day09/New_Day9Question15.mp3'
+  },
+  'day10': {
+    1: 'Day10/New_Day10Question01.mp3',
+    2: 'Day10/New_Day10Question02.mp3',
+    3: 'Day10/New_Day10Question03.mp3',
+    4: 'Day10/New_Day10Question04.mp3',
+    5: 'Day10/New_Day10Question05.mp3',
+    6: 'Day10/New_Day10Question06.mp3',
+    7: 'Day10/New_Day10Question07.mp3',
+    8: 'Day10/New_Day10Question08.mp3',
+    9: 'Day10/New_Day10Question09.mp3',
+    10: 'Day10/New_Day10Question10.mp3',
+    11: 'Day10/New_Day10Question11.mp3',
+    12: 'Day10/New_Day10Question12.mp3',
+    13: 'Day10/New_Day10Question13.mp3',
+    14: 'Day10/New_Day10Question14.mp3',
+    15: 'Day10/New_Day10Question15.mp3'
+  },
+  'day11': {
+    1: 'Day11/New_Day11Question01.mp3',
+    2: 'Day11/New_Day11Question02.mp3',
+    3: 'Day11/New_Day11Question03.mp3',
+    4: 'Day11/New_Day11Question04.mp3',
+    5: 'Day11/New_Day11Question05.mp3',
+    6: 'Day11/New_Day11Question06.mp3',
+    7: 'Day11/New_Day11Question07.mp3',
+    8: 'Day11/New_Day11Question08.mp3',
+    9: 'Day11/New_Day11Question09.mp3',
+    10: 'Day11/New_Day11Question10.mp3',
+    11: 'Day11/New_Day11Question11.mp3',
+    12: 'Day11/New_Day11Question12.mp3',
+    13: 'Day11/New_Day11Question13.mp3',
+    14: 'Day11/New_Day11Question14.mp3',
+    15: 'Day11/New_Day11Question15.mp3'
+  },
+  'day12': {
+    1: 'Day12/New_Day12Question01.mp3',
+    2: 'Day12/New_Day12Question02.mp3',
+    3: 'Day12/New_Day12Question03.mp3',
+    4: 'Day12/New_Day12Question04.mp3',
+    5: 'Day12/New_Day12Question05.mp3',
+    6: 'Day12/New_Day12Question06.mp3',
+    7: 'Day12/New_Day12Question07.mp3',
+    8: 'Day12/New_Day12Question08.mp3',
+    9: 'Day12/New_Day12Question09.mp3',
+    10: 'Day12/New_Day12Question10.mp3',
+    11: 'Day12/New_Day12Question11.mp3',
+    12: 'Day12/New_Day12Question12.mp3',
+    13: 'Day12/New_Day12Question13.mp3',
+    14: 'Day12/New_Day12Question14.mp3',
+    15: 'Day12/New_Day12Question15.mp3'
+  },
+  'day13': {
+    1: 'Day13/New_Day13Question01.mp3',
+    2: 'Day13/New_Day13Question02.mp3',
+    3: 'Day13/New_Day13Question03.mp3',
+    4: 'Day13/New_Day13Question04.mp3',
+    5: 'Day13/New_Day13Question05.mp3',
+    6: 'Day13/New_Day13Question06.mp3',
+    7: 'Day13/New_Day13Question07.mp3',
+    8: 'Day13/New_Day13Question08.mp3',
+    9: 'Day13/New_Day13Question09.mp3',
+    10: 'Day13/New_Day13Question10.mp3',
+    11: 'Day13/New_Day13Question11.mp3',
+    12: 'Day13/New_Day13Question12.mp3',
+    13: 'Day13/New_Day13Question13.mp3',
+    14: 'Day13/New_Day13Question14.mp3',
+    15: 'Day13/New_Day13Question15.mp3'
+  },
+  'day14': {
+    1: 'Day14/New_Day14Question01.mp3',
+    2: 'Day14/New_Day14Question02.mp3',
+    3: 'Day14/New_Day14Question03.mp3',
+    4: 'Day14/New_Day14Question04.mp3',
+    5: 'Day14/New_Day14Question05.mp3',
+    6: 'Day14/New_Day14Question06.mp3',
+    7: 'Day14/New_Day14Question07.mp3',
+    8: 'Day14/New_Day14Question08.mp3',
+    9: 'Day14/New_Day14Question09.mp3',
+    10: 'Day14/New_Day14Question10.mp3',
+    11: 'Day14/New_Day14Question11.mp3',
+    12: 'Day14/New_Day14Question12.mp3',
+    13: 'Day14/New_Day14Question13.mp3',
+    14: 'Day14/New_Day14Question14.mp3',
+    15: 'Day14/New_Day14Question15.mp3'
+  },
+  'day15': {
+    1: 'Day15/New_Day15Question01.mp3',
+    2: 'Day15/New_Day15Question02.mp3',
+    3: 'Day15/New_Day15Question03.mp3',
+    4: 'Day15/New_Day15Question04.mp3',
+    5: 'Day15/New_Day15Question05.mp3',
+    6: 'Day15/New_Day15Question06.mp3',
+    7: 'Day15/New_Day15Question07.mp3',
+    8: 'Day15/New_Day15Question08.mp3',
+    9: 'Day15/New_Day15Question09.mp3',
+    10: 'Day15/New_Day15Question10.mp3',
+    11: 'Day15/New_Day15Question11.mp3',
+    12: 'Day15/New_Day15Question12.mp3',
+    13: 'Day15/New_Day15Question13.mp3',
+    14: 'Day15/New_Day15Question14.mp3',
+    15: 'Day15/New_Day15Question15.mp3'
+  },
+  'day16': {
+    1: 'Day16/New_Day16Question01.mp3',
+    2: 'Day16/New_Day16Question02.mp3',
+    3: 'Day16/New_Day16Question03.mp3',
+    4: 'Day16/New_Day16Question04.mp3',
+    5: 'Day16/New_Day16Question05.mp3',
+    6: 'Day16/New_Day16Question06.mp3',
+    7: 'Day16/New_Day16Question07.mp3',
+    8: 'Day16/New_Day16Question08.mp3',
+    9: 'Day16/New_Day16Question09.mp3',
+    10: 'Day16/New_Day16Question10.mp3',
+    11: 'Day16/New_Day16Question11.mp3',
+    12: 'Day16/New_Day16Question12.mp3',
+    13: 'Day16/New_Day16Question13.mp3',
+    14: 'Day16/New_Day16Question14.mp3',
+    15: 'Day16/New_Day16Question15.mp3'
+  },
+  'day17': {
+    1: 'Day17/New_Day17Question01.mp3',
+    2: 'Day17/New_Day17Question02.mp3',
+    3: 'Day17/New_Day17Question03.mp3',
+    4: 'Day17/New_Day17Question04.mp3',
+    5: 'Day17/New_Day17Question05.mp3',
+    6: 'Day17/New_Day17Question06.mp3',
+    7: 'Day17/New_Day17Question07.mp3',
+    8: 'Day17/New_Day17Question08.mp3',
+    9: 'Day17/New_Day17Question09.mp3',
+    10: 'Day17/New_Day17Question10.mp3',
+    11: 'Day17/New_Day17Question11.mp3',
+    12: 'Day17/New_Day17Question12.mp3',
+    13: 'Day17/New_Day17Question13.mp3',
+    14: 'Day17/New_Day17Question14.mp3',
+    15: 'Day17/New_Day17Question15.mp3'
   }
 };
 
@@ -7211,6 +7440,661 @@ const day06Tracks = [
   { src: 'Day06/New_Day6Question15sol.mp3', target: '#questionBar', title: 'Q15 Solution: Multi-Column Group with HAVING', type: 'solution', qId: 15 }
 ];
 
+const day07Durations = [17.9, 14.0, 9.9, 13.7, 9.6, 15.2, 12.1, 12.3, 12.8, 14.5, 15.7, 9.9, 10.4, 14.9, 11.6, 10.5, 10.6, 9.7, 9.3, 8.1, 11.4, 10.6, 8.8, 8.8, 9.2, 8.4, 10.9, 9.9, 11.3, 10.3, 11.0, 10.4, 13.1, 11.4, 10.7, 10.6, 9.5, 11.8, 10.5, 7.9, 11.3, 12.4, 12.4, 16.0, 12.6, 14.8];
+
+const day07Tracks = [
+  // ── Section 1: Scalar vs Aggregate ──
+  { src: 'Day07/New_Day7Part1audio01.mp3', target: '#day07Scalar', title: '01. Single-Row Functions' },
+  { src: 'Day07/New_Day7Part1audio02.mp3', target: '#day07WhereClausesAllowed', title: 'Anywhere in SQL' },
+
+  // ── Section 2: Essential String Functions ──
+  { src: 'Day07/New_Day7Part1audio03.mp3', target: '#day07String', title: '02. Essential String Functions' },
+  { src: 'Day07/New_Day7Part1audio04.mp3', target: '#day07StringExamples', title: 'String Functions in Practice' },
+  { src: 'Day07/New_Day7Part1audio05.mp3', target: '#day07StringQuery2', title: 'Filtering by String Length' },
+
+  // ── Section 3: SUBSTR & INSTR ──
+  { src: 'Day07/New_Day7Part1audio06.mp3', target: '#day07Substr', title: '03. SUBSTR & INSTR' },
+  { src: 'Day07/New_Day7Part1audio07.mp3', target: '#day07SubstrExamples', title: 'Substrings & Date Slicing' },
+  { src: 'Day07/New_Day7Part1audio08.mp3', target: '#day07SubstrQuery2', title: 'Dynamic Domain Extraction' },
+
+  // ── Section 4: Numeric Functions ──
+  { src: 'Day07/New_Day7Part1audio09.mp3', target: '#day07Numeric', title: '04. Numeric Functions' },
+  { src: 'Day07/New_Day7Part1audio10.mp3', target: '#day07NumericExamples', title: 'Numeric Calculations in Action' },
+
+  // ── Section 5: Modulo & Partitioning ──
+  { src: 'Day07/New_Day7Part1audio11.mp3', target: '#day07Modulo', title: '05. Modulo Arithmetic' },
+  { src: 'Day07/New_Day7Part1audio12.mp3', target: '#day07ModuloExamples', title: 'Odd / Even Partitioning' },
+  { src: 'Day07/New_Day7Part1audio13.mp3', target: '#day07NullScalarWarn', title: '⚠️ NULL Contagion' },
+
+  // ── Section 6: Performance & Sargability ──
+  { src: 'Day07/New_Day7Part1audio14.mp3', target: '#day07Sargability', title: '06. Performance & Sargability' },
+  { src: 'Day07/New_Day7Part1audio15.mp3', target: '#day07NonSargCard', title: 'Cross-Database Syntax' },
+  { src: 'Day07/New_Day7Part1audio16.mp3', target: '#day07Scalar', title: 'Ready for Practice' },
+
+  // ── 15 Practice Questions & Solutions ──
+  { src: 'Day07/New_Day7Question01.mp3', target: '#questionBar', title: 'Q1: Full Name Concatenation', type: 'question', qId: 1 },
+  { src: 'Day07/New_Day7Question01sol.mp3', target: '#questionBar', title: 'Q1 Solution: Full Name Concatenation', type: 'solution', qId: 1 },
+  { src: 'Day07/New_Day7Question02.mp3', target: '#questionBar', title: 'Q2: Standardized Email Casing', type: 'question', qId: 2 },
+  { src: 'Day07/New_Day7Question02sol.mp3', target: '#questionBar', title: 'Q2 Solution: Standardized Email Casing', type: 'solution', qId: 2 },
+  { src: 'Day07/New_Day7Question03.mp3', target: '#questionBar', title: 'Q3: Username Extraction', type: 'question', qId: 3 },
+  { src: 'Day07/New_Day7Question03sol.mp3', target: '#questionBar', title: 'Q3 Solution: Username Extraction', type: 'solution', qId: 3 },
+  { src: 'Day07/New_Day7Question04.mp3', target: '#questionBar', title: 'Q4: Character Length Audit', type: 'question', qId: 4 },
+  { src: 'Day07/New_Day7Question04sol.mp3', target: '#questionBar', title: 'Q4 Solution: Character Length Audit', type: 'solution', qId: 4 },
+  { src: 'Day07/New_Day7Question05.mp3', target: '#questionBar', title: 'Q5: Catalog Price Rounding', type: 'question', qId: 5 },
+  { src: 'Day07/New_Day7Question05sol.mp3', target: '#questionBar', title: 'Q5 Solution: Catalog Price Rounding', type: 'solution', qId: 5 },
+  { src: 'Day07/New_Day7Question06.mp3', target: '#questionBar', title: 'Q6: 3-Letter Name Abbreviations', type: 'question', qId: 6 },
+  { src: 'Day07/New_Day7Question06sol.mp3', target: '#questionBar', title: 'Q6 Solution: 3-Letter Name Abbreviations', type: 'solution', qId: 6 },
+  { src: 'Day07/New_Day7Question07.mp3', target: '#questionBar', title: 'Q7: Estimated Monthly Compensation', type: 'question', qId: 7 },
+  { src: 'Day07/New_Day7Question07sol.mp3', target: '#questionBar', title: 'Q7 Solution: Estimated Monthly Compensation', type: 'solution', qId: 7 },
+  { src: 'Day07/New_Day7Question08.mp3', target: '#questionBar', title: 'Q8: Benchmark Variance (ABS)', type: 'question', qId: 8 },
+  { src: 'Day07/New_Day7Question08sol.mp3', target: '#questionBar', title: 'Q8 Solution: Benchmark Variance (ABS)', type: 'solution', qId: 8 },
+  { src: 'Day07/New_Day7Question09.mp3', target: '#questionBar', title: 'Q9: Dynamic Email Domain Extraction', type: 'question', qId: 9 },
+  { src: 'Day07/New_Day7Question09sol.mp3', target: '#questionBar', title: 'Q9 Solution: Dynamic Email Domain Extraction', type: 'solution', qId: 9 },
+  { src: 'Day07/New_Day7Question10.mp3', target: '#questionBar', title: 'Q10: Even Order Partitioning', type: 'question', qId: 10 },
+  { src: 'Day07/New_Day7Question10sol.mp3', target: '#questionBar', title: 'Q10 Solution: Even Order Partitioning', type: 'solution', qId: 10 },
+  { src: 'Day07/New_Day7Question11.mp3', target: '#questionBar', title: 'Q11: Filtering on String Length', type: 'question', qId: 11 },
+  { src: 'Day07/New_Day7Question11sol.mp3', target: '#questionBar', title: 'Q11 Solution: Filtering on String Length', type: 'solution', qId: 11 },
+  { src: 'Day07/New_Day7Question12.mp3', target: '#questionBar', title: 'Q12: Address Whitespace Sanitization', type: 'question', qId: 12 },
+  { src: 'Day07/New_Day7Question12sol.mp3', target: '#questionBar', title: 'Q12 Solution: Address Whitespace Sanitization', type: 'solution', qId: 12 },
+  { src: 'Day07/New_Day7Question13.mp3', target: '#questionBar', title: 'Q13: Logistics Package Tier (CEIL)', type: 'question', qId: 13 },
+  { src: 'Day07/New_Day7Question13sol.mp3', target: '#questionBar', title: 'Q13 Solution: Logistics Package Tier (CEIL)', type: 'solution', qId: 13 },
+  { src: 'Day07/New_Day7Question14.mp3', target: '#questionBar', title: 'Q14: Privacy-Masked Email Generator', type: 'question', qId: 14 },
+  { src: 'Day07/New_Day7Question14sol.mp3', target: '#questionBar', title: 'Q14 Solution: Privacy-Masked Email Generator', type: 'solution', qId: 14 },
+  { src: 'Day07/New_Day7Question15.mp3', target: '#questionBar', title: 'Q15: Lowercase & Floor Valuation', type: 'question', qId: 15 },
+  { src: 'Day07/New_Day7Question15sol.mp3', target: '#questionBar', title: 'Q15 Solution: Lowercase & Floor Valuation', type: 'solution', qId: 15 }
+];
+
+const day08Durations = [15.9, 20.2, 9.9, 12.0, 15.0, 12.7, 10.5, 12.6, 9.8, 11.9, 8.9, 11.5, 9.9, 17.8, 16.3, 11.1, 6.5, 4.1, 9.5, 9.4, 10.6, 12.9, 11.3, 9.4, 13.2, 12.5, 12.8, 14.4, 10.8, 15.0, 13.4, 11.2, 10.4, 11.8, 12.6, 17.9, 11.2, 21.7, 12.7, 16.6, 10.8, 12.1, 10.7, 16.8, 12.1, 17.7];
+
+const day08Tracks = [
+  // ── Section 1: Temporal Data Storage ──
+  { src: 'Day08/New_Day8Part1audio01.mp3', target: '#day08Storage', title: '01. Date Storage in SQL' },
+  { src: 'Day08/New_Day8Part1audio02.mp3', target: '#day08StorageInfo', title: 'Cross-Engine Date Types' },
+
+  // ── Section 2: Current Date & Time ──
+  { src: 'Day08/New_Day8Part1audio03.mp3', target: '#day08Current', title: '02. Getting Current Timestamps' },
+  { src: 'Day08/New_Day8Part1audio04.mp3', target: '#day08CurrentExamples', title: 'Current Date & Days Ago' },
+
+  // ── Section 3: Date Differences (julianday) ──
+  { src: 'Day08/New_Day8Part1audio05.mp3', target: '#day08Diff', title: '03. Calculating Intervals with julianday' },
+  { src: 'Day08/New_Day8Part1audio06.mp3', target: '#day08DiffExamples', title: 'Fulfillment & Staff Tenure' },
+
+  // ── Section 4: Date Arithmetic & Modifiers ──
+  { src: 'Day08/New_Day8Part1audio07.mp3', target: '#day08Arith', title: '04. Date Arithmetic & Modifiers' },
+  { src: 'Day08/New_Day8Part1audio08.mp3', target: '#day08ArithExamples', title: 'Deadlines & Rolling Lookbacks' },
+
+  // ── Section 5: strftime Formatting ──
+  { src: 'Day08/New_Day8Part1audio09.mp3', target: '#day08Strftime', title: '05. strftime() Component Extraction' },
+  { src: 'Day08/New_Day8Part1audio10.mp3', target: '#day08StrftimeRefTable', title: 'strftime Format Directives' },
+  { src: 'Day08/New_Day8Part1audio11.mp3', target: '#day08StrftimeExamples', title: 'Date Slicing & Rollups' },
+  { src: 'Day08/New_Day8Part1audio12.mp3', target: '#day08StrftimeQuery2', title: 'Annual Revenue Summary' },
+
+  // ── Section 6: Monthly & Cohort Trends ──
+  { src: 'Day08/New_Day8Part1audio13.mp3', target: '#day08Monthly', title: '06. Monthly Rollups & Cohorts' },
+  { src: 'Day08/New_Day8Part1audio14.mp3', target: '#day08SargWarn', title: '💡 Sargability in Date Filtering' },
+  { src: 'Day08/New_Day8Part1audio15.mp3', target: '#day08Storage', title: 'Cross-Database Comparison' },
+  { src: 'Day08/New_Day8Part1audio16.mp3', target: '#day08Storage', title: 'Ready for Practice' },
+
+  // ── 15 Practice Questions & Solutions ──
+  { src: 'Day08/New_Day8Question01.mp3', target: '#questionBar', title: 'Q1: Current System Date Retrieval', type: 'question', qId: 1 },
+  { src: 'Day08/New_Day8Question01sol.mp3', target: '#questionBar', title: 'Q1 Solution: Current Date Retrieval', type: 'solution', qId: 1 },
+  { src: 'Day08/New_Day8Question02.mp3', target: '#questionBar', title: 'Q2: Four-Digit Order Year', type: 'question', qId: 2 },
+  { src: 'Day08/New_Day8Question02sol.mp3', target: '#questionBar', title: 'Q2 Solution: Four-Digit Order Year', type: 'solution', qId: 2 },
+  { src: 'Day08/New_Day8Question03.mp3', target: '#questionBar', title: 'Q3: Calendar Year 2024 Orders', type: 'question', qId: 3 },
+  { src: 'Day08/New_Day8Question03sol.mp3', target: '#questionBar', title: 'Q3 Solution: Calendar Year 2024 Orders', type: 'solution', qId: 3 },
+  { src: 'Day08/New_Day8Question04.mp3', target: '#questionBar', title: 'Q4: 7-Day Projected Delivery Deadline', type: 'question', qId: 4 },
+  { src: 'Day08/New_Day8Question04sol.mp3', target: '#questionBar', title: 'Q4 Solution: Projected Delivery Deadline', type: 'solution', qId: 4 },
+  { src: 'Day08/New_Day8Question05.mp3', target: '#questionBar', title: 'Q5: Staff Seniority Tenure in Days', type: 'question', qId: 5 },
+  { src: 'Day08/New_Day8Question05sol.mp3', target: '#questionBar', title: 'Q5 Solution: Staff Seniority Tenure in Days', type: 'solution', qId: 5 },
+  { src: 'Day08/New_Day8Question06.mp3', target: '#questionBar', title: 'Q6: Fulfillment SLA Turnaround Days', type: 'question', qId: 6 },
+  { src: 'Day08/New_Day8Question06sol.mp3', target: '#questionBar', title: 'Q6 Solution: Fulfillment SLA Turnaround', type: 'solution', qId: 6 },
+  { src: 'Day08/New_Day8Question07.mp3', target: '#questionBar', title: 'Q7: Monthly Revenue & Volume Cohorts', type: 'question', qId: 7 },
+  { src: 'Day08/New_Day8Question07sol.mp3', target: '#questionBar', title: 'Q7 Solution: Monthly Revenue & Volume Cohorts', type: 'solution', qId: 7 },
+  { src: 'Day08/New_Day8Question08.mp3', target: '#questionBar', title: 'Q8: Weekend Shopping Behavioral Trends', type: 'question', qId: 8 },
+  { src: 'Day08/New_Day8Question08sol.mp3', target: '#questionBar', title: 'Q8 Solution: Weekend Shopping Trends', type: 'solution', qId: 8 },
+  { src: 'Day08/New_Day8Question09.mp3', target: '#questionBar', title: 'Q9: Annual Transaction Volume', type: 'question', qId: 9 },
+  { src: 'Day08/New_Day8Question09sol.mp3', target: '#questionBar', title: 'Q9 Solution: Annual Transaction Volume', type: 'solution', qId: 9 },
+  { src: 'Day08/New_Day8Question10.mp3', target: '#questionBar', title: 'Q10: Senior Staff Milestone (>700 Days)', type: 'question', qId: 10 },
+  { src: 'Day08/New_Day8Question10sol.mp3', target: '#questionBar', title: 'Q10 Solution: Senior Staff Milestone', type: 'solution', qId: 10 },
+  { src: 'Day08/New_Day8Question11.mp3', target: '#questionBar', title: 'Q11: High Shipping Lag Alert (>3 Days)', type: 'question', qId: 11 },
+  { src: 'Day08/New_Day8Question11sol.mp3', target: '#questionBar', title: 'Q11 Solution: High Shipping Lag Alert', type: 'solution', qId: 11 },
+  { src: 'Day08/New_Day8Question12.mp3', target: '#questionBar', title: 'Q12: Day-of-Week Revenue Distribution', type: 'question', qId: 12 },
+  { src: 'Day08/New_Day8Question12sol.mp3', target: '#questionBar', title: 'Q12 Solution: Day-of-Week Revenue', type: 'solution', qId: 12 },
+  { src: 'Day08/New_Day8Question13.mp3', target: '#questionBar', title: 'Q13: 30-Day Customer Return Deadline', type: 'question', qId: 13 },
+  { src: 'Day08/New_Day8Question13sol.mp3', target: '#questionBar', title: 'Q13 Solution: 30-Day Customer Return Deadline', type: 'solution', qId: 13 },
+  { src: 'Day08/New_Day8Question14.mp3', target: '#questionBar', title: 'Q14: Annual Performance by Status', type: 'question', qId: 14 },
+  { src: 'Day08/New_Day8Question14sol.mp3', target: '#questionBar', title: 'Q14 Solution: Annual Performance by Status', type: 'solution', qId: 14 },
+  { src: 'Day08/New_Day8Question15.mp3', target: '#questionBar', title: 'Q15: Customer Lifetime Order Boundaries', type: 'question', qId: 15 },
+  { src: 'Day08/New_Day8Question15sol.mp3', target: '#questionBar', title: 'Q15 Solution: Customer Lifetime Boundaries', type: 'solution', qId: 15 }
+];
+
+const day09Durations = [18.0, 15.7, 14.8, 8.8, 12.3, 12.5, 12.3, 9.4, 13.7, 8.6, 11.1, 10.9, 8.3, 10.7, 11.8, 8.3, 17.1, 21.8, 15.0, 15.1, 11.7, 13.0, 12.9, 13.1, 12.6, 14.3, 10.1, 15.4, 11.7, 14.9, 15.6, 17.6, 14.9, 17.3, 9.8, 12.7, 12.0, 14.3, 16.7, 27.5, 10.6, 11.8, 13.7, 15.0, 10.6, 15.9];
+
+const day09Tracks = [
+  // ── Section 1: The CASE Expression ──
+  { src: 'Day09/New_Day9Part1audio01.mp3', target: '#day09Case', title: '01. The CASE Expression' },
+  { src: 'Day09/New_Day9Part1audio02.mp3', target: '#day09IfElse', title: 'SQL IF-THEN-ELSE' },
+
+  // ── Section 2: Searched vs Simple CASE ──
+  { src: 'Day09/New_Day9Part1audio03.mp3', target: '#day09Searched', title: '02. Searched vs Simple CASE' },
+  { src: 'Day09/New_Day9Part1audio04.mp3', target: '#day09SearchedFlex', title: 'Searched CASE Flexibility' },
+  { src: 'Day09/New_Day9Part1audio05.mp3', target: '#day09SalaryExamples', title: 'Salary Bands in Practice' },
+  { src: 'Day09/New_Day9Part1audio06.mp3', target: '#day09OrderWarn', title: '⚠️ First-Match Wins Trap' },
+
+  // ── Section 3: Simple CASE Expressions ──
+  { src: 'Day09/New_Day9Part1audio07.mp3', target: '#day09SimpleCase', title: '03. Simple CASE Expressions' },
+  { src: 'Day09/New_Day9Part1audio08.mp3', target: '#day09SimpleExamples', title: 'Mapping Status Codes' },
+
+  // ── Section 4: Conditional Aggregation ──
+  { src: 'Day09/New_Day9Part1audio09.mp3', target: '#day09ConditionalAgg', title: '04. Conditional Aggregation' },
+  { src: 'Day09/New_Day9Part1audio10.mp3', target: '#day09PivotExamples', title: 'Pivoting Rows to Columns' },
+
+  // ── Section 5: NULL Handling & Safe Division ──
+  { src: 'Day09/New_Day9Part1audio11.mp3', target: '#day09Nulls', title: '05. NULL Handling & Safe Division' },
+  { src: 'Day09/New_Day9Part1audio12.mp3', target: '#day09SafeDivExamples', title: 'Preventing Division by Zero' },
+
+  // ── Section 6: Custom Sorting with CASE ──
+  { src: 'Day09/New_Day9Part1audio13.mp3', target: '#day09OrderSort', title: '06. CASE in ORDER BY & Sorting' },
+  { src: 'Day09/New_Day9Part1audio14.mp3', target: '#day09SortExamples', title: 'Custom Urgency Priority' },
+  { src: 'Day09/New_Day9Part1audio15.mp3', target: '#day09CrossDb', title: 'Cross-Database Compatibility' },
+  { src: 'Day09/New_Day9Part1audio16.mp3', target: '#day09Case', title: 'Ready for Practice' },
+
+  // ── 15 Practice Questions & Solutions ──
+  { src: 'Day09/New_Day9Question01.mp3', target: '#questionBar', title: 'Q1: Salary Tier Classification', type: 'question', qId: 1 },
+  { src: 'Day09/New_Day9Question01sol.mp3', target: '#questionBar', title: 'Q1 Solution: Salary Tier Classification', type: 'solution', qId: 1 },
+  { src: 'Day09/New_Day9Question02.mp3', target: '#questionBar', title: 'Q2: Order Value Segmentation', type: 'question', qId: 2 },
+  { src: 'Day09/New_Day9Question02sol.mp3', target: '#questionBar', title: 'Q2 Solution: Order Value Segmentation', type: 'solution', qId: 2 },
+  { src: 'Day09/New_Day9Question03.mp3', target: '#questionBar', title: 'Q3: Customer Loyalty Segmentation', type: 'question', qId: 3 },
+  { src: 'Day09/New_Day9Question03sol.mp3', target: '#questionBar', title: 'Q3 Solution: Customer Loyalty Segmentation', type: 'solution', qId: 3 },
+  { src: 'Day09/New_Day9Question04.mp3', target: '#questionBar', title: 'Q4: Translate Order Status Codes', type: 'question', qId: 4 },
+  { src: 'Day09/New_Day9Question04sol.mp3', target: '#questionBar', title: 'Q4 Solution: Translate Order Status Codes', type: 'solution', qId: 4 },
+  { src: 'Day09/New_Day9Question05.mp3', target: '#questionBar', title: 'Q5: Inventory Replenishment Alert', type: 'question', qId: 5 },
+  { src: 'Day09/New_Day9Question05sol.mp3', target: '#questionBar', title: 'Q5 Solution: Inventory Replenishment Alert', type: 'solution', qId: 5 },
+  { src: 'Day09/New_Day9Question06.mp3', target: '#questionBar', title: 'Q6: Conditional Order Counts', type: 'question', qId: 6 },
+  { src: 'Day09/New_Day9Question06sol.mp3', target: '#questionBar', title: 'Q6 Solution: Conditional Order Counts', type: 'solution', qId: 6 },
+  { src: 'Day09/New_Day9Question07.mp3', target: '#questionBar', title: 'Q7: Annual Bonus Calculation', type: 'question', qId: 7 },
+  { src: 'Day09/New_Day9Question07sol.mp3', target: '#questionBar', title: 'Q7 Solution: Annual Bonus Calculation', type: 'solution', qId: 7 },
+  { src: 'Day09/New_Day9Question08.mp3', target: '#questionBar', title: 'Q8: Safe Markup Percentage Calculation', type: 'question', qId: 8 },
+  { src: 'Day09/New_Day9Question08sol.mp3', target: '#questionBar', title: 'Q8 Solution: Safe Markup Percentage Calculation', type: 'solution', qId: 8 },
+  { src: 'Day09/New_Day9Question09.mp3', target: '#questionBar', title: 'Q9: Flag High-Cost Tech Staff', type: 'question', qId: 9 },
+  { src: 'Day09/New_Day9Question09sol.mp3', target: '#questionBar', title: 'Q9 Solution: Flag High-Cost Tech Staff', type: 'solution', qId: 9 },
+  { src: 'Day09/New_Day9Question10.mp3', target: '#questionBar', title: 'Q10: Sort by Custom Business Urgency', type: 'question', qId: 10 },
+  { src: 'Day09/New_Day9Question10sol.mp3', target: '#questionBar', title: 'Q10 Solution: Sort by Custom Business Urgency', type: 'solution', qId: 10 },
+  { src: 'Day09/New_Day9Question11.mp3', target: '#questionBar', title: 'Q11: Catalog Price Category', type: 'question', qId: 11 },
+  { src: 'Day09/New_Day9Question11sol.mp3', target: '#questionBar', title: 'Q11 Solution: Catalog Price Category', type: 'solution', qId: 11 },
+  { src: 'Day09/New_Day9Question12.mp3', target: '#questionBar', title: 'Q12: Fiscal Quarter Extraction', type: 'question', qId: 12 },
+  { src: 'Day09/New_Day9Question12sol.mp3', target: '#questionBar', title: 'Q12 Solution: Fiscal Quarter Extraction', type: 'solution', qId: 12 },
+  { src: 'Day09/New_Day9Question13.mp3', target: '#questionBar', title: 'Q13: Audit Commission Eligibility', type: 'question', qId: 13 },
+  { src: 'Day09/New_Day9Question13sol.mp3', target: '#questionBar', title: 'Q13 Solution: Audit Commission Eligibility', type: 'solution', qId: 13 },
+  { src: 'Day09/New_Day9Question14.mp3', target: '#questionBar', title: 'Q14: VIP Order Flagging', type: 'question', qId: 14 },
+  { src: 'Day09/New_Day9Question14sol.mp3', target: '#questionBar', title: 'Q14 Solution: VIP Order Flagging', type: 'solution', qId: 14 },
+  { src: 'Day09/New_Day9Question15.mp3', target: '#questionBar', title: 'Q15: Multi-Metric Revenue Summary', type: 'question', qId: 15 },
+  { src: 'Day09/New_Day9Question15sol.mp3', target: '#questionBar', title: 'Q15 Solution: Multi-Metric Revenue Summary', type: 'solution', qId: 15 }
+];
+
+const day10Durations = [19.8, 14.9, 13.2, 10.6, 10.9, 12.4, 11.7, 12.7, 13.3, 11.5, 12.4, 13.8, 7.3, 17.0, 13.4, 9.6, 12.0, 19.1, 12.1, 18.1, 10.4, 19.9, 10.6, 23.5, 11.9, 27.6, 10.8, 25.8, 12.0, 24.7, 12.4, 17.7, 12.0, 24.6, 13.0, 22.0, 11.6, 24.7, 11.7, 31.3, 11.2, 25.1, 11.1, 18.5, 10.9, 22.8];
+
+const day10Tracks = [
+  // ── Section 1: Relational Architecture ──
+  { src: 'Day10/New_Day10Part1audio01.mp3', target: '#day10Relational', title: '01. Why Joins?' },
+  { src: 'Day10/New_Day10Part1audio02.mp3', target: '#day10Keys', title: 'Primary & Foreign Keys' },
+
+  // ── Section 2: INNER JOIN Mechanics ──
+  { src: 'Day10/New_Day10Part1audio03.mp3', target: '#day10InnerJoin', title: '02. INNER JOIN Mechanics' },
+  { src: 'Day10/New_Day10Part1audio04.mp3', target: '#day10Aliases', title: 'Table Aliases' },
+  { src: 'Day10/New_Day10Part1audio05.mp3', target: '#day10InnerExamples', title: 'Customer Orders in Action' },
+
+  // ── Section 3: Multi-Table Joins ──
+  { src: 'Day10/New_Day10Part1audio06.mp3', target: '#day10MultiTable', title: '03. Multi-Table Joins' },
+  { src: 'Day10/New_Day10Part1audio07.mp3', target: '#day10MultiExamples', title: 'Line Items & Products' },
+
+  // ── Section 4: Joins with Aggregations ──
+  { src: 'Day10/New_Day10Part1audio08.mp3', target: '#day10JoinAgg', title: '04. Joins with GROUP BY' },
+
+  // ── Section 5: LEFT OUTER JOIN ──
+  { src: 'Day10/New_Day10Part1audio09.mp3', target: '#day10LeftJoin', title: '05. LEFT OUTER JOIN' },
+  { src: 'Day10/New_Day10Part1audio10.mp3', target: '#day10NullPadding', title: 'NULL-Padding Mechanics' },
+  { src: 'Day10/New_Day10Part1audio11.mp3', target: '#day10LeftExamples', title: 'All Customers & Order Counts' },
+
+  // ── Section 6: Anti-Join Pattern ──
+  { src: 'Day10/New_Day10Part1audio12.mp3', target: '#day10AntiJoin', title: '06. The Anti-Join Pattern' },
+  { src: 'Day10/New_Day10Part1audio13.mp3', target: '#day10AntiExamples', title: 'Finding Inactive Customers' },
+  { src: 'Day10/New_Day10Part1audio14.mp3', target: '#day10OnVsWhere', title: '⚠️ The ON vs WHERE Trap' },
+  { src: 'Day10/New_Day10Part1audio15.mp3', target: '#day10Venn', title: 'Cross-Engine Join Capabilities' },
+  { src: 'Day10/New_Day10Part1audio16.mp3', target: '#day10Relational', title: 'Ready for Practice' },
+
+  // ── 15 Practice Questions & Solutions ──
+  { src: 'Day10/New_Day10Question01.mp3', target: '#questionBar', title: 'Q1: Orders with Customer Names', type: 'question', qId: 1 },
+  { src: 'Day10/New_Day10Question01sol.mp3', target: '#questionBar', title: 'Q1 Solution: Orders with Customer Names', type: 'solution', qId: 1 },
+  { src: 'Day10/New_Day10Question02.mp3', target: '#questionBar', title: 'Q2: Products with Category Names', type: 'question', qId: 2 },
+  { src: 'Day10/New_Day10Question02sol.mp3', target: '#questionBar', title: 'Q2 Solution: Products with Category Names', type: 'solution', qId: 2 },
+  { src: 'Day10/New_Day10Question03.mp3', target: '#questionBar', title: 'Q3: Employees with Department Names', type: 'question', qId: 3 },
+  { src: 'Day10/New_Day10Question03sol.mp3', target: '#questionBar', title: 'Q3 Solution: Employees with Department Names', type: 'solution', qId: 3 },
+  { src: 'Day10/New_Day10Question04.mp3', target: '#questionBar', title: 'Q4: Three-Table Line Items Join', type: 'question', qId: 4 },
+  { src: 'Day10/New_Day10Question04sol.mp3', target: '#questionBar', title: 'Q4 Solution: Three-Table Line Items Join', type: 'solution', qId: 4 },
+  { src: 'Day10/New_Day10Question05.mp3', target: '#questionBar', title: 'Q5: Total Customer Spending', type: 'question', qId: 5 },
+  { src: 'Day10/New_Day10Question05sol.mp3', target: '#questionBar', title: 'Q5 Solution: Total Customer Spending', type: 'solution', qId: 5 },
+  { src: 'Day10/New_Day10Question06.mp3', target: '#questionBar', title: 'Q6: Category Catalog Summary', type: 'question', qId: 6 },
+  { src: 'Day10/New_Day10Question06sol.mp3', target: '#questionBar', title: 'Q6 Solution: Category Catalog Summary', type: 'solution', qId: 6 },
+  { src: 'Day10/New_Day10Question07.mp3', target: '#questionBar', title: 'Q7: Auditing All Customers with LEFT JOIN', type: 'question', qId: 7 },
+  { src: 'Day10/New_Day10Question07sol.mp3', target: '#questionBar', title: 'Q7 Solution: Auditing All Customers with LEFT JOIN', type: 'solution', qId: 7 },
+  { src: 'Day10/New_Day10Question08.mp3', target: '#questionBar', title: 'Q8: Identify Inactive Customers (Anti-Join)', type: 'question', qId: 8 },
+  { src: 'Day10/New_Day10Question08sol.mp3', target: '#questionBar', title: 'Q8 Solution: Identify Inactive Customers (Anti-Join)', type: 'solution', qId: 8 },
+  { src: 'Day10/New_Day10Question09.mp3', target: '#questionBar', title: 'Q9: Audit Empty Categories with LEFT JOIN', type: 'question', qId: 9 },
+  { src: 'Day10/New_Day10Question09sol.mp3', target: '#questionBar', title: 'Q9 Solution: Audit Empty Categories with LEFT JOIN', type: 'solution', qId: 9 },
+  { src: 'Day10/New_Day10Question10.mp3', target: '#questionBar', title: 'Q10: Order Line Totals', type: 'question', qId: 10 },
+  { src: 'Day10/New_Day10Question10sol.mp3', target: '#questionBar', title: 'Q10 Solution: Order Line Totals', type: 'solution', qId: 10 },
+  { src: 'Day10/New_Day10Question11.mp3', target: '#questionBar', title: 'Q11: Department Headcount with LEFT JOIN', type: 'question', qId: 11 },
+  { src: 'Day10/New_Day10Question11sol.mp3', target: '#questionBar', title: 'Q11 Solution: Department Headcount with LEFT JOIN', type: 'solution', qId: 11 },
+  { src: 'Day10/New_Day10Question12.mp3', target: '#questionBar', title: 'Q12: Joined Orders in Calendar Year 2024', type: 'question', qId: 12 },
+  { src: 'Day10/New_Day10Question12sol.mp3', target: '#questionBar', title: 'Q12 Solution: Joined Orders in Calendar Year 2024', type: 'solution', qId: 12 },
+  { src: 'Day10/New_Day10Question13.mp3', target: '#questionBar', title: 'Q13: High-Value Customer Orders', type: 'question', qId: 13 },
+  { src: 'Day10/New_Day10Question13sol.mp3', target: '#questionBar', title: 'Q13 Solution: High-Value Customer Orders', type: 'solution', qId: 13 },
+  { src: 'Day10/New_Day10Question14.mp3', target: '#questionBar', title: 'Q14: Unsold Catalog Products (Anti-Join)', type: 'question', qId: 14 },
+  { src: 'Day10/New_Day10Question14sol.mp3', target: '#questionBar', title: 'Q14 Solution: Unsold Catalog Products (Anti-Join)', type: 'solution', qId: 14 },
+  { src: 'Day10/New_Day10Question15.mp3', target: '#questionBar', title: 'Q15: Regional Revenue Rollup', type: 'question', qId: 15 },
+  { src: 'Day10/New_Day10Question15sol.mp3', target: '#questionBar', title: 'Q15 Solution: Regional Revenue Rollup', type: 'solution', qId: 15 }
+];
+
+const day11Durations = [19.4, 15.2, 9.9, 14.7, 13.7, 9.8, 10.8, 6.6, 11.2, 13.8, 8.3, 11.3, 12.0, 7.5, 10.8, 8.2, 15.3, 25.3, 13.1, 32.1, 12.6, 32.7, 11.4, 29.6, 10.4, 16.8, 9.9, 11.3, 9.3, 14.8, 9.2, 17.2, 11.3, 30.0, 10.5, 25.3, 11.3, 29.1, 10.4, 13.9, 10.0, 26.0, 10.1, 24.3, 8.8, 30.0];
+
+const day11Tracks = [
+  // ── Section 1: Self-Joins ──
+  { src: 'Day11/New_Day11Part1audio01.mp3', target: '#day11SelfJoin', title: '01. What Are Self-Joins?' },
+  { src: 'Day11/New_Day11Part1audio02.mp3', target: '#day11Recursive', title: 'Hierarchical Relationships' },
+  { src: 'Day11/New_Day11Part1audio03.mp3', target: '#day11Aliases', title: 'Mandatory Table Aliases' },
+  { src: 'Day11/New_Day11Part1audio04.mp3', target: '#day11HierarchyExamples', title: 'Employee to Manager Hierarchy' },
+  { src: 'Day11/New_Day11Part1audio05.mp3', target: '#day11LeftWarn', title: '⚠️ Preserving Top Executives' },
+  { src: 'Day11/New_Day11Part1audio06.mp3', target: '#day11SpanExamples', title: 'Management Span of Control' },
+
+  // ── Section 2: Peer Comparisons ──
+  { src: 'Day11/New_Day11Part1audio07.mp3', target: '#day11Peers', title: '02. Peer Comparisons & Pairing' },
+  { src: 'Day11/New_Day11Part1audio08.mp3', target: '#day11PeerExamples', title: 'Same-Department Peers' },
+
+  // ── Section 3: CROSS JOIN ──
+  { src: 'Day11/New_Day11Part1audio09.mp3', target: '#day11CrossJoin', title: '03. CROSS JOIN & Matrix' },
+  { src: 'Day11/New_Day11Part1audio10.mp3', target: '#day11CartesianCalc', title: 'Cartesian Multiplications' },
+  { src: 'Day11/New_Day11Part1audio11.mp3', target: '#day11MatrixExamples', title: 'Department-Region Matrix' },
+  { src: 'Day11/New_Day11Part1audio12.mp3', target: '#day11ShareExamples', title: 'Percentage Share Calculations' },
+
+  // ── Section 4: Non-Equi Joins ──
+  { src: 'Day11/New_Day11Part1audio13.mp3', target: '#day11NonEqui', title: '04. Non-Equi Joins' },
+  { src: 'Day11/New_Day11Part1audio14.mp3', target: '#day11NonEquiExamples', title: 'Price Comparison Peers' },
+  { src: 'Day11/New_Day11Part1audio15.mp3', target: '#day11Perf', title: 'Self-Join Indexing Performance' },
+  { src: 'Day11/New_Day11Part1audio16.mp3', target: '#day11SelfJoin', title: 'Ready for Practice' },
+
+  // ── 15 Practice Questions & Solutions ──
+  { src: 'Day11/New_Day11Question01.mp3', target: '#questionBar', title: 'Q1: Employee-to-Manager Hierarchy', type: 'question', qId: 1 },
+  { src: 'Day11/New_Day11Question01sol.mp3', target: '#questionBar', title: 'Q1 Solution: Employee-to-Manager Hierarchy', type: 'solution', qId: 1 },
+  { src: 'Day11/New_Day11Question02.mp3', target: '#questionBar', title: 'Q2: Management Span of Control', type: 'question', qId: 2 },
+  { src: 'Day11/New_Day11Question02sol.mp3', target: '#questionBar', title: 'Q2 Solution: Management Span of Control', type: 'solution', qId: 2 },
+  { src: 'Day11/New_Day11Question03.mp3', target: '#questionBar', title: 'Q3: High-Earning Subordinates', type: 'question', qId: 3 },
+  { src: 'Day11/New_Day11Question03sol.mp3', target: '#questionBar', title: 'Q3 Solution: High-Earning Subordinates', type: 'solution', qId: 3 },
+  { src: 'Day11/New_Day11Question04.mp3', target: '#questionBar', title: 'Q4: Same-Department Peer Pairs', type: 'question', qId: 4 },
+  { src: 'Day11/New_Day11Question04sol.mp3', target: '#questionBar', title: 'Q4 Solution: Same-Department Peer Pairs', type: 'solution', qId: 4 },
+  { src: 'Day11/New_Day11Question05.mp3', target: '#questionBar', title: 'Q5: Category Hierarchy Self-Join', type: 'question', qId: 5 },
+  { src: 'Day11/New_Day11Question05sol.mp3', target: '#questionBar', title: 'Q5 Solution: Category Hierarchy Self-Join', type: 'solution', qId: 5 },
+  { src: 'Day11/New_Day11Question06.mp3', target: '#questionBar', title: 'Q6: Root Categories Audit', type: 'question', qId: 6 },
+  { src: 'Day11/New_Day11Question06sol.mp3', target: '#questionBar', title: 'Q6 Solution: Root Categories Audit', type: 'solution', qId: 6 },
+  { src: 'Day11/New_Day11Question07.mp3', target: '#questionBar', title: 'Q7: Department-Region Coverage Matrix', type: 'question', qId: 7 },
+  { src: 'Day11/New_Day11Question07sol.mp3', target: '#questionBar', title: 'Q7 Solution: Department-Region Coverage Matrix', type: 'solution', qId: 7 },
+  { src: 'Day11/New_Day11Question08.mp3', target: '#questionBar', title: 'Q8: Product Fulfillment Scenarios', type: 'question', qId: 8 },
+  { src: 'Day11/New_Day11Question08sol.mp3', target: '#questionBar', title: 'Q8 Solution: Product Fulfillment Scenarios', type: 'solution', qId: 8 },
+  { src: 'Day11/New_Day11Question09.mp3', target: '#questionBar', title: 'Q9: Higher-Priced Category Peers', type: 'question', qId: 9 },
+  { src: 'Day11/New_Day11Question09sol.mp3', target: '#questionBar', title: 'Q9 Solution: Higher-Priced Category Peers', type: 'solution', qId: 9 },
+  { src: 'Day11/New_Day11Question10.mp3', target: '#questionBar', title: 'Q10: Co-Located Customer Pairs', type: 'question', qId: 10 },
+  { src: 'Day11/New_Day11Question10sol.mp3', target: '#questionBar', title: 'Q10 Solution: Co-Located Customer Pairs', type: 'solution', qId: 10 },
+  { src: 'Day11/New_Day11Question11.mp3', target: '#questionBar', title: 'Q11: Hierarchy & Department Rollup', type: 'question', qId: 11 },
+  { src: 'Day11/New_Day11Question11sol.mp3', target: '#questionBar', title: 'Q11 Solution: Hierarchy & Department Rollup', type: 'solution', qId: 11 },
+  { src: 'Day11/New_Day11Question12.mp3', target: '#questionBar', title: 'Q12: Detect Top-Level Executives', type: 'question', qId: 12 },
+  { src: 'Day11/New_Day11Question12sol.mp3', target: '#questionBar', title: 'Q12 Solution: Detect Top-Level Executives', type: 'solution', qId: 12 },
+  { src: 'Day11/New_Day11Question13.mp3', target: '#questionBar', title: 'Q13: Multi-Condition Joined Order Filter', type: 'question', qId: 13 },
+  { src: 'Day11/New_Day11Question13sol.mp3', target: '#questionBar', title: 'Q13 Solution: Multi-Condition Joined Order Filter', type: 'solution', qId: 13 },
+  { src: 'Day11/New_Day11Question14.mp3', target: '#questionBar', title: 'Q14: Product Stock Share Percentage', type: 'question', qId: 14 },
+  { src: 'Day11/New_Day11Question14sol.mp3', target: '#questionBar', title: 'Q14 Solution: Product Stock Share Percentage', type: 'solution', qId: 14 },
+  { src: 'Day11/New_Day11Question15.mp3', target: '#questionBar', title: 'Q15: Executive Hierarchy Reporting View', type: 'question', qId: 15 },
+  { src: 'Day11/New_Day11Question15sol.mp3', target: '#questionBar', title: 'Q15 Solution: Executive Hierarchy Reporting View', type: 'solution', qId: 15 }
+];
+
+const day12Durations = [17.9, 12.0, 8.7, 10.3, 8.0, 11.6, 11.2, 8.4, 11.6, 7.8, 9.1, 6.4, 10.2, 7.5, 17.6, 9.5, 9.0, 8.0, 12.9, 18.1, 9.1, 9.8, 9.3, 6.2, 8.0, 9.6, 7.4, 11.7, 9.0, 11.3, 7.5, 9.1, 9.0, 13.7, 11.9, 23.6, 7.9, 18.1, 9.5, 20.6, 11.4, 18.2, 8.4, 14.1, 11.6, 34.6];
+
+const day12Tracks = [
+  // ── Section 1: Set Theory Foundations ──
+  { src: 'Day12/New_Day12Part1audio01.mp3', target: '#day12SetTheory', title: '01. What Are Set Operations?' },
+  { src: 'Day12/New_Day12Part1audio02.mp3', target: '#day12Rules', title: 'Schema Compatibility Rules' },
+  { src: 'Day12/New_Day12Part1audio03.mp3', target: '#day12Inheritance', title: 'Column Name Inheritance' },
+
+  // ── Section 2: UNION ──
+  { src: 'Day12/New_Day12Part1audio04.mp3', target: '#day12Union', title: '02. UNION — Deduplicated Stacking' },
+  { src: 'Day12/New_Day12Part1audio05.mp3', target: '#day12EmailExamples', title: 'Master Email Directory' },
+
+  // ── Section 3: UNION ALL ──
+  { src: 'Day12/New_Day12Part1audio06.mp3', target: '#day12UnionAll', title: '03. UNION ALL — High Performance' },
+  { src: 'Day12/New_Day12Part1audio07.mp3', target: '#day12PerfBestPractice', title: 'Default to UNION ALL' },
+  { src: 'Day12/New_Day12Part1audio08.mp3', target: '#day12ContactExamples', title: 'Tagged Contacts Directory' },
+
+  // ── Section 4: INTERSECT ──
+  { src: 'Day12/New_Day12Part1audio09.mp3', target: '#day12Intersect', title: '04. INTERSECT — Set Overlap' },
+  { src: 'Day12/New_Day12Part1audio10.mp3', target: '#day12IntersectExamples', title: 'Shared Names in Overlap' },
+
+  // ── Section 5: EXCEPT ──
+  { src: 'Day12/New_Day12Part1audio11.mp3', target: '#day12Except', title: '05. EXCEPT — Set Subtraction' },
+  { src: 'Day12/New_Day12Part1audio12.mp3', target: '#day12ExceptExamples', title: 'Finding Inactive Customers' },
+
+  // ── Section 6: Global ORDER BY ──
+  { src: 'Day12/New_Day12Part1audio13.mp3', target: '#day12GlobalOrderBy', title: '06. Global ORDER BY' },
+  { src: 'Day12/New_Day12Part1audio14.mp3', target: '#day12FinanceExamples', title: 'Financial Ledger Consolidation' },
+  { src: 'Day12/New_Day12Part1audio15.mp3', target: '#day12Dialects', title: 'Dialect Compatibility' },
+  { src: 'Day12/New_Day12Part1audio16.mp3', target: '#day12SetTheory', title: 'Ready for Practice' },
+
+  // ── 15 Practice Questions & Solutions ──
+  { src: 'Day12/New_Day12Question01.mp3', target: '#questionBar', title: 'Q1: Master Email Directory', type: 'question', qId: 1 },
+  { src: 'Day12/New_Day12Question01sol.mp3', target: '#questionBar', title: 'Q1 Solution: Master Email Directory', type: 'solution', qId: 1 },
+  { src: 'Day12/New_Day12Question02.mp3', target: '#questionBar', title: 'Q2: Consolidate Contacts with Source Tags', type: 'question', qId: 2 },
+  { src: 'Day12/New_Day12Question02sol.mp3', target: '#questionBar', title: 'Q2 Solution: Consolidate Contacts with Source Tags', type: 'solution', qId: 2 },
+  { src: 'Day12/New_Day12Question03.mp3', target: '#questionBar', title: 'Q3: Unique First Names Directory', type: 'question', qId: 3 },
+  { src: 'Day12/New_Day12Question03sol.mp3', target: '#questionBar', title: 'Q3 Solution: Unique First Names Directory', type: 'solution', qId: 3 },
+  { src: 'Day12/New_Day12Question04.mp3', target: '#questionBar', title: 'Q4: Deduplicate Order Statuses', type: 'question', qId: 4 },
+  { src: 'Day12/New_Day12Question04sol.mp3', target: '#questionBar', title: 'Q4 Solution: Deduplicate Order Statuses', type: 'solution', qId: 4 },
+  { src: 'Day12/New_Day12Question05.mp3', target: '#questionBar', title: 'Q5: Shared Names Discovery', type: 'question', qId: 5 },
+  { src: 'Day12/New_Day12Question05sol.mp3', target: '#questionBar', title: 'Q5 Solution: Shared Names Discovery', type: 'solution', qId: 5 },
+  { src: 'Day12/New_Day12Question06.mp3', target: '#questionBar', title: 'Q6: Active Customer ID Audit', type: 'question', qId: 6 },
+  { src: 'Day12/New_Day12Question06sol.mp3', target: '#questionBar', title: 'Q6 Solution: Active Customer ID Audit', type: 'solution', qId: 6 },
+  { src: 'Day12/New_Day12Question07.mp3', target: '#questionBar', title: 'Q7: Identify Inactive Customers', type: 'question', qId: 7 },
+  { src: 'Day12/New_Day12Question07sol.mp3', target: '#questionBar', title: 'Q7 Solution: Identify Inactive Customers', type: 'solution', qId: 7 },
+  { src: 'Day12/New_Day12Question08.mp3', target: '#questionBar', title: 'Q8: Unsold Products Detection', type: 'question', qId: 8 },
+  { src: 'Day12/New_Day12Question08sol.mp3', target: '#questionBar', title: 'Q8 Solution: Unsold Products Detection', type: 'solution', qId: 8 },
+  { src: 'Day12/New_Day12Question09.mp3', target: '#questionBar', title: 'Q9: Active Categories with Inventory', type: 'question', qId: 9 },
+  { src: 'Day12/New_Day12Question09sol.mp3', target: '#questionBar', title: 'Q9 Solution: Active Categories with Inventory', type: 'solution', qId: 9 },
+  { src: 'Day12/New_Day12Question10.mp3', target: '#questionBar', title: 'Q10: VIP Entities Unified Ledger', type: 'question', qId: 10 },
+  { src: 'Day12/New_Day12Question10sol.mp3', target: '#questionBar', title: 'Q10 Solution: VIP Entities Unified Ledger', type: 'solution', qId: 10 },
+  { src: 'Day12/New_Day12Question11.mp3', target: '#questionBar', title: 'Q11: Empty Categories Audit', type: 'question', qId: 11 },
+  { src: 'Day12/New_Day12Question11sol.mp3', target: '#questionBar', title: 'Q11 Solution: Empty Categories Audit', type: 'solution', qId: 11 },
+  { src: 'Day12/New_Day12Question12.mp3', target: '#questionBar', title: 'Q12: Target Outreach Directory', type: 'question', qId: 12 },
+  { src: 'Day12/New_Day12Question12sol.mp3', target: '#questionBar', title: 'Q12 Solution: Target Outreach Directory', type: 'solution', qId: 12 },
+  { src: 'Day12/New_Day12Question13.mp3', target: '#questionBar', title: 'Q13: Consolidated Three-Way Roster', type: 'question', qId: 13 },
+  { src: 'Day12/New_Day12Question13sol.mp3', target: '#questionBar', title: 'Q13 Solution: Consolidated Three-Way Roster', type: 'solution', qId: 13 },
+  { src: 'Day12/New_Day12Question14.mp3', target: '#questionBar', title: 'Q14: Financial Inflow & Outflow Summary', type: 'question', qId: 14 },
+  { src: 'Day12/New_Day12Question14sol.mp3', target: '#questionBar', title: 'Q14 Solution: Financial Inflow & Outflow Summary', type: 'solution', qId: 14 },
+  { src: 'Day12/New_Day12Question15.mp3', target: '#questionBar', title: 'Q15: Customer Lifecycle Segmentation', type: 'question', qId: 15 },
+  { src: 'Day12/New_Day12Question15sol.mp3', target: '#questionBar', title: 'Q15 Solution: Customer Lifecycle Segmentation', type: 'solution', qId: 15 }
+];
+
+const day13Durations = [
+  17.69, 13.15, 10.34, 12.02, 11.83, 11.06, 10.39, 7.78, 12.6, 10.8, 12.94, 8.35, 12.29, 10.25, 14.62, 8.71,
+  9.31, 11.57, 10.94, 13.27, 7.82, 11.98, 8.9, 16.18, 10.87, 11.93, 11.02, 19.3, 9.19, 16.2, 8.81, 14.88,
+  9.02, 10.54, 7.61, 13.1, 9.05, 13.56, 10.25, 16.54, 7.92, 12.65, 11.21, 15.98, 9.62, 10.22
+];
+
+const day13Tracks = [
+  { src: 'Day13/New_Day13Part1audio01.mp3', target: '#day13Overview', title: 'Day 13 Overview: Master Subqueries' },
+  { src: 'Day13/New_Day13Part1audio02.mp3', target: '#whatIsSubquery', title: 'What is a Subquery?' },
+  { src: 'Day13/New_Day13Part1audio03.mp3', target: '#subqueryTypes', title: 'Four Primary Types of Subqueries' },
+  { src: 'Day13/New_Day13Part1audio04.mp3', target: '#scalarSubqueries', title: 'Scalar Subqueries in WHERE and SELECT' },
+  { src: 'Day13/New_Day13Part1audio05.mp3', target: '#query1Demo', title: 'Query 1 Walkthrough: WHERE Filtering' },
+  { src: 'Day13/New_Day13Part1audio06.mp3', target: '#query1SelectDemo', title: 'Scalar Subqueries in SELECT Calculations' },
+  { src: 'Day13/New_Day13Part1audio07.mp3', target: '#multiRowSubqueries', title: 'Multi-Row Subqueries (IN, ANY, ALL)' },
+  { src: 'Day13/New_Day13Part1audio08.mp3', target: '#query2Demo', title: 'Query 2 Walkthrough: Multi-Row Filtering' },
+  { src: 'Day13/New_Day13Part1audio09.mp3', target: '#derivedTables', title: 'Subqueries in the FROM Clause' },
+  { src: 'Day13/New_Day13Part1audio10.mp3', target: '#query3Demo', title: 'Query 3 Walkthrough: Derived Table Aggregation' },
+  { src: 'Day13/New_Day13Part1audio11.mp3', target: '#correlatedSubqueries', title: 'Correlated Subqueries Demystified' },
+  { src: 'Day13/New_Day13Part1audio12.mp3', target: '#query4Demo', title: 'Query 4 Walkthrough: Correlated WHERE Logic' },
+  { src: 'Day13/New_Day13Part1audio13.mp3', target: '#existsOperators', title: 'EXISTS & NOT EXISTS Semi-Joins' },
+  { src: 'Day13/New_Day13Part1audio14.mp3', target: '#query5Demo', title: 'Query 5 Walkthrough: NOT EXISTS Anti-Join' },
+  { src: 'Day13/New_Day13Part1audio15.mp3', target: '#nullTrap', title: 'Performance Pitfalls & NULL Traps' },
+  { src: 'Day13/New_Day13Part1audio16.mp3', target: '#day13Summary', title: 'Day 13 Summary: Subquery Mastery Checklist' },
+  { src: 'Day13/New_Day13Question01.mp3', target: '#questionBar', title: 'Q1: Above Average Earners', type: 'question', qId: 1 },
+  { src: 'Day13/New_Day13Question01sol.mp3', target: '#questionBar', title: 'Q1 Solution: Above Average Earners', type: 'solution', qId: 1 },
+  { src: 'Day13/New_Day13Question02.mp3', target: '#questionBar', title: 'Q2: Salary Variance from Average', type: 'question', qId: 2 },
+  { src: 'Day13/New_Day13Question02sol.mp3', target: '#questionBar', title: 'Q2 Solution: Salary Variance from Average', type: 'solution', qId: 2 },
+  { src: 'Day13/New_Day13Question03.mp3', target: '#questionBar', title: 'Q3: Purchasing Customers Audit', type: 'question', qId: 3 },
+  { src: 'Day13/New_Day13Question03sol.mp3', target: '#questionBar', title: 'Q3 Solution: Purchasing Customers Audit', type: 'solution', qId: 3 },
+  { src: 'Day13/New_Day13Question04.mp3', target: '#questionBar', title: 'Q4: Fulfilled Order Products', type: 'question', qId: 4 },
+  { src: 'Day13/New_Day13Question04sol.mp3', target: '#questionBar', title: 'Q4 Solution: Fulfilled Order Products', type: 'solution', qId: 4 },
+  { src: 'Day13/New_Day13Question05.mp3', target: '#questionBar', title: 'Q5: Zero-Order Accounts Detection', type: 'question', qId: 5 },
+  { src: 'Day13/New_Day13Question05sol.mp3', target: '#questionBar', title: 'Q5 Solution: Zero-Order Accounts Detection', type: 'solution', qId: 5 },
+  { src: 'Day13/New_Day13Question06.mp3', target: '#questionBar', title: 'Q6: Top Departmental Earner Correlated', type: 'question', qId: 6 },
+  { src: 'Day13/New_Day13Question06sol.mp3', target: '#questionBar', title: 'Q6 Solution: Top Departmental Earner Correlated', type: 'solution', qId: 6 },
+  { src: 'Day13/New_Day13Question07.mp3', target: '#questionBar', title: 'Q7: Above Department Average', type: 'question', qId: 7 },
+  { src: 'Day13/New_Day13Question07sol.mp3', target: '#questionBar', title: 'Q7 Solution: Above Department Average', type: 'solution', qId: 7 },
+  { src: 'Day13/New_Day13Question08.mp3', target: '#questionBar', title: 'Q8: Average of Department Payrolls', type: 'question', qId: 8 },
+  { src: 'Day13/New_Day13Question08sol.mp3', target: '#questionBar', title: 'Q8 Solution: Average of Department Payrolls', type: 'solution', qId: 8 },
+  { src: 'Day13/New_Day13Question09.mp3', target: '#questionBar', title: 'Q9: Top Organization Earner', type: 'question', qId: 9 },
+  { src: 'Day13/New_Day13Question09sol.mp3', target: '#questionBar', title: 'Q9 Solution: Top Organization Earner', type: 'solution', qId: 9 },
+  { src: 'Day13/New_Day13Question10.mp3', target: '#questionBar', title: 'Q10: Customer Existence Check', type: 'question', qId: 10 },
+  { src: 'Day13/New_Day13Question10sol.mp3', target: '#questionBar', title: 'Q10 Solution: Customer Existence Check', type: 'solution', qId: 10 },
+  { src: 'Day13/New_Day13Question11.mp3', target: '#questionBar', title: 'Q11: Inactive Customer Detection via NOT EXISTS', type: 'question', qId: 11 },
+  { src: 'Day13/New_Day13Question11sol.mp3', target: '#questionBar', title: 'Q11 Solution: Inactive Customer Detection via NOT EXISTS', type: 'solution', qId: 11 },
+  { src: 'Day13/New_Day13Question12.mp3', target: '#questionBar', title: 'Q12: Above Category Average Products', type: 'question', qId: 12 },
+  { src: 'Day13/New_Day13Question12sol.mp3', target: '#questionBar', title: 'Q12 Solution: Above Category Average Products', type: 'solution', qId: 12 },
+  { src: 'Day13/New_Day13Question13.mp3', target: '#questionBar', title: 'Q13: High Headcount Departments', type: 'question', qId: 13 },
+  { src: 'Day13/New_Day13Question13sol.mp3', target: '#questionBar', title: 'Q13 Solution: High Headcount Departments', type: 'solution', qId: 13 },
+  { src: 'Day13/New_Day13Question14.mp3', target: '#questionBar', title: 'Q14: High Volume Spenders Derived Table', type: 'question', qId: 14 },
+  { src: 'Day13/New_Day13Question14sol.mp3', target: '#questionBar', title: 'Q14 Solution: High Volume Spenders Derived Table', type: 'solution', qId: 14 },
+  { src: 'Day13/New_Day13Question15.mp3', target: '#questionBar', title: 'Q15: High Volume Order Basket Identification', type: 'question', qId: 15 },
+  { src: 'Day13/New_Day13Question15sol.mp3', target: '#questionBar', title: 'Q15 Solution: High Volume Order Basket Identification', type: 'solution', qId: 15 }
+];
+
+const day14Durations = [
+  16.63, 10.66, 12.96, 11.21, 10.99, 11.98, 12.48, 9.5, 12.07, 8.28, 11.86, 11.62, 11.18, 10.92, 15.94, 7.63,
+  10.85, 15.29, 12.46, 20.71, 14.83, 27.89, 13.7, 26.38, 8.57, 12.7, 13.92, 31.13, 11.62, 29.83, 13.1, 22.03,
+  13.9, 32.74, 13.7, 24.5, 14.45, 27.14, 12.72, 31.63, 12.5, 18.24, 11.78, 24.36, 10.92, 22.2
+];
+
+const day14Tracks = [
+  { src: 'Day14/New_Day14Part1audio01.mp3', target: '#day14Overview', title: 'Day 14 Overview: CTEs & Modular SQL' },
+  { src: 'Day14/New_Day14Part1audio02.mp3', target: '#whatIsCTE', title: 'What is a Common Table Expression?' },
+  { src: 'Day14/New_Day14Part1audio03.mp3', target: '#whyUseCTEs', title: 'Why Use CTEs Over Subqueries?' },
+  { src: 'Day14/New_Day14Part1audio04.mp3', target: '#cteSyntax', title: 'Basic CTE Syntax & Structure' },
+  { src: 'Day14/New_Day14Part1audio05.mp3', target: '#query1Demo', title: 'Query 1 Walkthrough: Benchmark CTE' },
+  { src: 'Day14/New_Day14Part1audio06.mp3', target: '#chainingCTEs', title: 'Chaining Multiple CTEs (Pipelines)' },
+  { src: 'Day14/New_Day14Part1audio07.mp3', target: '#query2Demo', title: 'Query 2 Walkthrough: Multi-Step Chaining' },
+  { src: 'Day14/New_Day14Part1audio08.mp3', target: '#query2Final', title: 'Downstream Consumption from Multiple CTEs' },
+  { src: 'Day14/New_Day14Part1audio09.mp3', target: '#cteVsSubquery', title: 'CTE vs Subquery vs Temp Tables Decision Matrix' },
+  { src: 'Day14/New_Day14Part1audio10.mp3', target: '#cteMaterialization', title: 'CTE Execution & Optimization Guarantees' },
+  { src: 'Day14/New_Day14Part1audio11.mp3', target: '#recursiveCTEs', title: 'Recursive CTEs Architecture' },
+  { src: 'Day14/New_Day14Part1audio12.mp3', target: '#anchorRecursive', title: 'Anchor Member & Recursive Member Mechanics' },
+  { src: 'Day14/New_Day14Part1audio13.mp3', target: '#query3Demo', title: 'Query 3 Walkthrough: Number Generator' },
+  { src: 'Day14/New_Day14Part1audio14.mp3', target: '#query4Demo', title: 'Query 4 Walkthrough: Organizational Hierarchy' },
+  { src: 'Day14/New_Day14Part1audio15.mp3', target: '#cteVsTempTable', title: 'Deep Architectural Comparison' },
+  { src: 'Day14/New_Day14Part1audio16.mp3', target: '#day14Summary', title: 'Day 14 Summary: CTE Mastery Checklist' },
+  { src: 'Day14/New_Day14Question01.mp3', target: '#questionBar', title: 'Q1: Benchmark CTE Salary Comparison', type: 'question', qId: 1 },
+  { src: 'Day14/New_Day14Question01sol.mp3', target: '#questionBar', title: 'Q1 Solution: Benchmark CTE Salary Comparison', type: 'solution', qId: 1 },
+  { src: 'Day14/New_Day14Question02.mp3', target: '#questionBar', title: 'Q2: Department Summary CTE', type: 'question', qId: 2 },
+  { src: 'Day14/New_Day14Question02sol.mp3', target: '#questionBar', title: 'Q2 Solution: Department Summary CTE', type: 'solution', qId: 2 },
+  { src: 'Day14/New_Day14Question03.mp3', target: '#questionBar', title: 'Q3: Two-Step Loyalty Chaining', type: 'question', qId: 3 },
+  { src: 'Day14/New_Day14Question03sol.mp3', target: '#questionBar', title: 'Q3 Solution: Two-Step Loyalty Chaining', type: 'solution', qId: 3 },
+  { src: 'Day14/New_Day14Question04.mp3', target: '#questionBar', title: 'Q4: Customer Volume Ranking', type: 'question', qId: 4 },
+  { src: 'Day14/New_Day14Question04sol.mp3', target: '#questionBar', title: 'Q4 Solution: Customer Volume Ranking', type: 'solution', qId: 4 },
+  { src: 'Day14/New_Day14Question05.mp3', target: '#questionBar', title: 'Q5: Recursive Sequence Generation', type: 'question', qId: 5 },
+  { src: 'Day14/New_Day14Question05sol.mp3', target: '#questionBar', title: 'Q5 Solution: Recursive Sequence Generation', type: 'solution', qId: 5 },
+  { src: 'Day14/New_Day14Question06.mp3', target: '#questionBar', title: 'Q6: Org Hierarchy Traversal', type: 'question', qId: 6 },
+  { src: 'Day14/New_Day14Question06sol.mp3', target: '#questionBar', title: 'Q6 Solution: Org Hierarchy Traversal', type: 'solution', qId: 6 },
+  { src: 'Day14/New_Day14Question07.mp3', target: '#questionBar', title: 'Q7: Category Parent Hierarchy', type: 'question', qId: 7 },
+  { src: 'Day14/New_Day14Question07sol.mp3', target: '#questionBar', title: 'Q7 Solution: Category Parent Hierarchy', type: 'solution', qId: 7 },
+  { src: 'Day14/New_Day14Question08.mp3', target: '#questionBar', title: 'Q8: Filter High-Value Orders CTE', type: 'question', qId: 8 },
+  { src: 'Day14/New_Day14Question08sol.mp3', target: '#questionBar', title: 'Q8 Solution: Filter High-Value Orders CTE', type: 'solution', qId: 8 },
+  { src: 'Day14/New_Day14Question09.mp3', target: '#questionBar', title: 'Q9: Self-Join Reusable CTE', type: 'question', qId: 9 },
+  { src: 'Day14/New_Day14Question09sol.mp3', target: '#questionBar', title: 'Q9 Solution: Self-Join Reusable CTE', type: 'solution', qId: 9 },
+  { src: 'Day14/New_Day14Question10.mp3', target: '#questionBar', title: 'Q10: Customer Spend Variance CTE', type: 'question', qId: 10 },
+  { src: 'Day14/New_Day14Question10sol.mp3', target: '#questionBar', title: 'Q10 Solution: Customer Spend Variance CTE', type: 'solution', qId: 10 },
+  { src: 'Day14/New_Day14Question11.mp3', target: '#questionBar', title: 'Q11: Department Budget Utilization', type: 'question', qId: 11 },
+  { src: 'Day14/New_Day14Question11sol.mp3', target: '#questionBar', title: 'Q11 Solution: Department Budget Utilization', type: 'solution', qId: 11 },
+  { src: 'Day14/New_Day14Question12.mp3', target: '#questionBar', title: 'Q12: Category Sales Metrics CTE', type: 'question', qId: 12 },
+  { src: 'Day14/New_Day14Question12sol.mp3', target: '#questionBar', title: 'Q12 Solution: Category Sales Metrics CTE', type: 'solution', qId: 12 },
+  { src: 'Day14/New_Day14Question13.mp3', target: '#questionBar', title: 'Q13: Five-Day Calendar Generation', type: 'question', qId: 13 },
+  { src: 'Day14/New_Day14Question13sol.mp3', target: '#questionBar', title: 'Q13 Solution: Five-Day Calendar Generation', type: 'solution', qId: 13 },
+  { src: 'Day14/New_Day14Question14.mp3', target: '#questionBar', title: 'Q14: Executive vs Staff Payroll Breakdown', type: 'question', qId: 14 },
+  { src: 'Day14/New_Day14Question14sol.mp3', target: '#questionBar', title: 'Q14 Solution: Executive vs Staff Payroll Breakdown', type: 'solution', qId: 14 },
+  { src: 'Day14/New_Day14Question15.mp3', target: '#questionBar', title: 'Q15: Regional Revenue Leaders CTE', type: 'question', qId: 15 },
+  { src: 'Day14/New_Day14Question15sol.mp3', target: '#questionBar', title: 'Q15 Solution: Regional Revenue Leaders CTE', type: 'solution', qId: 15 }
+];
+
+const day15Durations = [
+  16.27, 18.41, 13.73, 15.5, 12.62, 15.24, 8.42, 18.19, 17.52, 12.86, 15.91, 13.58, 12.43, 11.57, 13.66, 8.83,
+  10.37, 13.1, 13.1, 15.07, 10.03, 21.53, 10.9, 21.07, 9.17, 15.72, 9.34, 14.93, 10.7, 11.4, 10.51, 37.08,
+  11.66, 23.4, 9.98, 13.1, 10.61, 11.45, 10.61, 22.34, 11.04, 31.73, 11.93, 15.53, 11.95, 15.43
+];
+
+const day15Tracks = [
+  { src: 'Day15/New_Day15Part1audio01.mp3', target: '#day15Overview', title: 'Day 15 Overview: Window Functions I Ranking' },
+  { src: 'Day15/New_Day15Part1audio02.mp3', target: '#whatAreWindowFunctions', title: 'What Are Window Functions?' },
+  { src: 'Day15/New_Day15Part1audio03.mp3', target: '#overClauseAnatomy', title: 'Anatomy of the OVER() Clause' },
+  { src: 'Day15/New_Day15Part1audio04.mp3', target: '#rowNumberSection', title: 'ROW_NUMBER() Demystified' },
+  { src: 'Day15/New_Day15Part1audio05.mp3', target: '#rowNumberSection', title: 'Query 1 Walkthrough: Department Row Numbers' },
+  { src: 'Day15/New_Day15Part1audio06.mp3', target: '#rowNumberSection', title: 'Top-N Records per Group Pattern' },
+  { src: 'Day15/New_Day15Part1audio07.mp3', target: '#rankVsDenseRank', title: 'Ties Handling: RANK vs DENSE_RANK' },
+  { src: 'Day15/New_Day15Part1audio08.mp3', target: '#rankVsDenseRank', title: 'Query 2 Walkthrough: Side-by-Side Comparison' },
+  { src: 'Day15/New_Day15Part1audio09.mp3', target: '#rankVsDenseRank', title: 'Nth Highest Salary Interview Trap' },
+  { src: 'Day15/New_Day15Part1audio10.mp3', target: '#ntileBucketing', title: 'NTILE(n) Statistical Bucketing' },
+  { src: 'Day15/New_Day15Part1audio11.mp3', target: '#ntileBucketing', title: 'Query 3 Walkthrough: Salary Quartiles' },
+  { src: 'Day15/New_Day15Part1audio12.mp3', target: '#whereExecutionOrder', title: 'Execution Order: Why Window Functions Cannot Be in WHERE' },
+  { src: 'Day15/New_Day15Part1audio13.mp3', target: '#whereExecutionOrder', title: 'Correct Pattern: Filtering via CTE' },
+  { src: 'Day15/New_Day15Part1audio14.mp3', target: '#globalVsPartitioned', title: 'Global Ranking vs Partitioned Ranking' },
+  { src: 'Day15/New_Day15Part1audio15.mp3', target: '#globalVsPartitioned', title: 'Indexing for Window Function Performance' },
+  { src: 'Day15/New_Day15Part1audio16.mp3', target: '#day15QASection', title: 'Day 15 Summary: Ranking Window Functions Checklist' },
+  { src: 'Day15/New_Day15Question01.mp3', target: '#questionBar', title: 'Q1: Global Salary Sequence', type: 'question', qId: 1 },
+  { src: 'Day15/New_Day15Question01sol.mp3', target: '#questionBar', title: 'Q1 Solution: Global Salary Sequence', type: 'solution', qId: 1 },
+  { src: 'Day15/New_Day15Question02.mp3', target: '#questionBar', title: 'Q2: Department Salary Ranking', type: 'question', qId: 2 },
+  { src: 'Day15/New_Day15Question02sol.mp3', target: '#questionBar', title: 'Q2 Solution: Department Salary Ranking', type: 'solution', qId: 2 },
+  { src: 'Day15/New_Day15Question03.mp3', target: '#questionBar', title: 'Q3: Rank Comparison Side-by-Side', type: 'question', qId: 3 },
+  { src: 'Day15/New_Day15Question03sol.mp3', target: '#questionBar', title: 'Q3 Solution: Rank Comparison Side-by-Side', type: 'solution', qId: 3 },
+  { src: 'Day15/New_Day15Question04.mp3', target: '#questionBar', title: 'Q4: Top Earner per Department', type: 'question', qId: 4 },
+  { src: 'Day15/New_Day15Question04sol.mp3', target: '#questionBar', title: 'Q4 Solution: Top Earner per Department', type: 'solution', qId: 4 },
+  { src: 'Day15/New_Day15Question05.mp3', target: '#questionBar', title: 'Q5: Third Highest Distinct Salary', type: 'question', qId: 5 },
+  { src: 'Day15/New_Day15Question05sol.mp3', target: '#questionBar', title: 'Q5 Solution: Third Highest Distinct Salary', type: 'solution', qId: 5 },
+  { src: 'Day15/New_Day15Question06.mp3', target: '#questionBar', title: 'Q6: Customer Spending Tiers', type: 'question', qId: 6 },
+  { src: 'Day15/New_Day15Question06sol.mp3', target: '#questionBar', title: 'Q6 Solution: Customer Spending Tiers', type: 'solution', qId: 6 },
+  { src: 'Day15/New_Day15Question07.mp3', target: '#questionBar', title: 'Q7: Company Salary Quartiles', type: 'question', qId: 7 },
+  { src: 'Day15/New_Day15Question07sol.mp3', target: '#questionBar', title: 'Q7 Solution: Company Salary Quartiles', type: 'solution', qId: 7 },
+  { src: 'Day15/New_Day15Question08.mp3', target: '#questionBar', title: 'Q8: Top Products by Category Revenue', type: 'question', qId: 8 },
+  { src: 'Day15/New_Day15Question08sol.mp3', target: '#questionBar', title: 'Q8 Solution: Top Products by Category Revenue', type: 'solution', qId: 8 },
+  { src: 'Day15/New_Day15Question09.mp3', target: '#questionBar', title: 'Q9: Bottom Earners per Department', type: 'question', qId: 9 },
+  { src: 'Day15/New_Day15Question09sol.mp3', target: '#questionBar', title: 'Q9 Solution: Bottom Earners per Department', type: 'solution', qId: 9 },
+  { src: 'Day15/New_Day15Question10.mp3', target: '#questionBar', title: 'Q10: Customer Order Frequency Ranking', type: 'question', qId: 10 },
+  { src: 'Day15/New_Day15Question10sol.mp3', target: '#questionBar', title: 'Q10 Solution: Customer Order Frequency Ranking', type: 'solution', qId: 10 },
+  { src: 'Day15/New_Day15Question11.mp3', target: '#questionBar', title: 'Q11: Product Price Segmentation', type: 'question', qId: 11 },
+  { src: 'Day15/New_Day15Question11sol.mp3', target: '#questionBar', title: 'Q11 Solution: Product Price Segmentation', type: 'solution', qId: 11 },
+  { src: 'Day15/New_Day15Question12.mp3', target: '#questionBar', title: 'Q12: Seniority per Department', type: 'question', qId: 12 },
+  { src: 'Day15/New_Day15Question12sol.mp3', target: '#questionBar', title: 'Q12 Solution: Seniority per Department', type: 'solution', qId: 12 },
+  { src: 'Day15/New_Day15Question13.mp3', target: '#questionBar', title: 'Q13: Top Spender per Country', type: 'question', qId: 13 },
+  { src: 'Day15/New_Day15Question13sol.mp3', target: '#questionBar', title: 'Q13 Solution: Top Spender per Country', type: 'solution', qId: 13 },
+  { src: 'Day15/New_Day15Question14.mp3', target: '#questionBar', title: 'Q14: Departmental Salary Quintiles', type: 'question', qId: 14 },
+  { src: 'Day15/New_Day15Question14sol.mp3', target: '#questionBar', title: 'Q14 Solution: Departmental Salary Quintiles', type: 'solution', qId: 14 },
+  { src: 'Day15/New_Day15Question15.mp3', target: '#questionBar', title: 'Q15: Customer Order Chronology', type: 'question', qId: 15 },
+  { src: 'Day15/New_Day15Question15sol.mp3', target: '#questionBar', title: 'Q15 Solution: Customer Order Chronology', type: 'solution', qId: 15 }
+];
+
+const day16Durations = [
+  17.23, 13.2, 12.98, 12.77, 13.06, 12.72, 13.54, 13.25, 11.47, 13.39, 11.78, 14.06, 15.22, 13.78, 11.64, 9.65,
+  10.46, 12.94, 11.42, 18.24, 9.98, 15.0, 12.0, 15.62, 10.1, 15.84, 10.03, 17.3, 11.83, 20.47, 13.13, 20.52,
+  12.5, 17.95, 13.15, 21.26, 12.22, 17.38, 11.62, 16.97, 12.48, 17.93, 15.07, 31.49, 14.5, 22.75
+];
+
+const day16Tracks = [
+  { src: 'Day16/New_Day16Part1audio01.mp3', target: '#day16Overview', title: 'Day 16 Overview: Window Functions II Analytic' },
+  { src: 'Day16/New_Day16Part1audio02.mp3', target: '#runningTotalsSection', title: 'Running Totals with SUM() OVER' },
+  { src: 'Day16/New_Day16Part1audio03.mp3', target: '#runningTotalsSection', title: 'Partitioned Cumulative Totals' },
+  { src: 'Day16/New_Day16Part1audio04.mp3', target: '#windowFrameBoundaries', title: 'The Window Frame Clause: ROWS vs RANGE' },
+  { src: 'Day16/New_Day16Part1audio05.mp3', target: '#windowFrameBoundaries', title: 'Frame Boundaries Explained' },
+  { src: 'Day16/New_Day16Part1audio06.mp3', target: '#movingAveragesSection', title: 'Moving Averages & Rolling Windows' },
+  { src: 'Day16/New_Day16Part1audio07.mp3', target: '#windowFrameBoundaries', title: 'Default Frame Trap' },
+  { src: 'Day16/New_Day16Part1audio08.mp3', target: '#lagLeadSection', title: 'LAG() and LEAD() Overview' },
+  { src: 'Day16/New_Day16Part1audio09.mp3', target: '#lagLeadSection', title: 'Syntax of LAG & LEAD (Offset & Default)' },
+  { src: 'Day16/New_Day16Part1audio10.mp3', target: '#lagLeadSection', title: 'Query 3 Walkthrough: Order-to-Order Spending Deltas' },
+  { src: 'Day16/New_Day16Part1audio11.mp3', target: '#lagLeadSection', title: 'Predicting Intervals with LEAD' },
+  { src: 'Day16/New_Day16Part1audio12.mp3', target: '#firstLastValueSection', title: 'FIRST_VALUE() and Baseline Benchmarks' },
+  { src: 'Day16/New_Day16Part1audio13.mp3', target: '#firstLastValueSection', title: 'The Infamous LAST_VALUE Trap' },
+  { src: 'Day16/New_Day16Part1audio14.mp3', target: '#percentOfTotalSection', title: 'Percentage of Total within Groups' },
+  { src: 'Day16/New_Day16Part1audio15.mp3', target: '#namedWindowsSection', title: 'Reusable Named Windows (WINDOW Clause)' },
+  { src: 'Day16/New_Day16Part1audio16.mp3', target: '#day16QASection', title: 'Day 16 Summary: Analytic Window Functions Checklist' },
+  { src: 'Day16/New_Day16Question01.mp3', target: '#questionBar', title: 'Q1: Global Running Total of Orders', type: 'question', qId: 1 },
+  { src: 'Day16/New_Day16Question01sol.mp3', target: '#questionBar', title: 'Q1 Solution: Global Running Total of Orders', type: 'solution', qId: 1 },
+  { src: 'Day16/New_Day16Question02.mp3', target: '#questionBar', title: 'Q2: Customer Running Spend', type: 'question', qId: 2 },
+  { src: 'Day16/New_Day16Question02sol.mp3', target: '#questionBar', title: 'Q2 Solution: Customer Running Spend', type: 'solution', qId: 2 },
+  { src: 'Day16/New_Day16Question03.mp3', target: '#questionBar', title: 'Q3: Previous Order Amount Comparison', type: 'question', qId: 3 },
+  { src: 'Day16/New_Day16Question03sol.mp3', target: '#questionBar', title: 'Q3 Solution: Previous Order Amount Comparison', type: 'solution', qId: 3 },
+  { src: 'Day16/New_Day16Question04.mp3', target: '#questionBar', title: 'Q4: Order-to-Order Spending Difference', type: 'question', qId: 4 },
+  { src: 'Day16/New_Day16Question04sol.mp3', target: '#questionBar', title: 'Q4 Solution: Order-to-Order Spending Difference', type: 'solution', qId: 4 },
+  { src: 'Day16/New_Day16Question05.mp3', target: '#questionBar', title: 'Q5: Next Order Date per Customer', type: 'question', qId: 5 },
+  { src: 'Day16/New_Day16Question05sol.mp3', target: '#questionBar', title: 'Q5 Solution: Next Order Date per Customer', type: 'solution', qId: 5 },
+  { src: 'Day16/New_Day16Question06.mp3', target: '#questionBar', title: 'Q6: Three-Order Moving Average', type: 'question', qId: 6 },
+  { src: 'Day16/New_Day16Question06sol.mp3', target: '#questionBar', title: 'Q6 Solution: Three-Order Moving Average', type: 'solution', qId: 6 },
+  { src: 'Day16/New_Day16Question07.mp3', target: '#questionBar', title: 'Q7: First Order Baseline per Customer', type: 'question', qId: 7 },
+  { src: 'Day16/New_Day16Question07sol.mp3', target: '#questionBar', title: 'Q7 Solution: First Order Baseline per Customer', type: 'solution', qId: 7 },
+  { src: 'Day16/New_Day16Question08.mp3', target: '#questionBar', title: 'Q8: Percentage of Department Payroll', type: 'question', qId: 8 },
+  { src: 'Day16/New_Day16Question08sol.mp3', target: '#questionBar', title: 'Q8 Solution: Percentage of Department Payroll', type: 'solution', qId: 8 },
+  { src: 'Day16/New_Day16Question09.mp3', target: '#questionBar', title: 'Q9: Cumulative Product Quantity Sold', type: 'question', qId: 9 },
+  { src: 'Day16/New_Day16Question09sol.mp3', target: '#questionBar', title: 'Q9 Solution: Cumulative Product Quantity Sold', type: 'solution', qId: 9 },
+  { src: 'Day16/New_Day16Question10.mp3', target: '#questionBar', title: 'Q10: Customer Order Interval in Days', type: 'question', qId: 10 },
+  { src: 'Day16/New_Day16Question10sol.mp3', target: '#questionBar', title: 'Q10 Solution: Customer Order Interval in Days', type: 'solution', qId: 10 },
+  { src: 'Day16/New_Day16Question11.mp3', target: '#questionBar', title: 'Q11: Top Department Salary Benchmark', type: 'question', qId: 11 },
+  { src: 'Day16/New_Day16Question11sol.mp3', target: '#questionBar', title: 'Q11 Solution: Top Department Salary Benchmark', type: 'solution', qId: 11 },
+  { src: 'Day16/New_Day16Question12.mp3', target: '#questionBar', title: 'Q12: Centered Three-Point Moving Average', type: 'question', qId: 12 },
+  { src: 'Day16/New_Day16Question12sol.mp3', target: '#questionBar', title: 'Q12 Solution: Centered Three-Point Moving Average', type: 'solution', qId: 12 },
+  { src: 'Day16/New_Day16Question13.mp3', target: '#questionBar', title: 'Q13: Cumulative Category Price', type: 'question', qId: 13 },
+  { src: 'Day16/New_Day16Question13sol.mp3', target: '#questionBar', title: 'Q13 Solution: Cumulative Category Price', type: 'solution', qId: 13 },
+  { src: 'Day16/New_Day16Question14.mp3', target: '#questionBar', title: 'Q14: Percentage Change Between Orders', type: 'question', qId: 14 },
+  { src: 'Day16/New_Day16Question14sol.mp3', target: '#questionBar', title: 'Q14 Solution: Percentage Change Between Orders', type: 'solution', qId: 14 },
+  { src: 'Day16/New_Day16Question15.mp3', target: '#questionBar', title: 'Q15: Lowest Departmental Salary with Full Frame', type: 'question', qId: 15 },
+  { src: 'Day16/New_Day16Question15sol.mp3', target: '#questionBar', title: 'Q15 Solution: Lowest Departmental Salary with Full Frame', type: 'solution', qId: 15 }
+];
+
+const day17Durations = [
+  17.09, 13.9, 12.53, 13.42, 11.57, 13.39, 12.12, 13.32, 14.62, 12.7, 10.63, 10.25, 11.78, 13.87, 15.05, 9.86,
+  18.82, 24.89, 10.49, 14.98, 12.74, 17.66, 13.54, 12.43, 6.72, 6.02, 8.81, 7.42, 9.43, 9.24, 10.92, 11.78,
+  12.5, 18.31, 5.66, 5.04, 6.05, 7.94, 12.94, 16.44, 7.82, 5.62, 9.22, 12.26, 10.54, 9.1
+];
+
+const day17Tracks = [
+  { src: 'Day17/New_Day17Part1audio01.mp3', target: '#day17Overview', title: 'Day 17 Overview: DDL, DML, Constraints & Transactions' },
+  { src: 'Day17/New_Day17Part1audio02.mp3', target: '#sqlCommandCategories', title: 'SQL Command Classification (DDL, DML, DQL, DCL, TCL)' },
+  { src: 'Day17/New_Day17Part1audio03.mp3', target: '#ddlCreateTable', title: 'DDL: CREATE TABLE & Column Data Types' },
+  { src: 'Day17/New_Day17Part1audio04.mp3', target: '#createTableSection', title: 'Query 1 Walkthrough: Table Creation with Constraints' },
+  { src: 'Day17/New_Day17Part1audio05.mp3', target: '#constraintsMatrix', title: 'Data Integrity Constraints Overview' },
+  { src: 'Day17/New_Day17Part1audio06.mp3', target: '#constraintsSection', title: 'PRIMARY KEY, NOT NULL, UNIQUE, CHECK & DEFAULT' },
+  { src: 'Day17/New_Day17Part1audio07.mp3', target: '#foreignKeysSection', title: 'FOREIGN KEY & Referential Integrity' },
+  { src: 'Day17/New_Day17Part1audio08.mp3', target: '#alterDropSection', title: 'ALTER TABLE: Adding & Modifying Columns' },
+  { src: 'Day17/New_Day17Part1audio09.mp3', target: '#dropTruncateDelete', title: 'DROP vs TRUNCATE vs DELETE Comparison' },
+  { src: 'Day17/New_Day17Part1audio10.mp3', target: '#dmlOperations', title: 'DML: INSERT, UPDATE & DELETE Essentials' },
+  { src: 'Day17/New_Day17Part1audio11.mp3', target: '#dmlOperations', title: 'Single & Bulk Multi-Row INSERT' },
+  { src: 'Day17/New_Day17Part1audio12.mp3', target: '#whereClauseSafety', title: 'UPDATE & DELETE Mechanics' },
+  { src: 'Day17/New_Day17Part1audio13.mp3', target: '#whereClauseSafety', title: 'Defensive DML: Safe WHERE Clause Practices' },
+  { src: 'Day17/New_Day17Part1audio14.mp3', target: '#transactionsAcid', title: 'Transaction Management: BEGIN, COMMIT & ROLLBACK' },
+  { src: 'Day17/New_Day17Part1audio15.mp3', target: '#acidProperties', title: 'ACID Properties in Enterprise Databases' },
+  { src: 'Day17/New_Day17Part1audio16.mp3', target: '#day17QASection', title: 'Day 17 Summary: DDL & DML Architecture Checklist' },
+  { src: 'Day17/New_Day17Question01.mp3', target: '#questionBar', title: 'Q1: Create Reviews Table with Constraints', type: 'question', qId: 1 },
+  { src: 'Day17/New_Day17Question01sol.mp3', target: '#questionBar', title: 'Q1 Solution: Create Reviews Table with Constraints', type: 'solution', qId: 1 },
+  { src: 'Day17/New_Day17Question02.mp3', target: '#questionBar', title: 'Q2: Insert Single Review Record', type: 'question', qId: 2 },
+  { src: 'Day17/New_Day17Question02sol.mp3', target: '#questionBar', title: 'Q2 Solution: Insert Single Review Record', type: 'solution', qId: 2 },
+  { src: 'Day17/New_Day17Question03.mp3', target: '#questionBar', title: 'Q3: Bulk Insert Multiple Reviews', type: 'question', qId: 3 },
+  { src: 'Day17/New_Day17Question03sol.mp3', target: '#questionBar', title: 'Q3 Solution: Bulk Insert Multiple Reviews', type: 'solution', qId: 3 },
+  { src: 'Day17/New_Day17Question04.mp3', target: '#questionBar', title: 'Q4: Targeted Salary Raise', type: 'question', qId: 4 },
+  { src: 'Day17/New_Day17Question04sol.mp3', target: '#questionBar', title: 'Q4 Solution: Targeted Salary Raise', type: 'solution', qId: 4 },
+  { src: 'Day17/New_Day17Question05.mp3', target: '#questionBar', title: 'Q5: Purge Out-of-Stock Products', type: 'question', qId: 5 },
+  { src: 'Day17/New_Day17Question05sol.mp3', target: '#questionBar', title: 'Q5 Solution: Purge Out-of-Stock Products', type: 'solution', qId: 5 },
+  { src: 'Day17/New_Day17Question06.mp3', target: '#questionBar', title: 'Q6: Alter Table Add Column', type: 'question', qId: 6 },
+  { src: 'Day17/New_Day17Question06sol.mp3', target: '#questionBar', title: 'Q6 Solution: Alter Table Add Column', type: 'solution', qId: 6 },
+  { src: 'Day17/New_Day17Question07.mp3', target: '#questionBar', title: 'Q7: Create B-Tree Index for Lookups', type: 'question', qId: 7 },
+  { src: 'Day17/New_Day17Question07sol.mp3', target: '#questionBar', title: 'Q7 Solution: Create B-Tree Index for Lookups', type: 'solution', qId: 7 },
+  { src: 'Day17/New_Day17Question08.mp3', target: '#questionBar', title: 'Q8: Cancel Stale Processing Orders', type: 'question', qId: 8 },
+  { src: 'Day17/New_Day17Question08sol.mp3', target: '#questionBar', title: 'Q8 Solution: Cancel Stale Processing Orders', type: 'solution', qId: 8 },
+  { src: 'Day17/New_Day17Question09.mp3', target: '#questionBar', title: 'Q9: Create Promo Codes Table', type: 'question', qId: 9 },
+  { src: 'Day17/New_Day17Question09sol.mp3', target: '#questionBar', title: 'Q9 Solution: Create Promo Codes Table', type: 'solution', qId: 9 },
+  { src: 'Day17/New_Day17Question10.mp3', target: '#questionBar', title: 'Q10: Safe Table Deletion', type: 'question', qId: 10 },
+  { src: 'Day17/New_Day17Question10sol.mp3', target: '#questionBar', title: 'Q10 Solution: Safe Table Deletion', type: 'solution', qId: 10 },
+  { src: 'Day17/New_Day17Question11.mp3', target: '#questionBar', title: 'Q11: Nullify Department Commission', type: 'question', qId: 11 },
+  { src: 'Day17/New_Day17Question11sol.mp3', target: '#questionBar', title: 'Q11 Solution: Nullify Department Commission', type: 'solution', qId: 11 },
+  { src: 'Day17/New_Day17Question12.mp3', target: '#questionBar', title: 'Q12: Create System Notifications Table', type: 'question', qId: 12 },
+  { src: 'Day17/New_Day17Question12sol.mp3', target: '#questionBar', title: 'Q12 Solution: Create System Notifications Table', type: 'solution', qId: 12 },
+  { src: 'Day17/New_Day17Question13.mp3', target: '#questionBar', title: 'Q13: Add Tags Column with Default', type: 'question', qId: 13 },
+  { src: 'Day17/New_Day17Question13sol.mp3', target: '#questionBar', title: 'Q13 Solution: Add Tags Column with Default', type: 'solution', qId: 13 },
+  { src: 'Day17/New_Day17Question14.mp3', target: '#questionBar', title: 'Q14: Atomic Transaction with Commit', type: 'question', qId: 14 },
+  { src: 'Day17/New_Day17Question14sol.mp3', target: '#questionBar', title: 'Q14 Solution: Atomic Transaction with Commit', type: 'solution', qId: 14 },
+  { src: 'Day17/New_Day17Question15.mp3', target: '#questionBar', title: 'Q15: Transaction Rollback Recovery', type: 'question', qId: 15 },
+  { src: 'Day17/New_Day17Question15sol.mp3', target: '#questionBar', title: 'Q15 Solution: Transaction Rollback Recovery', type: 'solution', qId: 15 }
+];
+
 const slideTrackMap = {
   'day01': {
     0: { tracks: topic01Tracks, durations: topic01Durations },
@@ -7230,6 +8114,39 @@ const slideTrackMap = {
   },
   'day06': {
     0: { tracks: day06Tracks, durations: day06Durations }
+  },
+  'day07': {
+    0: { tracks: day07Tracks, durations: day07Durations }
+  },
+  'day08': {
+    0: { tracks: day08Tracks, durations: day08Durations }
+  },
+  'day09': {
+    0: { tracks: day09Tracks, durations: day09Durations }
+  },
+  'day10': {
+    0: { tracks: day10Tracks, durations: day10Durations }
+  },
+  'day11': {
+    0: { tracks: day11Tracks, durations: day11Durations }
+  },
+  'day12': {
+    0: { tracks: day12Tracks, durations: day12Durations }
+  },
+  'day13': {
+    0: { tracks: day13Tracks, durations: day13Durations }
+  },
+  'day14': {
+    0: { tracks: day14Tracks, durations: day14Durations }
+  },
+  'day15': {
+    0: { tracks: day15Tracks, durations: day15Durations }
+  },
+  'day16': {
+    0: { tracks: day16Tracks, durations: day16Durations }
+  },
+  'day17': {
+    0: { tracks: day17Tracks, durations: day17Durations }
   }
 };
 

@@ -477,7 +477,7 @@ CREATE TABLE employees (
 for row in employees:
   if row['dept'] == 'Engineering':
     results.append(row['name'])</pre>
-              <small style="color: #64748b; font-size: 0.72rem; display: block; margin-top: 4px;">You write the algorithm — loop, check, collect.</small>
+              <small style="color:var(--ink-muted); font-size: 0.72rem; display: block; margin-top: 4px;">You write the algorithm — loop, check, collect.</small>
             </div>
             <div class="vs-card vs-card--good">
               <h4 class="heading-with-audio" id="sqlDeclarativeVs" style="display: flex; align-items: center; gap: 8px;">
@@ -489,7 +489,7 @@ for row in employees:
               <pre style="margin: 0; font-size: 0.72rem;">SELECT name
 FROM employees
 WHERE department = 'Engineering';</pre>
-              <small style="color: #64748b; font-size: 0.72rem; display: block; margin-top: 4px;">You describe the goal — the engine decides how to retrieve it optimally.</small>
+              <small style="color:var(--ink-muted); font-size: 0.72rem; display: block; margin-top: 4px;">You describe the goal — the engine decides how to retrieve it optimally.</small>
             </div>
           </div>
         </div>
@@ -519,7 +519,7 @@ WHERE department = 'Engineering';</pre>
                         <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                       </button>
                     </div>
-                    <div style="font-size: 0.65rem; color: #64748b; margin-top: 2px;">Data Query Language</div>
+                    <div style="font-size: 0.65rem; color:var(--ink-muted); margin-top: 2px;">Data Query Language</div>
                   </td>
                   <td>Retrieve data from the database.</td>
                   <td><code>SELECT name, salary FROM employees;</code></td>
@@ -532,7 +532,7 @@ WHERE department = 'Engineering';</pre>
                         <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                       </button>
                     </div>
-                    <div style="font-size: 0.65rem; color: #64748b; margin-top: 2px;">Data Manipulation Language</div>
+                    <div style="font-size: 0.65rem; color:var(--ink-muted); margin-top: 2px;">Data Manipulation Language</div>
                   </td>
                   <td>Insert, update, or delete records.</td>
                   <td><code>INSERT INTO employees VALUES (11, 'Neha', 'Finance', 68000);</code></td>
@@ -545,7 +545,7 @@ WHERE department = 'Engineering';</pre>
                         <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                       </button>
                     </div>
-                    <div style="font-size: 0.65rem; color: #64748b; margin-top: 2px;">Data Definition Language</div>
+                    <div style="font-size: 0.65rem; color:var(--ink-muted); margin-top: 2px;">Data Definition Language</div>
                   </td>
                   <td>Create or modify tables/schema.</td>
                   <td><code>ALTER TABLE employees ADD COLUMN phone TEXT;</code></td>
@@ -558,7 +558,7 @@ WHERE department = 'Engineering';</pre>
                         <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                       </button>
                     </div>
-                    <div style="font-size: 0.65rem; color: #64748b; margin-top: 2px;">Transaction Control Language</div>
+                    <div style="font-size: 0.65rem; color:var(--ink-muted); margin-top: 2px;">Transaction Control Language</div>
                   </td>
                   <td>Manage transaction blocks.</td>
                   <td><code>BEGIN; ... COMMIT;</code></td>
@@ -571,7 +571,7 @@ WHERE department = 'Engineering';</pre>
                         <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                       </button>
                     </div>
-                    <div style="font-size: 0.65rem; color: #64748b; margin-top: 2px;">Data Control Language</div>
+                    <div style="font-size: 0.65rem; color:var(--ink-muted); margin-top: 2px;">Data Control Language</div>
                   </td>
                   <td>Manage database access control.</td>
                   <td><code>GRANT SELECT ON employees TO analyst_role;</code></td>
@@ -584,7 +584,7 @@ WHERE department = 'Engineering';</pre>
         <div class="slide-section">
           <div class="pro-tip-box" id="proTipRdbms">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-              <strong style="color: #60a5fa;">💡 Pro Tip — Which RDBMS to Choose?</strong>
+              <strong style="color:var(--ink-link);">💡 Pro Tip — Which RDBMS to Choose?</strong>
               <button class="audio-play-btn" onclick="playAudio('New_Day1Part1audio22.mp3', this)" title="Play narration" style="flex-shrink: 0;">
                 <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
               </button>
@@ -814,7 +814,7 @@ WHERE department = 'Engineering';</pre>
 
           <div class="db-mock-table-wrap" id="projectionMockTable">
             <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-              <small style="flex: 1; color: #64748b; font-size: 0.75rem;">Only projected columns are loaded and returned — unused columns are discarded at query time.</small>
+              <small style="flex: 1; color:var(--ink-muted); font-size: 0.75rem;">Only projected columns are loaded and returned — unused columns are discarded at query time.</small>
               <button class="audio-play-btn" onclick="playAudio('Day01topic2/New_Day1Part2audio12.mp3', this)" title="Play narration" style="flex-shrink: 0;">
                 <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
               </button>
@@ -868,7 +868,7 @@ WHERE department = 'Engineering';
 -- Even with an index on 'department',
 -- the engine must visit heap pages
 -- to fetch id, name, salary columns.</pre>
-              <small style="color: #64748b; font-size: 0.72rem; display: block; margin-top: 4px;">Index → Heap lookup → High I/O cost on large tables.</small>
+              <small style="color:var(--ink-muted); font-size: 0.72rem; display: block; margin-top: 4px;">Index → Heap lookup → High I/O cost on large tables.</small>
             </div>
             <div class="vs-card vs-card--good" id="indexOnlyScanGood">
               <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
@@ -882,7 +882,7 @@ WHERE department = 'Engineering';
 -- With index on (department, name),
 -- engine reads ONLY the index tree.
 -- Zero heap page access needed.</pre>
-              <small style="color: #64748b; font-size: 0.72rem; display: block; margin-top: 4px;">All data served from the index → dramatically lower I/O.</small>
+              <small style="color:var(--ink-muted); font-size: 0.72rem; display: block; margin-top: 4px;">All data served from the index → dramatically lower I/O.</small>
             </div>
           </div>
         </div>
@@ -943,7 +943,7 @@ WHERE department = 'Engineering';
         <div class="slide-section" id="projectionProTip">
           <div class="pro-tip-box">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-              <strong style="color: #fca5a5;">⚠️ Real-World Outage Scenario:</strong>
+              <strong style="color:var(--ink-neg);">⚠️ Real-World Outage Scenario:</strong>
               <button class="audio-play-btn" onclick="playAudio('Day01topic2/New_Day1Part2audio19.mp3', this)" title="Play narration" style="flex-shrink: 0;">
                 <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
               </button>

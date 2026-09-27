@@ -65,7 +65,7 @@ window.COURSE_CONTENT['day04'] = {
         <div class="slide-section" id="day04IntDivWarnSection">
           <div class="warn-box" id="day04IntDivWarn">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; width: 100%;">
-              <strong style="color: #b91c1c; flex: 1;">⚠️ Integer Division:</strong>
+              <strong style="color:var(--ink-neg); flex: 1;">⚠️ Integer Division:</strong>
             </div>
             <p>In some SQL dialects, dividing two integers returns an integer (e.g. <code>7 / 2 = 3</code>, not <code>3.5</code>). Cast one operand to REAL or multiply by <code>1.0</code>: <code>salary * 1.0 / 12</code>. In SQLite, <code>/</code> between integers truncates — always include a decimal point like <code>12.0</code> when you need precision.</p>
           </div>
@@ -122,7 +122,7 @@ window.COURSE_CONTENT['day04'] = {
         <div class="slide-section" id="day04PrecedenceInfoSection">
           <div class="info-box" id="day04PrecedenceInfo">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; width: 100%;">
-              <strong style="color: #0f766e; flex: 1;">ℹ️ Always parenthesise mixed <code>AND</code>/<code>OR</code>.</strong>
+              <strong style="color:var(--ink-teal); flex: 1;">ℹ️ Always parenthesise mixed <code>AND</code>/<code>OR</code>.</strong>
             </div>
             <p>Relying on implicit precedence is a common source of production bugs. Parentheses are free, they document intent, and they override precedence when you need it.</p>
           </div>
@@ -172,7 +172,7 @@ window.COURSE_CONTENT['day04'] = {
         <div class="slide-section" id="day04AllAnyWarnSection">
           <div class="warn-box" id="day04AllAnyWarn">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; width: 100%;">
-              <strong style="color: #b91c1c; flex: 1;">⚠️ Engine support:</strong>
+              <strong style="color:var(--ink-neg); flex: 1;">⚠️ Engine support:</strong>
             </div>
             <p><code>ALL</code>/<code>ANY</code> are standard SQL but <strong>not implemented in SQLite</strong> (the engine used in this playground). For runnable queries here, rewrite using <code>&gt; (SELECT MIN(...))</code> for <code>ANY</code> and <code>&gt; (SELECT MAX(...))</code> for <code>ALL</code>. MySQL and PostgreSQL support them natively.</p>
           </div>
@@ -181,7 +181,7 @@ window.COURSE_CONTENT['day04'] = {
         <div class="slide-section" id="day04AllAnyTipSection">
           <div class="pro-tip-box" id="day04AllAnyTip">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; width: 100%;">
-              <strong style="color: #b45309; flex: 1;">💡 Equivalences to memorise:</strong>
+              <strong style="color:var(--ink-warn); flex: 1;">💡 Equivalences to memorise:</strong>
             </div>
             <p><code>= ANY (...)</code> ≡ <code>IN (...)</code>; <code>&lt;&gt; ALL (...)</code> ≡ <code>NOT IN (...)</code>; <code>&gt; ALL (...)</code> ≡ <code>&gt; (SELECT MAX(...))</code>; <code>&gt; ANY (...)</code> ≡ <code>&gt; (SELECT MIN(...))</code>.</p>
           </div>
@@ -223,7 +223,7 @@ window.COURSE_CONTENT['day04'] = {
         <div class="slide-section" id="day04EscapeInfoSection">
           <div class="info-box" id="day04EscapeInfo">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; width: 100%;">
-              <strong style="color: #0f766e; flex: 1;">ℹ️ Which escape char?</strong>
+              <strong style="color:var(--ink-teal); flex: 1;">ℹ️ Which escape char?</strong>
             </div>
             <p>There is no fixed default in standard SQL — always specify <code>ESCAPE '!'</code> (or another chosen char) explicitly. Common choices are <code>\</code>, <code>!</code>, or <code>#</code>. Once declared, that character escapes itself: <code>!!</code> matches a literal <code>!</code>.</p>
           </div>
@@ -263,7 +263,7 @@ window.COURSE_CONTENT['day04'] = {
         <div class="slide-section" id="day04NullInfoSection">
           <div class="info-box" id="day04NullInfo">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; width: 100%;">
-              <strong style="color: #0f766e; flex: 1;">ℹ️ NULL ≠ 0.</strong>
+              <strong style="color:var(--ink-teal); flex: 1;">ℹ️ NULL ≠ 0.</strong>
             </div>
             <p>NULL means "unknown", not "zero". <code>salary + NULL</code> is NULL (not salary). <code>NULL = NULL</code> is UNKNOWN (not TRUE) — use <code>IS NULL</code> / <code>IS NOT NULL</code> to test for NULL.</p>
           </div>
@@ -321,7 +321,7 @@ window.COURSE_CONTENT['day04'] = {
         <div class="slide-section" id="day04NotInTrapWarnSection">
           <div class="warn-box" id="day04NotInTrapWarn">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; width: 100%;">
-              <strong style="color: #b91c1c; flex: 1;">⚠️ The <code>NOT IN</code> NULL trap:</strong>
+              <strong style="color:var(--ink-neg); flex: 1;">⚠️ The <code>NOT IN</code> NULL trap:</strong>
             </div>
             <p>If the right-hand list contains a NULL, <code>x NOT IN (...)</code> evaluates to UNKNOWN for every row, returning <strong>zero rows</strong>. Always filter NULLs out of the subquery, or use <code>NOT EXISTS</code> instead.</p>
           </div>

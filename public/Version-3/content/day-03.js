@@ -42,7 +42,7 @@ window.COURSE_CONTENT['day03'] = {
         <div class="slide-section" id="day03WhereInfoSection">
           <div class="info-box" id="day03WhereInfo">
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; width: 100%;">
-              <strong style="color: #0f766e; flex: 1;">ℹ️ Execution Order:</strong>
+              <strong style="color:var(--ink-teal); flex: 1;">ℹ️ Execution Order:</strong>
             </div>
             <p>
               <code>WHERE</code> is Step 2 in SQL's logical execution order — <em>after</em> <code>FROM</code> but <em>before</em> <code>GROUP BY</code>, <code>HAVING</code>, and <code>SELECT</code>. This means <code>WHERE</code> <strong>cannot reference column aliases</strong> defined in the <code>SELECT</code> list because those aliases don't exist yet at filtering time.
@@ -75,7 +75,7 @@ window.COURSE_CONTENT['day03'] = {
                   font-family: 'Inter', sans-serif;
                   font-size: 0.65rem;
                   font-weight: 800;
-                  color: #8a99ad;
+                  color:var(--ink-muted);
                   letter-spacing: 0.15em;
                   text-transform: uppercase;
                   white-space: nowrap;
@@ -443,9 +443,9 @@ window.COURSE_CONTENT['day03'] = {
                 letter-spacing: 0.06em;
               }
               
-              #day03PrecWrap .prec-priority--1 .label { color: #fca5a5; }
-              #day03PrecWrap .prec-priority--2 .label { color: #fcd34d; }
-              #day03PrecWrap .prec-priority--3 .label { color: #6ee7b7; }
+              #day03PrecWrap .prec-priority--1 .label { color:var(--ink-neg); }
+              #day03PrecWrap .prec-priority--2 .label { color:var(--ink-warn); }
+              #day03PrecWrap .prec-priority--3 .label { color:var(--ink-pos); }
               
               #day03PrecWrap .prec-venn{width:100%;background:rgba(5, 8, 16, 0.7);border-radius:8px;padding:0;border:1px solid rgba(255, 255, 255, 0.08);box-sizing:border-box;overflow:hidden;display:flex;align-items:center;justify-content:center}
 
@@ -466,17 +466,17 @@ window.COURSE_CONTENT['day03'] = {
               }
               #day03PrecWrap .formula-badge--not {
                 background: rgba(239, 68, 68, 0.12) !important;
-                color: #fca5a5 !important;
+                color:var(--ink-neg) !important;
                 border: 1px solid rgba(239, 68, 68, 0.25) !important;
               }
               #day03PrecWrap .formula-badge--and {
                 background: rgba(245, 158, 11, 0.12) !important;
-                color: #fcd34d !important;
+                color:var(--ink-warn) !important;
                 border: 1px solid rgba(245, 158, 11, 0.25) !important;
               }
               #day03PrecWrap .formula-badge--or {
                 background: rgba(16, 185, 129, 0.12) !important;
-                color: #6ee7b7 !important;
+                color:var(--ink-pos) !important;
                 border: 1px solid rgba(16, 185, 129, 0.25) !important;
               }
 
@@ -662,7 +662,7 @@ window.COURSE_CONTENT['day03'] = {
         <div class="slide-section" id="day03PrecedenceSection">
           <div class="precedence-note" id="day03PrecedenceNote" style="margin: 0; padding: 16px; background: rgba(59, 130, 246, 0.08); border-left: 4px solid #3b82f6; border-top: 1px solid rgba(255,255,255,0.08); border-right: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.08); border-radius: 8px;">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-              <span style="color: #1d4ed8; font-weight: 800; font-size: 0.90rem; display: inline-flex; align-items: center; gap: 6px;">⚠️ Operator Precedence Rule</span>
+              <span style="color:var(--ink-link); font-weight: 800; font-size: 0.90rem; display: inline-flex; align-items: center; gap: 6px;">⚠️ Operator Precedence Rule</span>
             </div>
             <p style="margin: 0; font-size: 0.85rem; line-height: 1.65; color: var(--theory-text);">
               SQL evaluates them in <strong>operator precedence</strong> order: <code>NOT</code> binds tightest → then <code>AND</code> → then <code>OR</code>. Mixing <code>AND</code> and <code>OR</code> without parentheses is a classic bug source — always use brackets to make your intent explicit.
@@ -703,7 +703,7 @@ window.COURSE_CONTENT['day03'] = {
         <div class="slide-section" id="day03LogicWarnSection">
           <div class="warn-box" id="day03LogicWarn">
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; width: 100%;">
-              <strong style="color: #b91c1c;">⚠️ Precedence Trap:</strong>
+              <strong style="color:var(--ink-neg);">⚠️ Precedence Trap:</strong>
             </div>
             <p>
               <code>WHERE dept = 10 OR dept = 20 AND salary &gt; 60000</code> is parsed as <code>WHERE dept = 10 OR (dept = 20 AND salary &gt; 60000)</code> — which is very different from filtering both departments! Always wrap <code>OR</code> groups in parentheses: <code>WHERE (dept = 10 OR dept = 20) AND salary &gt; 60000</code>.
@@ -812,7 +812,7 @@ window.COURSE_CONTENT['day03'] = {
         <div class="slide-section" id="day03InWarnSection">
           <div class="warn-box" id="day03InWarn">
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; width: 100%;">
-              <strong style="color: #b91c1c; flex: 1;">⚠️ NOT IN with NULLs — Silent Data Loss:</strong>
+              <strong style="color:var(--ink-neg); flex: 1;">⚠️ NOT IN with NULLs — Silent Data Loss:</strong>
             </div>
             <p>
               If the list passed to <code>NOT IN</code> contains even a single <code>NULL</code>, the entire query returns <strong>zero rows</strong>. Why? Every comparison with <code>NULL</code> yields <code>UNKNOWN</code>, not <code>TRUE</code>, so the <code>WHERE</code> filter passes nothing. When the list comes from a subquery that might return <code>NULL</code>, use <code>NOT EXISTS</code> or add <code>WHERE col IS NOT NULL</code> to the subquery.
@@ -895,7 +895,7 @@ WHERE name LIKE '_oo%'  -- 2nd/3rd = 'oo'</code></pre>
         <div class="slide-section" id="day03LikeTipSection">
           <div class="pro-tip-box" id="day03LikeTip">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; width: 100%;">
-              <strong style="color: #b45309; flex: 1;">💡 Case Sensitivity by Engine:</strong>
+              <strong style="color:var(--ink-warn); flex: 1;">💡 Case Sensitivity by Engine:</strong>
             </div>
             <p>
               In <strong>SQLite</strong> and <strong>MySQL</strong>, <code>LIKE</code> is case-insensitive for ASCII characters by default. In <strong>PostgreSQL</strong>, <code>LIKE</code> is case-sensitive — use <code>ILIKE</code> for a case-insensitive match. In <strong>SQL Server</strong>, behaviour depends on the column's collation setting.
@@ -968,7 +968,7 @@ WHERE commission IS NULL     -- ✅
 
 -- Correctly excludes NULL rows
 WHERE commission IS NOT NULL -- ✅</code></pre>
-              <p style="font-size:0.72rem;color:#6ee7b7;margin:6px 0 0;"><code>IS NULL</code> is a special predicate built to detect the absence of a value — it correctly returns <code>TRUE</code> for NULL rows.</p>
+              <p style="font-size:0.72rem;color:var(--ink-pos);margin:6px 0 0;"><code>IS NULL</code> is a special predicate built to detect the absence of a value — it correctly returns <code>TRUE</code> for NULL rows.</p>
             </div>
           </div>
         </div>

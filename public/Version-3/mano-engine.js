@@ -84,7 +84,7 @@ function showGuestPaywallModal(featureTitle = 'this feature') {
         <a href="/landing_v2/index.html#pricing" style="display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;width:100%;padding:14px 24px;background:linear-gradient(135deg, #00e6f6, #a855f7);color:#060913;font-weight:800;font-size:1.05rem;border-radius:14px;text-decoration:none;box-shadow:0 8px 30px rgba(0,230,246,0.4);transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
           🚀 Enroll Now & Unlock Everything →
         </a>
-        <p style="margin-top:1.2rem;font-size:0.78rem;color:#64748b;">Instant Lifetime Access • 750+ Real Interview Questions • Verified Certificate</p>
+        <p style="margin-top:1.2rem;font-size:0.78rem;color:var(--ink-muted);">Instant Lifetime Access • 750+ Real Interview Questions • Verified Certificate</p>
       </div>
     `;
     document.body.appendChild(modal);
@@ -3098,7 +3098,7 @@ function renderTestQuestion(index) {
   const qPromptEl = document.getElementById('testQuestionPrompt');
   if (qPromptEl) {
     if (q) {
-      qPromptEl.innerHTML = `<div style="text-align: justify; text-justify: inter-word;"><strong style="color:#0284c7;">Question ${index + 1}:</strong> ${q.prompt}</div>`;
+      qPromptEl.innerHTML = `<div style="text-align: justify; text-justify: inter-word;"><strong style="color:var(--ink-info);">Question ${index + 1}:</strong> ${q.prompt}</div>`;
     } else {
       qPromptEl.innerHTML = `<div style="text-align: justify; text-justify: inter-word;">Question ${index + 1} not available.</div>`;
     }
@@ -3255,7 +3255,7 @@ function runTestQuery() {
     tableHtml += `</tbody></table></div>`;
 
     if (values.length > 50) {
-      tableHtml += `<div style="font-size:0.7rem;color:#64748b;margin-top:4px;">Showing first 50 of ${values.length} rows</div>`;
+      tableHtml += `<div style="font-size:0.7rem;color:var(--ink-muted);margin-top:4px;">Showing first 50 of ${values.length} rows</div>`;
     }
 
     outEl.innerHTML = `
@@ -3455,8 +3455,8 @@ const REEL_CHALLENGES = {
     task: 'Row Filtering: Target Top Tier Active Performers by Salary',
     prompt: `HR needs all active high earners making above ₹75,000. Run Option A vs Option B to see why Option A accidentally includes inactive employees.<br/>
       <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-01-R1', 'A')">⚡ Load Option A (Trap)</button>
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-01-R1', 'B')">⚡ Load Option B (Fix)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:var(--ink-neg); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-01-R1', 'A')">⚡ Load Option A (Trap)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:var(--ink-pos); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-01-R1', 'B')">⚡ Load Option B (Fix)</button>
       </div>`,
     trapExplanation: 'Option A misses the active status filter (<code>is_active = 1</code>). Option B correctly filters only currently active high earners.',
     codeA: "SELECT first_name, salary\nFROM employees\nWHERE salary > 75000;",
@@ -3469,8 +3469,8 @@ const REEL_CHALLENGES = {
     task: 'Calculated Columns: Handling NULLs in Compensation Arithmetic',
     prompt: `Calculate total compensation (monthly salary * 12 + commission). Run Option A vs Option B to see why NULL commission wipes out the entire annual calculation.<br/>
       <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-01-R2', 'A')">⚡ Load Option A (Trap)</button>
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-01-R2', 'B')">⚡ Load Option B (Fix)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:var(--ink-neg); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-01-R2', 'A')">⚡ Load Option A (Trap)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:var(--ink-pos); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-01-R2', 'B')">⚡ Load Option B (Fix)</button>
       </div>`,
     trapExplanation: 'In SQL, <code>number + NULL = NULL</code>! Option A turns annual compensation into NULL for employees without commission. Option B uses <code>COALESCE</code> to safely treat NULL as 0.',
     codeA: "SELECT first_name, (salary * 12) + commission AS annual_comp\nFROM employees;",
@@ -3483,8 +3483,8 @@ const REEL_CHALLENGES = {
     task: 'Ranking Challenge: Avoid Skipping Ranks on Ties',
     prompt: `Two employees have the same salary! Run Option A (RANK) vs Option B (DENSE_RANK) to see why RANK() skips rank 2 and misses true earners.<br/>
       <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-02-R1', 'A')">⚡ Load Option A (RANK)</button>
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-02-R1', 'B')">⚡ Load Option B (DENSE_RANK)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:var(--ink-neg); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-02-R1', 'A')">⚡ Load Option A (RANK)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:var(--ink-pos); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-02-R1', 'B')">⚡ Load Option B (DENSE_RANK)</button>
       </div>`,
     trapExplanation: 'Notice that <strong>Rank 2 was skipped</strong>! <code>RANK()</code> leaves gaps when ties occur (1, 1, 3), missing valid leaderboard earners.',
     codeA: "SELECT first_name AS emp_name, salary, rk\nFROM (\n  SELECT first_name, salary,\n         RANK() OVER (ORDER BY salary DESC) AS rk\n  FROM employees\n) t\nWHERE rk <= 3;",
@@ -3497,8 +3497,8 @@ const REEL_CHALLENGES = {
     task: 'Cumulative Sum: True Row-by-Row Accumulation',
     prompt: `Same-day orders exist in the table! Run Option A (ROWS UNBOUNDED PRECEDING) vs Option B (default) to see why default RANGE causes sudden sum jumps on duplicate dates.<br/>
       <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-02-R2', 'A')">⚡ Load Option A (ROWS - Fix)</button>
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-02-R2', 'B')">⚡ Load Option B (Default - Trap)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:var(--ink-pos); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-02-R2', 'A')">⚡ Load Option A (ROWS - Fix)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:var(--ink-neg); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-02-R2', 'B')">⚡ Load Option B (Default - Trap)</button>
       </div>`,
     trapExplanation: 'Notice the running total <strong>jumps suddenly</strong> on duplicate dates! Default <code>RANGE BETWEEN</code> sums same-day rows all at once instead of row-by-row.',
     codeA: "SELECT order_date, total_amount AS amount,\n       SUM(total_amount) OVER (\n         ORDER BY order_date\n         ROWS UNBOUNDED PRECEDING\n       ) AS running_total\nFROM orders;",
@@ -3511,8 +3511,8 @@ const REEL_CHALLENGES = {
     task: 'Aggregation Trap: Counting Rows vs Non-NULL Values',
     prompt: `Department 20 has 4 employees, but Devendra has NULL commission! Run Option A (COUNT(commission)) vs Option B (COUNT(*)) to see why COUNT(column) silently drops NULL rows.<br/>
       <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-03-R1', 'A')">⚡ Load Option A (Trap)</button>
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-03-R1', 'B')">⚡ Load Option B (Fix)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:var(--ink-neg); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-03-R1', 'A')">⚡ Load Option A (Trap)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:var(--ink-pos); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-03-R1', 'B')">⚡ Load Option B (Fix)</button>
       </div>`,
     trapExplanation: 'Notice total_emps returned <strong>3</strong> instead of <strong>4</strong>! Because Devendra has a NULL commission, <code>COUNT(commission)</code> silently excluded him from the count.',
     codeA: "SELECT department_id,\n       COUNT(commission) AS total_emps\nFROM employees\nWHERE department_id = 20;",
@@ -3525,8 +3525,8 @@ const REEL_CHALLENGES = {
     task: 'Boolean Precedence: Enforcing Parentheses in Compound Filters',
     prompt: `HR needs all active employees in Dept 20 or 10! Siddharth is INACTIVE in Dept 10. Run Option A (no parens) vs Option B (with parens) to see why AND evaluates before OR.<br/>
       <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-03-R2', 'A')">⚡ Load Option A (Trap)</button>
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-03-R2', 'B')">⚡ Load Option B (Fix)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:var(--ink-neg); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-03-R2', 'A')">⚡ Load Option A (Trap)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:var(--ink-pos); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-03-R2', 'B')">⚡ Load Option B (Fix)</button>
       </div>`,
     trapExplanation: 'Notice that inactive employees in Dept 10 (like Siddharth, is_active = 0) are returned! In SQL, <code>AND</code> evaluates before <code>OR</code>, so <code>is_active = 1</code> was only applied to Dept 20.',
     codeA: "SELECT first_name, department_id, is_active\nFROM employees\nWHERE is_active = 1\n  AND department_id = 20\n   OR department_id = 10;",
@@ -3539,8 +3539,8 @@ const REEL_CHALLENGES = {
     task: 'Aggregation Filter: Why AVG() Crashes Inside the WHERE Clause',
     prompt: `Finance needs all departments averaging above ₹60,000 salary! Run Option A (WHERE with AVG) vs Option B (HAVING) to see why aggregate functions crash inside WHERE.<br/>
       <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-04-R1', 'A')">⚡ Load Option A (Trap)</button>
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-04-R1', 'B')">⚡ Load Option B (Fix)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:var(--ink-neg); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-04-R1', 'A')">⚡ Load Option A (Trap)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:var(--ink-pos); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-04-R1', 'B')">⚡ Load Option B (Fix)</button>
       </div>`,
     trapExplanation: 'Option A throws <strong>an error</strong>! In SQL, <code>WHERE</code> filters rows <em>before</em> GROUP BY runs — so <code>AVG()</code> doesn\'t exist yet at that stage. Aggregate functions can only live in <code>HAVING</code>, which filters <em>after</em> grouping.',
     codeA: "SELECT department_id,\n       AVG(salary) AS avg_sal\nFROM employees\nWHERE AVG(salary) > 60000\nGROUP BY department_id;",
@@ -3553,8 +3553,8 @@ const REEL_CHALLENGES = {
     task: 'Datetime Filtering: Why BETWEEN 23:59:59 Drops Transactions',
     prompt: `Finance needs all 2024 orders! Run Option A (BETWEEN ... 23:59:59) vs Option B (&gt;= Jan 1 AND &lt; Jan 1 2025) to see why Option A drops end-of-day orders with fractional seconds.<br/>
       <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-04-R2', 'A')">⚡ Load Option A (Trap)</button>
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-04-R2', 'B')">⚡ Load Option B (Fix)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:var(--ink-neg); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-04-R2', 'A')">⚡ Load Option A (Trap)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:var(--ink-pos); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-04-R2', 'B')">⚡ Load Option B (Fix)</button>
       </div>`,
     trapExplanation: 'Option A misses orders placed in the final second of the year (e.g. <code>23:59:59.850</code>)! In production databases, always use the half-open interval <code>&gt;= \'2024-01-01\' AND &lt; \'2025-01-01\'</code>.',
     codeA: "SELECT order_id, total_amount\nFROM orders\nWHERE order_date\n  BETWEEN '2024-01-01 00:00:00'\n      AND '2024-12-31 23:59:59';",
@@ -3567,8 +3567,8 @@ const REEL_CHALLENGES = {
     task: 'LEFT JOIN Filtering: WHERE vs AND (The Accidental INNER JOIN)',
     prompt: `Analytics needs a list of all customers, including those with zero shipped orders. Run Option A (Filter in WHERE) vs Option B (Filter in ON) to see why Option A silently throws away zero-order customers.<br/>
       <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-05-R1', 'A')">⚡ Load Option A (Trap)</button>
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-05-R1', 'B')">⚡ Load Option B (Fix)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:var(--ink-neg); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-05-R1', 'A')">⚡ Load Option A (Trap)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:var(--ink-pos); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-05-R1', 'B')">⚡ Load Option B (Fix)</button>
       </div>`,
     trapExplanation: 'Option A filters the right table in the <code>WHERE</code> clause, which runs <em>after</em> the join. Customers with no shipped orders have <code>NULL</code> status, and <code>NULL = \'Shipped\'</code> is UNKNOWN, discarding them like an INNER JOIN! Option B filters in the <code>ON</code> clause, keeping all customers.',
     codeA: "SELECT c.first_name, o.total_amount\nFROM customers c\nLEFT JOIN orders o ON c.customer_id = o.customer_id\nWHERE o.status = 'Shipped';",
@@ -3581,8 +3581,8 @@ const REEL_CHALLENGES = {
     task: 'Conditional Aggregation: COUNT(CASE ... ELSE 0) vs SUM(CASE ... ELSE 0)',
     prompt: `Analytics needs the total number of SHIPPED orders for each customer. Run Option A (COUNT with ELSE 0) vs Option B (SUM with ELSE 0) to see why COUNT(0) inflates the count.<br/>
       <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-05-R2', 'A')">⚡ Load Option A (Trap)</button>
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-05-R2', 'B')">⚡ Load Option B (Fix)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:var(--ink-neg); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-05-R2', 'A')">⚡ Load Option A (Trap)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:var(--ink-pos); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-05-R2', 'B')">⚡ Load Option B (Fix)</button>
       </div>`,
     trapExplanation: 'In SQL, <code>COUNT()</code> increments for EVERY non-NULL value! Because <code>0</code> is a valid number, <code>COUNT(0)</code> still counts the row, returning total orders! Option B uses <code>SUM()</code>, adding 1 for shipped and 0 for others.',
     codeA: "SELECT customer_id,\n       COUNT(CASE WHEN status = 'Shipped'\n                  THEN 1 ELSE 0 END) AS shipped_orders\nFROM orders\nGROUP BY customer_id;",
@@ -3595,8 +3595,8 @@ const REEL_CHALLENGES = {
     task: 'Self Join Trap: Why Plain JOIN Drops the Top-Level CEO',
     prompt: `HR needs an org chart report with all employees and their managers. Run Option A (plain JOIN) vs Option B (LEFT JOIN) to see why Option A deletes the CEO from the report.<br/>
       <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-06-R2', 'A')">⚡ Load Option A (Trap)</button>
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-06-R2', 'B')">⚡ Load Option B (Fix)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:var(--ink-neg); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-06-R2', 'A')">⚡ Load Option A (Trap)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:var(--ink-pos); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-06-R2', 'B')">⚡ Load Option B (Fix)</button>
       </div>`,
     trapExplanation: 'Option A silently <strong>deletes the CEO</strong>! Because the CEO has a NULL <code>manager_id</code>, plain <code>JOIN</code> (INNER JOIN) rejects the row. Option B uses <code>LEFT JOIN</code>, preserving the CEO.',
     codeA: "SELECT e.first_name AS employee,\n       m.first_name AS manager\nFROM employees e\nJOIN employees m ON e.manager_id = m.employee_id;",
@@ -3609,8 +3609,8 @@ const REEL_CHALLENGES = {
     task: 'Subquery Trap: Why a Single NULL Breaks NOT IN Queries',
     prompt: `Analytics needs all customers who have NEVER placed an order. Run Option A (NOT IN) vs Option B (NOT EXISTS) to see why Option A returns 0 rows when orders contain guest checkouts.<br/>
       <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-07-R1', 'A')">⚡ Load Option A (Trap)</button>
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-07-R1', 'B')">⚡ Load Option B (Fix)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:var(--ink-neg); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-07-R1', 'A')">⚡ Load Option A (Trap)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:var(--ink-pos); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-07-R1', 'B')">⚡ Load Option B (Fix)</button>
       </div>`,
     trapExplanation: 'If the subquery contains even one <code>NULL</code>, <code>customer_id NOT IN (..., NULL)</code> evaluates to <strong>UNKNOWN</strong> for every row, returning 0 rows! Option B uses <code>NOT EXISTS</code>, which is 100% NULL-safe.',
     codeA: "SELECT first_name FROM customers\nWHERE customer_id NOT IN (\n    SELECT customer_id FROM orders\n);",
@@ -3623,8 +3623,8 @@ const REEL_CHALLENGES = {
     task: 'Ranking Functions: RANK() vs DENSE_RANK() on Tied Salaries',
     prompt: `HR needs the salary leaderboard! Two employees share the #1 salary. Run Option A (RANK) vs Option B (DENSE_RANK) to see why RANK() skips 2nd place and JUMPS straight to 3.<br/>
       <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-07-R2', 'A')">⚡ Load Option A (RANK)</button>
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-07-R2', 'B')">⚡ Load Option B (DENSE_RANK)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:var(--ink-neg); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-07-R2', 'A')">⚡ Load Option A (RANK)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:var(--ink-pos); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-07-R2', 'B')">⚡ Load Option B (DENSE_RANK)</button>
       </div>`,
     trapExplanation: 'When ties occur, <code>RANK()</code> leaves gaps (1, 1, 3), skipping 2nd place! <code>DENSE_RANK()</code> assigns consecutive ranks (1, 1, 2) without any gaps.',
     codeA: "SELECT employee_id, first_name, salary,\n       RANK() OVER (ORDER BY salary DESC) AS sal_rank\nFROM employees;",
@@ -3637,8 +3637,8 @@ const REEL_CHALLENGES = {
     task: 'Pattern Matching: Escaping Literal % and _ in LIKE Queries',
     prompt: `Marketing needs all promo codes with a literal 50% discount. Run Option A (plain LIKE) vs Option B (ESCAPE) to see why Option A accidentally matches 500_FLAT, 50_OFF, etc.<br/>
       <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-08-R1', 'A')">⚡ Load Option A (Trap)</button>
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-08-R1', 'B')">⚡ Load Option B (Fix)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:var(--ink-neg); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-08-R1', 'A')">⚡ Load Option A (Trap)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:var(--ink-pos); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-08-R1', 'B')">⚡ Load Option B (Fix)</button>
       </div>`,
     trapExplanation: 'In SQL <code>LIKE</code>, <code>%</code> matches any character sequence. Option A (<code>\'%50%%\'</code>) matches 500_FLAT and 50_OFF! Option B uses <code>ESCAPE \'\\\'</code> to match literal 50%.',
     codeA: "SELECT promo_code\nFROM coupons\nWHERE promo_code LIKE '%50%%';",
@@ -3651,8 +3651,8 @@ const REEL_CHALLENGES = {
     task: 'Set Operations: UNION vs UNION ALL Deduplication and Revenue Loss',
     prompt: `Finance needs to merge January and February sales transactions. Run Option A (UNION) vs Option B (UNION ALL) to see why Option A accidentally deletes identical sales transactions!<br/>
       <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-08-R2', 'A')">⚡ Load Option A (UNION)</button>
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-08-R2', 'B')">⚡ Load Option B (UNION ALL)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:var(--ink-neg); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-08-R2', 'A')">⚡ Load Option A (UNION)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:var(--ink-pos); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-08-R2', 'B')">⚡ Load Option B (UNION ALL)</button>
       </div>`,
     trapExplanation: 'Plain <code>UNION</code> automatically deduplicates records, silently deleting legitimate identical transactions! <code>UNION ALL</code> keeps all rows and runs 5x faster.',
     codeA: "SELECT customer_id, amount FROM jan_sales\nUNION\nSELECT customer_id, amount FROM feb_sales;",
@@ -3665,8 +3665,8 @@ const REEL_CHALLENGES = {
     task: 'Window Functions vs Aggregation: Finding the Latest Transaction per Customer',
     prompt: `Analytics needs the single most recent order placed by each customer. Run Option A (ROW_NUMBER CTE) vs Option B (GROUP BY MAX + JOIN) to see why Option A is the FAANG standard.<br/>
       <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-09-R1', 'A')">⚡ Load Option A (CTE - Standard)</button>
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-09-R1', 'B')">⚡ Load Option B (Self-Join - Trap on Ties)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:var(--ink-pos); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-09-R1', 'A')">⚡ Load Option A (CTE - Standard)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:var(--ink-neg); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-09-R1', 'B')">⚡ Load Option B (Self-Join - Trap on Ties)</button>
       </div>`,
     trapExplanation: 'Option A uses <code>ROW_NUMBER()</code> inside a CTE, which guarantees exactly 1 row per customer even when order timestamps tie! Option B uses <code>GROUP BY MAX + JOIN</code>, which returns duplicate rows if two orders occur on the same date.',
     codeA: "WITH ranked AS (\n  SELECT *,\n         ROW_NUMBER() OVER (\n           PARTITION BY customer_id\n           ORDER BY order_date DESC\n         ) AS rn\n  FROM orders\n)\nSELECT * FROM ranked WHERE rn = 1;",
@@ -3679,8 +3679,8 @@ const REEL_CHALLENGES = {
     task: 'Advanced Algorithmic SQL: Grouping Consecutive Login Streaks',
     prompt: `Analytics needs to group consecutive active days into unbroken login streaks. Run Option A (Date - ROW_NUMBER trick) vs Option B (DENSE_RANK) to see why Option A is the Meta/Google FAANG standard.<br/>
       <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-10-R1', 'A')">⚡ Load Option A (Date - ROW_NUMBER Trick)</button>
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-10-R1', 'B')">⚡ Load Option B (DENSE_RANK Trap)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:var(--ink-pos); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-10-R1', 'A')">⚡ Load Option A (Date - ROW_NUMBER Trick)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:var(--ink-neg); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-10-R1', 'B')">⚡ Load Option B (DENSE_RANK Trap)</button>
       </div>`,
     trapExplanation: 'Option B uses plain <code>DENSE_RANK()</code>, which simply counts 1, 2, 3... ignoring multi-day gaps! Option A subtracts <code>ROW_NUMBER()</code> from consecutive dates to form a constant date anchor for each unbroken streak.',
     successExplanation: 'Option A uses the Date - ROW_NUMBER trick to generate a constant date anchor for each unbroken streak!',
@@ -3695,8 +3695,8 @@ const REEL_CHALLENGES = {
     task: 'Self Joins: Finding Employees Earning More Than Their Direct Manager',
     prompt: `HR needs to find all employees who earn more than their direct manager. Run Option A (Self JOIN) vs Option B (Subquery Trap) to see why Option A is the Flipkart / Amazon standard.<br/>
       <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-11-R1', 'A')">⚡ Load Option A (Self JOIN Standard)</button>
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-11-R1', 'B')">⚡ Load Option B (Subquery Trap)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:var(--ink-pos); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-11-R1', 'A')">⚡ Load Option A (Self JOIN Standard)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:var(--ink-neg); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-11-R1', 'B')">⚡ Load Option B (Subquery Trap)</button>
       </div>`,
     trapExplanation: 'Option B fails because <code>WHERE employee_id = manager_id</code> inside the inner subquery evaluates against the inner row itself (checking if someone is their own manager) rather than joining to the outer employee row! Option A explicitly joins <code>e.manager_id = m.employee_id</code> to compare the direct pair.',
     successExplanation: 'Option A uses Self JOIN to explicitly compare each employee with their direct manager!',
@@ -3711,8 +3711,8 @@ const REEL_CHALLENGES = {
     task: 'Date Filtering vs Status Flags: Detecting Salaries Credited After Resignation',
     prompt: `HR Audit discovered an ex-employee who resigned 3 months ago is still receiving salary credits! Run Option A (Date Check) vs Option B (Status Trap) to see why Option A is the real-world audit standard.<br/>
       <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-12-R1', 'A')">⚡ Load Option A (Date Check Standard)</button>
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-12-R1', 'B')">⚡ Load Option B (Status Trap)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:var(--ink-pos); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-12-R1', 'A')">⚡ Load Option A (Date Check Standard)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:var(--ink-neg); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-12-R1', 'B')">⚡ Load Option B (Status Trap)</button>
       </div>`,
     trapExplanation: 'Option B simply checks <code>WHERE status = \'Resigned\'</code>, which flags every historical legitimate salary ever paid while the employee was actively working! Option A correctly checks <code>WHERE pay_date > exit_date</code> to catch only unauthorized payments after resignation.',
     successExplanation: 'Option A correctly filters <code>pay_date > exit_date</code> to catch only unauthorized payments made after resignation!',
@@ -3727,8 +3727,8 @@ const REEL_CHALLENGES = {
     task: 'Event Delta Counters vs Quadratic Self-Joins: Tracking Peak Concurrent Streamers',
     prompt: `Netflix and Hotstar need to calculate peak concurrent viewers during live streaming. Run Option A (Quadratic Join Trap) vs Option B (Event Delta Trick) to see why Option B is the O(N log N) FAANG standard.<br/>
       <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-13-R1', 'A')">⚡ Load Option A (Self-Join Trap)</button>
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-13-R1', 'B')">⚡ Load Option B (Delta Event Standard)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:var(--ink-neg); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-13-R1', 'A')">⚡ Load Option A (Self-Join Trap)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:var(--ink-pos); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-13-R1', 'B')">⚡ Load Option B (Delta Event Standard)</button>
       </div>`,
     trapExplanation: 'Option A runs an O(N²) quadratic Self-Join between every single stream start and end time! On millions of live streams, this crashes with catastrophic memory exhaustion. Option B tags starts as +1 and ends as -1, running in O(N log N) time.',
     successExplanation: 'Option B uses the genius Event Delta (+1 on start, -1 on end) counter to track live concurrent viewership cleanly in O(N log N) time!',
@@ -3743,8 +3743,8 @@ const REEL_CHALLENGES = {
     task: 'Dynamic Sessionization: SUM() vs COUNT() Accumulator Trap',
     prompt: `Swiggy, Uber, and Amazon track user sessions by inactivity timeouts (e.g. 30 minutes of silence triggers a new session). Run Option A (SUM Accumulator) vs Option B (COUNT Accumulator) to spot the dangerous SQL trap.<br/>
       <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-14-R1', 'A')">⚡ Load Option A (SUM Standard)</button>
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-14-R1', 'B')">⚡ Load Option B (COUNT Trap)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:var(--ink-pos); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-14-R1', 'A')">⚡ Load Option A (SUM Standard)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:var(--ink-neg); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-14-R1', 'B')">⚡ Load Option B (COUNT Trap)</button>
       </div>`,
     trapExplanation: 'Option B uses COUNT(is_new). In SQL, 0 is NOT NULL! COUNT(0) counts the row, causing session_id to increment on EVERY SINGLE CLICK (1, 2, 3, 4, 5...)! It completely corrupts user sessionization.',
     successExplanation: 'Option A uses SUM(is_new) OVER. It adds 0 on ordinary clicks (preserving current session) and adds 1 only when gap > 30 mins, generating perfect incremental session IDs (1, 1, 2, 2, 3...)!',
@@ -3759,8 +3759,8 @@ const REEL_CHALLENGES = {
     task: 'Fintech Daily Ledger: RANGE vs ROWS Tie Breaker Trap',
     prompt: `Google Pay, Stripe, and modern banks calculate progressive running balances. Run Option A (Default RANGE Trap) vs Option B (Explicit ROWS Standard) to see why multiple transactions on the same date cause severe ledger bugs.<br/>
       <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-15-R1', 'A')">⚡ Load Option A (RANGE Tie Bug Trap)</button>
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-15-R1', 'B')">⚡ Load Option B (ROWS Fintech Standard)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:var(--ink-neg); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-15-R1', 'A')">⚡ Load Option A (RANGE Tie Bug Trap)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:var(--ink-pos); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-15-R1', 'B')">⚡ Load Option B (ROWS Fintech Standard)</button>
       </div>`,
     trapExplanation: 'Option A defaults to RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW. When two transactions happen on the exact same day, RANGE treats them as tied values and sums BOTH transactions together, jumping ahead and displaying incorrect duplicate balances!',
     successExplanation: 'Option B explicitly specifies ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW. ROWS forces physical row-by-row accumulation, correctly calculating continuous progressive totals even with identical timestamps!',
@@ -3775,8 +3775,8 @@ const REEL_CHALLENGES = {
     task: 'Zomato & Swiggy Payments: LAG Delta vs Self-Join Trap',
     prompt: `Food delivery apps like Zomato and Swiggy must detect accidental double-swipes (₹850 debited twice in 4 seconds) without corrupting genuine separate orders. Run Option A (LAG Time-Delta) vs Option B (Time-Window Join) to see why Option B catastrophically fails.<br/>
       <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:#6ee7b7; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-16-R1', 'A')">⚡ Load Option A (LAG Time-Delta Standard)</button>
-        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-16-R1', 'B')">⚡ Load Option B (Self-Join Trap)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(16,185,129,0.2); border:1px solid #10b981; color:var(--ink-pos); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-16-R1', 'A')">⚡ Load Option A (LAG Time-Delta Standard)</button>
+        <button type="button" class="btn-sec" style="font-size:0.75rem; padding:5px 12px; border-radius:6px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:var(--ink-neg); font-weight:700; cursor:pointer;" onclick="loadReelCode('SQL-16-R1', 'B')">⚡ Load Option B (Self-Join Trap)</button>
       </div>`,
     trapExplanation: 'Option B runs a Time-Window Self-Join without filtering out the row itself! Because p1.txn_time - p2.txn_time <= 10, EVERY transaction matches ITSELF (0s <= 10s)! It flags 100% of genuine orders as duplicate fraud, corrupting the entire ledger.',
     successExplanation: 'Option A uses LAG(txn_time) partitioned by card_id and amount. It compares each transaction ONLY to the immediately preceding swipe, correctly flagging only the 2nd swipe 4 seconds later while preserving genuine orders!',
@@ -5171,9 +5171,9 @@ function formatGradingDiff(diffOrResult) {
   const hint = result.actionable_hint || 'Review your WHERE filter bounds, expressions, or SELECT column list.';
   const visualDiff = result.visual_diff_html || '';
 
-  let html = `<div class="grading-diff-alert" style="margin-top: 10px; padding: 12px 14px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; font-size: 0.8rem; line-height: 1.5; color: #fca5a5;">`;
+  let html = `<div class="grading-diff-alert" style="margin-top: 10px; padding: 12px 14px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; font-size: 0.8rem; line-height: 1.5; color:var(--ink-neg);">`;
   html += `<div style="font-weight: 800; color: #ef4444; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">${badge}</div>`;
-  html += `<div style="color: #fca5a5; margin-bottom: 6px;">${summary}</div>`;
+  html += `<div style="color:var(--ink-neg); margin-bottom: 6px;">${summary}</div>`;
   if (hint) {
     html += `<div style="margin-top: 6px; font-size: 0.76rem; color: #cbd5e1;">💡 <strong>Hint:</strong> ${hint}</div>`;
   }
@@ -5522,7 +5522,7 @@ function runCurrentQuery() {
           const fixOpt = (q && q.correctOption) || 'A';
           const fixLabel = `⚡ Load Option ${fixOpt} (${fixOpt === 'A' ? 'Correct Standard' : 'Fix'})`;
           diffDiv.innerHTML = `
-            <div style="margin-top: 10px; padding: 12px 14px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; font-size: 0.8rem; line-height: 1.5; color: #fca5a5;">
+            <div style="margin-top: 10px; padding: 12px 14px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; font-size: 0.8rem; line-height: 1.5; color:var(--ink-neg);">
               <div style="font-weight: 800; color: #ef4444; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">💀 Trap Caught!</div>
               <div>${trapDetail}</div>
               <div style="margin-top: 8px; font-size: 0.76rem; color: #cbd5e1;">👉 Click <strong>[${fixLabel}]</strong> in the question card above to test the corrected query!</div>

@@ -4244,7 +4244,7 @@ pre span {
   .slide-content li {
     font-size: 0.8rem !important;
     line-height: 1.5 !important;
-    color: #334155 !important;
+    color: var(--text-secondary) !important;
   }
   .slide-content code {
     font-size: 0.75rem !important;
@@ -10362,5 +10362,195 @@ code.schema-peek-trigger:hover {
   transform: none !important;
 }
 
+/* =================================================================
+   v75.0 - DARK MODE CONTRAST PARITY  (Version-3 SQL day pages)
+   -----------------------------------------------------------------
+   Applies to index.html + public/sql/day01-18.html (all funnel into
+   public/Version-3/index.html + this stylesheet).
+   Dark-first: every rule is scoped to [data-theme="dark"], which the
+   anti-FOUC init ALWAYS sets on <html> (index.html L23-25), so light
+   mode is byte-for-byte unchanged except section 7.
+   Fixes: white "paper" cards never dark-themed (PK/FK/Good/Bad, RDBMS
+   infographic, info cards, RDBMS intro section), plus muted-ink-on-
+   white and dark-ink-on-dark in table header subtitles and the
+   projected-column tint.
+   ================================================================= */
 
+/* --- 1. Dark-mode component tokens ----------------------------- */
+:root,
+[data-theme="dark"] {
+  --dm-body-ink: #cbd5e1;
+  --dm-caption-ink: #94a3b8;
+  --dm-card-bg: #141620;
+  --dm-card-bg-soft: #171a24;
+  --dm-inset-bg: #0f1117;
+  --dm-hairline: rgba(255, 255, 255, 0.08);
+  --dm-divider: rgba(255, 255, 255, 0.10);
+  --dm-pk-bg: linear-gradient(180deg, #1c1710 0%, #141620 100%);
+  --dm-pk-ink: #fcd34d;
+  --dm-fk-bg: linear-gradient(180deg, #181428 0%, #141620 100%);
+  --dm-fk-ink: #c4b5fd;
+  --dm-good-bg: linear-gradient(180deg, #0f1d18 0%, #141620 100%);
+  --dm-good-ink: #34d399;
+  --dm-bad-bg: linear-gradient(180deg, #1e1214 0%, #141620 100%);
+  --dm-bad-ink: #f87171;
+}
 
+/* --- 2. Semantic ink tokens (slide content + engine) ----------- */
+:root,
+[data-theme="dark"] {
+  --ink-pos: #34d399;
+  --ink-neg: #f87171;
+  --ink-warn: #fcd34d;
+  --ink-info: #38bdf8;
+  --ink-link: #93c5fd;
+  --ink-teal: #5eead4;
+  --ink-muted: #94a3b8;
+}
+[data-theme="light"] {
+  --ink-pos: #047857;
+  --ink-neg: #b91c1c;
+  --ink-warn: #b45309;
+  --ink-info: #0369a1;
+  --ink-link: #1d4ed8;
+  --ink-teal: #0f766e;
+  --ink-muted: #64748b;
+}
+
+/* --- 3. Comparison cards: PK / FK / Good / Bad ----------------- */
+[data-theme="dark"] .slide-content .vs-card {
+  background: var(--dm-card-bg) !important;
+  border-color: var(--dm-hairline) !important;
+  color: var(--dm-body-ink) !important;
+}
+[data-theme="dark"] .slide-content .vs-card h3,
+[data-theme="dark"] .slide-content .vs-card h4 {
+  color: var(--theory-heading) !important;
+}
+[data-theme="dark"] .slide-content .vs-card p,
+[data-theme="dark"] .slide-content .vs-card li {
+  color: var(--dm-body-ink) !important;
+}
+[data-theme="dark"] .slide-content .vs-card--pk {
+  background: var(--dm-pk-bg) !important;
+  border-left-color: #f59e0b !important;
+}
+[data-theme="dark"] .slide-content .vs-card--pk h4 {
+  color: var(--dm-pk-ink) !important;
+}
+[data-theme="dark"] .slide-content .vs-card--fk {
+  background: var(--dm-fk-bg) !important;
+  border-left-color: #8b5cf6 !important;
+}
+[data-theme="dark"] .slide-content .vs-card--fk h4 {
+  color: var(--dm-fk-ink) !important;
+}
+[data-theme="dark"] .slide-content .vs-card--good {
+  background: var(--dm-good-bg) !important;
+  border-left-color: #10b981 !important;
+}
+[data-theme="dark"] .slide-content .vs-card--good h4 {
+  color: var(--dm-good-ink) !important;
+}
+[data-theme="dark"] .slide-content .vs-card--bad {
+  background: var(--dm-bad-bg) !important;
+  border-left-color: #ef4444 !important;
+}
+[data-theme="dark"] .slide-content .vs-card--bad h4 {
+  color: var(--dm-bad-ink) !important;
+}
+[data-theme="dark"] .slide-content .vs-card small {
+  color: var(--dm-caption-ink) !important;
+  border-top-color: var(--dm-divider) !important;
+}
+[data-theme="dark"] .slide-content .vs-card-illustration {
+  background: var(--dm-inset-bg) !important;
+  border-color: var(--dm-hairline) !important;
+}
+/* .vs-card pre intentionally keeps its Dracula dark surface. */
+
+/* --- 4. RDBMS infographic + info cards ------------------------- */
+[data-theme="dark"] .rdbms-infographic {
+  background: linear-gradient(180deg, #161923 0%, #12141c 100%) !important;
+  border-color: var(--dm-hairline) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45) !important;
+}
+[data-theme="dark"] .rdbms-infographic .info-title {
+  color: var(--theory-heading) !important;
+}
+[data-theme="dark"] .rdbms-infographic .db-icon {
+  color: #60a5fa !important;
+}
+[data-theme="dark"] .rdbms-infographic .info-card {
+  background: var(--dm-card-bg-soft) !important;
+  border-color: var(--dm-hairline) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35) !important;
+}
+[data-theme="dark"] .rdbms-infographic .info-card-illustration {
+  background: var(--dm-inset-bg) !important;
+  border-bottom-color: var(--dm-hairline) !important;
+}
+[data-theme="dark"] .rdbms-infographic .info-card-bullets {
+  background: #12141c !important;
+}
+[data-theme="dark"] .rdbms-infographic .info-card-bullets li {
+  color: var(--dm-body-ink) !important;
+}
+[data-theme="dark"] .rdbms-infographic .info-card--blue .info-card-bullets li {
+  color: #93c5fd !important;
+}
+[data-theme="dark"] .rdbms-infographic .info-card--green .info-card-bullets li {
+  color: #6ee7b7 !important;
+}
+[data-theme="dark"] .rdbms-infographic .info-card--orange .info-card-bullets li {
+  color: #fdba74 !important;
+}
+[data-theme="dark"] .rdbms-infographic .info-card--purple .info-card-bullets li {
+  color: #c4b5fd !important;
+}
+[data-theme="dark"] .rdbms-infographic .info-card--red .info-card-bullets li {
+  color: #fca5a5 !important;
+}
+[data-theme="dark"] .rdbms-infographic .info-card--amber .info-card-bullets li {
+  color: #fcd34d !important;
+}
+[data-theme="dark"] .rdbms-infographic .info-card--cyan .info-card-bullets li {
+  color: #67e8f9 !important;
+}
+/* info-card-header gradients keep their white ink - already AA safe */
+
+/* --- 5. RDBMS intro section ----------------------------------- */
+[data-theme="dark"] .rdbms-intro-section {
+  background: #12141c !important;
+  border-color: var(--dm-hairline) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35) !important;
+}
+[data-theme="dark"] .rdbms-intro-section h3 {
+  color: var(--theory-heading) !important;
+}
+[data-theme="dark"] .rdbms-intro-section p {
+  color: var(--dm-body-ink) !important;
+}
+
+/* --- 6. Table header subtitles + projected column tint -------- */
+[data-theme="dark"] .table-th-subtitle--slate {
+  background: rgba(148, 163, 184, 0.14) !important;
+  color: #cbd5e1 !important;
+  border-color: rgba(148, 163, 184, 0.28) !important;
+}
+[data-theme="dark"] .table-th-subtitle--blue {
+  background: rgba(59, 130, 246, 0.18) !important;
+  color: #93c5fd !important;
+  border-color: rgba(59, 130, 246, 0.35) !important;
+}
+[data-theme="dark"] .db-table-mock td.column-projected-cell {
+  background: rgba(59, 130, 246, 0.12) !important;
+}
+
+/* --- 7. Light-mode contrast fixes (reverse cases) -------------- */
+[data-theme="light"] .slide-content .vs-card small {
+  color: #475569 !important;
+}
+[data-theme="light"] .slide-content .audio-play-btn {
+  color: #475569 !important;
+}

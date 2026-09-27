@@ -22,7 +22,7 @@ window.COURSE_CONTENT['day02'] = {
           <p>Every SQL query begins with <code>SELECT</code> — the command that tells the database engine <em>what data to return</em>. The <code>FROM</code> clause specifies <em>which table</em> to read from. Together they form the minimum viable SQL query.</p>
 
           <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; margin-top: 14px;">
-            <small style="flex: 1; color: #64748b; font-size: 0.75rem;">SELECT * vs Named Columns Examples</small>
+            <small style="flex: 1; color:var(--ink-muted); font-size: 0.75rem;">SELECT * vs Named Columns Examples</small>
             <button class="audio-play-btn" onclick="playAudio('Day02/New_Day2Part1audio02.mp3', this)" title="Play narration" style="flex-shrink: 0;">
               <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
             </button>
@@ -37,7 +37,7 @@ FROM   employees;</code></pre>
 
           <div class="info-box" id="day02AnatomyInfo">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; width: 100%;">
-              <strong style="color: #0f766e;">ℹ️ SELECT * vs. Named Columns:</strong>
+              <strong style="color:var(--ink-teal);">ℹ️ SELECT * vs. Named Columns:</strong>
               <button class="audio-play-btn" onclick="playAudio('Day02/New_Day2Part1audio03.mp3', this)" title="Play narration" style="flex-shrink: 0;">
                 <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
               </button>
@@ -58,7 +58,7 @@ FROM   employees;</code></pre>
           <p>The <code>AS</code> keyword assigns a temporary label to a column or expression in the result set. Aliases appear in the output header and can be used in <code>ORDER BY</code>, but <strong>not</strong> in <code>WHERE</code> (evaluated before SELECT).</p>
 
           <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; margin-top: 14px;">
-            <small style="flex: 1; color: #64748b; font-size: 0.75rem;">SELECT Alias Examples</small>
+            <small style="flex: 1; color:var(--ink-muted); font-size: 0.75rem;">SELECT Alias Examples</small>
             <button class="audio-play-btn" onclick="playAudio('Day02/New_Day2Part1audio05.mp3', this)" title="Play narration" style="flex-shrink: 0;">
               <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
             </button>
@@ -110,7 +110,7 @@ FROM   employees;</code></pre>
           <p><code>DISTINCT</code> applies <em>after</em> the result set is constructed and eliminates duplicate rows based on the selected columns. It operates on the combination of all selected columns — not just one.</p>
 
           <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; margin-top: 14px;">
-            <small style="flex: 1; color: #64748b; font-size: 0.75rem;">SELECT DISTINCT Examples</small>
+            <small style="flex: 1; color:var(--ink-muted); font-size: 0.75rem;">SELECT DISTINCT Examples</small>
             <button class="audio-play-btn" onclick="playAudio('Day02/New_Day2Part1audio09.mp3', this)" title="Play narration" style="flex-shrink: 0;">
               <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
             </button>
@@ -126,7 +126,7 @@ ORDER BY department_id;</code></pre>
 
           <div class="warn-box" id="day02DistinctWarn">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; width: 100%;">
-              <strong style="color: #b91c1c;">⚠️ Performance Warning:</strong>
+              <strong style="color:var(--ink-neg);">⚠️ Performance Warning:</strong>
               <button class="audio-play-btn" onclick="playAudio('Day02/New_Day2Part1audio10.mp3', this)" title="Play narration" style="flex-shrink: 0;">
                 <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
               </button>
@@ -147,7 +147,7 @@ ORDER BY department_id;</code></pre>
           <p><code>ORDER BY</code> is evaluated <em>last</em> in SQL's logical execution order (just before <code>LIMIT</code>). You can sort by column names, column positions, or aliases. Multiple columns create a hierarchical sort.</p>
 
           <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; margin-top: 14px;">
-            <small style="flex: 1; color: #64748b; font-size: 0.75rem;">ORDER BY Examples</small>
+            <small style="flex: 1; color:var(--ink-muted); font-size: 0.75rem;">ORDER BY Examples</small>
             <button class="audio-play-btn" onclick="playAudio('Day02/New_Day2Part1audio12.mp3', this)" title="Play narration" style="flex-shrink: 0;">
               <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
             </button>
@@ -169,7 +169,7 @@ ORDER BY new_salary DESC;</code></pre>
 
           <div class="pro-tip-box" id="day02OrderByTip">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; width: 100%;">
-              <strong style="color: #b45309;">💡 Pro Tip — NULL in ORDER BY:</strong>
+              <strong style="color:var(--ink-warn);">💡 Pro Tip — NULL in ORDER BY:</strong>
               <button class="audio-play-btn" onclick="playAudio('Day02/New_Day2Part1audio13.mp3', this)" title="Play narration" style="flex-shrink: 0;">
                 <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
               </button>
@@ -190,7 +190,7 @@ ORDER BY new_salary DESC;</code></pre>
           <p><code>LIMIT</code> (SQLite/MySQL/PostgreSQL) or <code>TOP</code> (SQL Server) restricts how many rows are returned. It is applied <em>after</em> filtering, grouping, and sorting — meaning it returns the first N rows <em>of the sorted result</em>.</p>
 
           <div class="heading-with-audio" style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; margin-top: 14px;">
-            <small style="flex: 1; color: #64748b; font-size: 0.75rem;">LIMIT Examples</small>
+            <small style="flex: 1; color:var(--ink-muted); font-size: 0.75rem;">LIMIT Examples</small>
             <button class="audio-play-btn" onclick="playAudio('Day02/New_Day2Part1audio15.mp3', this)" title="Play narration" style="flex-shrink: 0;">
               <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
             </button>
@@ -258,14 +258,14 @@ LIMIT  5 OFFSET 5;</code></pre>
               .sof-node--blue{
                 border-color:#3b82f6;
                 border-left-width:3.5px;
-                color:#93c5fd;
+                color:var(--ink-link);
                 background:rgba(59,130,246,0.14);
                 animation:sofReveal 0.45s ease var(--d,0.3s) both,sofGlowBlue 2.6s ease-in-out var(--gd,4.5s) infinite;
               }
               .sof-node--green{
                 border-color:#10b981;
                 border-left-width:3.5px;
-                color:#6ee7b7;
+                color:var(--ink-pos);
                 background:rgba(16,185,129,0.14);
                 animation:sofReveal 0.45s ease var(--d,0.3s) both,sofGlowGreen 2.6s ease-in-out var(--gd,4.5s) infinite;
               }

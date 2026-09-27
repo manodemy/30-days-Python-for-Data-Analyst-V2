@@ -65,7 +65,7 @@ window.COURSE_CONTENT['day06'] = {
         <div class="slide-section" id="day06GroupByRuleWarnSection">
           <div class="warn-box" id="day06GroupByRuleWarn">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; width: 100%;">
-              <strong style="color: #b91c1c; flex: 1;">⚠️ The Golden GROUP BY Rule:</strong>
+              <strong style="color:var(--ink-neg); flex: 1;">⚠️ The Golden GROUP BY Rule:</strong>
             </div>
             <p style="margin: 0;">Any column in your <code>SELECT</code> list that is <strong>not enclosed inside an aggregate function</strong> (<code>COUNT</code>, <code>SUM</code>, <code>AVG</code>, etc.) <strong>must appear in the GROUP BY clause</strong>. Violating this rule fails with <em>"non-aggregated column not in GROUP BY"</em> in standard SQL.</p>
           </div>
@@ -108,7 +108,7 @@ window.COURSE_CONTENT['day06'] = {
         <div class="slide-section" id="day06MultiGroupInfoSection">
           <div class="info-box" id="day06MultiGroupInfo">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; width: 100%;">
-              <strong style="color: #0f766e; flex: 1;">💡 Cardinality Growth:</strong>
+              <strong style="color:var(--ink-teal); flex: 1;">💡 Cardinality Growth:</strong>
             </div>
             <p style="margin: 0;">Adding columns to <code>GROUP BY</code> increases result granularity. If table A has 6 departments and 2 active statuses, <code>GROUP BY department_id, is_active</code> produces up to 6 × 2 = 12 output groups.</p>
           </div>
@@ -175,7 +175,7 @@ window.COURSE_CONTENT['day06'] = {
 
           <div class="vs-block" id="day06WhereVsHavingCards" style="margin-top: 10px;">
             <div class="vs-card" id="day06WhereCard" style="flex: 1;">
-              <h4 style="margin: 0 0 6px; font-size: 0.95rem; color: #0284c7;">WHERE — Row Filter (Pre-Aggregation)</h4>
+              <h4 style="margin: 0 0 6px; font-size: 0.95rem; color:var(--ink-info);">WHERE — Row Filter (Pre-Aggregation)</h4>
               <ul style="margin: 0; padding-left: 18px; font-size: 0.82rem; line-height: 1.5;">
                 <li><strong>Timing:</strong> Step 2 — Evaluates BEFORE <code>GROUP BY</code></li>
                 <li><strong>Operates on:</strong> Individual base table rows</li>
@@ -220,7 +220,7 @@ window.COURSE_CONTENT['day06'] = {
         <div class="slide-section" id="day06WhereHavingProTipSection">
           <div class="pro-tip-box" id="day06WhereHavingProTip">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; width: 100%;">
-              <strong style="color: #b45309; flex: 1;">💡 Golden Best Practice:</strong>
+              <strong style="color:var(--ink-warn); flex: 1;">💡 Golden Best Practice:</strong>
             </div>
             <p style="margin: 0;">Apply non-aggregate filters in <code>WHERE</code> whenever possible. Only use <code>HAVING</code> when testing aggregate function results. Combining both maximizes performance: <code>WHERE</code> shrinks the dataset upfront, and <code>HAVING</code> prunes the final summaries.</p>
           </div>
@@ -281,14 +281,14 @@ window.COURSE_CONTENT['day06'] = {
             <table class="db-table-mock db-table-mock--compact">
               <thead><tr><th>Step</th><th>Clause</th><th>Phase</th><th>What Happens Here?</th></tr></thead>
               <tbody>
-                <tr id="day06ExecStep1"><td style="font-weight: 700; color: #0284c7;">Step 1</td><td><code>FROM &amp; JOIN</code></td><td>Source</td><td>Identify source tables and evaluate join predicates</td></tr>
-                <tr id="day06ExecStep2"><td style="font-weight: 700; color: #0284c7;">Step 2</td><td><code>WHERE</code></td><td>Filter Rows</td><td>Discard non-matching candidate rows before aggregation</td></tr>
+                <tr id="day06ExecStep1"><td style="font-weight: 700; color:var(--ink-info);">Step 1</td><td><code>FROM &amp; JOIN</code></td><td>Source</td><td>Identify source tables and evaluate join predicates</td></tr>
+                <tr id="day06ExecStep2"><td style="font-weight: 700; color:var(--ink-info);">Step 2</td><td><code>WHERE</code></td><td>Filter Rows</td><td>Discard non-matching candidate rows before aggregation</td></tr>
                 <tr id="day06ExecStep3"><td style="font-weight: 700; color: #e11d48; background: rgba(225,29,72,0.06);">Step 3</td><td><strong style="color: #e11d48;">GROUP BY</strong></td><td>Bucket</td><td>Partition remaining rows into categorical groups</td></tr>
                 <tr id="day06ExecStep4"><td style="font-weight: 700; color: #e11d48; background: rgba(225,29,72,0.06);">Step 4</td><td><strong style="color: #e11d48;">HAVING</strong></td><td>Filter Groups</td><td>Discard aggregated groups based on aggregate conditions</td></tr>
-                <tr id="day06ExecStep5"><td style="font-weight: 700; color: #0284c7;">Step 5</td><td><code>SELECT</code></td><td>Project</td><td>Evaluate expressions, scalar calculations, and column aliases</td></tr>
-                <tr id="day06ExecStep6"><td style="font-weight: 700; color: #0284c7;">Step 6</td><td><code>DISTINCT</code></td><td>Deduplicate</td><td>Remove duplicate projected rows from the output</td></tr>
-                <tr id="day06ExecStep7"><td style="font-weight: 700; color: #0284c7;">Step 7</td><td><code>ORDER BY</code></td><td>Sort</td><td>Sort the final result set (aliases from SELECT are valid here!)</td></tr>
-                <tr id="day06ExecStep8"><td style="font-weight: 700; color: #0284c7;">Step 8</td><td><code>LIMIT / OFFSET</code></td><td>Slice</td><td>Restrict output row count and skip initial rows</td></tr>
+                <tr id="day06ExecStep5"><td style="font-weight: 700; color:var(--ink-info);">Step 5</td><td><code>SELECT</code></td><td>Project</td><td>Evaluate expressions, scalar calculations, and column aliases</td></tr>
+                <tr id="day06ExecStep6"><td style="font-weight: 700; color:var(--ink-info);">Step 6</td><td><code>DISTINCT</code></td><td>Deduplicate</td><td>Remove duplicate projected rows from the output</td></tr>
+                <tr id="day06ExecStep7"><td style="font-weight: 700; color:var(--ink-info);">Step 7</td><td><code>ORDER BY</code></td><td>Sort</td><td>Sort the final result set (aliases from SELECT are valid here!)</td></tr>
+                <tr id="day06ExecStep8"><td style="font-weight: 700; color:var(--ink-info);">Step 8</td><td><code>LIMIT / OFFSET</code></td><td>Slice</td><td>Restrict output row count and skip initial rows</td></tr>
               </tbody>
             </table>
           </div>
@@ -297,7 +297,7 @@ window.COURSE_CONTENT['day06'] = {
         <div class="slide-section" id="day06ExecOrderTipSection">
           <div class="info-box" id="day06ExecOrderTip">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; width: 100%;">
-              <strong style="color: #0f766e; flex: 1;">💡 Why Aliases Work in ORDER BY but Not WHERE:</strong>
+              <strong style="color:var(--ink-teal); flex: 1;">💡 Why Aliases Work in ORDER BY but Not WHERE:</strong>
             </div>
             <p style="margin: 0;">Because <code>ORDER BY</code> runs at Step 7 (<em>after</em> Step 5 <code>SELECT</code>), it can reference column aliases like <code>avg_salary</code>. But <code>WHERE</code> and <code>HAVING</code> run at Steps 2 and 4 (<em>before</em> <code>SELECT</code>), so aliases do not exist yet.</p>
           </div>

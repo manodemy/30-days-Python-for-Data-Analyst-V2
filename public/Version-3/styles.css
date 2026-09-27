@@ -806,25 +806,32 @@ a { color: var(--cyan); text-decoration: none; }
   font-family: var(--mono);
   font-size: 0.8rem;
 }
-.q-nav {
-  display: flex;
-  gap: 4px;
-  flex-shrink: 0;
-}
-.q-nav button {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
+/* ── Toolbar Q-Nav Buttons (◀ / ▶ flanking the question picker) ── */
+.q-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-sm);
   background: var(--surface-2);
   border: 1px solid var(--border);
   color: var(--text-muted);
-  font-size: 0.75rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: var(--transition);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  padding: 0;
 }
-.q-nav button:hover { color: var(--cyan); border-color: var(--cyan); }
+.q-nav-btn:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-hover);
+  color: var(--text);
+}
+.q-nav-btn:active {
+  background: rgba(0,230,246,0.08);
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
 
 /* ─── Editor Area ─── */
 .editor-area {

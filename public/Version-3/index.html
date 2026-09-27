@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.css">
 
   <!-- App CSS -->
-  <link rel="stylesheet" href="/Version-3/styles.css?v=65.0">
+  <link rel="stylesheet" href="/Version-3/styles.css?v=66.0">
 
   <!-- CodeMirror JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
@@ -153,17 +153,18 @@
         <button class="audio-play-btn" id="questionAudioBtn" onclick="playQuestionAudio(this)" title="Play question narration" style="flex-shrink: 0; margin-top: 2px;">
           <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
         </button>
-        <div class="q-nav">
-          <button onclick="prevQuestion()" title="Previous question">◀</button>
-          <button onclick="nextQuestion()" title="Next question">▶</button>
-        </div>
       </div>
 
       <!-- Editor Area -->
       <div class="editor-area">
         <!-- Toolbar -->
         <div class="editor-toolbar">
-          <!-- Question Picker Trigger — dropdown left of Question-01 chip -->
+          <!-- ◀ Prev Question -->
+          <button class="q-nav-btn" id="prevQBtn" onclick="prevQuestion()" title="Previous question" aria-label="Previous question">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+          </button>
+
+          <!-- Question Picker Trigger -->
           <div class="q-picker-wrapper" id="qPickerWrapper">
             <button class="q-picker-trigger" id="qPickerTrigger" onclick="toggleQPicker(event)" title="Jump to question" aria-haspopup="listbox" aria-expanded="false">
               <span class="q-counter" id="qCounter">Question-01</span>
@@ -177,6 +178,12 @@
               </div>
             </div>
           </div>
+
+          <!-- ▶ Next Question -->
+          <button class="q-nav-btn" id="nextQBtn" onclick="nextQuestion()" title="Next question" aria-label="Next question">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+          </button>
+
           <button class="audio-play-btn" id="solutionAudioBtn" onclick="playSolutionAudioFromBtn(this)" title="Play solution narration" style="margin-left: 4px;">
             <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
           </button>

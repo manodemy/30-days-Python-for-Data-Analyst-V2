@@ -21,6 +21,9 @@ jobs:
       contents: read
       deployments: write
 
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN || secrets.VERCEL_AUTH_TOKEN || secrets.VERCEL_ACCESS_TOKEN }}
+
     steps:
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
@@ -47,14 +50,16 @@ jobs:
 
       - name: 🔍 Verify Vercel Token & Authenticate
         run: |
-          if [ -z "${{ secrets.VERCEL_TOKEN }}" ]; then
-            echo "::error::VERCEL_TOKEN secret is not set in GitHub repository secrets!"
-            echo "❌ **VERCEL_TOKEN secret is empty or missing!** Please add it in GitHub Settings > Secrets and variables > Actions." >> $GITHUB_STEP_SUMMARY
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "::error::VERCEL_TOKEN secret is not set in GitHub repository secrets! (Also checked VERCEL_AUTH_TOKEN and VERCEL_ACCESS_TOKEN)"
+            echo "❌ **VERCEL_TOKEN secret is empty or missing!**" >> $GITHUB_STEP_SUMMARY
+            echo "Please ensure the secret is saved under **Repository secrets** (not Environment secrets) at:" >> $GITHUB_STEP_SUMMARY
+            echo "https://github.com/manodemy/30-days_-Python-for-Data-Analyst/settings/secrets/actions" >> $GITHUB_STEP_SUMMARY
             exit 1
           fi
           echo "### 🚀 Vercel Deployment Diagnostics" >> $GITHUB_STEP_SUMMARY
           echo "Running vercel whoami..."
-          vercel whoami --token="${{ secrets.VERCEL_TOKEN }}" 2>&1 | tee whoami.log || {
+          vercel whoami --token="$VERCEL_TOKEN" 2>&1 | tee whoami.log || {
             echo "::error::vercel whoami failed! The token may be invalid or expired."
             echo "❌ **vercel whoami failed!** Output:" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
@@ -74,7 +79,7 @@ jobs:
 
       - name: 🔗 Pull Vercel project settings
         run: |
-          vercel pull --yes --environment=production --token="${{ secrets.VERCEL_TOKEN }}" 2>&1 | tee pull.log || {
+          vercel pull --yes --environment=production --token="$VERCEL_TOKEN" 2>&1 | tee pull.log || {
             echo "::error::vercel pull failed!"
             echo "❌ **vercel pull failed!** Log:" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
@@ -85,7 +90,7 @@ jobs:
 
       - name: 🏗️ Build with Vercel
         run: |
-          vercel build --prod --token="${{ secrets.VERCEL_TOKEN }}" 2>&1 | tee build.log || {
+          vercel build --prod --token="$VERCEL_TOKEN" 2>&1 | tee build.log || {
             echo "::error::vercel build failed!"
             echo "❌ **vercel build failed!** Log:" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
@@ -96,7 +101,7 @@ jobs:
 
       - name: 🚀 Deploy to Vercel Production
         run: |
-          vercel deploy --prebuilt --prod --token="${{ secrets.VERCEL_TOKEN }}" 2>&1 | tee deploy.log || {
+          vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN" 2>&1 | tee deploy.log || {
             echo "::error::vercel deploy failed!"
             echo "❌ **vercel deploy failed!** Log:" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY

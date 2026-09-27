@@ -144,6 +144,42 @@
     <!-- ─── LEFT PANEL ─── -->
     <div class="panel-left" id="panelLeft">
 
+      <!-- Toolbar — above the question prompt -->
+      <div class="editor-toolbar">
+        <!-- ◀ Prev Question -->
+        <button class="q-nav-btn" id="prevQBtn" onclick="prevQuestion()" title="Previous question" aria-label="Previous question">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        </button>
+
+        <!-- Question Picker Trigger -->
+        <div class="q-picker-wrapper" id="qPickerWrapper">
+          <button class="q-picker-trigger" id="qPickerTrigger" onclick="toggleQPicker(event)" title="Jump to question" aria-haspopup="listbox" aria-expanded="false">
+            <span class="q-counter" id="qCounter">Question-01</span>
+            <svg class="q-picker-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <!-- Question List Popover -->
+          <div class="q-picker-popover" id="qPickerPopover" role="listbox" aria-label="Question list" style="display:none;">
+            <div class="q-picker-header">Questions in this topic</div>
+            <div class="q-picker-list" id="qPickerList">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- ▶ Next Question -->
+        <button class="q-nav-btn" id="nextQBtn" onclick="nextQuestion()" title="Next question" aria-label="Next question">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </button>
+
+        <button class="audio-play-btn" id="solutionAudioBtn" onclick="playSolutionAudioFromBtn(this)" title="Play solution narration" style="margin-left: 4px;">
+          <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        <div class="spacer"></div>
+        <button class="tb-btn tb-btn--run" id="runBtn" onclick="runCurrentQuery()">▶ Run</button>
+        <button class="tb-btn tb-btn--tables" id="peekTrigger" onclick="togglePeekPopover(event)">📊 Tables</button>
+        <button class="tb-btn tb-btn--clear" onclick="clearEditor()">✕ Clear</button>
+      </div>
+
       <!-- Question Prompt -->
       <div class="question-bar" id="questionBar">
         <div class="q-marker"></div>
@@ -157,41 +193,6 @@
 
       <!-- Editor Area -->
       <div class="editor-area">
-        <!-- Toolbar -->
-        <div class="editor-toolbar">
-          <!-- ◀ Prev Question -->
-          <button class="q-nav-btn" id="prevQBtn" onclick="prevQuestion()" title="Previous question" aria-label="Previous question">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
-          </button>
-
-          <!-- Question Picker Trigger -->
-          <div class="q-picker-wrapper" id="qPickerWrapper">
-            <button class="q-picker-trigger" id="qPickerTrigger" onclick="toggleQPicker(event)" title="Jump to question" aria-haspopup="listbox" aria-expanded="false">
-              <span class="q-counter" id="qCounter">Question-01</span>
-              <svg class="q-picker-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-            <!-- Question List Popover -->
-            <div class="q-picker-popover" id="qPickerPopover" role="listbox" aria-label="Question list" style="display:none;">
-              <div class="q-picker-header">Questions in this topic</div>
-              <div class="q-picker-list" id="qPickerList">
-                <!-- Populated by JS -->
-              </div>
-            </div>
-          </div>
-
-          <!-- ▶ Next Question -->
-          <button class="q-nav-btn" id="nextQBtn" onclick="nextQuestion()" title="Next question" aria-label="Next question">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
-          </button>
-
-          <button class="audio-play-btn" id="solutionAudioBtn" onclick="playSolutionAudioFromBtn(this)" title="Play solution narration" style="margin-left: 4px;">
-            <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-          </button>
-          <div class="spacer"></div>
-          <button class="tb-btn tb-btn--run" id="runBtn" onclick="runCurrentQuery()">▶ Run</button>
-          <button class="tb-btn tb-btn--tables" id="peekTrigger" onclick="togglePeekPopover(event)">📊 Tables</button>
-          <button class="tb-btn tb-btn--clear" onclick="clearEditor()">✕ Clear</button>
-        </div>
 
         <!-- Mobile SQL Quick-Key Chips Toolbar -->
         <div class="mobile-sql-toolbar" id="mobileSqlToolbar" aria-label="SQL Quick Syntax Chips">

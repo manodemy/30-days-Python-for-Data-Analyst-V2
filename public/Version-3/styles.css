@@ -865,14 +865,160 @@ a { color: var(--cyan); text-decoration: none; }
 .tb-btn--run:hover { background: #0ea571; box-shadow: 0 0 12px var(--green-glow); }
 .tb-btn--clear { color: var(--text-dim); }
 
+/* ── Question Picker Wrapper ── */
+.q-picker-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Trigger button — looks like the old q-counter chip but with a chevron */
+.q-picker-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 3px 8px 3px 8px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  outline: none;
+}
+.q-picker-trigger:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-hover);
+}
+.q-picker-trigger[aria-expanded="true"] {
+  border-color: var(--cyan);
+  background: rgba(0,230,246,0.06);
+}
+.q-picker-trigger[aria-expanded="true"] .q-picker-chevron {
+  transform: rotate(180deg);
+}
+
+/* The Question-XX label inside the trigger */
 .q-counter {
   font-size: 0.72rem;
   color: var(--text-muted);
   font-family: var(--mono);
-  padding: 3px 8px;
-  background: var(--surface-2);
-  border-radius: var(--radius-sm);
+  background: none;
+  padding: 0;
+  border-radius: 0;
 }
+
+.q-picker-chevron {
+  color: var(--text-dim);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+/* ── Popover ── */
+.q-picker-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 999;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.06);
+  min-width: 260px;
+  max-width: 340px;
+  max-height: 320px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: qPickerSlideIn 0.18s cubic-bezier(0.4,0,0.2,1);
+}
+@keyframes qPickerSlideIn {
+  from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.q-picker-header {
+  padding: 9px 14px 8px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  flex-shrink: 0;
+}
+
+.q-picker-list {
+  overflow-y: auto;
+  flex: 1;
+}
+.q-picker-list::-webkit-scrollbar { width: 4px; }
+.q-picker-list::-webkit-scrollbar-track { background: transparent; }
+.q-picker-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+/* Each question row */
+.q-picker-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  transition: background 0.12s ease;
+  border-bottom: 1px solid #f1f5f9;
+}
+.q-picker-item:last-child { border-bottom: none; }
+.q-picker-item:hover { background: #f0f9ff; }
+.q-picker-item.q-picker-item--active {
+  background: #eff6ff;
+}
+.q-picker-item.q-picker-item--active .q-picker-item-num {
+  color: #2563eb;
+  background: #dbeafe;
+}
+
+/* Question number badge */
+.q-picker-item-num {
+  flex-shrink: 0;
+  font-size: 0.65rem;
+  font-weight: 700;
+  font-family: var(--mono);
+  color: #64748b;
+  background: #f1f5f9;
+  border-radius: 5px;
+  padding: 2px 7px;
+  min-width: 36px;
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* Question prompt — single line, truncated */
+.q-picker-item-text {
+  flex: 1;
+  font-size: 0.78rem;
+  color: #1e293b;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+}
+
+/* Solved checkmark badge */
+.q-picker-item-solved {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #dcfce7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.q-picker-item-solved svg { display: block; }
 
 /* CodeMirror wrapper */
 .editor-wrap {

@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.css">
 
   <!-- App CSS -->
-  <link rel="stylesheet" href="/Version-3/styles.css?v=64.0">
+  <link rel="stylesheet" href="/Version-3/styles.css?v=65.0">
 
   <!-- CodeMirror JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
@@ -163,8 +163,21 @@
       <div class="editor-area">
         <!-- Toolbar -->
         <div class="editor-toolbar">
-          <span class="q-counter" id="qCounter">Question-01</span>
-          <button class="audio-play-btn" id="solutionAudioBtn" onclick="playSolutionAudioFromBtn(this)" title="Play solution narration" style="margin-left: 6px;">
+          <!-- Question Picker Trigger — dropdown left of Question-01 chip -->
+          <div class="q-picker-wrapper" id="qPickerWrapper">
+            <button class="q-picker-trigger" id="qPickerTrigger" onclick="toggleQPicker(event)" title="Jump to question" aria-haspopup="listbox" aria-expanded="false">
+              <span class="q-counter" id="qCounter">Question-01</span>
+              <svg class="q-picker-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <!-- Question List Popover -->
+            <div class="q-picker-popover" id="qPickerPopover" role="listbox" aria-label="Question list" style="display:none;">
+              <div class="q-picker-header">Questions in this topic</div>
+              <div class="q-picker-list" id="qPickerList">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+          </div>
+          <button class="audio-play-btn" id="solutionAudioBtn" onclick="playSolutionAudioFromBtn(this)" title="Play solution narration" style="margin-left: 4px;">
             <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
           </button>
           <div class="spacer"></div>

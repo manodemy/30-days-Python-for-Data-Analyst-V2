@@ -5208,6 +5208,103 @@ function prevQuestion() {
   }
 }
 
+// ──────────────────────────────────────────────────────────────────
+// QUESTION PICKER DROPDOWN
+// ──────────────────────────────────────────────────────────────────
+
+function populateQPicker() {
+  const list = document.getElementById('qPickerList');
+  if (!list) return;
+  const questions = (COURSE_CONFIG && COURSE_CONFIG.practiceQuestions) || [];
+  list.innerHTML = '';
+  questions.forEach((q, idx) => {
+    const isSolved = solvedQuestions && solvedQuestions.has(`${currentDay}_${q.id}`);
+    const isActive = idx === currentPracticeQ;
+
+    // Strip HTML tags from prompt for plain-text display
+    const plainPrompt = (q.prompt || '').replace(/<[^>]*>/g, '').trim();
+
+    const btn = document.createElement('button');
+    btn.className = 'q-picker-item' + (isActive ? ' q-picker-item--active' : '');
+    btn.setAttribute('role', 'option');
+    btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    btn.setAttribute('data-idx', idx);
+    btn.title = plainPrompt;
+
+    btn.innerHTML = `
+      <span class="q-picker-item-num">Q${String(q.id).padStart(2,'0')}</span>
+      <span class="q-picker-item-text">${plainPrompt}</span>
+      ${isSolved ? `<span class="q-picker-item-solved" title="Solved">
+        <svg width="9" height="9" viewBox="0 0 12 12" fill="none">
+          <path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>` : ''}
+    `;
+    btn.addEventListener('click', () => jumpToQuestion(idx));
+    list.appendChild(btn);
+  });
+
+  // Scroll active item into view
+  const activeItem = list.querySelector('.q-picker-item--active');
+  if (activeItem) activeItem.scrollIntoView({ block: 'nearest' });
+}
+
+function jumpToQuestion(idx) {
+  if (IS_GUEST_REEL) { showGuestPaywallModal('all 750+ practice questions'); return; }
+  const questions = (COURSE_CONFIG && COURSE_CONFIG.practiceQuestions) || [];
+  if (idx < 0 || idx >= questions.length) return;
+  saveCurrentPracticeAnswer();
+  clearOutputSection();
+  currentPracticeQ = idx;
+  renderPracticeQuestion();
+  loadSavedPracticeAnswer();
+  closeQPicker();
+}
+
+function openQPicker() {
+  const popover = document.getElementById('qPickerPopover');
+  const trigger = document.getElementById('qPickerTrigger');
+  if (!popover || !trigger) return;
+  populateQPicker();
+  popover.style.display = 'flex';
+  trigger.setAttribute('aria-expanded', 'true');
+  // Dismiss on outside click
+  setTimeout(() => {
+    document.addEventListener('click', _qPickerOutsideClick, { once: true });
+  }, 0);
+}
+
+function closeQPicker() {
+  const popover = document.getElementById('qPickerPopover');
+  const trigger = document.getElementById('qPickerTrigger');
+  if (popover) popover.style.display = 'none';
+  if (trigger) trigger.setAttribute('aria-expanded', 'false');
+  document.removeEventListener('click', _qPickerOutsideClick);
+}
+
+function _qPickerOutsideClick(e) {
+  const wrapper = document.getElementById('qPickerWrapper');
+  if (wrapper && !wrapper.contains(e.target)) {
+    closeQPicker();
+  } else {
+    // Clicked inside — re-attach listener if popover still open
+    const popover = document.getElementById('qPickerPopover');
+    if (popover && popover.style.display !== 'none') {
+      document.addEventListener('click', _qPickerOutsideClick, { once: true });
+    }
+  }
+}
+
+function toggleQPicker(e) {
+  e.stopPropagation();
+  const popover = document.getElementById('qPickerPopover');
+  if (popover && popover.style.display !== 'none') {
+    closeQPicker();
+  } else {
+    openQPicker();
+  }
+}
+
 // Persist solved questions across page refreshes
 let solvedQuestions = new Set(JSON.parse(localStorage.getItem('manodemy_solved_v3') || '[]'));
 

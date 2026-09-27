@@ -23,6 +23,8 @@ jobs:
 
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN || secrets.VERCEL_AUTH_TOKEN || secrets.VERCEL_ACCESS_TOKEN }}
+      PYTHONIOENCODING: 'utf-8'
+      PYTHONUTF8: '1'
 
     steps:
       - name: 📥 Checkout repository

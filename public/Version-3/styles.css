@@ -816,7 +816,7 @@ a { color: var(--cyan); text-decoration: none; }
   border-radius: var(--radius-sm);
   background: var(--surface-2);
   border: 1px solid var(--border);
-  color: var(--text-muted);
+  color: #ffffff;
   cursor: pointer;
   flex-shrink: 0;
   transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
@@ -907,7 +907,7 @@ a { color: var(--cyan); text-decoration: none; }
 /* The Question-XX label inside the trigger */
 .q-counter {
   font-size: 0.72rem;
-  color: var(--text-muted);
+  color: #ffffff;
   font-family: var(--mono);
   background: none;
   padding: 0;
@@ -915,7 +915,7 @@ a { color: var(--cyan); text-decoration: none; }
 }
 
 .q-picker-chevron {
-  color: var(--text-dim);
+  color: rgba(255,255,255,0.7);
   flex-shrink: 0;
   transition: transform 0.2s ease;
 }

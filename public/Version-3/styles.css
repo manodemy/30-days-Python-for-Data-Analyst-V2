@@ -742,6 +742,7 @@ a { color: var(--cyan); text-decoration: none; }
   flex-direction: column;
   overflow: hidden;
   min-width: 320px;
+  background: #f9f8f6; /* matches .slide-content reading surface */
   transition: flex-basis 0.4s cubic-bezier(0.4, 0, 0.2, 1), min-height 0.4s ease;
 }
 .panel-right.collapsed {
@@ -998,10 +999,10 @@ a { color: var(--cyan); text-decoration: none; }
   position: relative;
 }
 
-/* Slide Viewer */
+/* Slide Viewer — open layout: no card padding, content fills the full panel */
 .slide-viewer {
   flex: 1;
-  padding: 8px 0.85rem 0.85rem 0.85rem !important;
+  padding: 0 !important;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -1037,14 +1038,15 @@ a { color: var(--cyan); text-decoration: none; }
   font-family: var(--font);
 }
 
-/* Slide Card Layout */
+/* Slide Card — open layout shell: transparent, no box, no rounded corners.
+   Keeps position:relative so the absolutely-positioned playback-bar anchors correctly. */
 .slide-card {
   animation: slideIn 0.3s ease;
-  background: #fafaf8 !important;
+  background: transparent !important;
   color: #1a1a2e !important;
-  border-radius: var(--radius);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-  border: 1px solid #e8e6e1;
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
   font-family: var(--font);
   line-height: 1.65;
   height: 100%;
@@ -1052,6 +1054,7 @@ a { color: var(--cyan); text-decoration: none; }
   flex-direction: column;
   overflow: hidden;
   min-height: 0;
+  position: relative;
 }
 @keyframes slideIn {
   from { opacity: 0; transform: translateX(16px); }
@@ -1078,12 +1081,13 @@ a { color: var(--cyan); text-decoration: none; }
   letter-spacing: -0.01em !important;
 }
 
-/* Slide Content */
+/* Slide Content — full-bleed warm reading surface, no card inset */
 .slide-content {
   flex: 1;
-  padding: 16px 20px 120px 20px !important;
+  padding: 20px 28px 120px 28px !important;
   overflow-y: auto;
   min-height: 0;
+  background: #f9f8f6 !important;
 }
 #slideBodyText > *:first-child {
   margin-top: 4px !important;

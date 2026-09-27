@@ -45,16 +45,66 @@ jobs:
       - name: 📦 Install Vercel CLI (latest)
         run: npm install -g vercel@latest
 
+      - name: 🔍 Verify Vercel Token & Authenticate
+        run: |
+          if [ -z "${{ secrets.VERCEL_TOKEN }}" ]; then
+            echo "::error::VERCEL_TOKEN secret is not set in GitHub repository secrets!"
+            echo "❌ **VERCEL_TOKEN secret is empty or missing!** Please add it in GitHub Settings > Secrets and variables > Actions." >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+          echo "### 🚀 Vercel Deployment Diagnostics" >> $GITHUB_STEP_SUMMARY
+          echo "Running vercel whoami..."
+          vercel whoami --token="${{ secrets.VERCEL_TOKEN }}" 2>&1 | tee whoami.log || {
+            echo "::error::vercel whoami failed! The token may be invalid or expired."
+            echo "❌ **vercel whoami failed!** Output:" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat whoami.log >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            exit 1
+          }
+          echo "✅ Authenticated with Vercel:" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cat whoami.log >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
       - name: 🔗 Link Vercel project
         run: |
           mkdir -p .vercel
-          echo '{"projectId":"prj_Zpd3KdcKpb5CH8w8s4vTJnfIdSr9","orgId":"team_9s0I2gx0M6USgOHjg7OllGOg"}' > .vercel/project.json
+          echo '{"projectId":"prj_Zpd3KdcKpb5CH8w8s4vTJnfIdSr9","orgId":"team_9s0I2gx0M6USgOHjg7OllGOg","projectName":"30-days-python-for-data-analyst-v2"}' > .vercel/project.json
+
+      - name: 🔗 Pull Vercel project settings
+        run: |
+          vercel pull --yes --environment=production --token="${{ secrets.VERCEL_TOKEN }}" 2>&1 | tee pull.log || {
+            echo "::error::vercel pull failed!"
+            echo "❌ **vercel pull failed!** Log:" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat pull.log >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            exit 1
+          }
+
+      - name: 🏗️ Build with Vercel
+        run: |
+          vercel build --prod --token="${{ secrets.VERCEL_TOKEN }}" 2>&1 | tee build.log || {
+            echo "::error::vercel build failed!"
+            echo "❌ **vercel build failed!** Log:" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat build.log >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            exit 1
+          }
 
       - name: 🚀 Deploy to Vercel Production
-        run: vercel deploy --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: team_9s0I2gx0M6USgOHjg7OllGOg
-          VERCEL_PROJECT_ID: prj_Zpd3KdcKpb5CH8w8s4vTJnfIdSr9
+        run: |
+          vercel deploy --prebuilt --prod --token="${{ secrets.VERCEL_TOKEN }}" 2>&1 | tee deploy.log || {
+            echo "::error::vercel deploy failed!"
+            echo "❌ **vercel deploy failed!** Log:" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat deploy.log >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            exit 1
+          }
+          echo "✅ **Vercel Production Deployment Successful!**" >> $GITHUB_STEP_SUMMARY
 
       - name: ⚡ Setup Supabase CLI
         uses: supabase/setup-cli@v1

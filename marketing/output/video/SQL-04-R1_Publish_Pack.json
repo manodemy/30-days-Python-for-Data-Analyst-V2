@@ -1,0 +1,450 @@
+{
+  "reelNo": "SQL-04-R1",
+  "day": "DAY 04",
+  "badge": "SQL · GROUP BY",
+  "videoFile": "SQL-04-R1.mp4",
+  "videoPath": "D:\\Learn Python in 60days\\Manodemy_Web_V2\\marketing\\output\\video\\SQL-04-R1.mp4",
+  "fileSizeMb": 4.31,
+  "resolution": "1080x1920",
+  "fps": 24,
+  "durationSec": 21.32,
+  "caption": "WHERE VS HAVING TRAP ⚗️\nWhich query filters departments by average salary without crashing?\n\nCan you spot the trap before checking the pinned comment? \n\nDrop your vote (A or B) below 👇\n\n\nPractice Data Skills \n👉 Day 1 & Day 2 are 100% FREE\n🔗 Link in bio / manodemy.com/q7\n\n#sql #sqlinterview #sqltips #dataanalytics #dataengineer #datascience #dataanalyst #sqlquery #faang #techinterview #codinginterview #learnsql #database #manodemy #dataanalysis",
+  "pinnedAnswer": "Option A is the trap ❌ | Option B is correct ✅\n\nWhy Option A throws an error:\nIn SQL, WHERE filters individual rows BEFORE GROUP BY runs. Aggregate functions like AVG() don't exist yet at the WHERE stage — they haven't been computed!\n\nOption B correctly uses HAVING, which runs AFTER GROUP BY has computed the average for each department.\n\n💡 Rule of thumb: WHERE = filter rows (before grouping), HAVING = filter groups (after grouping)!\n\nBe honest — did you get this right? 👇",
+  "simulatorLink": "https://www.manodemy.com/q7",
+  "cues": {
+    "t_hook_start": 0,
+    "t_line2_start": 5160,
+    "t_clock_in": 9380,
+    "t_opta": 10980,
+    "t_optb": 13060,
+    "t_optb_end": 17650,
+    "t_clock_out": 17300,
+    "t_cta_start": 17300,
+    "t_voice_end": 18820,
+    "totalMs": 21320,
+    "clockDurationMs": 7920,
+    "wordCues": [
+      {
+        "word": "WHERE",
+        "startMs": 0,
+        "endMs": 300
+      },
+      {
+        "word": "versus",
+        "startMs": 300,
+        "endMs": 660
+      },
+      {
+        "word": "HAVING",
+        "startMs": 660,
+        "endMs": 1020
+      },
+      {
+        "word": "is",
+        "startMs": 1020,
+        "endMs": 1260
+      },
+      {
+        "word": "the",
+        "startMs": 1260,
+        "endMs": 1380
+      },
+      {
+        "word": "most",
+        "startMs": 1380,
+        "endMs": 1680
+      },
+      {
+        "word": "asked",
+        "startMs": 1680,
+        "endMs": 2160
+      },
+      {
+        "word": "screening",
+        "startMs": 2160,
+        "endMs": 2540
+      },
+      {
+        "word": "question",
+        "startMs": 2540,
+        "endMs": 3040
+      },
+      {
+        "word": "in",
+        "startMs": 3040,
+        "endMs": 3400
+      },
+      {
+        "word": "SQL",
+        "startMs": 3400,
+        "endMs": 3780
+      },
+      {
+        "word": "technical",
+        "startMs": 3780,
+        "endMs": 4180
+      },
+      {
+        "word": "rounds.",
+        "startMs": 4180,
+        "endMs": 4620
+      },
+      {
+        "word": "Which",
+        "startMs": 5160,
+        "endMs": 5420
+      },
+      {
+        "word": "query",
+        "startMs": 5420,
+        "endMs": 5800
+      },
+      {
+        "word": "filters",
+        "startMs": 5800,
+        "endMs": 6140
+      },
+      {
+        "word": "departments",
+        "startMs": 6140,
+        "endMs": 6760
+      },
+      {
+        "word": "by",
+        "startMs": 6760,
+        "endMs": 7060
+      },
+      {
+        "word": "average",
+        "startMs": 7060,
+        "endMs": 7420
+      },
+      {
+        "word": "salary",
+        "startMs": 7420,
+        "endMs": 7800
+      },
+      {
+        "word": "without",
+        "startMs": 7800,
+        "endMs": 8320
+      },
+      {
+        "word": "crashing?",
+        "startMs": 8320,
+        "endMs": 8780
+      },
+      {
+        "word": "Choose",
+        "startMs": 9380,
+        "endMs": 9600
+      },
+      {
+        "word": "your",
+        "startMs": 9600,
+        "endMs": 9780
+      },
+      {
+        "word": "answer...",
+        "startMs": 9780,
+        "endMs": 10040
+      },
+      {
+        "word": "Option",
+        "startMs": 10980,
+        "endMs": 11460
+      },
+      {
+        "word": "A...",
+        "startMs": 11460,
+        "endMs": 11720
+      },
+      {
+        "word": "or",
+        "startMs": 13060,
+        "endMs": 13380
+      },
+      {
+        "word": "Option",
+        "startMs": 13380,
+        "endMs": 13720
+      },
+      {
+        "word": "B?",
+        "startMs": 16580,
+        "endMs": 17300
+      },
+      {
+        "word": "Drop",
+        "startMs": 17300,
+        "endMs": 17500
+      },
+      {
+        "word": "your",
+        "startMs": 17500,
+        "endMs": 17740
+      },
+      {
+        "word": "vote",
+        "startMs": 17740,
+        "endMs": 17960
+      },
+      {
+        "word": "in",
+        "startMs": 17960,
+        "endMs": 18060
+      },
+      {
+        "word": "the",
+        "startMs": 18060,
+        "endMs": 18360
+      },
+      {
+        "word": "comments",
+        "startMs": 18360,
+        "endMs": 18554
+      },
+      {
+        "word": "below.",
+        "startMs": 18554,
+        "endMs": 18700
+      }
+    ],
+    "phrases": [
+      {
+        "index": 0,
+        "text": "WHERE versus HAVING is the most asked screening question in SQL technical rounds.",
+        "startMs": 0,
+        "endMs": 5160,
+        "words": [
+          {
+            "word": "WHERE",
+            "startMs": 0,
+            "endMs": 300
+          },
+          {
+            "word": "versus",
+            "startMs": 300,
+            "endMs": 660
+          },
+          {
+            "word": "HAVING",
+            "startMs": 660,
+            "endMs": 1020
+          },
+          {
+            "word": "is",
+            "startMs": 1020,
+            "endMs": 1260
+          },
+          {
+            "word": "the",
+            "startMs": 1260,
+            "endMs": 1380
+          },
+          {
+            "word": "most",
+            "startMs": 1380,
+            "endMs": 1680
+          },
+          {
+            "word": "asked",
+            "startMs": 1680,
+            "endMs": 2160
+          },
+          {
+            "word": "screening",
+            "startMs": 2160,
+            "endMs": 2540
+          },
+          {
+            "word": "question",
+            "startMs": 2540,
+            "endMs": 3040
+          },
+          {
+            "word": "in",
+            "startMs": 3040,
+            "endMs": 3400
+          },
+          {
+            "word": "SQL",
+            "startMs": 3400,
+            "endMs": 3780
+          },
+          {
+            "word": "technical",
+            "startMs": 3780,
+            "endMs": 4180
+          },
+          {
+            "word": "rounds.",
+            "startMs": 4180,
+            "endMs": 4620
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "text": "Which query filters departments by average salary without crashing?",
+        "startMs": 5160,
+        "endMs": 9380,
+        "words": [
+          {
+            "word": "Which",
+            "startMs": 5160,
+            "endMs": 5420
+          },
+          {
+            "word": "query",
+            "startMs": 5420,
+            "endMs": 5800
+          },
+          {
+            "word": "filters",
+            "startMs": 5800,
+            "endMs": 6140
+          },
+          {
+            "word": "departments",
+            "startMs": 6140,
+            "endMs": 6760
+          },
+          {
+            "word": "by",
+            "startMs": 6760,
+            "endMs": 7060
+          },
+          {
+            "word": "average",
+            "startMs": 7060,
+            "endMs": 7420
+          },
+          {
+            "word": "salary",
+            "startMs": 7420,
+            "endMs": 7800
+          },
+          {
+            "word": "without",
+            "startMs": 7800,
+            "endMs": 8320
+          },
+          {
+            "word": "crashing?",
+            "startMs": 8320,
+            "endMs": 8780
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "text": "Choose your answer...",
+        "startMs": 9380,
+        "endMs": 10980,
+        "words": [
+          {
+            "word": "Choose",
+            "startMs": 9380,
+            "endMs": 9600
+          },
+          {
+            "word": "your",
+            "startMs": 9600,
+            "endMs": 9780
+          },
+          {
+            "word": "answer...",
+            "startMs": 9780,
+            "endMs": 10040
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "text": "Option A...",
+        "startMs": 10980,
+        "endMs": 13060,
+        "words": [
+          {
+            "word": "Option",
+            "startMs": 10980,
+            "endMs": 11460
+          },
+          {
+            "word": "A...",
+            "startMs": 11460,
+            "endMs": 11720
+          }
+        ]
+      },
+      {
+        "index": 4,
+        "text": "or Option B?",
+        "startMs": 13060,
+        "endMs": 17650,
+        "words": [
+          {
+            "word": "or",
+            "startMs": 13060,
+            "endMs": 13380
+          },
+          {
+            "word": "Option",
+            "startMs": 13380,
+            "endMs": 13720
+          },
+          {
+            "word": "B?",
+            "startMs": 16580,
+            "endMs": 17300
+          }
+        ]
+      },
+      {
+        "index": 5,
+        "text": "Drop your vote in the comments below.",
+        "startMs": 17300,
+        "endMs": 18820,
+        "words": [
+          {
+            "word": "Drop",
+            "startMs": 17300,
+            "endMs": 17500
+          },
+          {
+            "word": "your",
+            "startMs": 17500,
+            "endMs": 17740
+          },
+          {
+            "word": "vote",
+            "startMs": 17740,
+            "endMs": 17960
+          },
+          {
+            "word": "in",
+            "startMs": 17960,
+            "endMs": 18060
+          },
+          {
+            "word": "the",
+            "startMs": 18060,
+            "endMs": 18360
+          },
+          {
+            "word": "comments",
+            "startMs": 18360,
+            "endMs": 18554
+          },
+          {
+            "word": "below.",
+            "startMs": 18554,
+            "endMs": 18700
+          }
+        ]
+      }
+    ]
+  },
+  "generatedAt": "2026-08-26 23:50:50"
+}

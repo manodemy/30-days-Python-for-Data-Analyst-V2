@@ -955,11 +955,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('checkoutCardContainer');
     if (container) {
       container.innerHTML = '';
-      const originalCard = document.querySelector('.pricing-card--selfpaced') || document.querySelector('.pricing-card');
+      const originalCard = document.querySelector('.pricing-banner-rough') || document.querySelector('.pricing-banner-redesign') || document.querySelector('.pricing-card--selfpaced') || document.querySelector('.pricing-card');
       if (originalCard) {
         const clonedCard = originalCard.cloneNode(true);
-        const buyBtn = clonedCard.querySelector('.pricing-buy-btn');
+        const buyBtn = clonedCard.querySelector('.pricing-buy-btn') || clonedCard.querySelector('[data-cta="buy"]');
         if (buyBtn) buyBtn.style.display = 'none';
+        const freeEscape = clonedCard.querySelector('.pricing-free-escape');
+        if (freeEscape) freeEscape.style.display = 'none';
         container.appendChild(clonedCard);
       }
     }
@@ -2030,16 +2032,25 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function unlockAllDays() {
-    document.querySelectorAll('.day-card.locked, .day-card.coming-soon').forEach(card => {
+    document.querySelectorAll('.day-card').forEach(card => {
       card.classList.remove('locked');
       card.classList.remove('coming-soon');
-      const badge = card.querySelector('.badge');
-      if (badge) {
+      const badge = card.querySelector('.day-badge') || card.querySelector('.badge');
+      if (badge && !badge.classList.contains('badge-free')) {
         badge.textContent = 'AVAILABLE';
-        badge.classList.remove('badge-locked');
+        badge.classList.remove('badge-lock', 'badge-locked');
+        badge.classList.add('badge-free');
       }
       card.style.opacity = '1';
       card.style.pointerEvents = 'auto';
+      card.style.cursor = 'pointer';
+      const dayNum = card.getAttribute('data-day');
+      if (dayNum) {
+        card.onclick = (e) => {
+          e.preventDefault();
+          window.location.href = `/sql/day${dayNum}.html`;
+        };
+      }
     });
   }
 

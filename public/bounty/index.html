@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
+  <title>Manodemy — Day 17: Live ₹100 SQL Bug Bounty Arena</title>
+  <meta name="description" content="Interactive SQL Bug Bounty Arena with live WASM simulator, anti-cheat biometrics, and real-time ₹100 speed leaderboard.">
+
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://manodemy.com/bounty/">
+  <meta property="og:title" content="🏆 ₹100 SQL Bug Bounty — Spot the Bug, Win Cash!">
+  <meta property="og:description" content="Spot the 1-character SQL bug, fix it on our live simulator. Fastest developer wins ₹100 GPay! Challenge by Manodemy.">
+  <meta property="og:image" content="https://manodemy.com/icon-512x512.png">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Fonts (Exact Version-3 Match) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- CodeMirror 5 (Exact Version-3 Dracula Theme) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.css">
+
+  <!-- Core App CSS directly from Version-3 -->
+  <link rel="stylesheet" href="/Version-3/styles.css?v=63.0">
+  <!-- Bounty Specific Extensions -->
+  <link rel="stylesheet" href="/bounty/bounty.css?v=20260919_v6">
+
+  <!-- CodeMirror JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/sql/sql.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+
+  <!-- SQL.js WASM Engine -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+  <!-- Confetti Celebration -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- Supabase JS Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <!-- ═══════════════ HEADER (Exact Version-3 Navigation Bar) ═══════════════ -->
+  <header class="header">
+    <div class="header-left">
+      <!-- Back Arrow Link -->
+      <a href="/Version-3/index.html?day=17" class="back-to-home-btn" title="Back to Main Sandbox" style="color: #64748b; margin-right: 8px; display: flex; align-items: center; justify-content: center; transition: color 0.2s;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+      </a>
+
+      <!-- User Profile Avatar with active green dot -->
+      <div class="user-profile">
+        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzY0NzQ4YiI+PHBhdGggZD0iTTEyIDEyYzIuMjEgMCA0LTEuNzkgNC00cy0xLjc5LTQtNC00LTQgMS43OS00IDQgMS43OSA0IDQgNHptMCAyYy0yLjY3IDAtOCAxLjM0LTggNHYyaDE2di0yYzAtMi42Ni01LjMzLTQtOC00eiIvPjwvc3ZnPg==" alt="User Profile" class="avatar-img" style="background-color: rgba(255,255,255,0.08);" />
+        <span class="active-dot"></span>
+      </div>
+
+      <!-- Bounty Live Pill Badge -->
+      <div class="bounty-live-pill">
+        ⚡ ₹100 LIVE BOUNTY
+      </div>
+
+      <!-- Graded Fraction Stats Card -->
+      <div class="stats-card">
+        <div class="stats-row">
+          <div class="stats-item">
+            <span class="stats-label">PRIZE</span>
+            <span class="stats-value" style="color: #fbbf24; font-weight: 800; font-family: var(--font-mono);">₹100</span>
+          </div>
+          <div class="stats-item">
+            <span class="stats-label">ATTEMPT</span>
+            <span class="stats-value stats-value--fraction">
+              <span class="stats-num" id="attemptCountBadge">1</span>
+              <span class="stats-den">MAX</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-center">
+      <div class="day-navigation">
+        <div class="day-picker-pill">
+          <span class="day-picker-dot day-picker-dot--day"></span>
+          <span style="font-size: 0.78rem; font-weight: 700; color: #fff;">Day 17 — SQL Bug Bounty</span>
+        </div>
+
+        <div class="day-picker-pill topic-picker-pill">
+          <span class="day-picker-dot day-picker-dot--topic"></span>
+          <span style="font-size: 0.76rem; font-weight: 600; color: var(--text-muted);">Topic: WHERE vs HAVING</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <!-- Freeze Timer Countdown Pill -->
+      <div class="freeze-pill">
+        <span>⏱️ Freeze:</span>
+        <strong id="headerCountdown">--:--:--</strong>
+      </div>
+
+      <!-- Verified Receipt Button -->
+      <button class="hdr-btn hdr-btn--test" id="viewReceiptBtn" title="View Verified Payout Proof">
+        🧾 View Receipt
+      </button>
+
+      <!-- Overall Score Badge -->
+      <div class="header-overall-score" title="Manodemy Bounty League Status">
+        <div class="overall-score-icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+        </div>
+        <div class="overall-score-content">
+          <div class="overall-score-val">
+            <span class="overall-score-num">DAY 17</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile View Switcher (Exact Version-3) -->
+  <div class="mobile-tabs-nav" id="mobileTabsNav" role="tablist">
+    <button class="mobile-tab-btn active" id="tabBtnPractice" onclick="setMobileTab('practice')">
+      <span class="tab-emoji">💻</span> Code Editor
+    </button>
+    <button class="mobile-tab-btn" id="tabBtnTheory" onclick="setMobileTab('theory')">
+      <span class="tab-emoji">🏆</span> Bounty & Ranks
+    </button>
+  </div>
+
+  <!-- ═══════════════ SPLIT WORKSPACE (Exact Version-3 Layout) ═══════════════ -->
+  <div class="workspace" id="workspaceContainer">
+
+    <!-- ─── LEFT PANEL: Code Editor & Output (Exact Version-3 Panel Left) ─── -->
+    <div class="panel-left" id="panelLeft">
+
+      <!-- Question Prompt Bar -->
+      <div class="question-bar" id="questionBar">
+        <div class="q-marker"></div>
+        <div class="question-prompt" id="questionPrompt">
+          <strong>Bug Bounty Challenge:</strong> The retail operations team needs departments where the average employee salary exceeds the threshold. Spot the bug in the WHERE clause, replace it with proper SQL syntax, and click 'Run & Claim'!
+        </div>
+        <button class="audio-play-btn" id="questionAudioBtn" title="Play challenge briefing" style="flex-shrink: 0; margin-top: 2px;">
+          <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+      </div>
+
+      <!-- Editor Area -->
+      <div class="editor-area">
+        <!-- Toolbar -->
+        <div class="editor-toolbar">
+          <span class="q-counter" id="qCounter">Day 17 Bounty</span>
+          <span style="font-size: 0.72rem; color: #fca5a5; background: rgba(239, 68, 68, 0.12); padding: 2px 8px; border-radius: 4px; border: 1px solid rgba(239, 68, 68, 0.3); font-family: var(--font-mono); margin-left: 6px;">
+            🔒 Paste Disabled
+          </span>
+          <div class="spacer"></div>
+          <button class="tb-btn tb-btn--run" id="runBtn" disabled title="Execute query and claim bounty">
+            ▶ Run & Claim
+          </button>
+          <button class="tb-btn tb-btn--tables" id="peekTrigger" title="Inspect table schemas">
+            📊 Tables
+          </button>
+          <button class="tb-btn tb-btn--clear" id="clearEditorBtn" title="Reset to broken query">
+            ✕ Clear
+          </button>
+        </div>
+
+        <!-- Mobile SQL Quick-Key Chips Toolbar (Exact Version-3) -->
+        <div class="mobile-sql-toolbar" id="mobileSqlToolbar" aria-label="SQL Quick Syntax Chips">
+          <button class="sql-chip" data-insert="SELECT">SELECT</button>
+          <button class="sql-chip" data-insert="FROM">FROM</button>
+          <button class="sql-chip" data-insert="WHERE">WHERE</button>
+          <button class="sql-chip sql-chip--symbol" data-insert="*">*</button>
+          <button class="sql-chip sql-chip--symbol" data-insert=";">;</button>
+          <button class="sql-chip" data-insert="GROUP BY">GROUP BY</button>
+          <button class="sql-chip" data-insert="HAVING">HAVING</button>
+          <button class="sql-chip" data-insert="AVG()">AVG()</button>
+          <button class="sql-chip" data-insert="SUM()">SUM()</button>
+          <button class="sql-chip sql-chip--symbol" data-insert=" = ">=</button>
+          <button class="sql-chip sql-chip--symbol" data-insert=" > ">&gt;</button>
+          <button class="sql-chip" data-insert="'">'</button>
+        </div>
+
+        <!-- CodeMirror Mount (Dracula Theme) -->
+        <div class="editor-wrap" id="mainEditorWrap"></div>
+
+        <!-- Output Terminal (Exact Version-3 Terminal) -->
+        <div class="output-section" id="mainOutput">
+          <div class="output-label">Terminal Output</div>
+          <span class="output-success" id="terminalStatusMsg">
+            ⚡ Enter your WhatsApp number in the right panel and click [ START CHALLENGE ] to unlock the editor!
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── RESIZABLE DIVIDER (Exact Version-3 Divider) ─── -->
+    <div class="divider" id="divider" role="separator" aria-label="Resizable Divider">
+      <div class="divider-toggles">
+        <button class="div-toggle-btn div-toggle-btn--left" onclick="toggleLeftPanel(event)" title="Toggle code panel">◀</button>
+        <button class="div-toggle-btn div-toggle-btn--split" onclick="resetSplitScreen(event)" title="Reset split screen">◫</button>
+        <button class="div-toggle-btn div-toggle-btn--right" onclick="toggleRightPanel(event)" title="Toggle notes panel">▶</button>
+      </div>
+    </div>
+
+    <!-- ─── RIGHT PANEL: Bounty Hub & Live Leaderboard ─── -->
+    <div class="panel-right" id="panelRight">
+      <div class="right-content" id="rightContent">
+
+        <div class="slide-viewer">
+          <div class="slide-card">
+            
+            <!-- Slide Header (Exact Version-3 Card Header) -->
+            <div class="slide-header">
+              <div class="slide-header-content">
+                <h2>🏆 Live ₹100 Bug Bounty Arena</h2>
+                <div class="chapter-pill-btn" style="cursor: default;">
+                  <span>Day 17 Speed Challenge</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide Content (Scrollable) -->
+            <div class="slide-content bounty-right-container">
+
+
+              <!-- Live Stopwatch Ticker Bar -->
+              <div class="bounty-stopwatch-bar">
+                <div class="stopwatch-label">
+                  <span>⏱️</span>
+                  <span>LIVE STOPWATCH:</span>
+                </div>
+                <div class="stopwatch-display" id="stopwatchDisplay">
+                  00:00.00s
+                </div>
+              </div>
+
+              <!-- Phone Entry Gate Card (Locks attempt before start) -->
+              <div class="bounty-gate-card" id="bountyGateCard">
+                <div class="gate-title">🚀 Ready for Today's ₹100 Challenge?</div>
+                <p class="gate-desc">
+                  Enter your WhatsApp number to lock in your single official attempt. Once you click Start, the live stopwatch starts ticking!
+                </p>
+
+                <div class="phone-input-row">
+                  <span class="country-tag">🇮🇳 +91</span>
+                  <input type="tel" id="phoneInput" class="phone-input-field" placeholder="10-digit mobile number" maxlength="10">
+                </div>
+
+                <div class="dpdp-row">
+                  <input type="checkbox" id="dpdpConsent" checked>
+                  <label for="dpdpConsent">
+                    I consent to Manodemy recording my attempt and contacting me on WhatsApp for ₹100 prize distribution under our <a href="/privacy.html" target="_blank">Privacy Policy</a>.
+                  </label>
+                </div>
+
+                <button class="start-challenge-btn" id="startBountyBtn">
+                  ⚡ START CHALLENGE & START CLOCK
+                </button>
+              </div>
+
+              <!-- Fully Gamified Speed Leaderboard (Podium + Contenders) -->
+              <div class="gamified-leaderboard-card">
+                <div class="leaderboard-top-bar">
+                  <div class="leaderboard-heading-group">
+                    <h3>🏆 Daily Bounty Arena</h3>
+                    <div class="live-pulse-badge">
+                      <span class="live-pulse-dot"></span>
+                      <span>LIVE SYNC</span>
+                    </div>
+                  </div>
+                  <button class="refresh-action-btn" id="refreshLeaderboardBtn" title="Refresh Live Ranks">
+                    🔄 Refresh
+                  </button>
+                </div>
+
+                <!-- 3D Championship Podium (Top 3) -->
+                <div class="podium-stage" id="podiumStage">
+                  <!-- Rank 2: Silver -->
+                  <div class="podium-slot podium-slot-2">
+                    <div class="podium-avatar-wrap">
+                      <div class="podium-avatar" id="podiumAvatar2">VM</div>
+                      <span class="podium-rank-tag">2</span>
+                    </div>
+                    <div class="podium-name" id="podiumName2">Vignesh M</div>
+                    <div class="podium-time" id="podiumTime2">14.85s</div>
+                    <div class="podium-pedestal">2</div>
+                  </div>
+
+                  <!-- Rank 1: Gold Champion -->
+                  <div class="podium-slot podium-slot-1">
+                    <div class="podium-crown">👑</div>
+                    <div class="podium-avatar-wrap">
+                      <div class="podium-avatar" id="podiumAvatar1">KR</div>
+                      <span class="podium-rank-tag">1</span>
+                    </div>
+                    <div class="podium-winner-tag">₹100 WINNER</div>
+                    <div class="podium-name" id="podiumName1">Karthik Raja</div>
+                    <div class="podium-time" id="podiumTime1">11.42s</div>
+                    <div class="podium-pedestal">1</div>
+                  </div>
+
+                  <!-- Rank 3: Bronze -->
+                  <div class="podium-slot podium-slot-3">
+                    <div class="podium-avatar-wrap">
+                      <div class="podium-avatar" id="podiumAvatar3">SP</div>
+                      <span class="podium-rank-tag">3</span>
+                    </div>
+                    <div class="podium-name" id="podiumName3">Sneha P</div>
+                    <div class="podium-time" id="podiumTime3">18.20s</div>
+                    <div class="podium-pedestal">3</div>
+                  </div>
+                </div>
+
+                <!-- Contenders Shelf (Ranks 4-10) -->
+                <div class="contenders-shelf" id="contendersShelf">
+                  <!-- Populated by JS -->
+                </div>
+
+                <!-- Gamified Personal Status Strip -->
+                <div class="gamified-status-strip" id="gamifiedStatusStrip">
+                  🎮 Enter WhatsApp & click Start above to claim the #1 Crown!
+                </div>
+              </div>
+
+              <!-- Guaranteed Speed Rewards (70% Scholarship) -->
+              <div class="scholarship-box">
+                <div class="scholarship-title">🎁 Guaranteed Speed Rewards</div>
+                <p class="scholarship-desc">
+                  Solve today's bug in <strong>under 60 seconds</strong> to unlock the <strong>Speed SQL Certificate</strong> + <strong>70% Early Bird Scholarship</strong> for the 30-Day Python & SQL Mastery Cohort (Coupon: <strong>SPEEDSQL70</strong>)!
+                </p>
+              </div>
+
+              <!-- Instagram Story Brag Button -->
+              <button class="story-download-btn" id="storyShareBtn">
+                📲 Download 9:16 Instagram Story Card (Brag Your Speed!)
+              </button>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ PEEK DATA POPOVER (Exact Version-3) ═══════════════ -->
+  <div class="peek-popover" id="peekPopover">
+    <div class="peek-title">
+      <span>👀 Peek Data — </span><span id="peekTableName">employees</span>
+      <button class="peek-close" id="peekCloseBtn">✕</button>
+    </div>
+    <div id="peekContent" style="padding: 12px 14px 16px;">
+      <table class="result-table" style="margin-bottom: 12px;">
+        <thead>
+          <tr><th>Column</th><th>Type</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>id</td><td>INTEGER</td><td>Primary Key</td></tr>
+          <tr><td>name</td><td>TEXT</td><td>Employee Full Name</td></tr>
+          <tr><td>department</td><td>TEXT</td><td>Engineering, Marketing, Design, Sales</td></tr>
+          <tr><td>salary</td><td>REAL</td><td>Monthly Salary in INR</td></tr>
+        </tbody>
+      </table>
+      <div style="font-size: 0.72rem; color: var(--cyan); font-weight: 700; margin-bottom: 6px;">Sample Rows:</div>
+      <table class="result-table">
+        <thead>
+          <tr><th>id</th><th>name</th><th>department</th><th>salary</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>Karthik</td><td>Engineering</td><td>75000</td></tr>
+          <tr><td>2</td><td>Priya</td><td>Engineering</td><td>85000</td></tr>
+          <tr><td>3</td><td>Anand</td><td>Marketing</td><td>45000</td></tr>
+          <tr><td>5</td><td>Suresh</td><td>Design</td><td>52000</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══════════════ VICTORY CELEBRATION MODAL ═══════════════ -->
+  <div class="bounty-modal-overlay" id="victoryModal">
+    <div class="bounty-modal-card" style="text-align: center;">
+      <button class="bounty-modal-close" id="victoryCloseBtn">&times;</button>
+      <div class="victory-trophy-icon">🏆</div>
+      <h2 class="victory-title">BUG CRACKED!</h2>
+      <div class="victory-time-pill" id="victoryTimePill">⏱️ 00.00s</div>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 14px;">
+        Your query executed with 100% precision! Record your official time on the Leaderboard:
+      </p>
+
+      <form id="claimForm">
+        <div class="claim-form-group">
+          <label>Your Name / Instagram Handle</label>
+          <input type="text" id="claimNameInput" placeholder="e.g. Karthik (@karthik_dev)" maxlength="24" required>
+        </div>
+
+        <div class="claim-form-group">
+          <label>UPI ID for ₹100 Payout (GPay / PhonePe / Paytm)</label>
+          <input type="text" id="claimUPIInput" placeholder="e.g. yourname@okaxis" required>
+        </div>
+
+        <button type="submit" class="claim-submit-btn" id="claimSubmitBtn">
+          ⚡ SUBMIT SCORE & CLAIM BOUNTY
+        </button>
+      </form>
+
+      <div class="scholarship-box" style="margin-top: 14px; text-align: center;">
+        <div style="font-weight: 700; color: #fff; font-size: 0.8rem;">🎁 70% SCHOLARSHIP UNLOCKED: COUPON SPEEDSQL70</div>
+        <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">
+          Auto-applied at checkout for 30-Day Python & SQL Mastery Cohort.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ VERIFIED RECEIPT MODAL ═══════════════ -->
+  <div class="bounty-modal-overlay" id="receiptModal">
+    <div class="bounty-modal-card" style="text-align: center;">
+      <button class="bounty-modal-close" id="receiptCloseBtn">&times;</button>
+      <h3 style="color: #fff; font-size: 1.1rem; margin-bottom: 6px;">🧾 Verified Daily GPay Payout</h3>
+      <p style="color: var(--text-muted); font-size: 0.78rem; margin-bottom: 14px;">
+        100% Genuine Transparency • Daily transfers verified directly to winners
+      </p>
+
+      <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+        <div style="font-size: 2.2rem;">💸</div>
+        <div style="font-size: 1.8rem; font-weight: 800; color: #10b981;">₹100.00</div>
+        <div style="font-size: 0.85rem; color: #fff; font-weight: 600;">Paid to Manodemy Day 16 Winner</div>
+        <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-dim);">
+          UPI Ref / UTR: 4291******84 • Completed 10:04 PM IST
+        </div>
+        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; color: #10b981; font-size: 0.72rem; font-weight: 700; padding: 3px 12px; border-radius: 100px;">
+          ✅ VERIFIED GOOGLE PAY TRANSFER
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Shelf -->
+  <div class="bounty-toast-shelf" id="toastShelf"></div>
+
+  <!-- Application Logic Scripts -->
+  <script src="/bounty/bounty-biometrics.js?v=20260919_v6"></script>
+  <script src="/bounty/bounty.js?v=20260919_v6"></script>
+
+  <!-- Mobile Tab Switcher & Divider Helper Script -->
+  <script>
+    function setMobileTab(tab) {
+      const pLeft = document.getElementById('panelLeft');
+      const pRight = document.getElementById('panelRight');
+      const btnPractice = document.getElementById('tabBtnPractice');
+      const btnTheory = document.getElementById('tabBtnTheory');
+
+      if (tab === 'practice') {
+        if (pLeft) pLeft.style.display = 'flex';
+        if (pRight) pRight.style.display = 'none';
+        btnPractice.classList.add('active');
+        btnTheory.classList.remove('active');
+      } else {
+        if (pLeft) pLeft.style.display = 'none';
+        if (pRight) pRight.style.display = 'flex';
+        btnPractice.classList.remove('active');
+        btnTheory.classList.add('active');
+      }
+    }
+
+    function toggleLeftPanel(e) {
+      if (e) e.stopPropagation();
+      const pLeft = document.getElementById('panelLeft');
+      const pRight = document.getElementById('panelRight');
+      if (pLeft.style.display === 'none') {
+        pLeft.style.display = 'flex';
+        pLeft.style.flex = '1';
+        pRight.style.flex = '1';
+      } else {
+        pLeft.style.display = 'none';
+        pRight.style.flex = '1';
+      }
+    }
+
+    function toggleRightPanel(e) {
+      if (e) e.stopPropagation();
+      const pLeft = document.getElementById('panelLeft');
+      const pRight = document.getElementById('panelRight');
+      if (pRight.style.display === 'none') {
+        pRight.style.display = 'flex';
+        pRight.style.flex = '1';
+        pLeft.style.flex = '1';
+      } else {
+        pRight.style.display = 'none';
+        pLeft.style.flex = '1';
+      }
+    }
+
+    function resetSplitScreen(e) {
+      if (e) e.stopPropagation();
+      const pLeft = document.getElementById('panelLeft');
+      const pRight = document.getElementById('panelRight');
+      pLeft.style.display = 'flex';
+      pRight.style.display = 'flex';
+      pLeft.style.flex = '1';
+      pRight.style.flex = '1';
+    }
+  </script>
+</body>
+</html>

@@ -11,6 +11,9 @@
 | **2** | **`practice-question-audio-sync`** | [`.agents/skills/practice-question-audio-sync/`](file:///d:/Learn%20Python%20in%2060days/Manodemy_Web_V2/.agents/skills/practice-question-audio-sync/SKILL.md) | 🟢 Active | Word-level Whisper ASR sync, typewriter code narration, timeline continuation | *"audio sync"*, *"practice question audio"*, *"narration"*, *"typewriter"* |
 | **3** | **`reddit-growth-copilot`** | [`.agents/skills/reddit-growth-copilot/`](file:///d:/Learn%20Python%20in%2060days/Manodemy_Web_V2/.agents/skills/reddit-growth-copilot/SKILL.md) | 🟢 Active | 7-Day Reddit launch, live comment response generator, preflight health checks | *"reddit launch"*, *"marketing"*, *"comment reply"*, *"conversion"* |
 | **4** | **`day-curriculum-builder`** | [`.agents/skills/day-curriculum-builder/`](file:///d:/Learn%20Python%20in%2060days/Manodemy_Web_V2/.agents/skills/day-curriculum-builder/SKILL.md) | 🟡 Ready | Step-by-step creation of Days 05 to 60 with SQLite sandbox & practice questions | *"create day"*, *"new curriculum day"*, *"build lecture"* |
+| **5** | **`rag-theory-animator`** | [`.agents/skills/rag-theory-animator/`](file:///d:/Learn%20Python%20in%2060days/Manodemy_Web_V2/.agents/skills/rag-theory-animator/SKILL.md) | 🟢 Active | World-class narration-synced GSAP animated theory presentations with SVG diagrams & progressive disclosure | *"animate theory"*, *"theory video"*, *"animation engine"*, *"visual presentation"* |
+| **6** | **`marketing-reel-engine`** | [`.agents/skills/marketing-reel-engine/`](file:///d:/Learn%20Python%20in%2060days/Manodemy_Web_V2/.agents/skills/marketing-reel-engine/SKILL.md) | 🟢 Active | Autonomous 9:16 viral reel generation, Option A vs B psychological traps, ticking clock synthesis, 1-click launchpad packs | *"marketing"*, *"reel"*, *"viral hook"*, *"instagram"* |
+| **7** | **`teacher`** | [`.agents/skills/teacher/`](file:///d:/Learn%20Python%20in%2060days/Manodemy_Web_V2/.agents/skills/teacher/SKILL.md) | 🟢 Active | Elite 30-Day AI Engineering Mentor & Career Architect with persistent memory (6 LPA to 50 LPA transformation) | *"teacher"*, *"mentor"*, *"50 lpa"*, *"career sprint"*, *"system design"* |
 
 ---
 
@@ -41,6 +44,38 @@
 
 ---
 
+## 🎬 5. `rag-theory-animator`
+* **File:** [`.agents/skills/rag-theory-animator/SKILL.md`](file:///d:/Learn%20Python%20in%2060days/Manodemy_Web_V2/.agents/skills/rag-theory-animator/SKILL.md)
+* **What it does:**
+  - Transforms static theory slides into cinematic, narration-synced animated presentations.
+  - Uses GSAP 3.x for timeline-driven animations with 60fps playback.
+  - Generates inline SVG diagrams with self-drawing path animations.
+  - Produces custom images via AI generation for conceptual illustrations.
+  - Syncs every visual element to Whisper ASR word-level timestamps.
+  - Supports full play/pause/scrub/seek with graceful degradation.
+  - **Evolution Protocol:** Persistent cross-session learning via [`.agents/skills/rag-animator-memory/`](file:///d:/Learn%20Python%20in%2060days/Manodemy_Web_V2/.agents/skills/rag-animator-memory/learnings.md) and [`animator-evolution-protocol.md`](file:///d:/Learn%20Python%20in%2060days/Manodemy_Web_V2/.agents/skills/rag-theory-animator/animator-evolution-protocol.md).
+
+---
+
+## 🎬 6. `marketing-reel-engine`
+* **File:** [`.agents/skills/marketing-reel-engine/SKILL.md`](file:///d:/Learn%20Python%20in%2060days/Manodemy_Web_V2/.agents/skills/marketing-reel-engine/SKILL.md)
+* **What it does:**
+  - Led by **Marketing Madam (MM)**.
+  - Generates viral 9:16 vertical programming reels (Option A vs Option B traps, 5s ticking clock, sub-drop SFX).
+  - Produces complete 1-Click Publishing Packs with standardized captions, SEO tags, pinned technical explanations, and simulator links.
+
+---
+
+## 🎓 7. `teacher`
+* **File:** [`.agents/skills/teacher/SKILL.md`](file:///d:/Learn%20Python%20in%2060days/Manodemy_Web_V2/.agents/skills/teacher/SKILL.md)
+* **What it does:**
+  - Elite 30-Day AI Engineering Career Mentor & Architect with persistent multi-tier memory vault.
+  - Bridges technical gaps from **6 LPA Data Analyst** to **50 LPA AI Systems Engineer**.
+  - Enforces daily standups, production code deliverables (FastAPI, Docker, LangGraph, Evals), and direct founder outreach.
+
+---
+
 ## 🔄 How to Add or Update Skills in the Future
 1. When you finalize a new pattern in chat, simply say: **`"Update the skill file with this new standard"`**.
 2. The AI will immediately edit the corresponding `SKILL.md` and log the update in this master `SKILLS_INDEX.md`.
+

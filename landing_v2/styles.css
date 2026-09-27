@@ -4532,6 +4532,76 @@ th.col-mano { letter-spacing: 0.01em; }
 }
 
 /* Cloned card styling inside checkout overlay */
+#checkoutCardContainer .pricing-banner-rough,
+#checkoutCardContainer .pricing-banner-redesign {
+  display: flex !important;
+  flex-direction: column !important;
+  grid-template-columns: none !important;
+  gap: 14px !important;
+  padding: 18px 20px !important;
+  border-radius: 16px !important;
+  border: 1.2px solid var(--border-strong) !important;
+  box-shadow: none !important;
+  background: var(--base) !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+#checkoutCardContainer .pricing-banner-rough::before,
+#checkoutCardContainer .pricing-banner-redesign::before {
+  display: none !important;
+}
+
+#checkoutCardContainer .pricing-rough-title-col {
+  border-right: none !important;
+  padding-right: 0 !important;
+  padding-bottom: 10px !important;
+  border-bottom: 1px solid var(--border) !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+}
+
+#checkoutCardContainer .pricing-rough-title {
+  font-size: 16px !important;
+  line-height: 1.2 !important;
+  margin: 0 !important;
+}
+
+#checkoutCardContainer .pricing-rough-cert {
+  font-size: 11px !important;
+  margin: 0 !important;
+}
+
+#checkoutCardContainer .pricing-rough-features-col {
+  padding: 0 !important;
+}
+
+#checkoutCardContainer .pricing-rough-feature-grid {
+  grid-template-columns: 1fr !important;
+  gap: 6px !important;
+  margin: 0 !important;
+}
+
+#checkoutCardContainer .pricing-rough-feature-grid li {
+  padding: 6px 10px !important;
+  font-size: 11px !important;
+}
+
+#checkoutCardContainer .pricing-rough-feature-grid .feat-text-box strong {
+  font-size: 11px !important;
+}
+
+#checkoutCardContainer .pricing-rough-feature-grid .feat-text-box span {
+  font-size: 10px !important;
+}
+
+#checkoutCardContainer .pricing-rough-action-col {
+  display: none !important;
+}
+
 #checkoutCardContainer .pricing-card {
   margin: 0 auto;
   border-radius: 16px;

@@ -1,0 +1,85 @@
+{
+  "curriculum": [
+    {
+      "day": 1,
+      "file": "day-01.json",
+      "title": "Introduction to SQL & Databases / Column Projection",
+      "summary": "",
+      "topics": [],
+      "challenge_count": 0,
+      "sample_challenges": []
+    }
+  ],
+  "reels": [
+    {
+      "reel_id": "SQL-01-R1",
+      "topic": "SQL-01-R1",
+      "slot": "General",
+      "bridge_link": "manodemy.com"
+    },
+    {
+      "reel_id": "SQL-01-R2",
+      "topic": "SQL-01-R2",
+      "slot": "General",
+      "bridge_link": "manodemy.com"
+    },
+    {
+      "reel_id": "SQL-02-R1",
+      "topic": "SQL-02-R1",
+      "slot": "General",
+      "bridge_link": "manodemy.com"
+    },
+    {
+      "reel_id": "SQL-02-R2",
+      "topic": "SQL-02-R2",
+      "slot": "General",
+      "bridge_link": "manodemy.com"
+    },
+    {
+      "reel_id": "SQL-03-R1",
+      "topic": "SQL-03-R1",
+      "slot": "General",
+      "bridge_link": "manodemy.com/q5"
+    },
+    {
+      "reel_id": "SQL-03-R2",
+      "topic": "SQL-03-R2",
+      "slot": "General",
+      "bridge_link": "manodemy.com/q6"
+    },
+    {
+      "reel_id": "SQL-04-R1",
+      "topic": "SQL-04-R1",
+      "slot": "General",
+      "bridge_link": "manodemy.com/q7"
+    },
+    {
+      "reel_id": "SQL-04-R2",
+      "topic": "SQL-04-R2",
+      "slot": "General",
+      "bridge_link": "manodemy.com/q8"
+    },
+    {
+      "reel_id": "SQL-05-R1",
+      "topic": "LEFT JOIN WHERE vs AND Trap \ud83d\udca5 (The Accidental INNER JOIN)",
+      "slot": "Morning Slot (07:07 AM IST)",
+      "bridge_link": "manodemy.com/q9"
+    },
+    {
+      "reel_id": "SQL-05-R2",
+      "topic": "CONDITIONAL COUNT TRAP \ud83e\udd2f (COUNT with ELSE 0 vs SUM with ELSE 0)",
+      "slot": "Evening Slot (08:30 PM IST)",
+      "bridge_link": "manodemy.com/q10"
+    }
+  ],
+  "platform_info": {
+    "name": "Manodemy",
+    "founder": "Deepak",
+    "core_features": [
+      "In-browser zero-setup SQL/Python sandbox (WASM/DuckDB)",
+      "Day 01-18 SQL Learning Engine with studio audio narration",
+      "Instant automated grading & smart error diagnostics",
+      "Day 1 & Day 2 are 100% free"
+    ]
+  }
+}

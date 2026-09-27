@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>J.A.R.V.I.S // Wake-Word & Streaming Duplex AI Terminal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --cyan: #00f0ff;
+    --cyan-glow: rgba(0, 240, 255, 0.45);
+    --blue-dark: #030712;
+    --navy-panel: rgba(8, 16, 36, 0.85);
+    --gold: #facc15;
+    --emerald: #00f59b;
+    --red: #ef4444;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
+  }
+
+  body {
+    background: var(--blue-dark);
+    color: #e0f2fe;
+    font-family: 'Rajdhani', sans-serif;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .holo-bg {
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(circle at 50% 40%, rgba(0, 240, 255, 0.15) 0%, transparent 60%),
+      radial-gradient(circle at 80% 20%, rgba(56, 189, 248, 0.1) 0%, transparent 40%),
+      #030712;
+    z-index: 1;
+  }
+
+  .grid-overlay {
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(0, 240, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 240, 255, 0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .scanline {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 240, 255, 0.02) 50%);
+    background-size: 100% 4px;
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  .hud-top {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 28px;
+    height: 60px;
+    border-bottom: 1px solid rgba(0, 240, 255, 0.25);
+    background: rgba(4, 9, 22, 0.85);
+    backdrop-filter: blur(16px);
+    flex-shrink: 0;
+  }
+
+  .brand-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 0.15em;
+    color: #fff;
+    text-shadow: 0 0 16px var(--cyan);
+  }
+
+  .brand-sub {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--cyan);
+    opacity: 0.8;
+  }
+
+  .telemetry-bar {
+    display: flex;
+    gap: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    align-items: center;
+  }
+
+  .stat-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 240, 255, 0.08);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    padding: 4px 12px;
+    border-radius: 8px;
+  }
+
+  .workspace {
+    position: relative;
+    z-index: 10;
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 20px;
+    padding: 16px 24px;
+    max-width: 1600px;
+    margin: 0 auto;
+    width: 100%;
+    height: calc(100vh - 60px);
+    overflow: hidden;
+  }
+
+  .arc-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--navy-panel);
+    border: 1.5px solid rgba(0, 240, 255, 0.25);
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), inset 0 0 30px rgba(0, 240, 255, 0.05);
+    backdrop-filter: blur(20px);
+    position: relative;
+    padding: 24px 20px;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .arc-reactor {
+    width: 240px;
+    height: 240px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+    flex-shrink: 0;
+  }
+
+  .ring-outer {
+    position: absolute;
+    inset: 0;
+    border: 2px dashed rgba(0, 240, 255, 0.4);
+    border-radius: 50%;
+    animation: rotateCW 20s linear infinite;
+  }
+
+  .ring-middle {
+    position: absolute;
+    inset: 20px;
+    border: 2px solid rgba(56, 189, 248, 0.6);
+    border-top-color: transparent;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    animation: rotateCCW 12s linear infinite;
+  }
+
+  .ring-inner {
+    position: absolute;
+    inset: 44px;
+    border: 3px solid var(--cyan);
+    border-left-color: transparent;
+    border-radius: 50%;
+    box-shadow: 0 0 30px var(--cyan-glow), inset 0 0 20px var(--cyan-glow);
+    animation: pulseCore 3s ease-in-out infinite;
+  }
+
+  .core-center {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ffffff 0%, #38bdf8 40%, #0369a1 80%, #082f49 100%);
+    box-shadow: 0 0 50px #00f0ff, inset 0 0 20px #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 5;
+  }
+
+  .core-center:hover { transform: scale(1.08); box-shadow: 0 0 70px #00f0ff; }
+
+  .core-center.listening {
+    animation: pulseListen 1.1s infinite;
+    background: radial-gradient(circle, #ffffff 0%, #00f59b 40%, #065f46 100%);
+    box-shadow: 0 0 60px #00f59b;
+  }
+
+  .core-center.speaking {
+    animation: pulseSpeak 0.8s infinite alternate;
+    background: radial-gradient(circle, #ffffff 0%, #38bdf8 40%, #0284c7 100%);
+    box-shadow: 0 0 60px #00f0ff;
+  }
+
+  .core-center.standby {
+    background: radial-gradient(circle, #93c5fd 0%, #1e3a8a 60%, #030712 100%);
+    box-shadow: 0 0 25px rgba(59, 130, 246, 0.4);
+  }
+
+  .core-icon { font-size: 36px; filter: drop-shadow(0 0 8px rgba(0,0,0,0.5)); }
+
+  @keyframes rotateCW { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  @keyframes rotateCCW { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
+  @keyframes pulseCore { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.04); opacity: 1; } }
+  @keyframes pulseListen { 0%, 100% { transform: scale(1); box-shadow: 0 0 40px #00f59b; } 50% { transform: scale(1.12); box-shadow: 0 0 80px #00f59b; } }
+  @keyframes pulseSpeak { 0% { transform: scale(1); box-shadow: 0 0 40px #00f0ff; } 100% { transform: scale(1.1); box-shadow: 0 0 80px #00f0ff; } }
+
+  .status-text {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--cyan);
+    text-shadow: 0 0 12px var(--cyan);
+    margin-bottom: 8px;
+  }
+
+  .voice-transcript {
+    font-size: 20px;
+    font-weight: 600;
+    max-width: 680px;
+    text-align: center;
+    line-height: 1.4;
+    color: #f0f9ff;
+    min-height: 48px;
+  }
+
+  .control-row {
+    display: flex;
+    gap: 16px;
+    margin-top: 20px;
+    align-items: center;
+  }
+
+  .btn-hud {
+    background: rgba(0, 240, 255, 0.12);
+    border: 1.5px solid var(--cyan);
+    color: #fff;
+    padding: 10px 24px;
+    border-radius: 12px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+    transition: all 0.25s ease;
+  }
+
+  .btn-hud:hover { background: var(--cyan); color: #030712; box-shadow: 0 0 30px var(--cyan); }
+
+  .btn-hud.active-listen {
+    background: rgba(0, 245, 155, 0.25);
+    border-color: #00f59b;
+    color: #00f59b;
+    box-shadow: 0 0 25px rgba(0, 245, 155, 0.4);
+  }
+
+  .console-panel {
+    background: var(--navy-panel);
+    border: 1.5px solid rgba(0, 240, 255, 0.25);
+    border-radius: 24px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    backdrop-filter: blur(20px);
+  }
+
+  .panel-header {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--cyan);
+    border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+    padding-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .log-feed {
+    flex: 1;
+    background: rgba(2, 6, 23, 0.7);
+    border: 1px solid rgba(0, 240, 255, 0.15);
+    border-radius: 12px;
+    padding: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    overflow-y: auto;
+    max-height: 480px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .log-entry.jarvis { color: #38bdf8; font-weight: 700; }
+  .log-entry.user { color: #facc15; }
+  .log-entry.system { color: #34d399; }
+  .log-entry.wake { color: #a855f7; font-weight: 700; }
+
+  .input-box-wrapper { display: flex; gap: 10px; margin-top: 14px; }
+  .input-text {
+    flex: 1;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: #fff;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 15px;
+    outline: none;
+  }
+</style>
+</head>
+<body>
+  <div class="holo-bg"></div>
+  <div class="grid-overlay"></div>
+  <div class="scanline"></div>
+
+  <header class="hud-top">
+    <div>
+      <div class="brand-title">J.A.R.V.I.S</div>
+      <div class="brand-sub">WAKE-WORD & STREAMING DUPLEX v3</div>
+    </div>
+
+    <div class="telemetry-bar">
+      <div class="stat-badge">
+        <span>WAKE WORD: <strong style="color:#a855f7">"JARVIS"</strong></span>
+      </div>
+      <div class="stat-badge">
+        <span>TIMER: <strong id="timerLabel" style="color:#facc15">15s</strong></span>
+      </div>
+      <div class="stat-badge">
+        <span>MODE: <strong id="voiceStatusLabel" style="color:#00f59b">ACTIVE</strong></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <section class="arc-stage">
+      <div class="arc-reactor">
+        <div class="ring-outer"></div>
+        <div class="ring-middle"></div>
+        <div class="ring-inner"></div>
+        <div class="core-center" id="arcCore" onclick="toggleMicrophone()" title="Click to Talk with JARVIS">
+          <div class="core-icon" id="coreIcon">🎙️</div>
+        </div>
+      </div>
+
+      <div class="status-text" id="jarvisStatus">ACTIVE // LISTENING (15s TIMER)</div>
+      <div class="voice-transcript" id="voiceTranscript">"At your service, Deepak."</div>
+
+      <div class="control-row">
+        <button class="btn-hud" id="micBtn" onclick="toggleMicrophone()">
+          <span>🎙️ START LISTENING</span>
+        </button>
+        <button class="btn-hud" id="stopBtn" style="border-color: #ef4444; color: #fca5a5; background: rgba(239, 68, 68, 0.12);" onclick="forceStopListening()">
+          <span>🛑 STOP LISTENING</span>
+        </button>
+      </div>
+
+      <div style="margin-top: 20px; width: 100%; max-width: 600px;">
+        <div class="input-box-wrapper">
+          <input type="text" id="textPromptInput" class="input-text" placeholder="Type a command or speak naturally..." onkeydown="if(event.key==='Enter') sendTextMessage()">
+          <button class="btn-hud" style="padding: 8px 18px;" onclick="sendTextMessage()">TRANSMIT</button>
+        </div>
+      </div>
+    </section>
+
+    <aside class="console-panel">
+      <div class="panel-header">
+        <span>STREAMING LOG</span>
+        <span style="font-size: 11px; color:#94a3b8;">WAKE WORD DUPLEX</span>
+      </div>
+
+      <div class="log-feed" id="logFeed">
+        <div class="log-entry system">[SYSTEM] J.A.R.V.I.S Wake-Word Pipeline Initialized.</div>
+        <div class="log-entry wake">[WAKE ENGINE] Say "Jarvis" in any sentence to wake up.</div>
+        <div class="log-entry jarvis">[JARVIS] At your service, Deepak.</div>
+      </div>
+    </aside>
+  </main>
+
+  <script>
+    let ws = null;
+    let isListening = false;
+    let isSpeaking = false;
+    let isProcessing = false;
+    let recognition = null;
+    let isWakeWordMode = false; // True when 15s inactivity triggers sleep
+
+    let audioCtx = null;
+    let masterGain = null;
+    let audioQueue = [];
+    let isPlayingQueue = false;
+    let recentJarvisSentences = [];
+
+    // 15-Second Inactivity Sleep Timer
+    let inactivityTimer = null;
+    let countdownInterval = null;
+    let secondsRemaining = 15;
+
+    function resetInactivityTimer() {
+      clearTimeout(inactivityTimer);
+      clearInterval(countdownInterval);
+      isWakeWordMode = false;
+      secondsRemaining = 15;
+      document.getElementById('timerLabel').textContent = '15s';
+      document.getElementById('timerLabel').style.color = '#facc15';
+
+      countdownInterval = setInterval(() => {
+        if (!isSpeaking && !isPlayingQueue && isListening && !isWakeWordMode) {
+          secondsRemaining--;
+          document.getElementById('timerLabel').textContent = secondsRemaining + 's';
+          if (secondsRemaining <= 0) {
+            triggerInactivitySleep();
+          }
+        }
+      }, 1000);
+    }
+
+    function triggerInactivitySleep() {
+      clearInterval(countdownInterval);
+      clearTimeout(inactivityTimer);
+      isWakeWordMode = true;
+      document.getElementById('timerLabel').textContent = 'SLEEP';
+      document.getElementById('timerLabel').style.color = '#a855f7';
+      updateUIState('standby');
+      addLog('[STANDBY] 15s inactive. Sleep mode engaged. Say "Jarvis" to wake.', 'wake');
+    }
+
+    function initAudioGraph() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        masterGain = audioCtx.createGain();
+        masterGain.connect(audioCtx.destination);
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    // Connect WebSocket
+    function connectWebSocket() {
+      const loc = window.location;
+      const wsUri = (loc.protocol === "https:" ? "wss:" : "ws:") + "//" + loc.host + "/ws/jarvis";
+      ws = new WebSocket(wsUri);
+
+      ws.onopen = function() {
+        document.getElementById('wsStatus').textContent = 'CONNECTED';
+        document.getElementById('wsStatus').style.color = '#00f59b';
+        addLog('[WS] Duplex streaming bridge connected.', 'system');
+      };
+
+      ws.onmessage = async function(event) {
+        const msg = JSON.parse(event.data);
+        if (msg.type === "assistant_text_delta") {
+          recentJarvisSentences.push(msg.sentence.toLowerCase());
+          if (recentJarvisSentences.length > 5) recentJarvisSentences.shift();
+          document.getElementById('voiceTranscript').textContent = `"${msg.sentence}"`;
+          addLog(`[JARVIS] ${msg.sentence}`, 'jarvis');
+        } else if (msg.type === "audio_chunk") {
+          isProcessing = false;
+          queueAudioChunk(msg.data);
+        }
+      };
+
+      ws.onclose = function() {
+        document.getElementById('wsStatus').textContent = 'RECONNECTING';
+        document.getElementById('wsStatus').style.color = '#facc15';
+        setTimeout(connectWebSocket, 2000);
+      };
+    }
+
+    function queueAudioChunk(b64Data) {
+      initAudioGraph();
+      stopListening();
+      audioQueue.push(b64Data);
+      if (!isPlayingQueue) {
+        playNextInQueue();
+      }
+    }
+
+    function playNextInQueue() {
+      if (audioQueue.length === 0) {
+        isPlayingQueue = false;
+        isSpeaking = false;
+        updateUIState(isWakeWordMode ? 'standby' : 'ready');
+        resetInactivityTimer();
+        setTimeout(() => {
+          if (!isSpeaking && !isPlayingQueue) {
+            startListening();
+          }
+        }, 600);
+        return;
+      }
+
+      isPlayingQueue = true;
+      isSpeaking = true;
+      stopListening();
+      updateUIState('speaking');
+
+      const b64 = audioQueue.shift();
+      const audio = new Audio("data:audio/mp3;base64," + b64);
+      
+      const source = audioCtx.createMediaElementSource(audio);
+      source.connect(masterGain);
+
+      audio.onended = function() {
+        playNextInQueue();
+      };
+
+      audio.play().catch(() => {
+        playNextInQueue();
+      });
+    }
+
+    // Speech Recognition with Wake-Word Detection
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'en-IN';
+
+      recognition.onstart = function() {
+        isListening = true;
+        if (!isWakeWordMode) updateUIState('listening');
+      };
+
+      recognition.onresult = function(event) {
+        if (isSpeaking || isPlayingQueue) return;
+
+        let interimTranscript = '';
+        let finalTranscript = '';
+
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          const text = event.results[i][0].transcript;
+          if (event.results[i].isFinal) {
+            finalTranscript += text;
+          } else {
+            interimTranscript += text;
+          }
+        }
+
+        const candidateText = (finalTranscript || interimTranscript).trim();
+        const candidateLower = candidateText.toLowerCase();
+
+        // 1. WAKE-WORD DETECTION ("JARVIS")
+        if (isWakeWordMode) {
+          if (candidateLower.includes('jarvis') || candidateLower.includes('service') || candidateLower.includes('travis')) {
+            addLog(`[WAKE WORD TRIGGERED] "${candidateText}"`, 'wake');
+            isWakeWordMode = false;
+            resetInactivityTimer();
+
+            // Extract the user's intent after the word "jarvis"
+            let commandText = candidateText.replace(/hey\s*jarvis/i, '')
+                                           .replace(/hi\s*jarvis/i, '')
+                                           .replace(/jarvis/i, '')
+                                           .trim();
+
+            if (!commandText) {
+              commandText = "Hello Jarvis";
+            }
+
+            stopListening();
+            isProcessing = true;
+            updateUIState('processing');
+            document.getElementById('voiceTranscript').textContent = `"${candidateText}"`;
+            sendUserText(commandText);
+            return;
+          }
+          return; // Ignore general background noise in sleep mode
+        }
+
+        // 2. ACTIVE CONVERSATION MODE
+        if (interimTranscript.trim()) {
+          document.getElementById('voiceTranscript').textContent = `"${interimTranscript.trim()}"`;
+          resetInactivityTimer(); // Reset 15s timer as long as user is speaking
+        }
+
+        if (finalTranscript.trim()) {
+          const cleanText = finalTranscript.trim();
+          const cleanLower = cleanText.toLowerCase();
+
+          // Loop Filter against recent JARVIS speech
+          for (const sentence of recentJarvisSentences) {
+            if (sentence.includes(cleanLower) || cleanLower.includes(sentence)) {
+              console.log("[FILTERED ECHO LOOP]", cleanText);
+              return;
+            }
+          }
+
+          stopListening();
+          isProcessing = true;
+          updateUIState('processing');
+          resetInactivityTimer();
+
+          document.getElementById('voiceTranscript').textContent = `"${cleanText}"`;
+          addLog(`[USER] "${cleanText}"`, 'user');
+          sendUserText(cleanText);
+        }
+      };
+
+      recognition.onerror = function() {
+        isListening = false;
+        if (!isSpeaking && !isPlayingQueue && !isProcessing) {
+          setTimeout(startListening, 600);
+        } else {
+          updateUIState(isWakeWordMode ? 'standby' : 'ready');
+        }
+      };
+
+      recognition.onend = function() {
+        isListening = false;
+        if (!isSpeaking && !isPlayingQueue && !isProcessing) {
+          setTimeout(startListening, 400);
+        }
+      };
+    }
+
+    function startListening() {
+      if (isSpeaking || isPlayingQueue || isProcessing || isListening || !recognition) return;
+      try {
+        recognition.start();
+      } catch(e) {}
+    }
+
+    function stopListening() {
+      if (recognition) {
+        try { recognition.abort(); } catch(e) {}
+      }
+      isListening = false;
+    }
+
+    function forceStopListening() {
+      clearInterval(countdownInterval);
+      clearTimeout(inactivityTimer);
+      stopListening();
+      isWakeWordMode = true;
+      if (isSpeaking || isPlayingQueue) {
+        audioQueue = [];
+        isPlayingQueue = false;
+        isSpeaking = false;
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ type: "user_interrupt" }));
+        }
+      }
+      updateUIState('standby');
+      addLog('[STANDBY] Mic paused. Say "Jarvis" to wake.', 'wake');
+    }
+
+    function toggleMicrophone() {
+      initAudioGraph();
+      isWakeWordMode = false;
+      resetInactivityTimer();
+      if (isSpeaking || isPlayingQueue) {
+        audioQueue = [];
+        isPlayingQueue = false;
+        isSpeaking = false;
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ type: "user_interrupt" }));
+        }
+        startListening();
+        return;
+      }
+
+      startListening();
+      updateUIState('listening');
+    }
+
+    function updateUIState(state) {
+      const core = document.getElementById('arcCore');
+      const status = document.getElementById('jarvisStatus');
+      const micBtn = document.getElementById('micBtn');
+      const statusLabel = document.getElementById('voiceStatusLabel');
+
+      core.className = 'core-center ' + (state === 'listening' ? 'listening' : state === 'speaking' ? 'speaking' : state === 'standby' ? 'standby' : '');
+      
+      if (state === 'listening') {
+        status.textContent = 'ACTIVE // LISTENING (15s TIMER)';
+        status.style.color = '#00f59b';
+        statusLabel.textContent = 'ACTIVE';
+        statusLabel.style.color = '#00f59b';
+        micBtn.className = 'btn-hud active-listen';
+        micBtn.innerHTML = '<span>🟢 ACTIVE LISTENING</span>';
+      } else if (state === 'speaking') {
+        status.textContent = 'JARVIS TRANSMITTING';
+        status.style.color = '#00f0ff';
+        statusLabel.textContent = 'SPEAKING';
+        statusLabel.style.color = '#00f0ff';
+        micBtn.className = 'btn-hud';
+        micBtn.innerHTML = '<span>🔊 INTERRUPT</span>';
+      } else if (state === 'processing') {
+        status.textContent = 'THINKING // PROCESSING...';
+        status.style.color = '#facc15';
+        statusLabel.textContent = 'PROCESSING';
+        statusLabel.style.color = '#facc15';
+        micBtn.className = 'btn-hud';
+        micBtn.innerHTML = '<span>🟡 THINKING...</span>';
+      } else if (state === 'standby') {
+        status.textContent = 'STANDBY // SAY "JARVIS" TO WAKE';
+        status.style.color = '#a855f7';
+        statusLabel.textContent = 'SLEEP (WAKE READY)';
+        statusLabel.style.color = '#a855f7';
+        micBtn.className = 'btn-hud';
+        micBtn.innerHTML = '<span>⚡ SAY "JARVIS" TO WAKE</span>';
+      } else {
+        status.textContent = 'SYSTEM READY // CLICK OR SAY JARVIS';
+        status.style.color = '#00f0ff';
+        statusLabel.textContent = 'STANDBY';
+        statusLabel.style.color = '#00f0ff';
+        micBtn.className = 'btn-hud';
+        micBtn.innerHTML = '<span>🎙️ START LISTENING</span>';
+      }
+    }
+
+    function sendUserText(text) {
+      initAudioGraph();
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: "user_text", text: text }));
+      }
+    }
+
+    function sendTextMessage() {
+      const input = document.getElementById('textPromptInput');
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+      document.getElementById('voiceTranscript').textContent = `"${text}"`;
+      addLog(`[USER] "${text}"`, 'user');
+      resetInactivityTimer();
+      sendUserText(text);
+    }
+
+    function addLog(text, type='system') {
+      const feed = document.getElementById('logFeed');
+      const entry = document.createElement('div');
+      const timeStr = new Date().toTimeString().split(' ')[0];
+      entry.className = `log-entry ${type}`;
+      entry.textContent = `[${timeStr}] ${text}`;
+      feed.appendChild(entry);
+      feed.scrollTop = feed.scrollHeight;
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      connectWebSocket();
+      resetInactivityTimer();
+      setTimeout(startListening, 1000);
+    });
+  </script>
+</body>
+</html>

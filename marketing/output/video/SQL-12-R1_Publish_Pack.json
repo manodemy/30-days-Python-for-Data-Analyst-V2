@@ -1,0 +1,434 @@
+{
+  "reelNo": "SQL-12-R1",
+  "day": "DAY 12",
+  "badge": "SQL · Ghost Employee Trap",
+  "videoFile": "SQL-12-R1.mp4",
+  "videoPath": "D:\\Learn Python in 60days\\Manodemy_Web_V2\\marketing\\output\\video\\SQL-12-R1.mp4",
+  "coverFile": "SQL-12-R1_Cover.png",
+  "coverJpg": "SQL-12-R1_Cover.jpg",
+  "fileSizeMb": 13.35,
+  "resolution": "1080x1920",
+  "fps": 24,
+  "durationSec": 15.2,
+  "caption": "WHO STILL GOT PAID? 👻💸\n\nWhich query catches salary payments credited after an employee resigned?\n\nCan you spot which approach checks transaction dates instead of historical status flags?\n\nWhat’s your answer — A or B? 👇\nDrop your choice in the comments before checking the answer!\n\n🧠 Test this SQL interview question live:\n👉 manodemy.com/q19\n\n📊 Practice Data Skills with Manodemy\n🎁 Day 1 & Day 2 are 100% FREE\n\n🔗 Link in bio\n\n[sql interview questions, date filtering sql, ghost employees, payroll fraud audit, leetcode sql, data analyst interview, advanced sql, learn sql]\n\n#SQL #SQLInterview #SQLQuestions #SQLTips #DataAnalyst #DataAnalytics #LearnSQL #Manodemy",
+  "pinnedAnswer": "Option A is the Real-World Audit Standard ✅ | Option B is the Trap ❌\n\nWhy Option A (pay_date > exit_date) works:\nAn employee who resigned 3 months ago has a valid historical employment record. To catch post-resignation unauthorized payments, you MUST compare transaction timestamps (`p.pay_date > e.exit_date`).\n\nWhy Option B (status = 'Resigned') fails:\nOption B simply checks if status is 'Resigned'. This catastrophically flags EVERY single legitimate monthly salary ever paid to that employee while they were working full-time!\n\n💡 Rule of thumb: Never rely on static status flags for temporal audit checks — always filter against transactional timestamp boundaries!\n\nDid you vote A or B? 👇",
+  "simulatorLink": "https://www.manodemy.com/q19",
+  "cues": {
+    "t_hook_start": 0,
+    "t_line2_start": 4340,
+    "t_clock_in": 8280,
+    "t_opta": 9360,
+    "t_optb": 10520,
+    "t_optb_end": 11810,
+    "t_clock_out": 11960,
+    "t_cta_start": 11960,
+    "t_voice_end": 13800,
+    "totalMs": 15200,
+    "clockDurationMs": 3680,
+    "wordCues": [
+      {
+        "word": "Top",
+        "startMs": 0,
+        "endMs": 300
+      },
+      {
+        "word": "tech",
+        "startMs": 300,
+        "endMs": 500
+      },
+      {
+        "word": "companies",
+        "startMs": 500,
+        "endMs": 880
+      },
+      {
+        "word": "love",
+        "startMs": 880,
+        "endMs": 1220
+      },
+      {
+        "word": "asking",
+        "startMs": 1220,
+        "endMs": 1660
+      },
+      {
+        "word": "this",
+        "startMs": 1660,
+        "endMs": 1880
+      },
+      {
+        "word": "Ghost",
+        "startMs": 1880,
+        "endMs": 2200
+      },
+      {
+        "word": "Payroll",
+        "startMs": 2200,
+        "endMs": 2620
+      },
+      {
+        "word": "S-Q-L",
+        "startMs": 2620,
+        "endMs": 3180
+      },
+      {
+        "word": "trap!",
+        "startMs": 3180,
+        "endMs": 3580
+      },
+      {
+        "word": "Which",
+        "startMs": 4340,
+        "endMs": 4720
+      },
+      {
+        "word": "query",
+        "startMs": 4720,
+        "endMs": 5100
+      },
+      {
+        "word": "catches",
+        "startMs": 5100,
+        "endMs": 5500
+      },
+      {
+        "word": "salary",
+        "startMs": 5500,
+        "endMs": 5900
+      },
+      {
+        "word": "payments",
+        "startMs": 5900,
+        "endMs": 6280
+      },
+      {
+        "word": "credited",
+        "startMs": 6280,
+        "endMs": 6780
+      },
+      {
+        "word": "after",
+        "startMs": 6780,
+        "endMs": 6940
+      },
+      {
+        "word": "an",
+        "startMs": 6940,
+        "endMs": 7320
+      },
+      {
+        "word": "employee",
+        "startMs": 7320,
+        "endMs": 7760
+      },
+      {
+        "word": "resigned?",
+        "startMs": 7760,
+        "endMs": 8280
+      },
+      {
+        "word": "Choose",
+        "startMs": 8280,
+        "endMs": 8500
+      },
+      {
+        "word": "your",
+        "startMs": 8500,
+        "endMs": 8700
+      },
+      {
+        "word": "answer...",
+        "startMs": 8700,
+        "endMs": 8940
+      },
+      {
+        "word": "Option",
+        "startMs": 9360,
+        "endMs": 9740
+      },
+      {
+        "word": "A...",
+        "startMs": 9740,
+        "endMs": 9960
+      },
+      {
+        "word": "or",
+        "startMs": 10520,
+        "endMs": 10840
+      },
+      {
+        "word": "Option",
+        "startMs": 10840,
+        "endMs": 11080
+      },
+      {
+        "word": "B?",
+        "startMs": 11080,
+        "endMs": 11810
+      },
+      {
+        "word": "Drop",
+        "startMs": 11960,
+        "endMs": 12300
+      },
+      {
+        "word": "your",
+        "startMs": 12300,
+        "endMs": 12500
+      },
+      {
+        "word": "vote",
+        "startMs": 12500,
+        "endMs": 12740
+      },
+      {
+        "word": "in",
+        "startMs": 12740,
+        "endMs": 12960
+      },
+      {
+        "word": "the",
+        "startMs": 12960,
+        "endMs": 13060
+      },
+      {
+        "word": "comments",
+        "startMs": 13060,
+        "endMs": 13360
+      },
+      {
+        "word": "below.",
+        "startMs": 13360,
+        "endMs": 13700
+      }
+    ],
+    "phrases": [
+      {
+        "index": 0,
+        "text": "Top tech companies love asking this Ghost Payroll S-Q-L trap!",
+        "startMs": 0,
+        "endMs": 4340,
+        "words": [
+          {
+            "word": "Top",
+            "startMs": 0,
+            "endMs": 300
+          },
+          {
+            "word": "tech",
+            "startMs": 300,
+            "endMs": 500
+          },
+          {
+            "word": "companies",
+            "startMs": 500,
+            "endMs": 880
+          },
+          {
+            "word": "love",
+            "startMs": 880,
+            "endMs": 1220
+          },
+          {
+            "word": "asking",
+            "startMs": 1220,
+            "endMs": 1660
+          },
+          {
+            "word": "this",
+            "startMs": 1660,
+            "endMs": 1880
+          },
+          {
+            "word": "Ghost",
+            "startMs": 1880,
+            "endMs": 2200
+          },
+          {
+            "word": "Payroll",
+            "startMs": 2200,
+            "endMs": 2620
+          },
+          {
+            "word": "S-Q-L",
+            "startMs": 2620,
+            "endMs": 3180
+          },
+          {
+            "word": "trap!",
+            "startMs": 3180,
+            "endMs": 3580
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "text": "Which query catches salary payments credited after an employee resigned?",
+        "startMs": 4340,
+        "endMs": 8280,
+        "words": [
+          {
+            "word": "Which",
+            "startMs": 4340,
+            "endMs": 4720
+          },
+          {
+            "word": "query",
+            "startMs": 4720,
+            "endMs": 5100
+          },
+          {
+            "word": "catches",
+            "startMs": 5100,
+            "endMs": 5500
+          },
+          {
+            "word": "salary",
+            "startMs": 5500,
+            "endMs": 5900
+          },
+          {
+            "word": "payments",
+            "startMs": 5900,
+            "endMs": 6280
+          },
+          {
+            "word": "credited",
+            "startMs": 6280,
+            "endMs": 6780
+          },
+          {
+            "word": "after",
+            "startMs": 6780,
+            "endMs": 6940
+          },
+          {
+            "word": "an",
+            "startMs": 6940,
+            "endMs": 7320
+          },
+          {
+            "word": "employee",
+            "startMs": 7320,
+            "endMs": 7760
+          },
+          {
+            "word": "resigned?",
+            "startMs": 7760,
+            "endMs": 8280
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "text": "Choose your answer...",
+        "startMs": 8280,
+        "endMs": 9360,
+        "words": [
+          {
+            "word": "Choose",
+            "startMs": 8280,
+            "endMs": 8500
+          },
+          {
+            "word": "your",
+            "startMs": 8500,
+            "endMs": 8700
+          },
+          {
+            "word": "answer...",
+            "startMs": 8700,
+            "endMs": 8940
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "text": "Option A...",
+        "startMs": 9360,
+        "endMs": 10520,
+        "words": [
+          {
+            "word": "Option",
+            "startMs": 9360,
+            "endMs": 9740
+          },
+          {
+            "word": "A...",
+            "startMs": 9740,
+            "endMs": 9960
+          }
+        ]
+      },
+      {
+        "index": 4,
+        "text": "or Option B?",
+        "startMs": 10520,
+        "endMs": 11810,
+        "words": [
+          {
+            "word": "or",
+            "startMs": 10520,
+            "endMs": 10840
+          },
+          {
+            "word": "Option",
+            "startMs": 10840,
+            "endMs": 11080
+          },
+          {
+            "word": "B?",
+            "startMs": 11080,
+            "endMs": 11810
+          }
+        ]
+      },
+      {
+        "index": 5,
+        "text": "Drop your vote in the comments below.",
+        "startMs": 11960,
+        "endMs": 13800,
+        "words": [
+          {
+            "word": "Drop",
+            "startMs": 11960,
+            "endMs": 12300
+          },
+          {
+            "word": "your",
+            "startMs": 12300,
+            "endMs": 12500
+          },
+          {
+            "word": "vote",
+            "startMs": 12500,
+            "endMs": 12740
+          },
+          {
+            "word": "in",
+            "startMs": 12740,
+            "endMs": 12960
+          },
+          {
+            "word": "the",
+            "startMs": 12960,
+            "endMs": 13060
+          },
+          {
+            "word": "comments",
+            "startMs": 13060,
+            "endMs": 13360
+          },
+          {
+            "word": "below.",
+            "startMs": 13360,
+            "endMs": 13700
+          }
+        ]
+      }
+    ],
+    "hasOpeningPoster": true,
+    "openingPosterDuration": 4340
+  },
+  "generatedAt": "2026-09-05 02:54:53"
+}

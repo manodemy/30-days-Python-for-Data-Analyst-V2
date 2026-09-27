@@ -1,0 +1,34 @@
+{
+  "user": {
+    "name": "Machi (The 50 LPA Builder)",
+    "currentRole": "Data Analyst",
+    "currentCTC": "6 LPA",
+    "targetRole": "AI Systems Engineer / Applied AI Developer",
+    "targetCTC": "50 LPA (or $60k+ USD Remote)",
+    "timelineDays": 30,
+    "sprintStartDate": "2026-09-19",
+    "currentDay": 1
+  },
+  "technicalBaseline": {
+    "strengths": [
+      "SQL mastery, complex aggregations, window functions, query optimization",
+      "Data analysis, business problem formulation, analytics pipelines",
+      "Multi-Agent orchestration concepts (Maestro, Coach, Scout, Marketing Madam)",
+      "Multimodal pipeline familiarity (Whisper ASR, audio timestamps, video synthesis)",
+      "Python scripting & automation"
+    ],
+    "criticalGapsTo50LPA": [
+      "FastAPI production async streaming & Pydantic v2 validation",
+      "Docker containerization & docker-compose production deployment",
+      "Stateful agent frameworks (LangGraph / cyclic event-driven architectures)",
+      "Production RAG (Hybrid search, reranking, contextual retrieval)",
+      "LLM Evals, tracing & observability (LangSmith/Ragas)",
+      "Salary negotiation anchoring & direct founder cold outreach"
+    ]
+  },
+  "mindset": {
+    "readiness": "100% Locked In",
+    "mentor": "Teacher",
+    "commitmentHoursPerDay": 3
+  }
+}

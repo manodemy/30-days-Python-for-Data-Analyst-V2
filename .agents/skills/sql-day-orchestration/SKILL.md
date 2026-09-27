@@ -18,10 +18,11 @@ This skill governs the end-to-end production assembly line, role responsibilitie
 | **Compass** | Curriculum & Schema Mapping | SQL Syllabus & Seed DBs | Topic Spec, DB Schema Map, Target Tables |
 | **Theorist** | Theory Slide Authoring | Topic Spec & Asset paths | `COURSE_CONTENT['dayXX'].slides` HTML |
 | **Quizzer** | Practice & Interview Questions | DB Schema & Difficulty Arc | `COURSE_CONTENT['dayXX'].practiceQuestions` |
-| **Coach** *(New & Evolving)* | **Cognitive Diagnostics & 1-Click Auto-Fix Engine** | Topic Spec + Practice Questions + DB Schema | 1) Topic-specific anti-pattern diagnostic rules<br>2) 1-click actionable auto-fixes (`applyCoachFix`)<br>3) Interactive Schema Peeking Tooltips<br>4) Codified error classifiers for continuous curriculum evolution |
+| **Coach** | Cognitive Diagnostics & 1-Click Auto-Fix Engine | Topic Spec + Practice Questions + DB Schema | 1) Topic-specific anti-pattern diagnostic rules<br>2) 1-click actionable auto-fixes (`applyCoachFix`)<br>3) Interactive Schema Peeking Tooltips<br>4) Codified error classifiers |
 | **Voice** | Narration Script & Audio Production | Slide content & Solution SQL | Normalized MP3 files in `public/Version-3/DayXX/` |
-| **Sync** *(Upgraded)* | **Full-Spectrum Narration & Visual Syncing + Pattern Evolution** | Theory & Solution MP3s + Slide HTML + Solution SQL | 1) Whisper ASR sub-second Theory Visual Sync handlers (`updateTableHighlights`, card spotlights, timeline progressions)<br>2) `solutionEvents` JSON with 7-space layout<br>3) Codified sync patterns for future day evolution |
+| **Sync** | Full-Spectrum Narration & Visual Syncing | Theory & Solution MP3s + Slide HTML + Solution SQL | 1) Whisper ASR sub-second Theory Visual Sync handlers<br>2) `solutionEvents` JSON with 7-space layout<br>3) Codified sync patterns |
 | **Timekeeper** | Timeline Stitching & Engine Wiring | Audio durations + Track list | `mano-engine.js` registry, Cache-busters |
+| **Scout** *(New & Adaptive)* | **On-Demand User Emulation, Delta QA & Regression Shield** | Modified Day / Diff Scope + Protected Contracts | 1) Delta-targeted live browser testing (70-80% token savings)<br>2) Autonomous UI/UX & JS self-healing<br>3) Regression shield guarding Days 01-18<br>4) Continuous memory evolution |
 | **Maestro** | **Head Inspector & Orchestrator** | Gate metrics & Subagent reports | Green-light deployment sign-off & Skill evolution |
 
 ---
@@ -56,8 +57,12 @@ flowchart TD
         Timekeeper["Timekeeper (Track Durations, Diagnostics, mano-engine.js, Cache-Busters)"]
     end
 
-    subgraph STAGE_6 ["Stage 6: Pre-Flight Gate Inspection"]
-        Maestro["Maestro (7-Point Verification & Regression Check)"]
+    subgraph STAGE_6 ["Stage 6: On-Demand Delta QA & Regression Shield (Scout)"]
+        Scout["Scout (Delta Testing, Immutability Shield, Autonomous Self-Healing)"]
+    end
+
+    subgraph STAGE_7 ["Stage 7: Pre-Flight Gate Inspection"]
+        Maestro["Maestro (Master Verification & Final Sign-Off)"]
     end
 
     STAGE_1 --> STAGE_2
@@ -65,6 +70,7 @@ flowchart TD
     STAGE_3 --> STAGE_4
     STAGE_4 --> STAGE_5
     STAGE_5 --> STAGE_6
+    STAGE_6 --> STAGE_7
 ```
 
 ---
@@ -190,7 +196,14 @@ GATE-5 (Timekeeper):
   ✓ sum(dayXXDurations) equals sum of actual audio file durations (±1s)
   ✓ Cache-buster ?v=XX.X incremented on touched HTML files
 
-GATE-6 (Maestro Live Checks):
+GATE-SCOUT (Scout — On-Demand Delta QA & Regression Shield Gate):
+  ✓ On-Demand Scope Execution: Tests only the delta/touched surfaces to optimize tokens (or full suite if milestone).
+  ✓ Console & Network Cleanliness: 0 uncaught JS exceptions, 0 failed 404 network requests in live browser session.
+  ✓ Real-World User Emulation: Live clicking, typing, scrubbing, and question submission executed without error.
+  ✓ Immutability Shield: Zero regressions on established historical contracts (Days 01-05).
+  ✓ Autonomous Self-Healing: Any caught UI/UX or functional bugs are repaired, re-verified, and codified to memory.
+
+GATE-6 (Maestro Final Master Sign-Off):
   6.1 Master Timeline: Progress bar duration == total calculated audio duration.
   6.2 Timeline Seeking: Dragging scrubber instantly updates UI question card, editor, and active tab with zero latency.
   6.3 Visual Scoping & Positioning: Active card is isolated, correctly centered, and non-active cards are hidden.
@@ -437,5 +450,41 @@ Supersedes: none
 Statement: Continuous Diagnostic Evolution & Topic Expansion:
 For every new curriculum day, the Coach subagent MUST analyze the day's syllabus and practice questions to expand `analyzeQueryError()` with new topic-specific anti-patterns (e.g. Day 06 GROUP BY/HAVING rules, Day 07 JOIN ambiguities, Day 08 Window Partition traps). All newly codified diagnostics must pass `GATE-COACH` with zero regressions on previous days.
 Added: Day05 — established continuous diagnostic evolution protocol across all 60 curriculum days.
+Supersedes: none
+
+[SCOUT-001] [STATUS: active] [SCOPE: Scout]
+Statement: On-Demand Execution Constraint:
+Scout must ONLY execute testing when explicitly invoked by Maestro or the User. Never run heavy background test loops during drafting or asset preparation.
+Added: Inception — eliminates unnecessary token consumption.
+Supersedes: none
+
+[SCOUT-002] [STATUS: active] [SCOPE: Scout]
+Statement: Delta-First Inspection Protocol:
+Before launching browser sessions, Scout must identify the exact delta (files/days modified) and restrict test execution to the touched surfaces unless a full-day certification is explicitly requested.
+Added: Inception — guarantees 70-80% token efficiency.
+Supersedes: none
+
+[SCOUT-003] [STATUS: active] [SCOPE: Scout]
+Statement: Immutability Regression Shield:
+Any edit to shared engine files (mano-engine.js, styles.css) must be verified against the 6 Protected Contracts to ensure Days 01-18 are never inadvertently damaged.
+Added: Inception — prevents recurring regressions when working on new days.
+Supersedes: none
+
+[SCOUT-004] [STATUS: active] [SCOPE: Scout]
+Statement: Continuous Evolution & No-Repeat Guarantee:
+Whenever Scout fixes a bug, the root cause must be codified into the Active Rule Registry with an automated regression check to guarantee the same bug is never repeated in future days.
+Added: Inception — ensures the testing engine gets progressively smarter over time.
+Supersedes: none
+
+[SCOUT-005] [STATUS: active] [SCOPE: Scout]
+Statement: Cross-Day Scorecard & Progress Sync Integrity:
+Test scores submitted on any studio day must correctly persist in localStorage, update the navbar score badge, and synchronize with the Home Page overall progress counter and certificate milestone.
+Added: Inception — ensures student exam achievements reflect seamlessly across the entire platform.
+Supersedes: none
+
+[SCOUT-006] [STATUS: active] [SCOPE: Scout]
+Statement: Platform Navigation & Conversion Route Integrity:
+All landing page CTAs, course day cards, guest paywall triggers, and payment success/failed routes must resolve to valid URLs with zero 404s or broken checkout redirects.
+Added: Inception — protects business conversion and user onboarding funnels.
 Supersedes: none
 ```

@@ -2,19 +2,35 @@
 """
 Automated Workspace Organizer & Pruner for Manodemy.
 Safely categorizes migrations, scripts, and docs into dedicated subdirectories,
-and carefully purges temporary scratch logs and legacy root drafts.
+and carefully purges temporary scratch logs and legacy root drafts while strictly
+protecting production web root, schemas, and media assets.
 """
 import os
 import shutil
 import glob
+import sys
 
-# Protected directories that must NEVER be deleted
-PROTECTED_DIRS = ["public", "sql_migrations", "narrations", "docs", ".agents", "components", "app", "lib"]
+# Ensure UTF-8 output across all platforms/consoles
+sys.stdout.reconfigure(encoding='utf-8')
+
+PROTECTED_DIRS = [
+    "public", 
+    "sql_migrations", 
+    "narrations", 
+    "docs", 
+    ".agents", 
+    "components", 
+    "app", 
+    "lib", 
+    "marketing", 
+    "reels_hub", 
+    "src"
+]
 
 def organize_and_prune_workspace():
     base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     print("=" * 60)
-    print("🧹 MANODEMY WORKSPACE ORGANIZER & SAFE PRUNER")
+    print("🧹 [SENTRY] MANODEMY WORKSPACE HEALTH & SANITIZATION PASS")
     print("=" * 60)
 
     # 1. Target directory definitions
@@ -26,12 +42,13 @@ def organize_and_prune_workspace():
         os.path.join("docs", "curriculum"),
         os.path.join("docs", "specs"),
         os.path.join("docs", "prompts"),
-        os.path.join("docs", "business")
+        os.path.join("docs", "business"),
+        "scratch"
     ]
     for folder in folders:
         os.makedirs(os.path.join(base_dir, folder), exist_ok=True)
 
-    # 2. Organize SQL files
+    # 2. Organize SQL files into sql_migrations/
     sql_files = glob.glob(os.path.join(base_dir, "[0-9][0-9][0-9]_*.sql"))
     for sf in sql_files:
         if os.path.exists(sf):
@@ -39,7 +56,7 @@ def organize_and_prune_workspace():
             shutil.move(sf, dest)
             print(f"✅ Organized migration: {os.path.basename(sf)} -> sql_migrations/")
 
-    # 3. Organize Generator scripts
+    # 3. Organize loose generator scripts into scripts/generators/
     gen_patterns = [
         "gen_*.py",
         "day*_part*.py",
@@ -55,7 +72,31 @@ def organize_and_prune_workspace():
             shutil.move(f, dest)
             print(f"✅ Organized generator: {os.path.basename(f)} -> scripts/generators/")
 
-    # 4. Carefully Prune Temporary Scratch Logs & Legacy Drafts in Root
+    # 4. Move loose scratch scripts from root into scratch/
+    root_scratch_scripts = [
+        "scratch_inspect.py"
+    ]
+    for sc in root_scratch_scripts:
+        full_path = os.path.join(base_dir, sc)
+        if os.path.exists(full_path):
+            dest = os.path.join(base_dir, "scratch", sc)
+            shutil.move(full_path, dest)
+            print(f"✅ Moved scratch script: {sc} -> scratch/")
+
+    # 5. Clean up temporary test audio artifacts in scratch/ (*.mp3 files that are just temporary TTS bench tests)
+    scratch_dir = os.path.join(base_dir, "scratch")
+    temp_audio_pruned = 0
+    if os.path.exists(scratch_dir):
+        for temp_mp3 in glob.glob(os.path.join(scratch_dir, "test_*.mp3")) + glob.glob(os.path.join(scratch_dir, "bench_*.mp3")):
+            try:
+                os.remove(temp_mp3)
+                temp_audio_pruned += 1
+            except Exception as e:
+                print(f"⚠️ Could not delete {temp_mp3}: {e}")
+        if temp_audio_pruned > 0:
+            print(f"🗑️ Cleaned {temp_audio_pruned} temporary TTS audio benchmark files from scratch/")
+
+    # 6. Carefully Prune Temporary Scratch Logs & Legacy Drafts in Root
     scratch_patterns = [
         "*.tmp",
         "*_analysis.txt",
@@ -73,14 +114,15 @@ def organize_and_prune_workspace():
             except Exception as e:
                 print(f"⚠️ Could not delete {f}: {e}")
 
-    # Remove temporary archive folder if present
+    # 7. Remove temporary archive folder if present
     archive_dir = os.path.join(base_dir, "archive")
     if os.path.exists(archive_dir):
         shutil.rmtree(archive_dir, ignore_errors=True)
         print("🗑️ Removed legacy archive directory.")
 
     print("-" * 60)
-    print(f"🎉 WORKSPACE CLEAN & PRISTINE! Pruned {pruned_count} temporary scratch files.")
+    print(f"🎉 [SENTRY] WORKSPACE HEALTH PASS COMPLETE! (Pruned {pruned_count + temp_audio_pruned} temporary items)")
+    print("🔒 100% of production files (public/, narrations/, sql_migrations/, components/, app/, etc.) protected.")
     print("=" * 60)
 
 if __name__ == "__main__":

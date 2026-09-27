@@ -1,0 +1,63 @@
+{
+  "challenge_id": "day17_bug01",
+  "day": 17,
+  "title": "Bug Bounty Day 17: Misuse of Aggregate in WHERE Clause",
+  "category": "SQL Debugging & Aggregations",
+  "difficulty": "Intermediate",
+  "prize_inr": 100,
+  "freeze_time_ist": "22:00:00",
+  "objective": "The retail operations team wants to identify departments where the average employee salary exceeds the threshold. The junior developer wrote a query using AVG() inside the WHERE clause, which crashes the database with a syntax error. Spot the bug, replace it with the correct SQL clause, and execute the query!",
+  "seed_sql": "CREATE TABLE employees (id INTEGER PRIMARY KEY, name TEXT, department TEXT, salary REAL);\nINSERT INTO employees VALUES (1, 'Karthik', 'Engineering', 75000);\nINSERT INTO employees VALUES (2, 'Priya', 'Engineering', 85000);\nINSERT INTO employees VALUES (3, 'Anand', 'Marketing', 45000);\nINSERT INTO employees VALUES (4, 'Divya', 'Marketing', 48000);\nINSERT INTO employees VALUES (5, 'Suresh', 'Design', 52000);\nINSERT INTO employees VALUES (6, 'Meena', 'Design', 62000);\nINSERT INTO employees VALUES (7, 'Ramesh', 'Sales', 35000);\nINSERT INTO employees VALUES (8, 'Swetha', 'Sales', 42000);",
+  "table_schemas": [
+    {
+      "table_name": "employees",
+      "columns": [
+        { "name": "id", "type": "INTEGER" },
+        { "name": "name", "type": "TEXT" },
+        { "name": "department", "type": "TEXT" },
+        { "name": "salary", "type": "REAL" }
+      ],
+      "sample_rows": [
+        [1, "Karthik", "Engineering", 75000],
+        [2, "Priya", "Engineering", 85000],
+        [3, "Anand", "Marketing", 45000],
+        [4, "Divya", "Marketing", 48000],
+        [5, "Suresh", "Design", 52000]
+      ]
+    }
+  ],
+  "variants": {
+    "A": {
+      "variant_id": "A",
+      "target_val": 50000,
+      "broken_sql": "-- 🚨 BUGGED QUERY: Fix the syntax error to claim ₹100\nSELECT department, AVG(salary) AS avg_sal\nFROM employees\nWHERE AVG(salary) > 50000\nGROUP BY department;",
+      "expected_solution": "SELECT department, AVG(salary) AS avg_sal FROM employees GROUP BY department HAVING AVG(salary) > 50000;",
+      "expected_columns": ["department", "avg_sal"],
+      "expected_rows": [
+        ["Design", 57000],
+        ["Engineering", 80000]
+      ]
+    },
+    "B": {
+      "variant_id": "B",
+      "target_val": 55000,
+      "broken_sql": "-- 🚨 BUGGED QUERY: Fix the syntax error to claim ₹100\nSELECT department, AVG(salary) AS avg_sal\nFROM employees\nWHERE AVG(salary) > 55000\nGROUP BY department;",
+      "expected_solution": "SELECT department, AVG(salary) AS avg_sal FROM employees GROUP BY department HAVING AVG(salary) > 55000;",
+      "expected_columns": ["department", "avg_sal"],
+      "expected_rows": [
+        ["Design", 57000],
+        ["Engineering", 80000]
+      ]
+    },
+    "C": {
+      "variant_id": "C",
+      "target_val": 60000,
+      "broken_sql": "-- 🚨 BUGGED QUERY: Fix the syntax error to claim ₹100\nSELECT department, AVG(salary) AS avg_sal\nFROM employees\nWHERE AVG(salary) > 60000\nGROUP BY department;",
+      "expected_solution": "SELECT department, AVG(salary) AS avg_sal FROM employees GROUP BY department HAVING AVG(salary) > 60000;",
+      "expected_columns": ["department", "avg_sal"],
+      "expected_rows": [
+        ["Engineering", 80000]
+      ]
+    }
+  }
+}

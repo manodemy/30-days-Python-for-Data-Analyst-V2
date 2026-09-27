@@ -1,0 +1,279 @@
+{
+  "version": "1.0.0",
+  "sprintName": "6 LPA to 50 LPA AI Systems Engineer (30-Day Sprint)",
+  "startDate": "2026-09-19",
+  "currentDay": 1,
+  "overallStatus": "IN_PROGRESS",
+  "days": [
+    {
+      "day": 1,
+      "week": 1,
+      "title": "Diagnostic Assessment & 50 LPA Rebranding",
+      "status": "IN_PROGRESS",
+      "coreFocus": "Rebrand resume, LinkedIn headline, and GitHub to 'AI Systems Engineer'. Position Data Analyst background as unfair advantage.",
+      "deliverable": "Updated 1-page Resume draft + LinkedIn headline & bio tuned for AI Systems Engineering.",
+      "completedAt": null
+    },
+    {
+      "day": 2,
+      "week": 1,
+      "title": "FastAPI & Async Python for AI Streaming",
+      "status": "PENDING",
+      "coreFocus": "Build an async FastAPI service with Server-Sent Events (SSE) streaming token-by-token LLM responses + Pydantic v2 schemas.",
+      "deliverable": "Working standalone FastAPI streaming microservice with unit tests.",
+      "completedAt": null
+    },
+    {
+      "day": 3,
+      "week": 1,
+      "title": "Dockerizing AI Agents & Microservices",
+      "status": "PENDING",
+      "coreFocus": "Containerize the FastAPI AI service with multi-stage Dockerfile and docker-compose.yml including local database.",
+      "deliverable": "One-click 'docker compose up' running service with healthchecks.",
+      "completedAt": null
+    },
+    {
+      "day": 4,
+      "week": 1,
+      "title": "Stateful Multi-Agent Orchestration (LangGraph Patterns)",
+      "status": "PENDING",
+      "coreFocus": "Implement a stateful supervisor-worker agent loop with cyclic decision making and error recovery.",
+      "deliverable": "LangGraph state machine script executing multi-step autonomous research/code tasks.",
+      "completedAt": null
+    },
+    {
+      "day": 5,
+      "week": 1,
+      "title": "Sandboxed Tool Execution & Safe SQL/Code Runners",
+      "status": "PENDING",
+      "coreFocus": "Secure tool execution environment for agents to query databases and run code with strict timeouts and AST inspection.",
+      "deliverable": "Secure code runner tool module with failure-handling tests.",
+      "completedAt": null
+    },
+    {
+      "day": 6,
+      "week": 1,
+      "title": "Multimodal Engineering (Whisper ASR + Video Pipelines)",
+      "status": "PENDING",
+      "coreFocus": "Programmatic video and audio synthesis architecture: Whisper word timestamps, TTS integration, and automated headless rendering.",
+      "deliverable": "Architectural breakdown and clean CLI script of the Manodemy Video Engine.",
+      "completedAt": null
+    },
+    {
+      "day": 7,
+      "week": 1,
+      "title": "Week 1 Capstone Integration & Milestone Gate",
+      "status": "PENDING",
+      "coreFocus": "Package all Week 1 components into a clean, containerized multi-agent API service.",
+      "deliverable": "GitHub repository with clean README, architecture diagram, and docker-compose.",
+      "completedAt": null
+    },
+    {
+      "day": 8,
+      "week": 2,
+      "title": "Advanced RAG (Beyond Naive Vector Search)",
+      "status": "PENDING",
+      "coreFocus": "Implement Hybrid Search (BM25 + Dense Vectors) with Reciprocal Rank Fusion (RRF) and Cross-Encoder Re-ranking.",
+      "deliverable": "Hybrid RAG search module outperforming basic vector cosine similarity.",
+      "completedAt": null
+    },
+    {
+      "day": 9,
+      "week": 2,
+      "title": "Agentic Memory & Contextual Chunking",
+      "status": "PENDING",
+      "coreFocus": "Designing episodic vs semantic agent memory and contextual document chunking for complex analytics datasets.",
+      "deliverable": "Memory manager class supporting conversation recall and long-term facts.",
+      "completedAt": null
+    },
+    {
+      "day": 10,
+      "week": 2,
+      "title": "LLM Observability, Tracing & Evals (LangSmith/Ragas)",
+      "status": "PENDING",
+      "coreFocus": "Instrumenting agent traces, tracking latency/costs, and setting up automated evaluation benchmarks for hallucinations.",
+      "deliverable": "Evaluation suite script calculating faithfulness and answer relevancy scores.",
+      "completedAt": null
+    },
+    {
+      "day": 11,
+      "week": 2,
+      "title": "Production Cost & Latency Optimization",
+      "status": "PENDING",
+      "coreFocus": "Semantic caching (Redis/GPTCache), prompt compression, and model routing (small fast models vs heavy reasoning models).",
+      "deliverable": "Routing proxy that slashes token cost by 60% with zero quality degradation.",
+      "completedAt": null
+    },
+    {
+      "day": 12,
+      "week": 2,
+      "title": "Packaging Manodemy into a World-Class Portfolio Repo",
+      "status": "PENDING",
+      "coreFocus": "Turning the Manodemy multi-agent engine into a stunning open-source showcase with animated GIFs, system architecture, and 1-line setup.",
+      "deliverable": "Public GitHub repo with an elite README designed to impress CTOs.",
+      "completedAt": null
+    },
+    {
+      "day": 13,
+      "week": 2,
+      "title": "The 90-Second Hypnotic Loom Video Demo",
+      "status": "PENDING",
+      "coreFocus": "Scripting, recording, and publishing a crisp 90-second Loom showing the live working multi-agent video generator & SQL sandbox.",
+      "deliverable": "Published Loom link ready to be pasted into founder DMs.",
+      "completedAt": null
+    },
+    {
+      "day": 14,
+      "week": 2,
+      "title": "Week 2 Capstone Review & Public Launch",
+      "status": "PENDING",
+      "coreFocus": "Reviewing all artifacts, publishing the demo on LinkedIn/X, and stress-testing public endpoints.",
+      "deliverable": "Live public demo link + social post published.",
+      "completedAt": null
+    },
+    {
+      "day": 15,
+      "week": 3,
+      "title": "The Anti-Naukri Infiltration Target List",
+      "status": "PENDING",
+      "coreFocus": "Curating 50 high-paying Series A/B AI startups (Bangalore) and US Remote AI companies hiring for AI/Agentic roles.",
+      "deliverable": "CRM spreadsheet of 50 vetted companies with Founder/CTO LinkedIn and X handles.",
+      "completedAt": null
+    },
+    {
+      "day": 16,
+      "week": 3,
+      "title": "Crafting Irresistible Founder Cold Infiltration Pitches",
+      "status": "PENDING",
+      "coreFocus": "Writing high-converting, personalized 3-sentence DM templates embedding the Loom demo and specific company pain-points.",
+      "deliverable": "3 tested pitch variations with dynamic personalization placeholders.",
+      "completedAt": null
+    },
+    {
+      "day": 17,
+      "week": 3,
+      "title": "Launching Outreach Engine (Batch 1: 15 Founders)",
+      "status": "PENDING",
+      "coreFocus": "Sending personalized video pitches to the first 15 target founders/CTOs via LinkedIn and Twitter/X.",
+      "deliverable": "15 DMs sent and logged in outreach_pipeline.json.",
+      "completedAt": null
+    },
+    {
+      "day": 18,
+      "week": 3,
+      "title": "Viral Technical 'Build-in-Public' LinkedIn Post",
+      "status": "PENDING",
+      "coreFocus": "Publishing an in-depth technical post: 'How I built an autonomous multi-agent video pipeline with Whisper and Headless Browsers'.",
+      "deliverable": "LinkedIn post live with high-engagement technical breakdown.",
+      "completedAt": null
+    },
+    {
+      "day": 19,
+      "week": 3,
+      "title": "Outreach Batch 2 & Value-Add Follow Ups",
+      "status": "PENDING",
+      "coreFocus": "Sending next 15 founder DMs + sending insightful follow-up bumps to Batch 1 with fresh architecture updates.",
+      "deliverable": "30 total founders reached + initial response analysis.",
+      "completedAt": null
+    },
+    {
+      "day": 20,
+      "week": 3,
+      "title": "Dominating the 15-Minute Founder Fit Call",
+      "status": "PENDING",
+      "coreFocus": "Mastering the founder screening conversation: Transitioning from Data Analyst to AI Builder, leading with demo, securing tech round.",
+      "deliverable": "Scripted answers to top 5 founder screening questions.",
+      "completedAt": null
+    },
+    {
+      "day": 21,
+      "week": 3,
+      "title": "Week 3 Pipeline Review (Minimum 3-5 Rounds Scheduled)",
+      "status": "PENDING",
+      "coreFocus": "Auditing responses, scheduling interviews, and prioritizing high-probability 50 LPA opportunities.",
+      "deliverable": "Confirmed interview calendar with at least 3 active loops.",
+      "completedAt": null
+    },
+    {
+      "day": 22,
+      "week": 4,
+      "title": "System Design 1: Autonomous Multi-Agent Support Engine",
+      "status": "PENDING",
+      "coreFocus": "Designing end-to-end agentic workflow: Intent routing, human-in-the-loop escalation, state persistence, idempotency.",
+      "deliverable": "Excalidraw/Mermaid system design diagram with complete component breakdown.",
+      "completedAt": null
+    },
+    {
+      "day": 23,
+      "week": 4,
+      "title": "System Design 2: High-Throughput Multimodal Generation",
+      "status": "PENDING",
+      "coreFocus": "Designing scalable video/audio rendering pipelines: Queue workers (Celery/BullMQ), S3 storage, worker autoscaling.",
+      "deliverable": "Architecture spec for processing 10,000 automated videos/day with zero downtime.",
+      "completedAt": null
+    },
+    {
+      "day": 24,
+      "week": 4,
+      "title": "System Design 3: Scalable Enterprise RAG (10M+ Docs)",
+      "status": "PENDING",
+      "coreFocus": "Designing enterprise knowledge retrieval: Chunking strategies, vector index sharding (Qdrant/Milvus), latency caching, SLA guarantees.",
+      "deliverable": "System design write-up for sub-200ms enterprise RAG.",
+      "completedAt": null
+    },
+    {
+      "day": 25,
+      "week": 4,
+      "title": "Live Mock Interview Drill: System Design & Failure Modes",
+      "status": "PENDING",
+      "coreFocus": "Intensive 45-minute live drill with Teacher grill-session on LLM failure recovery, rate limits, and schema drift.",
+      "deliverable": "Scored mock session with identified fixes logged in memory.",
+      "completedAt": null
+    },
+    {
+      "day": 26,
+      "week": 4,
+      "title": "Live Mock Interview Drill: Tool-Calling & Live Coding",
+      "status": "PENDING",
+      "coreFocus": "Fast-paced live coding session: Building an agent tool from scratch in 30 minutes with error handling.",
+      "deliverable": "Clean runnable code under timed pressure.",
+      "completedAt": null
+    },
+    {
+      "day": 27,
+      "week": 4,
+      "title": "The 50 LPA Salary Anchoring Negotiation Masterclass",
+      "status": "PENDING",
+      "coreFocus": "Mastering the compensation dialogue: Neutralizing the 6 LPA current CTC trap, anchoring at ₹48–52 LPA, handling lowball offers.",
+      "deliverable": "Word-for-word negotiation scripts for HR calls and offer letters.",
+      "completedAt": null
+    },
+    {
+      "day": 28,
+      "week": 4,
+      "title": "Offer Evaluation & Counter-Offer Dynamics",
+      "status": "PENDING",
+      "coreFocus": "Analyzing offer packages: Base salary, performance bonus, ESOP vesting schedules, tax optimization, counter-offer tactics.",
+      "deliverable": "Offer comparison sheet and counter-offer communication draft.",
+      "completedAt": null
+    },
+    {
+      "day": 29,
+      "week": 4,
+      "title": "Final Readiness Inspection & Mindset Polish",
+      "status": "PENDING",
+      "coreFocus": "Comprehensive check of all active loops, closing open discussions, final offer negotiation execution.",
+      "deliverable": "Final negotiation round completion.",
+      "completedAt": null
+    },
+    {
+      "day": 30,
+      "week": 4,
+      "title": "VICTORY GATE: 50 LPA Offer Secured",
+      "status": "PENDING",
+      "coreFocus": "Celebrating the 6 LPA to 50 LPA transformation. Documenting lessons learned and onboarding roadmap as an elite AI Systems Engineer.",
+      "deliverable": "Signed 50 LPA Offer Letter & Career Transformation Manifesto.",
+      "completedAt": null
+    }
+  ]
+}

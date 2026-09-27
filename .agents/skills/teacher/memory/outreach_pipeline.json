@@ -1,0 +1,21 @@
+{
+  "version": "1.0.0",
+  "targetCriteria": {
+    "companyType": "Series A/B AI Startups, US Remote AI Teams, High-Growth Generative AI Product Companies",
+    "targetRoles": [
+      "AI Systems Engineer",
+      "Applied AI Developer",
+      "Agentic Workflow Architect",
+      "Founding AI Engineer"
+    ],
+    "compensationBand": "45 LPA - 60 LPA (or $60k - $90k USD Remote)"
+  },
+  "pipelineMetrics": {
+    "totalTargeted": 0,
+    "pitchesSent": 0,
+    "repliesReceived": 0,
+    "interviewsScheduled": 0,
+    "offersSecured": 0
+  },
+  "targets": []
+}

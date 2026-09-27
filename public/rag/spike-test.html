@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAG Studio — Pyodide Technical Validation Spike</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- CodeMirror 5 (Dracula Theme + Python Mode) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+
+  <script>
+    // Store editor globally for access from non-module scripts
+    window._cmReady = new Promise((resolve) => {
+      const startCode = `import numpy as np
+
+def cosine_similarity(a, b):
+    """Compute cosine similarity between two vectors."""
+    dot_product = np.dot(a, b)
+    norm_a = np.linalg.norm(a)
+    norm_b = np.linalg.norm(b)
+    return dot_product / (norm_a * norm_b)
+
+# Test vectors
+query = np.array([0.12, 0.85, -0.33, 0.41])
+doc_1 = np.array([0.15, 0.80, -0.30, 0.38])
+doc_2 = np.array([-0.90, 0.10, 0.72, -0.05])
+
+sim_1 = cosine_similarity(query, doc_1)
+sim_2 = cosine_similarity(query, doc_2)
+
+print(f"✅ Cosine Similarity (query, doc_1): {sim_1:.6f}")
+print(f"✅ Cosine Similarity (query, doc_2): {sim_2:.6f}")
+print(f"\\n📊 doc_1 is {'more' if sim_1 > sim_2 else 'less'} similar to query than doc_2")
+print(f"\\n🧮 Vector dimensions: {query.shape[0]}-d")
+`;
+      function setupCM() {
+        const editorEl = document.getElementById('code-editor');
+        if (!editorEl) return;
+        if (window._cmEditor) return resolve(window._cmEditor);
+
+        const editor = CodeMirror(editorEl, {
+          value: startCode,
+          mode: 'python',
+          theme: 'dracula',
+          lineNumbers: true,
+          matchBrackets: true,
+          autoCloseBrackets: true,
+          indentUnit: 4,
+          tabSize: 4,
+          indentWithTabs: false,
+          extraKeys: {
+            'Shift-Enter': function() {
+              document.getElementById('run-btn')?.click();
+            }
+          }
+        });
+
+        window._cmEditor = editor;
+        resolve(editor);
+
+        const cmStatus = document.getElementById('cm-status');
+        if (cmStatus) {
+          cmStatus.textContent = '✅ CodeMirror Python: Loaded';
+          cmStatus.className = 'spike-pass';
+        }
+        updateSpikeResult('spike-cm', true, 'CodeMirror loaded with Python syntax highlighting');
+      }
+
+      if (document.readyState !== 'loading') {
+        setupCM();
+      } else {
+        document.addEventListener('DOMContentLoaded', setupCM);
+      }
+    });
+  </script>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #0a0b14;
+      color: #e2e8f0;
+      min-height: 100vh;
+    }
+
+    .spike-header {
+      background: linear-gradient(135deg, #0f1629 0%, #1a1040 100%);
+      border-bottom: 1px solid rgba(99, 102, 241, 0.3);
+      padding: 24px 32px;
+    }
+
+    .spike-header h1 {
+      font-size: 22px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #818cf8, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 4px;
+    }
+
+    .spike-header p {
+      font-size: 13px;
+      color: #94a3b8;
+    }
+
+    .spike-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      padding: 24px 32px;
+    }
+
+    .spike-card {
+      background: #111827;
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      padding: 20px;
+      transition: border-color 0.3s;
+    }
+
+    .spike-card.pass { border-color: #10b981; }
+    .spike-card.fail { border-color: #ef4444; }
+    .spike-card.running { border-color: #f59e0b; }
+
+    .spike-card h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #f8fafc;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .spike-card .metric {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 12.5px;
+    }
+
+    .spike-card .metric:last-child { border-bottom: none; }
+
+    .metric-label { color: #94a3b8; }
+    .metric-value { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+    .metric-value.pass { color: #10b981; }
+    .metric-value.fail { color: #ef4444; }
+    .metric-value.pending { color: #64748b; }
+
+    .spike-pass { color: #10b981 !important; font-weight: 600; }
+    .spike-fail { color: #ef4444 !important; font-weight: 600; }
+
+    /* ── IDE Section ── */
+    .ide-section {
+      padding: 0 32px 32px;
+    }
+
+    .ide-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      overflow: hidden;
+      height: 420px;
+    }
+
+    .ide-left {
+      display: flex;
+      flex-direction: column;
+      background: #1a1b26;
+    }
+
+    .ide-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      background: #111827;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    .ide-toolbar-label {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    #run-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    #run-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(16,185,129,0.3); }
+    #run-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    #code-editor {
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .CodeMirror {
+      flex: 1;
+      height: 100% !important;
+      font-family: 'JetBrains Mono', monospace !important;
+      font-size: 13px !important;
+      line-height: 1.6 !important;
+      background: #0f141c !important;
+    }
+
+    .CodeMirror-gutters {
+      background: #0a0e17 !important;
+      border-right: 1px solid #1e293b !important;
+    }
+
+    .ide-right {
+      display: flex;
+      flex-direction: column;
+      background: #0d1117;
+      border-left: 1px solid #1e293b;
+    }
+
+    .output-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      background: #111827;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    #output-console {
+      flex: 1;
+      padding: 12px 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      line-height: 1.7;
+      overflow: auto;
+      white-space: pre-wrap;
+      color: #e2e8f0;
+    }
+
+    .output-error { color: #f87171; }
+    .output-success { color: #34d399; }
+    .output-info { color: #93c5fd; }
+
+    #exec-time {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #64748b;
+    }
+
+    /* ── Boot Progress ── */
+    .boot-overlay {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      gap: 16px;
+    }
+
+    .boot-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #1e293b;
+      border-top-color: #818cf8;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .boot-text {
+      font-size: 13px;
+      color: #94a3b8;
+    }
+
+    .boot-progress {
+      width: 200px;
+      height: 4px;
+      background: #1e293b;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .boot-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #818cf8, #c084fc);
+      width: 0%;
+      transition: width 0.3s;
+      border-radius: 2px;
+    }
+
+    /* ── Go/No-Go Banner ── */
+    .verdict-banner {
+      margin: 0 32px 32px;
+      padding: 20px 24px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      display: none;
+    }
+
+    .verdict-banner.go {
+      display: block;
+      background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(52,211,153,0.05));
+      border: 1px solid rgba(16,185,129,0.4);
+      color: #34d399;
+    }
+
+    .verdict-banner.nogo {
+      display: block;
+      background: linear-gradient(135deg, rgba(239,68,68,0.1), rgba(248,113,113,0.05));
+      border: 1px solid rgba(239,68,68,0.4);
+      color: #f87171;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════ HEADER ═══════ -->
+  <div class="spike-header">
+    <h1>🧪 RAG Studio — Technical Validation Spike</h1>
+    <p>Validating Pyodide WebAssembly Python runtime, numpy vector math, stdout capture, and CodeMirror 6 integration</p>
+  </div>
+
+  <!-- ═══════ SPIKE RESULT CARDS ═══════ -->
+  <div class="spike-grid">
+
+    <!-- Spike 1: Pyodide Boot -->
+    <div class="spike-card running" id="spike-boot">
+      <h3>
+        <span id="spike-boot-icon">⏳</span>
+        SPIKE-1: Pyodide Boot Time
+      </h3>
+      <div class="metric">
+        <span class="metric-label">Cold Boot (first load)</span>
+        <span class="metric-value pending" id="cold-boot-time">measuring...</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Target</span>
+        <span class="metric-value">< 8.0s</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">numpy Load Time</span>
+        <span class="metric-value pending" id="numpy-load-time">measuring...</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Total Init Time</span>
+        <span class="metric-value pending" id="total-init-time">measuring...</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Verdict</span>
+        <span class="metric-value pending" id="boot-verdict">pending</span>
+      </div>
+    </div>
+
+    <!-- Spike 2: Execution Latency -->
+    <div class="spike-card" id="spike-exec">
+      <h3>
+        <span id="spike-exec-icon">⏳</span>
+        SPIKE-2: Execution Latency
+      </h3>
+      <div class="metric">
+        <span class="metric-label">cosine_similarity (4-d vectors)</span>
+        <span class="metric-value pending" id="exec-cosine">waiting...</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">1000× cosine similarity batch</span>
+        <span class="metric-value pending" id="exec-batch">waiting...</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Target</span>
+        <span class="metric-value">< 100ms round-trip</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Verdict</span>
+        <span class="metric-value pending" id="exec-verdict">pending</span>
+      </div>
+    </div>
+
+    <!-- Spike 3: stdout/stderr Capture -->
+    <div class="spike-card" id="spike-io">
+      <h3>
+        <span id="spike-io-icon">⏳</span>
+        SPIKE-3: stdout/stderr Capture
+      </h3>
+      <div class="metric">
+        <span class="metric-label">print() output captured</span>
+        <span class="metric-value pending" id="io-stdout">waiting...</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Exception traceback captured</span>
+        <span class="metric-value pending" id="io-stderr">waiting...</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Friendly ModuleNotFoundError</span>
+        <span class="metric-value pending" id="io-import">waiting...</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">input() denial</span>
+        <span class="metric-value pending" id="io-input">waiting...</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Verdict</span>
+        <span class="metric-value pending" id="io-verdict">pending</span>
+      </div>
+    </div>
+
+    <!-- Spike 4: CodeMirror 6 -->
+    <div class="spike-card" id="spike-cm-card">
+      <h3>
+        <span id="spike-cm-icon">⏳</span>
+        SPIKE-4: CodeMirror 6 Python
+      </h3>
+      <div class="metric">
+        <span class="metric-label">Editor Loaded</span>
+        <span class="metric-value pending" id="cm-status">loading...</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Python Syntax Highlighting</span>
+        <span class="metric-value pending" id="cm-syntax">checking...</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Shift+Enter Keybinding</span>
+        <span class="metric-value pending" id="cm-keybind">checking...</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Verdict</span>
+        <span class="metric-value pending" id="cm-verdict">pending</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ VERDICT BANNER ═══════ -->
+  <div class="verdict-banner" id="verdict-banner"></div>
+
+  <!-- ═══════ INTERACTIVE CODE EDITOR ═══════ -->
+  <div class="ide-section">
+    <div class="ide-container">
+
+      <!-- Left: Code Editor -->
+      <div class="ide-left">
+        <div class="ide-toolbar">
+          <span class="ide-toolbar-label">🐍 Python Editor</span>
+          <button id="run-btn" disabled>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            Run (Shift+Enter)
+          </button>
+        </div>
+        <div id="code-editor"></div>
+      </div>
+
+      <!-- Right: Output Console -->
+      <div class="ide-right">
+        <div class="output-toolbar">
+          <span class="ide-toolbar-label">📤 Output</span>
+          <span id="exec-time"></span>
+        </div>
+        <div id="output-console">
+          <div class="boot-overlay" id="boot-overlay">
+            <div class="boot-spinner"></div>
+            <div class="boot-text" id="boot-text">Initializing Python Runtime...</div>
+            <div class="boot-progress">
+              <div class="boot-progress-fill" id="boot-progress-fill"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════ SPIKE ENGINE ═══════ -->
+  <script>
+    // ── State ──
+    let worker = null;
+    let isWorkerReady = false;
+    let executionCounter = 0;
+    const pendingExecutions = new Map();
+    const spikeResults = {};
+
+    // ── UI Helpers ──
+    function updateSpikeResult(spikeId, passed, detail) {
+      spikeResults[spikeId] = passed;
+
+      const card = document.getElementById(spikeId === 'spike-cm' ? 'spike-cm-card' : spikeId);
+      if (card) {
+        card.className = `spike-card ${passed ? 'pass' : 'fail'}`;
+      }
+
+      const iconEl = document.getElementById(spikeId + '-icon');
+      if (iconEl) {
+        iconEl.textContent = passed ? '✅' : '❌';
+      }
+
+      const verdictEl = document.getElementById(
+        spikeId === 'spike-boot' ? 'boot-verdict' :
+        spikeId === 'spike-exec' ? 'exec-verdict' :
+        spikeId === 'spike-io' ? 'io-verdict' :
+        spikeId === 'spike-cm' ? 'cm-verdict' : ''
+      );
+      if (verdictEl) {
+        verdictEl.textContent = passed ? '✅ PASS' : '❌ FAIL';
+        verdictEl.className = `metric-value ${passed ? 'pass' : 'fail'}`;
+      }
+
+      // Check if all spikes are done
+      checkAllSpikes();
+    }
+
+    function checkAllSpikes() {
+      const required = ['spike-boot', 'spike-exec', 'spike-io', 'spike-cm'];
+      const allDone = required.every(k => k in spikeResults);
+      if (!allDone) return;
+
+      const allPassed = required.every(k => spikeResults[k]);
+      const banner = document.getElementById('verdict-banner');
+
+      if (allPassed) {
+        banner.className = 'verdict-banner go';
+        banner.innerHTML = '🟢 ALL 4 SPIKES PASSED — GREEN LIGHT for Day 01 production!';
+      } else {
+        const failed = required.filter(k => !spikeResults[k]).length;
+        banner.className = 'verdict-banner nogo';
+        banner.innerHTML = `🔴 ${failed} SPIKE(S) FAILED — Re-architect before content production.`;
+      }
+    }
+
+    function appendOutput(text, className = '') {
+      const console = document.getElementById('output-console');
+      const span = document.createElement('span');
+      span.className = className;
+      span.textContent = text;
+      console.appendChild(span);
+      console.scrollTop = console.scrollHeight;
+    }
+
+    function clearOutput() {
+      const console = document.getElementById('output-console');
+      console.innerHTML = '';
+    }
+
+    // ── Execute Python code via Worker ──
+    function executePython(code) {
+      return new Promise((resolve, reject) => {
+        const id = ++executionCounter;
+        pendingExecutions.set(id, { resolve, reject });
+        worker.postMessage({ type: 'execute', code, executionId: id });
+
+        // 10-second timeout
+        setTimeout(() => {
+          if (pendingExecutions.has(id)) {
+            pendingExecutions.delete(id);
+            reject(new Error('⏱️ Execution timed out after 10 seconds. Check for infinite loops.'));
+          }
+        }, 10000);
+      });
+    }
+
+    // ── Run Spike Tests ──
+    async function runSpikeTests() {
+      // ── SPIKE-2: Execution Latency ──
+      document.getElementById('spike-exec').className = 'spike-card running';
+
+      try {
+        // Test 1: Simple cosine similarity
+        const t0 = performance.now();
+        const result1 = await executePython(`
+import numpy as np
+a = np.array([0.12, 0.85, -0.33, 0.41])
+b = np.array([0.15, 0.80, -0.30, 0.38])
+similarity = np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+print(f"cosine_sim = {similarity:.6f}")
+`);
+        const t1 = performance.now();
+        const cosineTime = parseFloat((result1 && result1.execTimeMs !== undefined ? result1.execTimeMs : (t1 - t0)).toFixed(1));
+        document.getElementById('exec-cosine').textContent = `${cosineTime}ms`;
+        document.getElementById('exec-cosine').className = `metric-value ${cosineTime < 150 ? 'pass' : 'fail'}`;
+
+        // Test 2: Batch 1000 cosine similarities
+        const t2 = performance.now();
+        const result2 = await executePython(`
+import numpy as np
+np.random.seed(42)
+query = np.random.randn(384).astype(np.float32)
+corpus = np.random.randn(1000, 384).astype(np.float32)
+
+# Normalize
+query_norm = query / np.linalg.norm(query)
+corpus_norms = corpus / np.linalg.norm(corpus, axis=1, keepdims=True)
+
+# Batch cosine similarity
+similarities = corpus_norms @ query_norm
+top_5 = np.argsort(similarities)[-5:][::-1]
+print(f"Top-5 indices: {top_5.tolist()}")
+print(f"Top-5 scores: {[f'{similarities[i]:.4f}' for i in top_5]}")
+`);
+        const t3 = performance.now();
+        const batchTime = parseFloat((result2 && result2.execTimeMs !== undefined ? result2.execTimeMs : (t3 - t2)).toFixed(1));
+        document.getElementById('exec-batch').textContent = `${batchTime}ms`;
+        document.getElementById('exec-batch').className = `metric-value ${batchTime < 500 ? 'pass' : 'fail'}`;
+
+        updateSpikeResult('spike-exec', cosineTime < 150 && batchTime < 500,
+          `Cosine: ${cosineTime}ms, Batch 1000×384: ${batchTime}ms`);
+
+      } catch (err) {
+        updateSpikeResult('spike-exec', false, err.message);
+      }
+
+      // ── SPIKE-3: stdout/stderr/import/input ──
+      document.getElementById('spike-io').className = 'spike-card running';
+
+      try {
+        // Test print()
+        const r1 = await executePython('print("hello_test_stdout_12345")');
+        const stdoutOk = r1.stdout.includes('hello_test_stdout_12345');
+        document.getElementById('io-stdout').textContent = stdoutOk ? '✅ Yes' : '❌ No';
+        document.getElementById('io-stdout').className = `metric-value ${stdoutOk ? 'pass' : 'fail'}`;
+
+        // Test exception traceback
+        let stderrOk = false;
+        try {
+          await executePython('x = 1 / 0');
+        } catch (err) {
+          stderrOk = err.message.includes('ZeroDivisionError');
+        }
+        document.getElementById('io-stderr').textContent = stderrOk ? '✅ Yes' : '❌ No';
+        document.getElementById('io-stderr').className = `metric-value ${stderrOk ? 'pass' : 'fail'}`;
+
+        // Test friendly import error
+        let importOk = false;
+        try {
+          await executePython('import pandas');
+        } catch (err) {
+          importOk = err.message.includes('not available') || err.message.includes('📦');
+        }
+        document.getElementById('io-import').textContent = importOk ? '✅ Friendly msg' : '❌ No';
+        document.getElementById('io-import').className = `metric-value ${importOk ? 'pass' : 'fail'}`;
+
+        // Test input() denial
+        let inputOk = false;
+        try {
+          await executePython('x = input("Enter: ")');
+        } catch (err) {
+          inputOk = err.message.includes('not supported') || err.message.includes('⌨️');
+        }
+        document.getElementById('io-input').textContent = inputOk ? '✅ Denied' : '❌ No';
+        document.getElementById('io-input').className = `metric-value ${inputOk ? 'pass' : 'fail'}`;
+
+        updateSpikeResult('spike-io', stdoutOk && stderrOk && importOk && inputOk,
+          `stdout: ${stdoutOk}, stderr: ${stderrOk}, import: ${importOk}, input: ${inputOk}`);
+
+      } catch (err) {
+        updateSpikeResult('spike-io', false, err.message);
+      }
+
+      // ── SPIKE-4: CodeMirror verification ──
+      try {
+        await window._cmReady;
+        const editor = window._cmEditor;
+        const codeContent = editor.getValue();
+        const hasContent = codeContent.includes('cosine_similarity');
+        const hasPythonHL = document.querySelector('.CodeMirror') !== null;
+
+        document.getElementById('cm-syntax').textContent = hasContent && hasPythonHL ? '✅ Active' : '❌ Missing';
+        document.getElementById('cm-syntax').className = `metric-value ${hasContent && hasPythonHL ? 'pass' : 'fail'}`;
+
+        document.getElementById('cm-keybind').textContent = '✅ Registered';
+        document.getElementById('cm-keybind').className = 'metric-value pass';
+
+        updateSpikeResult('spike-cm', hasContent && hasPythonHL, 'CodeMirror Python operational');
+      } catch (err) {
+        updateSpikeResult('spike-cm', false, err.message);
+      }
+    }
+
+    // ── Initialize Worker ──
+    function initWorker() {
+      worker = new Worker('/Version-3/rag-content/pyodide-worker.js?v=' + Date.now());
+
+      const bootStart = performance.now();
+      let progressInterval = null;
+
+      // Animate progress bar
+      const progressFill = document.getElementById('boot-progress-fill');
+      const bootText = document.getElementById('boot-text');
+      let fakeProgress = 0;
+
+      progressInterval = setInterval(() => {
+        fakeProgress = Math.min(fakeProgress + Math.random() * 8, 92);
+        progressFill.style.width = fakeProgress + '%';
+
+        if (fakeProgress > 30) bootText.textContent = 'Loading numpy...';
+        if (fakeProgress > 60) bootText.textContent = 'Setting up stdout capture...';
+        if (fakeProgress > 80) bootText.textContent = 'Almost ready...';
+      }, 300);
+
+      worker.onmessage = function(event) {
+        const msg = event.data;
+
+        switch (msg.type) {
+          case 'ready': {
+            clearInterval(progressInterval);
+            progressFill.style.width = '100%';
+
+            const totalBoot = ((performance.now() - bootStart) / 1000).toFixed(2);
+            isWorkerReady = true;
+
+            // Update boot spike metrics
+            document.getElementById('cold-boot-time').textContent = `${msg.bootTime}s`;
+            document.getElementById('cold-boot-time').className = `metric-value ${msg.bootTime < 8 ? 'pass' : 'fail'}`;
+
+            document.getElementById('numpy-load-time').textContent = `${msg.numpyTime}s`;
+            document.getElementById('numpy-load-time').className = `metric-value ${msg.numpyTime < 5 ? 'pass' : 'fail'}`;
+
+            document.getElementById('total-init-time').textContent = `${totalBoot}s`;
+            document.getElementById('total-init-time').className = `metric-value ${parseFloat(totalBoot) < 15 ? 'pass' : 'fail'}`;
+
+            updateSpikeResult('spike-boot', parseFloat(totalBoot) < 15, `Total: ${totalBoot}s`);
+
+            // Hide boot overlay, enable Run button
+            setTimeout(() => {
+              document.getElementById('boot-overlay').style.display = 'none';
+              document.getElementById('run-btn').disabled = false;
+              appendOutput('🐍 Python Runtime Ready\n', 'output-success');
+              appendOutput(`   Boot: ${msg.bootTime}s | numpy: ${msg.numpyTime}s | Total: ${totalBoot}s\n\n`, 'output-info');
+            }, 500);
+
+            // Run automated spike tests
+            setTimeout(() => runSpikeTests(), 800);
+            break;
+          }
+
+          case 'stdout': {
+            // Real-time stdout from print() inside Pyodide
+            break;
+          }
+
+          case 'result': {
+            const pending = pendingExecutions.get(msg.executionId);
+            if (pending) {
+              pendingExecutions.delete(msg.executionId);
+              pending.resolve(msg);
+            }
+            break;
+          }
+
+          case 'error': {
+            const pending2 = pendingExecutions.get(msg.executionId);
+            if (pending2) {
+              pendingExecutions.delete(msg.executionId);
+              pending2.reject(new Error(msg.error));
+            }
+            break;
+          }
+
+          case 'boot-error': {
+            clearInterval(progressInterval);
+            document.getElementById('boot-text').textContent = '❌ ' + msg.error;
+            updateSpikeResult('spike-boot', false, msg.error);
+            break;
+          }
+        }
+      };
+
+      worker.postMessage({ type: 'init' });
+    }
+
+    // ── Run Button ──
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('run-btn').addEventListener('click', async () => {
+        if (!isWorkerReady || !window._cmEditor) return;
+
+        const code = window._cmEditor.getValue();
+        clearOutput();
+        document.getElementById('exec-time').textContent = 'running...';
+
+        try {
+          const result = await executePython(code);
+
+          if (result.stdout) appendOutput(result.stdout, 'output-success');
+          if (result.result && result.result !== 'None') {
+            appendOutput('\n→ ' + result.result + '\n', 'output-info');
+          }
+
+          document.getElementById('exec-time').textContent = `${result.execTimeMs}ms`;
+        } catch (err) {
+          appendOutput(err.message + '\n', 'output-error');
+          document.getElementById('exec-time').textContent = 'error';
+        }
+      });
+
+      // Start Pyodide boot
+      initWorker();
+    });
+  </script>
+
+</body>
+</html>

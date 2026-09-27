@@ -4190,6 +4190,23 @@ const questionAudioMap = {
     13: 'Day05/New_Day5Question13.mp3',
     14: 'Day05/New_Day5Question14.mp3',
     15: 'Day05/New_Day5Question15.mp3'
+  },
+  'day06': {
+    1: 'Day06/New_Day6Question01.mp3',
+    2: 'Day06/New_Day6Question02.mp3',
+    3: 'Day06/New_Day6Question03.mp3',
+    4: 'Day06/New_Day6Question04.mp3',
+    5: 'Day06/New_Day6Question05.mp3',
+    6: 'Day06/New_Day6Question06.mp3',
+    7: 'Day06/New_Day6Question07.mp3',
+    8: 'Day06/New_Day6Question08.mp3',
+    9: 'Day06/New_Day6Question09.mp3',
+    10: 'Day06/New_Day6Question10.mp3',
+    11: 'Day06/New_Day6Question11.mp3',
+    12: 'Day06/New_Day6Question12.mp3',
+    13: 'Day06/New_Day6Question13.mp3',
+    14: 'Day06/New_Day6Question14.mp3',
+    15: 'Day06/New_Day6Question15.mp3'
   }
 };
 
@@ -5670,8 +5687,8 @@ function loadDayContent(dayId) {
                           Boolean(urlP.get('q')) || 
                           Boolean(urlP.get('question'));
 
-  // 1. Days 06–60: Coming Soon lock ONLY for regular non-admin students (Reel visitors get Reel Pass!)
-  if (dayNum >= 6 && !isAdminUser() && !isGuestReelPass) {
+  // 1. Days 07–60: Coming Soon lock ONLY for regular non-admin students (Reel visitors get Reel Pass!)
+  if (dayNum >= 7 && !isAdminUser() && !isGuestReelPass) {
     if (window.showComingSoonToast) {
       window.showComingSoonToast(dayMeta?.title || `Day ${String(dayNum).padStart(2, '0')}`, dayNum);
     }
@@ -7025,6 +7042,73 @@ const day05Tracks = [
   { src: 'Day05/New_Day5Question15sol.mp3', target: '#questionBar', title: 'Q15 Solution: Department Staff String', type: 'solution', qId: 15 }
 ];
 
+const day06Durations = [
+  12.0, 16.0, 14.0, 10.0, 15.0, 11.0, 12.0, 14.0, 10.0, 15.0, 14.0, 12.0, 16.0, 15.0, 10.0, 18.0,
+  8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0
+];
+
+const day06Tracks = [
+  // ── Section 1: GROUP BY — Bucketing Rows ──
+  { src: 'Day06/New_Day6Part1audio01.mp3', target: '#day06GroupBy', title: '01. GROUP BY — Bucketing Rows' },
+  { src: 'Day06/New_Day6Part1audio02.mp3', target: '#day06GroupByExamples', title: 'GROUP BY in Action' },
+  { src: 'Day06/New_Day6Part1audio03.mp3', target: '#day06GroupByRuleWarn', title: '⚠️ The Golden GROUP BY Rule' },
+
+  // ── Section 2: GROUP BY Multiple Columns ──
+  { src: 'Day06/New_Day6Part1audio04.mp3', target: '#day06MultiGroup', title: '02. Multiple Columns Grouping' },
+  { src: 'Day06/New_Day6Part1audio05.mp3', target: '#day06MultiGroupExamples', title: 'Multi-Column Examples' },
+  { src: 'Day06/New_Day6Part1audio06.mp3', target: '#day06MultiGroupInfo', title: '💡 Cardinality Growth' },
+
+  // ── Section 3: HAVING — Filtering Groups ──
+  { src: 'Day06/New_Day6Part1audio07.mp3', target: '#day06Having', title: '03. HAVING — Filtering Groups' },
+  { src: 'Day06/New_Day6Part1audio08.mp3', target: '#day06HavingExamples', title: 'HAVING in Action' },
+
+  // ── Section 4: WHERE vs HAVING ──
+  { src: 'Day06/New_Day6Part1audio09.mp3', target: '#day06WhereVsHaving', title: '04. WHERE vs HAVING' },
+  { src: 'Day06/New_Day6Part1audio10.mp3', target: '#day06WhereCard', title: 'WHERE Row Filter' },
+  { src: 'Day06/New_Day6Part1audio11.mp3', target: '#day06HavingCard', title: 'HAVING Group Filter' },
+  { src: 'Day06/New_Day6Part1audio12.mp3', target: '#day06WhereHavingProTip', title: '💡 Best Practice Rule' },
+
+  // ── Section 5: Combining WHERE, GROUP BY & HAVING ──
+  { src: 'Day06/New_Day6Part1audio13.mp3', target: '#day06Combine', title: '05. Combining Clauses' },
+  { src: 'Day06/New_Day6Part1audio14.mp3', target: '#day06AliasInHaving', title: '🎯 Aliases in HAVING' },
+
+  // ── Section 6: SQL Logical Execution Order ──
+  { src: 'Day06/New_Day6Part1audio15.mp3', target: '#day06ExecOrder', title: '06. Logical Execution Order' },
+  { src: 'Day06/New_Day6Part1audio16.mp3', target: '#day06ExecPipelineVisual', title: 'The 8-Step Hierarchy' },
+
+  // ── 15 Practice Questions & Solutions ──
+  { src: 'Day06/New_Day6Question01.mp3', target: '#questionBar', title: 'Q1: Department Headcount', type: 'question', qId: 1 },
+  { src: 'Day06/New_Day6Question01sol.mp3', target: '#questionBar', title: 'Q1 Solution: Department Headcount', type: 'solution', qId: 1 },
+  { src: 'Day06/New_Day6Question02.mp3', target: '#questionBar', title: 'Q2: Department Compensation', type: 'question', qId: 2 },
+  { src: 'Day06/New_Day6Question02sol.mp3', target: '#questionBar', title: 'Q2 Solution: Department Compensation', type: 'solution', qId: 2 },
+  { src: 'Day06/New_Day6Question03.mp3', target: '#questionBar', title: 'Q3: Order Fulfillment Pipeline', type: 'question', qId: 3 },
+  { src: 'Day06/New_Day6Question03sol.mp3', target: '#questionBar', title: 'Q3 Solution: Order Fulfillment Pipeline', type: 'solution', qId: 3 },
+  { src: 'Day06/New_Day6Question04.mp3', target: '#questionBar', title: 'Q4: Product Catalog Summary', type: 'question', qId: 4 },
+  { src: 'Day06/New_Day6Question04sol.mp3', target: '#questionBar', title: 'Q4 Solution: Product Catalog Summary', type: 'solution', qId: 4 },
+  { src: 'Day06/New_Day6Question05.mp3', target: '#questionBar', title: 'Q5: Filter Large Divisions (HAVING)', type: 'question', qId: 5 },
+  { src: 'Day06/New_Day6Question05sol.mp3', target: '#questionBar', title: 'Q5 Solution: Filter Large Divisions (HAVING)', type: 'solution', qId: 5 },
+  { src: 'Day06/New_Day6Question06.mp3', target: '#questionBar', title: 'Q6: High-Compensation Departments', type: 'question', qId: 6 },
+  { src: 'Day06/New_Day6Question06sol.mp3', target: '#questionBar', title: 'Q6 Solution: High-Compensation Departments', type: 'solution', qId: 6 },
+  { src: 'Day06/New_Day6Question07.mp3', target: '#questionBar', title: 'Q7: Division & Status Breakdown', type: 'question', qId: 7 },
+  { src: 'Day06/New_Day6Question07sol.mp3', target: '#questionBar', title: 'Q7 Solution: Division & Status Breakdown', type: 'solution', qId: 7 },
+  { src: 'Day06/New_Day6Question08.mp3', target: '#questionBar', title: 'Q8: Combining WHERE and HAVING', type: 'question', qId: 8 },
+  { src: 'Day06/New_Day6Question08sol.mp3', target: '#questionBar', title: 'Q8 Solution: Combining WHERE and HAVING', type: 'solution', qId: 8 },
+  { src: 'Day06/New_Day6Question09.mp3', target: '#questionBar', title: 'Q9: Item Sales Volume Leaderboard', type: 'question', qId: 9 },
+  { src: 'Day06/New_Day6Question09sol.mp3', target: '#questionBar', title: 'Q9 Solution: Item Sales Volume Leaderboard', type: 'solution', qId: 9 },
+  { src: 'Day06/New_Day6Question10.mp3', target: '#questionBar', title: 'Q10: Repeat Customer Segmentation', type: 'question', qId: 10 },
+  { src: 'Day06/New_Day6Question10sol.mp3', target: '#questionBar', title: 'Q10 Solution: Repeat Customer Segmentation', type: 'solution', qId: 10 },
+  { src: 'Day06/New_Day6Question11.mp3', target: '#questionBar', title: 'Q11: Premium Catalog Categories', type: 'question', qId: 11 },
+  { src: 'Day06/New_Day6Question11sol.mp3', target: '#questionBar', title: 'Q11 Solution: Premium Catalog Categories', type: 'solution', qId: 11 },
+  { src: 'Day06/New_Day6Question12.mp3', target: '#questionBar', title: 'Q12: Annual Sales & Transactions', type: 'question', qId: 12 },
+  { src: 'Day06/New_Day6Question12sol.mp3', target: '#questionBar', title: 'Q12 Solution: Annual Sales & Transactions', type: 'solution', qId: 12 },
+  { src: 'Day06/New_Day6Question13.mp3', target: '#questionBar', title: 'Q13: High-Payroll Department Filter', type: 'question', qId: 13 },
+  { src: 'Day06/New_Day6Question13sol.mp3', target: '#questionBar', title: 'Q13 Solution: High-Payroll Department Filter', type: 'solution', qId: 13 },
+  { src: 'Day06/New_Day6Question14.mp3', target: '#questionBar', title: 'Q14: Top Regional Market', type: 'question', qId: 14 },
+  { src: 'Day06/New_Day6Question14sol.mp3', target: '#questionBar', title: 'Q14 Solution: Top Regional Market', type: 'solution', qId: 14 },
+  { src: 'Day06/New_Day6Question15.mp3', target: '#questionBar', title: 'Q15: Multi-Column Group with HAVING', type: 'question', qId: 15 },
+  { src: 'Day06/New_Day6Question15sol.mp3', target: '#questionBar', title: 'Q15 Solution: Multi-Column Group with HAVING', type: 'solution', qId: 15 }
+];
+
 const slideTrackMap = {
   'day01': {
     0: { tracks: topic01Tracks, durations: topic01Durations },
@@ -7039,8 +7123,11 @@ const slideTrackMap = {
   'day04': {
     0: { tracks: day04Tracks, durations: day04Durations }
   },
-'day05': {
+  'day05': {
     0: { tracks: day05Tracks, durations: day05Durations }
+  },
+  'day06': {
+    0: { tracks: day06Tracks, durations: day06Durations }
   }
 };
 

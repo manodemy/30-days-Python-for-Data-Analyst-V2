@@ -711,6 +711,30 @@
       });
     }
 
+    // 12. Column Alias in HAVING Trap
+    const havingMatch = studentSql.match(/HAVING\s+([\s\S]+?)(?:\s+(?:ORDER\s+BY|LIMIT)|;|$)/i);
+    if (havingMatch) {
+      const havingClause = havingMatch[1];
+      const selectPart = (studentSql.match(/SELECT\s+([\s\S]+?)\s+FROM/i) || [])[1] || '';
+      const aliasMatches = [...selectPart.matchAll(/\bAS\s+([a-zA-Z0-9_]+)\b/gi)];
+      for (const m of aliasMatches) {
+        const alias = m[1];
+        const aliasRegex = new RegExp(`\\b${alias}\\b`, 'i');
+        if (aliasRegex.test(havingClause)) {
+          diags.push({
+            trapId: 'ALIAS_IN_HAVING_CLAUSE',
+            badge: '❌ Execution Order Trap: Alias in HAVING',
+            header: 'Column Alias Used in HAVING Clause',
+            explanation: `You used the column alias <code>${alias}</code> in your <code>HAVING</code> clause. Because <code>HAVING</code> evaluates at Step 4 before <code>SELECT</code> creates aliases at Step 5, aliases do not exist yet in standard SQL!`,
+            actionableHint: `Replace <code>${alias}</code> in your <code>HAVING</code> clause with the full aggregate expression (e.g. <code>COUNT(*)</code> or <code>AVG(...)</code>).`,
+            remediation: { actionLabel: `Repeat aggregate expression in HAVING` },
+            severity: 'HIGH'
+          });
+          break;
+        }
+      }
+    }
+
     return diags;
   }
 

@@ -1,0 +1,44 @@
+{
+  "agency": "DigiXgency (DGX), Noida",
+  "contactPerson": "Shubham Tomar (EdTech Growth Strategist)",
+  "targetClient": "Manodemy (Manoj)",
+  "recordedAt": "2026-09-19T18:29:00+05:30",
+  "platformSnapshot": {
+    "status": "Live ~1 month, 0 paid enrollments, 2 founders, no sales team",
+    "coreOffer": "60-Day Data Analytics (SQL, Excel, Python) interactive practice platform",
+    "basePricing": 990,
+    "practicalPricing": 1999
+  },
+  "agencyCoreInsights": {
+    "pricingLadderRequired": [
+      { "tier": "Entry Access", "price": 990 },
+      { "tier": "Core 60-Day Program", "price": 1999 },
+      { "tier": "Interview Practice Bundle", "price": 4999 },
+      { "tier": "Advanced Career Track", "price": 9999 }
+    ],
+    "unitEconomicsWarning": "At ₹990, 100 enrollments yield only ₹99k, making paid ads unprofitable. At ₹1,999, 100 enrollments yield ₹1.99L, allowing ₹75k-₹1L ad spend if CAC is under ₹800.",
+    "90DayAdTarget": {
+      "month1": { "targetEnrollments": "20-30", "recommendedBudget": "₹30K - ₹50K", "focus": "Find real CAC & messaging" },
+      "month2": { "targetEnrollments": "50-75", "recommendedBudget": "₹50K - ₹75K", "focus": "Scale winning creatives & nurture" },
+      "month3": { "targetEnrollments": "100-150", "recommendedBudget": "₹75K - ₹1.25L", "focus": "Push 100-150 monthly enrollments" }
+    },
+    "keyShortcomingsIdentified": [
+      "Ticket size ₹990 is too low for pure paid scaling without upselling bundles",
+      "Zero social proof, testimonials, or brand trust currently displayed",
+      "Lack of automated instant lead capture and WhatsApp nurture sequence"
+    ],
+    "funnelChecklistHighlights": {
+      "stage1_attention": "Offer clarity in 5s, audience split (freshers vs career switchers), test 3-5 creatives/mo, track Cost Per Enrollment (CPE) not just CPL",
+      "stage2_nurture": "Instant WhatsApp auto-reply < 5 mins, CRM lead stages, min 6 follow-up touchpoints, hot/warm/cold lead scoring",
+      "stage3_enrollment": "Understand->Diagnose->Prescribe->Close script, token fee booking, real deadline/urgency, dead lead reactivation (30-180 days)"
+    },
+    "recommendedTooling": [
+      { "name": "WATI", "purpose": "WhatsApp Business API auto-replies under 5 mins" },
+      { "name": "Fathom", "purpose": "AI meeting recorder for demos/counselling calls" },
+      { "name": "LeadSquared", "purpose": "Admissions CRM pipeline & tracking" }
+    ]
+  },
+  "marketingMadamVerdict": {
+    "takeaway": "Proposal has solid unit economics logic on the ₹1,999+ pricing ladder and the 5-min WhatsApp speed-to-lead rule. However, Manodemy should NOT pay agency retainers. Instead, adopt their pricing ladder + automated WhatsApp nurture into our in-house PLG and viral reel engine for maximum profit."
+  }
+}

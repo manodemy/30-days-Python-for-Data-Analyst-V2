@@ -1,0 +1,392 @@
+{
+  "reelNo": "SQL-05-R2",
+  "day": "DAY 05",
+  "badge": "SQL · Conditional Aggregation",
+  "videoFile": "SQL-05-R2.mp4",
+  "videoPath": "D:\\Learn Python in 60days\\Manodemy_Web_V2\\marketing\\output\\video\\SQL-05-R2.mp4",
+  "coverFile": "SQL-05-R2_Cover.png",
+  "coverJpg": "SQL-05-R2_Cover.jpg",
+  "fileSizeMb": 4.12,
+  "resolution": "1080x1920",
+  "fps": 24,
+  "durationSec": 15.3,
+  "caption": "CONDITIONAL COUNT TRAP 🤯\nWhich query correctly counts failed orders?\n\nCan you spot the trap before checking the pinned comment? \n\nDrop your vote (A or B) below 👇\n\n\nPractice Data Skills \n👉 Day 1 & Day 2 are 100% FREE\n🔗 Link in bio / manodemy.com/q10\n\n#sql #sqlinterview #sqltips #dataanalytics #dataengineer #datascience #dataanalyst #sqlquery #faang #techinterview #codinginterview #learnsql #database #manodemy #dataanalysis",
+  "pinnedAnswer": "Option A is the trap ❌ | Option B is correct ✅\n\nWhy Option A fails:\nIn SQL, `COUNT(expression)` counts EVERY single row where the expression is NOT NULL.\nIn Option A, when status != 'FAILED', the CASE expression returns 0.\nBecause `0` is a valid number (not NULL), `COUNT(0)` still increments the count! So Option A returns the TOTAL count of all orders!\n\nOption B uses `SUM(CASE ... THEN 1 ELSE 0 END)`, which adds 1 for failed orders and 0 for others, giving the exact count!\n\n💡 Rule of thumb: With COUNT, never use ELSE 0 (let it default to NULL). With SUM, use ELSE 0!\n\nBe honest — did you vote Option A? 👇",
+  "simulatorLink": "https://www.manodemy.com/q10",
+  "cues": {
+    "t_hook_start": 0,
+    "t_line2_start": 3720,
+    "t_clock_in": 6420,
+    "t_opta": 8060,
+    "t_optb": 10080,
+    "t_optb_end": 12310,
+    "t_clock_out": 12460,
+    "t_cta_start": 12460,
+    "t_voice_end": 13900,
+    "totalMs": 15300,
+    "clockDurationMs": 6040,
+    "wordCues": [
+      {
+        "word": "This",
+        "startMs": 0,
+        "endMs": 280
+      },
+      {
+        "word": "subtle",
+        "startMs": 280,
+        "endMs": 580
+      },
+      {
+        "word": "CASE",
+        "startMs": 580,
+        "endMs": 820
+      },
+      {
+        "word": "WHEN",
+        "startMs": 820,
+        "endMs": 1120
+      },
+      {
+        "word": "bug",
+        "startMs": 1120,
+        "endMs": 1360
+      },
+      {
+        "word": "catches",
+        "startMs": 1360,
+        "endMs": 1700
+      },
+      {
+        "word": "almost",
+        "startMs": 1700,
+        "endMs": 2080
+      },
+      {
+        "word": "every",
+        "startMs": 2080,
+        "endMs": 2560
+      },
+      {
+        "word": "data",
+        "startMs": 2560,
+        "endMs": 2820
+      },
+      {
+        "word": "analyst.",
+        "startMs": 2820,
+        "endMs": 3240
+      },
+      {
+        "word": "Which",
+        "startMs": 3720,
+        "endMs": 4020
+      },
+      {
+        "word": "query",
+        "startMs": 4020,
+        "endMs": 4360
+      },
+      {
+        "word": "correctly",
+        "startMs": 4360,
+        "endMs": 4840
+      },
+      {
+        "word": "counts",
+        "startMs": 4840,
+        "endMs": 5260
+      },
+      {
+        "word": "failed",
+        "startMs": 5260,
+        "endMs": 5500
+      },
+      {
+        "word": "orders?",
+        "startMs": 5500,
+        "endMs": 5780
+      },
+      {
+        "word": "Choose",
+        "startMs": 6420,
+        "endMs": 6600
+      },
+      {
+        "word": "your",
+        "startMs": 6600,
+        "endMs": 6780
+      },
+      {
+        "word": "answer...",
+        "startMs": 6780,
+        "endMs": 7020
+      },
+      {
+        "word": "Option",
+        "startMs": 8060,
+        "endMs": 8460
+      },
+      {
+        "word": "A...",
+        "startMs": 8460,
+        "endMs": 8740
+      },
+      {
+        "word": "or",
+        "startMs": 10080,
+        "endMs": 10380
+      },
+      {
+        "word": "Option",
+        "startMs": 10380,
+        "endMs": 10620
+      },
+      {
+        "word": "B?",
+        "startMs": 11960,
+        "endMs": 12460
+      },
+      {
+        "word": "Drop",
+        "startMs": 12460,
+        "endMs": 12640
+      },
+      {
+        "word": "your",
+        "startMs": 12640,
+        "endMs": 12880
+      },
+      {
+        "word": "vote",
+        "startMs": 12880,
+        "endMs": 13100
+      },
+      {
+        "word": "in",
+        "startMs": 13100,
+        "endMs": 13180
+      },
+      {
+        "word": "the",
+        "startMs": 13180,
+        "endMs": 13460
+      },
+      {
+        "word": "comments",
+        "startMs": 13460,
+        "endMs": 13654
+      },
+      {
+        "word": "below.",
+        "startMs": 13654,
+        "endMs": 13800
+      }
+    ],
+    "phrases": [
+      {
+        "index": 0,
+        "text": "This subtle CASE WHEN bug catches almost every data analyst.",
+        "startMs": 0,
+        "endMs": 3720,
+        "words": [
+          {
+            "word": "This",
+            "startMs": 0,
+            "endMs": 280
+          },
+          {
+            "word": "subtle",
+            "startMs": 280,
+            "endMs": 580
+          },
+          {
+            "word": "CASE",
+            "startMs": 580,
+            "endMs": 820
+          },
+          {
+            "word": "WHEN",
+            "startMs": 820,
+            "endMs": 1120
+          },
+          {
+            "word": "bug",
+            "startMs": 1120,
+            "endMs": 1360
+          },
+          {
+            "word": "catches",
+            "startMs": 1360,
+            "endMs": 1700
+          },
+          {
+            "word": "almost",
+            "startMs": 1700,
+            "endMs": 2080
+          },
+          {
+            "word": "every",
+            "startMs": 2080,
+            "endMs": 2560
+          },
+          {
+            "word": "data",
+            "startMs": 2560,
+            "endMs": 2820
+          },
+          {
+            "word": "analyst.",
+            "startMs": 2820,
+            "endMs": 3240
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "text": "Which query correctly counts failed orders?",
+        "startMs": 3720,
+        "endMs": 6420,
+        "words": [
+          {
+            "word": "Which",
+            "startMs": 3720,
+            "endMs": 4020
+          },
+          {
+            "word": "query",
+            "startMs": 4020,
+            "endMs": 4360
+          },
+          {
+            "word": "correctly",
+            "startMs": 4360,
+            "endMs": 4840
+          },
+          {
+            "word": "counts",
+            "startMs": 4840,
+            "endMs": 5260
+          },
+          {
+            "word": "failed",
+            "startMs": 5260,
+            "endMs": 5500
+          },
+          {
+            "word": "orders?",
+            "startMs": 5500,
+            "endMs": 5780
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "text": "Choose your answer...",
+        "startMs": 6420,
+        "endMs": 8060,
+        "words": [
+          {
+            "word": "Choose",
+            "startMs": 6420,
+            "endMs": 6600
+          },
+          {
+            "word": "your",
+            "startMs": 6600,
+            "endMs": 6780
+          },
+          {
+            "word": "answer...",
+            "startMs": 6780,
+            "endMs": 7020
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "text": "Option A...",
+        "startMs": 8060,
+        "endMs": 10080,
+        "words": [
+          {
+            "word": "Option",
+            "startMs": 8060,
+            "endMs": 8460
+          },
+          {
+            "word": "A...",
+            "startMs": 8460,
+            "endMs": 8740
+          }
+        ]
+      },
+      {
+        "index": 4,
+        "text": "or Option B?",
+        "startMs": 10080,
+        "endMs": 12310,
+        "words": [
+          {
+            "word": "or",
+            "startMs": 10080,
+            "endMs": 10380
+          },
+          {
+            "word": "Option",
+            "startMs": 10380,
+            "endMs": 10620
+          },
+          {
+            "word": "B?",
+            "startMs": 11960,
+            "endMs": 12460
+          }
+        ]
+      },
+      {
+        "index": 5,
+        "text": "Drop your vote in the comments below.",
+        "startMs": 12460,
+        "endMs": 13900,
+        "words": [
+          {
+            "word": "Drop",
+            "startMs": 12460,
+            "endMs": 12640
+          },
+          {
+            "word": "your",
+            "startMs": 12640,
+            "endMs": 12880
+          },
+          {
+            "word": "vote",
+            "startMs": 12880,
+            "endMs": 13100
+          },
+          {
+            "word": "in",
+            "startMs": 13100,
+            "endMs": 13180
+          },
+          {
+            "word": "the",
+            "startMs": 13180,
+            "endMs": 13460
+          },
+          {
+            "word": "comments",
+            "startMs": 13460,
+            "endMs": 13654
+          },
+          {
+            "word": "below.",
+            "startMs": 13654,
+            "endMs": 13800
+          }
+        ]
+      }
+    ]
+  },
+  "generatedAt": "2026-08-28 19:16:30"
+}

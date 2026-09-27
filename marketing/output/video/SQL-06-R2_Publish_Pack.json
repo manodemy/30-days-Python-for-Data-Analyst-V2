@@ -1,0 +1,432 @@
+{
+  "reelNo": "SQL-06-R2",
+  "day": "DAY 06",
+  "badge": "SQL · Self Joins & Hierarchy",
+  "videoFile": "SQL-06-R2.mp4",
+  "videoPath": "D:\\Learn Python in 60days\\Manodemy_Web_V2\\marketing\\output\\video\\SQL-06-R2.mp4",
+  "coverFile": "SQL-06-R2_Cover.png",
+  "coverJpg": "SQL-06-R2_Cover.jpg",
+  "fileSizeMb": 3.95,
+  "resolution": "1080x1920",
+  "fps": 24,
+  "durationSec": 16.66,
+  "caption": "CEO DISAPPEARED TRAP 👔💀\nWhich query keeps the CEO in the org chart report?\n\nDid you accidentally fire the CEO with an INNER JOIN? \n\nDrop your vote (A or B) below 👇\n\n\nPractice Data Skills \n👉 Day 1 & Day 2 are 100% FREE\n🔗 Link in bio / manodemy.com/q11\n\n#sql #sqlinterview #sqltips #dataanalytics #dataengineer #datascience #dataanalyst #sqlquery #faang #techinterview #codinginterview #learnsql #database #manodemy #dataanalysis",
+  "pinnedAnswer": "Option A is the trap ❌ | Option B is correct ✅\n\nWhy Option A accidentally deletes the CEO:\nIn most relational databases, the CEO has a NULL `manager_id` (since nobody manages the CEO!).\nIn Option A, the plain `JOIN` (INNER JOIN) requires matching values on both sides.\nBecause `NULL = m.id` evaluates to UNKNOWN, Option A silently DELETES the CEO from the entire company org chart!\n\nOption B uses `LEFT JOIN`, ensuring that all employees (including the top CEO) are preserved with a NULL manager.\n\n💡 Rule of thumb: When building manager-employee hierarchy reports, always use LEFT JOIN!\n\nBe honest — did you accidentally fire the CEO? 👇",
+  "simulatorLink": "https://www.manodemy.com/q11",
+  "cues": {
+    "t_hook_start": 0,
+    "t_line2_start": 4200,
+    "t_clock_in": 7820,
+    "t_opta": 9840,
+    "t_optb": 11460,
+    "t_optb_end": 13690,
+    "t_clock_out": 13840,
+    "t_cta_start": 13840,
+    "t_voice_end": 15260,
+    "totalMs": 16660,
+    "clockDurationMs": 6020,
+    "wordCues": [
+      {
+        "word": "HR",
+        "startMs": 0,
+        "endMs": 380
+      },
+      {
+        "word": "says!",
+        "startMs": 380,
+        "endMs": 640
+      },
+      {
+        "word": "The",
+        "startMs": 1200,
+        "endMs": 1300
+      },
+      {
+        "word": "CEO",
+        "startMs": 1300,
+        "endMs": 1640
+      },
+      {
+        "word": "disappeared",
+        "startMs": 1640,
+        "endMs": 2200
+      },
+      {
+        "word": "from",
+        "startMs": 2200,
+        "endMs": 2480
+      },
+      {
+        "word": "the",
+        "startMs": 2480,
+        "endMs": 2600
+      },
+      {
+        "word": "company's",
+        "startMs": 2600,
+        "endMs": 3100
+      },
+      {
+        "word": "org",
+        "startMs": 3100,
+        "endMs": 3500
+      },
+      {
+        "word": "report!",
+        "startMs": 3500,
+        "endMs": 3760
+      },
+      {
+        "word": "Which",
+        "startMs": 4200,
+        "endMs": 4560
+      },
+      {
+        "word": "query",
+        "startMs": 4560,
+        "endMs": 4900
+      },
+      {
+        "word": "correctly",
+        "startMs": 4900,
+        "endMs": 5360
+      },
+      {
+        "word": "keeps",
+        "startMs": 5360,
+        "endMs": 5700
+      },
+      {
+        "word": "the",
+        "startMs": 5700,
+        "endMs": 5860
+      },
+      {
+        "word": "CEO",
+        "startMs": 5860,
+        "endMs": 6220
+      },
+      {
+        "word": "in",
+        "startMs": 6220,
+        "endMs": 6660
+      },
+      {
+        "word": "the",
+        "startMs": 6660,
+        "endMs": 6800
+      },
+      {
+        "word": "org",
+        "startMs": 6800,
+        "endMs": 7000
+      },
+      {
+        "word": "chart?",
+        "startMs": 7000,
+        "endMs": 7240
+      },
+      {
+        "word": "Choose",
+        "startMs": 7820,
+        "endMs": 7960
+      },
+      {
+        "word": "your",
+        "startMs": 7960,
+        "endMs": 8140
+      },
+      {
+        "word": "answer...",
+        "startMs": 8140,
+        "endMs": 8400
+      },
+      {
+        "word": "Option",
+        "startMs": 9840,
+        "endMs": 10100
+      },
+      {
+        "word": "A...",
+        "startMs": 10820,
+        "endMs": 11460
+      },
+      {
+        "word": "or",
+        "startMs": 11460,
+        "endMs": 11740
+      },
+      {
+        "word": "Option",
+        "startMs": 11740,
+        "endMs": 11980
+      },
+      {
+        "word": "B?",
+        "startMs": 13180,
+        "endMs": 13840
+      },
+      {
+        "word": "Drop",
+        "startMs": 13840,
+        "endMs": 14000
+      },
+      {
+        "word": "your",
+        "startMs": 14000,
+        "endMs": 14240
+      },
+      {
+        "word": "vote",
+        "startMs": 14240,
+        "endMs": 14460
+      },
+      {
+        "word": "in",
+        "startMs": 14460,
+        "endMs": 14540
+      },
+      {
+        "word": "the",
+        "startMs": 14540,
+        "endMs": 14860
+      },
+      {
+        "word": "comments",
+        "startMs": 14860,
+        "endMs": 15031
+      },
+      {
+        "word": "below.",
+        "startMs": 15031,
+        "endMs": 15160
+      }
+    ],
+    "phrases": [
+      {
+        "index": 0,
+        "text": "HR says! The CEO disappeared from the company's org report!",
+        "startMs": 0,
+        "endMs": 4200,
+        "words": [
+          {
+            "word": "HR",
+            "startMs": 0,
+            "endMs": 380
+          },
+          {
+            "word": "says!",
+            "startMs": 380,
+            "endMs": 640
+          },
+          {
+            "word": "The",
+            "startMs": 1200,
+            "endMs": 1300
+          },
+          {
+            "word": "CEO",
+            "startMs": 1300,
+            "endMs": 1640
+          },
+          {
+            "word": "disappeared",
+            "startMs": 1640,
+            "endMs": 2200
+          },
+          {
+            "word": "from",
+            "startMs": 2200,
+            "endMs": 2480
+          },
+          {
+            "word": "the",
+            "startMs": 2480,
+            "endMs": 2600
+          },
+          {
+            "word": "company's",
+            "startMs": 2600,
+            "endMs": 3100
+          },
+          {
+            "word": "org",
+            "startMs": 3100,
+            "endMs": 3500
+          },
+          {
+            "word": "report!",
+            "startMs": 3500,
+            "endMs": 3760
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "text": "Which query correctly keeps the CEO in the org chart?",
+        "startMs": 4200,
+        "endMs": 7820,
+        "words": [
+          {
+            "word": "Which",
+            "startMs": 4200,
+            "endMs": 4560
+          },
+          {
+            "word": "query",
+            "startMs": 4560,
+            "endMs": 4900
+          },
+          {
+            "word": "correctly",
+            "startMs": 4900,
+            "endMs": 5360
+          },
+          {
+            "word": "keeps",
+            "startMs": 5360,
+            "endMs": 5700
+          },
+          {
+            "word": "the",
+            "startMs": 5700,
+            "endMs": 5860
+          },
+          {
+            "word": "CEO",
+            "startMs": 5860,
+            "endMs": 6220
+          },
+          {
+            "word": "in",
+            "startMs": 6220,
+            "endMs": 6660
+          },
+          {
+            "word": "the",
+            "startMs": 6660,
+            "endMs": 6800
+          },
+          {
+            "word": "org",
+            "startMs": 6800,
+            "endMs": 7000
+          },
+          {
+            "word": "chart?",
+            "startMs": 7000,
+            "endMs": 7240
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "text": "Choose your answer...",
+        "startMs": 7820,
+        "endMs": 9840,
+        "words": [
+          {
+            "word": "Choose",
+            "startMs": 7820,
+            "endMs": 7960
+          },
+          {
+            "word": "your",
+            "startMs": 7960,
+            "endMs": 8140
+          },
+          {
+            "word": "answer...",
+            "startMs": 8140,
+            "endMs": 8400
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "text": "Option A...",
+        "startMs": 9840,
+        "endMs": 11460,
+        "words": [
+          {
+            "word": "Option",
+            "startMs": 9840,
+            "endMs": 10100
+          },
+          {
+            "word": "A...",
+            "startMs": 10820,
+            "endMs": 11460
+          }
+        ]
+      },
+      {
+        "index": 4,
+        "text": "or Option B?",
+        "startMs": 11460,
+        "endMs": 13690,
+        "words": [
+          {
+            "word": "or",
+            "startMs": 11460,
+            "endMs": 11740
+          },
+          {
+            "word": "Option",
+            "startMs": 11740,
+            "endMs": 11980
+          },
+          {
+            "word": "B?",
+            "startMs": 13180,
+            "endMs": 13840
+          }
+        ]
+      },
+      {
+        "index": 5,
+        "text": "Drop your vote in the comments below.",
+        "startMs": 13840,
+        "endMs": 15260,
+        "words": [
+          {
+            "word": "Drop",
+            "startMs": 13840,
+            "endMs": 14000
+          },
+          {
+            "word": "your",
+            "startMs": 14000,
+            "endMs": 14240
+          },
+          {
+            "word": "vote",
+            "startMs": 14240,
+            "endMs": 14460
+          },
+          {
+            "word": "in",
+            "startMs": 14460,
+            "endMs": 14540
+          },
+          {
+            "word": "the",
+            "startMs": 14540,
+            "endMs": 14860
+          },
+          {
+            "word": "comments",
+            "startMs": 14860,
+            "endMs": 15031
+          },
+          {
+            "word": "below.",
+            "startMs": 15031,
+            "endMs": 15160
+          }
+        ]
+      }
+    ]
+  },
+  "generatedAt": "2026-08-29 19:02:52"
+}

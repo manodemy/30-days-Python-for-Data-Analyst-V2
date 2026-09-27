@@ -1,0 +1,73 @@
+{
+  "version": "1.0.0",
+  "category": "50 LPA AI Systems Engineer High-Frequency Interview Bank",
+  "questions": [
+    {
+      "id": "SYS-01",
+      "topic": "LLM Rate Limits & Fallback Systems",
+      "question": "How do you architect an enterprise AI agent system that guarantees 99.9% uptime when OpenAI or Claude APIs throw 429 Rate Limit or 503 Service Unavailable errors?",
+      "expectedKeyPoints": [
+        "Token bucket / Leaky bucket rate limiting at the gateway level",
+        "Exponential backoff with randomized jitter",
+        "Multi-model fallback routing (e.g. Primary: Claude 3.5 Sonnet -> Fallback: GPT-4o -> Local/Groq Llama 3.3 70B)",
+        "Circuit breaker pattern (pybreaker / resilience4j style)",
+        "Idempotency keys in message queues (RabbitMQ/Redis Streams) to avoid duplicate agent actions"
+      ],
+      "userScore": null,
+      "lastAttempted": null
+    },
+    {
+      "id": "SYS-02",
+      "topic": "Streaming & Latency Optimization",
+      "question": "Explain how you stream token-by-token LLM output from a background Python agent to a Next.js/browser frontend with sub-100ms time-to-first-token (TTFT).",
+      "expectedKeyPoints": [
+        "FastAPI StreamingResponse with Server-Sent Events (SSE / `text/event-stream`)",
+        "Async generators yielding chunk deltas instead of waiting for complete completion",
+        "Speculative decoding / Prompt caching at the LLM provider level",
+        "Bypassing heavy middleware buffers that block chunk flushing"
+      ],
+      "userScore": null,
+      "lastAttempted": null
+    },
+    {
+      "id": "SYS-03",
+      "topic": "Agent Infinite Loops & Hallucinated Tool Calls",
+      "question": "What mechanisms do you implement to prevent an autonomous multi-agent system from getting trapped in an expensive infinite tool-calling loop or hallucinating non-existent tools?",
+      "expectedKeyPoints": [
+        "Hard max_iterations cutoff & token budget limits per run",
+        "State graph cycle detection (detecting identical state hashes across consecutive turns)",
+        "Strict Pydantic JSON schema validation on tool arguments with structured outputs",
+        "Fallback human-in-the-loop escalation interrupts when confidence drops below threshold"
+      ],
+      "userScore": null,
+      "lastAttempted": null
+    },
+    {
+      "id": "SYS-04",
+      "topic": "RAG at Enterprise Scale (10M+ Documents)",
+      "question": "Why does simple cosine similarity on OpenAI embeddings fail in production, and how do you build a production-grade Hybrid RAG retrieval pipeline?",
+      "expectedKeyPoints": [
+        "Dense vectors capture semantics but miss exact keyword identifiers, part numbers, and acronyms",
+        "Hybrid Search: Combining Dense (HNSW / vector index) + Sparse (BM25 lexical search)",
+        "Reciprocal Rank Fusion (RRF) to merge ranked lists from both methods",
+        "Cross-Encoder Re-ranking on top 20 candidates down to top 5",
+        "Contextual chunking (prepending document title and summary to chunks before embedding)"
+      ],
+      "userScore": null,
+      "lastAttempted": null
+    },
+    {
+      "id": "SYS-05",
+      "topic": "LLM Evals & Regression Shield",
+      "question": "How do you evaluate and guarantee that a prompt or agent update doesn't silently break existing capabilities (Regression)?",
+      "expectedKeyPoints": [
+        "Golden test dataset with known ground-truth inputs and expected outputs",
+        "Ragas / DeepEval metrics: Faithfulness, Answer Relevancy, Context Recall, Context Precision",
+        "Automated CI/CD GitHub Actions workflow that runs eval suite on pull requests",
+        "LLM-as-a-Judge with calibrated scoring rubrics and few-shot calibration examples"
+      ],
+      "userScore": null,
+      "lastAttempted": null
+    }
+  ]
+}

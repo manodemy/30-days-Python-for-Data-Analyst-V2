@@ -29,6 +29,20 @@
       "status": "ready",
       "path": ".agents/skills/day-curriculum-builder/SKILL.md",
       "description": "Step-by-step creation of Days 05 to 60 with SQLite sandbox, multi-table exercises, and solution rubrics."
+    },
+    {
+      "id": "rag-theory-animator",
+      "name": "RAG Theory Animator",
+      "status": "active",
+      "path": ".agents/skills/rag-theory-animator/SKILL.md",
+      "description": "World-class motion design agent for generating cinematic, narration-synced, GSAP timeline-driven animated theory presentations with SVG diagrams, progressive disclosure, and 60fps playback."
+    },
+    {
+      "id": "teacher",
+      "name": "Teacher (50 LPA AI Engineer Mentor)",
+      "status": "active",
+      "path": ".agents/skills/teacher/SKILL.md",
+      "description": "Elite 30-day AI Engineering Mentor and Career Architect with persistent memory. Guides the user step-by-step from 6 LPA Data Analyst to 50 LPA AI Systems Engineer."
     }
   ]
 }

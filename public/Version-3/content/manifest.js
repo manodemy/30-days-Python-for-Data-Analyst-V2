@@ -9,24 +9,24 @@
   };
 
   const MANIFEST_60 = [
-    // 🗄️ SQL Track (Days 01–18) — Days 01–06 Active & Playable; Days 07–18 Coming Soon
+    // 🗄️ SQL Track (Days 01–18) — Days 01–17 Free & Active; Day 18 Capstone
     { globalDay: 1, track: 'sql', id: 'day01', trackDay: 1, title: 'Introduction to SQL & Databases', emoji: '🗄️', url: '/sql/day01.html', free: true, prepared: true, comingSoon: false },
     { globalDay: 2, track: 'sql', id: 'day02', trackDay: 2, title: 'Basic Retrieval: SELECT, DISTINCT, ORDER BY & LIMIT', emoji: '💾', url: '/sql/day02.html', free: true, prepared: true, comingSoon: false },
-    { globalDay: 3, track: 'sql', id: 'day03', trackDay: 3, title: 'Filtering Data (WHERE, LIKE, IN, BETWEEN)', emoji: '🔍', url: '/sql/day03.html', free: false, prepared: true, comingSoon: false },
-    { globalDay: 4, track: 'sql', id: 'day04', trackDay: 4, title: 'Operators & Expressions', emoji: '⚙️', url: '/sql/day04.html', free: false, prepared: true, comingSoon: false },
-    { globalDay: 5, track: 'sql', id: 'day05', trackDay: 5, title: 'Aggregate Functions (COUNT, SUM, AVG, MIN, MAX)', emoji: '📊', url: '/sql/day05.html', free: false, prepared: true, comingSoon: false },
-    { globalDay: 6, track: 'sql', id: 'day06', trackDay: 6, title: 'GROUP BY & HAVING Clauses', emoji: '🗃️', url: '/sql/day06.html', free: false, prepared: true, comingSoon: false },
-    { globalDay: 7, track: 'sql', id: 'day07', trackDay: 7, title: 'Single-Row & Scalar Functions', emoji: '🧵', url: '/sql/day07.html', free: false, prepared: true, comingSoon: false },
-    { globalDay: 8, track: 'sql', id: 'day08', trackDay: 8, title: 'Date & Time Manipulation Functions', emoji: '📅', url: '/sql/day08.html', free: false, prepared: true, comingSoon: false },
-    { globalDay: 9, track: 'sql', id: 'day09', trackDay: 9, title: 'CASE Expressions & Conditional Logic', emoji: '🔀', url: '/sql/day09.html', free: false, prepared: true, comingSoon: false },
-    { globalDay: 10, track: 'sql', id: 'day10', trackDay: 10, title: 'Joins Fundamentals (INNER, LEFT, RIGHT)', emoji: '🔗', url: '/sql/day10.html', free: false, prepared: true, comingSoon: false },
-    { globalDay: 11, track: 'sql', id: 'day11', trackDay: 11, title: 'Advanced Joins, Self-Joins & CROSS JOINs', emoji: '🔄', url: '/sql/day11.html', free: false, prepared: true, comingSoon: false },
-    { globalDay: 12, track: 'sql', id: 'day12', trackDay: 12, title: 'Set Operations (UNION, UNION ALL, INTERSECT)', emoji: '⛔', url: '/sql/day12.html', free: false, prepared: true, comingSoon: false },
-    { globalDay: 13, track: 'sql', id: 'day13', trackDay: 13, title: 'Subqueries & Correlated Subqueries', emoji: '🧠', url: '/sql/day13.html', free: false, prepared: true, comingSoon: false },
-    { globalDay: 14, track: 'sql', id: 'day14', trackDay: 14, title: 'Common Table Expressions (CTEs) & Recursive CTEs', emoji: '🏗️', url: '/sql/day14.html', free: false, prepared: true, comingSoon: false },
-    { globalDay: 15, track: 'sql', id: 'day15', trackDay: 15, title: 'Window Functions I — Ranking (ROW_NUMBER, RANK)', emoji: '🔢', url: '/sql/day15.html', free: false, prepared: true, comingSoon: false },
-    { globalDay: 16, track: 'sql', id: 'day16', trackDay: 16, title: 'Window Functions II — Analytic (LAG, LEAD)', emoji: '📈', url: '/sql/day16.html', free: false, prepared: true, comingSoon: false },
-    { globalDay: 17, track: 'sql', id: 'day17', trackDay: 17, title: 'DDL, DML, Indexes & Constraints', emoji: '🛠️', url: '/sql/day17.html', free: false, prepared: true, comingSoon: false },
+    { globalDay: 3, track: 'sql', id: 'day03', trackDay: 3, title: 'Filtering Data (WHERE, LIKE, IN, BETWEEN)', emoji: '🔍', url: '/sql/day03.html', free: true, prepared: true, comingSoon: false },
+    { globalDay: 4, track: 'sql', id: 'day04', trackDay: 4, title: 'Operators & Expressions', emoji: '⚙️', url: '/sql/day04.html', free: true, prepared: true, comingSoon: false },
+    { globalDay: 5, track: 'sql', id: 'day05', trackDay: 5, title: 'Aggregate Functions (COUNT, SUM, AVG, MIN, MAX)', emoji: '📊', url: '/sql/day05.html', free: true, prepared: true, comingSoon: false },
+    { globalDay: 6, track: 'sql', id: 'day06', trackDay: 6, title: 'GROUP BY & HAVING Clauses', emoji: '🗃️', url: '/sql/day06.html', free: true, prepared: true, comingSoon: false },
+    { globalDay: 7, track: 'sql', id: 'day07', trackDay: 7, title: 'Single-Row & Scalar Functions', emoji: '🧵', url: '/sql/day07.html', free: true, prepared: true, comingSoon: false },
+    { globalDay: 8, track: 'sql', id: 'day08', trackDay: 8, title: 'Date & Time Manipulation Functions', emoji: '📅', url: '/sql/day08.html', free: true, prepared: true, comingSoon: false },
+    { globalDay: 9, track: 'sql', id: 'day09', trackDay: 9, title: 'CASE Expressions & Conditional Logic', emoji: '🔀', url: '/sql/day09.html', free: true, prepared: true, comingSoon: false },
+    { globalDay: 10, track: 'sql', id: 'day10', trackDay: 10, title: 'Joins Fundamentals (INNER, LEFT, RIGHT)', emoji: '🔗', url: '/sql/day10.html', free: true, prepared: true, comingSoon: false },
+    { globalDay: 11, track: 'sql', id: 'day11', trackDay: 11, title: 'Advanced Joins, Self-Joins & CROSS JOINs', emoji: '🔄', url: '/sql/day11.html', free: true, prepared: true, comingSoon: false },
+    { globalDay: 12, track: 'sql', id: 'day12', trackDay: 12, title: 'Set Operations (UNION, UNION ALL, INTERSECT)', emoji: '⛔', url: '/sql/day12.html', free: true, prepared: true, comingSoon: false },
+    { globalDay: 13, track: 'sql', id: 'day13', trackDay: 13, title: 'Subqueries & Correlated Subqueries', emoji: '🧠', url: '/sql/day13.html', free: true, prepared: true, comingSoon: false },
+    { globalDay: 14, track: 'sql', id: 'day14', trackDay: 14, title: 'Common Table Expressions (CTEs) & Recursive CTEs', emoji: '🏗️', url: '/sql/day14.html', free: true, prepared: true, comingSoon: false },
+    { globalDay: 15, track: 'sql', id: 'day15', trackDay: 15, title: 'Window Functions I — Ranking (ROW_NUMBER, RANK)', emoji: '🔢', url: '/sql/day15.html', free: true, prepared: true, comingSoon: false },
+    { globalDay: 16, track: 'sql', id: 'day16', trackDay: 16, title: 'Window Functions II — Analytic (LAG, LEAD)', emoji: '📈', url: '/sql/day16.html', free: true, prepared: true, comingSoon: false },
+    { globalDay: 17, track: 'sql', id: 'day17', trackDay: 17, title: 'DDL, DML, Indexes & Constraints', emoji: '🛠️', url: '/sql/day17.html', free: true, prepared: true, comingSoon: false },
     { globalDay: 18, track: 'sql', id: 'day18', trackDay: 18, title: 'Query Optimization & SQL Capstone Project', emoji: '🚀', url: '/sql/day18.html', free: false, prepared: false, comingSoon: true },
 
     // 📊 Excel Track (Days 19–30 / Excel Days 01–12) — Coming Soon in Active Preparation

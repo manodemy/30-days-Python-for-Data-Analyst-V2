@@ -210,7 +210,7 @@ export async function middleware(request: NextRequest) {
   const legacySqlMatch = path.match(/^\/sql\/day(\d{2})\.html$/);
   if (legacySqlMatch) {
     const dayNum = parseInt(legacySqlMatch[1], 10);
-    if (dayNum >= 3) {
+    if (dayNum >= 18) {
       const dayId = `sql-day${legacySqlMatch[1]}`;
       const targetUrl = new URL(`/notebook/${dayId}${url.search}`, request.url);
       return NextResponse.redirect(targetUrl, { status: 301 });
@@ -231,8 +231,8 @@ export async function middleware(request: NextRequest) {
   const dayNum = extractNotebookDayNum(path);
   const isSqlNotebook = path.includes('sql-day');
 
-  // SQL Days 01 & 02 are universally free for everyone
-  if (isSqlNotebook && dayNum !== null && dayNum <= 2) {
+  // SQL Days 01–17 are universally free for everyone
+  if (isSqlNotebook && dayNum !== null && dayNum <= 17) {
     return NextResponse.next();
   }
 

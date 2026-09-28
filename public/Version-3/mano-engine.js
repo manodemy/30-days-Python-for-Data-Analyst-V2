@@ -60,6 +60,17 @@ function isPaidUser() {
   return false;
 }
 
+function isFreeDay(dayKey) {
+  if (!dayKey) return false;
+  // SQL Days 01–17 are universally free for all users
+  const match = String(dayKey).match(/day(\d+)/i);
+  if (match) {
+    const num = parseInt(match[1], 10);
+    return num >= 1 && num <= 17;
+  }
+  return false;
+}
+
 // Guest Reel Pass Parameters
 const URL_PARAMS = new URLSearchParams(window.location.search);
 const REEL_QUESTION_PARAM = URL_PARAMS.get('q') || URL_PARAMS.get('question');
@@ -2755,7 +2766,7 @@ let testAnswers = []; // array of { answer: string, attempted: bool }
 let testSubmitted = false;
 
 function openTestPortal() {
-  if (IS_GUEST_REEL || (!isPaidUser() && !isAdminUser() && currentDay !== 'day01' && currentDay !== 'day02')) {
+  if (IS_GUEST_REEL || (!isPaidUser() && !isAdminUser() && !isFreeDay(currentDay))) {
     showGuestPaywallModal('the 25-question interview test');
     return;
   }
@@ -5223,7 +5234,7 @@ function renderPracticeQuestion() {
 }
 
 function playQuestionAudio(btn, audioSrc) {
-  if (IS_GUEST_REEL || (!isPaidUser() && !isAdminUser() && currentDay !== 'day01' && currentDay !== 'day02')) {
+  if (IS_GUEST_REEL || (!isPaidUser() && !isAdminUser() && !isFreeDay(currentDay))) {
     showGuestPaywallModal('question audio narration');
     return;
   }
@@ -5274,7 +5285,7 @@ function playQuestionAudio(btn, audioSrc) {
 // ??? Solution audio + code typewriter ???????????????????????????????????????
 
 function playSolutionAudio(solutionEntry, triggerBtn) {
-  if (IS_GUEST_REEL || (!isPaidUser() && !isAdminUser() && currentDay !== 'day01' && currentDay !== 'day02')) {
+  if (IS_GUEST_REEL || (!isPaidUser() && !isAdminUser() && !isFreeDay(currentDay))) {
     showGuestPaywallModal('audio solutions and code typewriter');
     return;
   }
@@ -6040,9 +6051,9 @@ function loadDayContent(dayId) {
     return;
   }
 
-  // 2. Days 03–30: Paywall check for non-paid users (Reel visitors get Reel Pass!)
+  // 2. Days 18+: Paywall check for non-paid users (Reel visitors get Reel Pass!)
   if (!isPaidUser() && !isAdminUser()) {
-    if (dayNum >= 3 && !isGuestReelPass) {
+    if (dayNum >= 18 && !isGuestReelPass) {
       showGuestPaywallModal(`Day ${String(dayNum).padStart(2, '0')}`);
       return;
     }
@@ -12504,7 +12515,7 @@ function showTapToPlayFallback(index) {
 }
 
 function toggleCombinedPlayback() {
-  if (IS_GUEST_REEL || (!isPaidUser() && !isAdminUser() && currentDay !== 'day01' && currentDay !== 'day02')) {
+  if (IS_GUEST_REEL || (!isPaidUser() && !isAdminUser() && !isFreeDay(currentDay))) {
     showGuestPaywallModal('video & voice narration');
     return;
   }

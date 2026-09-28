@@ -625,7 +625,7 @@
       "permanent": true
     },
     {
-      "source": "/sql/day:day(0[3-9]|1[0-8]).html",
+      "source": "/sql/day:day(18).html",
       "destination": "/notebook/sql-day:day",
       "permanent": false
     },
@@ -635,7 +635,7 @@
       "permanent": true
     },
     {
-      "source": "/sql/day:day(0[3-9]|1[0-8])",
+      "source": "/sql/day:day(18)",
       "destination": "/notebook/sql-day:day",
       "permanent": true
     },

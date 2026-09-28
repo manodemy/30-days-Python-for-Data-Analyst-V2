@@ -10369,7 +10369,11 @@
 
         const targetPercent = Math.min(Math.round((solvedCount / item.totalCells) * 100), 100);
 
-        const isLockedDay = !isUserEnrolled && item.day !== "01" && item.day !== "02";
+        const dayInt = parseInt(item.day, 10);
+        const isFreeSql = currentCourse === 'sql' && dayInt >= 1 && dayInt <= 17;
+        const isFreeOther = item.day === "01" || item.day === "02";
+        const isFreeDay = isFreeSql || isFreeOther;
+        const isLockedDay = !isUserEnrolled && !isFreeDay;
 
 
 
@@ -10387,7 +10391,7 @@
 
           badgeHTML = `<span class="day-badge in-progress-badge">${solvedCount}/${item.totalCells}</span>`;
 
-        } else if (item.day === "01" || item.day === "02") {
+        } else if (isFreeDay) {
 
           badgeHTML = `<span class="day-badge free-badge">FREE</span>`;
 

@@ -1299,10 +1299,14 @@ document.addEventListener('DOMContentLoaded', () => {
       else if (card.closest('#panel-excel')) track = 'excel';
 
       if (track === 'sql') {
-        if (day === '01') window.location.href = '/sql/day01.html';
-        else if (day === '02') window.location.href = '/sql/day02.html';
-        else if (isPaid) window.location.href = `/notebook/sql-day${day}`;
-        else openCheckout();
+        const dayInt = parseInt(day, 10);
+        if (dayInt >= 1 && dayInt <= 17) {
+          window.location.href = `/sql/day${day}.html`;
+        } else if (isPaid) {
+          window.location.href = `/notebook/sql-day${day}`;
+        } else {
+          openCheckout();
+        }
       } else if (track === 'excel') {
         if (day === '01') window.location.href = '/excel/day01.html';
         else if (day === '02') window.location.href = '/excel/day02.html';

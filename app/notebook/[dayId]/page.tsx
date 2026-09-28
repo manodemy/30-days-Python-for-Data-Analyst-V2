@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: { params: { dayId: string } }
     alternates: {
       canonical: `https://www.manodemy.com/notebook/${cleanDayId}`,
     },
-    robots: dayNum >= 3 ? 'noindex, nofollow' : 'index, follow',
+    robots: (courseType === 'sql' ? dayNum >= 18 : dayNum >= 3) ? 'noindex, nofollow' : 'index, follow',
   };
 }
 
@@ -101,8 +101,8 @@ export default async function NotebookPage({
   const formattedDay = dayNum.toString().padStart(2, '0');
 
   // ── Server-Side Auth & Enrollment Guard for Protected Days ─────────────────
-  // Universally, ONLY SQL Day 01 & 02 are free. All Python & Excel days and SQL Days 03+ require enrollment.
-  const isUniversallyFree = courseType === 'sql' && dayNum <= 2;
+  // Universally, SQL Days 01–17 are free. All Python & Excel days and SQL Day 18 require enrollment.
+  const isUniversallyFree = courseType === 'sql' && dayNum <= 17;
 
   if (!isGuestPass && !isUniversallyFree) {
     const supabase = getSupabaseServerClient();

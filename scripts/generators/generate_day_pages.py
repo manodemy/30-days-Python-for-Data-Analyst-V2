@@ -571,7 +571,7 @@ def generate_page(item, curriculum, course_type):
         placeholder = "-- Write your SQL query here"
         course_id = "sql-20day"
         extra_scripts = ""
-        protected_regex = r"/day(0[3-9]|1[0-8])\.html/"
+        protected_regex = r"/day18\.html/"
         home_link = "../home.html"
     else:
         course_name = "Excel for Data Analyst"
@@ -597,7 +597,7 @@ def generate_page(item, curriculum, course_type):
         next_btn = f'<a href="day{next_num}.html" class="nav-icon-btn next-btn" aria-label="Next Day" title="Next Day"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></a>'
 
     # Protected day noindex meta
-    is_protected = day >= 3
+    is_protected = (day >= 18) if course_type == 'sql' else (day >= 3)
     noindex_meta = '<meta name="robots" content="noindex, nofollow">\n' if is_protected else ''
 
     # Build notebook sections

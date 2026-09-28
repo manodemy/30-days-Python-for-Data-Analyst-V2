@@ -196,34 +196,53 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
-  // ── Layer A: Redirect legacy dayXX.html → /notebook/dayXX ──────────────────
-  const legacyMatch = path.match(/^\/day(\d{2})\.html$/);
+  // ── Layer A: Redirect legacy & extensionless day routes ──────────────────
+  const legacyMatch = path.match(/^\/day(\d{1,2})(?:\.html)?$/i);
   if (legacyMatch) {
     const dayNum = parseInt(legacyMatch[1], 10);
+    const formatted = dayNum.toString().padStart(2, '0');
     if (dayNum >= 3) {
-      const dayId = `day${legacyMatch[1]}`;
+      const dayId = `day${formatted}`;
       const targetUrl = new URL(`/notebook/${dayId}${url.search}`, request.url);
       return NextResponse.redirect(targetUrl, { status: 301 });
+    } else {
+      if (!path.endsWith('.html')) {
+        const targetUrl = new URL(`/day${formatted}.html${url.search}`, request.url);
+        return NextResponse.redirect(targetUrl, { status: 301 });
+      }
     }
   }
 
-  const legacySqlMatch = path.match(/^\/sql\/day(\d{2})\.html$/);
+  const legacySqlMatch = path.match(/^\/sql\/day(\d{1,2})(?:\.html)?$/i);
   if (legacySqlMatch) {
     const dayNum = parseInt(legacySqlMatch[1], 10);
+    const formatted = dayNum.toString().padStart(2, '0');
     if (dayNum >= 18) {
-      const dayId = `sql-day${legacySqlMatch[1]}`;
+      const dayId = `sql-day${formatted}`;
       const targetUrl = new URL(`/notebook/${dayId}${url.search}`, request.url);
       return NextResponse.redirect(targetUrl, { status: 301 });
+    } else {
+      // Days 01–17: extensionless /sql/day01 -> /sql/day01.html
+      if (!path.endsWith('.html')) {
+        const targetUrl = new URL(`/sql/day${formatted}.html${url.search}`, request.url);
+        return NextResponse.redirect(targetUrl, { status: 301 });
+      }
     }
   }
 
-  const legacyExcelMatch = path.match(/^\/excel\/day(\d{2})\.html$/);
+  const legacyExcelMatch = path.match(/^\/excel\/day(\d{1,2})(?:\.html)?$/i);
   if (legacyExcelMatch) {
     const dayNum = parseInt(legacyExcelMatch[1], 10);
+    const formatted = dayNum.toString().padStart(2, '0');
     if (dayNum >= 3) {
-      const dayId = `excel-day${legacyExcelMatch[1]}`;
+      const dayId = `excel-day${formatted}`;
       const targetUrl = new URL(`/notebook/${dayId}${url.search}`, request.url);
       return NextResponse.redirect(targetUrl, { status: 301 });
+    } else {
+      if (!path.endsWith('.html')) {
+        const targetUrl = new URL(`/excel/day${formatted}.html${url.search}`, request.url);
+        return NextResponse.redirect(targetUrl, { status: 301 });
+      }
     }
   }
 
@@ -236,19 +255,28 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Python & Excel free days (01 & 02) redirect cleanly to their free simulator pages
+  if (dayNum !== null && dayNum <= 2) {
+    const formatted = dayNum.toString().padStart(2, '0');
+    if (path.includes('excel-day')) {
+      return NextResponse.redirect(new URL(`/excel/day${formatted}.html${url.search}`, request.url), { status: 301 });
+    } else if (!isSqlNotebook) {
+      return NextResponse.redirect(new URL(`/day${formatted}.html${url.search}`, request.url), { status: 301 });
+    }
+  }
+
   // Check if request is an authorized Reel Guest Challenge Pass (STRICTLY for SQL routes)
   const isGuestReel = (isSqlNotebook || path.startsWith('/sql-practice') || path.startsWith('/try')) &&
     (url.searchParams.get('guest') === 'true' || url.searchParams.has('q') || url.searchParams.has('question'));
 
-  if (dayNum !== null && dayNum >= 1 && dayNum <= PREMIUM_DAY_MAX) {
+  if (dayNum !== null && dayNum >= 3 && dayNum <= PREMIUM_DAY_MAX) {
     // If coming from an Instagram Reel Guest Pass for SQL, allow through to the sandboxed SQL engine
     if (isGuestReel) {
       return NextResponse.next({ request });
     }
 
-    // Free Python days: Day 01 & Day 02 were legacy free, but universally only SQL Day 01 & 02 are free
-    // Require auth for all premium notebook days
-    if (dayNum >= 1) {
+    // Require auth for all premium notebook days (Day 03+)
+    if (dayNum >= 3) {
       // Build a response object so @supabase/ssr can refresh cookies if needed
       const response = NextResponse.next({ request });
 
@@ -305,7 +333,10 @@ export const config = {
     // Legacy Excel HTML redirects (days 01–12)
     '/excel/day01.html', '/excel/day02.html', '/excel/day03.html', '/excel/day04.html', '/excel/day05.html',
     '/excel/day06.html', '/excel/day07.html', '/excel/day08.html', '/excel/day09.html', '/excel/day10.html',
-    '/excel/day11.html', '/excel/day12.html',
+    // Extensionless day paths (days 01–30, sql, excel)
+    '/day:path*',
+    '/sql/day:path*',
+    '/excel/day:path*',
     // Secure notebook routes (days 03–30 are premium)
     '/notebook/:path*',
     // Ultra-short campaign links & redirection triggers

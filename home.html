@@ -6778,14 +6778,18 @@
 
     const getDayUrl = (course, dayNum) => {
       const isNextJS = window.location.port === '3000' || window.location.hostname.includes('vercel.app') || window.location.hostname.includes('manodemy.com');
-      if (isNextJS) {
-        if (course === 'sql') return `/notebook/sql-day${dayNum}`;
-        if (course === 'excel') return `/notebook/excel-day${dayNum}`;
-        return `/notebook/day${dayNum}`;
+      const num = parseInt(dayNum, 10) || 1;
+      const formatted = String(num).padStart(2, '0');
+
+      if (course === 'sql') {
+        if (num <= 17) return `/sql/day${formatted}.html`;
+        return isNextJS ? `/notebook/sql-day${formatted}` : `/sql/day${formatted}.html`;
+      } else if (course === 'excel') {
+        if (num <= 2) return `/excel/day${formatted}.html`;
+        return isNextJS ? `/notebook/excel-day${formatted}` : `/excel/day${formatted}.html`;
       } else {
-        if (course === 'sql') return `sql/day${dayNum}.html`;
-        if (course === 'excel') return `excel/day${dayNum}.html`;
-        return `day${dayNum}.html`;
+        if (num <= 2) return `/day${formatted}.html`;
+        return isNextJS ? `/notebook/day${formatted}` : `/day${formatted}.html`;
       }
     };
 
@@ -7230,7 +7234,7 @@
             `;
 
             if (!c.enrolled) {
-              const freeDayUrl = c.id === 'sql' ? 'sql/day01.html' : (c.id === 'excel' ? 'excel/day01.html' : 'day01.html');
+              const freeDayUrl = c.id === 'sql' ? '/sql/day01.html' : (c.id === 'excel' ? '/excel/day01.html' : '/day01.html');
               progressHTML = `
                 <div class="course-select-free-preview-container">
                   <div class="course-select-free-preview-btn" onclick="event.stopPropagation(); window.location.href='${freeDayUrl}'">

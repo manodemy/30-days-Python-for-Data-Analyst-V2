@@ -6028,8 +6028,8 @@ function loadDayContent(dayId) {
                           Boolean(urlP.get('q')) || 
                           Boolean(urlP.get('question'));
 
-  // 1. Days 07–60: Coming Soon lock ONLY for regular non-admin students (Reel visitors get Reel Pass!)
-  if (dayNum >= 7 && !isAdminUser() && !isGuestReelPass) {
+  // 1. Days 18+: Coming Soon lock ONLY for regular non-admin students (Reel visitors get Reel Pass!)
+  if (dayNum >= 18 && !isAdminUser() && !isGuestReelPass) {
     if (window.showComingSoonToast) {
       window.showComingSoonToast(dayMeta?.title || `Day ${String(dayNum).padStart(2, '0')}`, dayNum);
     }

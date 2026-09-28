@@ -640,13 +640,53 @@
       "permanent": true
     },
     {
+      "source": "/sql/day:day(0[1-9]|1[0-7])",
+      "destination": "/sql/day:day.html",
+      "permanent": true
+    },
+    {
+      "source": "/sql/day:day([1-9])",
+      "destination": "/sql/day0:day.html",
+      "permanent": true
+    },
+    {
+      "source": "/day:day(0[1-2])",
+      "destination": "/day:day.html",
+      "permanent": true
+    },
+    {
+      "source": "/day:day([1-2])",
+      "destination": "/day0:day.html",
+      "permanent": true
+    },
+    {
+      "source": "/day:day(0[3-9]|[12][0-9]|30)",
+      "destination": "/notebook/day:day",
+      "permanent": true
+    },
+    {
+      "source": "/day:day([3-9])",
+      "destination": "/notebook/day0:day",
+      "permanent": true
+    },
+    {
       "source": "/excel/day:day(0[1-2])",
       "destination": "/excel/day:day.html",
       "permanent": true
     },
     {
+      "source": "/excel/day:day([1-2])",
+      "destination": "/excel/day0:day.html",
+      "permanent": true
+    },
+    {
       "source": "/excel/day:day(0[3-9]|1[0-2])",
       "destination": "/notebook/excel-day:day",
+      "permanent": true
+    },
+    {
+      "source": "/excel/day:day([3-9])",
+      "destination": "/notebook/excel-day0:day",
       "permanent": true
     },
     {

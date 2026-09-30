@@ -6788,8 +6788,8 @@
         if (num <= 2) return `/excel/day${formatted}.html`;
         return isNextJS ? `/notebook/excel-day${formatted}` : `/excel/day${formatted}.html`;
       } else {
-        if (num <= 2) return `/day${formatted}.html`;
-        return isNextJS ? `/notebook/day${formatted}` : `/day${formatted}.html`;
+        if (num <= 2) return `/python/day${formatted}.html`;
+        return isNextJS ? `/notebook/day${formatted}` : `/python/day${formatted}.html`;
       }
     };
 
@@ -7234,7 +7234,7 @@
             `;
 
             if (!c.enrolled) {
-              const freeDayUrl = c.id === 'sql' ? '/sql/day01.html' : (c.id === 'excel' ? '/excel/day01.html' : '/day01.html');
+              const freeDayUrl = c.id === 'sql' ? '/sql/day01.html' : (c.id === 'excel' ? '/excel/day01.html' : '/python/day01.html');
               progressHTML = `
                 <div class="course-select-free-preview-container">
                   <div class="course-select-free-preview-btn" onclick="event.stopPropagation(); window.location.href='${freeDayUrl}'">

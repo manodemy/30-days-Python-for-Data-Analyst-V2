@@ -1,8 +1,7 @@
 // ═══════════════════════════════════════════════════════════════
-// MANODEMY — PYTHON SLIDE PLAYER ENGINE
-// Pyodide-powered equivalent of scrimba-engine.js for SQL.
-// Handles: slide rendering, topic navigation, CodeMirror editors,
-//          practice questions, test portal, score card, persistence.
+// MANODEMY — PYTHON STUDIO ENGINE (100% Parity with SQL Engine)
+// Pyodide-powered runtime with slides, Whisper sync, dark/light theme,
+// dual CodeMirror editors, 25-question test portal, and scorecards.
 // ═══════════════════════════════════════════════════════════════
 
 'use strict';
@@ -11,22 +10,22 @@
 let pyodide = null;
 let pyodideReady = false;
 
-let currentDayId   = null;
+let currentDayId = null;
 let currentDayData = null;
-let currentSlideIndex  = 0;
+let currentSlideIndex = 0;
 let currentQuestionIndex = 0;
 
 // Test portal state
 let testEditor = null;
 let testTimerInterval = null;
-let testSecondsLeft = 7200;
-let testAnswers = {};  // { questionId: { code, passed } }
+let testSecondsLeft = 7200; // 120 mins
+let testAnswers = {}; // { questionId: { code, passed, message, stdout } }
 let currentTestQuestionIndex = 0;
 
 // Main editor
 let mainEditor = null;
 
-// Narration/Playback State
+// Narration / Playback State
 let isCombinedPlaying = false;
 let combinedTrackIndex = 0;
 let combinedTracks = [];
@@ -39,72 +38,776 @@ let ttsUtterance = null;
 let playbackTimerInterval = null;
 let isMuted = false;
 
-// Persistence
+// Audio playback instance
+let activeCombinedAudio = null;
+let currentPlayingAudio = null;
+let currentPlayingBtn = null;
+let typewriterTimer = null;
+
+// Drawing canvas state
+let isDrawing = false;
+let drawMode = 'pen'; // 'pen' | 'rect' | 'laser'
+let drawStrokes = [];
+
+// Persistence key
+
 const STORAGE_KEY = 'manodemy_python_progress';
+
+// ── Track Registries (100% Parity with SQL Engine) ────────────
+const PYTHON_DAY_TRACKS = {
+    'pyDay01': {
+    tracks: [
+  {
+    "src": "Day01/New_PyDay01Audio01.mp3",
+    "target": "#day01WhyPythonSection",
+    "title": "01. Python in Modern Data Analytics",
+    "type": "narration"
+  },
+  {
+    "src": "Day01/New_PyDay01Audio02.mp3",
+    "target": "#day01ToolMatrixSection",
+    "title": "Tool Matrix: SQL vs Excel vs Python",
+    "type": "narration"
+  },
+  {
+    "src": "Day01/New_PyDay01Audio03.mp3",
+    "target": "#day01MutabilitySection",
+    "title": "02. Object Mutability & Shared References",
+    "type": "narration"
+  },
+  {
+    "src": "Day01/New_PyDay01Audio04.mp3",
+    "target": "#day01DataTypesSection",
+    "title": "03. Master Data Types Reference",
+    "type": "narration"
+  },
+  {
+    "src": "Day01/New_PyDay01Audio05.mp3",
+    "target": "#day01MemorySection",
+    "title": "04. Memory Management & RAM Pointers",
+    "type": "narration"
+  },
+  {
+    "src": "Day01/New_PyDay01Question01.mp3",
+    "target": "#questionBar",
+    "title": "Question 1",
+    "type": "question",
+    "qId": 1
+  },
+  {
+    "src": "Day01/New_PyDay01Question01sol.mp3",
+    "target": "#questionBar",
+    "title": "Q1 Solution Walkthrough",
+    "type": "solution",
+    "qId": 1
+  },
+  {
+    "src": "Day01/New_PyDay01Question02.mp3",
+    "target": "#questionBar",
+    "title": "Question 2",
+    "type": "question",
+    "qId": 2
+  },
+  {
+    "src": "Day01/New_PyDay01Question02sol.mp3",
+    "target": "#questionBar",
+    "title": "Q2 Solution Walkthrough",
+    "type": "solution",
+    "qId": 2
+  },
+  {
+    "src": "Day01/New_PyDay01Question03.mp3",
+    "target": "#questionBar",
+    "title": "Question 3",
+    "type": "question",
+    "qId": 3
+  },
+  {
+    "src": "Day01/New_PyDay01Question03sol.mp3",
+    "target": "#questionBar",
+    "title": "Q3 Solution Walkthrough",
+    "type": "solution",
+    "qId": 3
+  },
+  {
+    "src": "Day01/New_PyDay01Question04.mp3",
+    "target": "#questionBar",
+    "title": "Question 4",
+    "type": "question",
+    "qId": 4
+  },
+  {
+    "src": "Day01/New_PyDay01Question04sol.mp3",
+    "target": "#questionBar",
+    "title": "Q4 Solution Walkthrough",
+    "type": "solution",
+    "qId": 4
+  },
+  {
+    "src": "Day01/New_PyDay01Question05.mp3",
+    "target": "#questionBar",
+    "title": "Question 5",
+    "type": "question",
+    "qId": 5
+  },
+  {
+    "src": "Day01/New_PyDay01Question05sol.mp3",
+    "target": "#questionBar",
+    "title": "Q5 Solution Walkthrough",
+    "type": "solution",
+    "qId": 5
+  },
+  {
+    "src": "Day01/New_PyDay01Question06.mp3",
+    "target": "#questionBar",
+    "title": "Question 6",
+    "type": "question",
+    "qId": 6
+  },
+  {
+    "src": "Day01/New_PyDay01Question06sol.mp3",
+    "target": "#questionBar",
+    "title": "Q6 Solution Walkthrough",
+    "type": "solution",
+    "qId": 6
+  },
+  {
+    "src": "Day01/New_PyDay01Question07.mp3",
+    "target": "#questionBar",
+    "title": "Question 7",
+    "type": "question",
+    "qId": 7
+  },
+  {
+    "src": "Day01/New_PyDay01Question07sol.mp3",
+    "target": "#questionBar",
+    "title": "Q7 Solution Walkthrough",
+    "type": "solution",
+    "qId": 7
+  },
+  {
+    "src": "Day01/New_PyDay01Question08.mp3",
+    "target": "#questionBar",
+    "title": "Question 8",
+    "type": "question",
+    "qId": 8
+  },
+  {
+    "src": "Day01/New_PyDay01Question08sol.mp3",
+    "target": "#questionBar",
+    "title": "Q8 Solution Walkthrough",
+    "type": "solution",
+    "qId": 8
+  },
+  {
+    "src": "Day01/New_PyDay01Question09.mp3",
+    "target": "#questionBar",
+    "title": "Question 9",
+    "type": "question",
+    "qId": 9
+  },
+  {
+    "src": "Day01/New_PyDay01Question09sol.mp3",
+    "target": "#questionBar",
+    "title": "Q9 Solution Walkthrough",
+    "type": "solution",
+    "qId": 9
+  },
+  {
+    "src": "Day01/New_PyDay01Question10.mp3",
+    "target": "#questionBar",
+    "title": "Question 10",
+    "type": "question",
+    "qId": 10
+  },
+  {
+    "src": "Day01/New_PyDay01Question10sol.mp3",
+    "target": "#questionBar",
+    "title": "Q10 Solution Walkthrough",
+    "type": "solution",
+    "qId": 10
+  },
+  {
+    "src": "Day01/New_PyDay01Question11.mp3",
+    "target": "#questionBar",
+    "title": "Question 11",
+    "type": "question",
+    "qId": 11
+  },
+  {
+    "src": "Day01/New_PyDay01Question11sol.mp3",
+    "target": "#questionBar",
+    "title": "Q11 Solution Walkthrough",
+    "type": "solution",
+    "qId": 11
+  },
+  {
+    "src": "Day01/New_PyDay01Question12.mp3",
+    "target": "#questionBar",
+    "title": "Question 12",
+    "type": "question",
+    "qId": 12
+  },
+  {
+    "src": "Day01/New_PyDay01Question12sol.mp3",
+    "target": "#questionBar",
+    "title": "Q12 Solution Walkthrough",
+    "type": "solution",
+    "qId": 12
+  },
+  {
+    "src": "Day01/New_PyDay01Question13.mp3",
+    "target": "#questionBar",
+    "title": "Question 13",
+    "type": "question",
+    "qId": 13
+  },
+  {
+    "src": "Day01/New_PyDay01Question13sol.mp3",
+    "target": "#questionBar",
+    "title": "Q13 Solution Walkthrough",
+    "type": "solution",
+    "qId": 13
+  },
+  {
+    "src": "Day01/New_PyDay01Question14.mp3",
+    "target": "#questionBar",
+    "title": "Question 14",
+    "type": "question",
+    "qId": 14
+  },
+  {
+    "src": "Day01/New_PyDay01Question14sol.mp3",
+    "target": "#questionBar",
+    "title": "Q14 Solution Walkthrough",
+    "type": "solution",
+    "qId": 14
+  },
+  {
+    "src": "Day01/New_PyDay01Question15.mp3",
+    "target": "#questionBar",
+    "title": "Question 15",
+    "type": "question",
+    "qId": 15
+  },
+  {
+    "src": "Day01/New_PyDay01Question15sol.mp3",
+    "target": "#questionBar",
+    "title": "Q15 Solution Walkthrough",
+    "type": "solution",
+    "qId": 15
+  }
+],
+    durations: [47.0, 46.0, 47.8, 46.9, 50.1, 10.1, 11.4, 11.1, 12.8, 11.4, 11.7, 12.0, 11.9, 13.5, 14.5, 10.9, 10.7, 12.4, 9.4, 14.1, 13.4, 14.5, 14.3, 12.0, 12.9, 12.4, 11.6, 11.5, 9.6, 10.8, 13.8, 11.5, 13.7, 10.2, 13.3]
+  },
+'pyDay02': {
+    tracks: [
+  {
+    "src": "Day02/New_PyDay02Audio01.mp3",
+    "target": "#day02ArithSection",
+    "title": "01. Arithmetic & In-Place Assignment",
+    "type": "narration"
+  },
+  {
+    "src": "Day02/New_PyDay02Audio02.mp3",
+    "target": "#day02ArithTableSection",
+    "title": "Arithmetic Operator Reference Table",
+    "type": "narration"
+  },
+  {
+    "src": "Day02/New_PyDay02Audio03.mp3",
+    "target": "#day02ArithCodeSection",
+    "title": "Compound Interest & Mutability Example",
+    "type": "narration"
+  },
+  {
+    "src": "Day02/New_PyDay02Audio04.mp3",
+    "target": "#day02CompSection",
+    "title": "02. Comparison Operators & Chaining",
+    "type": "narration"
+  },
+  {
+    "src": "Day02/New_PyDay02Audio05.mp3",
+    "target": "#day02CompTableSection",
+    "title": "Comparison Patterns & Chaining Matrix",
+    "type": "narration"
+  },
+  {
+    "src": "Day02/New_PyDay02Audio06.mp3",
+    "target": "#day02CompCodeSection",
+    "title": "Data Quality Validation with Chained Checks",
+    "type": "narration"
+  },
+  {
+    "src": "Day02/New_PyDay02Audio07.mp3",
+    "target": "#day02LogSection",
+    "title": "03. Logical Operators & Short-Circuit",
+    "type": "narration"
+  },
+  {
+    "src": "Day02/New_PyDay02Audio08.mp3",
+    "target": "#day02LogTableSection",
+    "title": "Short-Circuit Evaluation Matrix",
+    "type": "narration"
+  },
+  {
+    "src": "Day02/New_PyDay02Audio09.mp3",
+    "target": "#day02LogCodeSection",
+    "title": "Defensive Division Guard & Fallbacks",
+    "type": "narration"
+  },
+  {
+    "src": "Day02/New_PyDay02Audio10.mp3",
+    "target": "#day02IdSection",
+    "title": "04. Identity (is) vs Membership (in)",
+    "type": "narration"
+  },
+  {
+    "src": "Day02/New_PyDay02Audio11.mp3",
+    "target": "#day02IdTableSection",
+    "title": "Identity vs Membership Comparison Table",
+    "type": "narration"
+  },
+  {
+    "src": "Day02/New_PyDay02Audio12.mp3",
+    "target": "#day02IdCodeSection",
+    "title": "High-Speed Stop-Word Filter with Sets",
+    "type": "narration"
+  },
+  {
+    "src": "Day02/New_PyDay02Audio13.mp3",
+    "target": "#day02BitSection",
+    "title": "05. Bitwise Operators & Binary Masks",
+    "type": "narration"
+  },
+  {
+    "src": "Day02/New_PyDay02Audio14.mp3",
+    "target": "#day02BitTableSection",
+    "title": "Bitwise Operator Reference Table",
+    "type": "narration"
+  },
+  {
+    "src": "Day02/New_PyDay02Audio15.mp3",
+    "target": "#day02BitCodeSection",
+    "title": "Role-Based Access Control (RBAC) Bitmask",
+    "type": "narration"
+  },
+  {
+    "src": "Day02/New_PyDay02Audio16.mp3",
+    "target": "#day02WalrusSection",
+    "title": "06. Ternary & The Walrus Operator (:=)",
+    "type": "narration"
+  },
+  {
+    "src": "Day02/New_PyDay02Audio17.mp3",
+    "target": "#day02WalrusTableSection",
+    "title": "Operator Precedence Hierarchy Table",
+    "type": "narration"
+  },
+  {
+    "src": "Day02/New_PyDay02Audio18.mp3",
+    "target": "#day02WalrusCodeSection",
+    "title": "Walrus in List Comprehensions & Loops",
+    "type": "narration"
+  },
+  {
+    "src": "Day02/New_PyDay02Question01.mp3",
+    "target": "#questionBar",
+    "title": "Question 1",
+    "type": "question",
+    "qId": 1
+  },
+  {
+    "src": "Day02/New_PyDay02Question01sol.mp3",
+    "target": "#questionBar",
+    "title": "Q1 Solution Walkthrough",
+    "type": "solution",
+    "qId": 1
+  },
+  {
+    "src": "Day02/New_PyDay02Question02.mp3",
+    "target": "#questionBar",
+    "title": "Question 2",
+    "type": "question",
+    "qId": 2
+  },
+  {
+    "src": "Day02/New_PyDay02Question02sol.mp3",
+    "target": "#questionBar",
+    "title": "Q2 Solution Walkthrough",
+    "type": "solution",
+    "qId": 2
+  },
+  {
+    "src": "Day02/New_PyDay02Question03.mp3",
+    "target": "#questionBar",
+    "title": "Question 3",
+    "type": "question",
+    "qId": 3
+  },
+  {
+    "src": "Day02/New_PyDay02Question03sol.mp3",
+    "target": "#questionBar",
+    "title": "Q3 Solution Walkthrough",
+    "type": "solution",
+    "qId": 3
+  },
+  {
+    "src": "Day02/New_PyDay02Question04.mp3",
+    "target": "#questionBar",
+    "title": "Question 4",
+    "type": "question",
+    "qId": 4
+  },
+  {
+    "src": "Day02/New_PyDay02Question04sol.mp3",
+    "target": "#questionBar",
+    "title": "Q4 Solution Walkthrough",
+    "type": "solution",
+    "qId": 4
+  },
+  {
+    "src": "Day02/New_PyDay02Question05.mp3",
+    "target": "#questionBar",
+    "title": "Question 5",
+    "type": "question",
+    "qId": 5
+  },
+  {
+    "src": "Day02/New_PyDay02Question05sol.mp3",
+    "target": "#questionBar",
+    "title": "Q5 Solution Walkthrough",
+    "type": "solution",
+    "qId": 5
+  },
+  {
+    "src": "Day02/New_PyDay02Question06.mp3",
+    "target": "#questionBar",
+    "title": "Question 6",
+    "type": "question",
+    "qId": 6
+  },
+  {
+    "src": "Day02/New_PyDay02Question06sol.mp3",
+    "target": "#questionBar",
+    "title": "Q6 Solution Walkthrough",
+    "type": "solution",
+    "qId": 6
+  },
+  {
+    "src": "Day02/New_PyDay02Question07.mp3",
+    "target": "#questionBar",
+    "title": "Question 7",
+    "type": "question",
+    "qId": 7
+  },
+  {
+    "src": "Day02/New_PyDay02Question07sol.mp3",
+    "target": "#questionBar",
+    "title": "Q7 Solution Walkthrough",
+    "type": "solution",
+    "qId": 7
+  },
+  {
+    "src": "Day02/New_PyDay02Question08.mp3",
+    "target": "#questionBar",
+    "title": "Question 8",
+    "type": "question",
+    "qId": 8
+  },
+  {
+    "src": "Day02/New_PyDay02Question08sol.mp3",
+    "target": "#questionBar",
+    "title": "Q8 Solution Walkthrough",
+    "type": "solution",
+    "qId": 8
+  },
+  {
+    "src": "Day02/New_PyDay02Question09.mp3",
+    "target": "#questionBar",
+    "title": "Question 9",
+    "type": "question",
+    "qId": 9
+  },
+  {
+    "src": "Day02/New_PyDay02Question09sol.mp3",
+    "target": "#questionBar",
+    "title": "Q9 Solution Walkthrough",
+    "type": "solution",
+    "qId": 9
+  },
+  {
+    "src": "Day02/New_PyDay02Question10.mp3",
+    "target": "#questionBar",
+    "title": "Question 10",
+    "type": "question",
+    "qId": 10
+  },
+  {
+    "src": "Day02/New_PyDay02Question10sol.mp3",
+    "target": "#questionBar",
+    "title": "Q10 Solution Walkthrough",
+    "type": "solution",
+    "qId": 10
+  },
+  {
+    "src": "Day02/New_PyDay02Question11.mp3",
+    "target": "#questionBar",
+    "title": "Question 11",
+    "type": "question",
+    "qId": 11
+  },
+  {
+    "src": "Day02/New_PyDay02Question11sol.mp3",
+    "target": "#questionBar",
+    "title": "Q11 Solution Walkthrough",
+    "type": "solution",
+    "qId": 11
+  },
+  {
+    "src": "Day02/New_PyDay02Question12.mp3",
+    "target": "#questionBar",
+    "title": "Question 12",
+    "type": "question",
+    "qId": 12
+  },
+  {
+    "src": "Day02/New_PyDay02Question12sol.mp3",
+    "target": "#questionBar",
+    "title": "Q12 Solution Walkthrough",
+    "type": "solution",
+    "qId": 12
+  },
+  {
+    "src": "Day02/New_PyDay02Question13.mp3",
+    "target": "#questionBar",
+    "title": "Question 13",
+    "type": "question",
+    "qId": 13
+  },
+  {
+    "src": "Day02/New_PyDay02Question13sol.mp3",
+    "target": "#questionBar",
+    "title": "Q13 Solution Walkthrough",
+    "type": "solution",
+    "qId": 13
+  },
+  {
+    "src": "Day02/New_PyDay02Question14.mp3",
+    "target": "#questionBar",
+    "title": "Question 14",
+    "type": "question",
+    "qId": 14
+  },
+  {
+    "src": "Day02/New_PyDay02Question14sol.mp3",
+    "target": "#questionBar",
+    "title": "Q14 Solution Walkthrough",
+    "type": "solution",
+    "qId": 14
+  },
+  {
+    "src": "Day02/New_PyDay02Question15.mp3",
+    "target": "#questionBar",
+    "title": "Question 15",
+    "type": "question",
+    "qId": 15
+  },
+  {
+    "src": "Day02/New_PyDay02Question15sol.mp3",
+    "target": "#questionBar",
+    "title": "Q15 Solution Walkthrough",
+    "type": "solution",
+    "qId": 15
+  }
+],
+    durations: [
+  23.76,
+  17.64,
+  14.4,
+  14.98,
+  13.97,
+  11.33,
+  12.72,
+  12.94,
+  13.49,
+  12.12,
+  12.77,
+  11.26,
+  11.98,
+  14.18,
+  12.5,
+  11.93,
+  15.5,
+  11.45,
+  9.48,
+  12.55,
+  9.24,
+  13.66,
+  10.01,
+  16.06,
+  8.28,
+  12.84,
+  8.42,
+  15.77,
+  8.54,
+  22.37,
+  9.43,
+  16.7,
+  8.09,
+  13.94,
+  8.88,
+  9.7,
+  9.62,
+  6.6,
+  7.58,
+  8.02,
+  9.0,
+  7.37,
+  8.45,
+  6.82,
+  9.1,
+  9.02,
+  8.93,
+  8.5
+]
+  }
+};
+
+
+function updateLoadingProgress(pct) {
+  const bar = document.getElementById('pyLoadingBar');
+  if (bar) bar.style.width = pct + '%';
+}
+
+async function loadPyodideRuntime() {
+  try {
+    updateLoadingProgress(20);
+    if (typeof loadPyodide === 'function') {
+      pyodide = await loadPyodide({
+        indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.25.0/full/'
+      });
+      updateLoadingProgress(70);
+
+      // Pre-warm stdlib imports
+      await pyodide.runPythonAsync(`
+import sys, io, math, time, functools, copy
+from collections import defaultdict, Counter, namedtuple
+from decimal import Decimal
+print("Python 3.11 engine ready.")
+`);
+      updateLoadingProgress(100);
+      pyodideReady = true;
+
+      const runBtn = document.getElementById('runBtn');
+      if (runBtn) {
+        runBtn.disabled = false;
+        runBtn.textContent = '▶ Run';
+      }
+      const testRunBtn = document.getElementById('testRunBtn');
+      if (testRunBtn) {
+        testRunBtn.disabled = false;
+        testRunBtn.textContent = '▶ Run';
+      }
+
+      const initMsg = document.getElementById('outputInitMsg');
+      if (initMsg) initMsg.textContent = '⚡ Python 3.11 engine ready. Write code and click Run!';
+    }
+  } catch (err) {
+    console.warn('Pyodide background loading notice:', err);
+    const initMsg = document.getElementById('outputInitMsg');
+    if (initMsg && !pyodideReady) initMsg.textContent = '⚠️ Python runtime loading in background...';
+  }
+}
 
 // ── Initialisation ────────────────────────────────────────────
 
-async function init() {
-  // Load Python engine
-  try {
-    updateLoadingProgress(20);
-    pyodide = await loadPyodide({
-      indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.25.0/full/'
-    });
-    updateLoadingProgress(70);
+function init() {
+  initTheme();
+  updateOverallScoreUI();
 
-    // Pre-warm stdlib imports used by test questions
-    await pyodide.runPythonAsync(`
-import sys, io, math, time, functools, copy
-from collections import defaultdict, Counter, namedtuple
-from enum import Enum
-print("Python engine ready.")
-`);
-    updateLoadingProgress(100);
-    pyodideReady = true;
-
-    // Enable run buttons
-    document.getElementById('runBtn').disabled = false;
-    document.getElementById('runBtn').textContent = '▶ Run';
-    document.getElementById('testRunBtn').disabled = false;
-    document.getElementById('testRunBtn').textContent = '▶ Run';
-
-    const initMsg = document.getElementById('outputInitMsg');
-    if (initMsg) initMsg.textContent = '✅ Python 3.11 ready. Write code and click Run.';
-
-  } catch (err) {
-    console.error('Pyodide failed to load:', err);
-    document.getElementById('outputInitMsg').textContent = '❌ Python engine failed to load. Check your internet connection.';
-  }
-
+  // Dismiss loading overlay smoothly so UI is immediately interactive
   setTimeout(() => {
     const overlay = document.getElementById('pyLoadingOverlay');
-    if (overlay) overlay.style.display = 'none';
-  }, 800);
+    if (overlay) {
+      overlay.style.opacity = '0';
+      overlay.style.transition = 'opacity 0.25s ease';
+      setTimeout(() => { overlay.style.display = 'none'; }, 250);
+    }
+  }, 100);
 
-  // Populate day selector
+  // Initialize CodeMirror editor
+  initMainEditor();
+
+  // Build Day Selector
   buildDaySelector();
 
-  // Load day based on search query parameter (?day=1 or ?day=2) or default to manifest[0]
+  // Resolve current day
   const urlParams = new URLSearchParams(window.location.search);
-  const requestedDay = parseInt(urlParams.get('day'), 10);
-  let initialDay = window.COURSE_MANIFEST && window.COURSE_MANIFEST[0];
-  if (requestedDay && window.COURSE_MANIFEST) {
-    const found = window.COURSE_MANIFEST.find(d => d.day === requestedDay);
-    if (found) initialDay = found;
+  let pathDay = null;
+  const pathMatch = window.location.pathname.match(/day(\d+)\.html/i);
+  if (pathMatch) pathDay = parseInt(pathMatch[1], 10);
+  const requestedDay = parseInt(urlParams.get('day'), 10) || window.COURSE_DAY || pathDay || 1;
+
+  let initialDay = null;
+  if (window.COURSE_MANIFEST && window.COURSE_MANIFEST.length > 0) {
+    initialDay = window.COURSE_MANIFEST.find(d => d.day === requestedDay) || window.COURSE_MANIFEST[0];
   }
   if (initialDay) {
     loadDay(initialDay.id);
+  } else {
+    // Fallback direct load
+    const fallbackId = requestedDay === 2 ? 'pyDay02' : 'pyDay01';
+    loadDay(fallbackId);
   }
 
-  // Init main CodeMirror editor
-  initMainEditor();
-
-  // Init divider drag
+  // Setup resizable divider
   initDivider();
 
-  // Initialize premium custom dropdown overlays
-  initCustomDropdowns();
+  // Background runtime loading
+  loadPyodideRuntime();
+
+  // Close popovers when clicking outside
+  document.addEventListener('click', e => {
+    const qWrapper = document.getElementById('qPickerWrapper');
+    const qPopover = document.getElementById('qPickerPopover');
+    if (qWrapper && !qWrapper.contains(e.target) && qPopover) {
+      qPopover.style.display = 'none';
+    }
+
+    const chapBtn = document.getElementById('chapterPillBtn');
+    const chapList = document.getElementById('chapterList');
+    if (chapBtn && !chapBtn.contains(e.target) && chapList && !chapList.contains(e.target)) {
+      chapList.style.display = 'none';
+    }
+
+    const volWrapper = document.querySelector('.volume-control-wrapper');
+    const volPopover = document.getElementById('volumePopover');
+    if (volWrapper && !volWrapper.contains(e.target) && volPopover) {
+      volPopover.classList.remove('open');
+      document.getElementById('volumeBtn')?.classList.remove('active');
+    }
+
+    const speedWrapper = document.querySelector('.speed-control-wrapper');
+    const speedPopover = document.getElementById('speedPopover');
+    if (speedWrapper && !speedWrapper.contains(e.target) && speedPopover) {
+      speedPopover.classList.remove('open');
+      document.getElementById('speedControlBtn')?.classList.remove('active');
+    }
+  });
+
+  // Hotkeys: Ctrl+Enter / Cmd+Enter runs code
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      e.preventDefault();
+      const testOverlay = document.getElementById('testOverlay');
+      if (testOverlay && testOverlay.style.display === 'flex') {
+        runTestCode();
+      } else {
+        runCurrentCode();
+      }
+    }
+  });
 }
 
 function updateLoadingProgress(pct) {
@@ -112,84 +815,276 @@ function updateLoadingProgress(pct) {
   if (bar) bar.style.width = pct + '%';
 }
 
-function isPaidUser() {
-  if (localStorage.getItem('manodemy_enrolled') === 'true') return true;
+// ── Theme Engine (100% Parity with SQL Studio) ──────────────────
+
+function initTheme() {
   try {
-    const supaData = localStorage.getItem('sb-erqoyvbuhmkyvcqgwcbz-auth-token');
-    if (supaData) {
-      const parsed = JSON.parse(supaData);
-      if (parsed?.user?.user_metadata?.plan === 'pro') return true;
-    }
-  } catch (e) {}
-  return false;
+    const saved = localStorage.getItem('manodemy-theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.setAttribute('data-theme', saved);
+    updateThemeToggleUI(saved);
+  } catch (e) {
+    console.error('Error initTheme:', e);
+  }
 }
 
-// ── Day Selector ──────────────────────────────────────────────
+function updateThemeToggleUI(theme) {
+  const btn = document.getElementById('themeToggleBtn');
+  if (!btn) return;
+  const isLight = theme === 'light';
+  btn.setAttribute('aria-checked', isLight ? 'true' : 'false');
+  btn.title = isLight ? 'Switch to Dark mode' : 'Switch to Light mode';
+  btn.setAttribute('aria-label', isLight ? 'Switch to Dark mode' : 'Switch to Light mode');
+}
+
+function toggleTheme() {
+  try {
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+    document.body.classList.add('theme-transitioning');
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('manodemy-theme', newTheme);
+    updateThemeToggleUI(newTheme);
+
+    const isLight = newTheme === 'light';
+    const cmTheme = isLight ? 'default' : 'dracula';
+    if (typeof mainEditor !== 'undefined' && mainEditor) {
+      mainEditor.setOption('theme', cmTheme);
+      setTimeout(() => { try { mainEditor.refresh(); } catch (e) {} }, 50);
+    }
+    if (typeof testEditor !== 'undefined' && testEditor) {
+      testEditor.setOption('theme', cmTheme);
+      setTimeout(() => { try { testEditor.refresh(); } catch (e) {} }, 50);
+    }
+
+    setTimeout(() => {
+      document.body.classList.remove('theme-transitioning');
+    }, 400);
+  } catch (e) {
+    console.error('Error toggling theme:', e);
+  }
+}
+window.initTheme = initTheme;
+window.toggleTheme = toggleTheme;
+window.updateThemeToggleUI = updateThemeToggleUI;
+
+// ── Overall Scorecard Badge (/ 1500) ──────────────────────────
+
+function updateOverallScoreUI() {
+  let totalScore = 0;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && parsed.days) {
+        Object.keys(parsed.days).forEach(k => {
+          totalScore += (parsed.days[k].bestScore || 0);
+          totalScore += (parsed.days[k].marks || 0);
+        });
+      }
+    }
+  } catch (e) {}
+
+  const scoreEls = document.querySelectorAll('#headerOverallScore, #testHeaderOverallScore, .overall-score-num');
+  scoreEls.forEach(el => {
+    el.textContent = Math.round(totalScore);
+  });
+
+  const fills = document.querySelectorAll('#overallScoreBarFill, #testOverallScoreBarFill, .overall-score-bar-fill');
+  const pct = Math.min(100, Math.max(0, (totalScore / 1500) * 100));
+  fills.forEach(f => {
+    f.style.width = `${pct}%`;
+  });
+}
+window.updateOverallScoreUI = updateOverallScoreUI;
+
+// ── Navigation & Day Selection ─────────────────────────────────
 
 function buildDaySelector() {
   const sel = document.getElementById('daySelect');
-  if (!sel || !window.COURSE_MANIFEST) return;
-  sel.innerHTML = window.COURSE_MANIFEST.map(d =>
-    `<option value="${d.id}">${d.emoji || '🐍'} Day ${String(d.day).padStart(2,'0')}: ${d.title}</option>`
-  ).join('');
-  sel.addEventListener('change', () => loadDay(sel.value));
+  if (!sel) return;
+  sel.innerHTML = '';
+
+  const manifest = window.COURSE_MANIFEST || [
+    { day: 1, id: 'pyDay01', title: 'Data Types & Memory', emoji: '🔢' },
+    { day: 2, id: 'pyDay02', title: 'Operators & Expressions', emoji: '⚙️' }
+  ];
+
+  manifest.forEach(item => {
+    const opt = document.createElement('option');
+    opt.value = item.id;
+    opt.textContent = `Day ${String(item.day).padStart(2,'0')}: ${item.title}`;
+    sel.appendChild(opt);
+  });
+
+  sel.onchange = () => {
+    const targetDay = manifest.find(m => m.id === sel.value);
+    if (targetDay) {
+      window.location.href = `/python/day${String(targetDay.day).padStart(2,'0')}.html`;
+    }
+  };
 }
 
-// Custom dropdown initializer to replace native select inputs with a premium dropdown menu
+function loadDay(dayId) {
+  currentDayId = dayId;
+  currentDayData = (window.COURSE_CONTENT && window.COURSE_CONTENT[dayId]) || null;
+
+  if (!currentDayData) {
+    console.error(`Course data for ${dayId} not found.`);
+    return;
+  }
+
+  // Sync daySelect dropdown value
+  const daySel = document.getElementById('daySelect');
+  if (daySel) daySel.value = dayId;
+
+  // Initialize master timeline tracks for this day
+  const registry = PYTHON_DAY_TRACKS[dayId] || PYTHON_DAY_TRACKS['pyDay01'];
+  combinedTracks = registry.tracks.slice();
+  combinedTrackDurations = registry.durations.slice();
+  totalCombinedDuration = combinedTrackDurations.reduce((acc, d) => acc + d, 0);
+
+  const seekBar = document.getElementById('seekBar');
+  if (seekBar) {
+    seekBar.max = totalCombinedDuration;
+    seekBar.value = 0;
+  }
+  const pTime = document.getElementById('playbackTime');
+  if (pTime) {
+    pTime.textContent = `0:00 / ${formatTime(totalCombinedDuration)}`;
+  }
+
+  // Build topic selector & chapter list
+  buildTopicSelector();
+  buildChapterList();
+  initCustomDropdowns();
+
+  // Render the unified continuous lesson document
+  currentSlideIndex = 0;
+  renderSlide(0);
+
+  // Load first practice question
+  currentQuestionIndex = 0;
+  buildQPickerList();
+  loadPracticeQuestion(0);
+
+  // Update stats
+  updateStatsCard();
+}
+
+function buildTopicSelector() {
+  const sel = document.getElementById('topicSelect');
+  if (!sel || !currentDayData) return;
+  sel.innerHTML = '';
+
+  const topics = currentDayData.topics || [
+    { id: 'topic-1', label: currentDayData.title || 'Lesson', duration: '12:00' }
+  ];
+
+  const multiTopic = topics.length > 1;
+  topics.forEach((t, idx) => {
+    const opt = document.createElement('option');
+    opt.value = t.id;
+    const cleaned = t.label.replace(/^(Topic\s+\d+:\s*|\d+\.\s*)/i, '').replace(/\s*\([0-9:]+\)\s*$/, '');
+    opt.textContent = multiTopic ? `Topic 0${idx + 1}: ${cleaned}` : cleaned;
+    sel.appendChild(opt);
+  });
+}
+
+function onTopicSelectChange(topicId) {
+  const target = document.getElementById(topicId);
+  if (target) {
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else {
+    const sc = document.getElementById('slideContent');
+    if (sc) sc.scrollTop = 0;
+  }
+}
+
+// ── Custom Dropdowns Initializer (100% SQL Flagship Parity) ───────
 function initCustomDropdowns() {
   const selects = document.querySelectorAll('.day-picker-pill select');
   selects.forEach(select => {
-    select.style.display = 'none';
     const wrapper = select.parentElement;
-    
-    // Remove legacy dot and chevron elements to prevent duplicate icons
-    wrapper.querySelectorAll('.day-picker-dot, .day-picker-chevron').forEach(el => el.remove());
+    if (!wrapper) return;
+
+    select.style.display = 'none';
 
     let trigger = wrapper.querySelector('.custom-select-trigger');
     let optionsMenu = wrapper.querySelector('.custom-select-options');
-    
+
+    // Remove legacy loose dot and chevron elements to prevent duplicate icons
+    wrapper.querySelectorAll('.day-picker-dot, .day-picker-chevron').forEach(el => {
+      if (!el.closest('.custom-select-trigger')) el.remove();
+    });
+
+    if (!trigger) {
+      trigger = document.createElement('div');
+      trigger.className = 'custom-select-trigger';
+      wrapper.appendChild(trigger);
+    }
+
+    if (!trigger.querySelector('.selected-text')) {
+      trigger.innerHTML = `
+        <span class="selected-text"></span>
+        <span class="day-picker-chevron">
+          <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1.5L5 5L9 1.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+      `;
+    }
+
+    if (!optionsMenu) {
+      optionsMenu = document.createElement('div');
+      optionsMenu.className = 'custom-select-options';
+      wrapper.appendChild(optionsMenu);
+    }
+
     function updateTriggerText() {
       const textSpan = trigger.querySelector('.selected-text');
-      if (textSpan) {
-        const option = select.options[select.selectedIndex];
-        if (select.id === 'topicSelect' && option) {
-          const slideIdx = parseInt(option.value);
-          const duration = getSlideDurationString(slideIdx);
-          const slide = currentDayData && currentDayData.slides && currentDayData.slides[slideIdx];
-          const cleanedTitle = slide ? slide.title.replace(/^\d+\.\s*/, '') : option.text;
-          textSpan.innerHTML = `
-            <span class="trigger-title">Topic 0${slideIdx + 1}: ${cleanedTitle}</span>
-            <span class="trigger-duration-badge">${duration}</span>
-          `;
-        } else if (option) {
-          if (select.id === 'daySelect') {
-            const allDays = window.COURSE_MANIFEST_60 || [];
-            const activeDay = allDays.find(d => d.id === option.value) || { track: 'python', globalDay: 31 };
-            const svgIcons = window.SVG_TRACK_ICONS || {};
-            const iconHtml = svgIcons[activeDay.track] || svgIcons.python || '🐍';
+      if (!textSpan) return;
 
-            textSpan.innerHTML = `
-              <span style="display:inline-flex;align-items:center;gap:6px;">
-                ${iconHtml}
-                <strong>Day ${String(activeDay.globalDay || 31).padStart(2, '0')}</strong>
-              </span>
-            `;
-          } else {
-            textSpan.textContent = option.text;
-          }
-        } else {
-          textSpan.textContent = '';
+      if (select.id === 'daySelect') {
+        const val = select.value || currentDayId || 'pyDay01';
+        let dayNumStr = '01';
+        if (val.toLowerCase().includes('02') || val.toLowerCase().includes('day2')) dayNumStr = '02';
+        else if (val.toLowerCase().includes('01') || val.toLowerCase().includes('day1')) dayNumStr = '01';
+        else {
+          const match = val.match(/\d+/);
+          if (match) dayNumStr = String(match[0]).padStart(2, '0');
         }
+
+        const svgIcons = window.SVG_TRACK_ICONS || {};
+        const iconHtml = svgIcons.python || '<span class="track-logo-badge track-logo-python" title="Python Track"><svg viewBox="45.9 0 367.2 459" fill="none" style="width:14px;height:14px;"><path fill="#306998" d="M229.5 0C161.4 0 122.4 15.6 122.4 53.6v34.4h107.1v15.3H122.4c-47.8 0-76.5 30.6-76.5 76.5v61.2c0 45.9 28.7 76.5 76.5 76.5h30.6v-45.9c0-51 41.3-91.8 91.8-91.8h107.1V107.1c0-53.6-47.8-107.1-122.4-107.1zM175.9 30.6c8.4 0 15.3 6.9 15.3 15.3s-6.9 15.3-15.3 15.3-15.3-6.9-15.3-15.3 6.9-15.3 15.3-15.3z" /><path fill="#FFE873" d="M229.5 459c68.1 0 107.1-15.6 107.1-53.6v-34.4H229.5v-15.3h107.1c47.8 0 76.5-30.6 76.5-76.5v-61.2c0-45.9-28.7-76.5-76.5-76.5h-30.6v45.9c0 51-41.3 91.8-91.8 91.8H122.4V351.9c0 53.6 47.8 107.1 22.4 107.1zm53.6-30.6c-8.4 0-15.3-6.9-15.3-15.3s6.9-15.3 15.3-15.3 15.3-6.9 15.3-15.3z" /></svg></span>';
+
+        textSpan.innerHTML = `
+          <span style="display:inline-flex;align-items:center;gap:6px;">
+            ${iconHtml}
+            <strong>Day ${dayNumStr}</strong>
+          </span>
+        `;
+      } else if (select.id === 'topicSelect') {
+        const topics = (currentDayData && currentDayData.topics) || [];
+        const activeTopic = topics.find(t => t.id === select.value) || topics[0];
+        const rawTitle = activeTopic ? activeTopic.label : (currentDayData ? currentDayData.title : 'Overview');
+        const cleanedTitle = rawTitle.replace(/^(Topic\s+\d+:\s*|\d+\.\s*)/i, '').replace(/\s*\([0-9:]+\)\s*$/, '');
+        const multiTopic = topics.length > 1;
+        const displayTitle = multiTopic ? rawTitle : cleanedTitle;
+        const topicDuration = activeTopic && activeTopic.duration ? activeTopic.duration : (currentDayData && currentDayData.slides && currentDayData.slides[0]?.duration ? currentDayData.slides[0].duration : '12:00');
+
+        textSpan.innerHTML = `
+          <span class="trigger-title">${displayTitle}</span>
+          <span class="trigger-duration-badge">${topicDuration}</span>
+        `;
       }
     }
 
     function populateOptions() {
       optionsMenu.innerHTML = '';
-      const isPaid = isPaidUser();
-      const allDays = window.COURSE_MANIFEST_60 || [];
       const svgIcons = window.SVG_TRACK_ICONS || {};
+      const allDays = window.COURSE_MANIFEST_60 || [];
 
       if (select.id === 'daySelect' && allDays.length > 0) {
+        // Group all 60 days into 3 categorized sections
         const tracks = [
           { key: 'sql', label: '🗄️ SQL Mastery (Days 01–18)', days: allDays.filter(d => d.track === 'sql') },
           { key: 'excel', label: '📊 Advanced Excel & BI (Days 19–30)', days: allDays.filter(d => d.track === 'excel') },
@@ -203,19 +1098,16 @@ function initCustomDropdowns() {
           optionsMenu.appendChild(header);
 
           trackGroup.days.forEach(d => {
-            const isUnpaidLocked = (!d.free && !isPaid);
-            const isComingSoon = (!d.prepared);
-            const isSelected = (select.value === d.id || (select.value === 'pyDay01' && d.id === 'pyDay01'));
+            const isSelected = (select.value === d.id || currentDayId === d.id || (currentDayId === 'pyDay01' && d.id === 'pyDay01') || (currentDayId === 'pyDay02' && d.id === 'pyDay02'));
+            const isLocked = (!d.prepared && !d.free);
             const optionItem = document.createElement('div');
-            optionItem.className = `custom-select-option${isSelected ? ' selected' : ''}${isUnpaidLocked ? ' is-locked' : ''}`;
-            
+            optionItem.className = `custom-select-option${isSelected ? ' selected' : ''}${isLocked ? ' is-locked' : ''}`;
+
             const iconSvg = svgIcons[d.track] || '';
-            const dayNumStr = String(d.globalDay).padStart(2, '0');
+            const dayNumStr = String(d.trackDay || d.globalDay).padStart(2, '0');
 
             let badgeHtml = '';
-            if (isUnpaidLocked) {
-              badgeHtml = '<span class="day-lock-badge" title="Pro subscription required">🔒</span>';
-            } else if (isComingSoon) {
+            if (isLocked) {
               badgeHtml = '<span class="day-coming-soon-badge" title="Under active development">Coming Soon</span>';
             } else if (d.free) {
               badgeHtml = '<span class="day-free-badge">FREE</span>';
@@ -235,16 +1127,8 @@ function initCustomDropdowns() {
             optionItem.dataset.value = d.id;
             optionItem.addEventListener('click', (e) => {
               e.stopPropagation();
-              if (isUnpaidLocked) {
-                window.location.href = '../index.html#pricing?locked=true';
-                return;
-              }
-              if (isComingSoon) {
-                if (window.showComingSoonToast) {
-                  window.showComingSoonToast(d.title, d.globalDay);
-                } else {
-                  alert(`Day ${dayNumStr} is currently in active development and coming soon!`);
-                }
+              if (isLocked) {
+                alert(`Day ${dayNumStr} (${d.title}) is currently under active preparation and coming soon!`);
                 return;
               }
               window.location.href = d.url;
@@ -252,83 +1136,71 @@ function initCustomDropdowns() {
             optionsMenu.appendChild(optionItem);
           });
         });
-      } else {
-        Array.from(select.options).forEach((opt) => {
+      } else if (select.id === 'topicSelect') {
+        const topics = (currentDayData && currentDayData.topics) || [];
+        const multiTopic = topics.length > 1;
+        topics.forEach((t, idx) => {
           const optionItem = document.createElement('div');
-          optionItem.className = `custom-select-option${opt.selected ? ' selected' : ''}`;
-          
-          if (select.id === 'topicSelect') {
-            const slideIdx = parseInt(opt.value);
-            const duration = getSlideDurationString(slideIdx);
-            const slide = currentDayData && currentDayData.slides && currentDayData.slides[slideIdx];
-            const cleanedTitle = slide ? slide.title.replace(/^\d+\.\s*/, '') : opt.text;
-            optionItem.innerHTML = `
-              <span class="option-title">Topic 0${slideIdx + 1}: ${cleanedTitle}</span>
-              <span class="option-duration">${duration}</span>
-            `;
-          } else {
-            optionItem.textContent = opt.text;
-          }
-          
-          optionItem.dataset.value = opt.value;
+          const isSelected = (select.value === t.id || (!select.value && idx === 0));
+          optionItem.className = `custom-select-option${isSelected ? ' selected' : ''}`;
+          const cleaned = t.label.replace(/^(Topic\s+\d+:\s*|\d+\.\s*)/i, '').replace(/\s*\([0-9:]+\)\s*$/, '');
+          const labelText = multiTopic ? `Topic 0${idx + 1}: ${cleaned}` : cleaned;
+          optionItem.innerHTML = `
+            <span class="option-title">${labelText}</span>
+            <span class="option-duration">${t.duration || '2:00'}</span>
+          `;
+          optionItem.dataset.value = t.id;
           optionItem.addEventListener('click', (e) => {
             e.stopPropagation();
-            select.value = opt.value;
+            select.value = t.id;
             select.dispatchEvent(new Event('change'));
             optionsMenu.classList.remove('open');
             wrapper.classList.remove('open');
             trigger.classList.remove('open');
+
+            // Smooth scroll directly to the selected section
+            const sec = document.getElementById(t.id);
+            if (sec) {
+              sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
           });
           optionsMenu.appendChild(optionItem);
         });
       }
+
+      const isSingleTopic = (select.id === 'topicSelect' && (!currentDayData || !currentDayData.topics || currentDayData.topics.length <= 1));
+
+      if (isSingleTopic) {
+        wrapper.classList.add('no-dropdown');
+        const chev = trigger.querySelector('.day-picker-chevron');
+        if (chev) chev.style.display = 'none';
+        wrapper.onclick = null;
+      } else {
+        wrapper.classList.remove('no-dropdown');
+        const chev = trigger.querySelector('.day-picker-chevron');
+        if (chev) chev.style.display = 'flex';
+
+        wrapper.onclick = (e) => {
+          e.stopPropagation();
+          const isOpen = optionsMenu.classList.contains('open');
+          document.querySelectorAll('.custom-select-options').forEach(menu => {
+            menu.classList.remove('open');
+            menu.parentElement.classList.remove('open');
+            if (menu.previousElementSibling) menu.previousElementSibling.classList.remove('open');
+          });
+          if (!isOpen) {
+            optionsMenu.classList.add('open');
+            wrapper.classList.add('open');
+            trigger.classList.add('open');
+          }
+        };
+      }
+
       updateTriggerText();
     }
-    
-    if (trigger && optionsMenu) {
-      populateOptions();
-      return;
-    }
-    
-    // Remove old native chevron
-    wrapper.querySelector('.day-picker-chevron')?.remove();
-    
-    if (!trigger) {
-      trigger = document.createElement('div');
-      trigger.className = 'custom-select-trigger';
-      wrapper.appendChild(trigger);
-    }
-    
-    if (!optionsMenu) {
-      optionsMenu = document.createElement('div');
-      optionsMenu.className = 'custom-select-options';
-      wrapper.appendChild(optionsMenu);
-    }
-    
-    trigger.innerHTML = `
-      <span class="selected-text"></span>
-      <span class="day-picker-chevron">
-        <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1.5L5 5L9 1.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </span>
-    `;
-    
+
     populateOptions();
-    
-    wrapper.onclick = (e) => {
-      e.stopPropagation();
-      const isOpen = optionsMenu.classList.contains('open');
-      document.querySelectorAll('.custom-select-options').forEach(menu => {
-        menu.classList.remove('open');
-        menu.parentElement.classList.remove('open');
-        menu.previousElementSibling.classList.remove('open');
-      });
-      if (!isOpen) {
-        optionsMenu.classList.add('open');
-        wrapper.classList.add('open');
-        trigger.classList.add('open');
-      }
-    };
-    
+
     select.addEventListener('change', () => {
       updateTriggerText();
       optionsMenu.querySelectorAll('.custom-select-option').forEach(el => {
@@ -339,210 +1211,970 @@ function initCustomDropdowns() {
         }
       });
     });
-    
+
     const observer = new MutationObserver(() => {
       populateOptions();
     });
     observer.observe(select, { childList: true });
-    
-    const descriptor = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value');
-    Object.defineProperty(select, 'value', {
-      get() {
-        return descriptor.get.call(this);
-      },
-      set(val) {
-        descriptor.set.call(this, val);
-        updateTriggerText();
-        optionsMenu.querySelectorAll('.custom-select-option').forEach(el => {
-          if (el.dataset.value === String(val)) {
-            el.classList.add('selected');
-          } else {
-            el.classList.remove('selected');
-          }
-        });
-      }
-    });
+
+    if (!Object.getOwnPropertyDescriptor(select, 'value')) {
+      const descriptor = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value');
+      Object.defineProperty(select, 'value', {
+        configurable: true,
+        get() {
+          return descriptor.get.call(this);
+        },
+        set(val) {
+          descriptor.set.call(this, val);
+          updateTriggerText();
+          optionsMenu.querySelectorAll('.custom-select-option').forEach(el => {
+            if (el.dataset.value === String(val)) {
+              el.classList.add('selected');
+            } else {
+              el.classList.remove('selected');
+            }
+          });
+        }
+      });
+    }
   });
-  
+
+  // Global click outside listener to close dropdown menus
   document.addEventListener('click', () => {
     document.querySelectorAll('.custom-select-options').forEach(menu => {
       menu.classList.remove('open');
       menu.parentElement.classList.remove('open');
-      menu.previousElementSibling.classList.remove('open');
+      if (menu.previousElementSibling) menu.previousElementSibling.classList.remove('open');
     });
   });
 }
+window.initCustomDropdowns = initCustomDropdowns;
 
-function getSlideDurationString(slideIdx) {
-  if (currentDayData && currentDayData.slides && currentDayData.slides[slideIdx]) {
-    return currentDayData.slides[slideIdx].duration || '5:00';
+function buildChapterList() {
+  const list = document.getElementById('chapterList');
+  if (!list || !combinedTracks || combinedTracks.length === 0) return;
+  list.innerHTML = '';
+
+  const typeIcons = { narration: '▶', question: '❓', solution: '✅', completion: '🏆' };
+  let elapsed = 0;
+
+  combinedTracks.forEach((t, idx) => {
+    const dur = combinedTrackDurations[idx] || 0;
+    const item = document.createElement('div');
+    item.className = 'chapter-item' + (idx === combinedTrackIndex ? ' active' : '');
+    item.dataset.idx = idx;
+    item.setAttribute('role', 'option');
+    item.innerHTML = `
+      <span class="chapter-item__icon">${typeIcons[t.type] || '▶'}</span>
+      <span class="chapter-item__time">${formatTime(elapsed)}</span>
+      <span class="chapter-item__title">${t.title}</span>`;
+    item.addEventListener('click', (e) => {
+      e.stopPropagation();
+      seekCombinedPlayback(elapsed);
+      if (!isCombinedPlaying) playCombinedPlayback();
+      list.style.display = 'none';
+    });
+    list.appendChild(item);
+    elapsed += dur;
+  });
+}
+
+function updateChapterListActive() {
+  const listEl = document.getElementById('chapterList');
+  if (listEl) {
+    listEl.querySelectorAll('.chapter-item').forEach(item => {
+      item.classList.toggle('active', parseInt(item.dataset.idx, 10) === combinedTrackIndex);
+    });
   }
-  return '5:00';
+  const titleEl = document.getElementById('activeChapterTitle');
+  if (titleEl && combinedTracks && combinedTracks[combinedTrackIndex]) {
+    titleEl.textContent = combinedTracks[combinedTrackIndex].title || 'In this lesson';
+  }
 }
 
-function loadDay(dayId) {
-  const data = window.COURSE_CONTENT && window.COURSE_CONTENT[dayId];
-  if (!data) { console.warn('No content for', dayId); return; }
-
-  currentDayId   = dayId;
-  currentDayData = data;
-  currentSlideIndex = 0;
-  currentQuestionIndex = 0;
-
-  // Sync day selector
-  const sel = document.getElementById('daySelect');
-  if (sel) sel.value = dayId;
-
-  // Build topic selector
-  buildTopicSelector(data);
-
-  // Load slide 0
-  renderSlide(0);
-
-  // Load first practice question
-  loadPracticeQuestion(0);
-
-  // Update header stats
-  updateStatsCard();
-
-  // Update test title
-  const tt = document.getElementById('testTitle');
-  if (tt) tt.textContent = `🐍 Python Day ${data.day} — Interview Test`;
+function toggleChapterList(event) {
+  if (event && event.stopPropagation) event.stopPropagation();
+  const list = document.getElementById('chapterList');
+  if (!list) return;
+  list.style.display = list.style.display === 'none' ? 'block' : 'none';
+  if (list.style.display === 'block') {
+    buildChapterList();
+    updateChapterListActive();
+  }
 }
-
-// ── Topic Selector ────────────────────────────────────────────
-
-function buildTopicSelector(data) {
-  const sel = document.getElementById('topicSelect');
-  if (!sel || !data.slides) return;
-  sel.innerHTML = data.slides.map((s, i) =>
-    `<option value="${i}">${s.title}</option>`
-  ).join('');
-}
-
-function onTopicSelectChange(val) {
-  const idx = parseInt(val, 10);
-  if (!isNaN(idx)) renderSlide(idx);
-}
-
-// ── Slide Rendering ───────────────────────────────────────────
 
 function renderSlide(index) {
-  if (!currentDayData || !currentDayData.slides) return;
-  const slides = currentDayData.slides;
-  if (index < 0 || index >= slides.length) return;
-
+  if (!currentDayData || !currentDayData.slides || !currentDayData.slides[index]) return;
   currentSlideIndex = index;
+  const slide = currentDayData.slides[index];
 
-  const slide = slides[index];
-
-  // Update topic selector
-  const topicSel = document.getElementById('topicSelect');
-  if (topicSel) topicSel.value = index;
-
-  // Slide header
-  const header = document.getElementById('slideHeader');
-  if (header) {
-    header.innerHTML = `
-      <span class="slide-topic-tag">${slide.title}</span>
-      <span class="slide-duration" style="font-size:0.75rem;color:#64748b;margin-left:auto;">${slide.duration || ''}</span>
-    `;
+  // Update header text
+  const slideHeader = document.getElementById('slideHeader');
+  if (slideHeader) {
+    const h2 = slideHeader.querySelector('h2');
+    if (h2) h2.textContent = slide.title;
+  }
+  const activeChapterTitle = document.getElementById('activeChapterTitle');
+  if (activeChapterTitle) {
+    activeChapterTitle.textContent = slide.title.length > 28 ? slide.title.substring(0, 26) + '…' : slide.title;
   }
 
-  // Slide body
-  const body = document.getElementById('slideBodyText');
-  if (body) {
-    body.innerHTML = slide.html || '';
-    // Scroll to top
-    const sc = document.getElementById('slideContent');
-    if (sc) sc.scrollTop = 0;
+  // Render unified continuous document
+  const bodyText = document.getElementById('slideBodyText');
+  if (bodyText) {
+    bodyText.innerHTML = slide.html;
+    const skel = document.getElementById('slideSkeleton');
+    if (skel) skel.style.display = 'none';
   }
 
-  // Update present mode if open
-  const presentSlide = document.getElementById('presentSlideContent');
-  if (presentSlide) presentSlide.innerHTML = slide.html || '';
-
-  // Update counters
-  updateSlideCounter();
-
-  // Re-build slide narration track segments
-  buildNarrationTracksForSlide();
+  updateChapterListActive();
 }
 
-function updateSlideCounter() {
-  const slides = currentDayData ? (currentDayData.slides || []) : [];
-  const total = slides.length;
-  const cur = currentSlideIndex + 1;
-  const barEl = document.getElementById('slideCounterBar');
-  const presEl = document.getElementById('presentCounter');
-  if (barEl) barEl.textContent = `${cur} / ${total}`;
-  if (presEl) presEl.textContent = `${cur} / ${total}`;
+
+// ── Audio-Synced Typewriter & Visual Synchronization Engine ──────────
+
+const PYTHON_QUESTION_SOLUTIONS = {
+  'pyDay01': {
+    "1": {
+        "src": "Day01/New_PyDay01Question01sol.mp3",
+        "code": "print(\"Hello, Python for Data Analysis!\")",
+        "duration": 11.4,
+        "startAt": 1.3,
+        "endAt": 10.0,
+        "scrollAt": 10.6
+    },
+    "2": {
+        "src": "Day01/New_PyDay01Question02sol.mp3",
+        "code": "print(150 + 250)",
+        "duration": 12.8,
+        "startAt": 1.3,
+        "endAt": 11.4,
+        "scrollAt": 12.0
+    },
+    "3": {
+        "src": "Day01/New_PyDay01Question03sol.mp3",
+        "code": "print(\"Total Records:\", 500)",
+        "duration": 11.7,
+        "startAt": 1.3,
+        "endAt": 10.3,
+        "scrollAt": 10.9
+    },
+    "4": {
+        "src": "Day01/New_PyDay01Question04sol.mp3",
+        "code": "employee_count = 150\nprint(\"Employee Count:\", employee_count)",
+        "duration": 11.9,
+        "startAt": 1.3,
+        "endAt": 10.5,
+        "scrollAt": 11.1
+    },
+    "5": {
+        "src": "Day01/New_PyDay01Question05sol.mp3",
+        "code": "average_salary = 75450.50\nprint(\"Average Salary:\", average_salary)",
+        "duration": 14.5,
+        "startAt": 1.3,
+        "endAt": 13.1,
+        "scrollAt": 13.7
+    },
+    "6": {
+        "src": "Day01/New_PyDay01Question06sol.mp3",
+        "code": "company_name = \"Manodemy\"\nprint(\"Company Name:\", company_name)",
+        "duration": 10.7,
+        "startAt": 1.3,
+        "endAt": 9.3,
+        "scrollAt": 9.9
+    },
+    "7": {
+        "src": "Day01/New_PyDay01Question07sol.mp3",
+        "code": "is_full_time = True\nprint(\"Full Time Status:\", is_full_time)",
+        "duration": 9.4,
+        "startAt": 1.3,
+        "endAt": 8.0,
+        "scrollAt": 8.6
+    },
+    "8": {
+        "src": "Day01/New_PyDay01Question08sol.mp3",
+        "code": "sales_figures = [1200, 1450, 1800]\nprint(\"Sales Figures:\", sales_figures)",
+        "duration": 13.4,
+        "startAt": 1.3,
+        "endAt": 12.0,
+        "scrollAt": 12.6
+    },
+    "9": {
+        "src": "Day01/New_PyDay01Question09sol.mp3",
+        "code": "server_location = (\"Mumbai\", 19.07, 72.87)\nprint(\"Server Location:\", server_location)",
+        "duration": 14.3,
+        "startAt": 1.3,
+        "endAt": 12.9,
+        "scrollAt": 13.5
+    },
+    "10": {
+        "src": "Day01/New_PyDay01Question10sol.mp3",
+        "code": "customer_profile = {\"name\": \"Aarav\", \"orders\": 5}\nprint(\"Customer Profile:\", customer_profile)",
+        "duration": 12.9,
+        "startAt": 1.3,
+        "endAt": 11.5,
+        "scrollAt": 12.1
+    },
+    "11": {
+        "src": "Day01/New_PyDay01Question11sol.mp3",
+        "code": "unique_tags = {\"python\", \"sql\", \"analytics\"}\nprint(\"Unique Tags:\", unique_tags)",
+        "duration": 11.6,
+        "startAt": 1.3,
+        "endAt": 10.2,
+        "scrollAt": 10.8
+    },
+    "12": {
+        "src": "Day01/New_PyDay01Question12sol.mp3",
+        "code": "bonus_amount = None\nprint(\"Bonus Amount:\", bonus_amount)",
+        "duration": 9.6,
+        "startAt": 1.3,
+        "endAt": 8.2,
+        "scrollAt": 8.8
+    },
+    "13": {
+        "src": "Day01/New_PyDay01Question13sol.mp3",
+        "code": "from collections import defaultdict\n\ntransactions = [\n    {\"user_id\": \"U01\", \"device\": \"mobile\", \"ip\": \"10.0.0.1\", \"amount\": 120.50},\n    {\"user_id\": \"U01\", \"device\": \"mobile\", \"ip\": \"10.0.0.1\", \"amount\": 340.00},\n    {\"user_id\": \"U02\", \"device\": \"desktop\", \"ip\": \"192.168.1.5\", \"amount\": 85.75},\n    {\"user_id\": \"U01\", \"device\": \"mobile\", \"ip\": \"10.0.0.2\", \"amount\": 500.00},\n]\n\nfraud_map = defaultdict(float)\nfor tx in transactions:\n    key = (tx[\"user_id\"], tx[\"device\"], tx[\"ip\"])\n    fraud_map[key] += tx[\"amount\"]\nprint(dict(fraud_map))",
+        "duration": 13.8,
+        "startAt": 1.3,
+        "endAt": 12.4,
+        "scrollAt": 13.0
+    },
+    "14": {
+        "src": "Day01/New_PyDay01Question14sol.mp3",
+        "code": "nested = {\n    \"user\": {\n        \"name\": \"Aarav\",\n        \"address\": {\n            \"city\": \"Mumbai\",\n            \"pin\": None\n        }\n    },\n    \"score\": 95\n}\n\ndef flatten_dict(d, parent_key=''):\n    items = {}\n    for k, v in d.items():\n        new_key = f\"{parent_key}.{k}\" if parent_key else k\n        if isinstance(v, dict):\n            items.update(flatten_dict(v, new_key))\n        else:\n            items[new_key] = 'N/A' if v is None else v\n    return items\n\nflat = flatten_dict(nested)\nprint(flat)",
+        "duration": 13.7,
+        "startAt": 1.3,
+        "endAt": 12.3,
+        "scrollAt": 12.9
+    },
+    "15": {
+        "src": "Day01/New_PyDay01Question15sol.mp3",
+        "code": "import sys\n\nlst = []\njump_sizes = []\nprev_size = sys.getsizeof(lst)\n\nfor i in range(21):\n    lst.append(i)\n    cur_size = sys.getsizeof(lst)\n    if cur_size > prev_size:\n        jump_sizes.append((i, cur_size))\n        prev_size = cur_size\n\nprint(jump_sizes)",
+        "duration": 13.3,
+        "startAt": 1.3,
+        "endAt": 11.9,
+        "scrollAt": 12.5
+    }
+}
+};
+
+const THEORY_VISUAL_CUES = {
+  'Day01/New_PyDay01Audio01.mp3': [
+    { atSec: 0, target: '#day01WhyPythonSection', highlight: '#headingWhyPython' },
+    { atSec: 9.5, target: '.py-sp-grid', highlight: '.py-sp-grid .py-sp-card:nth-child(1)' },
+    { atSec: 17.5, target: '.py-sp-grid', highlight: '.py-sp-grid .py-sp-card:nth-child(2)' },
+    { atSec: 24.5, target: '.py-sp-grid', highlight: '.py-sp-grid .py-sp-card:nth-child(3)' },
+    { atSec: 32.5, target: '.py-sp-grid', highlight: '.py-sp-grid .py-sp-card:nth-child(4)' },
+    { atSec: 39.5, target: '.py-sp-grid', highlight: '.py-sp-grid .py-sp-card:nth-child(5)' }
+  ],
+  'Day01/New_PyDay01Audio02.mp3': [
+    { atSec: 0, target: '#day01ToolMatrixSection', highlight: '#day01ToolMatrixSection' },
+    { atSec: 9.5, target: '.py-matrix-table', highlight: '.py-matrix-table tbody tr:nth-child(1)' },
+    { atSec: 17.5, target: '.py-matrix-table', highlight: '.py-matrix-table tbody tr:nth-child(2)' },
+    { atSec: 27.5, target: '.py-matrix-table', highlight: '.py-matrix-table tbody tr:nth-child(3)' },
+    { atSec: 37.5, target: '.py-matrix-table', highlight: '.py-matrix-table tbody tr:nth-child(4), .py-matrix-table' }
+  ],
+  'Day01/New_PyDay01Audio03.mp3': [
+    { atSec: 0, target: '#day01MutabilitySection', highlight: '#headingMutability, .py-mut-header' },
+    { atSec: 11.5, target: '.py-mut-panel:first-child', highlight: '.py-mut-panel:first-child' },
+    { atSec: 20.5, target: '.py-mut-panel:last-child', highlight: '.py-mut-panel:last-child' },
+    { atSec: 31.5, target: '.py-analyst-trap-card', highlight: '.py-analyst-trap-card' }
+  ],
+  'Day01/New_PyDay01Audio04.mp3': [
+    { atSec: 0, target: '#day01DataTypesSection', highlight: '#headingDataTypes' },
+    { atSec: 9.5, target: '.py-master-ref-table', highlight: '.py-master-ref-table tbody tr:nth-child(1), .py-master-ref-table tbody tr:nth-child(2)' },
+    { atSec: 17.5, target: '.py-master-ref-table', highlight: '.py-master-ref-table tbody tr:nth-child(4), .py-master-ref-table tbody tr:nth-child(5)' },
+    { atSec: 27.5, target: '.py-master-ref-table', highlight: '.py-master-ref-table tbody tr:nth-child(7), .py-master-ref-table tbody tr:nth-child(9)' },
+    { atSec: 34.5, target: '.py-master-ref-table', highlight: '.py-master-ref-table tbody tr:nth-child(10), .py-master-ref-table tbody tr:nth-child(13)' }
+  ],
+  'Day01/New_PyDay01Audio05.mp3': [
+    { atSec: 0, target: '#day01MemorySection', highlight: '#headingMemory' },
+    { atSec: 2.0, target: '.vnode-code', highlight: '.vnode-code' },
+    { atSec: 10.5, target: '.vnode-objects', highlight: '.vnode-objects, .vnode-ram' },
+    { atSec: 19.5, target: '.vnode-pointers', highlight: '.vnode-pointers, .vnode-reuse' },
+    { atSec: 29.5, target: '.vnode-mutable', highlight: '.vnode-mutable, .vnode-immutable' },
+    { atSec: 37.5, target: '.vnode-immutable', highlight: '.vnode-immutable' },
+    { atSec: 43.5, target: '.vnode-mgmt', highlight: '.vnode-mgmt, .vnode-summary' }
+  ]
+};
+
+function resolveAudioUrl(src) {
+  if (!src) return '';
+  if (src.startsWith('http://') || src.startsWith('https://')) return src;
+  const clean = src.replace(/\\/g, '/').replace(/^\/?(python\/)?/, '');
+  return `/python/${clean}`;
 }
 
-function prevSlide() {
-  renderSlide(currentSlideIndex - 1);
+let currentSpotlightSelector = null;
+
+function clearTheoryVisuals() {
+  document.querySelectorAll('.narration-spotlight').forEach(el => {
+    el.classList.remove('narration-spotlight');
+  });
+  currentSpotlightSelector = null;
 }
 
-function nextSlide() {
-  renderSlide(currentSlideIndex + 1);
-}
+function syncTheoryVisuals(audioObj, src) {
+  if (!audioObj || !src) return;
+  const fname = src.split('/').pop().split('?')[0];
+  const matchedKey = Object.keys(THEORY_VISUAL_CUES).find(k => k.includes(fname));
+  if (!matchedKey) return;
 
-// ── Practice Questions ────────────────────────────────────────
+  const cues = THEORY_VISUAL_CUES[matchedKey];
+  const t = audioObj.currentTime || 0;
 
-function loadPracticeQuestion(index) {
-  if (!currentDayData || !currentDayData.practiceQuestions) return;
-  const qs = currentDayData.practiceQuestions;
-  if (index < 0 || index >= qs.length) return;
-
-  currentQuestionIndex = index;
-  const q = qs[index];
-
-  const promptEl = document.getElementById('questionPrompt');
-  if (promptEl) promptEl.innerHTML = `Q${index + 1}. ${q.prompt}`;
-
-  const counterEl = document.getElementById('qCounter');
-  if (counterEl) counterEl.textContent = `Question-${String(index + 1).padStart(2,'0')}`;
-
-  // Set starter code
-  if (mainEditor) {
-    mainEditor.setValue(q.starterCode || '# Write your answer here\n');
-    mainEditor.clearHistory();
+  let activeCue = cues[0];
+  for (let i = 0; i < cues.length; i++) {
+    if (t >= cues[i].atSec) {
+      activeCue = cues[i];
+    } else {
+      break;
+    }
   }
 
-  // Clear output
-  clearOutput();
+  if (activeCue && activeCue.highlight !== currentSpotlightSelector) {
+    clearTheoryVisuals();
+    currentSpotlightSelector = activeCue.highlight;
+    const highlightEls = document.querySelectorAll(activeCue.highlight);
+    if (highlightEls.length > 0) {
+      highlightEls.forEach(el => el.classList.add('narration-spotlight'));
+      const firstEl = highlightEls[0];
+      if (firstEl && typeof firstEl.scrollIntoView === 'function') {
+        firstEl.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+      }
+    }
+  }
 }
 
-function prevQuestion() {
-  loadPracticeQuestion(currentQuestionIndex - 1);
+let activeTypewriterRAF = null;
+let activeTypewriterEvents = [];
+let activeTypewriterScrollAt = null;
+let hasExecutedCurrentCode = false;
+
+function cancelTypewriter() {
+  if (activeTypewriterRAF) {
+    cancelAnimationFrame(activeTypewriterRAF);
+    activeTypewriterRAF = null;
+  }
+  if (typewriterTimer) {
+    clearInterval(typewriterTimer);
+    typewriterTimer = null;
+  }
+  activeTypewriterEvents = [];
+  activeTypewriterScrollAt = null;
+  hasExecutedCurrentCode = false;
 }
 
-function nextQuestion() {
-  loadPracticeQuestion(currentQuestionIndex + 1);
+function startAudioSyncedTypewriter(audioObj, solEntry) {
+  cancelTypewriter();
+  if (!audioObj || !solEntry || !mainEditor) return;
+
+  const targetCode = (solEntry.code || '').trim();
+  const dur = solEntry.duration || (audioObj.duration && !isNaN(audioObj.duration) ? audioObj.duration : 12);
+  const startAt = solEntry.startAt || 1.3;
+  const endAt = solEntry.endAt || Math.max(startAt + 1.0, dur - 1.4);
+  const scrollAt = solEntry.scrollAt || Math.max(endAt, dur - 0.8);
+
+  activeTypewriterScrollAt = scrollAt;
+  hasExecutedCurrentCode = false;
+
+  const chars = targetCode.split('');
+  const totalChars = chars.length;
+  const typingDur = Math.max(0.4, endAt - startAt);
+  const charInterval = typingDur / Math.max(1, totalChars);
+
+  let currentCode = '';
+  activeTypewriterEvents = [];
+  chars.forEach((ch, idx) => {
+    currentCode += ch;
+    activeTypewriterEvents.push({
+      atSec: startAt + idx * charInterval,
+      text: currentCode
+    });
+  });
+
+  function tick() {
+    if (!audioObj || audioObj.paused) {
+      activeTypewriterRAF = null;
+      return;
+    }
+
+    const t = audioObj.currentTime;
+    let textToSet = '';
+    if (t < startAt) {
+      textToSet = '';
+    } else if (t >= endAt) {
+      textToSet = targetCode;
+    } else {
+      for (let i = 0; i < activeTypewriterEvents.length; i++) {
+        if (activeTypewriterEvents[i].atSec <= t) {
+          textToSet = activeTypewriterEvents[i].text;
+        } else {
+          break;
+        }
+      }
+    }
+
+    if (mainEditor.getValue() !== textToSet) {
+      mainEditor.setValue(textToSet);
+      mainEditor.setCursor(mainEditor.lineCount(), 0);
+    }
+
+    if (t >= scrollAt && !hasExecutedCurrentCode) {
+      hasExecutedCurrentCode = true;
+      if (typeof runCurrentCode === 'function') {
+        runCurrentCode();
+      }
+    }
+
+    activeTypewriterRAF = requestAnimationFrame(tick);
+  }
+
+  // Immediate catchup for current time
+  const initT = audioObj.currentTime || 0;
+  let initText = '';
+  if (initT >= endAt) {
+    initText = targetCode;
+  } else if (initT >= startAt) {
+    for (let i = 0; i < activeTypewriterEvents.length; i++) {
+      if (activeTypewriterEvents[i].atSec <= initT) {
+        initText = activeTypewriterEvents[i].text;
+      } else {
+        break;
+      }
+    }
+  }
+  mainEditor.setValue(initText);
+
+  if (!audioObj.paused) {
+    activeTypewriterRAF = requestAnimationFrame(tick);
+  }
 }
 
-function updateStatsCard() {
-  const qs = currentDayData ? (currentDayData.practiceQuestions || []) : [];
-  const total = qs.length;
-  const solved = 0; // could track per-session
-  document.getElementById('solvedCount').textContent = solved;
-  document.getElementById('totalQuestions').textContent = total;
-  document.getElementById('marksCount').textContent = solved.toFixed(1);
-  document.getElementById('totalMarks').textContent = total.toFixed(1);
-  const pct = total > 0 ? (solved / total) * 100 : 0;
-  document.getElementById('statsProgressFill').style.width = pct + '%';
+
+function playAudio(src, btn, onStartCb) {
+  if (!src) return;
+  const audioSrc = resolveAudioUrl(src);
+
+  // Toggle pause if already playing this file
+  const fname = src.split('/').pop().split('?')[0];
+  if (currentPlayingAudio && currentPlayingAudio.src.includes(fname)) {
+    if (currentPlayingAudio.paused) {
+      currentPlayingAudio.play().catch(e => console.warn(e));
+      if (btn) {
+        btn.innerHTML = `<svg class="pause-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+        btn.classList.add('playing');
+      }
+      updatePlayButtonStates(true);
+    } else {
+      currentPlayingAudio.pause();
+      if (btn) {
+        btn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+        btn.classList.remove('playing');
+      }
+      if (activeTypewriterRAF) {
+        cancelAnimationFrame(activeTypewriterRAF);
+        activeTypewriterRAF = null;
+      }
+      updatePlayButtonStates(false);
+    }
+    return;
+  }
+
+  // Stop any active combined timeline audio
+  if (activeCombinedAudio) {
+    try { activeCombinedAudio.pause(); } catch(e) {}
+    activeCombinedAudio = null;
+    isCombinedPlaying = false;
+  }
+
+  if (currentPlayingAudio) {
+    currentPlayingAudio.pause();
+    if (currentPlayingBtn) {
+      currentPlayingBtn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+      currentPlayingBtn.classList.remove('playing');
+    }
+  }
+
+  cancelTypewriter();
+  clearTheoryVisuals();
+
+  currentPlayingAudio = new Audio(audioSrc);
+  currentPlayingBtn = btn;
+  currentPlayingAudio.playbackRate = currentPlaybackRate;
+  currentPlayingAudio.volume = isMuted ? 0 : currentPlaybackVolume;
+
+  currentPlayingAudio.onplay = () => {
+    if (btn) {
+      btn.innerHTML = `<svg class="pause-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+      btn.classList.add('playing');
+    }
+    // Highlight parent section if theory
+    const sec = btn ? btn.closest('.slide-section') : null;
+    if (sec) {
+      document.querySelectorAll('.slide-section').forEach(s => s.classList.remove('active-narration'));
+      sec.classList.add('active-narration');
+    }
+    updatePlayButtonStates(true);
+    syncTheoryVisuals(currentPlayingAudio, src);
+    if (typeof onStartCb === 'function') {
+      onStartCb(currentPlayingAudio);
+    }
+  };
+
+  currentPlayingAudio.ontimeupdate = () => {
+    syncTheoryVisuals(currentPlayingAudio, src);
+  };
+
+  currentPlayingAudio.onpause = () => {
+    if (btn) {
+      btn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+      btn.classList.remove('playing');
+    }
+    if (activeTypewriterRAF) {
+      cancelAnimationFrame(activeTypewriterRAF);
+      activeTypewriterRAF = null;
+    }
+    updatePlayButtonStates(false);
+  };
+
+  currentPlayingAudio.onended = () => {
+    if (btn) {
+      btn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+      btn.classList.remove('playing');
+    }
+    clearTheoryVisuals();
+    cancelTypewriter();
+    updatePlayButtonStates(false);
+    currentPlayingAudio = null;
+    currentPlayingBtn = null;
+  };
+
+  currentPlayingAudio.onerror = (err) => {
+    console.warn("Audio file error:", src, err);
+    if (btn) {
+      btn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+      btn.classList.remove('playing');
+    }
+    updatePlayButtonStates(false);
+  };
+
+  currentPlayingAudio.play().catch(e => {
+    console.warn("Audio play blocked:", e.message);
+    updatePlayButtonStates(false);
+  });
 }
 
-// ── Main Editor (CodeMirror) ──────────────────────────────────
+function playQuestionAudio(btn) {
+  const q = currentDayData && currentDayData.practiceQuestions && currentDayData.practiceQuestions[currentQuestionIndex];
+  if (!q) return;
+  const dayNum = String(currentDayData.day).padStart(2,'0');
+  const qNum = String(currentQuestionIndex + 1).padStart(2,'0');
+  const src = q.questionAudio || `Day${dayNum}/New_PyDay${dayNum}Question${qNum}.mp3`;
+  cancelTypewriter();
+  playAudio(src, btn);
+}
+
+function playSolutionAudioFromBtn(btn) {
+  const q = currentDayData && currentDayData.practiceQuestions && currentDayData.practiceQuestions[currentQuestionIndex];
+  if (!q) return;
+  const dayNum = String(currentDayData.day).padStart(2,'0');
+  const qNum = String(currentQuestionIndex + 1).padStart(2,'0');
+  const src = q.solutionAudio || `Day${dayNum}/New_PyDay${dayNum}Question${qNum}sol.mp3`;
+
+  const solMap = PYTHON_QUESTION_SOLUTIONS[currentDayId] || PYTHON_QUESTION_SOLUTIONS['pyDay01'];
+  const solEntry = (solMap && solMap[q.id]) || { code: q.ref, duration: 12 };
+
+  playAudio(src, btn, (audioInstance) => {
+    if (solEntry) {
+      startAudioSyncedTypewriter(audioInstance, solEntry);
+    }
+  });
+}
+
+function typewriterCode(targetCode) {
+  // Legacy fallback if called directly
+  if (!mainEditor) return;
+  startAudioSyncedTypewriter({ currentTime: 0, duration: 8, paused: false }, { code: targetCode, startAt: 0, endAt: 7.5 });
+}
+
+// ── Master Timeline Combined Playback Controls ──────────────────
+function toggleCombinedPlayback() {
+  if (isCombinedPlaying) {
+    pauseCombinedPlayback();
+  } else {
+    playCombinedPlayback();
+  }
+}
+
+function playCombinedPlayback() {
+  if (!combinedTracks || combinedTracks.length === 0) {
+    const registry = (PYTHON_DAY_TRACKS && (PYTHON_DAY_TRACKS[currentDayId] || PYTHON_DAY_TRACKS['pyDay01']));
+    if (registry) {
+      combinedTracks = registry.tracks.slice();
+      combinedTrackDurations = registry.durations.slice();
+      totalCombinedDuration = combinedTrackDurations.reduce((acc, d) => acc + d, 0);
+    }
+  }
+  if (!combinedTracks || combinedTracks.length === 0) return;
+
+  // Stop any active single-audio playback
+  if (currentPlayingAudio) {
+    try { currentPlayingAudio.pause(); } catch(e) {}
+    if (currentPlayingBtn) {
+      currentPlayingBtn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+      currentPlayingBtn.classList.remove('playing');
+      currentPlayingBtn = null;
+    }
+  }
+
+  isCombinedPlaying = true;
+  updatePlayButtonStates(true);
+
+  if (activeCombinedAudio && activeCombinedAudio.paused && combinedTrackIndex >= 0) {
+    activeCombinedAudio.play().catch(e => console.warn(e));
+    const track = combinedTracks[combinedTrackIndex];
+    if (track && track.type === 'solution' && track.qId) {
+      const solMap = PYTHON_QUESTION_SOLUTIONS[currentDayId] || PYTHON_QUESTION_SOLUTIONS['pyDay01'];
+      const solEntry = (solMap && solMap[track.qId]);
+      if (solEntry) {
+        startAudioSyncedTypewriter(activeCombinedAudio, solEntry);
+      }
+    } else if (track && track.type === 'narration') {
+      syncTheoryVisuals(activeCombinedAudio, track.src);
+    }
+  } else {
+    playTrackSegment(combinedTrackIndex);
+  }
+}
+
+function pauseCombinedPlayback() {
+  isCombinedPlaying = false;
+  updatePlayButtonStates(false);
+
+  if (activeCombinedAudio) {
+    try { activeCombinedAudio.pause(); } catch(e) {}
+  }
+  if (activeTypewriterRAF) {
+    cancelAnimationFrame(activeTypewriterRAF);
+    activeTypewriterRAF = null;
+  }
+  if (playbackTimerInterval) {
+    clearInterval(playbackTimerInterval);
+    playbackTimerInterval = null;
+  }
+}
+
+function playTrackSegment(trackIdx, localOffset = 0) {
+  if (!isCombinedPlaying) return;
+  if (trackIdx < 0 || trackIdx >= combinedTracks.length) {
+    onCombinedPlaybackEnded();
+    return;
+  }
+
+  cancelTypewriter();
+  clearTheoryVisuals();
+
+  // Stop any active single-audio playback
+  if (currentPlayingAudio) {
+    try { currentPlayingAudio.pause(); } catch(e) {}
+    if (currentPlayingBtn) {
+      currentPlayingBtn.innerHTML = `<svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+      currentPlayingBtn.classList.remove('playing');
+      currentPlayingBtn = null;
+    }
+  }
+
+  combinedTrackIndex = trackIdx;
+  const track = combinedTracks[trackIdx];
+  updateChapterListActive();
+
+  // Scroll and illuminate active content
+  if (track.type === 'question' && track.qId) {
+    loadPracticeQuestion(track.qId - 1);
+    const qBar = document.getElementById('questionBar');
+    if (qBar) {
+      qBar.classList.add('question-playing');
+      qBar.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  } else if (track.type === 'solution' && track.qId) {
+    loadPracticeQuestion(track.qId - 1);
+    const qBar = document.getElementById('questionBar');
+    if (qBar) {
+      qBar.classList.add('question-playing');
+      qBar.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  } else {
+    // Theory narration track
+    const qBar = document.getElementById('questionBar');
+    if (qBar) qBar.classList.remove('question-playing');
+
+    const targetEl = track.target ? document.querySelector(track.target) : null;
+    document.querySelectorAll('.slide-section').forEach(sec => {
+      sec.classList.remove('active-narration');
+    });
+    if (targetEl) {
+      const sec = targetEl.closest('.slide-section') || targetEl;
+      sec.classList.add('active-narration');
+      targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  // Caption banner
+  const captionBox = document.getElementById('workspaceVpCaption');
+  if (captionBox) {
+    captionBox.style.display = 'block';
+    captionBox.textContent = `📢 Narrator: "${track.title}"`;
+  }
+
+  let startOffset = 0;
+  for (let i = 0; i < trackIdx; i++) {
+    startOffset += combinedTrackDurations[i];
+  }
+  currentCombinedTime = startOffset + localOffset;
+  updateProgressUI();
+
+  if (activeCombinedAudio) {
+    try { activeCombinedAudio.pause(); } catch(e) {}
+    activeCombinedAudio = null;
+  }
+
+  const audioSrc = resolveAudioUrl(track.src);
+  activeCombinedAudio = new Audio(audioSrc);
+  activeCombinedAudio.playbackRate = currentPlaybackRate;
+  activeCombinedAudio.volume = isMuted ? 0 : currentPlaybackVolume;
+
+  if (localOffset > 0) {
+    activeCombinedAudio.onloadedmetadata = () => {
+      try {
+        if (localOffset < activeCombinedAudio.duration) {
+          activeCombinedAudio.currentTime = localOffset;
+        }
+      } catch(e) {}
+    };
+  }
+
+  activeCombinedAudio.onplay = () => {
+    updatePlayButtonStates(true);
+    if (track.type === 'solution' && track.qId) {
+      const solMap = PYTHON_QUESTION_SOLUTIONS[currentDayId] || PYTHON_QUESTION_SOLUTIONS['pyDay01'];
+      const solEntry = (solMap && solMap[track.qId]) || { code: currentDayData?.practiceQuestions[track.qId - 1]?.ref, duration: combinedTrackDurations[trackIdx] };
+      if (solEntry) {
+        startAudioSyncedTypewriter(activeCombinedAudio, solEntry);
+      }
+    } else if (track.type === 'narration') {
+      syncTheoryVisuals(activeCombinedAudio, track.src);
+    }
+  };
+
+  activeCombinedAudio.ontimeupdate = () => {
+    if (isCombinedPlaying && activeCombinedAudio) {
+      currentCombinedTime = startOffset + activeCombinedAudio.currentTime;
+      updateProgressUI();
+
+      if (track.type === 'narration') {
+        syncTheoryVisuals(activeCombinedAudio, track.src);
+      }
+    }
+  };
+
+  activeCombinedAudio.onended = () => {
+    cancelTypewriter();
+    clearTheoryVisuals();
+    if (isCombinedPlaying && combinedTrackIndex === trackIdx) {
+      playTrackSegment(trackIdx + 1);
+    }
+  };
+
+  activeCombinedAudio.onerror = (err) => {
+    console.warn("Audio error for track:", track.src, err);
+    if (isCombinedPlaying && combinedTrackIndex === trackIdx) {
+      playTrackSegment(trackIdx + 1);
+    }
+  };
+
+  activeCombinedAudio.play().catch(e => {
+    console.warn("Audio play blocked:", e.message);
+    if (isCombinedPlaying && combinedTrackIndex === trackIdx) {
+      playTrackSegment(trackIdx + 1);
+    }
+  });
+}
+
+function seekCombinedPlayback(val) {
+  const targetTime = parseFloat(val);
+  let elapsed = 0;
+  let trackIdx = 0;
+  let localTime = 0;
+
+  for (let i = 0; i < combinedTrackDurations.length; i++) {
+    const dur = combinedTrackDurations[i];
+    if (targetTime < elapsed + dur) {
+      trackIdx = i;
+      localTime = targetTime - elapsed;
+      break;
+    }
+    elapsed += dur;
+    if (i === combinedTrackDurations.length - 1) {
+      trackIdx = i;
+      localTime = Math.max(0, dur - 0.1);
+    }
+  }
+
+  currentCombinedTime = targetTime;
+  updateProgressUI();
+
+  if (activeCombinedAudio) {
+    try { activeCombinedAudio.pause(); } catch(e) {}
+  }
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+  }
+
+  if (isCombinedPlaying) {
+    playTrackSegment(trackIdx, localTime);
+  } else {
+    combinedTrackIndex = trackIdx;
+    updateChapterListActive();
+    const track = combinedTracks[trackIdx];
+    if (track && track.type === 'solution' && track.qId) {
+      loadPracticeQuestion(track.qId - 1);
+      const solMap = PYTHON_QUESTION_SOLUTIONS[currentDayId] || PYTHON_QUESTION_SOLUTIONS['pyDay01'];
+      const solEntry = (solMap && solMap[track.qId]);
+      if (solEntry) {
+        startAudioSyncedTypewriter({ currentTime: localTime, duration: combinedTrackDurations[trackIdx], paused: true }, solEntry);
+      }
+    } else if (track && track.type === 'narration') {
+      const targetEl = track.target ? document.querySelector(track.target) : null;
+      if (targetEl) {
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      syncTheoryVisuals({ currentTime: localTime }, track.src);
+    } else if (track && track.type === 'question' && track.qId) {
+      loadPracticeQuestion(track.qId - 1);
+    }
+  }
+}
+
+function skipCombined(seconds) {
+  if (!totalCombinedDuration) return;
+  const target = Math.max(0, Math.min(totalCombinedDuration, currentCombinedTime + seconds));
+  seekCombinedPlayback(target);
+}
+
+function onCombinedPlaybackEnded() {
+  isCombinedPlaying = false;
+  currentCombinedTime = 0;
+  combinedTrackIndex = 0;
+  if (playbackTimerInterval) {
+    clearInterval(playbackTimerInterval);
+    playbackTimerInterval = null;
+  }
+  updatePlayButtonStates(false);
+  updateProgressUI();
+
+  document.querySelectorAll('.slide-section').forEach(sec => {
+    sec.classList.remove('active-narration');
+    sec.classList.remove('inactive-narration');
+  });
+
+  const captionBox = document.getElementById('workspaceVpCaption');
+  if (captionBox) captionBox.style.display = 'none';
+}
+
+function updateProgressUI() {
+  const seekBar = document.getElementById('seekBar');
+  const playbackTime = document.getElementById('playbackTime');
+  const tooltip = document.getElementById('timelineHoverTooltip');
+
+  if (seekBar) {
+    seekBar.max = totalCombinedDuration || 100;
+    seekBar.value = currentCombinedTime;
+  }
+  if (playbackTime) {
+    playbackTime.textContent = `${formatTime(currentCombinedTime)} / ${formatTime(totalCombinedDuration)}`;
+  }
+  if (tooltip) {
+    tooltip.textContent = formatTime(currentCombinedTime);
+  }
+}
+
+function formatTime(secs) {
+  const m = Math.floor(secs / 60);
+  const s = Math.floor(secs % 60);
+  return `${m}:${s < 10 ? '0' : ''}${s}`;
+}
+
+function updatePlayButtonStates(isPlaying) {
+  const navBtn = document.getElementById('navPlayBtn');
+  const barBtn = document.getElementById('playPauseBtn');
+
+  if (navBtn) {
+    navBtn.innerHTML = isPlaying
+      ? `<span class="btn-icon">⏸</span> <span class="btn-text">Pause Lesson</span>`
+      : `<span class="btn-icon">▶</span> <span class="btn-text">Play Lesson</span>`;
+  }
+  if (barBtn) {
+    barBtn.innerHTML = isPlaying
+      ? `<span class="btn-icon" aria-hidden="true">⏸</span><span class="btn-text">Pause Lesson</span>`
+      : `<span class="btn-icon" aria-hidden="true">&#9654;</span><span class="btn-text">Play Lesson</span>`;
+    barBtn.setAttribute('aria-pressed', isPlaying ? 'true' : 'false');
+  }
+}
+
+function toggleVolumePopover(event) {
+  event.stopPropagation();
+  const popover = document.getElementById('volumePopover');
+  const volBtn = document.getElementById('volumeBtn');
+  popover?.classList.toggle('open');
+  volBtn?.classList.toggle('active');
+}
+
+function toggleSpeedPopover(event) {
+  event.stopPropagation();
+  const popover = document.getElementById('speedPopover');
+  const speedBtn = document.getElementById('speedControlBtn');
+  popover?.classList.toggle('open');
+  speedBtn?.classList.toggle('active');
+}
+
+function setPlaybackVolume(val) {
+  currentPlaybackVolume = parseFloat(val) / 100;
+  isMuted = currentPlaybackVolume === 0;
+  const label = document.getElementById('volumeValue');
+  if (label) label.textContent = `${Math.round(val)}%`;
+  if (currentPlayingAudio) currentPlayingAudio.volume = currentPlaybackVolume;
+}
+
+function selectSpeedOption(rate, label) {
+  currentPlaybackRate = rate;
+  const speedLabel = document.getElementById('speedValueLabel');
+  if (speedLabel) speedLabel.textContent = label;
+
+  const options = document.querySelectorAll('.speed-option');
+  options.forEach(opt => {
+    opt.classList.toggle('active', opt.textContent.trim() === label);
+  });
+
+  const popover = document.getElementById('speedPopover');
+  popover?.classList.remove('open');
+  document.getElementById('speedControlBtn')?.classList.remove('active');
+
+  if (currentPlayingAudio) currentPlayingAudio.playbackRate = rate;
+}
+
+// ── Practice Questions & CodeMirror Workbench ──────────────────
 
 function initMainEditor() {
   const wrap = document.getElementById('mainEditorWrap');
   if (!wrap || mainEditor) return;
 
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+
   mainEditor = CodeMirror(wrap, {
-    value: '# Write your answer here\n',
+    value: '',
     mode: 'python',
-    theme: 'dracula',
+    theme: isLight ? 'default' : 'dracula',
     lineNumbers: true,
     autoCloseBrackets: true,
     matchBrackets: true,
@@ -557,968 +2189,856 @@ function initMainEditor() {
     },
     lineWrapping: true,
   });
-
-  // Resize observer to fix CodeMirror height
-  const ro = new ResizeObserver(() => mainEditor && mainEditor.refresh());
-  ro.observe(wrap);
+  window.mainEditor = mainEditor;
 }
 
-// ── Code Execution ────────────────────────────────────────────
+function buildQPickerList() {
+  const list = document.getElementById('qPickerList');
+  if (!list || !currentDayData || !currentDayData.practiceQuestions) return;
+  list.innerHTML = '';
 
-async function runCurrentCode() {
-  if (!pyodideReady) {
-    showOutput([{ type: 'error', text: '⏳ Python engine still loading. Please wait.' }]);
-    return;
+  const headerEl = document.querySelector('#qPickerPopover .q-picker-header');
+  let solvedCount = 0;
+  const questions = currentDayData.practiceQuestions;
+
+  // Retrieve saved solved questions from localStorage
+  let solvedIds = [];
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    const data = raw ? JSON.parse(raw) : { days: {} };
+    if (data.days && data.days[currentDayId] && data.days[currentDayId].solved) {
+      solvedIds = data.days[currentDayId].solved;
+    }
+  } catch (e) {}
+
+  questions.forEach((q, idx) => {
+    const isSolved = solvedIds.includes(q.id);
+    if (isSolved) solvedCount++;
+    const isActive = idx === currentQuestionIndex;
+
+    // Extract clean title and badge from prompt
+    let title = '';
+    let badge = '';
+
+    const strongMatch = (q.prompt || '').match(/<strong>(.*?)<\/strong>/i);
+    if (strongMatch) {
+      let rawTitle = strongMatch[1].replace(/<[^>]*>/g, '').trim();
+      const tagMatch = rawTitle.match(/^\[(.*?)\]\s*(.*)$/);
+      if (tagMatch) {
+        badge = tagMatch[1];
+        title = tagMatch[2];
+      } else if (rawTitle.toLowerCase().startsWith('task:')) {
+        title = rawTitle.substring(5).trim();
+      } else {
+        title = rawTitle;
+      }
+    }
+
+    if (!title) {
+      const clean = (q.prompt || '')
+        .replace(/<\/(p|div|strong|h\d)>|<br\s*\/?>/gi, ' ')
+        .replace(/<[^>]*>/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+      title = clean.length > 55 ? clean.substring(0, 52) + '…' : clean;
+    }
+
+    const qNum = String(q.id || idx + 1).padStart(2, '0');
+
+    const btn = document.createElement('button');
+    btn.className = 'q-picker-item' + (isActive ? ' q-picker-item--active active' : '');
+    btn.setAttribute('role', 'option');
+    btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    btn.setAttribute('data-idx', idx);
+    btn.title = `Question ${qNum}: ${title}`;
+
+    const esc = str => (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    btn.innerHTML = `
+      <span class="q-picker-item-num">Q${qNum}</span>
+      <div class="q-picker-item-main">
+        <span class="q-picker-item-title">${esc(title)}</span>
+        ${badge ? `<span class="q-picker-item-badge">${esc(badge)}</span>` : ''}
+      </div>
+      <span class="q-picker-item-status ${isSolved ? 'is-solved' : ''}">
+        ${isSolved ? `<svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+          <circle cx="8" cy="8" r="7" fill="rgba(34, 197, 94, 0.2)" stroke="#16a34a" stroke-width="1.5"/>
+          <path d="M5 8.2l2 2 4.2-4.2" stroke="#16a34a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>` : `<span class="q-picker-item-dot"></span>`}
+      </span>
+    `;
+    btn.onclick = () => {
+      selectQuestion(idx);
+      closeQPicker();
+    };
+    list.appendChild(btn);
+  });
+
+  if (headerEl) {
+    headerEl.innerHTML = `<span>Practice Questions (${questions.length})</span> <span class="q-picker-count-badge">${solvedCount}/${questions.length} Solved</span>`;
   }
-  const code = mainEditor ? mainEditor.getValue() : '';
-  const out = await executePython(code);
-  renderOutput(out, document.getElementById('mainOutput'));
+
+  // Auto scroll active into view
+  setTimeout(() => {
+    const activeItem = list.querySelector('.q-picker-item--active, .q-picker-item.active');
+    if (activeItem) activeItem.scrollIntoView({ block: 'nearest' });
+  }, 10);
+}
+
+function openQPicker() {
+  const popover = document.getElementById('qPickerPopover');
+  const trigger = document.getElementById('qPickerTrigger');
+  if (!popover) return;
+  buildQPickerList();
+  popover.style.display = 'flex';
+  if (trigger) trigger.setAttribute('aria-expanded', 'true');
+  setTimeout(() => {
+    document.addEventListener('click', _qPickerOutsideClick, { once: true });
+  }, 0);
+}
+
+function closeQPicker() {
+  const popover = document.getElementById('qPickerPopover');
+  const trigger = document.getElementById('qPickerTrigger');
+  if (popover) popover.style.display = 'none';
+  if (trigger) trigger.setAttribute('aria-expanded', 'false');
+  document.removeEventListener('click', _qPickerOutsideClick);
+}
+
+function _qPickerOutsideClick(e) {
+  const wrapper = document.getElementById('qPickerWrapper');
+  if (wrapper && !wrapper.contains(e.target)) {
+    closeQPicker();
+  } else {
+    const popover = document.getElementById('qPickerPopover');
+    if (popover && popover.style.display !== 'none') {
+      document.addEventListener('click', _qPickerOutsideClick, { once: true });
+    }
+  }
+}
+
+function toggleQPicker(event) {
+  if (event) event.stopPropagation();
+  const popover = document.getElementById('qPickerPopover');
+  if (popover && popover.style.display !== 'none') {
+    closeQPicker();
+  } else {
+    openQPicker();
+  }
+}
+
+function selectQuestion(idx) {
+  currentQuestionIndex = idx;
+  loadPracticeQuestion(idx);
+}
+
+function prevQuestion() {
+  if (currentQuestionIndex > 0) {
+    selectQuestion(currentQuestionIndex - 1);
+  }
+}
+
+function nextQuestion() {
+  if (currentDayData && currentDayData.practiceQuestions && currentQuestionIndex < currentDayData.practiceQuestions.length - 1) {
+    selectQuestion(currentQuestionIndex + 1);
+  }
+}
+
+function loadPracticeQuestion(idx) {
+  if (!currentDayData || !currentDayData.practiceQuestions || !currentDayData.practiceQuestions[idx]) return;
+  const q = currentDayData.practiceQuestions[idx];
+
+  // Update prompt
+  const promptEl = document.getElementById('questionPrompt');
+  if (promptEl) promptEl.innerHTML = q.prompt;
+
+  // Update counter
+  const counter = document.getElementById('qCounter');
+  if (counter) counter.textContent = `Question-${String(q.id).padStart(2, '0')}`;
+
+  // Update editor with saved user code or starterCode (never preload default boilerplate)
+  const saved = getSavedQuestionCode(currentDayId, q.id);
+  let initialCode = '';
+  const isStaleBoilerplate = saved && (
+    saved.startsWith('# Q') ||
+    saved.startsWith('# Write your') ||
+    saved.includes('# TODO:') ||
+    saved.includes('Loading question...')
+  );
+
+  if (saved && !isStaleBoilerplate) {
+    initialCode = saved;
+  } else if (q.starterCode && q.starterCode.trim() !== '') {
+    initialCode = q.starterCode;
+  } else {
+    initialCode = '';
+  }
+
+  if (mainEditor) {
+    mainEditor.setValue(initialCode);
+    mainEditor.clearHistory();
+  }
+
+  // Update picker list active state
+  const list = document.getElementById('qPickerList');
+  if (list) {
+    const items = list.querySelectorAll('.q-picker-item');
+    items.forEach((it, i) => it.classList.toggle('active', i === idx));
+  }
+
+  // Clear output terminal
+  clearOutput();
+}
+
+function peekSolution() {
+  const q = currentDayData && currentDayData.practiceQuestions && currentDayData.practiceQuestions[currentQuestionIndex];
+  if (!q || !q.ref || !mainEditor) return;
+  mainEditor.setValue(q.ref);
 }
 
 function resetCode() {
-  const q = currentDayData &&
-    currentDayData.practiceQuestions &&
-    currentDayData.practiceQuestions[currentQuestionIndex];
-  if (mainEditor) {
-    mainEditor.setValue(q ? (q.starterCode || '# Write your answer here\n') : '# Write your answer here\n');
-  }
+  const q = currentDayData && currentDayData.practiceQuestions && currentDayData.practiceQuestions[currentQuestionIndex];
+  if (!mainEditor) return;
+  const starter = (q && q.starterCode && q.starterCode.trim() !== '') ? q.starterCode : '';
+  mainEditor.setValue(starter);
+  mainEditor.clearHistory();
   clearOutput();
 }
 
 function clearEditor() {
-  if (mainEditor) mainEditor.setValue('');
+  if (mainEditor) {
+    mainEditor.setValue('');
+    mainEditor.clearHistory();
+  }
 }
 
 function clearOutput() {
   const out = document.getElementById('mainOutput');
   if (out) {
-    out.innerHTML = '<div class="output-label">Python Output</div><span class="output-success">Ready…</span>';
+    out.innerHTML = '<div class="output-label">Terminal Output</div><span class="output-success">⚡ Write your Python code above and click "Run" to execute it!</span>';
   }
 }
 
-// ── Core Pyodide Execution ────────────────────────────────────
-
-async function executePython(code) {
-  if (!pyodide) return [{ type: 'error', text: 'Python engine not ready.' }];
-
-  try {
-    // Reset stdout
-    await pyodide.runPythonAsync(`
-import sys, io as _io
-sys.stdout = _io.StringIO()
-sys.stderr = sys.stdout
-`);
-    await pyodide.runPythonAsync(code);
-    const stdout = String(await pyodide.runPythonAsync(`sys.stdout.getvalue()`));
-    return [{ type: 'success', text: stdout || '(no output)' }];
-  } catch (err) {
-    return [{ type: 'error', text: err.message || String(err) }];
-  }
-}
-
-function renderOutput(lines, container) {
-  if (!container) return;
-  let html = '<div class="output-label">Python Output</div>';
-  for (const line of lines) {
-    if (line.type === 'error') {
-      html += `<span class="output-error" style="color:#f87171;white-space:pre-wrap;">${escHtml(line.text)}</span>`;
-    } else {
-      html += `<span class="output-success" style="white-space:pre-wrap;">${escHtml(line.text)}</span>`;
-    }
-  }
-  container.innerHTML = html;
-}
-
-function showOutput(lines) {
-  renderOutput(lines, document.getElementById('mainOutput'));
-}
-
-function escHtml(s) {
-  return String(s)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
-}
-
-// ── Test Portal ───────────────────────────────────────────────
-
-function openTestPortal() {
-  if (!currentDayData || !currentDayData.testQuestions) {
-    alert('No test questions available for this day.');
+async function runCurrentCode() {
+  if (!pyodideReady) {
+    renderOutput({ stdout: '', stderr: '' }, document.getElementById('mainOutput'), false, 'Python engine still loading… please wait a moment.');
     return;
   }
 
-  document.getElementById('testOverlay').style.display = 'flex';
+  const q = currentDayData && currentDayData.practiceQuestions && currentDayData.practiceQuestions[currentQuestionIndex];
+  if (!q) return;
+
+  const code = mainEditor ? mainEditor.getValue() : '';
+  const outDiv = document.getElementById('mainOutput');
+
+  if (!code || code.trim() === '') {
+    renderOutput({ stdout: '', stderr: '' }, outDiv, false, '⚠️ Please enter your Python code before running.');
+    return;
+  }
+
+  // Save draft
+  saveQuestionCode(currentDayId, q.id, code);
+
+  // Execute in Pyodide
+  const start = performance.now();
+  const out = await executePython(code);
+  const duration = Math.round(performance.now() - start);
+
+  // Grade submission if grader available
+  let passed = false;
+  let gradeMsg = '';
+  if (typeof window.pyGradeSubmission === 'function') {
+    const grade = await window.pyGradeSubmission(code, q, pyodide, out);
+    passed = grade.passed;
+    gradeMsg = grade.message;
+  } else {
+    // Fallback: check no error
+    passed = !out.error;
+    gradeMsg = passed ? '✅ Code executed successfully.' : '⚠️ Execution encountered an error.';
+  }
+
+  // Render output
+  renderOutput(out, outDiv, passed, gradeMsg, duration);
+
+  if (passed) {
+    markQuestionSolved(currentDayId, q.id);
+    updateStatsCard();
+    updateOverallScoreUI();
+  }
+}
+
+async function executePython(code) {
+  if (!pyodide) return { stdout: '', stderr: 'Python runtime is not loaded yet. Please wait a moment.', error: true };
+  if (!code || code.trim() === '') {
+    return { stdout: '', stderr: 'Editor is empty. Write your Python code above and click Run.', error: true };
+  }
+
+  let stdout = '';
+  let stderr = '';
+  let error = false;
+
+  try {
+    pyodide.globals.set('__student_code__', code);
+    await pyodide.runPythonAsync(`
+import sys, io as _io, ast as _ast
+
+_buf_stdout = _io.StringIO()
+_buf_stderr = _io.StringIO()
+_old_stdout = sys.stdout
+_old_stderr = sys.stderr
+sys.stdout = _buf_stdout
+sys.stderr = _buf_stderr
+
+_init_keys = set(globals().keys())
+
+try:
+    _parsed = _ast.parse(__student_code__)
+    if _parsed.body:
+        _last = _parsed.body[-1]
+        if isinstance(_last, _ast.Expr):
+            # Execute leading statements if any
+            if len(_parsed.body) > 1:
+                exec(compile(_ast.Module(body=_parsed.body[:-1], type_ignores=[]), '<student_code>', 'exec'), globals())
+            # Evaluate last expression
+            _eval_val = eval(compile(_ast.Expression(_last.value), '<student_code>', 'eval'), globals())
+            if _eval_val is not None:
+                print(_eval_val)
+        else:
+            exec(compile(_parsed, '<student_code>', 'exec'), globals())
+            # If no stdout was produced by print(), display newly assigned user variables
+            if not _buf_stdout.getvalue().strip():
+                _assigned = [
+                    k for k in globals().keys() 
+                    if not k.startswith('_') and k not in _init_keys and k != '__student_code__'
+                ]
+                for _k in _assigned:
+                    print(f"{_k} = {repr(globals()[_k])}")
+except Exception as _err:
+    import traceback
+    traceback.print_exc(file=_buf_stderr)
+finally:
+    sys.stdout = _old_stdout
+    sys.stderr = _old_stderr
+`);
+
+    stdout = String(await pyodide.runPythonAsync(`_buf_stdout.getvalue()`));
+    stderr = String(await pyodide.runPythonAsync(`_buf_stderr.getvalue()`));
+    if (stderr.trim()) {
+      error = true;
+    }
+  } catch (err) {
+    stderr = err.message || String(err);
+    error = true;
+  }
+
+  return { stdout, stderr, error };
+}
+
+function renderOutput(out, container, passed, gradeMsg, duration) {
+  if (!container) return;
+  const execTimeBadge = duration ? `<span class="exec-badge" style="float:right;font-size:0.75rem;color:var(--cyan);background:rgba(0,230,246,0.1);padding:2px 8px;border-radius:4px;">⚡ ${duration}ms</span>` : '';
+
+  let html = `<div class="output-label">Terminal Output ${execTimeBadge}</div>`;
+
+  const hasStdout = Boolean(out && out.stdout && out.stdout.trim() !== '');
+  const hasStderr = Boolean(out && out.stderr && out.stderr.trim() !== '');
+
+  // 1. Terminal Console STDOUT (Displayed FIRST so student sees their printed output immediately)
+  if (hasStdout) {
+    html += `<pre class="output-stdout" style="margin:6px 0 10px 0;font-family:var(--mono, 'JetBrains Mono', monospace);font-size:0.88rem;color:var(--terminal-text, inherit);white-space:pre-wrap;line-height:1.55;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:8px 12px;word-break:break-word;">${escHtml(out.stdout.trimEnd())}</pre>`;
+  }
+
+  // 2. Terminal Console STDERR (Displayed if runtime or syntax error)
+  if (hasStderr) {
+    html += `<pre class="output-stderr" style="margin:6px 0 10px 0;font-family:var(--mono, 'JetBrains Mono', monospace);font-size:0.85rem;color:#f87171;white-space:pre-wrap;line-height:1.5;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:6px;padding:8px 12px;word-break:break-word;">${escHtml(out.stderr.trimEnd())}</pre>`;
+  }
+
+  // 3. Grader Evaluation Status Banner (Displayed below program output)
+  if (gradeMsg) {
+    const bannerColor = passed ? '#16a34a' : '#dc2626';
+    const bannerBorder = passed ? '#22c55e' : '#ef4444';
+    const bannerBg = passed ? 'rgba(34,197,94,0.12)' : 'rgba(239,68,68,0.12)';
+    html += `<div class="terminal-grade-banner" style="background:${bannerBg};border-left:4px solid ${bannerBorder};padding:8px 12px;border-radius:6px;margin-bottom:6px;font-size:0.85rem;color:${bannerColor};font-weight:600;white-space:pre-wrap;line-height:1.45;">${gradeMsg}</div>`;
+  }
+
+  // 4. Default prompt if no output, no errors, and no grade message
+  if (!hasStdout && !hasStderr && !gradeMsg) {
+    html += `<span class="output-success">⚡ Write your Python code above and click "Run" to execute it!</span>`;
+  }
+
+  container.innerHTML = html;
+}
+
+function escHtml(str) {
+  return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// ── Mobile Syntax Chips ────────────────────────────────────────
+
+function insertPythonSnippet(snippet) {
+  if (!mainEditor) return;
+  const doc = mainEditor.getDoc();
+  const cursor = doc.getCursor();
+  doc.replaceRange(snippet, cursor);
+  mainEditor.focus();
+}
+window.insertPythonSnippet = insertPythonSnippet;
+
+// ── Timed Test Portal (25 Questions) ───────────────────────────
+
+function openTestPortal() {
+  const overlay = document.getElementById('testOverlay');
+  if (!overlay || !currentDayData || !currentDayData.testQuestions) return;
+
+  overlay.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+
+  // Build sidebar with 25 questions
   buildTestSidebar();
+
+  // Load question 0
+  currentTestQuestionIndex = 0;
   loadTestQuestion(0);
+
+  // Start countdown timer
   startTestTimer();
 }
 
 function closeTestPortal() {
-  document.getElementById('testOverlay').style.display = 'none';
-  clearInterval(testTimerInterval);
+  const overlay = document.getElementById('testOverlay');
+  if (overlay) overlay.style.display = 'none';
+  document.body.style.overflow = '';
+  if (testTimerInterval) {
+    clearInterval(testTimerInterval);
+    testTimerInterval = null;
+  }
 }
 
 function buildTestSidebar() {
   const sidebar = document.getElementById('testSidebar');
-  const qs = currentDayData.testQuestions;
-  sidebar.innerHTML = qs.map((q, i) => {
-    const state = testAnswers[q.id];
-    let cls = '';
-    if (state) {
-      cls = state.passed ? 'correct' : 'incorrect';
-    }
-    if (i === currentTestQuestionIndex) {
-      cls += ' current';
-    }
-    return `<button class="test-q-btn ${cls}" onclick="loadTestQuestion(${i})" id="testSidebarBtn-${i}"><span class="q-prefix">Q</span>${i + 1}</button>`;
-  }).join('');
+  if (!sidebar || !currentDayData || !currentDayData.testQuestions) return;
+  sidebar.innerHTML = '';
+
+  currentDayData.testQuestions.forEach((q, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'test-q-btn' + (idx === currentTestQuestionIndex ? ' active' : '');
+    btn.textContent = `Q${q.id}`;
+    btn.onclick = () => loadTestQuestion(idx);
+    sidebar.appendChild(btn);
+  });
 }
 
-function loadTestQuestion(index) {
-  const qs = currentDayData.testQuestions;
-  if (index < 0 || index >= qs.length) return;
-  currentTestQuestionIndex = index;
-  const q = qs[index];
+function loadTestQuestion(idx) {
+  if (!currentDayData || !currentDayData.testQuestions || !currentDayData.testQuestions[idx]) return;
+  currentTestQuestionIndex = idx;
+  const q = currentDayData.testQuestions[idx];
 
-  // Update current classes in sidebar
-  document.querySelectorAll('#testSidebar .test-q-btn').forEach((btn, i) => {
-    if (i === index) {
-      btn.classList.add('current');
-    } else {
-      btn.classList.remove('current');
-    }
-  });
+  // Update prompt
+  const promptEl = document.getElementById('testQuestionPrompt');
+  if (promptEl) promptEl.innerHTML = `<strong>Question ${q.id}:</strong> ${q.prompt}`;
 
-  const prompt = document.getElementById('testQuestionPrompt');
-  if (prompt) prompt.innerHTML = `
-    <div style="font-size:0.78rem;color:#64748b;margin-bottom:6px;">Q${index + 1} of ${qs.length}</div>
-    <div style="font-weight:600;line-height:1.6;">${q.prompt}</div>
-    ${q.validation && q.validation.checkVars ?
-      `<div style="margin-top:8px;padding:6px 10px;background:rgba(59,130,246,0.08);border-left:3px solid #3b82f6;border-radius:4px;font-size:0.78rem;color:#93c5fd;">
-        📌 Store your answer in: ${q.validation.checkVars.map(v => `<code>${v.name}</code>`).join(', ')}
-      </div>` : ''}
-  `;
+  // Update counter
+  const qCounter = document.getElementById('testQCounter');
+  if (qCounter) qCounter.textContent = `Q${q.id} / ${currentDayData.testQuestions.length}`;
 
-  const counter = document.getElementById('testQCounter');
-  if (counter) counter.textContent = `Q${index + 1} / ${qs.length}`;
-
-  // Set/restore editor content
+  // CodeMirror instance for test
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
   const saved = testAnswers[q.id];
-  const code = saved ? saved.code : (q.starterCode || '# Write your answer here\n');
+  const initialCode = saved ? saved.code : (q.starterCode || '');
 
   if (!testEditor) {
     const wrap = document.getElementById('testEditorWrap');
-    testEditor = CodeMirror(wrap, {
-      value: code,
-      mode: 'python',
-      theme: 'dracula',
-      lineNumbers: true,
-      autoCloseBrackets: true,
-      matchBrackets: true,
-      indentUnit: 4,
-      tabSize: 4,
-      indentWithTabs: false,
-      extraKeys: {
-        Tab: cm => cm.execCommand('indentMore'),
-        'Shift-Tab': cm => cm.execCommand('indentLess'),
-        'Ctrl-Enter': () => runTestCode(),
-        'Cmd-Enter': () => runTestCode(),
-      },
-      lineWrapping: true,
-    });
+    if (wrap) {
+      testEditor = CodeMirror(wrap, {
+        value: initialCode,
+        mode: 'python',
+        theme: isLight ? 'default' : 'dracula',
+        lineNumbers: true,
+        autoCloseBrackets: true,
+        matchBrackets: true,
+        indentUnit: 4,
+        tabSize: 4,
+        indentWithTabs: false,
+        lineWrapping: true,
+      });
+    }
   } else {
-    testEditor.setValue(code);
+    testEditor.setValue(initialCode);
     testEditor.clearHistory();
   }
+  window.testEditor = testEditor;
 
-  // Clear output and banner
-  const out = document.getElementById('testOutput');
-  if (out) out.innerHTML = '<div class="output-label">Python Output</div><span class="output-success">Ready…</span>';
-  hideBanner();
+  // Update sidebar active buttons
+  const sidebar = document.getElementById('testSidebar');
+  if (sidebar) {
+    const btns = sidebar.querySelectorAll('.test-q-btn');
+    btns.forEach((b, i) => b.classList.toggle('active', i === idx));
+  }
+
+  // Clear test output
+  const testOut = document.getElementById('testOutput');
+  if (testOut) testOut.innerHTML = '<div class="output-label">Terminal Output</div><span class="output-success">Ready...</span>';
 }
 
 async function runTestCode() {
-  if (!pyodideReady) return;
-  const qs = currentDayData.testQuestions;
-  const q = qs[currentTestQuestionIndex];
+  if (!pyodideReady || !currentDayData || !currentDayData.testQuestions) return;
+  const q = currentDayData.testQuestions[currentTestQuestionIndex];
+  if (!q) return;
+
   const code = testEditor ? testEditor.getValue() : '';
+  const testOut = document.getElementById('testOutput');
 
-  // Save code
-  if (!testAnswers[q.id]) testAnswers[q.id] = {};
-  testAnswers[q.id].code = code;
-
-  // Execute
+  const start = performance.now();
   const out = await executePython(code);
-  renderOutput(out, document.getElementById('testOutput'));
+  const duration = Math.round(performance.now() - start);
 
-  // Grade
+  let passed = false;
+  let gradeMsg = '';
   if (typeof window.pyGradeSubmission === 'function') {
-    const result = await window.pyGradeSubmission(code, q, pyodide);
-
-    testAnswers[q.id].passed = result.passed;
-    testAnswers[q.id].message = result.message;
-    testAnswers[q.id].stdout = result.stdout;
-
-    showBanner(result.passed, result.message);
-    updateSidebarButton(currentTestQuestionIndex, result.passed);
-    updateTestProgress();
+    const grade = await window.pyGradeSubmission(code, q, pyodide, out);
+    passed = grade.passed;
+    gradeMsg = grade.message;
+  } else {
+    passed = !out.error;
+    gradeMsg = passed ? '✅ Valid submission.' : '⚠️ Error in code.';
   }
+
+  testAnswers[q.id] = { code, passed, message: gradeMsg, stdout: out.stdout };
+
+  renderOutput(out, testOut, passed, gradeMsg, duration);
+
+  // Update sidebar button style
+  const sidebar = document.getElementById('testSidebar');
+  if (sidebar) {
+    const btn = sidebar.querySelectorAll('.test-q-btn')[currentTestQuestionIndex];
+    if (btn) {
+      btn.classList.add(passed ? 'answered-correct' : 'answered');
+    }
+  }
+
+  updateTestProgress();
 }
 
 function clearTestEditor() {
   if (testEditor) testEditor.setValue('');
 }
 
-function showBanner(passed, message) {
-  const banner = document.getElementById('testValidationBanner');
-  if (!banner) return;
-  banner.style.display = 'block';
-  banner.style.background = passed ? 'rgba(34,197,94,0.12)' : 'rgba(239,68,68,0.12)';
-  banner.style.borderLeft = `3px solid ${passed ? '#22c55e' : '#ef4444'}`;
-  banner.style.color = passed ? '#86efac' : '#fca5a5';
-  banner.innerHTML = message;
-}
-
-function hideBanner() {
-  const banner = document.getElementById('testValidationBanner');
-  if (banner) banner.style.display = 'none';
-}
-
-function updateSidebarButton(index, passed) {
-  const btn = document.getElementById(`testSidebarBtn-${index}`);
-  if (!btn) return;
-  btn.className = `test-q-btn current ${passed ? 'correct' : 'incorrect'}`;
-}
-
 function updateTestProgress() {
   const attempted = Object.keys(testAnswers).length;
-  const passed = Object.values(testAnswers).filter(a => a.passed).length;
-  const total = currentDayData.testQuestions.length;
+  const total = currentDayData && currentDayData.testQuestions ? currentDayData.testQuestions.length : 25;
+  const el = document.getElementById('testProgress');
+  if (el) el.textContent = `Attempted: ${attempted} / ${total}`;
 
-  document.getElementById('testAttemptedCount').textContent = attempted;
-  document.getElementById('testBestScoreCount').textContent = passed;
-  document.getElementById('testProgress').textContent = `Attempted: ${attempted} / ${total}`;
-  document.getElementById('testProgressFill').style.width = `${(attempted / total) * 100}%`;
+  const attemptedCountEl = document.getElementById('testAttemptedCount');
+  if (attemptedCountEl) attemptedCountEl.textContent = attempted;
+
+  const fill = document.getElementById('testProgressFill');
+  if (fill) fill.style.width = `${Math.round((attempted / total) * 100)}%`;
 }
 
-async function submitTest() {
-  const day = (typeof currentDay !== 'undefined' && currentDay) ? currentDay : 'py-day-01';
-  const submitBtn = document.getElementById('submitTestBtn');
-  const questions = (currentDayData && currentDayData.testQuestions) ? currentDayData.testQuestions : [];
-  const total = questions.length || 25;
+function submitTest() {
+  if (!currentDayData || !currentDayData.testQuestions) return;
+  const qs = currentDayData.testQuestions;
+  let passedCount = 0;
 
-  // 1. Unattempted confirmation
-  const attemptedCount = Object.keys(testAnswers || {}).length;
-  const unattempted = total - attemptedCount;
-  if (unattempted > 0 && !window._testAutoSubmit) {
-    const msg = `You have ${unattempted} unanswered question${unattempted > 1 ? 's' : ''} remaining out of ${total}.\n\nAre you sure you want to submit your Python test now?`;
-    if (!confirm(msg)) return;
-  }
-  window._testAutoSubmit = false;
+  const tbody = document.getElementById('scorecardBody');
+  if (tbody) tbody.innerHTML = '';
 
-  // 2. Visual loading feedback
-  if (submitBtn) {
-    submitBtn.disabled = true;
-    submitBtn.textContent = '⏳ Grading Python Tests...';
-  }
+  qs.forEach(q => {
+    const ans = testAnswers[q.id];
+    const isPass = ans && ans.passed;
+    if (isPass) passedCount++;
 
-  // 3. Yield to UI thread before Pyodide batch evaluation
-  setTimeout(async () => {
-    try {
-      clearInterval(testTimerInterval);
-      testSubmitted = true;
-
-      let totalPassed = 0;
-      let reviewCardsHtml = '';
-
-      for (let i = 0; i < questions.length; i++) {
-        const q = questions[i];
-        const ansObj = testAnswers[q.id] || { code: '', passed: false };
-        const studentCode = (ansObj.code || '').trim();
-        let passed = !!ansObj.passed;
-        let message = ansObj.message || '';
-
-        // Evaluate if not already evaluated
-        if (!ansObj.passed && studentCode !== '' && studentCode !== '# Write your answer here' && typeof window.gradeSubmission === 'function' && pyodide) {
-          try {
-            const grading = await window.gradeSubmission(studentCode, q, pyodide);
-            passed = !!grading.passed;
-            message = grading.message || '';
-          } catch (e) {
-            passed = false;
-            message = e.message;
-          }
-        }
-
-        if (passed) totalPassed++;
-
-        const statusText = passed ? 'Passed' : (studentCode ? 'Failed' : 'Skipped');
-        const badgeColor = passed ? 'var(--green)' : (studentCode ? 'var(--red)' : 'var(--text-muted)');
-        const cardClass = passed ? 'review-card--correct' : 'review-card--incorrect';
-
-        reviewCardsHtml += `
-          <div class="review-card ${cardClass}" style="background: rgba(15,23,42,0.6); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 14px; margin-bottom: 12px;">
-            <div class="review-header" style="display: flex; justify-content: space-between; align-items: center;">
-              <span style="font-weight: 800; color: #38bdf8;">Question ${String(q.id || i + 1).padStart(2, '0')}</span>
-              <span class="status-badge" style="color: ${badgeColor}; font-weight: 800; text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.05em; background: rgba(255,255,255,0.04); padding: 2px 8px; border-radius: 4px;">${statusText}</span>
-            </div>
-            <div class="review-prompt" style="margin-top: 6px; color: #e2e8f0; font-size: 0.82rem; line-height: 1.45;">${q.prompt || ''}</div>
-            <div class="review-queries" style="margin-top: 10px; display: grid; grid-template-columns: 1fr; gap: 8px;">
-              <div>
-                <div style="font-size: 0.65rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;">YOUR CODE:</div>
-                <pre style="margin: 4px 0 0 0; padding: 10px; background: #04060c; border: 1px solid rgba(255,255,255,0.05); border-radius: 6px; font-family: var(--mono); font-size: 0.72rem; color: #cbd5e1; white-space: pre-wrap; word-break: break-all;"><code>${studentCode ? escHtml(studentCode) : '—'}</code></pre>
-              </div>
-              <div>
-                <div style="font-size: 0.65rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; margin-top: 6px;">REFERENCE SOLUTION:</div>
-                <pre style="margin: 4px 0 0 0; padding: 10px; background: #04060c; border: 1px solid rgba(255,255,255,0.05); border-radius: 6px; font-family: var(--mono); font-size: 0.72rem; color: var(--green); white-space: pre-wrap; word-break: break-all;"><code>${escHtml(q.ref || q.referenceCode || '# Solution')}</code></pre>
-              </div>
-            </div>
-            ${message ? `<div style="margin-top: 8px; font-size: 0.75rem; color: ${passed ? '#86efac' : '#fca5a5'};">${message}</div>` : ''}
-          </div>
-        `;
-      }
-
-      // Update Scorecard Header Metrics
-      const scoreBig = document.getElementById('scoreBig');
-      if (scoreBig) {
-        scoreBig.textContent = `${totalPassed} / ${total}`;
-        scoreBig.className = `score-big ${totalPassed >= Math.ceil(total * 0.5) ? 'pass' : 'fail'}`;
-      }
-      const scoreMeta = document.getElementById('scoreMeta');
-      if (scoreMeta) {
-        scoreMeta.textContent = `${totalPassed >= Math.ceil(total * 0.5) ? '✅ PASSED' : '❌ NEEDS REVIEW'}`;
-      }
-
-      const scorecardBody = document.getElementById('scorecardBody');
-      if (scorecardBody) {
-        const table = document.getElementById('scorecardTable');
-        if (table) table.style.display = 'none';
-
-        let cardContainer = document.getElementById('scorecardCards');
-        if (!cardContainer) {
-          cardContainer = document.createElement('div');
-          cardContainer.id = 'scorecardCards';
-          cardContainer.style.maxHeight = '420px';
-          cardContainer.style.overflowY = 'auto';
-          cardContainer.style.paddingRight = '4px';
-          scorecardBody.parentElement.appendChild(cardContainer);
-        }
-        cardContainer.innerHTML = reviewCardsHtml;
-        cardContainer.scrollTop = 0;
-      }
-
-      // Persist attempt
-      if (window.ProgressManager) {
-        ProgressManager.saveTestAttempt(day, {
-          startedAt: Date.now(),
-          timeRemaining: 0,
-          answers: testAnswers,
-          submitted: true,
-          score: totalPassed
-        });
-      }
-
-      // Open Scorecard Overlay
-      const overlay = document.getElementById('scorecardOverlay');
-      if (overlay) {
-        overlay.style.display = 'flex';
-        overlay.classList.add('open');
-      }
-
-    } catch (err) {
-      console.error('[Manodemy] Python submitTest error:', err);
-      alert(`⚠️ An error occurred while submitting your test: ${err.message}`);
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Submit Test';
-      }
+    if (tbody) {
+      const tr = document.createElement('tr');
+      const badge = isPass
+        ? `<span class="badge badge-success" style="color:#22c55e;font-weight:700;">PASSED</span>`
+        : `<span class="badge badge-fail" style="color:#ef4444;font-weight:700;">FAILED</span>`;
+      tr.innerHTML = `<td>Q${q.id}</td><td>${badge}</td><td><code style="font-family:var(--font-mono);font-size:0.8rem;">${escHtml((ans ? ans.code : '').substring(0, 45))}…</code></td>`;
+      tbody.appendChild(tr);
     }
-  }, 30);
+  });
+
+  const bigScore = document.getElementById('scoreBig');
+  if (bigScore) bigScore.textContent = `${passedCount} / ${qs.length}`;
+
+  const meta = document.getElementById('scoreMeta');
+  const elapsedMins = Math.floor((7200 - testSecondsLeft) / 60);
+  const elapsedSecs = (7200 - testSecondsLeft) % 60;
+  if (meta) meta.textContent = `Time spent: ${String(elapsedMins).padStart(2,'0')}:${String(elapsedSecs).padStart(2,'0')} • Accuracy: ${Math.round((passedCount / qs.length) * 100)}%`;
+
+  // Persist test best score
+  saveTestScore(currentDayId, passedCount);
+  updateOverallScoreUI();
+
+  // Show scorecard modal
+  const scorecard = document.getElementById('scorecardOverlay');
+  if (scorecard) scorecard.style.display = 'flex';
 }
 
 function closeScorecard() {
-  const scorecardOverlay = document.getElementById('scorecardOverlay');
-  if (scorecardOverlay) {
-    scorecardOverlay.style.display = 'none';
-    scorecardOverlay.classList.remove('open');
-  }
+  const scorecard = document.getElementById('scorecardOverlay');
+  if (scorecard) scorecard.style.display = 'none';
   closeTestPortal();
 }
 
-// ── Timer ─────────────────────────────────────────────────────
-
 function startTestTimer() {
-  testSecondsLeft = 7200;
-  clearInterval(testTimerInterval);
+  testSecondsLeft = 7200; // 2 hours
+  if (testTimerInterval) clearInterval(testTimerInterval);
+
   testTimerInterval = setInterval(() => {
-    testSecondsLeft--;
-    const m = Math.floor(testSecondsLeft / 60);
-    const s = testSecondsLeft % 60;
-    const el = document.getElementById('testTimer');
-    if (el) el.textContent = `${String(m).padStart(3,'0')}:${String(s).padStart(2,'0')}`;
-    if (testSecondsLeft <= 0) {
+    if (testSecondsLeft > 0) {
+      testSecondsLeft--;
+      const m = Math.floor(testSecondsLeft / 60);
+      const s = testSecondsLeft % 60;
+      const el = document.getElementById('testTimer');
+      if (el) el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    } else {
       clearInterval(testTimerInterval);
+      testTimerInterval = null;
       submitTest();
     }
   }, 1000);
 }
 
-// ── Present Mode ──────────────────────────────────────────────
+// ── Progress & Persistence ─────────────────────────────────────
 
-function closePresentMode() {
-  document.getElementById('presentOverlay').style.display = 'none';
+function markQuestionSolved(dayId, qId) {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    const data = raw ? JSON.parse(raw) : { days: {} };
+    if (!data.days[dayId]) data.days[dayId] = { solved: [], marks: 0, bestScore: 0 };
+    if (!data.days[dayId].solved.includes(qId)) {
+      data.days[dayId].solved.push(qId);
+      data.days[dayId].marks = data.days[dayId].solved.length;
+    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (e) {}
 }
 
-let penMode = false;
-function togglePen() {
-  penMode = !penMode;
-  document.getElementById('penBtn').textContent = penMode ? '✏️ Stop Drawing' : '✏️ Draw';
+function saveQuestionCode(dayId, qId, code) {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    const data = raw ? JSON.parse(raw) : { days: {} };
+    if (!data.days[dayId]) data.days[dayId] = { solved: [], codes: {} };
+    if (!data.days[dayId].codes) data.days[dayId].codes = {};
+    data.days[dayId].codes[qId] = code;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (e) {}
 }
 
-// ── Divider Resize ────────────────────────────────────────────
+function getSavedQuestionCode(dayId, qId) {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const data = JSON.parse(raw);
+    return data.days && data.days[dayId] && data.days[dayId].codes ? data.days[dayId].codes[qId] : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function saveTestScore(dayId, score) {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    const data = raw ? JSON.parse(raw) : { days: {} };
+    if (!data.days[dayId]) data.days[dayId] = { solved: [], marks: 0, bestScore: 0 };
+    data.days[dayId].bestScore = Math.max(data.days[dayId].bestScore || 0, score);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (e) {}
+}
+
+function updateStatsCard() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    const data = raw ? JSON.parse(raw) : { days: {} };
+    const dayData = (data.days && data.days[currentDayId]) || { solved: [], marks: 0 };
+
+    const totalQ = currentDayData && currentDayData.practiceQuestions ? currentDayData.practiceQuestions.length : 15;
+    const solvedNum = dayData.solved.length;
+    const marksNum = dayData.solved.length;
+
+    const solvedEl = document.getElementById('solvedCount');
+    if (solvedEl) solvedEl.textContent = solvedNum;
+    const totalQEl = document.getElementById('totalQuestions');
+    if (totalQEl) totalQEl.textContent = totalQ;
+
+    const marksEl = document.getElementById('marksCount');
+    if (marksEl) marksEl.textContent = marksNum.toFixed(1);
+    const totalMarksEl = document.getElementById('totalMarks');
+    if (totalMarksEl) totalMarksEl.textContent = Number(totalQ).toFixed(1);
+
+    const fill = document.getElementById('statsProgressFill');
+    if (fill) fill.style.width = `${Math.min(100, Math.round((solvedNum / totalQ) * 100))}%`;
+  } catch (e) {}
+}
+
+// ── Resizable Split Divider ───────────────────────────────────
 
 function initDivider() {
   const divider = document.getElementById('divider');
+  const panelLeft = document.getElementById('panelLeft');
+  const panelRight = document.getElementById('panelRight');
   const container = document.getElementById('workspaceContainer');
-  const left = document.getElementById('panelLeft');
-  const right = document.getElementById('panelRight');
-  if (!divider || !container || !left || !right) return;
+  if (!divider || !panelLeft || !panelRight || !container) return;
 
-  let dragging = false;
+  let isDragging = false;
+
   divider.addEventListener('mousedown', e => {
-    if (e.target.tagName === 'BUTTON') return;
-    dragging = true;
+    if (e.target.closest('.divider-toggles')) return;
+    isDragging = true;
     document.body.style.cursor = 'col-resize';
     document.body.style.userSelect = 'none';
   });
+
   document.addEventListener('mousemove', e => {
-    if (!dragging) return;
+    if (!isDragging) return;
     const rect = container.getBoundingClientRect();
-    let pct = ((e.clientX - rect.left) / rect.width) * 100;
-    pct = Math.max(20, Math.min(80, pct));
-    left.style.flex = `0 0 ${pct}%`;
-    right.style.flex = `0 0 ${100 - pct}%`;
+    const x = e.clientX - rect.left;
+    const totalWidth = rect.width;
+    const leftWidth = Math.max(280, Math.min(totalWidth - 320, x));
+    const rightWidth = totalWidth - leftWidth - 6;
+
+    panelLeft.style.flex = `0 0 ${leftWidth}px`;
+    panelRight.style.flex = `0 0 ${rightWidth}px`;
     if (mainEditor) mainEditor.refresh();
   });
+
   document.addEventListener('mouseup', () => {
-    dragging = false;
-    document.body.style.cursor = '';
-    document.body.style.userSelect = '';
+    if (isDragging) {
+      isDragging = false;
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+      if (mainEditor) mainEditor.refresh();
+    }
   });
 }
 
 function toggleLeftPanel(e) {
-  e.stopPropagation();
-  const left = document.getElementById('panelLeft');
-  const right = document.getElementById('panelRight');
-  const hidden = left.style.display === 'none';
-  left.style.display = hidden ? '' : 'none';
-  right.style.flex = hidden ? '' : '1';
-}
-
-function toggleRightPanel(e) {
-  e.stopPropagation();
-  const right = document.getElementById('panelRight');
-  const left = document.getElementById('panelLeft');
-  const hidden = right.style.display === 'none';
-  right.style.display = hidden ? '' : 'none';
-  left.style.flex = hidden ? '' : '1';
-}
-
-function resetSplitScreen(e) {
-  e.stopPropagation();
-  const left = document.getElementById('panelLeft');
-  const right = document.getElementById('panelRight');
-  left.style.flex = '';
-  left.style.display = '';
-  right.style.flex = '';
-  right.style.display = '';
+  if (e) e.stopPropagation();
+  const panelLeft = document.getElementById('panelLeft');
+  const panelRight = document.getElementById('panelRight');
+  if (!panelLeft || !panelRight) return;
+  panelLeft.style.flex = '0 0 0px';
+  panelRight.style.flex = '1 1 auto';
+  panelLeft.style.display = 'none';
   if (mainEditor) mainEditor.refresh();
 }
 
-// ── Mobile Tabs ───────────────────────────────────────────────
+function toggleRightPanel(e) {
+  if (e) e.stopPropagation();
+  const panelLeft = document.getElementById('panelLeft');
+  const panelRight = document.getElementById('panelRight');
+  if (!panelLeft || !panelRight) return;
+  panelRight.style.flex = '0 0 0px';
+  panelLeft.style.flex = '1 1 auto';
+  panelRight.style.display = 'none';
+  if (mainEditor) mainEditor.refresh();
+}
+
+function resetSplitScreen(e) {
+  if (e) e.stopPropagation();
+  const panelLeft = document.getElementById('panelLeft');
+  const panelRight = document.getElementById('panelRight');
+  if (!panelLeft || !panelRight) return;
+  panelLeft.style.display = 'flex';
+  panelRight.style.display = 'flex';
+  panelLeft.style.flex = '1 1 50%';
+  panelRight.style.flex = '1 1 50%';
+  if (mainEditor) mainEditor.refresh();
+}
 
 function setMobileTab(tab) {
-  const ws = document.getElementById('workspaceContainer');
-  const btnT = document.getElementById('tabBtnTheory');
-  const btnP = document.getElementById('tabBtnPractice');
-  if (tab === 'theory') {
-    ws.classList.add('mobile-show-theory');
-    ws.classList.remove('mobile-show-practice');
-    btnT.classList.add('active');
-    btnP.classList.remove('active');
+  const container = document.getElementById('workspaceContainer');
+  const btnPractice = document.getElementById('tabBtnPractice');
+  const btnTheory = document.getElementById('tabBtnTheory');
+  if (!container) return;
+
+  if (tab === 'practice') {
+    container.classList.remove('mobile-show-theory');
+    container.classList.add('mobile-show-practice');
+    btnPractice?.classList.add('active');
+    btnTheory?.classList.remove('active');
   } else {
-    ws.classList.add('mobile-show-practice');
-    ws.classList.remove('mobile-show-theory');
-    btnP.classList.add('active');
-    btnT.classList.remove('active');
+    container.classList.remove('mobile-show-practice');
+    container.classList.add('mobile-show-theory');
+    btnTheory?.classList.add('active');
+    btnPractice?.classList.remove('active');
   }
 }
 
-// ── Playback Controls & Narration System ──────────────────────
+// Compatibility no-ops for legacy slide nav
+function prevSlide() {}
+function nextSlide() {}
 
-function buildNarrationTracksForSlide() {
-  pauseCombinedPlayback();
-  
-  const slideContainer = document.getElementById('slideContent');
-  if (!slideContainer) return;
-  
-  // Find all slide sections
-  const sections = Array.from(slideContainer.querySelectorAll('.slide-section'));
-  if (sections.length === 0) {
-    sections.push(slideContainer);
-  }
-  
-  combinedTracks = sections.map((sect) => {
-    // Extract text, strip code block elements for clean reading
-    const clone = sect.cloneNode(true);
-    // Remove pre and code blocks
-    clone.querySelectorAll('pre, code, svg, .db-table-mock').forEach(el => el.remove());
-    
-    let text = clone.innerText || clone.textContent || "";
-    // Clean text: normalize spaces
-    text = text.replace(/\s+/g, ' ').trim();
-    
-    // Fallback if empty text
-    if (!text) {
-      text = "This section displays illustrations of the concept.";
-    }
-    
-    const wordCount = text.split(/\s+/).filter(w => w.length > 0).length;
-    const duration = Math.max(3.5, wordCount / 2.2);
-    
-    return {
-      element: sect,
-      text: text,
-      duration: duration
-    };
-  });
-  
-  combinedTrackDurations = combinedTracks.map(t => t.duration);
-  totalCombinedDuration = combinedTrackDurations.reduce((a, b) => a + b, 0);
-  combinedTrackIndex = 0;
-  currentCombinedTime = 0;
-  
-  // Show play buttons and progress bar
-  const navBtn = document.getElementById('navPlayBtn');
-  if (navBtn) navBtn.style.display = 'inline-flex';
-  document.getElementById('playbackBar')?.classList.add('visible');
-  
-  updatePlayButtonStates(false);
-  updateProgressUI();
+// ── Export globals ─────────────────────────────────────────────
+window.init = init;
+window.loadDay = loadDay;
+window.renderSlide = renderSlide;
+window.prevSlide = prevSlide;
+window.nextSlide = nextSlide;
+window.toggleChapterList = toggleChapterList;
+window.onTopicSelectChange = onTopicSelectChange;
+window.toggleCombinedPlayback = toggleCombinedPlayback;
+window.seekCombinedPlayback = seekCombinedPlayback;
+window.skipCombined = skipCombined;
+window.setPlaybackVolume = setPlaybackVolume;
+window.toggleVolumePopover = toggleVolumePopover;
+window.toggleSpeedPopover = toggleSpeedPopover;
+window.selectSpeedOption = selectSpeedOption;
+window.playAudio = playAudio;
+window.playQuestionAudio = playQuestionAudio;
+window.playSolutionAudioFromBtn = playSolutionAudioFromBtn;
+window.prevQuestion = prevQuestion;
+window.nextQuestion = nextQuestion;
+window.selectQuestion = selectQuestion;
+window.toggleQPicker = toggleQPicker;
+window.peekSolution = peekSolution;
+window.resetCode = resetCode;
+window.clearEditor = clearEditor;
+window.runCurrentCode = runCurrentCode;
+window.openTestPortal = openTestPortal;
+window.closeTestPortal = closeTestPortal;
+window.loadTestQuestion = loadTestQuestion;
+window.runTestCode = runTestCode;
+window.clearTestEditor = clearTestEditor;
+window.submitTest = submitTest;
+window.closeScorecard = closeScorecard;
+window.toggleLeftPanel = toggleLeftPanel;
+window.toggleRightPanel = toggleRightPanel;
+window.resetSplitScreen = resetSplitScreen;
+window.setMobileTab = setMobileTab;
+
+// Start on DOM ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
 }
 
-function toggleCombinedPlayback() {
-  if (isCombinedPlaying) {
-    pauseCombinedPlayback();
-  } else {
-    playCombinedPlayback();
-  }
-}
+// ── Mobile Theme Toggle Relocation ──
+function initMobileThemeToggle() {
+  const mql = window.matchMedia('(max-width: 768px)');
+  function relocateToggle(e) {
+    const btn = document.getElementById('themeToggleBtn');
+    const dayNav = document.querySelector('.day-navigation');
+    const headerRight = document.querySelector('.header-right');
+    const topicPill = document.querySelector('.topic-picker-pill');
+    if (!btn || !dayNav || !headerRight) return;
 
-function playCombinedPlayback() {
-  isCombinedPlaying = true;
-  updatePlayButtonStates(true);
-  
-  // Start timer interval to update progress UI
-  if (playbackTimerInterval) clearInterval(playbackTimerInterval);
-  playbackTimerInterval = setInterval(() => {
-    if (isCombinedPlaying) {
-      currentCombinedTime = Math.min(totalCombinedDuration, currentCombinedTime + 0.1);
-      updateProgressUI();
-      
-      if (currentCombinedTime >= totalCombinedDuration) {
-        onCombinedPlaybackEnded();
+    if (e.matches) {
+      dayNav.appendChild(btn);
+    } else {
+      if (headerRight.firstChild !== btn) {
+        headerRight.insertBefore(btn, headerRight.firstChild);
       }
     }
-  }, 100);
-  
-  speakTrackSegment(combinedTrackIndex);
+  }
+  mql.addEventListener('change', relocateToggle);
+  relocateToggle(mql);
 }
-
-function pauseCombinedPlayback() {
-  isCombinedPlaying = false;
-  updatePlayButtonStates(false);
-  
-  if (playbackTimerInterval) {
-    clearInterval(playbackTimerInterval);
-    playbackTimerInterval = null;
-  }
-  
-  window.speechSynthesis.cancel();
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initMobileThemeToggle);
+} else {
+  initMobileThemeToggle();
 }
-
-function speakTrackSegment(trackIdx) {
-  if (!isCombinedPlaying) return;
-  if (trackIdx < 0 || trackIdx >= combinedTracks.length) {
-    onCombinedPlaybackEnded();
-    return;
-  }
-  
-  combinedTrackIndex = trackIdx;
-  const track = combinedTracks[trackIdx];
-  
-  // Highlight active section visually
-  combinedTracks.forEach((t, i) => {
-    if (i === trackIdx) {
-      t.element.classList.add('active-narration');
-      t.element.classList.remove('inactive-narration');
-      t.element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    } else {
-      t.element.classList.remove('active-narration');
-      t.element.classList.add('inactive-narration');
-    }
-  });
-
-  // Highlight caption box
-  const captionBox = document.getElementById('workspaceVpCaption');
-  if (captionBox) {
-    captionBox.style.display = 'block';
-    captionBox.textContent = `📢 Narrator: "${track.text.substring(0, 100)}${track.text.length > 100 ? '...' : ''}"`;
-  }
-  
-  // Calculate elapsed time up to the start of this segment
-  let startOffset = 0;
-  for (let i = 0; i < trackIdx; i++) {
-    startOffset += combinedTrackDurations[i];
-  }
-  currentCombinedTime = startOffset;
-  
-  // Cancel previous speech synthesis
-  window.speechSynthesis.cancel();
-  
-  // Create SpeechSynthesisUtterance
-  ttsUtterance = new SpeechSynthesisUtterance(track.text);
-  ttsUtterance.rate = currentPlaybackRate;
-  ttsUtterance.volume = isMuted ? 0 : currentPlaybackVolume;
-  
-  ttsUtterance.onend = () => {
-    if (isCombinedPlaying && combinedTrackIndex === trackIdx) {
-      speakTrackSegment(trackIdx + 1);
-    }
-  };
-  
-  ttsUtterance.onerror = (e) => {
-    console.log("TTS Error:", e);
-  };
-  
-  window.speechSynthesis.speak(ttsUtterance);
-}
-
-function seekCombinedPlayback(val) {
-  const targetTime = parseFloat(val);
-  
-  // Find which track segment targetTime belongs to
-  let elapsed = 0;
-  let trackIdx = 0;
-  
-  for (let i = 0; i < combinedTrackDurations.length; i++) {
-    const dur = combinedTrackDurations[i];
-    if (targetTime < elapsed + dur) {
-      trackIdx = i;
-      break;
-    }
-    elapsed += dur;
-    if (i === combinedTrackDurations.length - 1) {
-      trackIdx = i;
-    }
-  }
-  
-  currentCombinedTime = targetTime;
-  combinedTrackIndex = trackIdx;
-  
-  updateProgressUI();
-  
-  if (isCombinedPlaying) {
-    speakTrackSegment(trackIdx);
-  }
-}
-
-function onCombinedPlaybackEnded() {
-  pauseCombinedPlayback();
-  combinedTrackIndex = 0;
-  currentCombinedTime = 0;
-  
-  // Reset visual highlights
-  combinedTracks.forEach(t => {
-    t.element.classList.remove('active-narration');
-    t.element.classList.remove('inactive-narration');
-  });
-  
-  const captionBox = document.getElementById('workspaceVpCaption');
-  if (captionBox) captionBox.style.display = 'none';
-  
-  updateProgressUI();
-}
-
-function updateProgressUI() {
-  const seekBar = document.getElementById('seekBar');
-  const playbackTime = document.getElementById('playbackTime');
-  if (seekBar) {
-    seekBar.max = totalCombinedDuration || 100;
-    seekBar.value = currentCombinedTime;
-  }
-  if (playbackTime) {
-    playbackTime.textContent = `${formatTime(currentCombinedTime)} / ${formatTime(totalCombinedDuration)}`;
-  }
-}
-
-function formatTime(secs) {
-  const m = Math.floor(secs / 60);
-  const s = Math.floor(secs % 60);
-  return `${m}:${s < 10 ? '0' : ''}${s}`;
-}
-
-function updatePlayButtonStates(isPlaying) {
-  const navBtn = document.getElementById('navPlayBtn');
-  const barBtn = document.getElementById('playPauseBtn');
-  
-  if (navBtn) {
-    navBtn.innerHTML = isPlaying 
-      ? `<span class="btn-icon">⏸</span> <span class="btn-text">Pause Lesson</span>`
-      : `<span class="btn-icon">▶</span> <span class="btn-text">Play Lesson</span>`;
-  }
-  if (barBtn) {
-    barBtn.textContent = isPlaying ? '⏸' : '▶';
-  }
-}
-
-// Popover control functions
-function toggleVolumePopover(event) {
-  event.stopPropagation();
-  const volBtn = document.getElementById('volumeBtn');
-  const popover = document.getElementById('volumePopover');
-  const speedPopover = document.getElementById('speedPopover');
-  const speedBtn = document.getElementById('speedControlBtn');
-  
-  if (speedPopover) {
-    speedPopover.classList.remove('open');
-    speedBtn?.classList.remove('active');
-  }
-  
-  popover?.classList.toggle('open');
-  volBtn?.classList.toggle('active');
-}
-
-function toggleSpeedPopover(event) {
-  event.stopPropagation();
-  const speedBtn = document.getElementById('speedControlBtn');
-  const popover = document.getElementById('speedPopover');
-  const volPopover = document.getElementById('volumePopover');
-  const volBtn = document.getElementById('volumeBtn');
-  
-  if (volPopover) {
-    volPopover.classList.remove('open');
-    volBtn?.classList.remove('active');
-  }
-  
-  popover?.classList.toggle('open');
-  speedBtn?.classList.toggle('active');
-}
-
-function setPlaybackVolume(value) {
-  const vol = parseFloat(value) / 100;
-  currentPlaybackVolume = vol;
-  isMuted = (vol === 0);
-  
-  if (ttsUtterance) {
-    ttsUtterance.volume = vol;
-  }
-  
-  const valLabel = document.getElementById('volumeValue');
-  if (valLabel) valLabel.textContent = `${value}%`;
-  
-  const volBtn = document.getElementById('volumeBtn');
-  if (volBtn) {
-    if (value == 0) {
-      volBtn.innerHTML = `
-        <svg class="volume-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.21.05-.42.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
-        </svg>
-      `;
-    } else if (value < 50) {
-      volBtn.innerHTML = `
-        <svg class="volume-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M18.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM5 9v6h4l5 5V4L9 9H5z"/>
-        </svg>
-      `;
-    } else {
-      volBtn.innerHTML = `
-        <svg class="volume-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
-        </svg>
-      `;
-    }
-  }
-}
-
-function selectSpeedOption(speed, labelText) {
-  const btn = document.getElementById('speedControlBtn');
-  currentPlaybackRate = parseFloat(speed);
-  
-  if (ttsUtterance) {
-    ttsUtterance.rate = currentPlaybackRate;
-  }
-  
-  if (isCombinedPlaying) {
-    speakTrackSegment(combinedTrackIndex);
-  }
-  
-  const valLabel = document.getElementById('speedValueLabel');
-  if (valLabel) valLabel.textContent = labelText;
-  
-  document.querySelectorAll('.speed-option').forEach(opt => {
-    const optSpeed = parseFloat(opt.textContent);
-    if (optSpeed === speed) {
-      opt.classList.add('active');
-    } else {
-      opt.classList.remove('active');
-    }
-  });
-  
-  document.getElementById('speedPopover')?.classList.remove('open');
-  btn?.classList.remove('active');
-}
-
-// Global click handler to close popovers when clicking outside
-document.addEventListener('click', () => {
-  document.getElementById('volumePopover')?.classList.remove('open');
-  document.getElementById('volumeBtn')?.classList.remove('active');
-  document.getElementById('speedPopover')?.classList.remove('open');
-  document.getElementById('speedControlBtn')?.classList.remove('active');
-});
-
-// P2 #15: Class-based clearSlidePlaybackVisibility
-function clearSlidePlaybackVisibility() {
-  const containers = [
-    document.getElementById('slideBodyText'),
-    document.getElementById('presentSlideContent')
-  ].filter(Boolean);
-
-  containers.forEach(container => {
-    container.classList.remove('playback-active');
-    container.querySelectorAll('.section-hidden, .vis-target-hidden, .vis-target-dimmed, .narration-spotlight-active, .stunning-section-entry, .instant-display').forEach(el => {
-      el.classList.remove('section-hidden', 'vis-target-hidden', 'vis-target-dimmed', 'narration-spotlight-active', 'stunning-section-entry', 'instant-display');
-      el.style.display = '';
-      el.style.opacity = '';
-    });
-  });
-}
-
-function getVisibilityBlock(targetElement, sectionBoundary) {
-  const tr = targetElement.closest('tr');
-  if (tr && sectionBoundary.contains(tr)) return tr;
-  const vsCard = targetElement.closest('.vs-card');
-  if (vsCard && sectionBoundary.contains(vsCard)) return vsCard;
-  return targetElement;
-}
-
-function updateSlidePlaybackVisibility(targetSelector, isSeek = false) {
-  const containers = [
-    document.getElementById('slideBodyText'),
-    document.getElementById('presentSlideContent')
-  ].filter(Boolean);
-
-  containers.forEach(container => {
-    if (typeof isCombinedPlaying === 'undefined' || !isCombinedPlaying) {
-      clearSlidePlaybackVisibility();
-      return;
-    }
-
-    container.classList.add('playback-active');
-
-    container.querySelectorAll('.narration-spotlight-active, .stunning-section-entry').forEach(el => {
-      el.classList.remove('narration-spotlight-active', 'stunning-section-entry');
-    });
-
-    const targetEl = container.querySelector(targetSelector);
-    if (!targetEl) return;
-
-    container.querySelectorAll('.section-hidden, .vis-target-hidden').forEach(el => {
-      el.classList.remove('section-hidden', 'vis-target-hidden');
-      el.style.display = '';
-    });
-
-    const activeSection = targetEl.closest('.slide-section');
-    if (!activeSection) {
-      container.querySelectorAll('.slide-section').forEach(s => s.classList.remove('section-hidden'));
-      return;
-    }
-
-    if (isSeek) {
-      activeSection.classList.add('instant-display');
-      activeSection.classList.remove('stunning-section-entry');
-    } else {
-      activeSection.classList.remove('instant-display');
-      activeSection.classList.add('stunning-section-entry');
-    }
-
-    let activeBlock = getVisibilityBlock(targetEl, activeSection) || targetEl;
-    if (activeBlock.classList && activeBlock.classList.contains('audio-play-btn')) {
-      activeBlock = activeBlock.closest('.heading-with-audio, .heading-box-wrap, .warn-box, .info-box, .tip-box, .callout-box, .note-box, .warning-box, h3, h4, [id]') || activeBlock;
-    }
-
-    if (activeBlock) {
-      activeBlock.classList.add('narration-spotlight-active');
-    }
-
-    container.querySelectorAll('.slide-section').forEach(section => {
-      if (section !== activeSection) {
-        section.classList.add('section-hidden');
-        section.classList.remove('stunning-section-entry');
-      } else {
-        section.classList.remove('section-hidden');
-      }
-    });
-
-    container.scrollTop = 0;
-
-    const h2 = container.querySelector('h2');
-    if (h2) h2.classList.remove('section-hidden', 'vis-target-hidden');
-
-    const activeTrackElements = new Set();
-    activeTrackElements.add(activeBlock);
-    activeBlock.querySelectorAll('*').forEach(c => activeTrackElements.add(c));
-
-    const sectionHead = activeSection.querySelector('h3, h4');
-    if (sectionHead) {
-      activeTrackElements.add(sectionHead);
-      sectionHead.querySelectorAll('*').forEach(c => activeTrackElements.add(c));
-    }
-
-    let sibling = activeBlock.nextElementSibling;
-    while (sibling) {
-      if (sibling.classList.contains('heading-with-audio') ||
-          sibling.classList.contains('heading-box-wrap') ||
-          sibling.classList.contains('warn-box') ||
-          sibling.classList.contains('info-box') ||
-          sibling.classList.contains('tip-box') ||
-          sibling.classList.contains('callout-box') ||
-          sibling.classList.contains('note-box') ||
-          sibling.classList.contains('warning-box') ||
-          sibling.tagName === 'H3' ||
-          sibling.tagName === 'H4' ||
-          sibling.querySelector('.audio-play-btn')) {
-        break;
-      }
-      activeTrackElements.add(sibling);
-      sibling.querySelectorAll('*').forEach(c => activeTrackElements.add(c));
-      sibling = sibling.nextElementSibling;
-    }
-
-    const allChildBlocks = activeSection.querySelectorAll('.heading-with-audio, .heading-box-wrap, h3, h4, p, .warn-box, .info-box, .tip-box, .callout-box, .note-box, .warning-box, .db-mock-table-wrap, table, pre, code, ul, ol, .sql-example, .vs-block, .vs-card, .prec-card, .prec-note, .section-block, [id]');
-    allChildBlocks.forEach(blk => {
-      if (activeTrackElements.has(blk)) {
-        blk.classList.remove('vis-target-hidden');
-        blk.style.display = '';
-      } else {
-        blk.classList.add('vis-target-hidden');
-      }
-    });
-  });
-}
-
-// ── Bootstrap ─────────────────────────────────────────────────
-
-document.addEventListener('DOMContentLoaded', init);

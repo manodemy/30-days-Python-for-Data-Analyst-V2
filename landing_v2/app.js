@@ -1290,7 +1290,7 @@ document.addEventListener('DOMContentLoaded', () => {
         || localStorage.getItem('manodemy_enrolled_sql') === 'true'
         || localStorage.getItem('manodemy_enrolled_excel') === 'true'
         || localStorage.getItem('manodemy_enrolled_python') === 'true';
-      let path = '/day01.html';
+      let path = '/python/day01.html';
 
       // Detect track type
       const grid = card.closest('.curriculum-grid');
@@ -1313,8 +1313,8 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (isPaid) window.location.href = `/notebook/excel-day${day}`;
         else openCheckout();
       } else {
-        if (day === '01') window.location.href = '/day01.html';
-        else if (day === '02') window.location.href = '/day02.html';
+        if (day === '01') window.location.href = '/python/day01.html';
+        else if (day === '02') window.location.href = '/python/day02.html';
         else if (isPaid) window.location.href = `/notebook/day${day}`;
         else openCheckout();
       }

@@ -748,12 +748,28 @@
       "destination": "/python/index.html"
     },
     {
+      "source": "/python/day01",
+      "destination": "/python/day01.html"
+    },
+    {
+      "source": "/python/day02",
+      "destination": "/python/day02.html"
+    },
+    {
+      "source": "/day01",
+      "destination": "/python/day01.html"
+    },
+    {
+      "source": "/day02",
+      "destination": "/python/day02.html"
+    },
+    {
       "source": "/day01.html",
-      "destination": "/python/index.html?day=1"
+      "destination": "/python/day01.html"
     },
     {
       "source": "/day02.html",
-      "destination": "/python/index.html?day=2"
+      "destination": "/python/day02.html"
     }
   ]
 }

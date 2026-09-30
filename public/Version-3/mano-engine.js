@@ -5461,36 +5461,79 @@ function populateQPicker() {
   if (!list) return;
   const questions = (COURSE_CONFIG && COURSE_CONFIG.practiceQuestions) || [];
   list.innerHTML = '';
+
+  const headerEl = document.querySelector('#qPickerPopover .q-picker-header');
+  let solvedCount = 0;
+
   questions.forEach((q, idx) => {
     const isSolved = solvedQuestions && (solvedQuestions.has(`${currentDay}-${q.id}`) || solvedQuestions.has(`${currentDay}_${q.id}`));
+    if (isSolved) solvedCount++;
     const isActive = idx === currentPracticeQ;
 
-    // Strip HTML tags from prompt for plain-text display
-    const plainPrompt = (q.prompt || '').replace(/<[^>]*>/g, '').trim();
+    // Extract clean title and badge from prompt
+    let title = '';
+    let badge = '';
+
+    const strongMatch = (q.prompt || '').match(/<strong>(.*?)<\/strong>/i);
+    if (strongMatch) {
+      let rawTitle = strongMatch[1].replace(/<[^>]*>/g, '').trim();
+      const tagMatch = rawTitle.match(/^\[(.*?)\]\s*(.*)$/);
+      if (tagMatch) {
+        badge = tagMatch[1];
+        title = tagMatch[2];
+      } else if (rawTitle.toLowerCase().startsWith('task:')) {
+        title = rawTitle.substring(5).trim();
+      } else {
+        title = rawTitle;
+      }
+    }
+
+    if (!title) {
+      const clean = (q.prompt || '')
+        .replace(/<\/(p|div|strong|h\d)>|<br\s*\/?>/gi, ' ')
+        .replace(/<[^>]*>/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+      title = clean.length > 55 ? clean.substring(0, 52) + '…' : clean;
+    }
+
+    const qNum = String(q.id || idx + 1).padStart(2, '0');
 
     const btn = document.createElement('button');
     btn.className = 'q-picker-item' + (isActive ? ' q-picker-item--active' : '');
     btn.setAttribute('role', 'option');
     btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
     btn.setAttribute('data-idx', idx);
-    btn.title = plainPrompt;
+    btn.title = `Question ${qNum}: ${title}`;
+
+    const esc = str => (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
     btn.innerHTML = `
-      <span class="q-picker-item-num">Q${String(q.id).padStart(2,'0')}</span>
-      <span class="q-picker-item-text">${plainPrompt}</span>
-      ${isSolved ? `<span class="q-picker-item-solved" title="Solved">
-        <svg width="9" height="9" viewBox="0 0 12 12" fill="none">
-          <path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </span>` : ''}
+      <span class="q-picker-item-num">Q${qNum}</span>
+      <div class="q-picker-item-main">
+        <span class="q-picker-item-title">${esc(title)}</span>
+        ${badge ? `<span class="q-picker-item-badge">${esc(badge)}</span>` : ''}
+      </div>
+      <span class="q-picker-item-status ${isSolved ? 'is-solved' : ''}">
+        ${isSolved ? `<svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+          <circle cx="8" cy="8" r="7" fill="rgba(34, 197, 94, 0.2)" stroke="#16a34a" stroke-width="1.5"/>
+          <path d="M5 8.2l2 2 4.2-4.2" stroke="#16a34a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>` : `<span class="q-picker-item-dot"></span>`}
+      </span>
     `;
     btn.addEventListener('click', () => jumpToQuestion(idx));
     list.appendChild(btn);
   });
 
+  if (headerEl) {
+    headerEl.innerHTML = `<span>Practice Questions (${questions.length})</span> <span class="q-picker-count-badge">${solvedCount}/${questions.length} Solved</span>`;
+  }
+
   // Scroll active item into view
-  const activeItem = list.querySelector('.q-picker-item--active');
-  if (activeItem) activeItem.scrollIntoView({ block: 'nearest' });
+  setTimeout(() => {
+    const activeItem = list.querySelector('.q-picker-item--active');
+    if (activeItem) activeItem.scrollIntoView({ block: 'nearest' });
+  }, 10);
 }
 
 function jumpToQuestion(idx) {
@@ -13583,3 +13626,30 @@ if (document.readyState === 'loading') {
   initTheme();
 }
 
+
+// ── Mobile Theme Toggle Relocation ──
+function initMobileThemeToggle() {
+  const mql = window.matchMedia('(max-width: 768px)');
+  function relocateToggle(e) {
+    const btn = document.getElementById('themeToggleBtn');
+    const dayNav = document.querySelector('.day-navigation');
+    const headerRight = document.querySelector('.header-right');
+    const topicPill = document.querySelector('.topic-picker-pill');
+    if (!btn || !dayNav || !headerRight) return;
+
+    if (e.matches) {
+      dayNav.appendChild(btn);
+    } else {
+      if (headerRight.firstChild !== btn) {
+        headerRight.insertBefore(btn, headerRight.firstChild);
+      }
+    }
+  }
+  mql.addEventListener('change', relocateToggle);
+  relocateToggle(mql);
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initMobileThemeToggle);
+} else {
+  initMobileThemeToggle();
+}

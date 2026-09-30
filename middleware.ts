@@ -206,8 +206,22 @@ export async function middleware(request: NextRequest) {
       const targetUrl = new URL(`/notebook/${dayId}${url.search}`, request.url);
       return NextResponse.redirect(targetUrl, { status: 301 });
     } else {
+      const targetUrl = new URL(`/python/day${formatted}.html${url.search}`, request.url);
+      return NextResponse.redirect(targetUrl, { status: 301 });
+    }
+  }
+
+  const legacyPythonMatch = path.match(/^\/python\/day(\d{1,2})(?:\.html)?$/i);
+  if (legacyPythonMatch) {
+    const dayNum = parseInt(legacyPythonMatch[1], 10);
+    const formatted = dayNum.toString().padStart(2, '0');
+    if (dayNum >= 3) {
+      const dayId = `day${formatted}`;
+      const targetUrl = new URL(`/notebook/${dayId}${url.search}`, request.url);
+      return NextResponse.redirect(targetUrl, { status: 301 });
+    } else {
       if (!path.endsWith('.html')) {
-        const targetUrl = new URL(`/day${formatted}.html${url.search}`, request.url);
+        const targetUrl = new URL(`/python/day${formatted}.html${url.search}`, request.url);
         return NextResponse.redirect(targetUrl, { status: 301 });
       }
     }
@@ -261,7 +275,7 @@ export async function middleware(request: NextRequest) {
     if (path.includes('excel-day')) {
       return NextResponse.redirect(new URL(`/excel/day${formatted}.html${url.search}`, request.url), { status: 301 });
     } else if (!isSqlNotebook) {
-      return NextResponse.redirect(new URL(`/day${formatted}.html${url.search}`, request.url), { status: 301 });
+      return NextResponse.redirect(new URL(`/python/day${formatted}.html${url.search}`, request.url), { status: 301 });
     }
   }
 
@@ -333,8 +347,9 @@ export const config = {
     // Legacy Excel HTML redirects (days 01–12)
     '/excel/day01.html', '/excel/day02.html', '/excel/day03.html', '/excel/day04.html', '/excel/day05.html',
     '/excel/day06.html', '/excel/day07.html', '/excel/day08.html', '/excel/day09.html', '/excel/day10.html',
-    // Extensionless day paths (days 01–30, sql, excel)
+    // Extensionless day paths (days 01–30, sql, excel, python)
     '/day:path*',
+    '/python/day:path*',
     '/sql/day:path*',
     '/excel/day:path*',
     // Secure notebook routes (days 03–30 are premium)

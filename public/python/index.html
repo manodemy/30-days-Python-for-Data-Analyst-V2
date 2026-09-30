@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
 
   <!-- App CSS -->
-  <link rel="stylesheet" href="/python/styles.css?v=30.0">
+  <link rel="stylesheet" href="/python/styles.css?v=84.0">
 
   <!-- CodeMirror JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
@@ -129,28 +129,56 @@
     <!-- ─── LEFT PANEL ─── -->
     <div class="panel-left" id="panelLeft">
 
+      <!-- Toolbar — above the question prompt -->
+      <div class="editor-toolbar">
+        <!-- ◀ Prev Question -->
+        <button class="q-nav-btn" id="prevQBtn" onclick="prevQuestion()" title="Previous question" aria-label="Previous question">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        </button>
+
+        <!-- Question Picker Trigger -->
+        <div class="q-picker-wrapper" id="qPickerWrapper">
+          <button class="q-picker-trigger" id="qPickerTrigger" onclick="toggleQPicker(event)" title="Jump to question" aria-haspopup="listbox" aria-expanded="false">
+            <span class="q-counter" id="qCounter">Question-01</span>
+            <svg class="q-picker-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <!-- Question List Popover -->
+          <div class="q-picker-popover" id="qPickerPopover" role="listbox" aria-label="Question list" style="display:none;">
+            <div class="q-picker-header">Practice Questions</div>
+            <div class="q-picker-list" id="qPickerList">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- ▶ Next Question -->
+        <button class="q-nav-btn" id="nextQBtn" onclick="nextQuestion()" title="Next question" aria-label="Next question">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </button>
+
+        <button class="audio-play-btn" id="solutionAudioBtn" onclick="playSolutionAudioFromBtn(this)" title="Play solution narration" style="margin-left: 4px;">
+          <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        <div class="spacer"></div>
+        <button class="tb-btn tb-btn--solution" onclick="peekSolution()" title="Peek solution">💡 Solution</button>
+        <button class="tb-btn tb-btn--reset" onclick="resetCode()" title="Reset code to starter template">↺ Reset</button>
+        <button class="tb-btn tb-btn--run" id="runBtn" onclick="runCurrentCode()" disabled>⏳ Loading…</button>
+        <button class="tb-btn tb-btn--clear" onclick="clearEditor()">✕ Clear</button>
+      </div>
+
       <!-- Question Prompt -->
       <div class="question-bar" id="questionBar">
         <div class="q-marker"></div>
         <div class="question-prompt" id="questionPrompt">
-          Q1. Write Python code to print <code>Hello, World!</code>
+          Loading question...
         </div>
-        <div class="q-nav">
-          <button onclick="prevQuestion()" title="Previous question">◀</button>
-          <button onclick="nextQuestion()" title="Next question">▶</button>
-        </div>
+        <button class="audio-play-btn" id="questionAudioBtn" onclick="playQuestionAudio(this)" title="Play question narration" style="flex-shrink: 0; margin-top: 2px;">
+          <svg class="play-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </button>
       </div>
 
       <!-- Editor Area -->
       <div class="editor-area">
-        <!-- Toolbar -->
-        <div class="editor-toolbar">
-          <span class="q-counter" id="qCounter">Question-01</span>
-          <div class="spacer"></div>
-          <button class="tb-btn tb-btn--reset" onclick="resetCode()" title="Reset code to starter template">↺ Reset</button>
-          <button class="tb-btn tb-btn--run" id="runBtn" onclick="runCurrentCode()" disabled>⏳ Loading…</button>
-          <button class="tb-btn tb-btn--clear" onclick="clearEditor()">✕ Clear</button>
-        </div>
 
         <!-- CodeMirror Mount -->
         <div class="editor-wrap" id="mainEditorWrap"></div>
@@ -381,12 +409,13 @@
   <!-- Supabase SDK -->
   <script src="/supabase.js" defer></script>
   <!-- Content modules -->
-  <script src="/python/content/manifest.js?v=30.0"></script>
-  <script src="/python/content/py-day-01.js?v=30.0"></script>
-  <script src="/python/content/py-day-02.js?v=30.0"></script>
+  <script src="/python/content/manifest.js?v=35.0"></script>
+  <script src="/python/content/py-narrations.js?v=136.0"></script>
+  <script src="/python/content/py-day-01.js?v=65.0"></script>
+  <script src="/python/content/py-day-02.js?v=65.0"></script>
   <!-- Python grading engine -->
-  <script src="/python/python-grading-engine.js?v=30.0"></script>
+  <script src="/python/python-grading-engine.js?v=36.0"></script>
   <!-- App Engine -->
-  <script src="/python/python-engine.js?v=30.0"></script>
+  <script src="/python/python-engine.js?v=136.0"></script>
 </body>
 </html>

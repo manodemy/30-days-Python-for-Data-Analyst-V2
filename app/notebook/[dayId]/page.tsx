@@ -106,8 +106,8 @@ export default async function NotebookPage({
   const formattedDay = dayNum.toString().padStart(2, '0');
 
   // ── Server-Side Auth & Enrollment Guard for Protected Days ─────────────────
-  // Universally, SQL Days 01–17 are free. All Python & Excel days and SQL Day 18 require enrollment.
-  const isUniversallyFree = courseType === 'sql' && dayNum <= 17;
+  // Universally, SQL Days 01–17 and Python Days 01–02 are free. SQL Day 18 and other days require enrollment.
+  const isUniversallyFree = (courseType === 'sql' && dayNum <= 17) || (courseType === 'python' && dayNum <= 2);
 
   if (!isGuestPass && !isUniversallyFree) {
     const supabase = getSupabaseServerClient();

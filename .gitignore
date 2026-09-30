@@ -35,6 +35,8 @@ demo.txt
 *.mp3
 !public/Version-3/**/
 !public/Version-3/**/*.mp3
+!public/python/**/
+!public/python/**/*.mp3
 !public/landing_v2/*.mp3
 *.wfp
 video_pipeline/

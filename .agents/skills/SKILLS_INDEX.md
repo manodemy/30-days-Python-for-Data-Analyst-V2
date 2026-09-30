@@ -14,6 +14,7 @@
 | **5** | **`rag-theory-animator`** | [`.agents/skills/rag-theory-animator/`](file:///d:/Learn%20Python%20in%2060days/Manodemy_Web_V2/.agents/skills/rag-theory-animator/SKILL.md) | 🟢 Active | World-class narration-synced GSAP animated theory presentations with SVG diagrams & progressive disclosure | *"animate theory"*, *"theory video"*, *"animation engine"*, *"visual presentation"* |
 | **6** | **`marketing-reel-engine`** | [`.agents/skills/marketing-reel-engine/`](file:///d:/Learn%20Python%20in%2060days/Manodemy_Web_V2/.agents/skills/marketing-reel-engine/SKILL.md) | 🟢 Active | Autonomous 9:16 viral reel generation, Option A vs B psychological traps, ticking clock synthesis, 1-click launchpad packs | *"marketing"*, *"reel"*, *"viral hook"*, *"instagram"* |
 | **7** | **`teacher`** | [`.agents/skills/teacher/`](file:///d:/Learn%20Python%20in%2060days/Manodemy_Web_V2/.agents/skills/teacher/SKILL.md) | 🟢 Active | Elite 30-Day AI Engineering Mentor & Career Architect with persistent memory (6 LPA to 50 LPA transformation) | *"teacher"*, *"mentor"*, *"50 lpa"*, *"career sprint"*, *"system design"* |
+| **8** | **`python-day-orchestration`** | [`.agents/skills/python-day-orchestration/`](file:///d:/Learn%20Python%20in%2060days/Manodemy_Web_V2/.agents/skills/python-day-orchestration/SKILL.md) | 🟢 Active | Multi-agent orchestration protocol and quality gate specification (Maestro v4.0) for Python Days 01–30 with Pyodide execution, theory spotlights, and universal access | *"python day"*, *"python curriculum"*, *"pyodide"*, *"python audio sync"* |
 
 ---
 
@@ -72,6 +73,18 @@
   - Elite 30-Day AI Engineering Career Mentor & Architect with persistent multi-tier memory vault.
   - Bridges technical gaps from **6 LPA Data Analyst** to **50 LPA AI Systems Engineer**.
   - Enforces daily standups, production code deliverables (FastAPI, Docker, LangGraph, Evals), and direct founder outreach.
+
+---
+
+## 🐍 8. `python-day-orchestration`
+* **File:** [`.agents/skills/python-day-orchestration/SKILL.md`](file:///d:/Learn%20Python%20in%2060days/Manodemy_Web_V2/.agents/skills/python-day-orchestration/SKILL.md)
+* **What it does:**
+  - Standard operating procedure & quality gate specification (Maestro v4.0) for building Python Days 01–30 with 100% parity to Python Day 01.
+  - Enforces single-document continuous reading architecture with semantic section IDs (`#dayXX...`).
+  - Governs sub-second visual spotlights (`.narration-spotlight` with radiant `#38bdf8` cyan glow and auto-scroll).
+  - Drives paced character-by-character typewriter syncing using RAF and auto-execution via Pyodide.
+  - Manages master timeline synchronization (`PYTHON_DAY_TRACKS`), URL normalization (`resolveAudioUrl`), and audio asset whitelisting (`!public/python/**/*.mp3`).
+  - Guarantees universal access and edge rewrites in `page.tsx`, `middleware.ts`, `vercel.json`, and `home.html`.
 
 ---
 

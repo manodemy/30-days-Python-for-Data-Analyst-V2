@@ -208,6 +208,40 @@ After `onNarrationSegmentEnded` fires for a `completion` track:
 - `teardownCompletionAnimation()`: disposes all geometries/materials, calls `renderer.dispose()`, removes full-screen backdrop and overlay DOM elements
 - Called automatically from `cancelTypewriter()` (seeking away) and `onNarrationSegmentEnded` (track ends)
 - `completionDisposables[]` array tracks all `cd(resource)` calls for clean memory disposal
-- Called automatically from `cancelTypewriter()` (seeking away) and `onNarrationSegmentEnded` (track ends)
-- `completionDisposables[]` array tracks all `cd(resource)` calls for clean disposal
+
+---
+
+## 🐍 Python Track Typewriter & Pyodide Execution Standard
+
+For all Python curriculum days (`pyDay01` through `pyDay30`):
+
+### 1. Engine Registration (`PYTHON_QUESTION_SOLUTIONS`)
+In `public/python/python-engine.js`:
+```javascript
+const PYTHON_QUESTION_SOLUTIONS = {
+  'pyDay01': {
+    1: {
+      code: "print('Hello, Python for Data Analysis')",
+      duration: 11.45,
+      startAt: 1.2,
+      endAt: 9.8,
+      scrollAt: 10.2
+    }
+  }
+};
+```
+
+### 2. High-Performance RAF Typewriter Loop
+- Uses `requestAnimationFrame` (`activeTypewriterRAF`) with character-by-character interpolation.
+- When `audioObj.currentTime >= solEntry.startAt`, typing begins at an even, natural cadence:
+  $$\text{charInterval} = \frac{\text{endAt} - \text{startAt}}{\text{totalChars}}$$
+- When `audioObj.currentTime >= solEntry.scrollAt`, `hasExecutedCurrentCode` triggers `runCurrentCode()` to execute in Pyodide.
+
+### 3. Arbitrary Seeking & Scrubber Fast-Forward
+- If a learner scrubs forward into the middle of a solution track, the engine immediately calculates the exact text up to `currentTime`, updates CodeMirror with `mainEditor.setValue(interpolatedText)`, and sets the cursor at the end.
+- If scrubbing past `scrollAt`, CodeMirror receives the full code and Pyodide executes immediately.
+
+### 4. Audio Whitelist & URL Normalization
+- All audio source paths must pass through `resolveAudioUrl(src)` returning `/python/${clean}`.
+- All MP3 assets in `public/python/DayXX/*.mp3` must be whitelisted in `.gitignore` via `!public/python/**/*.mp3`.
 

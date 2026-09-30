@@ -43,6 +43,13 @@
       "status": "active",
       "path": ".agents/skills/teacher/SKILL.md",
       "description": "Elite 30-day AI Engineering Mentor and Career Architect with persistent memory. Guides the user step-by-step from 6 LPA Data Analyst to 50 LPA AI Systems Engineer."
+    },
+    {
+      "id": "python-day-orchestration",
+      "name": "Python Day Orchestration Protocol",
+      "status": "active",
+      "path": ".agents/skills/python-day-orchestration/SKILL.md",
+      "description": "Multi-agent orchestration protocol and quality gate specification (Maestro v4.0) for producing, synchronizing, and validating Days 01 through 30 in the Python learning engine with Pyodide execution, theory spotlights, and universal access."
     }
   ]
 }
